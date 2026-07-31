@@ -26,9 +26,14 @@ export default function PopupComplete() {
       const supabase = createClient();
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
+        // Target '*' here, not a specific origin: window.opener already
+        // uniquely identifies the one tab that can receive this (nobody
+        // else gets it either way), and blob: URL tabs (like a SunScout
+        // report) don't always report a matchable origin string, which
+        // silently drops the message if we require an exact match.
         window.opener.postMessage(
           { type: 'blindspot-popup-auth', access_token: session.access_token, refresh_token: session.refresh_token },
-          origin
+          '*'
         );
         setMessage('Signed in — you can close this window.');
         setTimeout(() => window.close(), 600);
