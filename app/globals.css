@@ -301,6 +301,9 @@
 .auth-submit:disabled{ opacity:0.5; cursor:default }
 .auth-note{ font-size:12.5px; color:var(--text-dim); margin-top:18px; line-height:1.6 }
 .auth-success{ color:#fff; font-size:13.5px; line-height:1.6 }
+.auth-links{ display:flex; flex-direction:column; gap:10px; margin-top:20px }
+.auth-links a{ font-size:13px; color:var(--text-mute); text-decoration:none; border-bottom:1px solid var(--line) }
+.auth-links a:hover{ color:#fff; border-color:#fff }
 
 .reports-page{ min-height:100vh; background:var(--bg); padding:100px 32px 60px }
 .reports-inner{ max-width:900px; margin:0 auto }
