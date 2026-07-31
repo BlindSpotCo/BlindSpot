@@ -31,11 +31,14 @@ export default function LoginPage() {
   };
 
   const finishPopup = (session) => {
-    const origin = getPopupOrigin();
-    if (origin && window.opener && session) {
+    if (window.opener && session) {
+      // '*' here, not the origin param: window.opener already uniquely
+      // identifies the recipient, and a blob: URL report tab doesn't
+      // reliably report a matchable origin, which silently drops the
+      // message if we require an exact match.
       window.opener.postMessage(
         { type: 'blindspot-popup-auth', access_token: session.access_token, refresh_token: session.refresh_token },
-        origin
+        '*'
       );
     }
     window.close();
