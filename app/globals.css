@@ -269,9 +269,9 @@
 
 /* ---------- AUTH (added for account/login feature) ---------- */
 .btn-auth{
-  background:var(--sun); color:#fff; border-color:var(--sun);
+  background:#fff; color:#1a1a1a; border-color:#fff;
 }
-.btn-auth:hover{ background:#c46900; border-color:#c46900; }
+.btn-auth:hover{ background:#e5e5e5; border-color:#e5e5e5; }
 .nav-user{ font-size:12.5px; color:var(--text-mute); display:flex; align-items:center; gap:12px }
 .nav-user a{ color:var(--text); text-decoration:none; border-bottom:1px solid var(--line) }
 .nav-user a:hover{ border-color:var(--text) }
@@ -292,15 +292,15 @@
   width:100%; padding:11px 14px; border-radius:var(--radius); border:1px solid var(--line);
   background:var(--bg); color:var(--text); font-size:14px; font-family:'Inter',sans-serif;
 }
-.auth-field input:focus{ outline:none; border-color:var(--sun) }
+.auth-field input:focus{ outline:none; border-color:#fff }
 .auth-submit{
-  width:100%; padding:12px; border-radius:var(--radius); border:none; background:var(--sun);
+  width:100%; padding:12px; border-radius:var(--radius); border:1px solid #fff; background:transparent;
   color:#fff; font-weight:600; font-size:14px; cursor:pointer; margin-top:8px;
 }
-.auth-submit:hover{ background:#c46900 }
+.auth-submit:hover{ background:rgba(255,255,255,0.08) }
 .auth-submit:disabled{ opacity:0.5; cursor:default }
 .auth-note{ font-size:12.5px; color:var(--text-dim); margin-top:18px; line-height:1.6 }
-.auth-success{ color:var(--sun); font-size:13.5px; line-height:1.6 }
+.auth-success{ color:#fff; font-size:13.5px; line-height:1.6 }
 
 .reports-page{ min-height:100vh; background:var(--bg); padding:100px 32px 60px }
 .reports-inner{ max-width:900px; margin:0 auto }
