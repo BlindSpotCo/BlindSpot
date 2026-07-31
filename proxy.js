@@ -3,7 +3,10 @@ import { NextResponse } from 'next/server';
 
 // Runs on every request. Its only job is to refresh the Supabase auth
 // session cookie so a logged-in user doesn't get silently signed out.
-export async function middleware(request) {
+// Named "proxy" (not "middleware") -- required by Next.js 16, which
+// renamed this file convention and now runs it on the Node.js runtime
+// by default instead of Edge.
+export async function proxy(request) {
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
