@@ -17,24 +17,68 @@ export default function LoginPage() {
     return new URLSearchParams(window.location.search).get('next') || '/';
   };
 
+  // True when this login page was opened as a popup (e.g. from the "Save
+  // to BlindSpot" button on a SunScout report) rather than a normal page
+  // visit. In that case we hand the session back via postMessage and
+  // close the popup instead of redirecting anywhere.
+  const isPopup = () => {
+    if (typeof window === 'undefined') return false;
+    return new URLSearchParams(window.location.search).get('popup') === '1';
+  };
+  const getPopupOrigin = () => {
+    if (typeof window === 'undefined') return null;
+    return new URLSearchParams(window.location.search).get('origin');
+  };
+
+  const finishPopup = (session) => {
+    const origin = getPopupOrigin();
+    if (origin && window.opener && session) {
+      window.opener.postMessage(
+        { type: 'blindspot-popup-auth', access_token: session.access_token, refresh_token: session.refresh_token },
+        origin
+      );
+    }
+    window.close();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSending(true);
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     setSending(false);
     if (error) {
       setError(error.message);
+      return;
+    }
+    if (isPopup()) {
+      finishPopup(data.session);
+      return;
+    }
+    const next = getNextParam();
+    // If returning to a different domain (SunScout, AsliVastu), that site
+    // can't see this domain's session cookie -- hand it the tokens
+    // directly via the URL fragment, same as the OAuth path.
+    if (next.startsWith('http') && data.session) {
+      const url = new URL(next);
+      url.hash = `access_token=${encodeURIComponent(data.session.access_token)}&refresh_token=${encodeURIComponent(data.session.refresh_token)}`;
+      window.location.href = url.toString();
     } else {
-      window.location.href = getNextParam();
+      window.location.href = next;
     }
   };
 
   const handleGoogleSignIn = async () => {
     setError('');
     const supabase = createClient();
-    const next = encodeURIComponent(getNextParam());
+    // In popup mode, send the OAuth flow to /auth/popup-complete instead
+    // of the normal next -- that page does the postMessage-and-close.
+    const popupOrigin = getPopupOrigin();
+    const nextTarget = isPopup() && popupOrigin
+      ? `/auth/popup-complete?origin=${encodeURIComponent(popupOrigin)}`
+      : getNextParam();
+    const next = encodeURIComponent(nextTarget);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
