@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 // Only these origins are allowed to receive a session via postMessage from
 // a popup -- prevents some unrelated site from opening a login popup and
 // harvesting a session token back to itself.
-const ALLOWED_ORIGINS = ['https://sun-scout.com', 'https://aslivastu.com', 'http://localhost:3001', 'http://localhost:3002'];
+const ALLOWED_ORIGINS = ['https://sun-scout.com', 'https://aslivastu.com', 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'];
 
 export default function PopupComplete() {
   const [message, setMessage] = useState('Finishing sign-in…');
