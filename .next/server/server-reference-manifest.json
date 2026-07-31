@@ -1,0 +1,17 @@
+{
+  "node": {
+    "001325f27f1e732780ab28d7cf37e968fd81df8bf1": {
+      "workers": {
+        "app/my-reports/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Farunagangji%2FDownloads%2Fblindspot-next%2Fapp%2Fmy-reports%2Fpage.js%22%2C%5B%5B%22001325f27f1e732780ab28d7cf37e968fd81df8bf1%22%2C%22%24%24RSC_SERVER_ACTION_0%22%5D%5D%5D%5D&__client_imported__=!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/my-reports/page": "rsc"
+      }
+    }
+  },
+  "edge": {},
+  "encryptionKey": "QzafOdTszmmtiqwYrllqeos+hZMxarlg1rA4GDDXDA8="
+}

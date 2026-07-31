@@ -1,0 +1,99 @@
+'use client';
+
+import { useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
+
+export default function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSending(true);
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    setSending(false);
+    if (error) {
+      setError(error.message);
+    } else {
+      setSent(true);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setError('');
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    if (error) setError(error.message);
+    // On success, Supabase redirects the browser to Google itself --
+    // nothing more to do here.
+  };
+
+  return (
+    <div className="auth-page">
+      <div className="auth-card">
+        <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 28 }}>
+          <img src="/mark.png" alt="BlindSpot" style={{ height: 20 }} />
+          <img src="/wordmark.png" alt="BlindSpot" style={{ height: 11 }} />
+        </a>
+        <h1>Sign in</h1>
+        <p>Enter your email and we&apos;ll send you a link to sign in — no password needed. Use the same email whether you&apos;re saving from SunScout or AsliVastu.</p>
+
+        {sent ? (
+          <p className="auth-success">Check your inbox — we sent a sign-in link to {email}.</p>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              className="auth-submit"
+              style={{ background: '#fff', color: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 20 }}
+            >
+              <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84c-.21 1.13-.84 2.09-1.8 2.73v2.27h2.92c1.71-1.57 2.68-3.88 2.68-6.64z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.17l-2.92-2.27c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.34C2.44 15.98 5.48 18 9 18z"/><path fill="#FBBC05" d="M3.97 10.72c-.18-.54-.28-1.12-.28-1.72s.1-1.18.28-1.72V4.94H.96A8.996 8.996 0 0 0 0 9c0 1.45.35 2.83.96 4.06l3.01-2.34z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.59-2.59C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.94l3.01 2.34C4.68 5.16 6.66 3.58 9 3.58z"/></svg>
+              Continue with Google
+            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0', color: 'var(--text-dim)', fontSize: 12 }}>
+              <div style={{ flex: 1, height: 1, background: 'var(--line-soft)' }} />
+              or
+              <div style={{ flex: 1, height: 1, background: 'var(--line-soft)' }} />
+            </div>
+            <form onSubmit={handleSubmit}>
+            <div className="auth-field">
+              <label htmlFor="email">Email</label>
+              <input
+                id="email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+              />
+            </div>
+            {error && <p style={{ color: '#c46900', fontSize: 13, marginBottom: 12 }}>{error}</p>}
+            <button type="submit" className="auth-submit" disabled={sending}>
+              {sending ? 'Sending…' : 'Send sign-in link'}
+            </button>
+            </form>
+          </>
+        )}
+
+        <p className="auth-note">
+          By continuing you agree this is used only to save and show you your own reports from SunScout and AsliVastu.
+        </p>
+      </div>
+    </div>
+  );
+}
