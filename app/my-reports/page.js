@@ -39,6 +39,9 @@ export default async function MyReportsPage() {
   return (
     <div className="reports-page">
       <div className="reports-inner">
+        <a href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--text-mute)', textDecoration: 'none', fontSize: 13, marginBottom: 28 }}>
+          ← Back to home
+        </a>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
           <div>
             <h1>My Reports</h1>

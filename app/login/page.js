@@ -9,15 +9,24 @@ export default function LoginPage() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
 
+  // Where to land after signing in. Defaults to the homepage; if someone
+  // got bounced here from a gated page (e.g. /my-reports), that page sets
+  // ?next=... so we return them there instead.
+  const getNextParam = () => {
+    if (typeof window === 'undefined') return '/';
+    return new URLSearchParams(window.location.search).get('next') || '/';
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSending(true);
     const supabase = createClient();
+    const next = encodeURIComponent(getNextParam());
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=${next}`,
       },
     });
     setSending(false);
@@ -31,10 +40,11 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     setError('');
     const supabase = createClient();
+    const next = encodeURIComponent(getNextParam());
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/callback?next=${next}`,
       },
     });
     if (error) setError(error.message);
