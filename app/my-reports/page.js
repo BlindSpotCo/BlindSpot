@@ -73,10 +73,10 @@ export default async function MyReportsPage() {
           <div className="reports-group">
             <h2>SunScout</h2>
             {sunscoutReports.map((r) => (
-              <div className="report-row" key={r.id}>
+              <a href={`/my-reports/${r.id}`} className="report-row" key={r.id} style={{ textDecoration: 'none', display: 'flex' }}>
                 <span className="label">{r.title || 'Untitled report'}</span>
                 <span className="meta">{new Date(r.created_at).toLocaleDateString()}</span>
-              </div>
+              </a>
             ))}
           </div>
         )}
@@ -85,10 +85,10 @@ export default async function MyReportsPage() {
           <div className="reports-group">
             <h2>AsliVastu</h2>
             {aslivastuReports.map((r) => (
-              <div className="report-row" key={r.id}>
+              <a href={`/my-reports/${r.id}`} className="report-row" key={r.id} style={{ textDecoration: 'none', display: 'flex' }}>
                 <span className="label">{r.title || 'Untitled report'}</span>
                 <span className="meta">{new Date(r.created_at).toLocaleDateString()}</span>
-              </div>
+              </a>
             ))}
           </div>
         )}

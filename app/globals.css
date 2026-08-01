@@ -317,7 +317,8 @@
 .reports-group h2{ font-size:13px; text-transform:uppercase; letter-spacing:0.1em; color:var(--sun); margin-bottom:16px }
 .report-row{
   display:flex; justify-content:space-between; align-items:center; padding:16px 0;
-  border-bottom:1px solid var(--line-soft);
+  border-bottom:1px solid var(--line-soft); cursor:pointer; transition:background 0.15s ease;
 }
+.report-row:hover{ background: rgba(255,255,255,0.03) }
 .report-row .label{ font-size:14px; color:#fff }
 .report-row .meta{ font-size:12px; color:var(--text-dim) }
