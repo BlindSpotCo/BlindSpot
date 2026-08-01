@@ -3,6 +3,12 @@
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
+// Only these origins are ever allowed to receive session tokens via a
+// redirect. Without this check, 'next' could be set to any attacker-
+// controlled URL, and a signed-in visitor's tokens would go straight to
+// it -- full account takeover via one crafted link.
+const ALLOWED_ORIGINS = ['https://sun-scout.com', 'https://aslivastu.com', 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'];
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,33 +23,6 @@ export default function LoginPage() {
     return new URLSearchParams(window.location.search).get('next') || '/';
   };
 
-  // True when this login page was opened as a popup (e.g. from the "Save
-  // to BlindSpot" button on a SunScout report) rather than a normal page
-  // visit. In that case we hand the session back via postMessage and
-  // close the popup instead of redirecting anywhere.
-  const isPopup = () => {
-    if (typeof window === 'undefined') return false;
-    return new URLSearchParams(window.location.search).get('popup') === '1';
-  };
-  const getPopupOrigin = () => {
-    if (typeof window === 'undefined') return null;
-    return new URLSearchParams(window.location.search).get('origin');
-  };
-
-  const finishPopup = (session) => {
-    if (window.opener && session) {
-      // '*' here, not the origin param: window.opener already uniquely
-      // identifies the recipient, and a blob: URL report tab doesn't
-      // reliably report a matchable origin, which silently drops the
-      // message if we require an exact match.
-      window.opener.postMessage(
-        { type: 'blindspot-popup-auth', access_token: session.access_token, refresh_token: session.refresh_token },
-        '*'
-      );
-    }
-    window.close();
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -55,16 +34,23 @@ export default function LoginPage() {
       setError(error.message);
       return;
     }
-    if (isPopup()) {
-      finishPopup(data.session);
-      return;
-    }
     const next = getNextParam();
-    // If returning to a different domain (SunScout, AsliVastu), that site
-    // can't see this domain's session cookie -- hand it the tokens
-    // directly via the URL fragment, same as the OAuth path.
-    if (next.startsWith('http') && data.session) {
-      const url = new URL(next);
+    if (next.startsWith('http')) {
+      // Returning to a different domain (SunScout, AsliVastu) -- that
+      // site can't see this domain's session cookie, so hand it the
+      // tokens directly via the URL fragment. Only ever to a known,
+      // trusted destination.
+      let url;
+      try {
+        url = new URL(next);
+      } catch {
+        window.location.href = '/';
+        return;
+      }
+      if (!ALLOWED_ORIGINS.includes(url.origin) || !data.session) {
+        window.location.href = '/';
+        return;
+      }
       url.hash = `access_token=${encodeURIComponent(data.session.access_token)}&refresh_token=${encodeURIComponent(data.session.refresh_token)}`;
       window.location.href = url.toString();
     } else {
@@ -75,13 +61,7 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     setError('');
     const supabase = createClient();
-    // In popup mode, send the OAuth flow to /auth/popup-complete instead
-    // of the normal next -- that page does the postMessage-and-close.
-    const popupOrigin = getPopupOrigin();
-    const nextTarget = isPopup() && popupOrigin
-      ? `/auth/popup-complete?origin=${encodeURIComponent(popupOrigin)}`
-      : getNextParam();
-    const next = encodeURIComponent(nextTarget);
+    const next = encodeURIComponent(getNextParam());
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
