@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 // Without this check, 'next' could be set to any attacker-controlled URL
 // in the address bar, and a signed-in visitor's access/refresh tokens
 // would be handed straight to it -- full account takeover via one link.
-const ALLOWED_ORIGINS = ['https://sun-scout.com', 'https://aslivastu.com', 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'];
+const ALLOWED_ORIGINS = ['https://sun-scout.com', 'https://www.sun-scout.com', 'https://aslivastu.com', 'https://www.aslivastu.com', 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'];
 
 // Reached right after /auth/callback establishes a session via cookies.
 // Its only job: read that session and jump to the external site (SunScout,

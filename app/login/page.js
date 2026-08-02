@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 // redirect. Without this check, 'next' could be set to any attacker-
 // controlled URL, and a signed-in visitor's tokens would go straight to
 // it -- full account takeover via one crafted link.
-const ALLOWED_ORIGINS = ['https://sun-scout.com', 'https://aslivastu.com', 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'];
+const ALLOWED_ORIGINS = ['https://sun-scout.com', 'https://www.sun-scout.com', 'https://aslivastu.com', 'https://www.aslivastu.com', 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'];
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
