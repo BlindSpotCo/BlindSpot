@@ -23,7 +23,6 @@ export default async function ReportDetailPage({ params }) {
 
   const d = report.data || {};
   const verdict = d.summary?.solarFeasibility;
-  const screenshots = Array.isArray(d.screenshots) ? d.screenshots : [];
 
   return (
     <div className="reports-page">
@@ -108,23 +107,6 @@ export default async function ReportDetailPage({ params }) {
                     ))}
                   </tbody>
                 </table>
-              </div>
-            )}
-
-            {/* Map screenshots -- actual images, not just referenced in text */}
-            {screenshots.length > 0 && (
-              <div>
-                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 12 }}>Map Screenshots ({screenshots.length})</div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 10 }}>
-                  {screenshots.map((shot, i) => (
-                    <div key={i} style={{ border: '1px solid var(--line-soft)', overflow: 'hidden' }}>
-                      <img src={shot.base64} alt={shot.label || `Screenshot ${i + 1}`} style={{ width: '100%', display: 'block' }} />
-                      {shot.label && (
-                        <div style={{ fontSize: 10.5, color: 'var(--text-dim)', padding: '6px 8px', background: 'var(--bg-2)' }}>{shot.label}</div>
-                      )}
-                    </div>
-                  ))}
-                </div>
               </div>
             )}
           </>
