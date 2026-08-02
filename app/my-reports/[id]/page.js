@@ -22,6 +22,8 @@ export default async function ReportDetailPage({ params }) {
   }
 
   const d = report.data || {};
+  const verdict = d.summary?.solarFeasibility;
+  const screenshots = Array.isArray(d.screenshots) ? d.screenshots : [];
 
   return (
     <div className="reports-page">
@@ -58,17 +60,41 @@ export default async function ReportDetailPage({ params }) {
               )}
             </div>
 
-            {d.summary?.solarFeasibility && (
-              <div style={{ background: 'var(--bg-2)', border: '1px solid var(--line-soft)', borderRadius: 8, padding: 20, marginBottom: 24 }}>
-                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--sun)', marginBottom: 8 }}>Solar Feasibility</div>
-                <div style={{ fontSize: 14, color: '#fff', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
-                  {typeof d.summary.solarFeasibility === 'string' ? d.summary.solarFeasibility : JSON.stringify(d.summary.solarFeasibility, null, 2)}
-                </div>
+            {/* Verdict -- rendered as actual fields, not a JSON dump */}
+            {verdict && (
+              <div style={{ display: 'flex', gap: 14, marginBottom: 28, flexWrap: 'wrap' }}>
+                {verdict.verdict && (
+                  <div style={{ background: 'var(--bg-2)', border: '1px solid var(--line-soft)', padding: '14px 18px', flex: 1, minWidth: 140 }}>
+                    <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 4 }}>Overall Verdict</div>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--sun)' }}>{verdict.verdict}</div>
+                    {verdict.avgUsableHours != null && <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 2 }}>{verdict.avgUsableHours}h/day avg</div>}
+                  </div>
+                )}
+                {Array.isArray(verdict.bestMonths) && verdict.bestMonths.length > 0 && (
+                  <div style={{ background: 'var(--bg-2)', border: '1px solid var(--line-soft)', padding: '14px 18px', flex: 1, minWidth: 140 }}>
+                    <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 4 }}>Best Months</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: '#fff' }}>{verdict.bestMonths.join(', ')}</div>
+                  </div>
+                )}
+                {Array.isArray(verdict.worstMonths) && verdict.worstMonths.length > 0 && (
+                  <div style={{ background: 'var(--bg-2)', border: '1px solid var(--line-soft)', padding: '14px 18px', flex: 1, minWidth: 140 }}>
+                    <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 4 }}>Worst Months</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: '#fff' }}>{verdict.worstMonths.join(', ')}</div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Written analysis, before the table -- matches the order the report itself uses */}
+            {d.analysis && (
+              <div style={{ marginBottom: 32 }}>
+                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 10 }}>Summary</div>
+                <div style={{ fontSize: 14, color: 'var(--text-mute)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{d.analysis}</div>
               </div>
             )}
 
             {Array.isArray(d.summary?.monthlySummary) && d.summary.monthlySummary.length > 0 && (
-              <div style={{ marginBottom: 24, overflowX: 'auto' }}>
+              <div style={{ marginBottom: 32, overflowX: 'auto' }}>
                 <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 10 }}>Monthly Sunlight Data</div>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                   <tbody>
@@ -85,17 +111,27 @@ export default async function ReportDetailPage({ params }) {
               </div>
             )}
 
-            {d.analysis && (
+            {/* Map screenshots -- actual images, not just referenced in text */}
+            {screenshots.length > 0 && (
               <div>
-                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 10 }}>Full Analysis</div>
-                <div style={{ fontSize: 14, color: 'var(--text-mute)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{d.analysis}</div>
+                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 12 }}>Map Screenshots ({screenshots.length})</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 10 }}>
+                  {screenshots.map((shot, i) => (
+                    <div key={i} style={{ border: '1px solid var(--line-soft)', overflow: 'hidden' }}>
+                      <img src={shot.base64} alt={shot.label || `Screenshot ${i + 1}`} style={{ width: '100%', display: 'block' }} />
+                      {shot.label && (
+                        <div style={{ fontSize: 10.5, color: 'var(--text-dim)', padding: '6px 8px', background: 'var(--bg-2)' }}>{shot.label}</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </>
         )}
 
         {report.source !== 'sunscout' && (
-          <pre style={{ fontSize: 13, color: 'var(--text-mute)', whiteSpace: 'pre-wrap', background: 'var(--bg-2)', padding: 20, borderRadius: 8, marginTop: 20 }}>
+          <pre style={{ fontSize: 13, color: 'var(--text-mute)', whiteSpace: 'pre-wrap', background: 'var(--bg-2)', padding: 20, marginTop: 20 }}>
             {JSON.stringify(d, null, 2)}
           </pre>
         )}
