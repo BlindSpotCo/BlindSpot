@@ -315,6 +315,7 @@
 }
 .reports-group{ margin-bottom:40px }
 .reports-group h2{ font-size:13px; text-transform:uppercase; letter-spacing:0.1em; color:var(--sun); margin-bottom:16px }
+.reports-group.av h2{ color:var(--slate) }
 .report-row{
   display:flex; justify-content:space-between; align-items:center; padding:16px 0;
   border-bottom:1px solid var(--line-soft); cursor:pointer; transition:background 0.15s ease;

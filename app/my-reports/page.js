@@ -82,7 +82,7 @@ export default async function MyReportsPage() {
         )}
 
         {aslivastuReports.length > 0 && (
-          <div className="reports-group">
+          <div className="reports-group av">
             <h2>AsliVastu</h2>
             {aslivastuReports.map((r) => (
               <a href={`/my-reports/${r.id}`} className="report-row" key={r.id} style={{ textDecoration: 'none', display: 'flex' }}>
