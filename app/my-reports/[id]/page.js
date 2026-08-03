@@ -143,6 +143,12 @@ export default async function ReportDetailPage({ params }) {
 
           return (
             <>
+              {d.url && (
+                <p style={{ fontSize: 12, marginBottom: 20 }}>
+                  <a href={d.url} style={{ color: 'var(--slate)' }}>View live report on AsliVastu →</a>
+                </p>
+              )}
+
               {/* Headline card */}
               {card('Overview', (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '16px 20px' }}>
@@ -219,11 +225,35 @@ export default async function ReportDetailPage({ params }) {
                 stat('Flood incidents', d.flooding_incidents_annual, d.flooding_incidents_annual != null ? '/yr' : ''),
               ])}
 
-              {d.price_context && card('Price context', (
-                <pre style={{ fontSize: 13, color: 'var(--text-mute)', whiteSpace: 'pre-wrap', margin: 0, fontFamily: 'inherit', lineHeight: 1.6 }}>
-                  {typeof d.price_context === 'string' ? d.price_context : JSON.stringify(d.price_context, null, 2)}
-                </pre>
-              ))}
+              {d.price_context && d.price_context.rate_sqft && card('Price context · guidance value', (() => {
+                const pc = d.price_context;
+                const [lo, hi] = pc.rate_sqft;
+                const bands = ['Premium', 'Upper', 'Mid', 'Modest', 'Value'];
+                const inr = n => '₹' + Number(n).toLocaleString('en-IN');
+                const mLo = Math.round(lo * 1.2 / 100) * 100, mHi = Math.round(hi * 1.6 / 100) * 100;
+                const blr = d.city === 'Bangalore';
+                return (
+                  <>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: 28, fontWeight: 700, color: '#fff' }}>{inr(lo)}–{inr(hi)}</span>
+                      <span style={{ fontSize: 12, color: 'var(--text-dim)' }}>per sq ft · {(pc.label || '').toLowerCase()} band for {blr ? 'Bengaluru' : 'the NCR'}</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: 5, margin: '14px 0 6px' }}>
+                      {bands.map((b, i) => (
+                        <div key={b} style={{ flex: 1 }}>
+                          <div style={{ height: 6, background: 'var(--slate)', opacity: (i + 1) === pc.tier ? 1 : 0.25 }} />
+                          <div style={{ fontSize: 9.5, textTransform: 'uppercase', letterSpacing: '0.04em', color: (i + 1) === pc.tier ? 'var(--slate)' : 'var(--text-dim)', marginTop: 5, fontWeight: (i + 1) === pc.tier ? 700 : 400 }}>
+                            {b}{(i + 1) === pc.tier ? ' ▲' : ''}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <p style={{ fontSize: 13, color: 'var(--text-mute)', margin: '12px 0 0', lineHeight: 1.5 }}>
+                      Market prices run <strong style={{ color: '#fff' }}>20–70% above</strong> the {blr ? 'guidance value' : 'circle rate'} — expect roughly <strong style={{ color: '#fff' }}>{inr(mLo)}–{inr(mHi)}/sq ft</strong> in practice. Indicative government valuation, not a market quote.
+                    </p>
+                  </>
+                );
+              })())}
 
               {Array.isArray(d.schools_list) && d.schools_list.length > 0 && card(`Schools · ${d.schools_count ?? d.schools_list.length} mapped`, (
                 <div>
@@ -235,12 +265,6 @@ export default async function ReportDetailPage({ params }) {
                   ))}
                 </div>
               ))}
-
-              {d.url && (
-                <p style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 8 }}>
-                  <a href={d.url} style={{ color: 'var(--slate)' }}>View live report on AsliVastu →</a>
-                </p>
-              )}
             </>
           );
         })()}
