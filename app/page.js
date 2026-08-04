@@ -138,7 +138,7 @@ export default function Home() {
         </div>
 
         <div className="hero-scene-wrap">
-          <img className="hero-scene-img" src="/hero-scene.png" alt="A city skyline converging on a single located pin, with the sun's arc traced above it" />
+          <img className="hero-scene-img" src="/hero-scene-v3.png" alt="A city skyline converging on a single located pin, with the sun's arc and a light beam traced above it" />
           <div className="hero-scene-panel" aria-hidden="true"></div>
         </div>
       </section>

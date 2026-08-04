@@ -98,7 +98,7 @@
      behind the headline, and the beam showed up as a visible dark stripe
      there instead.) */
   .hero-scene-panel{
-    position:absolute; left:4.8%; right:5.1%; top:27%; height:23%;
+    position:absolute; left:4.8%; right:5.1%; top:41.1%; height:26.8%;
     background:rgba(4,4,5,0.62); pointer-events:none;
   }
 
@@ -178,7 +178,7 @@
      (soft, localized) plus text-shadow on the headline/sub. */
   .hero-scene-wrap{
     grid-row:1; grid-column:1; position:relative; z-index:0;
-    width:100%; max-width:1380px; margin:0 auto; align-self:start; pointer-events:none;
+    width:100%; max-width:1244px; margin:12px auto 0; align-self:start; pointer-events:none;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
     mask-image: linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
   }
@@ -186,9 +186,9 @@
     width:100%; height:auto; display:block;
   }
 
-  /* On mobile the headline/paragraph wrap into a much taller stack, while
-     the illustration (a wide landscape scene) scales down to almost nothing
-     tall at narrow widths — layering them in the same grid cell like desktop
+  /* Below a narrow width the headline/paragraph wrap into a much taller
+     stack, while the illustration (a wide landscape scene) scales down to
+     almost nothing tall — layering them in the same grid cell like desktop
      no longer lines the pin/arc up with the text, it just collides with
      whatever text happens to sit at that height. So below 640px we stop
      stacking them: the scene drops out of the grid into normal flow, below
@@ -201,6 +201,25 @@
     .hero-scene-wrap{
       position:relative; grid-row:auto; grid-column:auto;
       max-width:78%; margin:36px auto 0; opacity:0.92;
+    }
+  }
+
+  /* The layered desktop composition (arc/sun above the headline, pin below
+     the coord-readout) is calibrated against the illustration's actual
+     proportions at its natural rendered size (max-width:1244px). Below
+     that, .hero-scene-wrap scales down with the viewport but the text
+     doesn't shrink nearly as fast (h1/paragraph have their own min sizes),
+     so the ring/pin rides up and starts covering the CTAs and coordinate
+     row. Rather than fight that at every in-between width, treat anything
+     under the illustration's natural width the same as mobile: drop the
+     scene below the text instead of layering it behind. */
+  @media (min-width:641px) and (max-width:1279px){
+    .hero{ display:block; padding-top:56px }
+    .hero-vignette{ display:none }
+    .hero-content{ position:relative; padding-top:0 }
+    .hero-scene-wrap{
+      position:relative; grid-row:auto; grid-column:auto;
+      max-width:640px; margin:44px auto 0; opacity:0.92;
     }
   }
 
