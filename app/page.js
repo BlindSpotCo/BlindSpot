@@ -193,11 +193,10 @@ export default function Home() {
           <div className="hero-scroll-cue" aria-hidden="true"><span></span>Scroll</div>
 
           <div className="hero-scene-wrap">
-            <img className="hero-scene-img" src="/hero-scene-v3.png" alt="A city skyline converging on a single located pin, with the sun's arc and a light beam traced above it" />
+            <img className="hero-scene-img hero-scene-base" src="/hero-scene-base.png" alt="A city skyline with the sun's arc traced above it" />
+            <img className="hero-scene-img hero-scene-road" src="/hero-scene-road.png" alt="" aria-hidden="true" />
             <div className="hero-scene-panel" aria-hidden="true"></div>
           </div>
-
-          <div className="hero-blast" aria-hidden="true"></div>
         </section>
       </div>
 
