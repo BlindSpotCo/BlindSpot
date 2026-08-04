@@ -8,8 +8,6 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const [checkedAuth, setCheckedAuth] = useState(false);
   const coordRef = useRef(null);
-  const heroStageRef = useRef(null);
-  const heroRef = useRef(null);
 
   // Auth state
   useEffect(() => {
@@ -80,56 +78,6 @@ export default function Home() {
     return () => io.disconnect();
   }, []);
 
-  // Hero scroll-jack: scrolling down "flies" the pov toward the pin (the
-  // scene zooms in on the pin, headline/CTAs fade out), then a blast flare
-  // fires right as the pin fills the frame — which scrolls away to reveal
-  // the products section right behind it. Driven by a single --p (0→1)
-  // custom property on .hero; every visual step (zoom amount, text fade,
-  // blast size/opacity) is a plain CSS calc() off that one value, so it's
-  // always in lockstep with actual scroll position, not a fixed-duration
-  // animation that can drift out of sync.
-  useEffect(() => {
-    const stage = heroStageRef.current;
-    const hero = heroRef.current;
-    if (!stage || !hero) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    const HEADER_H = 66; // matches nav.wrap height — hero sticks just below it, not under it
-    let extra = 0;
-
-    function layout() {
-      const heroH = hero.offsetHeight;
-      extra = Math.round(Math.min(window.innerHeight * 1.15, 1050));
-      stage.style.height = heroH + extra + 'px';
-    }
-    layout();
-    window.addEventListener('resize', layout);
-
-    let ticking = false;
-    function update() {
-      ticking = false;
-      const rect = stage.getBoundingClientRect();
-      const effectiveTop = rect.top - HEADER_H;
-      const p = extra > 0 ? Math.min(1, Math.max(0, -effectiveTop / extra)) : 0;
-      hero.style.setProperty('--p', p.toFixed(4));
-    }
-    function onScroll() {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(update);
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    update();
-
-    stage.classList.add('stage-active');
-    hero.classList.add('hero-pinned');
-
-    return () => {
-      window.removeEventListener('resize', layout);
-      window.removeEventListener('scroll', onScroll);
-    };
-  }, []);
-
   return (
     <>
       <header>
@@ -169,36 +117,32 @@ export default function Home() {
         </nav>
       </header>
 
-      <div className="hero-stage" ref={heroStageRef}>
-        <section className="hero" ref={heroRef}>
-          <div className="corner tl"><svg viewBox="0 0 22 22" fill="none"><path d="M1 10V1H10" stroke="white" strokeWidth="1.4"/></svg></div>
-          <div className="corner tr"><svg viewBox="0 0 22 22" fill="none"><path d="M1 10V1H10" stroke="white" strokeWidth="1.4"/></svg></div>
-          <div className="corner bl"><svg viewBox="0 0 22 22" fill="none"><path d="M1 10V1H10" stroke="white" strokeWidth="1.4"/></svg></div>
-          <div className="corner br"><svg viewBox="0 0 22 22" fill="none"><path d="M1 10V1H10" stroke="white" strokeWidth="1.4"/></svg></div>
+      <section className="hero">
+        <div className="corner tl"><svg viewBox="0 0 22 22" fill="none"><path d="M1 10V1H10" stroke="white" strokeWidth="1.4"/></svg></div>
+        <div className="corner tr"><svg viewBox="0 0 22 22" fill="none"><path d="M1 10V1H10" stroke="white" strokeWidth="1.4"/></svg></div>
+        <div className="corner bl"><svg viewBox="0 0 22 22" fill="none"><path d="M1 10V1H10" stroke="white" strokeWidth="1.4"/></svg></div>
+        <div className="corner br"><svg viewBox="0 0 22 22" fill="none"><path d="M1 10V1H10" stroke="white" strokeWidth="1.4"/></svg></div>
 
-          <div className="hero-vignette" aria-hidden="true"></div>
+        <div className="hero-vignette" aria-hidden="true"></div>
 
-          <div className="wrap hero-content">
-            <span className="hero-eyebrow">Property Intelligence</span>
-            <h1>Know the place, <br/>before you commit.</h1>
-            <p className="hero-tagline"><span className="seg sun">One pin</span><span className="sep"></span><span className="seg slate">Two answers</span></p>
-            <p className="hero-sub">Drop a pin. See exactly how sunlight moves through the unit, and exactly what the neighbourhood around it is really like. Real solar geometry. Real government records. No broker spin.</p>
-            <div className="hero-ctas">
-              <a href="https://sun-scout.com" target="_blank" rel="noopener" className="btn btn-lg"><span className="btn-dot d-sun"></span>Open SunScout →</a>
-              <a href="https://aslivastu.com" target="_blank" rel="noopener" className="btn btn-lg"><span className="btn-dot d-slate"></span>Open AsliVastu →</a>
-            </div>
-            <div className="coord-readout"><span className="blink"></span><span ref={coordRef} className="mono">12.9716° N, 77.5946° E — checking Bengaluru</span></div>
+        <div className="wrap hero-content">
+          <span className="hero-eyebrow">Property Intelligence</span>
+          <h1>Know the place, <br/>before you commit.</h1>
+          <p className="hero-tagline"><span className="seg sun">One pin</span><span className="sep"></span><span className="seg slate">Two answers</span></p>
+          <p className="hero-sub">Drop a pin. See exactly how sunlight moves through the unit, and exactly what the neighbourhood around it is really like. Real solar geometry. Real government records. No broker spin.</p>
+          <div className="hero-ctas">
+            <a href="https://sun-scout.com" target="_blank" rel="noopener" className="btn btn-lg"><span className="btn-dot d-sun"></span>Open SunScout →</a>
+            <a href="https://aslivastu.com" target="_blank" rel="noopener" className="btn btn-lg"><span className="btn-dot d-slate"></span>Open AsliVastu →</a>
           </div>
+          <div className="coord-readout"><span className="blink"></span><span ref={coordRef} className="mono">12.9716° N, 77.5946° E — checking Bengaluru</span></div>
+        </div>
 
-          <div className="hero-scroll-cue" aria-hidden="true"><span></span>Scroll</div>
-
-          <div className="hero-scene-wrap">
-            <img className="hero-scene-img hero-scene-base" src="/hero-scene-base.png" alt="A city skyline with the sun's arc traced above it" />
-            <img className="hero-scene-img hero-scene-road" src="/hero-scene-road.png" alt="" aria-hidden="true" />
-            <div className="hero-scene-panel" aria-hidden="true"></div>
-          </div>
-        </section>
-      </div>
+        <div className="hero-scene-wrap">
+          <img className="hero-scene-img hero-scene-base" src="/hero-scene-base.png" alt="A city skyline with the sun's arc traced above it" />
+          <img className="hero-scene-img hero-scene-road" src="/hero-scene-road.png" alt="" aria-hidden="true" />
+          <div className="hero-scene-panel" aria-hidden="true"></div>
+        </div>
+      </section>
 
       <section className="section" id="products">
         <div className="wrap section-inner">

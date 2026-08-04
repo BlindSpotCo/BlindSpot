@@ -71,7 +71,6 @@
 
   /* ---------- HERO ---------- */
   .hero{
-    --p:0;
     position:relative;
     padding:0 0 48px;
     text-align:center;
@@ -79,63 +78,6 @@
     display:grid;
     grid-template-columns:minmax(0,1fr);
     background:#000;
-  }
-
-  /* Scroll-jack rig: .hero-stage is given extra height by JS (hero's own
-     height + a scroll runway), and .hero sticks inside it so the runway
-     scrolls "through" a pinned hero instead of past it. --p (0→1, set by
-     JS on scroll) drives every visual step below via plain calc(), so it
-     always tracks actual scroll position exactly — no fixed-duration
-     animation to fall out of sync with. Only takes effect once JS opts in
-     (.stage-active/.hero-pinned); until then, or if JS never runs,
-     .hero-stage is just a normal-height wrapper and .hero scrolls
-     normally like any other section.
-
-     The illustration is split into two separate PNGs so the "moving
-     forward" feel only ever touches the road: hero-scene-base.png is the
-     buildings/arc/sun/sightlines with the road+ring+pin area painted out
-     (this one never transforms — buildings stay put), and
-     hero-scene-road.png is just that cut-out area on a transparent
-     background, stacked exactly on top. Scaling ONLY the road layer, from
-     its own vanishing point at the ring, reads as driving toward the pin
-     instead of the whole scene zooming. */
-  .hero-stage.stage-active{ position:relative; }
-  .hero.hero-pinned{ position:sticky; top:66px; z-index:1; }
-
-  .hero-pinned .hero-scene-road{
-    transform:scale(calc(1 + var(--p) * 2.6));
-    transform-origin:50% 68.6%;
-    will-change:transform;
-  }
-  .hero-pinned .hero-content{
-    opacity:clamp(0, calc(1 - var(--p) * 3), 1);
-    transform:translateY(calc(var(--p) * -26px));
-    transition:opacity .05s linear;
-  }
-  .hero-pinned .hero-scene-panel{
-    opacity:clamp(0, calc(1 - var(--p) * 3), 1);
-  }
-  .hero-scroll-cue{
-    grid-row:1; grid-column:1;
-    position:absolute; left:50%; bottom:22px; transform:translateX(-50%);
-    display:flex; flex-direction:column; align-items:center; gap:6px;
-    font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase;
-    color:var(--text-dim); pointer-events:none;
-  }
-  .hero-scroll-cue span{
-    width:1px; height:16px; background:linear-gradient(to bottom, transparent, var(--text-dim));
-    animation:scrollCue 1.6s ease-in-out infinite;
-  }
-  @keyframes scrollCue{0%,100%{opacity:.3; transform:scaleY(.7)} 50%{opacity:1; transform:scaleY(1)}}
-  .hero-pinned .hero-scroll-cue{ opacity:clamp(0, calc(1 - var(--p) * 6), 1) }
-
-  @media (prefers-reduced-motion: reduce){
-    .hero-stage{ height:auto !important; }
-    .hero.hero-pinned{ position:relative !important; top:auto !important; }
-    .hero-pinned .hero-scene-road, .hero-pinned .hero-content, .hero-pinned .hero-scene-panel{
-      transform:none !important; opacity:1 !important;
-    }
-    .hero-scroll-cue{ display:none !important; }
   }
   .corner{position:absolute; width:22px; height:22px; opacity:0.35; z-index:3}
   .corner svg{width:100%; height:100%}
@@ -243,10 +185,10 @@
   .hero-scene-img{
     width:100%; height:auto; display:block;
   }
-  /* .hero-scene-base (buildings/arc/sun) sits in normal flow and sets the
-     wrap's height; .hero-scene-road (road/ring/pin, transparent elsewhere)
-     is pinned exactly over it so the two reassemble into one image at
-     rest, with the road layer free to scale independently on scroll. */
+  /* hero-scene-base.png (buildings/arc/sun) sits in normal flow and sets
+     the wrap's height; hero-scene-road.png (road/ring/pin, transparent
+     elsewhere) is pinned exactly over it so the two static layers
+     reassemble into the one original image. */
   .hero-scene-road{
     position:absolute; inset:0; width:100%; height:100%;
   }
