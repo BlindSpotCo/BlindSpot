@@ -72,11 +72,11 @@
   /* ---------- HERO ---------- */
   .hero{
     position:relative;
-    min-height:100vh;
-    padding:118px 0 44px;
+    padding:0 0 48px;
     text-align:center;
     overflow:hidden;
     display:grid;
+    grid-template-columns:minmax(0,1fr);
     background:#000;
   }
   .corner{position:absolute; width:22px; height:22px; opacity:0.35; z-index:3}
@@ -87,16 +87,17 @@
   .corner.br{bottom:26px; right:26px; transform:scale(-1,-1)}
   @media (max-width:700px){ .corner{display:none} }
 
-  /* hero-vignette is now a no-op layer — readability is handled by the single
-     veil painted on .hero-scene-wrap::after below, so the two never stack and
-     double-darken the art. Kept as an empty rule rather than removed so the
-     JSX div doesn't need touching. */
+  /* Light contrast helper behind the headline only — kept deliberately soft
+     so it doesn't crush the sun dot at the top of the arc. Most of the
+     readability now comes from the text-shadow on h1/.hero-sub instead. */
   .hero-vignette{
     grid-row:1; grid-column:1; position:relative; z-index:1; pointer-events:none;
+    background:radial-gradient(ellipse 640px 380px at center 230px, rgba(10,10,11,0.40) 0%, rgba(10,10,11,0.14) 45%, transparent 74%);
   }
 
   .hero-content{
     grid-row:1; grid-column:1; position:relative; z-index:2;
+    padding-top:64px;
   }
 
   .hero-eyebrow{
@@ -110,6 +111,15 @@
     font-size:clamp(34px,5.6vw,58px); line-height:1.06; font-weight:700; max-width:760px;
     margin:0 auto; color:#fff;
     text-shadow:0 2px 28px rgba(0,0,0,0.55);
+  }
+  /* Below ~480px the hard line-break between "place," and "before" no
+     longer fits on its own line at the 34px floor size — that's what was
+     forcing the headline (and, via the grid track it was stretching,
+     everything else in the hero) to overflow the viewport and get clipped
+     on both edges. Let it wrap naturally and drop the size floor a touch. */
+  @media (max-width:480px){
+    .hero h1{ font-size:clamp(28px,9vw,34px) }
+    .hero h1 br{ display:none }
   }
   .hero-tagline{
     font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:0.08em; text-transform:uppercase;
@@ -136,29 +146,44 @@
   .coord-readout .blink{width:5px; height:5px; background:var(--text-dim); animation:blink 1.4s steps(1) infinite}
   @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
 
-  /* Full-bleed background: the illustration fills the entire hero at full
-     brightness. A single smooth veil (::after) handles text readability —
-     darkest under the nav/headline, easing off through the middle, darkening
-     again into the next section — so the art never dims into a "greyed out"
-     look and can't form a bright box against the (also pure-black) hero. */
+  /* Full-bleed WIDTH, natural aspect HEIGHT: buildings run edge-to-edge
+     like the reference mock, but the art is never object-fit:cover-cropped
+     or stretched to fill 100vh — it scales as one undistorted image at
+     width:100% / height:auto. That keeps the arc's proportions relative to
+     the fixed-width headline identical at every viewport width (the "text
+     fit inside the arc" issue only showed up when cover-cropping let the
+     arc's on-screen size drift independently of the text). A left/right
+     mask fades the outer buildings out before the hard viewport edge —
+     "fade towards the edges" — with no top veil, so the small sun dot
+     stays fully visible; text readability comes from .hero-vignette
+     (soft, localized) plus text-shadow on the headline/sub. */
   .hero-scene-wrap{
-    grid-row:1; grid-column:1; position:absolute; z-index:0;
-    inset:0; overflow:hidden; pointer-events:none;
+    grid-row:1; grid-column:1; position:relative; z-index:0;
+    width:100%; max-width:1452px; margin:0 auto; align-self:start; pointer-events:none;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
   }
   .hero-scene-img{
-    width:100%; height:100%; object-fit:cover; object-position:center 40%;
-    display:block; opacity:1;
+    width:100%; height:auto; display:block;
   }
-  .hero-scene-wrap::after{
-    content:''; position:absolute; inset:0; pointer-events:none;
-    background:linear-gradient(to bottom,
-      rgba(0,0,0,0.72) 0%,
-      rgba(0,0,0,0.30) 17%,
-      rgba(0,0,0,0) 42%,
-      rgba(0,0,0,0) 88%,
-      rgba(0,0,0,0.45) 100%);
+
+  /* On mobile the headline/paragraph wrap into a much taller stack, while
+     the illustration (a wide landscape scene) scales down to almost nothing
+     tall at narrow widths — layering them in the same grid cell like desktop
+     no longer lines the pin/arc up with the text, it just collides with
+     whatever text happens to sit at that height. So below 640px we stop
+     stacking them: the scene drops out of the grid into normal flow, below
+     all the text/CTAs, sized down (smaller pin, as asked) instead of
+     overlapping it. */
+  @media (max-width:640px){
+    .hero{ display:block; padding-top:40px }
+    .hero-vignette{ display:none }
+    .hero-content{ position:relative; padding-top:0 }
+    .hero-scene-wrap{
+      position:relative; grid-row:auto; grid-column:auto;
+      max-width:78%; margin:36px auto 0; opacity:0.92;
+    }
   }
-  @media (max-width:820px){ .hero-scene-img{ object-position:center 44% } }
 
   @media (prefers-reduced-motion: reduce){
     .coord-readout .blink, .pcard-tag .dot{animation:none !important}
