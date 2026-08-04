@@ -91,20 +91,15 @@
     grid-row:1; grid-column:1; position:relative; z-index:1; pointer-events:none;
   }
 
-  /* Matches the supplied design element exactly: a flat rectangular panel
-     behind the text block, plus a solid vertical beam (rounded top cap)
-     running from just below the sun down to the pin, fully covering the
-     dashed guide-line instead of just dimming it. Percentages are the
-     measured proportions of that reference (1359×741), positioned inside
-     .hero-scene-wrap so they scale exactly with the illustration. */
+  /* Flat rectangular panel behind the paragraph/CTAs/coord-readout only —
+     that's the zone where the dashed guide-line was actually crossing
+     readable text. (A vertical "beam" extending this coverage up through
+     the headline was tried and removed: nobody had a problem with the line
+     behind the headline, and the beam showed up as a visible dark stripe
+     there instead.) */
   .hero-scene-panel{
     position:absolute; left:4.8%; right:5.1%; top:27%; height:23%;
     background:rgba(4,4,5,0.62); pointer-events:none;
-  }
-  .hero-scene-beam{
-    position:absolute; left:50%; transform:translateX(-50%); width:4.4%;
-    top:8%; height:39%;
-    background:#040404; border-radius:999px 999px 0 0; pointer-events:none;
   }
 
   .hero-content{
