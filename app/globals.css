@@ -71,6 +71,7 @@
 
   /* ---------- HERO ---------- */
   .hero{
+    --p:0;
     position:relative;
     padding:0 0 48px;
     text-align:center;
@@ -78,6 +79,66 @@
     display:grid;
     grid-template-columns:minmax(0,1fr);
     background:#000;
+  }
+
+  /* Scroll-jack rig: .hero-stage is given extra height by JS (hero's own
+     height + a scroll runway), and .hero sticks inside it so the runway
+     scrolls "through" a pinned hero instead of past it. --p (0→1, set by
+     JS on scroll) drives every visual step below via plain calc() — zoom,
+     fade, blast — so it always tracks actual scroll position exactly, ​no
+     fixed-duration animation to fall out of sync with. Only takes effect
+     once JS opts in (.stage-active/.hero-pinned); until then, or if JS
+     never runs, .hero-stage is just a normal-height wrapper and .hero
+     scrolls normally like any other section. */
+  .hero-stage.stage-active{ position:relative; }
+  .hero.hero-pinned{ position:sticky; top:66px; z-index:1; }
+
+  .hero-pinned .hero-scene-wrap{
+    transform:scale(calc(1 + var(--p) * 2.3));
+    transform-origin:50% 79%;
+    will-change:transform;
+  }
+  .hero-pinned .hero-content{
+    opacity:clamp(0, calc(1 - var(--p) * 3), 1);
+    transform:translateY(calc(var(--p) * -26px));
+    transition:opacity .05s linear;
+  }
+  .hero-pinned .hero-scene-panel{
+    opacity:clamp(0, calc(1 - var(--p) * 3), 1);
+  }
+  .hero-scroll-cue{
+    grid-row:1; grid-column:1;
+    position:absolute; left:50%; bottom:22px; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--text-dim); pointer-events:none;
+  }
+  .hero-scroll-cue span{
+    width:1px; height:16px; background:linear-gradient(to bottom, transparent, var(--text-dim));
+    animation:scrollCue 1.6s ease-in-out infinite;
+  }
+  @keyframes scrollCue{0%,100%{opacity:.3; transform:scaleY(.7)} 50%{opacity:1; transform:scaleY(1)}}
+  .hero-pinned .hero-scroll-cue{ opacity:clamp(0, calc(1 - var(--p) * 6), 1) }
+
+  .hero-blast{
+    position:absolute; left:50%; top:58%; width:300px; height:300px;
+    transform:translate(-50%,-50%) scale(calc(0.5 + clamp(0, (var(--p) - 0.68) * 3.2, 1) * 6));
+    border-radius:50%;
+    background:radial-gradient(circle, #fff 0%, rgba(255,214,158,0.95) 28%, rgba(255,150,60,0.45) 52%, rgba(255,150,60,0) 70%);
+    opacity:clamp(0, calc((var(--p) - 0.68) * 3.2), 1);
+    pointer-events:none;
+    z-index:5;
+    filter:blur(1px);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .hero-stage{ height:auto !important; }
+    .hero.hero-pinned{ position:relative !important; top:auto !important; }
+    .hero-pinned .hero-scene-wrap, .hero-pinned .hero-content, .hero-pinned .hero-scene-panel{
+      transform:none !important; opacity:1 !important;
+    }
+    .hero-blast{ display:none !important; }
+    .hero-scroll-cue{ display:none !important; }
   }
   .corner{position:absolute; width:22px; height:22px; opacity:0.35; z-index:3}
   .corner svg{width:100%; height:100%}
