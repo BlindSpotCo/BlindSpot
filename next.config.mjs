@@ -1,5 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Next.js 16's dev server only trusts requests from localhost/127.0.0.1 by
+  // default -- a request coming in via a LAN IP (e.g. testing on a phone on
+  // the same WiFi, or hitting the dev server via `npm run dev -- -H 0.0.0.0`)
+  // gets silently blocked otherwise, which looks exactly like a hung fetch
+  // ("Loading..." forever) rather than a clean error. This only affects
+  // `next dev`, never a production build.
+  //
+  // If your machine's LAN IP changes (different network, DHCP renewal),
+  // update this to match and restart the dev server.
+  allowedDevOrigins: ['192.168.68.52'],
   async headers() {
     return [
       {

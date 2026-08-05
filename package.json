@@ -12,6 +12,7 @@
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.45.4",
     "@vercel/analytics": "^2.0.1",
+    "geo-tz": "^8.1.8",
     "next": "16.2.11",
     "react": "19.1.7",
     "react-dom": "19.1.7"

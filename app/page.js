@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
+import CombinedScoreFlow from '@/components/CombinedScoreFlow';
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -143,6 +144,8 @@ export default function Home() {
           <div className="hero-scene-panel" aria-hidden="true"></div>
         </div>
       </section>
+
+      <CombinedScoreFlow />
 
       <section className="section" id="products">
         <div className="wrap section-inner">
