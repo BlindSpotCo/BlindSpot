@@ -71,6 +71,36 @@
   .btn-dot.d-slate{background:var(--slate)}
   @media (max-width:860px){ .nav-links{display:none} }
 
+  /* Mobile nav toggle — hidden on desktop, shown alongside nav-cta below
+     the 860px breakpoint where .nav-links disappears. */
+  .nav-burger{
+    display:none; background:none; border:1px solid var(--line); border-radius:6px;
+    width:38px; height:38px; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;
+  }
+  .nav-burger span, .nav-burger span::before, .nav-burger span::after{
+    content:''; display:block; width:18px; height:1.5px; background:var(--text); position:relative; transition:transform .2s ease, opacity .2s ease;
+  }
+  .nav-burger span::before{ position:absolute; top:-6px; }
+  .nav-burger span::after{ position:absolute; top:6px; }
+  .nav-burger.is-open span{ background:transparent; }
+  .nav-burger.is-open span::before{ top:0; transform:rotate(45deg); }
+  .nav-burger.is-open span::after{ top:0; transform:rotate(-45deg); }
+  @media (max-width:860px){ .nav-burger{ display:flex; } }
+
+  .nav-mobile-panel{
+    display:none; flex-direction:column; gap:2px;
+    border-top:1px solid var(--line-soft); background:var(--bg);
+    padding:14px 0 18px;
+  }
+  .nav-mobile-panel.is-open{ display:flex; }
+  .nav-mobile-panel a{
+    color:var(--text); text-decoration:none; font-size:14.5px; font-weight:500;
+    padding:12px 4px; border-bottom:1px solid var(--line-soft);
+  }
+  .nav-mobile-panel a:last-child{ border-bottom:none; }
+
+  @media (min-width:861px){ .nav-mobile-panel{ display:none !important; } }
+
   /* ---------- HERO ---------- */
   /* Completely new hero: no illustration. Warm paper background with a
      faint dot-grid texture, headline/CTAs on the left, a live-styled
