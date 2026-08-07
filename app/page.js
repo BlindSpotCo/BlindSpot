@@ -1,32 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
-import { createClient } from '@/lib/supabase/client';
+import { useEffect, useRef } from 'react';
+import SiteHeader from '@/components/SiteHeader';
 import HowItWorks from '@/components/HowItWorks';
 
 export default function Home() {
-  const [user, setUser] = useState(null);
-  const [checkedAuth, setCheckedAuth] = useState(false);
   const coordRef = useRef(null);
-
-  // Auth state
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user ?? null);
-      setCheckedAuth(true);
-    });
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-    return () => sub.subscription.unsubscribe();
-  }, []);
-
-  const handleSignOut = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-  };
 
   // Rotating coordinate readout in the hero — ported directly from the
   // original inline script.
@@ -81,43 +60,7 @@ export default function Home() {
 
   return (
     <>
-      <header>
-        <nav className="wrap">
-          <a href="#" className="brand">
-            <img className="brand-mark-img" src="/mark.png" alt="BlindSpot" />
-            <img className="brand-word-img" src="/wordmark.png" alt="BlindSpot" />
-          </a>
-          <div className="nav-links">
-            <a href="#how-it-works">How It Works</a>
-            <a href="#products">Tools</a>
-            <a href="#why">Why BlindSpot</a>
-            <a href="#team">The Team</a>
-          </div>
-          <div className="nav-cta">
-            <a href="https://sun-scout.com" target="_blank" rel="noopener" className="btn">
-              <span className="btn-dot d-sun"></span>SunScout
-            </a>
-            <a href="https://aslivastu.com" target="_blank" rel="noopener" className="btn">
-              <span className="btn-dot d-slate"></span>AsliVastu
-            </a>
-            {checkedAuth && (
-              user ? (
-                <div className="nav-user">
-                  <Link href="/my-reports">My Reports</Link>
-                  <button
-                    onClick={handleSignOut}
-                    style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', font: 'inherit', padding: 0 }}
-                  >
-                    Sign out
-                  </button>
-                </div>
-              ) : (
-                <Link href="/login" className="btn btn-auth">Sign in</Link>
-              )
-            )}
-          </div>
-        </nav>
-      </header>
+      <SiteHeader />
 
       <section className="hero">
         <div className="hero-bg" aria-hidden="true"></div>
