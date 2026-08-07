@@ -14,14 +14,12 @@
     --radius:6px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth; overflow-x:hidden; max-width:100%;}
+  html{scroll-behavior:smooth}
   body{
     font-family:'Inter',sans-serif;
     background:var(--bg);
     color:var(--text);
     -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
-    max-width:100%;
   }
   h1,h2,h3,.disp{font-family:'Space Grotesk',sans-serif;letter-spacing:-0.01em; font-weight:600}
   .mono{font-family:'IBM Plex Mono',monospace}

@@ -268,6 +268,7 @@ export default async function ReportDetailPage({ params }) {
             </>
           );
         })()}
+
       </div>
     </div>
   );
