@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
+import HowItWorks from '@/components/HowItWorks';
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -87,6 +88,7 @@ export default function Home() {
             <img className="brand-word-img" src="/wordmark.png" alt="BlindSpot" />
           </a>
           <div className="nav-links">
+            <a href="#how-it-works">How It Works</a>
             <a href="#products">Tools</a>
             <a href="#why">Why BlindSpot</a>
             <a href="#team">The Team</a>
@@ -118,37 +120,52 @@ export default function Home() {
       </header>
 
       <section className="hero">
-        <div className="corner tl"><svg viewBox="0 0 22 22" fill="none"><path d="M1 10V1H10" stroke="white" strokeWidth="1.4"/></svg></div>
-        <div className="corner tr"><svg viewBox="0 0 22 22" fill="none"><path d="M1 10V1H10" stroke="white" strokeWidth="1.4"/></svg></div>
-        <div className="corner bl"><svg viewBox="0 0 22 22" fill="none"><path d="M1 10V1H10" stroke="white" strokeWidth="1.4"/></svg></div>
-        <div className="corner br"><svg viewBox="0 0 22 22" fill="none"><path d="M1 10V1H10" stroke="white" strokeWidth="1.4"/></svg></div>
+        <div className="hero-bg" aria-hidden="true"></div>
 
-        <div className="hero-vignette" aria-hidden="true"></div>
-
-        <div className="wrap hero-content">
-          <span className="hero-eyebrow">Property Intelligence</span>
-          <h1>Know the place, <br/>before you commit.</h1>
-          <p className="hero-tagline"><span className="seg sun">One pin</span><span className="sep"></span><span className="seg slate">Two answers</span></p>
-          <p className="hero-sub">Drop a pin. See exactly how sunlight moves through the unit, and exactly what the neighbourhood around it is really like. Real solar geometry. Real government records. No broker spin.</p>
-          <div className="hero-ctas">
-            <a href="https://sun-scout.com" target="_blank" rel="noopener" className="btn btn-lg"><span className="btn-dot d-sun"></span>Open SunScout →</a>
-            <a href="https://aslivastu.com" target="_blank" rel="noopener" className="btn btn-lg"><span className="btn-dot d-slate"></span>Open AsliVastu →</a>
+        <div className="wrap hero-grid">
+          <div className="hero-content">
+            <span className="hero-eyebrow">Property Intelligence</span>
+            <h1>Know the place, before you commit.</h1>
+            <p className="hero-tagline"><span className="seg sun">One pin</span><span className="sep"></span><span className="seg slate">Two answers</span></p>
+            <p className="hero-sub">Drop a pin. See exactly how sunlight moves through the unit, and exactly what the neighbourhood around it is really like. Real solar geometry. Real government records. No broker spin.</p>
+            <div className="hero-ctas">
+              <a href="https://sun-scout.com" target="_blank" rel="noopener" className="btn btn-lg"><span className="btn-dot d-sun"></span>Open SunScout →</a>
+              <a href="https://aslivastu.com" target="_blank" rel="noopener" className="btn btn-lg"><span className="btn-dot d-slate"></span>Open AsliVastu →</a>
+            </div>
+            <div className="coord-readout"><span className="blink"></span><span ref={coordRef} className="mono">12.9716° N, 77.5946° E — checking Bengaluru</span></div>
           </div>
-          <div className="coord-readout"><span className="blink"></span><span ref={coordRef} className="mono">12.9716° N, 77.5946° E — checking Bengaluru</span></div>
-        </div>
 
-        <div className="hero-scene-wrap">
-          <img className="hero-scene-img hero-scene-base" src="/hero-scene-base.png" alt="A city skyline with the sun's arc traced above it" />
-          <img className="hero-scene-img hero-scene-road" src="/hero-scene-road.png" alt="" aria-hidden="true" />
-          <div className="hero-scene-panel" aria-hidden="true"></div>
+          <div className="hero-visual">
+            <span className="hero-visual-tag">Live preview</span>
+            <div className="hero-score-card">
+              <div className="hsc-head">
+                <span className="hsc-label">BlindSpot Score</span>
+                <span className="hsc-badge">Recommended</span>
+              </div>
+              <div className="hsc-number">80<span>/100</span></div>
+              <div className="hsc-row">
+                <div className="hsc-item slate">
+                  <span className="hsc-item-label">AREA — KORAMANGALA</span>
+                  <span className="hsc-item-val">78</span>
+                </div>
+                <div className="hsc-item sun">
+                  <span className="hsc-item-label">UNIT — FL 7, SE</span>
+                  <span className="hsc-item-val">82</span>
+                </div>
+              </div>
+              <div className="hsc-foot">Real solar geometry + government locality data, combined into one number you can trust.</div>
+            </div>
+          </div>
         </div>
       </section>
+
+      <HowItWorks />
 
       <section className="section" id="products">
         <div className="wrap section-inner">
           <div className="section-head reveal">
             <div>
-              <span className="eyebrow">The Platform</span>
+              <span className="eyebrow">01 — The Platform</span>
               <h2>One location. Two lenses.</h2>
             </div>
             <p>Every property decision comes down to two questions. BlindSpot answers both from the same pin.</p>
@@ -185,7 +202,7 @@ export default function Home() {
         <div className="wrap section-inner">
           <div className="section-head reveal">
             <div>
-              <span className="eyebrow">Why BlindSpot</span>
+              <span className="eyebrow">03 — Why BlindSpot</span>
               <h2>Built for the decision, not the browse.</h2>
             </div>
           </div>
@@ -218,7 +235,7 @@ export default function Home() {
         <div className="wrap section-inner">
           <div className="section-head reveal">
             <div>
-              <span className="eyebrow">The Team</span>
+              <span className="eyebrow">04 — The Team</span>
               <h2>Two people who got tired of guessing.</h2>
             </div>
             <p>The two founders behind BlindSpot&apos;s product line — each leading one half of the platform.</p>

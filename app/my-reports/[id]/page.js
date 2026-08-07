@@ -42,13 +42,13 @@ export default async function ReportDetailPage({ params }) {
               {d.floor && (
                 <div>
                   <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 4 }}>Floor</div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: '#fff' }}>{d.floor}</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>{d.floor}</div>
                 </div>
               )}
               {d.facing && (
                 <div>
                   <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 4 }}>Facing</div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: '#fff' }}>{d.facing}</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>{d.facing}</div>
                 </div>
               )}
               {(d.lat && d.lon) && (
@@ -72,13 +72,13 @@ export default async function ReportDetailPage({ params }) {
                 {Array.isArray(verdict.bestMonths) && verdict.bestMonths.length > 0 && (
                   <div style={{ background: 'var(--bg-2)', border: '1px solid var(--line-soft)', padding: '14px 18px', flex: 1, minWidth: 140 }}>
                     <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 4 }}>Best Months</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#fff' }}>{verdict.bestMonths.join(', ')}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>{verdict.bestMonths.join(', ')}</div>
                   </div>
                 )}
                 {Array.isArray(verdict.worstMonths) && verdict.worstMonths.length > 0 && (
                   <div style={{ background: 'var(--bg-2)', border: '1px solid var(--line-soft)', padding: '14px 18px', flex: 1, minWidth: 140 }}>
                     <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 4 }}>Worst Months</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#fff' }}>{verdict.worstMonths.join(', ')}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>{verdict.worstMonths.join(', ')}</div>
                   </div>
                 )}
               </div>
@@ -99,7 +99,7 @@ export default async function ReportDetailPage({ params }) {
                   <tbody>
                     {d.summary.monthlySummary.map((row, i) => (
                       <tr key={i} style={{ borderBottom: '1px solid var(--line-soft)' }}>
-                        <td style={{ padding: '8px 12px 8px 0', color: '#fff' }}>{row.month || Object.values(row)[0]}</td>
+                        <td style={{ padding: '8px 12px 8px 0', color: 'var(--ink)' }}>{row.month || Object.values(row)[0]}</td>
                         <td style={{ padding: '8px 0', color: 'var(--text-mute)' }}>
                           {Object.entries(row).slice(1).map(([k, v]) => `${k}: ${v}`).join(' · ')}
                         </td>
@@ -126,7 +126,7 @@ export default async function ReportDetailPage({ params }) {
             value === undefined || value === null || value === '' ? null : (
               <div>
                 <div style={{ fontSize: 10.5, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-dim)' }}>{label}</div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: '#fff', marginTop: 3, lineHeight: 1.15 }}>{String(value)}{unit}</div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', marginTop: 3, lineHeight: 1.15 }}>{String(value)}{unit}</div>
               </div>
             )
           );
@@ -167,7 +167,7 @@ export default async function ReportDetailPage({ params }) {
                   {Object.entries(d.scores).map(([k, v]) => (
                     <div key={k}>
                       <div style={{ fontSize: 10.5, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-dim)' }}>{LABEL[k] || k}</div>
-                      <div style={{ fontSize: 18, fontWeight: 700, color: '#fff', marginTop: 3 }}>{v}/100</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', marginTop: 3 }}>{v}/100</div>
                       {d.weights && d.weights[k] != null && (
                         <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 2 }}>{d.weights[k]}% weight</div>
                       )}
@@ -235,7 +235,7 @@ export default async function ReportDetailPage({ params }) {
                 return (
                   <>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: 28, fontWeight: 700, color: '#fff' }}>{inr(lo)}–{inr(hi)}</span>
+                      <span style={{ fontSize: 28, fontWeight: 700, color: 'var(--ink)' }}>{inr(lo)}–{inr(hi)}</span>
                       <span style={{ fontSize: 12, color: 'var(--text-dim)' }}>per sq ft · {(pc.label || '').toLowerCase()} band for {blr ? 'Bengaluru' : 'the NCR'}</span>
                     </div>
                     <div style={{ display: 'flex', gap: 5, margin: '14px 0 6px' }}>
@@ -249,7 +249,7 @@ export default async function ReportDetailPage({ params }) {
                       ))}
                     </div>
                     <p style={{ fontSize: 13, color: 'var(--text-mute)', margin: '12px 0 0', lineHeight: 1.5 }}>
-                      Market prices run <strong style={{ color: '#fff' }}>20–70% above</strong> the {blr ? 'guidance value' : 'circle rate'} — expect roughly <strong style={{ color: '#fff' }}>{inr(mLo)}–{inr(mHi)}/sq ft</strong> in practice. Indicative government valuation, not a market quote.
+                      Market prices run <strong style={{ color: 'var(--ink)' }}>20–70% above</strong> the {blr ? 'guidance value' : 'circle rate'} — expect roughly <strong style={{ color: 'var(--ink)' }}>{inr(mLo)}–{inr(mHi)}/sq ft</strong> in practice. Indicative government valuation, not a market quote.
                     </p>
                   </>
                 );
@@ -259,7 +259,7 @@ export default async function ReportDetailPage({ params }) {
                 <div>
                   {d.schools_list.map((s, i) => (
                     <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, fontSize: 13, padding: '9px 0', borderTop: i ? '1px dashed var(--line-soft)' : 'none' }}>
-                      <span style={{ color: '#fff' }}>{s.name}</span>
+                      <span style={{ color: 'var(--ink)' }}>{s.name}</span>
                       <span style={{ color: 'var(--text-dim)', fontSize: 11 }}>{s.board || 'CBSE'}</span>
                     </div>
                   ))}

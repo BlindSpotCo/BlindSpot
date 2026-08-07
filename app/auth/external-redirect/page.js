@@ -49,7 +49,7 @@ export default function ExternalRedirect() {
   }, []);
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0A0A0B', color: '#9C9CA1', fontFamily: 'Inter,sans-serif', fontSize: 14 }}>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', color: 'var(--text-mute)', fontFamily: 'Inter,sans-serif', fontSize: 14 }}>
       {message}
     </div>
   );
