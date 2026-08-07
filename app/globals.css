@@ -7,40 +7,78 @@
     --line:rgba(28,24,18,0.14);
     --line-soft:rgba(28,24,18,0.08);
     --text:#1C1812;
-    --text-mute:#6E6656;
-    --text-dim:#A79C88;
-    --sun:#C1541C;
-    --slate:#1E5C47;
+    /* Darkened from #6E6656 — body paragraphs sitting at 400 weight next
+       to bold 700 headings were reading as thin/washed-out by comparison,
+       even though the weight bump on headings alone is a big contrast
+       jump. Paragraphs get darker + heavier below, not just headings. */
+    --text-mute:#5A5140;
+    /* Darkened from the original #A79C88 — that was low-contrast against
+       --bg (roughly 2.2:1), which is a real chunk of why small mono
+       labels read as "thin, not visible" — this gets it closer to 4:1. */
+    --text-dim:#726A54;
+    /* Accent colors, per reference: a deep maroon/burgundy and a warm
+       amber, replacing the old orange/green pair everywhere in one place —
+       every button, badge, gradient and accent on the site is built on
+       these two CSS variables, so this swap alone re-themes the whole
+       site without hunting down individual hex values. */
+    --sun:#C9812E;
+    --slate:#6B2430;
     --radius:6px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
+  /* 500 as the base weight for every paragraph/body element site-wide —
+     Inter's default 400 was the other big reason body copy read as thin.
+     UI elements (buttons, nav links, badges, etc.) already declare their
+     own explicit weight, so they aren't affected by this; only running
+     text that wasn't setting a weight picks it up. */
   body{
-    font-family:'Inter',sans-serif;
+    font-family:'Inter',sans-serif; font-weight:500;
     background:var(--bg);
     color:var(--text);
     -webkit-font-smoothing:antialiased;
   }
-  h1,h2,h3,.disp{font-family:'Space Grotesk',sans-serif;letter-spacing:-0.01em; font-weight:600}
-  .mono{font-family:'IBM Plex Mono',monospace}
+  /* Bumped from 600 — this is meant to read as a bold, high-contrast
+     "intelligence" system, and 600 at these sizes was reading soft/thin
+     next to the reference. */
+  h1,h2,h3,.disp{font-family:'Bricolage Grotesque',sans-serif;letter-spacing:-0.01em; font-weight:700}
+  /* IBM Plex Mono defaults to 400 if unset, which looks thin at the small
+     sizes used for eyebrows/labels site-wide — 500 as the baseline for
+     every .mono element fixes that in one place. */
+  .mono{font-family:'IBM Plex Mono',monospace; font-weight:500}
   a{color:inherit}
   img{max-width:100%;display:block}
   .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
   @media (max-width:640px){.wrap{padding:0 20px}}
 
   /* ---------- NAV ---------- */
+  /* Starts fully transparent with no border — at rest, the header is
+     nothing but the centered logo floating over the hero. Once `scrolled`
+     is true (see page.js), .scrolled adds the frosted background bar back
+     in, at the same time the nav links/CTA mount. */
   header{
     position:sticky; top:0; z-index:50;
+    background:transparent; border-bottom:1px solid transparent;
+    transition:background .3s ease, border-color .3s ease;
+  }
+  header.scrolled{
     background:rgba(250,246,238,0.86);
     backdrop-filter:blur(10px);
     border-bottom:1px solid var(--line-soft);
   }
   nav.wrap{display:flex; align-items:center; justify-content:space-between; height:66px}
+  /* Single child (just .brand) at rest — centers it in the bar instead of
+     letting it sit flush left with nothing to balance it. */
+  nav.wrap.nav-centered{justify-content:center}
   .brand{display:flex; align-items:center; gap:11px; text-decoration:none}
   .brand-mark-img{height:24px; width:auto; flex-shrink:0; transition:transform .3s ease}
   .brand:hover .brand-mark-img{transform:rotate(8deg)}
   .brand-word-img{height:12px; width:auto; flex-shrink:0; filter:invert(1) brightness(0.15)}
-  .nav-links{display:flex; align-items:center; gap:32px}
+  /* Mounts (not just unhides) when scrolling starts, so it gets a real
+     entrance instead of popping in instantly. */
+  .nav-links{display:flex; align-items:center; gap:32px; animation:navReveal .4s ease both}
+  @keyframes navReveal{ from{opacity:0; transform:translateY(-6px)} to{opacity:1; transform:translateY(0)} }
+  @media (prefers-reduced-motion: reduce){ .nav-links, .nav-cta{ animation:none !important } }
   .nav-links a{position:relative; font-size:13px; color:var(--text-mute); text-decoration:none; font-weight:500; transition:color .15s; padding-bottom:3px}
   .nav-links a::after{
     content:''; position:absolute; left:0; right:100%; bottom:0; height:1px; background:var(--text);
@@ -48,7 +86,7 @@
   }
   .nav-links a:hover{color:var(--text)}
   .nav-links a:hover::after{right:0}
-  .nav-cta{display:flex; gap:10px}
+  .nav-cta{display:flex; align-items:center; gap:10px; animation:navReveal .4s ease .05s both}
   .btn{
     display:inline-flex; align-items:center; gap:8px;
     padding:9px 17px; border-radius:var(--radius); font-size:13px; font-weight:500;
@@ -59,6 +97,27 @@
   .btn:hover{border-color:rgba(28,24,18,0.4); background:rgba(28,24,18,0.045)}
   .btn-dot{width:6px; height:6px; border-radius:50%; flex-shrink:0; transition:transform .18s ease}
   .btn:hover .btn-dot{transform:scale(1.5)}
+
+  /* The one unified CTA — replaces the separate "Open SunScout"/"Open
+     AsliVastu" links everywhere on the page now that this landing page's
+     job is to funnel into the combined 3-step tool, not two standalone
+     products. Gradient echoes the sun/slate combined-score styling used
+     elsewhere (the verdict badge, the active "combo" tab) so it visually
+     reads as "both engines, one place" rather than a generic button. */
+  .btn-cta{
+    background:linear-gradient(90deg, var(--sun), var(--slate)); color:#fff; border:none;
+    box-shadow:0 10px 24px -12px rgba(201,129,46,0.45);
+    transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+  }
+  .btn-cta:hover{ transform:translateY(-1px); box-shadow:0 14px 28px -12px rgba(201,129,46,0.55); filter:brightness(1.05) }
+  .btn-cta-sm{
+    display:inline-flex; align-items:center;
+    padding:8px 16px; border-radius:var(--radius); font-size:12.5px; font-weight:600;
+    background:linear-gradient(90deg, var(--sun), var(--slate)); color:#fff; text-decoration:none;
+    white-space:nowrap; box-shadow:0 6px 16px -8px rgba(201,129,46,0.45);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-cta-sm:hover{ transform:translateY(-1px); box-shadow:0 10px 20px -8px rgba(201,129,46,0.55) }
 
   /* Scroll-triggered reveal — sections/cards fade and rise into place once,
      the first time they enter the viewport. Respects reduced motion. */
@@ -115,7 +174,12 @@
      anchor — a real product artifact instead of an illustrated skyline. */
   .hero{
     position:relative;
-    padding:96px 0 90px;
+    /* Bottom padding bumped up from 90px — the next section's eyebrow
+       and heading were peeking into the initial viewport on typical
+       screen heights, which reads as clutter before you've even started
+       scrolling. This gives the hero real breathing room at the bottom
+       instead of the next section immediately crowding in. */
+    padding:96px 0 168px;
     overflow:hidden;
     background:var(--bg);
   }
@@ -136,20 +200,20 @@
 
   .hero-eyebrow{
     display:inline-flex; align-items:center; gap:10px;
-    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase;
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:12.5px; letter-spacing:0.14em; text-transform:uppercase;
     color:var(--slate); margin-bottom:22px;
   }
   .hero-eyebrow::before{content:''; width:22px; height:1px; background:var(--slate)}
 
   .hero h1{
-    font-size:clamp(34px,5vw,58px); line-height:1.05; font-weight:600; max-width:620px;
+    font-size:clamp(34px,5vw,58px); line-height:1.05; font-weight:700; max-width:620px;
     color:var(--ink);
   }
   @media (max-width:480px){
     .hero h1{ font-size:clamp(30px,9vw,36px) }
   }
   .hero-tagline{
-    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.08em; text-transform:uppercase;
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px; letter-spacing:0.08em; text-transform:uppercase;
     margin:18px 0 0; display:flex; align-items:center; gap:10px;
   }
   .hero-tagline .seg{color:var(--text-dim)}
@@ -162,18 +226,18 @@
   .hero-ctas{
     display:flex; align-items:center; gap:14px; margin:30px 0 0; flex-wrap:wrap;
   }
-  .hero-ctas .btn{
-    background:var(--ink); color:var(--paper); border-color:var(--ink); padding:12px 22px; border-radius:var(--radius);
-  }
-  .hero-ctas .btn:hover{ background:#332c22; border-color:#332c22 }
-  .hero-ctas .btn:last-child{
-    background:transparent; color:var(--ink); border-color:var(--line);
-  }
-  .hero-ctas .btn:last-child:hover{ background:rgba(28,24,18,0.05); border-color:rgba(28,24,18,0.4) }
+  /* NOTE: only layout/sizing here (padding, radius) — deliberately no
+     background/color/border, since .btn-cta owns that now. This section
+     used to style two differently-styled buttons (a solid one + a
+     `:last-child` bordered one); with a single unified CTA button that
+     distinction is gone, and re-adding a background here would silently
+     outrank `.btn-cta`'s gradient (two classes beats one, same cascade
+     trap as elsewhere in this file) — same bug class, different property. */
+  .hero-ctas .btn{ padding:12px 22px; border-radius:var(--radius) }
   .btn-lg{font-size:13px; font-weight:600}
 
   .coord-readout{
-    margin-top:20px; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-dim);
+    margin-top:20px; font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-mute);
     display:inline-flex; align-items:center; gap:9px; min-height:16px;
   }
   .coord-readout .blink{width:5px; height:5px; background:var(--slate); animation:blink 1.4s steps(1) infinite}
@@ -187,21 +251,29 @@
     transform:rotate(1.2deg);
   }
   .hsc-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px }
-  .hsc-label{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim) }
+  .hsc-label{ font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim) }
   .hsc-badge{
-    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:13px; color:#fff;
+    font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:13px; color:#fff;
     background:linear-gradient(90deg, var(--sun), var(--slate)); padding:6px 14px; border-radius:20px;
   }
-  .hsc-number{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:56px; line-height:1; color:var(--ink); margin-bottom:20px }
+  .hsc-number{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:56px; line-height:1; color:var(--ink); margin-bottom:10px }
   .hsc-number span{ font-size:18px; color:var(--text-dim); font-family:'Inter',sans-serif; font-weight:500 }
-  .hsc-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:18px }
-  .hsc-item{ border:1px solid var(--line); border-radius:8px; padding:12px 14px }
+  /* The one-line human verdict — the actual "should I buy this" answer,
+     ahead of the reason rows below it. */
+  .hsc-verdict{ font-size:14px; font-weight:500; color:var(--text-mute); line-height:1.5; margin:0 0 20px }
+  /* Reason rows: stacked (not side-by-side) so each gets room for an
+     icon + a real sentence instead of a cramped label/number pair — the
+     score itself is still here, just folded into the small second line
+     rather than being the first thing you read. */
+  .hsc-row{ display:flex; flex-direction:column; gap:10px; margin-bottom:18px }
+  .hsc-item{ display:flex; align-items:center; gap:12px; border:1px solid var(--line); border-radius:8px; padding:11px 14px }
   .hsc-item.slate{ border-left:3px solid var(--slate) }
   .hsc-item.sun{ border-left:3px solid var(--sun) }
-  .hsc-item-label{ display:block; font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.06em; color:var(--text-dim); margin-bottom:6px }
-  .hsc-item-val{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:22px; color:var(--ink) }
-  .hsc-item.slate .hsc-item-val{ color:var(--slate) }
-  .hsc-item.sun .hsc-item-val{ color:var(--sun) }
+  .hsc-item-icon{ width:19px; height:19px; flex-shrink:0 }
+  .hsc-item.slate .hsc-item-icon{ color:var(--slate) }
+  .hsc-item.sun .hsc-item-icon{ color:var(--sun) }
+  .hsc-item-label{ display:block; font-family:'Inter',sans-serif; font-weight:600; font-size:13.5px; color:var(--ink) }
+  .hsc-item-sub{ display:block; font-family:'IBM Plex Mono',monospace; font-weight:500; font-size:10.5px; letter-spacing:.05em; color:var(--text-dim); margin-top:3px }
   .hsc-foot{ font-size:11.5px; color:var(--text-mute); line-height:1.6; border-top:1px solid var(--line-soft); padding-top:14px }
 
   .hero-visual-tag{
@@ -220,15 +292,15 @@
   .section{padding:0}
   .section-inner{padding:88px 0; border-top:1px solid var(--line-soft)}
   .eyebrow{
-    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase;
-    color:var(--text-dim); margin-bottom:14px; display:block; position:relative; padding-bottom:10px;
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:12.5px; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--text-mute); margin-bottom:14px; display:block; position:relative; padding-bottom:10px;
   }
   .eyebrow::after{
     content:''; position:absolute; left:0; bottom:0; height:1px; width:0; background:var(--sun);
     transition:width .7s ease .15s;
   }
   .section-head.in-view .eyebrow::after{width:34px}
-  .section h2{font-size:clamp(24px,3vw,34px); font-weight:600; max-width:600px; line-height:1.2; color:var(--ink)}
+  .section h2{font-size:clamp(24px,3vw,34px); font-weight:700; max-width:600px; line-height:1.2; color:var(--ink)}
   .section-head{margin-bottom:52px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:20px}
   .section-head p{font-size:14px; color:var(--text-mute); max-width:320px; line-height:1.6}
 
@@ -251,12 +323,12 @@
   @keyframes tagPulse{0%,100%{opacity:.55; transform:scale(1)} 50%{opacity:1; transform:scale(1.25)}}
   .pcard.sun .dot{background:var(--sun)}
   .pcard.slate .dot{background:var(--slate)}
-  .pcard h3{font-size:24px; font-weight:600; margin-bottom:14px; color:var(--ink); transition:transform .25s ease}
+  .pcard h3{font-size:24px; font-weight:700; margin-bottom:14px; color:var(--ink); transition:transform .25s ease}
   .pcard:hover h3{transform:translateX(2px)}
   .pcard p{font-size:14px; line-height:1.7; color:var(--text-mute); margin-bottom:28px; flex:1}
   .pcard-stats{display:flex; gap:26px; padding-top:22px; border-top:1px solid var(--line-soft); margin-bottom:26px}
-  .pstat-num{font-family:'IBM Plex Mono',monospace; font-size:17px; font-weight:500; color:var(--ink)}
-  .pstat-lbl{font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-top:3px}
+  .pstat-num{font-family:'IBM Plex Mono',monospace; font-size:17px; font-weight:600; color:var(--ink)}
+  .pstat-lbl{font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-top:3px}
   .pcard-cta{
     display:inline-flex; align-items:center; gap:8px; font-size:13.5px; font-weight:600; text-decoration:none;
     color:var(--text); border-bottom:1px solid var(--line); padding-bottom:2px; align-self:flex-start;
@@ -324,27 +396,108 @@
 
   .hw-pulse{ animation:hwPulse 2.4s ease-in-out infinite; }
   @keyframes hwPulse{
-    0%,100%{ box-shadow:0 0 0 0 rgba(193,84,28,0.38) }
-    50%{ box-shadow:0 0 0 7px rgba(193,84,28,0) }
+    0%,100%{ box-shadow:0 0 0 0 rgba(201,129,46,0.38) }
+    50%{ box-shadow:0 0 0 7px rgba(201,129,46,0) }
   }
   @media (prefers-reduced-motion: reduce){
     .howworks-panel, .hw-box, .hw-pulse{ animation:none !important; transition:none !important }
   }
 
-  .howworks-steps{display:flex; flex-direction:column}
+  /* NOTE: .howworks-panel-sticky's position is set once, above (sticky) —
+     it must never be redeclared in another rule later in this file, even
+     to just add z-index. Two same-specificity rules for the same property
+     resolve by source order, so a later `position:relative` here would
+     silently clobber the `position:sticky` above and the panel would just
+     scroll away with the page. (This is exactly what happened before —
+     the z-index rule below used to bundle .howworks-panel-sticky in with
+     .howworks-steps-col and reset it to relative.) */
+  .howworks-panel-sticky{ z-index:1 }
+  .howworks-steps-col{ position:relative; z-index:1 }
+
+  /* No separate map box. Instead, a small route marker sits in the left
+     margin of each step, structurally tied to that step's row via CSS
+     Grid: two columns (a narrow marker column, then the text), and each
+     step contributes exactly one grid row's worth of items in DOM order
+     (marker, then text — see the `display:contents` wrapper in
+     HowItWorks.js, which flattens that wrapper out of the box tree so its
+     two children place directly into the grid). No JS measurement, no
+     explicit row/column indices to keep in sync — plain auto-placement
+     guarantees the marker for step N always lands in the same row as step
+     N's text, because it's rendered right before it.
+
+     This also sidesteps the sync problem that broke every earlier
+     attempt: this whole column is normal document flow, not sticky and
+     not a background layer behind something sticky, so it scrolls at
+     exactly the same rate as the text next to it, always, by definition —
+     there's no second position to keep matched. */
+  .howworks-steps{ display:grid; grid-template-columns:30px 1fr; column-gap:18px; row-gap:0 }
+
+  /* Each marker cell stretches to the full height of its row by default
+     (grid items are align-self:stretch unless told otherwise), so its
+     border-left runs the entire height of that step — with row-gap:0 and
+     no gap between rows, three consecutive segments read as one
+     continuous line down the margin, coloured in as you reach each step. */
+  .hw-route-marker{
+    position:relative; border-left:2px solid var(--line); transition:border-color .4s ease;
+  }
+  .hw-route-marker.reached.accent-slate{ border-color:var(--slate) }
+  .hw-route-marker.reached.accent-sun{ border-color:var(--sun) }
+  .hw-route-marker.reached.accent-combo{ border-color:var(--ink) }
+
+  /* A real teardrop pin (not a plain dot) for each step, positioned near
+     the top of its marker cell so it lines up with the eyebrow label
+     right next to it. Grey/hollow until reached, coloured once passed,
+     with a small pulsing ring on whichever one is current. */
+  .hw-route-pin{
+    position:absolute; left:-7px; top:42px; width:14px; height:19px;
+    color:var(--text-dim); filter:drop-shadow(0 2px 3px rgba(28,24,18,.25));
+    transition:color .4s ease;
+  }
+  .hw-route-marker.reached.accent-slate .hw-route-pin{ color:var(--slate) }
+  .hw-route-marker.reached.accent-sun .hw-route-pin{ color:var(--sun) }
+  .hw-route-marker.reached.accent-combo .hw-route-pin{ color:var(--ink) }
+  .hw-route-pin svg path{ fill:currentColor }
+  .hw-route-pin-hole{ fill:var(--bg) }
+  .hw-route-marker.current .hw-route-pin::after{
+    content:''; position:absolute; left:7px; top:11px; width:8px; height:8px; margin:-4px 0 0 -4px;
+    border-radius:50%; background:currentColor; opacity:.4;
+    animation:hwRoutePing 1.8s ease-out infinite;
+  }
+  @keyframes hwRoutePing{ 0%{ transform:scale(.7); opacity:.5 } 100%{ transform:scale(2.6); opacity:0 } }
+
+  @media (max-width:640px){
+    .howworks-steps{ grid-template-columns:1fr }
+    .hw-route-marker{ display:none }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hw-route-marker, .hw-route-pin, .hw-route-marker.current .hw-route-pin::after{
+      transition:none !important; animation:none !important;
+    }
+  }
+
+  /* NOTE: .howworks-steps's `display` is set once, above (grid) — it must
+     not be redeclared here (this used to be a leftover `display:flex` rule
+     from before the margin-marker rework; same specificity, later in the
+     file, would have silently overridden the grid — the exact same class
+     of bug that broke position:sticky earlier in this file). */
   .howworks-step-block{
     min-height:62vh; display:flex; flex-direction:column; justify-content:center;
     padding:40px 0; opacity:.4; transition:opacity .35s ease;
   }
-  .howworks-step-block:first-child{padding-top:0}
-  .howworks-step-block:last-child{min-height:40vh}
+  /* .first/.last are explicit classes set in HowItWorks.js, not
+     :first-child/:last-child — each block's actual DOM parent is now its
+     own `display:contents` wrapper (containing just [marker, block]), so
+     the block is always that wrapper's last child and never its first;
+     :first-child/:last-child would silently match the wrong elements. */
+  .howworks-step-block.first{padding-top:0}
+  .howworks-step-block.last{min-height:40vh}
   .howworks-step-block.active{opacity:1}
 
-  .howworks-step-eyebrow{font-size:11px; letter-spacing:.12em; margin-bottom:14px}
+  .howworks-step-eyebrow{font-size:12.5px; font-weight:600; letter-spacing:.12em; margin-bottom:14px}
   .howworks-step-eyebrow.accent-slate{color:var(--slate)}
   .howworks-step-eyebrow.accent-sun{color:var(--sun)}
   .howworks-step-eyebrow.accent-combo{color:var(--text)}
-  .howworks-step-block h3{font-size:22px; font-weight:600; color:var(--ink); line-height:1.3; margin-bottom:14px}
+  .howworks-step-block h3{font-size:22px; font-weight:700; color:var(--ink); line-height:1.3; margin-bottom:14px}
   .howworks-step-block p{font-size:14px; line-height:1.7; color:var(--text-mute); margin-bottom:20px}
   .howworks-bullets{list-style:none}
   .howworks-bullets li{
@@ -353,6 +506,165 @@
   .howworks-bullets li::before{
     content:''; position:absolute; left:0; top:9px; width:8px; height:1px; background:var(--line);
   }
+
+  /* ---------- ASLIVASTU-STYLE PANEL (step 1) ----------
+     Deliberately breaks from the page's light theme — this mock is meant
+     to read as "a preview of the actual AsliVastu app", which is a
+     near-black spec-sheet UI with a maroon-red accent, not the warm cream
+     BlindSpot marketing site around it. */
+  .av-panel{
+    background:#0B0B0C; border-color:rgba(255,255,255,0.14); color:#EDEDEC;
+    box-shadow:0 34px 68px -36px rgba(0,0,0,0.55), 0 2px 0 rgba(0,0,0,0.2);
+  }
+  .av-panel::before{ background:#B23A46; }
+  .av-corner{ position:absolute; width:13px; height:13px; opacity:.85; pointer-events:none; z-index:2 }
+  .av-corner.tl{ top:14px; left:14px; border-top:1.5px solid #B23A46; border-left:1.5px solid #B23A46 }
+  .av-corner.tr{ top:14px; right:14px; border-top:1.5px solid #B23A46; border-right:1.5px solid #B23A46 }
+  .av-corner.bl{ bottom:14px; left:14px; border-bottom:1.5px solid #B23A46; border-left:1.5px solid #B23A46 }
+  .av-corner.br{ bottom:14px; right:14px; border-bottom:1.5px solid #B23A46; border-right:1.5px solid #B23A46 }
+
+  .av-brandline{ font-size:10px; font-weight:600; letter-spacing:.14em; color:rgba(237,237,236,0.65); margin-bottom:12px }
+  .av-sheet-label{ font-size:11px; font-weight:600; letter-spacing:.12em; color:#B23A46; margin-bottom:4px }
+  .av-city{ font-family:'Anton',sans-serif; font-weight:400; font-size:clamp(28px,3vw,38px); line-height:1.02; color:#fff; margin-bottom:14px }
+
+  .av-score-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px }
+  .av-score-block, .av-verdict-block{ border:1px solid rgba(255,255,255,0.14); border-radius:4px; padding:11px 16px }
+  .av-verdict-block{ background:#B23A46; border-color:#B23A46 }
+  .av-tiny{ font-size:10.5px; font-weight:600; letter-spacing:.12em; color:rgba(237,237,236,0.6) }
+  .av-verdict-block .av-tiny{ color:rgba(255,255,255,0.75) }
+  .av-score-num{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:28px; color:#fff; margin-top:6px }
+  .av-score-num span{ font-size:12px; margin-left:8px; color:#fff; border:1px solid #B23A46; background:rgba(178,58,70,0.35); padding:2px 7px; border-radius:3px; vertical-align:middle }
+  .av-verdict-word{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:19px; color:#fff; margin-top:6px }
+
+  .av-dim-row{ margin-bottom:9px }
+  .av-dim-head{ display:flex; justify-content:space-between; font-size:12px; font-weight:500; letter-spacing:.04em; color:#e4e4e2; margin-bottom:4px }
+  .av-dim-track{ height:5px; border-radius:3px; background:rgba(255,255,255,0.1); overflow:hidden; margin-bottom:3px }
+  .av-dim-fill{ height:100%; border-radius:3px }
+  .av-dim-fill.good{ background:#3ecf6e }
+  .av-dim-fill.mid{ background:#e0a72e }
+  .av-dim-fill.bad{ background:repeating-linear-gradient(135deg,#e0524a,#e0524a 4px,#b7413c 4px,#b7413c 8px) }
+  .av-dim-source{ font-size:10px; color:rgba(237,237,236,0.5); letter-spacing:.04em }
+
+  .av-list{ margin-top:4px }
+  .av-list-row{
+    display:flex; justify-content:space-between; padding:7px 4px; font-size:12.5px; color:#cfcfcd;
+    border-top:1px dashed rgba(255,255,255,0.12);
+  }
+  .av-list-row em{ font-style:normal; color:rgba(237,237,236,0.6); margin-left:5px }
+
+  /* Locked full-report teaser at the bottom of the card, matching the real
+     AsliVastu paywall block (dashed divider, red status dot, feature list,
+     solid CTA) — kept short so it doesn't blow the card's height out. */
+  .av-locked{
+    margin-top:14px; padding-top:12px; border-top:1px dashed rgba(255,255,255,0.16);
+    text-align:center; position:relative;
+  }
+  .av-locked-dot{
+    position:absolute; top:-5px; left:50%; width:8px; height:8px; border-radius:50%;
+    background:#B23A46; transform:translateX(-50%); box-shadow:0 0 0 4px rgba(178,58,70,0.22);
+  }
+  .av-locked-eyebrow{ color:#B23A46; font-size:10px; font-weight:700; letter-spacing:.14em; margin-bottom:6px }
+  .av-locked-heading{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:17px; color:#fff; margin-bottom:10px }
+  .av-locked-features{
+    display:flex; justify-content:center; gap:16px; margin:0 auto 10px;
+  }
+  .av-locked-feature{ position:relative; padding-left:15px; font-size:11px; color:#cfcfcd; line-height:1.5 }
+  .av-locked-feature::before{ content:'+'; position:absolute; left:0; top:0; color:#B23A46; font-weight:700 }
+  .av-locked-cta{
+    display:inline-block; background:#B23A46; color:#fff; font-weight:700; font-size:12px;
+    letter-spacing:.03em; padding:10px 22px; border-radius:6px;
+  }
+
+  /* ---------- SUNSCOUT-STYLE PANEL (step 2) ----------
+     Matches the real LiveScore modal: cream card (close to the page's own
+     paper tone already), a hard orange accent distinct from the site's
+     terracotta, a dark slider track with only the handle picked out in
+     orange, and a solid pill CTA. */
+  /* Map strip replaces the card's own accent bar at the top — no need for
+     both. */
+  .ss-panel::before{ display:none; }
+  .ss-tag{ color:#E07B00; font-size:11.5px; font-weight:700; letter-spacing:.12em; margin-bottom:12px }
+  .ss-heading{ font-size:21px; font-weight:700; color:#16130E; line-height:1.28; margin-bottom:22px }
+  .ss-field{ margin-bottom:22px }
+  .ss-label{ font-size:11px; font-weight:600; letter-spacing:.1em; color:#736c5a; margin-bottom:11px }
+  .ss-slider-row{ display:flex; align-items:center; gap:12px }
+  .ss-slider-track{ flex:1; height:6px; border-radius:4px; background:#211d16; position:relative }
+  .ss-slider-handle{
+    position:absolute; top:50%; width:16px; height:16px; border-radius:50%; background:#E07B00;
+    border:3px solid var(--paper); transform:translate(-50%,-50%); box-shadow:0 2px 6px rgba(0,0,0,.35);
+  }
+  .ss-value-chip{
+    background:#211d16; color:#fff; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px;
+    padding:6px 13px; border-radius:6px; min-width:14px; text-align:center;
+  }
+  .ss-facing-grid{ display:grid; grid-template-columns:repeat(4,1fr); border:1px solid rgba(28,24,18,0.16); border-radius:4px; overflow:hidden }
+  .ss-facing-cell{
+    padding:10px 4px; font-size:10.5px; font-weight:700; text-align:center; color:#16130E;
+    background:#fff; border:1px solid rgba(28,24,18,0.1); margin:-0.5px; cursor:default;
+  }
+  .ss-facing-cell.active{ background:#E07B00; color:#fff; border-color:#E07B00 }
+  .ss-cta{
+    width:100%; box-sizing:border-box; text-align:center; background:#E07B00; color:#fff; border:none;
+    border-radius:24px; padding:13px; font-weight:700; font-size:13.5px; letter-spacing:.02em;
+    margin:24px 0 18px;
+  }
+  .ss-result{ border:1px solid rgba(28,24,18,0.14); border-left:3px solid #E07B00; border-radius:6px; padding:14px 16px }
+  .ss-result-num{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:30px; color:#E07B00 }
+  .ss-result-num span{ font-size:13px; color:#736c5a; margin-left:4px; font-family:'Inter',sans-serif; font-weight:500 }
+  .ss-result-desc{ font-size:12.5px; color:#544f42; line-height:1.6; margin-top:6px }
+
+  /* ---------- SUNSCOUT MAP STRIP (step 2) ----------
+     Lives INSIDE the card (bled to its top edge, same border-radius) so
+     the card's overall footprint matches the AsliVastu card exactly — no
+     outer wrapper adding extra width/height around it. A real small road
+     grid with building blocks sitting between the streets, the unit's own
+     building picked out in orange with a pin, and a dotted sun-path arc. */
+  .ss-map-strip{
+    position:relative; height:132px; margin:-24px -24px 20px; overflow:hidden;
+    border-radius:10px 10px 0 0;
+    background:radial-gradient(130% 150% at 24% 0%, #40311f 0%, #1b1509 74%);
+  }
+  .ss-map-toolbar{ position:absolute; top:10px; left:12px; z-index:1; display:flex; gap:6px }
+  .ss-map-chip{
+    font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; letter-spacing:.08em;
+    text-transform:uppercase; color:rgba(255,255,255,0.5); background:rgba(255,255,255,0.07);
+    border:1px solid rgba(255,255,255,0.14); padding:4px 8px; border-radius:4px;
+  }
+  .ss-map-chip.active{ color:#171209; background:#E07B00; border-color:#E07B00 }
+  .ss-map-svg{ position:absolute; inset:0; width:100%; height:100% }
+  .ss-map-road{ stroke:rgba(255,255,255,0.2); stroke-width:2 }
+  .ss-map-bldg{ fill:rgba(255,255,255,0.14); stroke:rgba(255,255,255,0.26); stroke-width:1 }
+  .ss-map-bldg-target{ fill:rgba(224,123,0,0.4); stroke:#E07B00; stroke-width:1.5 }
+  .ss-map-sunpath{ fill:none; stroke:rgba(233,169,74,0.7); stroke-width:1.5; stroke-dasharray:2 6; stroke-linecap:round }
+  .ss-map-sun{ fill:var(--sun) }
+  .ss-map-pin{ fill:#E07B00 }
+  .ss-map-pin-hole{ fill:#1b1509 }
+  .ss-map-ping{ fill:none; stroke:#E07B00; stroke-width:1.5; opacity:.55; animation:ssMapPing 2.6s ease-out infinite }
+  @keyframes ssMapPing{ 0%{ transform:scale(.35); opacity:.7 } 100%{ transform:scale(1.9); opacity:0 } }
+  .ss-map-time{
+    position:absolute; right:12px; bottom:9px; z-index:1; font-family:'IBM Plex Mono',monospace; font-size:9.5px;
+    color:rgba(255,255,255,0.45); letter-spacing:.05em;
+  }
+  @media (prefers-reduced-motion: reduce){ .ss-map-ping{ animation:none !important } }
+
+  /* AI Summary sits side by side with LiveScore, like the real product's
+     LiveScore / AI Solar Report split — not a separate floating note or a
+     tab you have to click away to. */
+  .ss-body{ display:grid; grid-template-columns:1fr 172px; column-gap:20px }
+  .ss-ai-col{
+    padding:2px 0 0 20px; border-left:1px dashed rgba(28,24,18,0.18);
+    display:flex; flex-direction:column; align-items:flex-start;
+  }
+  .ss-ai-col svg{ color:#E07B00; margin-bottom:10px }
+  .ss-ai-col-tag{ color:#E07B00; font-size:10px; font-weight:700; letter-spacing:.1em; margin-bottom:6px }
+  .ss-ai-col-heading{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:16px; color:#16130E; line-height:1.25 }
+  .ss-ai-col-desc{ font-size:11px; color:#736c5a; line-height:1.55; margin:10px 0 16px }
+  .ss-ai-col-cta{
+    width:100%; box-sizing:border-box; text-align:center; background:transparent; color:#E07B00;
+    border:1.5px solid #E07B00; border-radius:20px; padding:9px 6px; font-weight:700; font-size:11px;
+    letter-spacing:.02em; margin-bottom:9px;
+  }
+  .ss-ai-col-meta{ width:100%; text-align:center; font-size:9px; color:#9a9182; letter-spacing:.06em }
 
   /* ---------- WHY LIST ---------- */
   .why-list{border-top:1px solid var(--line-soft)}
@@ -367,7 +679,7 @@
   .why-row:hover .why-icon{transform:scale(1.15)}
   .why-row:nth-child(1) .why-icon, .why-row:nth-child(3) .why-icon{color:var(--sun)}
   .why-row:nth-child(2) .why-icon, .why-row:nth-child(4) .why-icon{color:var(--slate)}
-  .why-title{font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:600; color:var(--ink)}
+  .why-title{font-family:'Bricolage Grotesque',sans-serif; font-size:16px; font-weight:700; color:var(--ink)}
   .why-desc{font-size:14px; line-height:1.7; color:var(--text-mute)}
 
   /* ---------- TEAM ---------- */
@@ -378,12 +690,12 @@
   .team-avatar{
     width:56px; height:56px; flex-shrink:0; border:1.5px solid var(--line); border-radius:50%;
     display:flex; align-items:center; justify-content:center;
-    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:17px; color:var(--text-dim);
+    font-family:'Bricolage Grotesque',sans-serif; font-weight:600; font-size:17px; color:var(--text-dim);
     letter-spacing:0.02em; transition:border-color .25s ease, color .25s ease, transform .25s ease;
   }
   .team-card:hover .team-avatar{border-color:var(--ink); color:var(--ink); transform:rotate(-4deg)}
-  .team-name{font-size:18px; font-weight:600; color:var(--ink); font-family:'Space Grotesk',sans-serif; margin-bottom:3px}
-  .team-role{font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:12px}
+  .team-name{font-size:18px; font-weight:700; color:var(--ink); font-family:'Bricolage Grotesque',sans-serif; margin-bottom:3px}
+  .team-role{font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:11.5px; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:12px}
   .team-role.sun{color:var(--sun)}
   .team-role.slate{color:var(--slate)}
   .team-desc{font-size:13.5px; color:var(--text-mute); line-height:1.65; margin-bottom:14px}
@@ -392,11 +704,12 @@
 
   /* ---------- CLOSING ---------- */
   .closing-inner{text-align:center; max-width:600px; margin:0 auto; padding:96px 0}
-  .closing-inner h2{font-size:clamp(26px,3.6vw,40px); font-weight:600; color:var(--ink); line-height:1.25; margin-bottom:28px}
+  .closing-inner h2{font-size:clamp(26px,3.6vw,40px); font-weight:700; color:var(--ink); line-height:1.25; margin-bottom:28px}
   .closing-inner p{color:var(--text-mute); font-size:15px; line-height:1.6; margin-bottom:40px}
   .closing-ctas{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
-  .closing-ctas .btn{background:var(--ink); color:var(--paper); border-color:var(--ink)}
-  .closing-ctas .btn:hover{background:#332c22; border-color:#332c22}
+  /* Same note as .hero-ctas above: no background/color here on purpose —
+     .btn-cta owns the gradient, and a class-based background here would
+     silently outrank it (two classes beats one). */
 
   footer{padding:44px 0; border-top:1px solid var(--line-soft)}
   .footer-row{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px}
@@ -404,7 +717,7 @@
   .footer-links{display:flex; gap:24px; font-size:12.5px}
   .footer-links a{color:var(--text-mute); text-decoration:none}
   .footer-links a:hover{color:var(--text)}
-  .footer-fine{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--text-dim); margin-top:22px; text-align:center; letter-spacing:0.03em}
+  .footer-fine{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--text-dim); margin-top:22px; text-align:center; letter-spacing:0.03em}
 
 /* ---------- AUTH (added for account/login feature) ---------- */
 .btn-auth{

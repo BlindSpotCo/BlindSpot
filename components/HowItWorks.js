@@ -59,123 +59,185 @@ const SAMPLE_LOCALITIES = [
   { name: 'Indiranagar', meta: 'Bengaluru · 560038', score: 84, grade: 'A-', selected: false },
 ];
 
-const SAMPLE_FACTORS = [
-  { label: 'Crime', score: 81 },
-  { label: 'Air Quality', score: 64 },
-  { label: 'Power', score: 88 },
-  { label: 'Schools', score: 76 },
-];
-
 const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'North-West', 'South-West'];
 
-function GradeBadge({ grade, color }) {
+// AsliVastu's real UI is a near-black "spec sheet": condensed poster-style
+// locality name, a mono SHEET/PIN label, a composite index next to a solid
+// verdict block, and dimension bars in green/amber/red with the source
+// named underneath. This mock is styled to match that directly, rather
+// than the light BlindSpot theme the rest of the page uses — it reads as
+// a preview of AsliVastu itself, not a re-skin of it.
+function AvDim({ label, score, source }) {
+  const tier = score >= 70 ? 'good' : score >= 45 ? 'mid' : 'bad';
   return (
-    <span
-      className="mono"
-      style={{
-        display: 'inline-block', fontSize: 11, fontWeight: 500, letterSpacing: '.08em',
-        textTransform: 'uppercase', border: `1px solid ${color}`, color, padding: '4px 10px', borderRadius: 3,
-      }}
-    >
-      {grade}
-    </span>
-  );
-}
-
-function FactorBar({ label, score }) {
-  const color = score >= 75 ? '#4ADE80' : score >= 50 ? 'var(--slate)' : '#f87171';
-  return (
-    <div style={{ marginBottom: 10 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11.5, color: 'var(--text-mute)', marginBottom: 4 }}>
-        <span>{label}</span><span className="mono" style={{ color: 'var(--text)' }}>{score}</span>
+    <div className="av-dim-row hw-box">
+      <div className="av-dim-head">
+        <span>{label.toUpperCase()}</span>
+        <span className="mono">{score}</span>
       </div>
-      <div style={{ background: 'var(--line-soft)', height: 4, borderRadius: 3, overflow: 'hidden' }}>
-        <div style={{ width: `${score}%`, height: '100%', background: color }} />
-      </div>
+      <div className="av-dim-track"><div className={`av-dim-fill ${tier}`} style={{ width: `${score}%` }} /></div>
+      {source && <div className="mono av-dim-source">{source}</div>}
     </div>
   );
 }
 
 function AreaPanel() {
   const selected = SAMPLE_LOCALITIES.find((l) => l.selected);
+  const others = SAMPLE_LOCALITIES.filter((l) => !l.selected);
+  const verdictWord = selected.score >= 80 ? 'STRONG' : selected.score >= 65 ? 'CONSIDER' : 'CAUTION';
+
   return (
-    <div className="howworks-panel">
-      <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', letterSpacing: '.1em', marginBottom: 14 }}>
-        SEARCH — &ldquo;koramangala&rdquo;
+    <div className="howworks-panel av-panel">
+      <span className="av-corner tl" aria-hidden="true" /><span className="av-corner tr" aria-hidden="true" />
+      <span className="av-corner bl" aria-hidden="true" /><span className="av-corner br" aria-hidden="true" />
+
+      <div className="mono av-brandline">ASLIVASTU BY BLINDSPOT · NEIGHBOURHOOD INTELLIGENCE</div>
+      <div className="mono av-sheet-label">SHEET 01 · {selected.meta.toUpperCase()}</div>
+      <div className="av-city">{selected.name.toUpperCase()}</div>
+
+      <div className="av-score-row">
+        <div className="av-score-block hw-box">
+          <div className="mono av-tiny">COMPOSITE INDEX</div>
+          <div className="av-score-num">{selected.score}<span>{selected.grade}</span></div>
+        </div>
+        <div className="av-verdict-block hw-box">
+          <div className="mono av-tiny">VERDICT</div>
+          <div className="av-verdict-word">{verdictWord}</div>
+        </div>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, border: '1px solid var(--line)', borderRadius: 3, marginBottom: 22 }}>
-        {SAMPLE_LOCALITIES.map((l) => (
-          <div
-            key={l.name}
-            className="hw-box"
-            style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
-              padding: '11px 14px', borderBottom: '1px solid var(--line-soft)', borderRadius: 4,
-              background: l.selected ? 'rgba(30,92,71,0.10)' : 'transparent',
-            }}
-          >
-            <div>
-              <div style={{ fontSize: 13.5, color: 'var(--text)', fontWeight: 600 }}>{l.name}</div>
-              <div className="mono" style={{ fontSize: 10.5, color: 'var(--text-dim)' }}>{l.meta}</div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-              <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 16, color: 'var(--slate)' }}>{l.score}</span>
-              <GradeBadge grade={l.grade} color="var(--slate)" />
-            </div>
+
+      <div className="mono av-tiny" style={{ margin: '14px 0 8px' }}>DIMENSION READOUT</div>
+      <div className="av-dims">
+        <AvDim label="Crime" score={81} source="Delhi Police Annual Report" />
+        <AvDim label="Air Quality" score={64} source="CPCB live AQI" />
+        <AvDim label="Power" score={88} source="BSES / Tata Power" />
+        <AvDim label="Schools" score={76} source="CBSE affiliation database" />
+      </div>
+
+      <div className="av-list">
+        {others.map((l) => (
+          <div key={l.name} className="av-list-row hw-box">
+            <span>{l.name}</span>
+            <span className="mono">{l.score} <em>{l.grade}</em></span>
           </div>
         ))}
       </div>
 
-      <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', letterSpacing: '.1em', marginBottom: 10 }}>
-        {selected.name.toUpperCase()} — FACTOR BREAKDOWN
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '4px 20px' }}>
-        {SAMPLE_FACTORS.map((f) => (
-          <FactorBar key={f.label} label={f.label} score={f.score} />
-        ))}
+      {/* Locked full-report teaser, matching the real AsliVastu paywall
+          block — kept short (a couple of features, no caption line) so it
+          doesn't blow the card's height past the SunScout card next to it. */}
+      <div className="av-locked">
+        <span className="av-locked-dot" aria-hidden="true" />
+        <div className="mono av-locked-eyebrow">LOCKED · SHEET 02</div>
+        <div className="av-locked-heading">Full Neighbourhood Report</div>
+        <div className="av-locked-features">
+          <span className="av-locked-feature">Plan-view map + nearby pins</span>
+          <span className="av-locked-feature">Price context &amp; market gap</span>
+        </div>
+        <div className="av-locked-cta">VIEW FULL REPORT →</div>
       </div>
     </div>
   );
 }
 
+// SunScout's real UI, at the point that matters here, is the LiveScore
+// modal: a cream card floating over the dark 3D map, an orange "LIVESCORE"
+// tag, a bold question as the headline, then a floor slider and a facing
+// grid feeding one big orange CTA. Matched directly, including the dark
+// slider track (only the handle is orange in the real thing, not the fill).
+// A small, legible vector map — real road grid, blocks of buildings sitting
+// between the streets, the unit's building picked out in orange with a pin,
+// and a dotted sun-path arc — rather than a scatter of unrelated boxes.
+function SsMap() {
+  return (
+    <div className="ss-map-strip" aria-hidden="true">
+      <div className="ss-map-toolbar">
+        <span className="ss-map-chip active">3D</span>
+        <span className="ss-map-chip">2D</span>
+      </div>
+      <svg className="ss-map-svg" viewBox="0 0 520 132" preserveAspectRatio="xMidYMid slice">
+        <path className="ss-map-road" d="M0,44 H520 M0,100 H520 M130,0 V132 M290,0 V132 M400,0 V132" />
+
+        <rect className="ss-map-bldg" x="14" y="8" width="48" height="24" rx="2" />
+        <rect className="ss-map-bldg" x="145" y="8" width="56" height="24" rx="2" />
+        <rect className="ss-map-bldg" x="212" y="8" width="46" height="24" rx="2" />
+        <rect className="ss-map-bldg" x="305" y="8" width="56" height="24" rx="2" />
+        <rect className="ss-map-bldg" x="415" y="8" width="44" height="24" rx="2" />
+        <rect className="ss-map-bldg" x="470" y="8" width="34" height="24" rx="2" />
+
+        <rect className="ss-map-bldg" x="14" y="52" width="42" height="36" rx="2" />
+        <rect className="ss-map-bldg" x="62" y="58" width="46" height="30" rx="2" />
+        <rect className="ss-map-bldg ss-map-bldg-target" x="150" y="50" width="60" height="38" rx="2" />
+        <rect className="ss-map-bldg" x="305" y="52" width="40" height="36" rx="2" />
+        <rect className="ss-map-bldg" x="410" y="52" width="44" height="36" rx="2" />
+        <rect className="ss-map-bldg" x="460" y="58" width="46" height="30" rx="2" />
+
+        <path className="ss-map-sunpath" d="M20,126 Q260,100 500,126" />
+        <circle className="ss-map-sun" cx="260" cy="102" r="4" />
+
+        <circle className="ss-map-ping" cx="180" cy="69" r="9" />
+        <path className="ss-map-pin" d="M180 56c-5.5 0-10 4.4-10 9.9 0 7.4 10 17.1 10 17.1s10-9.7 10-17.1c0-5.5-4.5-9.9-10-9.9z" />
+        <circle className="ss-map-pin-hole" cx="180" cy="66" r="3.6" />
+      </svg>
+      <span className="ss-map-time">04:52 PM</span>
+    </div>
+  );
+}
+
+// SunScout's real UI, at the point that matters here, is the LiveScore
+// modal: a cream card over a dark 3D map, a bold question as the headline,
+// a floor slider and facing grid feeding one big orange CTA — and, next to
+// it, an AI Summary pane, matching the product's LiveScore / AI Solar
+// Report split screen. Matched directly, including the dark slider track
+// (only the handle is orange in the real thing, not the fill).
 function UnitPanel() {
   return (
-    <div className="howworks-panel">
-      <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', letterSpacing: '.1em', marginBottom: 14 }}>
-        7TH FLOOR · SOUTH-EAST FACING
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
-        <span className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', flexShrink: 0 }}>Floor</span>
-        <div style={{ flex: 1, height: 4, borderRadius: 3, background: 'var(--line-soft)', position: 'relative' }}>
-          <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '23%', background: 'var(--sun)', borderRadius: 3 }} />
-        </div>
-        <div className="hw-pulse" style={{ background: 'var(--sun)', color: '#fff', borderRadius: 4, padding: '4px 12px', fontSize: 13, fontWeight: 700, minWidth: 24, textAlign: 'center' }}>7</div>
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0, marginBottom: 22 }}>
-        {FACING_OPTS.map((dir) => (
-          <div
-            key={dir}
-            className={`hw-box${dir === 'South-East' ? ' hw-pulse' : ''}`}
-            style={{
-              background: dir === 'South-East' ? 'var(--sun)' : 'transparent',
-              color: dir === 'South-East' ? '#fff' : 'var(--text-mute)',
-              border: `1px solid ${dir === 'South-East' ? 'var(--sun)' : 'var(--line)'}`,
-              padding: '8px 4px', fontSize: 10.5, fontWeight: 700, textAlign: 'center',
-              marginLeft: -1, marginTop: -1, cursor: 'default',
-            }}
-          >
-            {dir}
+    <div className="howworks-panel ss-panel">
+      <SsMap />
+
+      <div className="ss-body">
+        <div className="ss-main">
+          <div className="mono ss-tag">LIVESCORE</div>
+          <h4 className="ss-heading">Will This Unit Work For You?</h4>
+
+          <div className="ss-field">
+            <div className="mono ss-label">FLOOR NUMBER</div>
+            <div className="ss-slider-row">
+              <div className="ss-slider-track"><div className="ss-slider-handle" style={{ left: '23%' }} /></div>
+              <div className="ss-value-chip">7</div>
+            </div>
           </div>
-        ))}
-      </div>
-      <div className="hw-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 3, padding: '16px 18px' }}>
-        <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 6 }}>HOME COMFORT SCORE</div>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
-          <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 34, color: 'var(--sun)' }}>82</span>
-          <span style={{ fontSize: 13, color: 'var(--text-dim)' }}>/100</span>
+
+          <div className="ss-field">
+            <div className="mono ss-label">FACING DIRECTION</div>
+            <div className="ss-facing-grid">
+              {FACING_OPTS.map((dir) => (
+                <div key={dir} className={`hw-box ss-facing-cell${dir === 'South-East' ? ' active' : ''}`}>
+                  {dir}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="ss-cta hw-pulse">GET MY LIVESCORE</div>
+
+          <div className="hw-box ss-result">
+            <div className="mono ss-label">HOME COMFORT SCORE</div>
+            <div className="ss-result-num">82<span>/100</span></div>
+            <div className="ss-result-desc">Strong morning light, minimal shadow before 3pm, good cross-ventilation for this facing.</div>
+          </div>
         </div>
-        <div style={{ fontSize: 11.5, color: 'var(--text-mute)', marginTop: 6, lineHeight: 1.6 }}>
-          Strong morning light, minimal shadow before 3pm, good cross-ventilation for this facing.
+
+        {/* AI Summary pane, side by side with LiveScore — condensed version
+            of the real AI Solar Report pane (sun/shadow narration + report
+            CTA), not full report data. */}
+        <div className="ss-ai-col">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2l2.2 6.8L21 11l-6.8 2.2L12 20l-2.2-6.8L3 11l6.8-2.2z" /></svg>
+          <div className="mono ss-ai-col-tag">AI SOLAR</div>
+          <div className="ss-ai-col-heading">AI Summary</div>
+          <p className="ss-ai-col-desc">Real sun &amp; shadow data for this unit, narrated in plain English.</p>
+          <div className="ss-ai-col-cta">Generate Report</div>
+          <div className="mono ss-ai-col-meta">~30 SEC · FREE</div>
         </div>
       </div>
     </div>
@@ -186,40 +248,40 @@ function VerdictPanel() {
   return (
     <div className="howworks-panel">
       <div style={{ marginBottom: 20 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11.5, marginBottom: 8 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, fontWeight: 600, marginBottom: 8 }}>
           <span className="mono" style={{ color: 'var(--slate)' }}>AREA 50%</span>
           <span className="mono" style={{ color: 'var(--sun)' }}>UNIT 50%</span>
         </div>
         <div style={{ height: 4, borderRadius: 3, background: 'linear-gradient(90deg, var(--slate) 50%, var(--sun) 50%)' }} />
-        <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 6 }}>
+        <div className="mono" style={{ fontSize: 11.5, fontWeight: 500, color: 'var(--text-mute)', marginTop: 6 }}>
           Starts 50/50 — drag anytime to change how much the neighbourhood matters vs. the specific flat.
         </div>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18, flexWrap: 'wrap', gap: 14 }}>
         <div>
-          <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', letterSpacing: '.12em', marginBottom: 6 }}>BLINDSPOT COMBINED SCORE</div>
-          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 46, lineHeight: 1, color: 'var(--text)' }}>
-            80<span style={{ fontSize: 18, color: 'var(--text-dim)' }}>/100</span>
+          <div className="mono" style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-mute)', letterSpacing: '.12em', marginBottom: 6 }}>BLINDSPOT COMBINED SCORE</div>
+          <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 800, fontSize: 46, lineHeight: 1, color: 'var(--text)' }}>
+            80<span style={{ fontSize: 18, color: 'var(--text-mute)' }}>/100</span>
           </div>
         </div>
-        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 18, color: '#fff', background: 'linear-gradient(90deg, var(--sun), var(--slate))', padding: '8px 16px', borderRadius: 3 }}>
+        <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 18, color: '#fff', background: 'linear-gradient(90deg, var(--sun), var(--slate))', padding: '8px 16px', borderRadius: 3 }}>
           Recommended
         </div>
       </div>
 
-      <p style={{ fontSize: 13, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 20 }}>
+      <p style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 20 }}>
         Solid area score with a genuinely bright unit — good light most of the year, no major shadow issues at this floor.
       </p>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
         <div className="hw-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--slate)', borderRadius: 3, padding: '14px 16px' }}>
-          <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 6 }}>AREA — KORAMANGALA — 50%</div>
-          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 22, color: 'var(--slate)' }}>78</div>
+          <div className="mono" style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-mute)', marginBottom: 6 }}>AREA — KORAMANGALA — 50%</div>
+          <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 22, color: 'var(--slate)' }}>78</div>
         </div>
         <div className="hw-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 3, padding: '14px 16px' }}>
-          <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT — FL 7, SE — 50%</div>
-          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 22, color: 'var(--sun)' }}>82</div>
+          <div className="mono" style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-mute)', marginBottom: 6 }}>UNIT — FL 7, SE — 50%</div>
+          <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 22, color: 'var(--sun)' }}>82</div>
         </div>
       </div>
     </div>
@@ -231,6 +293,7 @@ const PANELS = { area: AreaPanel, unit: UnitPanel, verdict: VerdictPanel };
 export default function HowItWorks() {
   const [active, setActive] = useState('area');
   const Panel = PANELS[active];
+  const activeIndex = STEPS.findIndex((s) => s.id === active);
   const stepRefs = useRef({});
   const tickingRef = useRef(false);
 
@@ -240,7 +303,9 @@ export default function HowItWorks() {
   // On every scroll frame, find whichever step block's vertical centre is
   // closest to the viewport's vertical centre and make that the active
   // step. No scroll-jacking — native scroll speed/position is untouched,
-  // this only reads position and swaps which panel is shown.
+  // this only reads position and swaps which panel is shown. The mini-map
+  // below reacts to this same `active` value purely through CSS classes —
+  // there's no continuous scroll-position math driving any visual anymore.
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 901px)');
 
@@ -248,6 +313,7 @@ export default function HowItWorks() {
       tickingRef.current = false;
       if (!mq.matches) return;
       const viewportCenter = window.innerHeight / 2;
+
       let closestId = null;
       let closestDist = Infinity;
       STEPS.forEach((s) => {
@@ -271,10 +337,10 @@ export default function HowItWorks() {
 
     updateActive();
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
+    window.addEventListener('resize', updateActive);
     return () => {
       window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
+      window.removeEventListener('resize', updateActive);
     };
   }, []);
 
@@ -307,28 +373,61 @@ export default function HowItWorks() {
           ))}
         </div>
 
-        <div className="howworks-scroll reveal">
+        {/* No `reveal` class on this container — .reveal applies a CSS
+            transform, and a transform on an element breaks position:sticky
+            on its descendants in most browsers. Separately, a later CSS
+            rule used to also redeclare `position:relative` on
+            .howworks-panel-sticky for z-index purposes, which — same
+            specificity, later in the file — silently overrode the
+            `position:sticky` set on it elsewhere. Both are fixed now (see
+            globals.css); the sticky card actually stays pinned. */}
+        <div className="howworks-scroll">
           <div className="howworks-panel-sticky">
             <Panel key={active} />
           </div>
 
-          <div className="howworks-steps">
-            {STEPS.map((s) => (
-              <div
-                key={s.id}
-                ref={(el) => { stepRefs.current[s.id] = el; }}
-                className={`howworks-step-block${active === s.id ? ' active' : ''}`}
-              >
-                <div className={`mono howworks-step-eyebrow accent-${s.accent}`}>{s.eyebrow}</div>
-                <h3>{s.heading}</h3>
-                <p>{s.copy}</p>
-                <ul className="howworks-bullets">
-                  {s.bullets.map((b) => (
-                    <li key={b}>{b}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+          <div className="howworks-steps-col">
+            {/* No separate map box — instead, a small route marker sits in
+                the left margin of each step, structurally locked to that
+                step's row via CSS Grid (see `.howworks-steps` below: a
+                marker cell and a text cell per step, auto-placed into the
+                same row by plain DOM order — no JS measurement involved).
+                Each marker's border-left segments join up into one
+                continuous vertical line down the margin, coloured in as
+                you pass each step.
+
+                Because this whole column is normal document flow (not
+                sticky, not a background layer behind something sticky),
+                it scrolls at exactly the same rate as the text next to it,
+                always, by construction — the sync problem that broke every
+                earlier version simply doesn't exist here. */}
+            <div className="howworks-steps">
+              {STEPS.map((s, i) => (
+                <div key={s.id} style={{ display: 'contents' }}>
+                  <div className={`hw-route-marker accent-${s.accent}${i <= activeIndex ? ' reached' : ''}${s.id === active ? ' current' : ''}`}>
+                    <span className="hw-route-pin">
+                      <svg viewBox="0 0 22 30" width="14" height="19">
+                        <path d="M11 0C4.9 0 0 4.9 0 11c0 8.2 11 19 11 19s11-10.8 11-19C22 4.9 17.1 0 11 0z" />
+                        <circle cx="11" cy="11" r="4.2" className="hw-route-pin-hole" />
+                      </svg>
+                    </span>
+                  </div>
+                  <div
+                    ref={(el) => { stepRefs.current[s.id] = el; }}
+                    className={`howworks-step-block${active === s.id ? ' active' : ''}${i === 0 ? ' first' : ''}${i === STEPS.length - 1 ? ' last' : ''}`}
+                  >
+                    <div className={`mono howworks-step-eyebrow accent-${s.accent}`}>{s.eyebrow}</div>
+                    <h3>{s.heading}</h3>
+                    <p>{s.copy}</p>
+                    <ul className="howworks-bullets">
+                      {s.bullets.map((b) => (
+                        <li key={b}>{b}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

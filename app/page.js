@@ -1,10 +1,14 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import SiteHeader from '@/components/SiteHeader';
 import HowItWorks from '@/components/HowItWorks';
 
 export default function Home() {
+  // Auth state, scroll-reveal and the mobile menu all now live in
+  // SiteHeader (shared across every page) — this file only needs the
+  // hero's own coordinate-readout ref.
   const coordRef = useRef(null);
 
   // Rotating coordinate readout in the hero — ported directly from the
@@ -72,8 +76,7 @@ export default function Home() {
             <p className="hero-tagline"><span className="seg sun">One pin</span><span className="sep"></span><span className="seg slate">Two answers</span></p>
             <p className="hero-sub">Drop a pin. See exactly how sunlight moves through the unit, and exactly what the neighbourhood around it is really like. Real solar geometry. Real government records. No broker spin.</p>
             <div className="hero-ctas">
-              <a href="https://sun-scout.com" target="_blank" rel="noopener" className="btn btn-lg"><span className="btn-dot d-sun"></span>Open SunScout →</a>
-              <a href="https://aslivastu.com" target="_blank" rel="noopener" className="btn btn-lg"><span className="btn-dot d-slate"></span>Open AsliVastu →</a>
+              <Link href="/property-score" className="btn btn-lg btn-cta">Uncover Your BlindSpot →</Link>
             </div>
             <div className="coord-readout"><span className="blink"></span><span ref={coordRef} className="mono">12.9716° N, 77.5946° E — checking Bengaluru</span></div>
           </div>
@@ -86,14 +89,28 @@ export default function Home() {
                 <span className="hsc-badge">Recommended</span>
               </div>
               <div className="hsc-number">80<span>/100</span></div>
+              {/* Leads with the plain-English takeaway before any raw
+                  numbers — directly per the mentor's report feedback in
+                  the shared sheet ("the fundamental question is not 'how
+                  much sunlight' but 'should I buy this property'"). The
+                  two reason rows below follow the same logic: a human
+                  sentence first, the underlying score folded in small and
+                  second, not the other way round. */}
+              <p className="hsc-verdict">Good light, safe neighbourhood, fair value for the area.</p>
               <div className="hsc-row">
                 <div className="hsc-item slate">
-                  <span className="hsc-item-label">AREA — KORAMANGALA</span>
-                  <span className="hsc-item-val">78</span>
+                  <svg className="hsc-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-5.4-7-11a7 7 0 1 1 14 0c0 5.6-7 11-7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>
+                  <div>
+                    <span className="hsc-item-label">Safe, well-connected area</span>
+                    <span className="hsc-item-sub">Koramangala — 78/100</span>
+                  </div>
                 </div>
                 <div className="hsc-item sun">
-                  <span className="hsc-item-label">UNIT — FL 7, SE</span>
-                  <span className="hsc-item-val">82</span>
+                  <svg className="hsc-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M4 20 L10 14 M20 20 L14 14"/></svg>
+                  <div>
+                    <span className="hsc-item-label">Bright, well-ventilated unit</span>
+                    <span className="hsc-item-sub">Floor 7, SE — 82/100</span>
+                  </div>
                 </div>
               </div>
               <div className="hsc-foot">Real solar geometry + government locality data, combined into one number you can trust.</div>
@@ -123,7 +140,6 @@ export default function Home() {
                 <div><div className="pstat-num">3D</div><div className="pstat-lbl">Building shadows</div></div>
                 <div><div className="pstat-num">NOAA</div><div className="pstat-lbl">Solar data</div></div>
               </div>
-              <a href="https://sun-scout.com" target="_blank" rel="noopener" className="pcard-cta">Open SunScout <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
             </div>
 
             <div className="pcard slate reveal">
@@ -135,7 +151,6 @@ export default function Home() {
                 <div><div className="pstat-num">8</div><div className="pstat-lbl">Dimensions</div></div>
                 <div><div className="pstat-num">Govt.</div><div className="pstat-lbl">Data source</div></div>
               </div>
-              <a href="https://aslivastu.com" target="_blank" rel="noopener" className="pcard-cta">Open AsliVastu <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
             </div>
           </div>
         </div>
@@ -212,8 +227,7 @@ export default function Home() {
           <h2>See the sunlight. Know the neighbourhood.</h2>
           <p>Two free tools. One pin. Everything the listing wasn&apos;t going to mention.</p>
           <div className="closing-ctas">
-            <a href="https://sun-scout.com" target="_blank" rel="noopener" className="btn btn-lg"><span className="btn-dot d-sun"></span>Open SunScout</a>
-            <a href="https://aslivastu.com" target="_blank" rel="noopener" className="btn btn-lg"><span className="btn-dot d-slate"></span>Open AsliVastu</a>
+            <Link href="/property-score" className="btn btn-lg btn-cta">Uncover Your BlindSpot →</Link>
           </div>
         </div>
 
@@ -225,8 +239,6 @@ export default function Home() {
                 <img className="brand-word-img" src="/wordmark.png" alt="BlindSpot" style={{ height: 10 }} />
               </div>
               <div className="footer-links">
-                <a href="https://sun-scout.com" target="_blank" rel="noopener">SunScout</a>
-                <a href="https://aslivastu.com" target="_blank" rel="noopener">AsliVastu</a>
                 <a href="#why">Why BlindSpot</a>
                 <a href="#team">The Team</a>
               </div>
