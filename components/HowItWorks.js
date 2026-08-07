@@ -23,6 +23,7 @@ const STEPS = [
       'Searchable by name, not just pincode',
       '8 weighted dimensions, one composite score',
       'Nearby-locality comparison built in',
+      'Unlock the full report — inspection notes, price and commute check',
     ],
   },
   {
@@ -34,8 +35,9 @@ const STEPS = [
     copy: "The area score is the same for every flat on the block. This step is what makes it personal: pick a floor and facing, and SunScout's real solar geometry returns a Home Comfort Score for that exact unit.",
     bullets: [
       'Real sun-path modelling, not a guess',
-      'Floor + facing change the number',
+      'Change the floor or facing, get a new score instantly',
       'Home Comfort Score: sun, shade and ventilation combined',
+      'AI Summary narrates the sun & shadow pattern in plain English',
     ],
   },
   {

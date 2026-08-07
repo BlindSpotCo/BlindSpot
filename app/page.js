@@ -131,17 +131,6 @@ export default function Home() {
             <p>Every property decision comes down to two questions. BlindSpot answers both from the same pin.</p>
           </div>
           <div className="products">
-            <div className="pcard sun reveal">
-              <div className="pcard-tag"><span className="dot"></span>Solar &amp; Shadow Analysis</div>
-              <h3>SunScout</h3>
-              <p>Drop a pin on any property and watch the sun&apos;s real path arc across it — hour by hour, season by season, rendered against actual 3D building shadows. See exactly when direct light reaches a specific floor.</p>
-              <div className="pcard-stats">
-                <div><div className="pstat-num">365</div><div className="pstat-lbl">Days modeled</div></div>
-                <div><div className="pstat-num">3D</div><div className="pstat-lbl">Building shadows</div></div>
-                <div><div className="pstat-num">NOAA</div><div className="pstat-lbl">Solar data</div></div>
-              </div>
-            </div>
-
             <div className="pcard slate reveal">
               <div className="pcard-tag"><span className="dot"></span>Neighbourhood Intelligence</div>
               <h3>AsliVastu</h3>
@@ -150,6 +139,17 @@ export default function Home() {
                 <div><div className="pstat-num">150+</div><div className="pstat-lbl">Areas covered</div></div>
                 <div><div className="pstat-num">8</div><div className="pstat-lbl">Dimensions</div></div>
                 <div><div className="pstat-num">Govt.</div><div className="pstat-lbl">Data source</div></div>
+              </div>
+            </div>
+
+            <div className="pcard sun reveal">
+              <div className="pcard-tag"><span className="dot"></span>Solar &amp; Shadow Analysis</div>
+              <h3>SunScout</h3>
+              <p>Drop a pin on any property and watch the sun&apos;s real path arc across it — hour by hour, season by season, rendered against actual 3D building shadows. See exactly when direct light reaches a specific floor.</p>
+              <div className="pcard-stats">
+                <div><div className="pstat-num">365</div><div className="pstat-lbl">Days modeled</div></div>
+                <div><div className="pstat-num">3D</div><div className="pstat-lbl">Building shadows</div></div>
+                <div><div className="pstat-num">NOAA</div><div className="pstat-lbl">Solar data</div></div>
               </div>
             </div>
           </div>
