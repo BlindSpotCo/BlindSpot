@@ -61,10 +61,10 @@ export default function SiteHeader({ homeHref = '/' }) {
           <Link href="/#team">The Team</Link>
         </div>
         <div className="nav-cta">
-          <a href="https://sun-scout.com" target="_blank" rel="noopener" className="btn">
+          <a href="https://sun-scout.com" target="_blank" rel="noopener" className="btn nav-tool-btn">
             <span className="btn-dot d-sun"></span>SunScout
           </a>
-          <a href="https://aslivastu.com" target="_blank" rel="noopener" className="btn">
+          <a href="https://aslivastu.com" target="_blank" rel="noopener" className="btn nav-tool-btn">
             <span className="btn-dot d-slate"></span>AsliVastu
           </a>
           {checkedAuth && (
@@ -100,6 +100,12 @@ export default function SiteHeader({ homeHref = '/' }) {
           <Link href="/property-score" onClick={closeMobile}>Property Score</Link>
           <Link href="/#why" onClick={closeMobile}>Why BlindSpot</Link>
           <Link href="/#team" onClick={closeMobile}>The Team</Link>
+          <a href="https://sun-scout.com" target="_blank" rel="noopener" onClick={closeMobile} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span className="btn-dot d-sun"></span>SunScout
+          </a>
+          <a href="https://aslivastu.com" target="_blank" rel="noopener" onClick={closeMobile} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span className="btn-dot d-slate"></span>AsliVastu
+          </a>
         </div>
       </div>
     </header>
