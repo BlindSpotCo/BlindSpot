@@ -74,7 +74,7 @@ export default function Home() {
             <span className="hero-eyebrow">Property Intelligence</span>
             <h1>Know the place, before you commit.</h1>
             <p className="hero-tagline"><span className="seg sun">One pin</span><span className="sep"></span><span className="seg slate">Two answers</span></p>
-            <p className="hero-sub">Drop a pin. See exactly how sunlight moves through the unit, and exactly what the neighbourhood around it is really like. Real solar geometry. Real government records. No broker spin.</p>
+            <p className="hero-sub">Drop a pin. See exactly what the neighbourhood around it is really like, and exactly how sunlight moves through the unit. Real government records. Real solar geometry. No broker spin.</p>
             <div className="hero-ctas">
               <Link href="/property-score" className="btn btn-lg btn-cta">Uncover Your BlindSpot →</Link>
             </div>
