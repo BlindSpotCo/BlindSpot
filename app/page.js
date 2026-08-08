@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import SiteHeader from '@/components/SiteHeader';
 import HowItWorks from '@/components/HowItWorks';
-import HeroIllustration from '@/components/HeroIllustration';
+import HeroMap from '@/components/HeroMap';
 
 export default function Home() {
   // Auth state, scroll-reveal and the mobile menu all now live in
@@ -68,7 +68,7 @@ export default function Home() {
       <SiteHeader />
 
       <section className="hero">
-        <div className="hero-bg" aria-hidden="true"></div>
+        <HeroMap />
 
         <div className="wrap hero-grid">
           <div className="hero-content">
@@ -83,8 +83,20 @@ export default function Home() {
           </div>
 
           <div className="hero-visual">
-            <div className="hero-illustration-wrap">
-              <HeroIllustration />
+            {/* Pin drops onto the map on load, ripples spread from where it
+                lands, and the card fades in just after -- so the card reads
+                as the result of dropping the pin, not decoration beside it.
+                Desktop only (hidden below 900px in globals.css), where the
+                card is centred and there's no room for it to land cleanly. */}
+            <div className="hero-drop" aria-hidden="true">
+              <span className="hero-ring hero-ring-1" />
+              <span className="hero-ring hero-ring-2" />
+              <span className="hero-ring hero-ring-3" />
+              <svg className="hero-drop-pin" viewBox="0 0 48 62">
+                <path d="M24 0C10.7 0 0 10.6 0 23.7 0 41.5 24 62 24 62s24-20.5 24-38.3C48 10.6 37.3 0 24 0z" fill="var(--slate)" />
+                <circle cx="24" cy="23" r="8.6" fill="var(--bg)" />
+              </svg>
+              <span className="hero-drop-shadow" />
             </div>
             <div className="hero-card-wrap">
               <span className="hero-visual-tag">Live preview</span>
