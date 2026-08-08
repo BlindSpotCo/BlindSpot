@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import SiteHeader from '@/components/SiteHeader';
 import HowItWorks from '@/components/HowItWorks';
+import HeroIllustration from '@/components/HeroIllustration';
 
 export default function Home() {
   // Auth state, scroll-reveal and the mobile menu all now live in
@@ -82,6 +83,7 @@ export default function Home() {
           </div>
 
           <div className="hero-visual">
+            <HeroIllustration />
             <span className="hero-visual-tag">Live preview</span>
             <div className="hero-score-card">
               <div className="hsc-head">
