@@ -199,7 +199,12 @@ export async function POST(req) {
   const safeFacing = escapeHtml(facing);
   const safeFloor = escapeHtml(floor);
   const safeFacingAssumptionNote = facingAssumptionNote ? escapeHtml(facingAssumptionNote) : undefined;
-  const safeAnalysis = escapeHtml(analysis);
+  // Safety net: the prompt in analyse/route.js tells Gemini never to use
+  // emoji, but model instructions aren't guaranteed -- strip any pictograph
+  // emoji from the AI's own text server-side so the report can't end up
+  // with them even if the model doesn't comply.
+  const stripEmoji = (s) => s ? s.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F1E6}-\u{1F1FF}\u{2B00}-\u{2BFF}]/gu, '').replace(/[ \t]{2,}/g, ' ') : s;
+  const safeAnalysis = stripEmoji(escapeHtml(analysis));
   if (summary?.solarFeasibility?.verdict) summary.solarFeasibility.verdict = escapeHtml(summary.solarFeasibility.verdict);
   if (summary?.buildingHeightNote?.sentence) summary.buildingHeightNote.sentence = escapeHtml(summary.buildingHeightNote.sentence);
 
@@ -288,6 +293,39 @@ export async function POST(req) {
       detail: `Schools ${schools ?? '—'}, crime ${crime ?? '—'}`, color: gradeColor(avg),
     });
   }
+  // Elderly Suitability -- derived from floor (lift dependency risk on
+  // higher floors), roads score (walkability proxy), and crime score
+  // (safety). No medical-facility-proximity data exists in AsliVastu yet,
+  // so that gap is named honestly in the detail line rather than implied.
+  if (hasNeighbourhood && (avRecord.scores?.roads != null || avRecord.scores?.crime != null)) {
+    const roadsScore = avRecord.scores?.roads, crimeScoreForElderly = avRecord.scores?.crime;
+    const floorN2 = parseInt(floor) || 0;
+    const floorPenalty = floorN2 <= 2 ? 0 : floorN2 <= 6 ? 10 : 20;
+    const elderlyBase = ((roadsScore ?? 55) + (crimeScoreForElderly ?? 55)) / 2;
+    const elderlyScore = Math.max(0, elderlyBase - floorPenalty);
+    scorecardCards.push({
+      label: 'Elderly Suitability',
+      value: elderlyScore >= 70 ? 'Good' : elderlyScore >= 45 ? 'Fair' : 'Limited',
+      detail: `Floor ${floorN2}${roadsScore != null ? `, roads ${roadsScore}` : ''}${crimeScoreForElderly != null ? `, crime ${crimeScoreForElderly}` : ''} — medical proximity not yet mapped`,
+      color: gradeColor(elderlyScore),
+    });
+  }
+  // Indoor Plants -- most houseplants want consistent moderate light, not
+  // extremes; too little usable sun struggles to sustain them, too much
+  // (especially on hot-facing units) risks scorching/drying. Air quality
+  // factors in where available since it affects plant health too.
+  if (summary?.solarFeasibility) {
+    const avgH = summary.solarFeasibility.avgUsableHours;
+    const airScoreForPlants = avRecord?.scores?.air;
+    let plantsValue, plantsColor;
+    if (avgH >= 2 && avgH <= 8) { plantsValue = 'Good'; plantsColor = GOOD; }
+    else if (avgH > 8) { plantsValue = 'Fair — may need shading'; plantsColor = OK; }
+    else { plantsValue = 'Limited — low light'; plantsColor = OK; }
+    if (airScoreForPlants != null && airScoreForPlants < 50 && plantsColor === GOOD) { plantsValue = 'Fair'; plantsColor = OK; }
+    const plantsDetailParts = [`${avgH}h/day avg light`];
+    if (airScoreForPlants != null) plantsDetailParts.push(`air quality ${airScoreForPlants}`);
+    scorecardCards.push({ label: 'Indoor Plants', value: plantsValue, detail: plantsDetailParts.join(' · '), color: plantsColor });
+  }
   if (summary?.monthlySummary) {
     const hours = summary.monthlySummary.map(m => m.usableHours);
     const zeroMonths = summary.monthlySummary.filter(m => m.usableHours === 0);
@@ -316,7 +354,9 @@ export async function POST(req) {
       color: WINE,
     });
   }
-  scorecardCards.push({ label: 'Rental Appeal', value: 'Needs data', detail: 'Not yet computed by BlindSpot', color: DIM });
+  // Rental Appeal card removed -- nothing in BlindSpot actually computes
+  // rental data yet, and a permanent "Needs data" placeholder wasn't wanted
+  // in the scorecard.
   if (windSub) {
     scorecardCards.push({
       label: 'Ventilation',
@@ -368,9 +408,9 @@ export async function POST(req) {
 
   const VERDICT_BADGE = {
     'Prime Pick': { text: 'RECOMMENDED', color: GOOD },
-    'Hidden Gem': { text: 'GOOD UNIT, WEAKER AREA', color: OK },
-    'Location Play': { text: 'GOOD AREA, WEAKER UNIT', color: OK },
-    'Reconsider': { text: 'RECONSIDER', color: POOR },
+    'Hidden Gem': { text: 'RECOMMENDED WITH CAUTION', color: OK },
+    'Location Play': { text: 'RECOMMENDED WITH CAUTION', color: OK },
+    'Reconsider': { text: 'NOT RECOMMENDED', color: POOR },
   };
   const badge = verdictLabel ? (VERDICT_BADGE[verdictLabel] || { text: escapeHtml(verdictLabel).toUpperCase(), color: SUN }) : null;
 
@@ -458,7 +498,7 @@ export async function POST(req) {
     <!-- Honesty line: real OSM data-completeness check, not a canned disclaimer -->
     ${summary.buildingHeightNote ? `
     <div style="display:flex;gap:8px;align-items:flex-start;background:#FBF8F1;border:1px dashed ${LINE};padding:11px 15px;margin-bottom:24px;">
-      <span style="font-size:13px;line-height:1.5;">📐</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${DIM}" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-top:2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="11"/><circle cx="12" cy="7.5" r="0.5" fill="${DIM}"/></svg>
       <div style="font-size:11.5px;color:${DIM};line-height:1.6;">${summary.buildingHeightNote.sentence}</div>
     </div>` : ''}
   ` : '';
@@ -488,9 +528,11 @@ export async function POST(req) {
       </div>`;
   })() : '';
 
+  const PIN_SVG = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:-1px;"><path d="M12 2C7.58 2 4 5.58 4 10c0 5.25 8 12 8 12s8-6.75 8-12c0-4.42-3.58-8-8-8zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg>`;
+
   const labelPill = reportLabel ? `
     <div style="display:inline-flex;align-items:center;gap:7px;background:${GRADIENT};color:#fff;font-size:12.5px;font-weight:700;padding:7px 16px;margin-bottom:14px;box-shadow:0 4px 14px rgba(107,36,48,0.25);">
-      📍 ${safeReportLabel}
+      ${PIN_SVG} ${safeReportLabel}
     </div>` : '';
 
   // Combined BlindSpot score / area / unit stat row -- only shown when this
@@ -592,6 +634,21 @@ export async function POST(req) {
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${SUN}" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4.5"/><line x1="12" y1="19.5" x2="12" y2="22"/><line x1="2" y1="12" x2="4.5" y2="12"/><line x1="19.5" y1="12" x2="22" y2="12"/></svg>
         <h2 style="font-size:16px;font-weight:800;color:${INK};font-family:${DISPLAY};">${hasNeighbourhood ? 'Sun &amp; Shadow Analysis' : 'Summary'} — Floor ${safeFloor}, ${safeFacing}-facing</h2>
       </div>
+      ${summary?.solarFeasibility ? `
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:20px;">
+        <div style="background:${CARD};border:1px solid ${LINE};padding:12px 16px;flex:1;min-width:130px;display:flex;align-items:center;gap:10px;">
+          <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${GOOD};flex-shrink:0;"></span>
+          <div><div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.06em;">Best Months</div><div style="font-size:12.5px;font-weight:700;color:${INK};">${summary.solarFeasibility.bestMonths.join(', ')}</div></div>
+        </div>
+        <div style="background:${CARD};border:1px solid ${LINE};padding:12px 16px;flex:1;min-width:130px;display:flex;align-items:center;gap:10px;">
+          <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${POOR};flex-shrink:0;"></span>
+          <div><div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.06em;">Worst Months</div><div style="font-size:12.5px;font-weight:700;color:${INK};">${summary.solarFeasibility.worstMonths.join(', ')}</div></div>
+        </div>
+        <div style="background:${CARD};border:1px solid ${LINE};padding:12px 16px;flex:1;min-width:130px;display:flex;align-items:center;gap:10px;">
+          <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${SUN};flex-shrink:0;"></span>
+          <div><div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.06em;">Daily Average</div><div style="font-size:12.5px;font-weight:700;color:${INK};">${summary.solarFeasibility.avgUsableHours}h usable sun</div></div>
+        </div>
+      </div>` : ''}
       ${formattedAnalysis}
       ${sunBarChart}
       ${summary?.solarFeasibility ? `<div style="font-size:11px;color:${DIM};">Best months: ${summary.solarFeasibility.bestMonths.join(', ')} · Worst months: ${summary.solarFeasibility.worstMonths.join(', ')}</div>` : ''}
@@ -619,7 +676,7 @@ export async function POST(req) {
     <span id="pdf-status" style="font-size:12px;color:${DIM};max-width:260px;text-align:right;"></span>
     <button id="back-to-sunscout-btn" style="background:#fff;color:${WINE};border:1px solid ${WINE};padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;">← Close</button>
     <button id="print-btn" style="background:${CARD};color:${MUTE};border:1px solid ${LINE};padding:10px 16px;font-size:13px;cursor:pointer;">Print</button>
-    <button id="download-pdf-btn" style="background:${GRADIENT};color:#fff;border:none;padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(107,36,48,0.3);">⬇ Download PDF</button>
+    <button id="download-pdf-btn" style="background:${GRADIENT};color:#fff;border:none;padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(107,36,48,0.3);display:inline-flex;align-items:center;gap:7px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg>Download PDF</button>
     <button onclick="window.close()" style="background:${CARD};color:${MUTE};border:1px solid ${LINE};padding:10px 18px;font-size:14px;cursor:pointer;">Close</button>
   </div>
 
@@ -638,7 +695,7 @@ export async function POST(req) {
           <h1 style="font-size:27px;font-weight:800;color:${INK};margin:0;font-family:${DISPLAY};letter-spacing:-.01em;">${safeAddress}</h1>
           ${badge ? `<span style="background:${badge.color};color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:5px 12px;text-transform:uppercase;">${badge.text}</span>` : ''}
         </div>
-        <div style="font-size:11px;color:${DIM};">📍 ${parseFloat(lat).toFixed(5)}°N, ${parseFloat(lon).toFixed(5)}°E · ${date}</div>
+        <div style="font-size:11px;color:${DIM};display:flex;align-items:center;gap:5px;"><span style="color:${DIM};">${PIN_SVG}</span>${parseFloat(lat).toFixed(5)}°N, ${parseFloat(lon).toFixed(5)}°E · ${date}</div>
       </div>
 
       <div style="display:flex;gap:14px;margin-bottom:28px;flex-wrap:wrap;">

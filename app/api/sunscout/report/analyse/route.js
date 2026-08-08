@@ -116,6 +116,7 @@ You also have ${screenshots.length} screenshots of the actual 3D map at this loc
 Write personally, not clinically — like a knowledgeable friend giving honest advice, not a data report reciting fields. Address the reader as "you" where it reads naturally. Be thorough and specific, not brief. This report is a defensible artifact a buyer will rely on — do not compress away detail to save space, and do not pad it with generic real-estate filler that could apply to any property.
 
 FORMATTING RULES (follow exactly, every time, regardless of location):
+- Never use emoji, anywhere, in any section, under any circumstances — not as bullet markers, not as decoration, not inline in a sentence. Plain text only.
 - Start each section heading on its own line as "N. TITLE" (plain text, no ** bold markers, no # markdown), using the exact section numbers given below.
 - Use plain "- " for bullet points, not "*".
 - Do not use markdown bold (**) anywhere except to emphasize a single key figure inline.
