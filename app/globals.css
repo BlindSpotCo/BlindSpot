@@ -216,15 +216,19 @@
     overflow:hidden;
     background:var(--bg);
   }
-  /* Headroom for the pin + its ripple rings WITHOUT moving any hero
-     content. They're positioned above the score card and the rings expand
-     outward, so plain `overflow:hidden` would shave the top off them.
-     `overflow:clip` clips identically to hidden except it honours
-     overflow-clip-margin, which lets the hero's own decoration paint a
-     little beyond the box while everything else still clips exactly as
-     before. Padding stays untouched, so hero layout is unchanged. */
+  /* Headroom for the hero illustration WITHOUT moving any hero content.
+     The building/sun scene is positioned well above the score card, and
+     plain `overflow:hidden` would cut off whatever pokes past the hero's
+     top edge -- which is how the sun went missing twice. An earlier fix
+     added ~90px of padding-top here instead, but that shoved the
+     headline, card and everything else down the page, which was worse
+     than the problem it solved. `overflow:clip` clips identically to
+     hidden except it honours overflow-clip-margin, which lets the
+     illustration paint up to 260px beyond the box while everything else
+     still clips exactly as before. Padding stays untouched, so the hero's
+     layout is unchanged. */
   @media (min-width:901px){
-    .hero{ overflow:clip; overflow-clip-margin:200px }
+    .hero{ overflow:clip; overflow-clip-margin:260px }
   }
 
   /* ---- Full-bleed city map (components/HeroMap.js) ----
@@ -320,52 +324,49 @@
   .coord-readout .blink{width:5px; height:5px; background:var(--slate); animation:blink 1.4s steps(1) infinite}
   @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
 
-  /* ---- Hero visual: pin drop + product-score card ----
-     On load the pin falls onto the map, ripple rings spread from where it
-     lands, and the card fades in just after -- so the card reads as the
-     result of dropping the pin rather than decoration sitting beside it.
-     Desktop only: below 900px the card is centred with no room for the
-     pin to land cleanly, so the whole drop is hidden there (the map still
-     shows) rather than being crammed in. */
+  /* ---- Hero visual: building/sun/pin illustration + product-score card ----
+     Sits over the card, anchored to its top-right and layered above it
+     (z-index:2 vs the card's 1). The building's base stays clear above
+     the card's top edge; only the pin at the bottom of the scene drops
+     onto the card, marking the unit the card is scoring. Percentage width
+     so the scene scales with the hero column instead of drifting out of
+     alignment at different desktop widths.
+     `top` is also the number that decides whether the sun survives: .hero
+     clips its overflow, so pushing this further negative eventually cuts
+     the sun off the top (it has happened twice). Re-check it against the
+     scene's height in HeroIllustration.js before increasing it. */
   .hero-visual{ position:relative }
+  .hero-illustration-wrap{
+    position:absolute; top:-206px; right:-28px; width:62%;
+    z-index:2; pointer-events:none;
+  }
+  .hero-illustration-svg{ display:block; width:100%; height:auto; overflow:visible }
+  @media (max-width:900px){ .hero-illustration-wrap{ display:none } }
 
-  .hero-drop{ position:absolute; top:-108px; left:16%; width:0; height:0; z-index:3; pointer-events:none }
-  @media (max-width:900px){ .hero-drop{ display:none } }
-  .hero-drop-pin{
-    position:absolute; left:-24px; top:-62px; width:48px; height:62px;
-    filter:drop-shadow(0 10px 14px rgba(28,24,18,0.3));
-    opacity:0; animation:heroPinDrop .7s cubic-bezier(.3,1.4,.5,1) .35s both;
+  /* On load: the dotted trail draws out from the building (revealed
+     right-to-left, i.e. building -> pin), then the pin drops in at the
+     end of it with a slight overshoot so it reads as landing. */
+  .hero-trail{
+    clip-path:inset(0 0 0 100%);
+    animation:heroTrailDraw .6s ease forwards .25s;
+  }
+  @keyframes heroTrailDraw{ to{ clip-path:inset(0 0 0 0) } }
+  .hero-pin-g{
+    opacity:0; transform-box:fill-box; transform-origin:50% 100%;
+    animation:heroPinDrop .55s cubic-bezier(.34,1.36,.5,1) forwards .8s;
   }
   @keyframes heroPinDrop{
-    0%{ opacity:0; transform:translateY(-90px) scale(.7) }
-    55%{ opacity:1 }
-    100%{ opacity:1; transform:translateY(0) scale(1) }
-  }
-  .hero-drop-shadow{
-    position:absolute; left:-17px; top:-4px; width:34px; height:9px; border-radius:50%;
-    background:rgba(28,24,18,0.22); opacity:0; animation:heroDropShadow .4s ease .95s both;
-  }
-  @keyframes heroDropShadow{ from{ opacity:0; transform:scaleX(.4) } to{ opacity:1; transform:none } }
-  .hero-ring{
-    position:absolute; left:0; top:0; width:26px; height:26px; margin:-13px 0 0 -13px;
-    border-radius:50%; border:1.5px solid var(--slate); opacity:0;
-  }
-  .hero-ring-1{ animation:heroRing 2.8s ease-out 1s infinite }
-  .hero-ring-2{ animation:heroRing 2.8s ease-out 1.9s infinite }
-  .hero-ring-3{ animation:heroRing 2.8s ease-out 2.8s infinite }
-  @keyframes heroRing{
-    0%{ opacity:.55; transform:scale(.5) }
-    100%{ opacity:0; transform:scale(7.5) }
+    from{ opacity:0; transform:translateY(-34px) scale(.92) }
+    60%{ opacity:1 }
+    to{ opacity:1; transform:translateY(0) scale(1) }
   }
 
-  .hero-card-wrap{ position:relative; z-index:1; animation:heroCardIn .6s ease .85s both }
-  @keyframes heroCardIn{ from{ opacity:0; transform:translateY(16px) } to{ opacity:1; transform:none } }
+  .hero-card-wrap{ position:relative; z-index:1 }
 
   @media (prefers-reduced-motion: reduce){
-    .hero-map, .hero-drop-pin, .hero-drop-shadow, .hero-card-wrap{
-      animation:none !important; opacity:1 !important; transform:none !important;
-    }
-    .hero-ring{ display:none }
+    .hero-map{ animation:none !important; opacity:1 !important; transform:none !important }
+    .hero-trail{ clip-path:none; animation:none }
+    .hero-pin-g{ opacity:1; transform:none; animation:none }
   }
 
   .hero-score-card{
