@@ -6,7 +6,7 @@
 // bubble up to the parent via onLocationSelect, since BlindSpot's
 // CombinedScoreFlow owns the actual lat/lon state.
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
 import dynamic from 'next/dynamic';
 import ReportModal from './ReportModal';
 import LiveScoreModal from './LiveScoreModal';
@@ -47,7 +47,14 @@ function getLocalDateStr() {
   return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
 }
 
-export default function SunScoutPanel({ lat, lon, address, onUnitSelected, onLiveScoreResult, onLocationSelect }) {
+const SunScoutPanel = forwardRef(function SunScoutPanel({
+  lat, lon, address, onUnitSelected, onLiveScoreResult, onLocationSelect,
+  // Combined-report context (AsliVastu record + combined/unit scores +
+  // weights) forwarded straight through to ReportModal when the AI Report
+  // is triggered from the Property Score flow via openReport(), rather than
+  // from this panel's own toolbar (that button now lives in UnitVerdict).
+  areaRecord, combinedScore, unitScore, areaWeight, unitWeight, unitSubScores, verdictLabel,
+}, ref) {
   const [targetDate, setTargetDate] = useState(getLocalDateStr);
   const [simTime, setSimTime] = useState(() => {
     const n = new Date();
@@ -67,6 +74,14 @@ export default function SunScoutPanel({ lat, lon, address, onUnitSelected, onLiv
 
   const [showReport, setShowReport] = useState(false);
   const [showLiveScore, setShowLiveScore] = useState(false);
+  const [reportPrefill, setReportPrefill] = useState(null); // { floor, facing } | null
+
+  useImperativeHandle(ref, () => ({
+    openReport(prefill) {
+      setReportPrefill(prefill || null);
+      setShowReport(true);
+    },
+  }), []);
 
   const captureRef = useRef(null);
   const screenshotResolverRef = useRef(null);
@@ -197,12 +212,11 @@ export default function SunScoutPanel({ lat, lon, address, onUnitSelected, onLiv
         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: INK, fontWeight: 700, flexShrink: 0 }}>{simTime}</span>
 
         <div style={{ flex: '1 1 0', minWidth: 4 }} />
-        <button onClick={() => setShowReport(true)} style={{ background: ORG, color: '#fff', border: 'none', borderRadius: 0, padding: '7px 12px', fontWeight: 700, fontSize: 12, cursor: 'pointer', flexShrink: 0 }}>AI Report</button>
         <button onClick={() => setShowLiveScore(true)} style={{ background: INK, color: '#fff', border: 'none', borderRadius: 0, padding: '7px 12px', fontWeight: 700, fontSize: 12, cursor: 'pointer', letterSpacing: '.03em', flexShrink: 0 }}>LIVESCORE</button>
       </div>
 
       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, color: TEXT_SUB, padding: '5px 10px', background: '#FFFBF5', borderBottom: '1px solid rgba(224,123,0,0.08)' }}>
-        Click anywhere on the map to move the pin — the AI Report and LiveScore below use wherever it lands.
+        Click anywhere on the map to move the pin — LiveScore below and the AI Report (further down, once you confirm floor/facing) use wherever it lands.
       </div>
 
       <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>
@@ -228,9 +242,13 @@ export default function SunScoutPanel({ lat, lon, address, onUnitSelected, onLiv
       {showReport && (
         <ReportModal
           lat={lat} lon={lon} tzOffset={tzOffset} address={address || searchQuery || undefined}
-          onClose={() => setShowReport(false)}
+          onClose={() => { setShowReport(false); setReportPrefill(null); }}
           captureScreenshots={captureScreenshots}
           onFloorFacingSubmit={onUnitSelected}
+          areaRecord={areaRecord} combinedScore={combinedScore} unitScore={unitScore}
+          areaWeight={areaWeight} unitWeight={unitWeight}
+          unitSubScores={unitSubScores} verdictLabel={verdictLabel}
+          prefillFloor={reportPrefill?.floor} prefillFacing={reportPrefill?.facing}
         />
       )}
       {showLiveScore && (
@@ -250,4 +268,6 @@ export default function SunScoutPanel({ lat, lon, address, onUnitSelected, onLiv
       `}</style>
     </div>
   );
-}
+});
+
+export default SunScoutPanel;

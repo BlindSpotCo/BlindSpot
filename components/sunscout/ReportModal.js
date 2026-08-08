@@ -19,11 +19,19 @@ const MONO = "'IBM Plex Mono', monospace";
 const SANS = "'Plus Jakarta Sans', sans-serif";
 const DISPLAY = "'Space Grotesk', sans-serif";
 
-export default function ReportModal({ lat, lon, tzOffset, address, onClose, captureScreenshots, onFloorFacingSubmit }) {
-  const [floor, setFloor]     = useState('5');
-  const [facing, setFacing]   = useState('South');
-  const [facingTouched, setFacingTouched] = useState(false);
-  const facingTouchedRef = useRef(false);
+export default function ReportModal({
+  lat, lon, tzOffset, address, onClose, captureScreenshots, onFloorFacingSubmit,
+  // Combined-report context, passed down from UnitVerdict via SunScoutPanel
+  // when this modal is opened from the Property Score flow (as opposed to
+  // SunScout used standalone). When avRecord is present, the generated
+  // report covers the neighbourhood too, not just this unit.
+  areaRecord, combinedScore, unitScore, areaWeight, unitWeight, unitSubScores, verdictLabel,
+  prefillFloor, prefillFacing,
+}) {
+  const [floor, setFloor]     = useState(prefillFloor != null ? String(prefillFloor) : '5');
+  const [facing, setFacing]   = useState(prefillFacing || 'South');
+  const [facingTouched, setFacingTouched] = useState(Boolean(prefillFacing));
+  const facingTouchedRef = useRef(Boolean(prefillFacing));
   const [facingSuggestion, setFacingSuggestion] = useState(null);
   const [facingLoading, setFacingLoading] = useState(true);
   const [facingExpanded, setFacingExpanded] = useState(false);
@@ -77,7 +85,10 @@ export default function ReportModal({ lat, lon, tzOffset, address, onClose, capt
       const analyseRes = await fetch('/api/sunscout/report/analyse', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ screenshots, lat, lon, address: addr, floor, facing, tzOffset }),
+        body: JSON.stringify({
+          screenshots, lat, lon, address: addr, floor, facing, tzOffset,
+          avRecord: areaRecord || undefined, combinedScore, unitScore, areaWeight, unitWeight,
+        }),
       });
       if (!analyseRes.ok) throw new Error('analysis-failed');
       const { analysis, summary } = await analyseRes.json();
@@ -90,13 +101,25 @@ export default function ReportModal({ lat, lon, tzOffset, address, onClose, capt
           lat, lon, tzOffset, address: addr, floor, facing, screenshots, analysis, summary,
           reportLabel: reportLabel || undefined,
           facingAssumptionNote: (!facingTouched && facingSuggestion) ? facingSuggestion.sentence : undefined,
+          avRecord: areaRecord || undefined, combinedScore, unitScore, areaWeight, unitWeight,
+          unitSubScores, verdictLabel,
         }),
       });
       if (!pdfRes.ok) throw new Error('pdf-failed');
       setProgress(100);
 
-      const html = await pdfRes.text();
-      const blob = new Blob([html], { type: 'text/html' });
+      const { mainHtml, galleryHtml } = await pdfRes.json();
+
+      // The gallery (12 screenshots + per-image analysis) is its own blob
+      // with its own URL. The main report links out to it via a
+      // __GALLERY_URL__ placeholder that gets swapped for the real blob URL
+      // here, once we know it -- this is what lets the main report stay
+      // short (no images embedded) while still linking straight to them.
+      const galleryBlob = new Blob([galleryHtml], { type: 'text/html' });
+      const galleryUrl = URL.createObjectURL(galleryBlob);
+      const finalMainHtml = mainHtml.replaceAll('__GALLERY_URL__', galleryUrl);
+
+      const blob = new Blob([finalMainHtml], { type: 'text/html' });
       const url = URL.createObjectURL(blob);
       setReportUrl(url);
     } catch (e) {
@@ -130,14 +153,16 @@ export default function ReportModal({ lat, lon, tzOffset, address, onClose, capt
           <>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
               <div>
-                <div style={{ fontFamily:MONO, fontSize:10, fontWeight:500, color:ORG, letterSpacing:'.14em', marginBottom:6 }}>AI SOLAR REPORT</div>
+                <div style={{ fontFamily:MONO, fontSize:10, fontWeight:500, color:ORG, letterSpacing:'.14em', marginBottom:6 }}>{areaRecord ? 'AI COMBINED REPORT' : 'AI SOLAR REPORT'}</div>
                 <h2 style={{ fontFamily:DISPLAY, fontSize:21, fontWeight:800, color:INK, margin:0 }}>Home Buyer Analysis</h2>
               </div>
               <button onClick={onClose} style={{ background:'none', border:'none', fontSize:18, cursor:'pointer', color:SUB, lineHeight:1, padding:4 }}>✕</button>
             </div>
 
             <p style={{ fontSize:13, color:SUB, lineHeight:1.6, marginBottom:26 }}>
-              We compute precise sun/shadow data for this exact location, capture 12 real screenshots (3 per season) at different times, then use AI to narrate the shadow patterns at your pin location.
+              {areaRecord
+                ? `We combine your AsliVastu neighbourhood score for ${areaRecord.name || areaRecord.pin_code} with precise sun/shadow data for this exact unit — 12 real screenshots (3 per season) — then use AI to write one combined Home Buyer Verdict covering both. The report itself stays short and readable; the 12 images and their analysis sit in a linked gallery.`
+                : 'We compute precise sun/shadow data for this exact location, capture 12 real screenshots (3 per season) at different times, then use AI to narrate the shadow patterns. The images and their analysis open in a linked gallery, keeping the main report short.'}
             </p>
 
             <div style={{ marginBottom:22 }}>

@@ -5,12 +5,13 @@
 // then either a combined AsliVastu+SunScout verdict (if an AsliVastu area
 // was matched) or a SunScout-only Home Comfort Score (if not).
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import SunScoutPanel from '@/components/sunscout/SunScoutPanel';
 
 const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'North-West', 'South-West'];
 
 export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel }) {
+  const sunScoutRef = useRef(null);
   const [floor, setFloor] = useState(null);
   const [facing, setFacing] = useState(null);
   const [capturedFromSS, setCapturedFromSS] = useState(false);
@@ -107,18 +108,26 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
         </div>
         {gpsError && <div style={{ color: '#f87171', fontSize: 11.5, marginBottom: 10 }}>{gpsError}</div>}
         <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 14 }}>
-          Use the <strong style={{ color: 'var(--sun)' }}>AI Report</strong> and <strong style={{ color: 'var(--sun)' }}>LIVESCORE</strong> buttons below for the full sun/shadow analysis and Home Comfort breakdown.
+          Use the <strong style={{ color: 'var(--sun)' }}>LIVESCORE</strong> button below for the Home Comfort breakdown — once you have a verdict below, you can generate the <strong style={{ color: 'var(--sun)' }}>full AI report</strong> covering both the neighbourhood and this unit.
         </div>
 
         {lat && lon && (
           <>
             <div style={{ width: '100%', maxWidth: '100%', border: '1px solid var(--line)', borderRadius: 3, overflow: 'hidden', height: 680 }}>
               <SunScoutPanel
+                ref={sunScoutRef}
                 lat={parseFloat(lat)} lon={parseFloat(lon)}
                 address={addressLabel || areaRecord?.name || ''}
                 onUnitSelected={handleUnitSelected}
                 onLiveScoreResult={handleLiveScoreResult}
                 onLocationSelect={handleLocationSelect}
+                areaRecord={areaRecord}
+                combinedScore={combined?.combinedScore}
+                unitScore={combined?.unit?.score}
+                unitSubScores={combined?.unit?.subScores}
+                verdictLabel={combined?.verdict?.label}
+                areaWeight={areaRecord ? areaWeight / 100 : undefined}
+                unitWeight={areaRecord ? (100 - areaWeight) / 100 : undefined}
               />
             </div>
 
@@ -226,10 +235,20 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               )}
 
               {combined.dataNotes?.length > 0 && (
-                <div style={{ fontSize: 11, color: 'var(--text-dim)', lineHeight: 1.7 }}>
+                <div style={{ fontSize: 11, color: 'var(--text-dim)', lineHeight: 1.7, marginBottom: 20 }}>
                   {combined.dataNotes.map((n, i) => <div key={i}>— {n}</div>)}
                 </div>
               )}
+
+              <button
+                onClick={() => sunScoutRef.current?.openReport({ floor: combined.unit.floor, facing: combined.unit.facing })}
+                style={{
+                  background: 'linear-gradient(90deg, var(--sun), var(--slate))', color: '#fff', border: 'none',
+                  borderRadius: 3, padding: '13px 22px', fontSize: 12.5, fontWeight: 700, cursor: 'pointer',
+                  letterSpacing: '.03em', textTransform: 'uppercase', width: '100%',
+                }}>
+                {combined.area ? 'Generate Full AI Report — Neighbourhood + Unit' : 'Generate AI Report — Unit'}
+              </button>
             </div>
           )}
         </div>
