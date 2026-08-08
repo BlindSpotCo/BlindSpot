@@ -312,13 +312,20 @@
      block of space that the card physically cannot encroach on except
      for the small deliberate overlap below. */
   .hero-visual{ position:relative }
-  /* -20px, deliberately small: the illustration's own geometry puts the
-     ground line (and the pin's tip) at y~372 of a 400-unit-tall viewBox,
-     so this overlaps only the strip below that -- tucking the building's
-     base behind the card for depth while leaving the sun, the building
-     and the pin fully visible. Don't increase this much without moving
-     the ground line in HeroIllustration.js to match. */
-  .hero-illustration-wrap{ position:relative; z-index:0; margin:0 0 -20px; pointer-events:none }
+  /* Absolutely positioned OVER the card, anchored to its top-right, and
+     layered above it (z-index:2 vs the card's 1) -- that stacking is the
+     whole point: the illustration's lower strip is just the pin, which is
+     meant to read as landing ON the card, pointing at the unit the card
+     is scoring. The building's base sits above the card's top edge (see
+     the layout contract in HeroIllustration.js), so nothing but the pin
+     actually covers card content.
+     width is a percentage so the scene scales with the hero column
+     instead of drifting out of alignment at different desktop widths;
+     the negative `top` lifts the building clear above the card. */
+  .hero-illustration-wrap{
+    position:absolute; top:-196px; right:-8px; width:64%;
+    z-index:2; pointer-events:none;
+  }
   .hero-illustration-svg{ display:block; width:100%; height:auto }
   @media (max-width:900px){ .hero-illustration-wrap{ display:none } }
   .hero-card-wrap{ position:relative; z-index:1 }
@@ -353,8 +360,12 @@
   .hsc-item-sub{ display:block; font-family:'IBM Plex Mono',monospace; font-weight:500; font-size:11.5px; letter-spacing:.05em; color:var(--text-dim); margin-top:3px }
   .hsc-foot{ font-size:12.5px; color:var(--text-mute); line-height:1.6; border-top:1px solid var(--line-soft); padding-top:14px }
 
+  /* Sits top-LEFT, not top-right: the hero illustration's building now
+     occupies the card's top-right corner, and this tag used to collide
+     with it there. (Mobile already anchored it left, below -- desktop now
+     matches instead of contradicting it.) */
   .hero-visual-tag{
-    position:absolute; top:-16px; right:22px; z-index:2; background:var(--ink); color:var(--paper);
+    position:absolute; top:-16px; left:22px; z-index:2; background:var(--ink); color:var(--paper);
     font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase;
     padding:7px 12px; border-radius:20px; box-shadow:0 10px 24px -12px rgba(28,24,18,0.5);
   }
