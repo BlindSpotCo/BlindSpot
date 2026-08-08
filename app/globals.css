@@ -417,21 +417,16 @@
      step — the sticky panel swaps in sync via JS (see HowItWorks.js). */
   .howworks-scroll{display:grid; grid-template-columns:1.05fr 1fr; gap:48px; align-items:start; position:relative}
 
-  /* Per-step inline panel (see .howworks-mobile-panel in HowItWorks.js) --
-     hidden on desktop, where the single shared .howworks-panel-sticky
-     already shows the right card via scroll-position tracking. */
-  .howworks-mobile-panel{ display:none }
-
   @media (max-width:900px){
     .howworks-scroll{grid-template-columns:1fr; gap:0}
-    /* The shared sticky panel only ever shows AsliVastu on mobile -- the
-       scroll-tracking that swaps it is deliberately desktop-only (see the
-       matchMedia check in HowItWorks.js), so below 900px it would
-       otherwise sit there permanently on step 1's card while steps 2 and
-       3 never got a visual at all. Hidden entirely in favour of each
-       step's own inline panel now. */
+    /* No visual card on mobile at all (deliberate call, not a bug) -- the
+       shared sticky panel only ever showed AsliVastu here since the
+       scroll-tracking that swaps it is desktop-only (see the matchMedia
+       check in HowItWorks.js), and a per-step inline version of it was
+       tried and then explicitly dropped in favour of tabs + copy only.
+       Kept hidden rather than removing the rule, since it's one line and
+       documents the decision for next time. */
     .howworks-panel-sticky{ display:none !important }
-    .howworks-mobile-panel{ display:block; margin:20px 0 4px }
     .howworks-step-block{min-height:0 !important; opacity:1 !important; padding:0 0 32px !important}
   }
 
@@ -599,9 +594,11 @@
 
   .av-brandline{ font-size:11px; font-weight:600; letter-spacing:.14em; color:rgba(237,237,236,0.65); margin-bottom:12px }
   .av-sheet-label{ font-size:12px; font-weight:600; letter-spacing:.12em; color:#B23A46; margin-bottom:4px }
+  /* No mobile breakpoints needed here (there used to be two) -- the
+     card this belongs to is hidden entirely below 901px now (see
+     .howworks-panel-sticky above), so this only ever renders at desktop
+     sizes where the fixed 38px is correct. */
   .av-city{ font-family:'Anton',sans-serif; font-weight:400; font-size:38px; line-height:1.02; color:#fff; margin-bottom:14px }
-  @media (max-width:900px){ .av-city{ font-size:30px } }
-  @media (max-width:480px){ .av-city{ font-size:28px } }
 
   .av-score-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px }
   .av-score-block, .av-verdict-block{ border:1px solid rgba(255,255,255,0.14); border-radius:4px; padding:11px 16px }
@@ -726,39 +723,15 @@
   /* AI Summary sits side by side with LiveScore, like the real product's
      LiveScore / AI Solar Report split — not a separate floating note or a
      tab you have to click away to. */
+  /* No mobile stacking breakpoint needed here (there used to be one, plus
+     a whole font-rescale pass to go with it) -- this card is hidden
+     entirely below 901px now (see .howworks-panel-sticky above), so the
+     fixed 172px column is only ever seen at desktop widths where it was
+     always fine. */
   .ss-body{ display:grid; grid-template-columns:1fr 172px; column-gap:20px }
   .ss-ai-col{
     padding:2px 0 0 20px; border-left:1px dashed rgba(28,24,18,0.18);
     display:flex; flex-direction:column; align-items:flex-start;
-  }
-  /* The fixed 172px column plus the main column's own real minimum width
-     (the 4-across facing grid alone needs ~200px+ to stay legible) adds up
-     to well over 390px -- more than the entire card gets on any phone in
-     the 320-430px range, guaranteed horizontal overflow on every one of
-     them. Stacks to one column here instead; the AI Summary pane drops
-     below LiveScore with a top divider instead of a left one. 700px is a
-     deliberately generous threshold (comfortably covers phones in both
-     orientations and small tablets), not just the usual 640px, because
-     this specific overflow starts well before the usual mobile cutoff. */
-  @media (max-width:700px){
-    .ss-body{ grid-template-columns:1fr; column-gap:0 }
-    .ss-ai-col{
-      padding:16px 0 0; margin-top:4px;
-      border-left:none; border-top:1px dashed rgba(28,24,18,0.18);
-    }
-    /* .ss-ai-col's own font sizes (11-12px tag/desc, a 12px button label)
-       were sized for the cramped 172px sidebar it used to be squeezed
-       into. The layout fix above stopped it from overflowing, but left it
-       reading as noticeably smaller/tighter than everything else on the
-       page once it's a full-width section instead of a sliver -- brought
-       in line with the rest of the mobile scale (roughly 14-15px body,
-       12.5-13px labels) instead of the old sidebar-only sizes. */
-    .ss-ai-col svg{ width:18px; height:18px; margin-bottom:12px }
-    .ss-ai-col-tag{ font-size:12.5px }
-    .ss-ai-col-heading{ font-size:19px }
-    .ss-ai-col-desc{ font-size:14px; line-height:1.6; margin:10px 0 18px }
-    .ss-ai-col-cta{ font-size:14.5px; padding:13px 6px }
-    .ss-ai-col-meta{ font-size:11px }
   }
   .ss-ai-col svg{ color:#E07B00; margin-bottom:10px }
   .ss-ai-col-tag{ color:#E07B00; font-size:11px; font-weight:700; letter-spacing:.1em; margin-bottom:6px }
@@ -924,17 +897,10 @@
   .howworks-step-block h3{ font-size:19px; margin-bottom:10px }
   .howworks-step-block p{ font-size:14px; line-height:1.65; margin-bottom:16px }
   .howworks-bullets li{ font-size:13.5px; margin-bottom:6px }
-  /* Was 18px 18px 16px -- reads as noticeably tighter than intended once
-     paired with the smaller mobile type scale above; this splits the
-     difference between that and the desktop 24px instead of matching
-     either one exactly. */
-  .howworks-panel{ padding:22px 20px 20px }
-  /* .ss-map-strip's negative margin bleeds it to the card's own edges, so
-     it has to match whatever the card's padding actually is at this width
-     -- it's hardcoded to the desktop 24px above, and this rule keeps it in
-     sync with the padding directly above so the map never overhangs the
-     card edge. */
-  .ss-map-strip{ margin:-22px -20px 20px }
+  /* No .howworks-panel / .ss-map-strip mobile overrides needed here
+     anymore -- both only ever applied to the visual card that used to
+     render inline per-step, which is gone now (tabs + copy only below
+     901px, see .howworks-panel-sticky above). */
 
   .why-row{ padding:22px 16px }
   .why-title{ font-size:15px }

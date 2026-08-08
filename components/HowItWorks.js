@@ -404,44 +404,36 @@ export default function HowItWorks() {
                 always, by construction — the sync problem that broke every
                 earlier version simply doesn't exist here. */}
             <div className="howworks-steps">
-              {STEPS.map((s, i) => {
-                // Mobile only (see .howworks-mobile-panel in globals.css,
-                // hidden on desktop where the shared sticky panel already
-                // covers this). Desktop swaps ONE shared panel via scroll
-                // position; that tracking is deliberately off below 901px
-                // (see the matchMedia check above), so without this, mobile
-                // showed AsliVastu's card once, statically, above all three
-                // steps' text -- SunScout's and the verdict card never
-                // rendered at all. Each step now carries its own correct
-                // card inline instead of relying on scroll-driven swapping.
-                const StepPanel = PANELS[s.id];
-                return (
-                  <div key={s.id} style={{ display: 'contents' }}>
-                    <div className={`hw-route-marker accent-${s.accent}${i <= activeIndex ? ' reached' : ''}${s.id === active ? ' current' : ''}`}>
-                      <span className="hw-route-pin">
-                        <svg viewBox="0 0 22 30" width="14" height="19">
-                          <path d="M11 0C4.9 0 0 4.9 0 11c0 8.2 11 19 11 19s11-10.8 11-19C22 4.9 17.1 0 11 0z" />
-                          <circle cx="11" cy="11" r="4.2" className="hw-route-pin-hole" />
-                        </svg>
-                      </span>
-                    </div>
-                    <div
-                      ref={(el) => { stepRefs.current[s.id] = el; }}
-                      className={`howworks-step-block${active === s.id ? ' active' : ''}${i === 0 ? ' first' : ''}${i === STEPS.length - 1 ? ' last' : ''}`}
-                    >
-                      <div className={`mono howworks-step-eyebrow accent-${s.accent}`}>{s.eyebrow}</div>
-                      <h3>{s.heading}</h3>
-                      <div className="howworks-mobile-panel"><StepPanel /></div>
-                      <p>{s.copy}</p>
-                      <ul className="howworks-bullets">
-                        {s.bullets.map((b) => (
-                          <li key={b}>{b}</li>
-                        ))}
-                      </ul>
-                    </div>
+              {/* No per-step visual card on mobile (removed -- see globals.css
+                  history for the .howworks-mobile-panel mechanism this used
+                  to use). Desktop still shows the real thing via the shared
+                  sticky panel (scroll-position-driven, see the matchMedia
+                  check above); on mobile it's tabs + copy only now. */}
+              {STEPS.map((s, i) => (
+                <div key={s.id} style={{ display: 'contents' }}>
+                  <div className={`hw-route-marker accent-${s.accent}${i <= activeIndex ? ' reached' : ''}${s.id === active ? ' current' : ''}`}>
+                    <span className="hw-route-pin">
+                      <svg viewBox="0 0 22 30" width="14" height="19">
+                        <path d="M11 0C4.9 0 0 4.9 0 11c0 8.2 11 19 11 19s11-10.8 11-19C22 4.9 17.1 0 11 0z" />
+                        <circle cx="11" cy="11" r="4.2" className="hw-route-pin-hole" />
+                      </svg>
+                    </span>
                   </div>
-                );
-              })}
+                  <div
+                    ref={(el) => { stepRefs.current[s.id] = el; }}
+                    className={`howworks-step-block${active === s.id ? ' active' : ''}${i === 0 ? ' first' : ''}${i === STEPS.length - 1 ? ' last' : ''}`}
+                  >
+                    <div className={`mono howworks-step-eyebrow accent-${s.accent}`}>{s.eyebrow}</div>
+                    <h3>{s.heading}</h3>
+                    <p>{s.copy}</p>
+                    <ul className="howworks-bullets">
+                      {s.bullets.map((b) => (
+                        <li key={b}>{b}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
