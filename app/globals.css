@@ -416,9 +416,22 @@
      scroll distance to trigger against, and dims when it's not the active
      step — the sticky panel swaps in sync via JS (see HowItWorks.js). */
   .howworks-scroll{display:grid; grid-template-columns:1.05fr 1fr; gap:48px; align-items:start; position:relative}
+
+  /* Per-step inline panel (see .howworks-mobile-panel in HowItWorks.js) --
+     hidden on desktop, where the single shared .howworks-panel-sticky
+     already shows the right card via scroll-position tracking. */
+  .howworks-mobile-panel{ display:none }
+
   @media (max-width:900px){
     .howworks-scroll{grid-template-columns:1fr; gap:0}
-    .howworks-panel-sticky{position:relative !important; top:0 !important; margin-bottom:32px}
+    /* The shared sticky panel only ever shows AsliVastu on mobile -- the
+       scroll-tracking that swaps it is deliberately desktop-only (see the
+       matchMedia check in HowItWorks.js), so below 900px it would
+       otherwise sit there permanently on step 1's card while steps 2 and
+       3 never got a visual at all. Hidden entirely in favour of each
+       step's own inline panel now. */
+    .howworks-panel-sticky{ display:none !important }
+    .howworks-mobile-panel{ display:block; margin:20px 0 4px }
     .howworks-step-block{min-height:0 !important; opacity:1 !important; padding:0 0 32px !important}
   }
 
