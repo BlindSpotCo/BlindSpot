@@ -27,11 +27,17 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  /* Safety net against horizontal scroll on mobile -- any element that
-     overflows its container width (long unbreakable text, a flex row that
-     didn't get squeezed correctly, etc.) clips instead of pushing the
-     whole page wider than the viewport. */
-  html, body{ overflow-x:hidden; max-width:100vw; }
+  /* NOTE: deliberately NOT setting overflow-x:hidden on html/body here.
+     That looks like a harmless horizontal-scroll safety net, but setting
+     overflow-x to anything but `visible` on html/body turns the viewport
+     itself into a scroll container in most browsers -- which breaks
+     `position:sticky` for every descendant (the How It Works card on
+     desktop, .howworks-panel-sticky, relies on the viewport being the
+     sticky positioning context). This exact rule broke that "cards"
+     scroll animation on desktop once already -- don't re-add it here. If
+     horizontal overflow shows up again, fix the specific element that's
+     overflowing (see .nav-cta .nav-user below) instead of hiding it at
+     the html/body level. */
   /* 500 as the base weight for every paragraph/body element site-wide —
      Inter's default 400 was the other big reason body copy read as thin.
      UI elements (buttons, nav links, badges, etc.) already declare their
