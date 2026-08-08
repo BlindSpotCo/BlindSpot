@@ -746,6 +746,19 @@
       padding:16px 0 0; margin-top:4px;
       border-left:none; border-top:1px dashed rgba(28,24,18,0.18);
     }
+    /* .ss-ai-col's own font sizes (11-12px tag/desc, a 12px button label)
+       were sized for the cramped 172px sidebar it used to be squeezed
+       into. The layout fix above stopped it from overflowing, but left it
+       reading as noticeably smaller/tighter than everything else on the
+       page once it's a full-width section instead of a sliver -- brought
+       in line with the rest of the mobile scale (roughly 14-15px body,
+       12.5-13px labels) instead of the old sidebar-only sizes. */
+    .ss-ai-col svg{ width:18px; height:18px; margin-bottom:12px }
+    .ss-ai-col-tag{ font-size:12.5px }
+    .ss-ai-col-heading{ font-size:19px }
+    .ss-ai-col-desc{ font-size:14px; line-height:1.6; margin:10px 0 18px }
+    .ss-ai-col-cta{ font-size:14.5px; padding:13px 6px }
+    .ss-ai-col-meta{ font-size:11px }
   }
   .ss-ai-col svg{ color:#E07B00; margin-bottom:10px }
   .ss-ai-col-tag{ color:#E07B00; font-size:11px; font-weight:700; letter-spacing:.1em; margin-bottom:6px }
@@ -911,13 +924,17 @@
   .howworks-step-block h3{ font-size:19px; margin-bottom:10px }
   .howworks-step-block p{ font-size:14px; line-height:1.65; margin-bottom:16px }
   .howworks-bullets li{ font-size:13.5px; margin-bottom:6px }
-  .howworks-panel{ padding:18px 18px 16px }
+  /* Was 18px 18px 16px -- reads as noticeably tighter than intended once
+     paired with the smaller mobile type scale above; this splits the
+     difference between that and the desktop 24px instead of matching
+     either one exactly. */
+  .howworks-panel{ padding:22px 20px 20px }
   /* .ss-map-strip's negative margin bleeds it to the card's own edges, so
      it has to match whatever the card's padding actually is at this width
-     -- it's hardcoded to the desktop 24px above, and this rule just
-     dropped that padding to 18px, which would leave the map overhanging
-     the card by 6px on every side otherwise. */
-  .ss-map-strip{ margin:-18px -18px 20px }
+     -- it's hardcoded to the desktop 24px above, and this rule keeps it in
+     sync with the padding directly above so the map never overhangs the
+     card edge. */
+  .ss-map-strip{ margin:-22px -20px 20px }
 
   .why-row{ padding:22px 16px }
   .why-title{ font-size:15px }
