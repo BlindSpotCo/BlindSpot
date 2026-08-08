@@ -216,6 +216,18 @@
     overflow:hidden;
     background:var(--bg);
   }
+  /* Desktop only: extra headroom so the hero illustration's sun can never
+     be clipped by the overflow:hidden above. The illustration is absolutely
+     positioned ~170px above the score card's top edge, and the card is
+     vertically centred in the grid -- when the card happens to be the
+     taller column there is no slack above it, and the top of the scene
+     lands outside the hero box and silently disappears (this is exactly
+     how the sun went missing twice). Pulling the bottom padding in keeps
+     the hero's overall height close to what it was. Mobile keeps its own
+     values from the <=640px block at the end of this file. */
+  @media (min-width:901px){
+    .hero{ padding:190px 0 130px }
+  }
   .hero-bg{
     position:absolute; inset:0; z-index:0; pointer-events:none;
     background-image:radial-gradient(var(--line) 1px, transparent 1px);
@@ -322,12 +334,41 @@
      width is a percentage so the scene scales with the hero column
      instead of drifting out of alignment at different desktop widths;
      the negative `top` lifts the building clear above the card. */
+  /* `top` is the number that decides whether the sun survives: .hero has
+     overflow:hidden, so anything positioned above the hero's own top edge
+     (header height + .hero's padding-top) is silently cut off. The sun
+     was clipped away twice by pushing this too far negative. At -185px
+     the scene's highest point clears the hero's top edge by ~40px at
+     normal desktop heights. Re-check this against the scene's height in
+     HeroIllustration.js before making either number bigger. */
   .hero-illustration-wrap{
-    position:absolute; top:-196px; right:-8px; width:64%;
+    position:absolute; top:-170px; right:-28px; width:62%;
     z-index:2; pointer-events:none;
   }
-  .hero-illustration-svg{ display:block; width:100%; height:auto }
+  .hero-illustration-svg{ display:block; width:100%; height:auto; overflow:visible }
   @media (max-width:900px){ .hero-illustration-wrap{ display:none } }
+
+  /* On load: the dotted trail draws out from the building (revealed
+     right-to-left, i.e. building -> pin), then the pin drops in at the
+     end of it with a slight overshoot so it reads as landing. */
+  .hero-trail{
+    clip-path:inset(0 0 0 100%);
+    animation:heroTrailDraw .6s ease forwards .25s;
+  }
+  @keyframes heroTrailDraw{ to{ clip-path:inset(0 0 0 0) } }
+  .hero-pin-g{
+    opacity:0; transform-box:fill-box; transform-origin:50% 100%;
+    animation:heroPinDrop .55s cubic-bezier(.34,1.36,.5,1) forwards .8s;
+  }
+  @keyframes heroPinDrop{
+    from{ opacity:0; transform:translateY(-34px) scale(.92) }
+    60%{ opacity:1 }
+    to{ opacity:1; transform:translateY(0) scale(1) }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero-trail{ clip-path:none; animation:none }
+    .hero-pin-g{ opacity:1; transform:none; animation:none }
+  }
   .hero-card-wrap{ position:relative; z-index:1 }
   .hero-score-card{
     position:relative; background:var(--paper); border:1px solid var(--line); border-radius:12px;
