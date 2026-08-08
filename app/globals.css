@@ -840,3 +840,48 @@
 .report-row:hover{ background: rgba(28,24,18,0.03) }
 .report-row .label{ font-size:14px; color:var(--ink) }
 .report-row .meta{ font-size:13px; color:var(--text-dim) }
+
+/* ---------- MOBILE TYPE SCALE-DOWN (<=640px) ----------
+   The site-wide text bump above (done to fix the desktop landing page
+   feeling too empty) landed everywhere with no mobile-specific pullback.
+   On a ~390px phone that means every paragraph now wraps to more lines
+   and sits packed closer together than it did before -- reading as
+   cluttered even though nothing is actually overlapping. This block pulls
+   secondary/body copy back down specifically on mobile and tightens the
+   vertical rhythm around it, while leaving the bigger desktop sizes alone.
+   Placed at the very end of the file on purpose: every selector here has
+   the same specificity as its base rule elsewhere in the file, and same-
+   specificity rules resolve by source order -- being last guarantees this
+   wins, instead of silently losing the way the .nav-user hide rule did
+   earlier (see the note above .nav-cta .nav-user for that whole story). */
+@media (max-width:640px){
+  .hero-eyebrow{ font-size:12.5px }
+  .hero-tagline{ font-size:13px }
+  .hero-sub{ font-size:15px; margin-top:14px }
+  .eyebrow{ font-size:12.5px; margin-bottom:12px }
+  .section-head{ margin-bottom:36px }
+  .section-head p{ font-size:14px }
+  .section-inner{ padding:56px 0 }
+
+  .pcard{ padding:28px }
+  .pcard p{ font-size:14px; margin-bottom:20px }
+
+  .howworks-step-eyebrow{ font-size:12.5px; margin-bottom:10px }
+  .howworks-step-block h3{ font-size:19px; margin-bottom:10px }
+  .howworks-step-block p{ font-size:14px; line-height:1.65; margin-bottom:16px }
+  .howworks-bullets li{ font-size:13.5px; margin-bottom:6px }
+  .howworks-panel{ padding:18px 18px 16px }
+
+  .why-row{ padding:22px 16px }
+  .why-title{ font-size:15px }
+  .why-desc{ font-size:14px }
+
+  .team-card{ padding:26px }
+  .team-desc{ font-size:13.5px }
+
+  .footer-links{ font-size:12.5px; gap:16px }
+  .footer-fine{ font-size:11.5px }
+
+  .closing-inner{ padding:64px 0 }
+  .closing-inner p{ font-size:14px; margin-bottom:28px }
+}
