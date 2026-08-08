@@ -216,17 +216,19 @@
     overflow:hidden;
     background:var(--bg);
   }
-  /* Desktop only: extra headroom so the hero illustration's sun can never
-     be clipped by the overflow:hidden above. The illustration is absolutely
-     positioned ~170px above the score card's top edge, and the card is
-     vertically centred in the grid -- when the card happens to be the
-     taller column there is no slack above it, and the top of the scene
-     lands outside the hero box and silently disappears (this is exactly
-     how the sun went missing twice). Pulling the bottom padding in keeps
-     the hero's overall height close to what it was. Mobile keeps its own
-     values from the <=640px block at the end of this file. */
+  /* Headroom for the hero illustration WITHOUT moving any hero content.
+     The illustration is absolutely positioned well above the score card,
+     and `overflow:hidden` above would cut off whatever pokes out past the
+     hero's top edge -- which is how the sun went missing twice. An
+     earlier fix added ~90px of padding-top here instead, but that shoved
+     the headline, card and everything else down the page, which is worse
+     than the problem it solved. `overflow:clip` clips identically to
+     hidden, except it also honours overflow-clip-margin, which lets the
+     illustration paint up to 260px beyond the box while everything else
+     still gets clipped exactly as before. Padding stays untouched, so the
+     hero's layout is pixel-identical to what it was. */
   @media (min-width:901px){
-    .hero{ padding:190px 0 130px }
+    .hero{ overflow:clip; overflow-clip-margin:260px }
   }
   .hero-bg{
     position:absolute; inset:0; z-index:0; pointer-events:none;
@@ -342,7 +344,7 @@
      normal desktop heights. Re-check this against the scene's height in
      HeroIllustration.js before making either number bigger. */
   .hero-illustration-wrap{
-    position:absolute; top:-170px; right:-28px; width:62%;
+    position:absolute; top:-206px; right:-28px; width:62%;
     z-index:2; pointer-events:none;
   }
   .hero-illustration-svg{ display:block; width:100%; height:auto; overflow:visible }
