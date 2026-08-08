@@ -731,6 +731,22 @@
     padding:2px 0 0 20px; border-left:1px dashed rgba(28,24,18,0.18);
     display:flex; flex-direction:column; align-items:flex-start;
   }
+  /* The fixed 172px column plus the main column's own real minimum width
+     (the 4-across facing grid alone needs ~200px+ to stay legible) adds up
+     to well over 390px -- more than the entire card gets on any phone in
+     the 320-430px range, guaranteed horizontal overflow on every one of
+     them. Stacks to one column here instead; the AI Summary pane drops
+     below LiveScore with a top divider instead of a left one. 700px is a
+     deliberately generous threshold (comfortably covers phones in both
+     orientations and small tablets), not just the usual 640px, because
+     this specific overflow starts well before the usual mobile cutoff. */
+  @media (max-width:700px){
+    .ss-body{ grid-template-columns:1fr; column-gap:0 }
+    .ss-ai-col{
+      padding:16px 0 0; margin-top:4px;
+      border-left:none; border-top:1px dashed rgba(28,24,18,0.18);
+    }
+  }
   .ss-ai-col svg{ color:#E07B00; margin-bottom:10px }
   .ss-ai-col-tag{ color:#E07B00; font-size:11px; font-weight:700; letter-spacing:.1em; margin-bottom:6px }
   .ss-ai-col-heading{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:16px; color:#16130E; line-height:1.25 }
@@ -876,14 +892,32 @@
   .section-head p{ font-size:14px }
   .section-inner{ padding:56px 0 }
 
+  /* Hero's desktop padding/gap (96px/168px bottom, 56px grid gap) is tuned
+     for a page with room to spare -- on a phone it just pushes the first
+     real content down and adds scroll distance for nothing. Tightened
+     here only; .hero-grid's own 900px stacking rule is untouched. */
+  .hero{ padding:56px 0 64px }
+  .hero-grid{ gap:36px }
+  .hero-score-card{ padding:24px 22px }
+
   .pcard{ padding:28px }
   .pcard p{ font-size:14px; margin-bottom:20px }
+  /* Safety margin for the smallest phones (320-375px) -- three stat
+     blocks at the desktop 26px gap leaves each one uncomfortably narrow
+     once the card's own padding is subtracted. */
+  .pcard-stats{ gap:16px }
 
   .howworks-step-eyebrow{ font-size:12.5px; margin-bottom:10px }
   .howworks-step-block h3{ font-size:19px; margin-bottom:10px }
   .howworks-step-block p{ font-size:14px; line-height:1.65; margin-bottom:16px }
   .howworks-bullets li{ font-size:13.5px; margin-bottom:6px }
   .howworks-panel{ padding:18px 18px 16px }
+  /* .ss-map-strip's negative margin bleeds it to the card's own edges, so
+     it has to match whatever the card's padding actually is at this width
+     -- it's hardcoded to the desktop 24px above, and this rule just
+     dropped that padding to 18px, which would leave the map overhanging
+     the card by 6px on every side otherwise. */
+  .ss-map-strip{ margin:-18px -18px 20px }
 
   .why-row{ padding:22px 16px }
   .why-title{ font-size:15px }
@@ -894,6 +928,19 @@
 
   .footer-links{ font-size:12.5px; gap:16px }
   .footer-fine{ font-size:11.5px }
+
+  /* Tap targets -- 38px is under the ~44px comfortable minimum, and the
+     nav CTA pill's desktop padding runs a little tight for a thumb once
+     it's the only thing left in the row besides the burger. */
+  .nav-burger{ width:44px; height:44px }
+  .nav-cta .btn-cta-sm{ padding:11px 16px }
+
+  /* Auth/reports pages: same story as the hero -- desktop padding numbers
+     that were never revisited for a narrow screen, not anything wrong
+     structurally. */
+  .auth-page{ padding:16px }
+  .auth-card{ padding:32px 24px }
+  .reports-page{ padding:88px 20px 48px }
 
   .closing-inner{ padding:64px 0 }
   .closing-inner p{ font-size:14px; margin-bottom:28px }
