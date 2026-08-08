@@ -70,7 +70,13 @@
   /* Single child (just .brand) at rest — centers it in the bar instead of
      letting it sit flush left with nothing to balance it. */
   nav.wrap.nav-centered{justify-content:center}
-  .brand{display:flex; align-items:center; gap:11px; text-decoration:none}
+  /* flex-shrink:0 so the logo never gets squeezed by its neighbours in the
+     nav row -- without this, on narrow phones the flex algorithm was
+     shrinking .brand and .nav-cta below their content's rendered width
+     (since white-space:nowrap text can't wrap to relieve the pressure),
+     and the CTA pill's text was rendering on top of the wordmark instead
+     of pushing past it. */
+  .brand{display:flex; align-items:center; gap:11px; text-decoration:none; flex-shrink:0}
   .brand-mark-img{height:24px; width:auto; flex-shrink:0; transition:transform .3s ease}
   .brand:hover .brand-mark-img{transform:rotate(8deg)}
   .brand-word-img{height:12px; width:auto; flex-shrink:0; filter:invert(1) brightness(0.15)}
@@ -135,6 +141,15 @@
   @media (max-width:860px){
     .nav-tool-btn{ display:none; }
     .nav-cta{ gap:8px; }
+  }
+
+  /* Below 640px the row is brand + CTA pill + burger, full stop -- "My
+     Reports"/"Sign out" (or "Sign in") were the widest thing left in
+     .nav-cta and had nothing to shrink into, which is what forced the CTA
+     pill to overlap the logo. Same links are duplicated in
+     .nav-mobile-panel (see SiteHeader.js) so they're still reachable. */
+  @media (max-width:640px){
+    .nav-user, .btn-auth{ display:none; }
   }
 
   /* Mobile nav toggle — hidden on desktop, shown alongside nav-cta below

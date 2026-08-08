@@ -84,6 +84,11 @@ export default function SiteHeader({ homeHref = '/' }) {
             </div>
             <div className="nav-cta">
               <Link href="/property-score" className="btn-cta-sm">Uncover Your BlindSpot</Link>
+              {/* .nav-user / .btn-auth are hidden below 640px (see globals.css) --
+                  "My Reports" + "Sign out" together were the widest thing in
+                  this row and had nowhere to shrink to, which is what pushed
+                  the CTA pill left into the logo. Same auth state is repeated
+                  in the mobile panel below so it's still reachable on phones. */}
               {checkedAuth && (
                 user ? (
                   <div className="nav-user">
@@ -120,6 +125,21 @@ export default function SiteHeader({ homeHref = '/' }) {
             <Link href="/#why" onClick={closeMobile}>Why BlindSpot</Link>
             <Link href="/#team" onClick={closeMobile}>The Team</Link>
             <Link href="/property-score" onClick={closeMobile}>Uncover Your BlindSpot</Link>
+            {checkedAuth && (
+              user ? (
+                <>
+                  <Link href="/my-reports" onClick={closeMobile}>My Reports</Link>
+                  <button
+                    onClick={() => { handleSignOut(); closeMobile(); }}
+                    style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', font: 'inherit', padding: '12px 4px', textAlign: 'left' }}
+                  >
+                    Sign out
+                  </button>
+                </>
+              ) : (
+                <Link href="/login" onClick={closeMobile}>Sign in</Link>
+              )
+            )}
           </div>
         </div>
       )}
