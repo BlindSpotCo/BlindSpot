@@ -250,6 +250,18 @@
     font-size:62px; line-height:1.04; font-weight:700; max-width:680px;
     color:var(--ink);
   }
+  /* Common windowed-browser widths (not fullscreen, not a phone) --
+     62px was wrapping "before you commit." onto an awkward 3rd line here
+     because the hero-grid's left column is narrower than the 680px
+     max-width at these sizes; the max-width caps the box, it doesn't
+     guarantee the column is that wide. Steps down before that happens
+     instead of letting it wrap unpredictably. Ordered before the 900px
+     rule below on purpose -- max-width media queries apply widest-first,
+     so the more specific (narrower) rule has to come later in the file
+     to win at those widths. */
+  @media (max-width:1300px){
+    .hero h1{ font-size:50px }
+  }
   @media (max-width:900px){
     .hero h1{ font-size:46px }
   }
