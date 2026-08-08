@@ -312,7 +312,13 @@
      block of space that the card physically cannot encroach on except
      for the small deliberate overlap below. */
   .hero-visual{ position:relative }
-  .hero-illustration-wrap{ position:relative; z-index:0; margin:0 0 -22px; pointer-events:none }
+  /* -20px, deliberately small: the illustration's own geometry puts the
+     ground line (and the pin's tip) at y~372 of a 400-unit-tall viewBox,
+     so this overlaps only the strip below that -- tucking the building's
+     base behind the card for depth while leaving the sun, the building
+     and the pin fully visible. Don't increase this much without moving
+     the ground line in HeroIllustration.js to match. */
+  .hero-illustration-wrap{ position:relative; z-index:0; margin:0 0 -20px; pointer-events:none }
   .hero-illustration-svg{ display:block; width:100%; height:auto }
   @media (max-width:900px){ .hero-illustration-wrap{ display:none } }
   .hero-card-wrap{ position:relative; z-index:1 }
