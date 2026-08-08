@@ -238,12 +238,23 @@
   }
   .hero-eyebrow::before{content:''; width:22px; height:1px; background:var(--slate)}
 
+  /* Fixed size per breakpoint band, not a continuous vw-scaled clamp() --
+     a fluid clamp() means the headline is a slightly different size at
+     literally every window width, which reads as "the site looks
+     different" when comparing screenshots taken at two arbitrary desktop
+     widths, since nothing else around it (padding, gaps) scales at the
+     same rate. Identical on any window from 900px up to full-width
+     desktop/ultra-wide; steps down only at the two real breakpoints
+     below, same as the rest of the page's layout already does. */
   .hero h1{
-    font-size:clamp(38px,5.8vw,70px); line-height:1.04; font-weight:700; max-width:680px;
+    font-size:62px; line-height:1.04; font-weight:700; max-width:680px;
     color:var(--ink);
   }
+  @media (max-width:900px){
+    .hero h1{ font-size:46px }
+  }
   @media (max-width:480px){
-    .hero h1{ font-size:clamp(32px,10vw,40px) }
+    .hero h1{ font-size:34px }
   }
   .hero-tagline{
     font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:14px; letter-spacing:0.08em; text-transform:uppercase;
@@ -333,7 +344,12 @@
     transition:width .7s ease .15s;
   }
   .section-head.in-view .eyebrow::after{width:34px}
-  .section h2{font-size:clamp(24px,3vw,34px); font-weight:700; max-width:600px; line-height:1.2; color:var(--ink)}
+  /* Fixed per breakpoint, same reasoning as .hero h1 above -- a vw-scaled
+     clamp() here made section headings a slightly different size at every
+     window width instead of a deliberate step at real breakpoints. */
+  .section h2{font-size:34px; font-weight:700; max-width:600px; line-height:1.2; color:var(--ink)}
+  @media (max-width:900px){ .section h2{ font-size:28px } }
+  @media (max-width:480px){ .section h2{ font-size:24px } }
   .section-head{margin-bottom:52px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:20px}
   .section-head p{font-size:15px; color:var(--text-mute); max-width:320px; line-height:1.6}
 
@@ -558,7 +574,9 @@
 
   .av-brandline{ font-size:11px; font-weight:600; letter-spacing:.14em; color:rgba(237,237,236,0.65); margin-bottom:12px }
   .av-sheet-label{ font-size:12px; font-weight:600; letter-spacing:.12em; color:#B23A46; margin-bottom:4px }
-  .av-city{ font-family:'Anton',sans-serif; font-weight:400; font-size:clamp(28px,3vw,38px); line-height:1.02; color:#fff; margin-bottom:14px }
+  .av-city{ font-family:'Anton',sans-serif; font-weight:400; font-size:38px; line-height:1.02; color:#fff; margin-bottom:14px }
+  @media (max-width:900px){ .av-city{ font-size:30px } }
+  @media (max-width:480px){ .av-city{ font-size:28px } }
 
   .av-score-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px }
   .av-score-block, .av-verdict-block{ border:1px solid rgba(255,255,255,0.14); border-radius:4px; padding:11px 16px }
@@ -737,7 +755,9 @@
 
   /* ---------- CLOSING ---------- */
   .closing-inner{text-align:center; max-width:600px; margin:0 auto; padding:96px 0}
-  .closing-inner h2{font-size:clamp(26px,3.6vw,40px); font-weight:700; color:var(--ink); line-height:1.25; margin-bottom:28px}
+  .closing-inner h2{font-size:40px; font-weight:700; color:var(--ink); line-height:1.25; margin-bottom:28px}
+  @media (max-width:900px){ .closing-inner h2{ font-size:32px } }
+  @media (max-width:480px){ .closing-inner h2{ font-size:26px } }
   .closing-inner p{color:var(--text-mute); font-size:15px; line-height:1.6; margin-bottom:40px}
   .closing-ctas{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
   /* Same note as .hero-ctas above: no background/color here on purpose —
