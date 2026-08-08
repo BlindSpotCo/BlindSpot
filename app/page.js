@@ -83,39 +83,43 @@ export default function Home() {
           </div>
 
           <div className="hero-visual">
-            <HeroIllustration />
-            <span className="hero-visual-tag">Live preview</span>
-            <div className="hero-score-card">
-              <div className="hsc-head">
-                <span className="hsc-label">BlindSpot Score</span>
-                <span className="hsc-badge">Recommended</span>
-              </div>
-              <div className="hsc-number">80<span>/100</span></div>
-              {/* Leads with the plain-English takeaway before any raw
-                  numbers — directly per the mentor's report feedback in
-                  the shared sheet ("the fundamental question is not 'how
-                  much sunlight' but 'should I buy this property'"). The
-                  two reason rows below follow the same logic: a human
-                  sentence first, the underlying score folded in small and
-                  second, not the other way round. */}
-              <p className="hsc-verdict">Good light, safe neighbourhood, fair value for the area.</p>
-              <div className="hsc-row">
-                <div className="hsc-item slate">
-                  <svg className="hsc-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-5.4-7-11a7 7 0 1 1 14 0c0 5.6-7 11-7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>
-                  <div>
-                    <span className="hsc-item-label">Safe, well-connected area</span>
-                    <span className="hsc-item-sub">Koramangala — 78/100</span>
+            <div className="hero-illustration-wrap">
+              <HeroIllustration />
+            </div>
+            <div className="hero-card-wrap">
+              <span className="hero-visual-tag">Live preview</span>
+              <div className="hero-score-card">
+                <div className="hsc-head">
+                  <span className="hsc-label">BlindSpot Score</span>
+                  <span className="hsc-badge">Recommended</span>
+                </div>
+                <div className="hsc-number">80<span>/100</span></div>
+                {/* Leads with the plain-English takeaway before any raw
+                    numbers — directly per the mentor's report feedback in
+                    the shared sheet ("the fundamental question is not 'how
+                    much sunlight' but 'should I buy this property'"). The
+                    two reason rows below follow the same logic: a human
+                    sentence first, the underlying score folded in small and
+                    second, not the other way round. */}
+                <p className="hsc-verdict">Good light, safe neighbourhood, fair value for the area.</p>
+                <div className="hsc-row">
+                  <div className="hsc-item slate">
+                    <svg className="hsc-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-5.4-7-11a7 7 0 1 1 14 0c0 5.6-7 11-7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>
+                    <div>
+                      <span className="hsc-item-label">Safe, well-connected area</span>
+                      <span className="hsc-item-sub">Koramangala — 78/100</span>
+                    </div>
+                  </div>
+                  <div className="hsc-item sun">
+                    <svg className="hsc-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M4 20 L10 14 M20 20 L14 14"/></svg>
+                    <div>
+                      <span className="hsc-item-label">Bright, well-ventilated unit</span>
+                      <span className="hsc-item-sub">Floor 7, SE — 82/100</span>
+                    </div>
                   </div>
                 </div>
-                <div className="hsc-item sun">
-                  <svg className="hsc-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M4 20 L10 14 M20 20 L14 14"/></svg>
-                  <div>
-                    <span className="hsc-item-label">Bright, well-ventilated unit</span>
-                    <span className="hsc-item-sub">Floor 7, SE — 82/100</span>
-                  </div>
-                </div>
+                <div className="hsc-foot">Real solar geometry + government locality data, combined into one number you can trust.</div>
               </div>
-              <div className="hsc-foot">Real solar geometry + government locality data, combined into one number you can trust.</div>
             </div>
           </div>
         </div>
