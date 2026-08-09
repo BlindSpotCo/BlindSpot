@@ -237,14 +237,38 @@
      product actually does. Masked to a soft ellipse so it dissolves at
      the edges, and kept low-contrast so the headline and card stay
      legible on top of it. */
+  /* Fixed 1600px intrinsic width, centred -- NOT inset:0.
+     Stretching it to the viewport (which is what inset:0 did) meant the
+     SVG's preserveAspectRatio="slice" scale was driven by window width,
+     so the grid squares came out a different size on every desktop: ~217px
+     cells on a 1300px window vs ~250px on a 1600px one. Pinning the width
+     to the viewBox's own 1600 makes the scale exactly 1 at every viewport,
+     so the grid is identical at 1440 / 1600 / 1920 / 2048; wider screens
+     just see more of the surrounding area. Nothing is cut off at the sides
+     because the mask has already faded the map to transparent well before
+     the element's edges. */
   .hero-map{
-    position:absolute; inset:0; z-index:0; pointer-events:none;
-    -webkit-mask-image:radial-gradient(ellipse 82% 74% at 62% 44%, #000 24%, transparent 78%);
-    mask-image:radial-gradient(ellipse 82% 74% at 62% 44%, #000 24%, transparent 78%);
+    position:absolute; top:0; bottom:0; left:50%; width:1600px;
+    transform:translateX(-50%);
+    z-index:0; pointer-events:none;
+    /* Mask radii in px, not % -- a percentage ellipse was sized off the
+       element, so on a wide screen the map was still opaque when it hit
+       the element's own 1600px edge and cut off with a visible hard line.
+       At 900px the gradient is fully transparent 702px out from its
+       centre, which is inside the element on both sides, so the map always
+       dissolves into the background instead of ending on an edge. */
+    -webkit-mask-image:radial-gradient(ellipse 900px 620px at 55% 44%, #000 24%, transparent 78%);
+    mask-image:radial-gradient(ellipse 900px 620px at 55% 44%, #000 24%, transparent 78%);
     animation:heroMapIn 1.5s ease both;
   }
   .hero-map svg{ width:100%; height:100%; display:block }
-  @keyframes heroMapIn{ from{ opacity:0; transform:scale(1.04) } to{ opacity:1; transform:scale(1) } }
+  /* translateX(-50%) has to be repeated in the keyframes -- an animation
+     on `transform` replaces the base value outright, so omitting it here
+     would knock the map off-centre for the duration of the animation. */
+  @keyframes heroMapIn{
+    from{ opacity:0; transform:translateX(-50%) scale(1.04) }
+    to{ opacity:1; transform:translateX(-50%) scale(1) }
+  }
   .hero-map-roads{ stroke:rgba(28,24,18,0.17); stroke-width:2.5; fill:none }
   .hero-map-roads-minor{ stroke:rgba(28,24,18,0.09); stroke-width:1.5 }
   .hero-map-blocks rect{ fill:rgba(28,24,18,0.05); stroke:rgba(28,24,18,0.09); stroke-width:1 }
@@ -275,17 +299,22 @@
     font-size:62px; line-height:1.04; font-weight:700; max-width:680px;
     color:var(--ink);
   }
-  /* Common windowed-browser widths (not fullscreen, not a phone) --
-     62px was wrapping "before you commit." onto an awkward 3rd line here
-     because the hero-grid's left column is narrower than the 680px
-     max-width at these sizes; the max-width caps the box, it doesn't
-     guarantee the column is that wide. Steps down before that happens
-     instead of letting it wrap unpredictably. Ordered before the 900px
-     rule below on purpose -- max-width media queries apply widest-first,
-     so the more specific (narrower) rule has to come later in the file
-     to win at those widths. */
-  @media (max-width:1300px){
-    .hero h1{ font-size:50px }
+  /* Breakpoint is 1180px -- the width at which .wrap actually stops being
+     capped and the columns genuinely start shrinking -- NOT 1300px, which
+     is what it used to be.
+     That 1300px value was the single biggest cause of the hero rendering
+     differently between two desktops: .wrap is max-width:1180px, so at
+     1200 / 1280 / 1300 the container, columns, card and illustration are
+     already pixel-identical to 1440 / 1920 / 2048. Dropping the headline
+     to 50px inside that range changed the left column's height for no
+     layout reason, and because .hero-grid is align-items:center, the card
+     and illustration are centred against that column -- so a 1280 laptop
+     and a 1600 monitor placed the whole right-hand composition at
+     different heights. Same design, two different renderings.
+     Below 1180 the columns really do shrink, so the type scales with them
+     via clamp() instead of jumping at a hard step. */
+  @media (max-width:1180px){
+    .hero h1{ font-size:clamp(46px, 5vw, 62px) }
   }
   @media (max-width:900px){
     .hero h1{ font-size:46px }
@@ -375,7 +404,9 @@
   .hero-card-wrap{ position:relative; z-index:1 }
 
   @media (prefers-reduced-motion: reduce){
-    .hero-map{ animation:none !important; opacity:1 !important; transform:none !important }
+    /* transform must stay translateX(-50%), not none -- that's what centres
+       the fixed-width map, it isn't part of the animation. */
+    .hero-map{ animation:none !important; opacity:1 !important; transform:translateX(-50%) !important }
     .hero-trail{ clip-path:none; animation:none }
     .hero-pin-g{ opacity:1; transform:none; animation:none }
   }
