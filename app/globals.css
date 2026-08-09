@@ -336,6 +336,17 @@
      the sun off the top (it has happened twice). Re-check it against the
      scene's height in HeroIllustration.js before increasing it. */
   .hero-visual{ position:relative }
+  /* Nudges the whole visual column (card + illustration together, since
+     the illustration is positioned relative to this) down so the card's
+     bottom edge sits lower against the hero. transform, not margin:
+     .hero-grid is align-items:center, so a margin would get folded into
+     the centring calculation and only move it about half as far, and it
+     would also change the hero's layout height. A transform moves it
+     visually and leaves layout untouched. Desktop only -- below 900px the
+     grid stacks and the card is centred on its own. */
+  @media (min-width:901px){
+    .hero-visual{ transform:translateY(56px) }
+  }
   .hero-illustration-wrap{
     position:absolute; top:-206px; right:-28px; width:62%;
     z-index:2; pointer-events:none;
