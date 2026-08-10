@@ -1041,4 +1041,43 @@
 
   .closing-inner{ padding:64px 0 }
   .closing-inner p{ font-size:14px; margin-bottom:28px }
+
+  /* Hero score-card number was still full desktop size (56px) on phone --
+     everything else in the card had a mobile pass, this didn't. */
+  .hsc-number{ font-size:44px }
+  .hsc-number span{ font-size:15px }
+}
+
+/* ---------- APP SCREENS (Property Score / SunScout) — MOBILE SCALE-DOWN
+   (<=640px) ----------
+   Unlike the landing/auth/reports pages above, these screens are built with
+   inline styles (style={{...}}), so a plain selector here can't touch them
+   -- an inline style always wins over an external stylesheet at equal
+   specificity. Every rule in this block targets a className added
+   alongside the existing inline style (never removed, never changed) and
+   uses !important specifically to beat that inline value on phone only.
+   Desktop is completely unaffected: none of these classNames have a
+   non-mobile rule anywhere else in this file. */
+@media (max-width:640px){
+  .uv-combined-card{ padding:18px 16px !important; }
+  .uv-score-number{ font-size:36px !important; }
+  .uv-verdict-badge{ font-size:14px !important; padding:6px 12px !important; }
+  .uv-score-grid{ gap:8px !important; }
+  .uv-score-box{ padding:10px 12px !important; }
+  .uv-score-box-number{ font-size:18px !important; }
+
+  .av-card{ padding:16px 14px !important; }
+  .av-score-number{ font-size:32px !important; }
+
+  .ls-score-box{ padding:14px 12px !important; }
+  .ls-score-number{ font-size:34px !important; }
+  .ls-subscore-item{ padding:12px 12px !important; }
+
+  /* Report/LiveScore modals: same 20px page-edge + 24px inner padding
+     everywhere regardless of viewport, eating most of a phone's width
+     with whitespace before any content starts. */
+  .modal-overlay{ padding:10px !important; }
+  .modal-header{ padding:16px 16px 12px !important; }
+  .modal-body{ padding:16px !important; }
+  .modal-title{ font-size:17px !important; }
 }

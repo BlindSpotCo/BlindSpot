@@ -34,7 +34,7 @@ export default function LiveScoreCard({ result }) {
 
   return (
     <div style={{ fontFamily: SANS }}>
-      <div style={{
+      <div className="ls-score-box" style={{
         border: `1px solid ${LINE}`,
         borderLeft: `4px solid ${GRADE_COLOR[result.grade]}`,
         padding: '22px 20px',
@@ -45,7 +45,7 @@ export default function LiveScoreCard({ result }) {
           <div style={{ fontFamily: MONO, fontSize: 10, fontWeight: 500, color: SUB, letterSpacing: '.14em', marginBottom: 6 }}>
             LIVESCORE — COMPOSITE
           </div>
-          <div style={{ fontFamily: DISPLAY, fontSize: 52, fontWeight: 800, color: INK, lineHeight: 1 }}>
+          <div className="ls-score-number" style={{ fontFamily: DISPLAY, fontSize: 52, fontWeight: 800, color: INK, lineHeight: 1 }}>
             {result.liveScore}<span style={{ fontSize: 18, color: SUB, fontWeight: 700 }}>/100</span>
           </div>
         </div>
@@ -65,7 +65,7 @@ export default function LiveScoreCard({ result }) {
           const weightKey = WEIGHT_KEY_MAP[sub.key];
           const weightPct = weightKey ? Math.round((result.weights[weightKey] / totalWeight) * 100) : 0;
           return (
-            <div key={sub.key} style={{
+            <div key={sub.key} className="ls-subscore-item" style={{
               border: `1px solid ${LINE}`,
               borderTop: i === 0 ? `1px solid ${LINE}` : 'none',
               padding: '16px 18px',

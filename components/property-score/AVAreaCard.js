@@ -13,10 +13,10 @@ export default function AVAreaCard({ record, city, citiesData }) {
   const [showAvFullReport, setShowAvFullReport] = useState(false);
 
   return (
-    <div style={{ marginBottom: 36, border: '1px solid var(--line)', borderLeft: '4px solid var(--slate)', borderRadius: 3, padding: '22px 24px' }}>
+    <div className="av-card" style={{ marginBottom: 36, border: '1px solid var(--line)', borderLeft: '4px solid var(--slate)', borderRadius: 3, padding: '22px 24px' }}>
       <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', letterSpacing: '.12em', marginBottom: 10 }}>ASLIVASTU — {record.name.toUpperCase()}</div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 20 }}>
-        <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 44, color: 'var(--slate)' }}>{record.nqi_composite}</span>
+        <span className="av-score-number" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 44, color: 'var(--slate)' }}>{record.nqi_composite}</span>
         <GradeBadge grade={record.grade} color="var(--slate)" />
         <span style={{ fontSize: 12.5, color: 'var(--text-mute)' }}>Pincode {record.pin_code}{city ? `, ${city}` : ''}</span>
       </div>

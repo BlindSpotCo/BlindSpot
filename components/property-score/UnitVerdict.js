@@ -180,7 +180,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
           {combinedError && <div style={{ color: '#f87171', fontSize: 12, marginBottom: 16 }}>{combinedError}</div>}
 
           {combined && (
-            <div style={{ border: '1px solid var(--line)', borderRadius: 3, padding: '28px 26px', background: 'var(--bg-2)' }}>
+            <div className="uv-combined-card" style={{ border: '1px solid var(--line)', borderRadius: 3, padding: '28px 26px', background: 'var(--bg-2)' }}>
               {combined.area && (
                 <div style={{ marginBottom: 24 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11.5, marginBottom: 8 }}>
@@ -199,11 +199,11 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                   <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', letterSpacing: '.12em', marginBottom: 6 }}>
                     {combined.area ? 'BLINDSPOT COMBINED SCORE' : 'HOME COMFORT SCORE'}
                   </div>
-                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 56, lineHeight: 1, color: 'var(--text)' }}>
+                  <div className="uv-score-number" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 56, lineHeight: 1, color: 'var(--text)' }}>
                     {combined.combinedScore}<span style={{ fontSize: 20, color: 'var(--text-dim)' }}>/100</span>
                   </div>
                 </div>
-                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 20, color: '#fff', background: 'linear-gradient(90deg, var(--sun), var(--slate))', padding: '8px 18px', borderRadius: 3 }}>
+                <div className="uv-verdict-badge" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 20, color: '#fff', background: 'linear-gradient(90deg, var(--sun), var(--slate))', padding: '8px 18px', borderRadius: 3 }}>
                   {combined.verdict.label}
                 </div>
               </div>
@@ -211,20 +211,20 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               <p style={{ fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 24 }}>{combined.verdict.detail}</p>
 
               {combined.area ? (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
-                  <div style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--slate)', borderRadius: 3, padding: '14px 16px' }}>
+                <div className="uv-score-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
+                  <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--slate)', borderRadius: 3, padding: '14px 16px' }}>
                     <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 6 }}>AREA — {combined.area.name} — {combined.area.weight}%</div>
-                    <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 24, color: 'var(--slate)' }}>{combined.area.score}</div>
+                    <div className="uv-score-box-number" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 24, color: 'var(--slate)' }}>{combined.area.score}</div>
                   </div>
-                  <div style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 3, padding: '14px 16px' }}>
+                  <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 3, padding: '14px 16px' }}>
                     <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT (HOME COMFORT) — FL {combined.unit.floor}, {combined.unit.facing} — {combined.unit.weight}%</div>
-                    <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 24, color: 'var(--sun)' }}>{combined.unit.score}</div>
+                    <div className="uv-score-box-number" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 24, color: 'var(--sun)' }}>{combined.unit.score}</div>
                   </div>
                 </div>
               ) : (
-                <div style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 3, padding: '14px 16px', marginBottom: 20 }}>
+                <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 3, padding: '14px 16px', marginBottom: 20 }}>
                   <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT (HOME COMFORT) — FL {combined.unit.floor}, {combined.unit.facing}</div>
-                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 24, color: 'var(--sun)' }}>{combined.unit.score}</div>
+                  <div className="uv-score-box-number" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 24, color: 'var(--sun)' }}>{combined.unit.score}</div>
                 </div>
               )}
 

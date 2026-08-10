@@ -65,18 +65,18 @@ export default function LiveScoreModal({ lat, lon, tzOffset, onClose, onFloorFac
   };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(10,5,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+    <div className="modal-overlay" style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(10,5,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
       <div style={{ background: '#FFFBF5', border: `1px solid ${LINE}`, padding: 0, width: '100%', maxWidth: 480, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 30px 90px rgba(0,0,0,0.35)', fontFamily: SANS }}>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '24px 24px 18px', borderBottom: `1px solid ${LINE}` }}>
+        <div className="modal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '24px 24px 18px', borderBottom: `1px solid ${LINE}` }}>
           <div>
             <div style={{ fontFamily: MONO, fontSize: 10, fontWeight: 500, color: ORG, letterSpacing: '.14em', marginBottom: 6 }}>LIVESCORE</div>
-            <h2 style={{ fontFamily: DISPLAY, fontSize: 21, fontWeight: 800, color: INK, margin: 0 }}>Will This Unit Work For You?</h2>
+            <h2 className="modal-title" style={{ fontFamily: DISPLAY, fontSize: 21, fontWeight: 800, color: INK, margin: 0 }}>Will This Unit Work For You?</h2>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: SUB, lineHeight: 1, padding: 4 }}>✕</button>
         </div>
 
-        <div style={{ padding: 24 }}>
+        <div className="modal-body" style={{ padding: 24 }}>
           {!result && !loading && (
             <>
               <p style={{ fontSize: 13, color: SUB, lineHeight: 1.6, marginBottom: 26 }}>
