@@ -27,6 +27,14 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
+  /* Extra safety net for phone: nothing (image, fixed-width table, long
+     unbroken heading/number) should be able to force the page wider than
+     the screen. This does NOT set overflow-x on html/body itself (see the
+     note below on why that specific approach was avoided before) -- it
+     just stops individual elements from being the thing that's too wide
+     in the first place. */
+  img, svg, table, iframe, canvas{ max-width:100% }
+  h1, h2, h3, .mono{ overflow-wrap:break-word; word-break:break-word }
   /* NOTE: deliberately NOT setting overflow-x:hidden on html/body here.
      That looks like a harmless horizontal-scroll safety net, but setting
      overflow-x to anything but `visible` on html/body turns the viewport
@@ -1048,6 +1056,63 @@
   .hsc-number span{ font-size:15px }
 }
 
+/* ---------- SMALL PHONE — SECOND, HARDER PASS (<=480px) ----------
+   The 640px pass above only trimmed things -- on an actual ~375-390px
+   phone (iPhone SE/12/13/14 width) it was still reading as "desktop,
+   slightly smaller" rather than a real phone layout. This block cuts
+   further on top of it: smaller nav, tighter hero, smaller section
+   headings/padding everywhere. Same rule as above -- placed last so it
+   wins on source order, and only ever makes things smaller, never
+   touches anything above 480px. */
+@media (max-width:480px){
+  nav.wrap{ height:56px }
+  .brand-mark-img{ height:20px }
+  .brand-word-img{ height:10px }
+  .wrap{ padding:0 16px }
+
+  .hero{ padding:40px 0 44px }
+  .hero-eyebrow{ font-size:11px; margin-bottom:16px }
+  .hero-sub{ font-size:13.5px; margin-top:12px }
+  .hero-grid{ gap:28px }
+  .hero-score-card{ padding:18px 16px }
+  .hsc-number{ font-size:36px }
+  .hsc-verdict{ font-size:13.5px; margin-bottom:16px }
+  .hsc-item{ padding:9px 11px }
+  .hsc-item-label{ font-size:13px }
+  .hsc-badge{ font-size:11.5px; padding:5px 11px }
+
+  .section-inner{ padding:40px 0 }
+  .section-head{ margin-bottom:28px }
+  .eyebrow{ font-size:11px; margin-bottom:10px }
+
+  .pcard{ padding:20px }
+  .pcard p{ font-size:13px; margin-bottom:16px }
+  .pcard-tag{ font-size:10.5px; margin-bottom:14px }
+
+  .howworks-step-block h3{ font-size:17px }
+  .howworks-step-block p{ font-size:13px; margin-bottom:12px }
+  .howworks-bullets li{ font-size:12.5px }
+
+  .why-row{ padding:16px 14px }
+  .why-title{ font-size:14px }
+  .why-desc{ font-size:13px }
+
+  .team-card{ padding:18px }
+  .team-desc{ font-size:12.5px }
+
+  footer{ padding:28px 0 }
+  .footer-links{ font-size:11.5px; gap:12px }
+  .footer-fine{ font-size:10.5px }
+
+  .auth-card{ padding:24px 18px }
+  .auth-card h1{ font-size:19px }
+  .reports-page{ padding:76px 16px 40px }
+  .reports-inner h1{ font-size:22px }
+
+  .closing-inner{ padding:44px 0 }
+  .closing-inner p{ font-size:13px; margin-bottom:22px }
+}
+
 /* ---------- APP SCREENS (Property Score / SunScout) — MOBILE SCALE-DOWN
    (<=640px) ----------
    Unlike the landing/auth/reports pages above, these screens are built with
@@ -1059,19 +1124,19 @@
    Desktop is completely unaffected: none of these classNames have a
    non-mobile rule anywhere else in this file. */
 @media (max-width:640px){
-  .uv-combined-card{ padding:18px 16px !important; }
-  .uv-score-number{ font-size:36px !important; }
-  .uv-verdict-badge{ font-size:14px !important; padding:6px 12px !important; }
-  .uv-score-grid{ gap:8px !important; }
-  .uv-score-box{ padding:10px 12px !important; }
-  .uv-score-box-number{ font-size:18px !important; }
+  .uv-combined-card{ padding:20px 18px !important; }
+  .uv-score-number{ font-size:32px !important; }
+  .uv-verdict-badge{ font-size:13px !important; padding:6px 10px !important; }
+  .uv-score-grid{ gap:10px !important; }
+  .uv-score-box{ padding:12px 14px !important; }
+  .uv-score-box-number{ font-size:17px !important; }
 
-  .av-card{ padding:16px 14px !important; }
-  .av-score-number{ font-size:32px !important; }
+  .av-card{ padding:18px 16px !important; }
+  .av-score-number{ font-size:28px !important; }
 
-  .ls-score-box{ padding:14px 12px !important; }
-  .ls-score-number{ font-size:34px !important; }
-  .ls-subscore-item{ padding:12px 12px !important; }
+  .ls-score-box{ padding:16px 14px !important; }
+  .ls-score-number{ font-size:30px !important; }
+  .ls-subscore-item{ padding:14px 14px !important; }
 
   /* Report/LiveScore modals: same 20px page-edge + 24px inner padding
      everywhere regardless of viewport, eating most of a phone's width
@@ -1080,4 +1145,61 @@
   .modal-header{ padding:16px 16px 12px !important; }
   .modal-body{ padding:16px !important; }
   .modal-title{ font-size:17px !important; }
+
+  .ps-mode-btn{ padding:12px 14px !important; }
+  .ps-mode-btn-title{ font-size:13px !important; }
+  .ps-mode-btn-sub{ font-size:11px !important; }
+
+  .uv-latlon-input{ font-size:12px !important; padding:8px 10px !important; }
+  .uv-mylocation-btn{ font-size:11px !important; padding:8px 12px !important; }
+  .uv-facing-btn{ font-size:9.5px !important; padding:7px 2px !important; }
+  .uv-getscore-btn{ padding:12px 18px !important; font-size:12px !important; }
+}
+
+/* Second, harder pass on the same app screens -- matches the landing
+   page's two-tier approach (640px trims, 480px cuts further) instead of
+   stopping at one pass. */
+@media (max-width:480px){
+  .uv-combined-card{ padding:14px 12px !important; }
+  .uv-score-number{ font-size:26px !important; }
+  .uv-score-box{ padding:9px 10px !important; }
+  .uv-score-box-number{ font-size:15px !important; }
+  .uv-getscore-btn{ padding:11px 14px !important; font-size:11.5px !important; }
+
+  .av-card{ padding:14px 12px !important; }
+  .av-score-number{ font-size:24px !important; }
+
+  .ls-score-box{ padding:12px 10px !important; }
+  .ls-score-number{ font-size:24px !important; }
+  .ls-subscore-item{ padding:11px 10px !important; }
+
+  .modal-overlay{ padding:0 !important; }
+  .modal-body{ padding:14px !important; }
+  .modal-header{ padding:14px 14px 10px !important; }
+  .modal-title{ font-size:15.5px !important; }
+
+  .ps-mode-btn{ padding:10px 12px !important; }
+  .uv-facing-btn{ font-size:8.5px !important; }
+}
+
+/* ---------- NAV OVERFLOW FIX ----------
+   Root cause of the horizontal scroll: .btn-cta-sm has white-space:nowrap
+   (needed on desktop so the pill never wraps awkwardly), and flex items
+   default to min-width:auto, which for nowrap text means "at least as wide
+   as the full unwrapped text" -- so the CTA pill physically could not
+   shrink below ~187px no matter how narrow the screen got, and the nav
+   row (brand + pill + burger) forced the whole page wider than the
+   viewport. Fixed at the source: swap to a short label on phone (so
+   there's no long nowrap text to be rigid about), and let the flex chain
+   actually shrink instead of using its content's natural width as a
+   floor. */
+.btn-cta-short{ display:none }
+@media (max-width:640px){
+  nav.wrap, .nav-cta, .brand{ min-width:0 }
+  .btn-cta-sm{ min-width:0; flex-shrink:1 }
+}
+@media (max-width:480px){
+  .btn-cta-full{ display:none }
+  .btn-cta-short{ display:inline }
+  .btn-cta-sm{ padding:11px 14px !important; }
 }

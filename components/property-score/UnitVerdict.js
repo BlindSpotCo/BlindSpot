@@ -98,11 +98,11 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
         <div className="mono" style={{ fontSize: 11, color: 'var(--sun)', letterSpacing: '.12em', marginBottom: 12 }}>SUN &amp; SHADOW FOR THIS FLAT</div>
 
         <div style={{ display: 'flex', gap: 10, marginBottom: 14, flexWrap: 'wrap' }}>
-          <input type="text" placeholder="Latitude" value={lat} onChange={e => setLat(e.target.value)}
+          <input type="text" placeholder="Latitude" value={lat} onChange={e => setLat(e.target.value)} className="uv-latlon-input"
             style={{ flex: '1 1 140px', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 3, padding: '9px 12px', color: 'var(--text)', fontSize: 12.5, fontFamily: "'IBM Plex Mono', monospace" }} />
-          <input type="text" placeholder="Longitude" value={lon} onChange={e => setLon(e.target.value)}
+          <input type="text" placeholder="Longitude" value={lon} onChange={e => setLon(e.target.value)} className="uv-latlon-input"
             style={{ flex: '1 1 140px', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 3, padding: '9px 12px', color: 'var(--text)', fontSize: 12.5, fontFamily: "'IBM Plex Mono', monospace" }} />
-          <button onClick={useMyLocation} style={{ background: 'transparent', border: '1px solid var(--line)', borderRadius: 3, padding: '9px 16px', color: 'var(--text)', fontSize: 12, cursor: 'pointer' }}>
+          <button onClick={useMyLocation} className="uv-mylocation-btn" style={{ background: 'transparent', border: '1px solid var(--line)', borderRadius: 3, padding: '9px 16px', color: 'var(--text)', fontSize: 12, cursor: 'pointer' }}>
             Use my location
           </button>
         </div>
@@ -158,7 +158,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0 }}>
                 {FACING_OPTS.map(dir => (
-                  <button key={dir} onClick={() => setFacing(dir)} style={{
+                  <button key={dir} onClick={() => setFacing(dir)} className="uv-facing-btn" style={{
                     background: facing === dir ? 'var(--sun)' : 'transparent', color: facing === dir ? '#fff' : 'var(--text)',
                     border: `1px solid ${facing === dir ? 'var(--sun)' : 'var(--line)'}`,
                     padding: '8px 4px', fontSize: 11, fontWeight: 700, cursor: 'pointer', marginLeft: -1, marginTop: -1,
@@ -168,7 +168,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
             </div>
           )}
 
-          <button onClick={() => computeCombined()} disabled={loadingCombined || floor == null || !facing}
+          <button onClick={() => computeCombined()} disabled={loadingCombined || floor == null || !facing} className="uv-getscore-btn"
             style={{
               background: (floor == null || !facing) ? 'var(--line)' : 'linear-gradient(90deg, var(--sun), var(--slate))',
               color: '#fff', border: 'none', borderRadius: 3, padding: '14px 24px', fontSize: 13, fontWeight: 700,

@@ -83,7 +83,10 @@ export default function SiteHeader({ homeHref = '/' }) {
               <Link href="/#team">The Team</Link>
             </div>
             <div className="nav-cta">
-              <Link href="/property-score" className="btn-cta-sm">Uncover Your BlindSpot</Link>
+              <Link href="/property-score" className="btn-cta-sm">
+                <span className="btn-cta-full">Uncover Your BlindSpot</span>
+                <span className="btn-cta-short">Start</span>
+              </Link>
               {/* .nav-user / .btn-auth are hidden below 640px (see globals.css) --
                   "My Reports" + "Sign out" together were the widest thing in
                   this row and had nowhere to shrink to, which is what pushed
