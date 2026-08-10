@@ -15,7 +15,15 @@ export async function GET(req) {
       `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&addressdetails=1&limit=6&countrycodes=in`,
       { headers: { 'User-Agent': 'BlindSpot_NextJS/1.0 (+https://blindspotco.net)' } }
     );
+    // TEMP DIAGNOSTIC — remove once we've confirmed the cause.
+    if (!r.ok) {
+      console.error('[geocode-suggest] Nominatim non-OK status', r.status, await r.text());
+      return NextResponse.json({ results: [] });
+    }
     const data = await r.json();
+    if (!Array.isArray(data)) {
+      console.error('[geocode-suggest] Nominatim OK but not an array', JSON.stringify(data).slice(0, 200));
+    }
     const results = Array.isArray(data)
       ? data.map(d => ({
           lat: parseFloat(d.lat),
@@ -26,7 +34,8 @@ export async function GET(req) {
         }))
       : [];
     return NextResponse.json({ results });
-  } catch {
+  } catch (e) {
+    console.error('[geocode-suggest] fetch threw', e?.message);
     return NextResponse.json({ results: [] });
   }
 }
