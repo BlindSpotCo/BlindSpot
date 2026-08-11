@@ -273,7 +273,7 @@ export default function AddressPicker({ onConfirmed }) {
 
               <button onClick={continueToSunScout}
                 style={{
-                  background: 'linear-gradient(90deg, var(--sun), var(--slate))', color: '#fff', border: 'none', borderRadius: 3,
+                  background: 'var(--brand)', color: '#fff', border: 'none', borderRadius: 3,
                   padding: '14px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
                 }}>
                 Continue to Sun &amp; Shadow →
