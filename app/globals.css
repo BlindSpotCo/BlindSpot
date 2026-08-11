@@ -198,8 +198,19 @@
      products. Gradient echoes the sun/slate combined-score styling used
      elsewhere (the verdict badge, the active "combo" tab) so it visually
      reads as "both engines, one place" rather than a generic button. */
+  /* Gradient is a travelling background, not a fixed two-stop fill --
+     sun/slate/sun with a 200%-wide background sheet, animated slowly back
+     and forth. Kept deliberately slow (7s) and ease-in-out rather than a
+     snappy loop, in line with the brand doc's motion doctrine ("never
+     bounce for personality's sake") -- this should read as the gradient
+     quietly living, not as a flashy loading-bar effect. Respects
+     prefers-reduced-motion below, same as every other animation in this
+     file. */
   .btn-cta{
-    background:linear-gradient(90deg, var(--sun), var(--slate)); color:#fff; border:none;
+    background:linear-gradient(90deg, var(--sun), var(--slate), var(--sun));
+    background-size:200% 100%;
+    animation:ctaGradientShift 7s ease-in-out infinite;
+    color:#fff; border:none;
     box-shadow:0 10px 24px -12px rgba(201,129,46,0.45);
     transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
   }
@@ -207,11 +218,22 @@
   .btn-cta-sm{
     display:inline-flex; align-items:center;
     padding:8px 16px; border-radius:var(--radius); font-size:13.5px; font-weight:600;
-    background:linear-gradient(90deg, var(--sun), var(--slate)); color:#fff; text-decoration:none;
+    background:linear-gradient(90deg, var(--sun), var(--slate), var(--sun));
+    background-size:200% 100%;
+    animation:ctaGradientShift 7s ease-in-out infinite;
+    color:#fff; text-decoration:none;
     white-space:nowrap; box-shadow:0 6px 16px -8px rgba(201,129,46,0.45);
     transition:transform .15s ease, box-shadow .15s ease;
   }
   .btn-cta-sm:hover{ transform:translateY(-1px); box-shadow:0 10px 20px -8px rgba(201,129,46,0.55) }
+  @keyframes ctaGradientShift{
+    0%{ background-position:0% 50% }
+    50%{ background-position:100% 50% }
+    100%{ background-position:0% 50% }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .btn-cta, .btn-cta-sm{ animation:none !important; background-position:0% 50% }
+  }
 
   /* Scroll-triggered reveal — sections/cards fade and rise into place once,
      the first time they enter the viewport. Respects reduced motion. */
@@ -1103,8 +1125,15 @@
      contrast at its wine end (wine button edge on wine background). Swap
      to solid white with wine text here specifically -- still reads as the
      one obvious action on the tile, just inverted instead of invisible. */
+  /* animation:none here too -- the `background:#fff` above already resets
+     background-image/size/position to solid white via the shorthand, so
+     the travelling-gradient keyframes from the base .btn-cta rule would
+     keep running for no visible effect (animating background-position
+     under a flat colour). Turning it off outright instead of leaving a
+     pointless animation ticking in the background. */
   .closing-inner.bento .btn-cta{
     background:#fff; color:var(--brand); box-shadow:0 10px 24px -12px rgba(0,0,0,0.35);
+    animation:none;
   }
   .closing-inner.bento .btn-cta:hover{ filter:none; background:#fff; transform:translateY(-1px) }
 
