@@ -24,17 +24,42 @@
        type, spacing, radius, layout — stays identical across all three.
        --brand is the mandatory secondary: it must appear somewhere in every
        engine-coloured layout (the badge/CTA gradients already do this). */
-    --brand:#6B2232;   /* BlindSpot (parent) — the judgment */
-    --av:#4B4F1A;       /* AsliVastu — the area. AAA on paper (8.49:1) */
-    --av-fill:#ADA846;  /* AsliVastu light fill — decorative/large only, fails text contrast */
+    /* Dominant/parent and AsliVastu swapped on request -- olive is now the
+       parent hue, wine is now AsliVastu's. Values are a straight swap of
+       what --brand/--brand-fill and --av/--av-fill used to hold, so every
+       downstream var(--brand)/var(--av) call site below picks up the new
+       colour automatically with zero call-site edits. One real
+       consequence, not just relabelling: --brand-fill now carries the old
+       --av-fill value, which was explicitly documented as "decorative/
+       large only, fails text contrast" -- it was never calibrated for
+       sitting under white button text the way the old wine --brand-fill
+       was (that one was hand-tightened twice during CTA tuning
+       specifically for that job). The CTA gradient (.btn-cta, further
+       below) uses --brand-fill, so its punch will read noticeably
+       lighter/softer now, with weaker contrast than before the swap --
+       worth a live look, not just trusting this comment. */
+    --brand:#4B4F1A;   /* BlindSpot (parent) — the judgment. AAA on paper (8.49:1) */
+    --brand-fill:#ADA846; /* brighter/lighter parent fill -- decorative/large only, fails text contrast (this was AsliVastu's old --av-fill value) */
+    --av:#6B2232;       /* AsliVastu — the area. Even higher contrast on paper than the old olive value (~11:1) */
+    --av-fill:#7C2839;  /* AsliVastu large-fill variant (this was the parent's old --brand-fill value -- the twice-tightened "brighter wine" from CTA tuning) */
     --ss:#AF5F30;       /* SunScout — the light. AA-safe for text/icons (4.59:1 on paper) */
-    --ss-fill:#C56B36;  /* SunScout large-type/fill variant (3.74:1 — 24px+ or bold 18.7px+ only) */
-    --ss-sun:#FFC100;   /* illustration fill only — never text or UI (1.60:1) */
+    --ss-fill:#D1901F;  /* SunScout large-type/fill variant. Shifted more yellow (was #C56B36, a burnt orange that read as "just orange" in the CTA gradient) -- boosted green/reduced red toward gold rather than orange. Contrast against white text drops further as a result (~2.6:1, down from the original 3.74:1) -- still fine as a large decorative fill behind bold button text, but genuinely below AA even at "large text" size now, so don't reuse this token anywhere small text would sit on it directly. */
+    --ss-sun:#E9A94A;   /* illustration fill only — never text or UI. Matches the hero building's own lit-face yellow (components/HeroIllustration.js) so the sun and the building read as one consistent illustration instead of two different yellows -- was a brighter #FFC100 before. */
     --plum:#451B3B;     /* Not Recommended / deep ground — AAA everywhere */
 
     /* Legacy aliases so every existing --sun/--slate usage below keeps
        working during migration, but with the accessible values:
-       --slate was already ≈ --brand (#6B2430 vs #6B2232 — imperceptible).
+       --slate was already ≈ --brand at the time this alias was written
+       (#6B2430 vs #6B2232 — imperceptible), which is why aliasing it
+       straight to --brand was safe. --slate still means "whatever --brand
+       currently is" -- since the dominant/AsliVastu swap above, that's
+       olive, not wine. Every bare var(--slate) call site below is
+       generic parent-brand chrome (nav, CTA, hero tagline, etc.), not
+       AsliVastu-specific content -- those were already migrated to
+       var(--av) directly earlier (see .hsc-item, .pcard, .team-role,
+       the How It Works tabs/markers/eyebrows, .reports-group.av), so this
+       alias flipping to olive is the intended parent-colour swap, not a
+       conflation bug reappearing.
        --sun previously pointed at #C9812E, which fails WCAG AA as text/icon
        colour (2.92:1 on --bg, needs 4.5:1) — e.g. .hero-tagline .seg.sun
        and .hsc-item.sun .hsc-item-icon. Aliasing it to --ss fixes that
@@ -195,45 +220,41 @@
   /* The one unified CTA — replaces the separate "Open SunScout"/"Open
      AsliVastu" links everywhere on the page now that this landing page's
      job is to funnel into the combined 3-step tool, not two standalone
-     products. Gradient echoes the sun/slate combined-score styling used
-     elsewhere (the verdict badge, the active "combo" tab) so it visually
-     reads as "both engines, one place" rather than a generic button. */
-  /* Gradient is a travelling background, not a fixed two-stop fill --
-     sun/slate/sun with a 200%-wide background sheet, animated slowly back
-     and forth. Kept deliberately slow (7s) and ease-in-out rather than a
-     snappy loop, in line with the brand doc's motion doctrine ("never
-     bounce for personality's sake") -- this should read as the gradient
-     quietly living, not as a flashy loading-bar effect. Respects
-     prefers-reduced-motion below, same as every other animation in this
-     file. */
+     products.
+     Went through a travelling-gradient version of this button before
+     (ss-fill/brand-fill swept via animated background-position) -- retired
+     it in favour of a flat solid fill, per the brand research doc's own
+     stated rule: "Forbidden are glows, glassmorphism beyond the header,
+     noise/grain, and multi-stop gradients. The three-stop gradient in the
+     v2 mockup read as muddy." Solid --brand (the dominant colour) with the
+     arrow rendered in --ss (SunScout orange, via .btn-cta-arrow below)
+     keeps the "both engines, one action" idea the gradient was going for,
+     without the gradient itself -- one flat field, one accent detail,
+     restraint over range. */
   .btn-cta{
-    background:linear-gradient(90deg, var(--sun), var(--slate), var(--sun));
-    background-size:200% 100%;
-    animation:ctaGradientShift 7s ease-in-out infinite;
+    background:var(--brand);
     color:#fff; border:none;
-    box-shadow:0 10px 24px -12px rgba(201,129,46,0.45);
-    transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+    box-shadow:0 12px 28px -12px rgba(75,79,26,0.55);
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
   }
-  .btn-cta:hover{ transform:translateY(-1px); box-shadow:0 14px 28px -12px rgba(201,129,46,0.55); filter:brightness(1.05) }
+  .btn-cta:hover{ transform:translateY(-1px); box-shadow:0 16px 34px -12px rgba(75,79,26,0.65); background:#404318 }
   .btn-cta-sm{
     display:inline-flex; align-items:center;
     padding:8px 16px; border-radius:var(--radius); font-size:13.5px; font-weight:600;
-    background:linear-gradient(90deg, var(--sun), var(--slate), var(--sun));
-    background-size:200% 100%;
-    animation:ctaGradientShift 7s ease-in-out infinite;
+    background:var(--brand);
     color:#fff; text-decoration:none;
-    white-space:nowrap; box-shadow:0 6px 16px -8px rgba(201,129,46,0.45);
-    transition:transform .15s ease, box-shadow .15s ease;
+    white-space:nowrap; box-shadow:0 8px 18px -8px rgba(75,79,26,0.55);
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
   }
-  .btn-cta-sm:hover{ transform:translateY(-1px); box-shadow:0 10px 20px -8px rgba(201,129,46,0.55) }
-  @keyframes ctaGradientShift{
-    0%{ background-position:0% 50% }
-    50%{ background-position:100% 50% }
-    100%{ background-position:0% 50% }
-  }
-  @media (prefers-reduced-motion: reduce){
-    .btn-cta, .btn-cta-sm{ animation:none !important; background-position:0% 50% }
-  }
+  .btn-cta-sm:hover{ transform:translateY(-1px); box-shadow:0 10px 22px -8px rgba(75,79,26,0.65); background:#404318 }
+  /* The one deliberate accent on an otherwise flat button -- the arrow
+     glyph in the button label ("Uncover Your BlindSpot →") gets its own
+     span so it can carry the SunScout orange while the rest of the label
+     stays white. Nudges right on hover, same idiom as .pcard-cta svg
+     elsewhere in this file, so the motion lives in a small icon detail
+     instead of the whole button face. */
+  .btn-cta-arrow{ color:var(--ss); display:inline-block; transition:transform .18s ease }
+  .btn-cta:hover .btn-cta-arrow, .btn-cta-sm:hover .btn-cta-arrow{ transform:translateX(3px) }
 
   /* Scroll-triggered reveal — sections/cards fade and rise into place once,
      the first time they enter the viewport. Respects reduced motion. */
@@ -538,10 +559,11 @@
   .hsc-row{ display:flex; flex-direction:column; gap:10px; margin-bottom:18px }
   .hsc-item{ display:flex; align-items:center; gap:12px; border:1px solid var(--line); border-radius:8px; padding:11px 14px }
   /* This row is genuinely AsliVastu content (neighbourhood/safety), so it
-     gets the AsliVastu engine hue (--av, olive) rather than the parent
-     --brand/--slate wine — the two were previously conflated into one
-     colour here. This is the one-variable-hue system actually showing up
-     as three distinct engine colours instead of two. */
+     gets the AsliVastu engine hue (--av, wine as of the dominant/AsliVastu
+     swap) rather than the parent --brand/--slate (olive) — the two were
+     previously conflated into one colour here. This is the one-variable-
+     hue system actually showing up as three distinct engine colours
+     instead of two. */
   .hsc-item.slate{ border-left:3px solid var(--av) }
   .hsc-item.sun{ border-left:3px solid var(--ss) }
   .hsc-item-icon{ width:19px; height:19px; flex-shrink:0 }
@@ -593,12 +615,13 @@
   /* ---------- PRODUCT PANELS ---------- */
   .products{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line-soft); border:1px solid var(--line-soft); border-radius:10px; overflow:hidden}
   @media (max-width:820px){.products{grid-template-columns:1fr}}
-  /* border-left in the parent wine, on BOTH engine cards -- Swiggy's rule
-     that the parent colour is a mandatory secondary in every sub-brand
-     layout, not just a decoration. Reuses the same border-left-accent
-     idiom already established elsewhere in this file (.hsc-item,
-     .ss-result, .hw-route-marker) rather than inventing a new device, and
-     is deliberately the SAME on both .pcard.sun and .pcard.slate: this
+  /* border-left in the parent colour (olive, as of the dominant/AsliVastu
+     swap), on BOTH engine cards -- Swiggy's rule that the parent colour is
+     a mandatory secondary in every sub-brand layout, not just a
+     decoration. Reuses the same border-left-accent idiom already
+     established elsewhere in this file (.hsc-item, .ss-result,
+     .hw-route-marker) rather than inventing a new device, and is
+     deliberately the SAME on both .pcard.sun and .pcard.slate: this
      accent says "this is a BlindSpot product," not "which engine," so it
      doesn't vary with the card's own engine hue. */
   .pcard{
@@ -619,7 +642,7 @@
   /* .pcard.sun is literally the SunScout product card and .pcard.slate is
      literally the AsliVastu card (see the "products" section in page.js) --
      genuine per-engine content, same reasoning as the score-card row fix,
-     so these get the engine hues instead of the parent wine/orange pair. */
+     so these get the engine hues instead of the parent olive/orange pair. */
   .pcard.sun .dot{background:var(--ss)}
   .pcard.slate .dot{background:var(--av)}
   .pcard h3{font-size:24px; font-weight:700; margin-bottom:14px; color:var(--ink); transition:transform .25s ease}
@@ -1029,9 +1052,9 @@
   /* ---------- TEAM ---------- */
   .team-grid{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line-soft); border:1px solid var(--line-soft); border-radius:10px; overflow:hidden}
   @media (max-width:820px){.team-grid{grid-template-columns:1fr}}
-  /* Same mandatory-wine border-left as .pcard above, same reasoning: each
-     team member's role text carries their engine hue, but the card itself
-     is framed in the parent wine either way. */
+  /* Same mandatory-parent-colour border-left as .pcard above (olive), same
+     reasoning: each team member's role text carries their engine hue, but
+     the card itself is framed in the parent colour either way. */
   .team-card{background:var(--paper); padding:38px; border-left:3px solid var(--brand); display:flex; gap:20px; align-items:flex-start; transition:background .25s ease}
   .team-card:hover{background:#FFFEFB}
   .team-avatar{
@@ -1058,7 +1081,8 @@
      copy on top of it -- Swiggy's own template for hero, social post,
      pitch slide and report cover alike. This is a generic, hue-agnostic
      base: pass one of the three modifier classes below (or none, which
-     defaults to the parent wine) to get a specific engine's field colour.
+     defaults to the parent colour -- olive, as of the dominant/AsliVastu
+     swap) to get a specific engine's field colour.
      Radius uses --radius-lg (12px) as a stand-in for "derived from the
      logo's geometry" -- the logo lockup itself is still undecided (see the
      brand doc's open questions), so this is the closest real token until
@@ -1085,7 +1109,8 @@
      all. .closing-inner keeps its max-width/padding scaffolding; the
      .closing-inner.bento pair below overrides the parts that conflict
      with plain .bento (text-align, the CTA's own gradient, which would
-     nearly vanish at its wine end against a wine field) -- kept as
+     lose too much contrast at its parent-colour end sitting against a
+     field of the same colour) -- kept as
      compound selectors rather than relying on source order, since this
      file has been bitten by same-specificity/later-wins bugs before (see
      the .howworks-panel-sticky and .nav-cta .nav-user notes elsewhere in
@@ -1110,10 +1135,10 @@
   /* Same cascade trap again, this time on text colour: `.closing-inner h2`
      and `.closing-inner p` above are equal specificity to `.bento h2`/
      `.bento p` (one class + one element each) and come later in source, so
-     they'd silently win and render dark ink text on the wine field without
-     these compound overrides -- not a hypothetical, this is exactly the
-     bug class every other same-specificity comment in this file warns
-     about, just caught here before shipping instead of after. */
+     they'd silently win and render dark ink text on the coloured field
+     without these compound overrides -- not a hypothetical, this is
+     exactly the bug class every other same-specificity comment in this
+     file warns about, just caught here before shipping instead of after. */
   .closing-inner.bento h2{ color:#fff }
   .closing-inner.bento p{ color:rgba(255,255,255,0.82) }
   .closing-ctas{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
@@ -1121,21 +1146,17 @@
   /* Same note as .hero-ctas above: no background/color here on purpose —
      .btn-cta owns the gradient, and a class-based background here would
      silently outrank it (two classes beats one). */
-  /* On a wine field, .btn-cta's own sun→slate gradient loses almost all
-     contrast at its wine end (wine button edge on wine background). Swap
-     to solid white with wine text here specifically -- still reads as the
-     one obvious action on the tile, just inverted instead of invisible. */
-  /* animation:none here too -- the `background:#fff` above already resets
-     background-image/size/position to solid white via the shorthand, so
-     the travelling-gradient keyframes from the base .btn-cta rule would
-     keep running for no visible effect (animating background-position
-     under a flat colour). Turning it off outright instead of leaving a
-     pointless animation ticking in the background. */
+  /* On the parent-colour field, .btn-cta's own solid --brand fill would
+     vanish outright (same colour meeting the same colour). Swap to solid
+     white with parent-colour text here specifically -- still reads as the
+     one obvious action on the tile, just inverted instead of invisible.
+     (No animation/filter to reset here any more, now that the base
+     .btn-cta is a flat fill rather than a travelling gradient.) */
   .closing-inner.bento .btn-cta{
     background:#fff; color:var(--brand); box-shadow:0 10px 24px -12px rgba(0,0,0,0.35);
-    animation:none;
   }
-  .closing-inner.bento .btn-cta:hover{ filter:none; background:#fff; transform:translateY(-1px) }
+  .closing-inner.bento .btn-cta:hover{ background:#fff; transform:translateY(-1px) }
+  .closing-inner.bento .btn-cta-arrow{ color:var(--ss) }
 
   footer{padding:44px 0; border-top:1px solid var(--line-soft)}
   .footer-row{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px}
@@ -1185,7 +1206,7 @@
 
 .reports-page{ min-height:100vh; background:var(--bg); padding:100px 32px 60px }
 .reports-inner{ max-width:900px; margin:0 auto }
-/* Wine frames the page before the two engine-coloured groups below it --
+/* The parent colour (olive) frames the page before the two engine-coloured groups below it --
    same mandatory-secondary rule as .pcard/.team-card, applied at the page
    level here instead of per-card since the two groups on this page are
    both entirely engine-coloured content (see .reports-group h2 below),
@@ -1200,7 +1221,7 @@
 /* Default group here is literally the SunScout list and .av is literally
    the AsliVastu list (see my-reports/page.js) -- this was the same bug as
    the score-card row: the .av-labelled group was colored with the parent
-   wine instead of its own engine hue. Fixed the same way. */
+   colour instead of its own engine hue. Fixed the same way. */
 .reports-group h2{ font-size:14px; text-transform:uppercase; letter-spacing:0.1em; color:var(--ss); margin-bottom:16px }
 .reports-group.av h2{ color:var(--av) }
 .report-row{

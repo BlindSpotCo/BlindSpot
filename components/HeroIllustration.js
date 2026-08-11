@@ -28,8 +28,15 @@ export default function HeroIllustration() {
       aria-hidden="true"
     >
       <g className="hero-sun-g">
-        <circle cx="258" cy="36" r="13" fill="var(--sun)" />
-        <g stroke="var(--sun)" strokeWidth="1.8" strokeLinecap="round" opacity="0.55">
+        {/* var(--ss-sun), not var(--sun) -- this is exactly the "illustration
+            fill only" token, and it's set to match the building's own
+            #E9A94A lit-face yellow directly below, so the sun and the
+            building read as one consistent light source instead of two
+            different yellows. var(--sun) is the text/icon-safe SunScout
+            colour used elsewhere on the page; keep that one for UI, not
+            this illustration. */}
+        <circle cx="258" cy="36" r="13" fill="var(--ss-sun)" />
+        <g stroke="var(--ss-sun)" strokeWidth="1.8" strokeLinecap="round" opacity="0.55">
           <line x1="258" y1="15" x2="258" y2="6" />
           <line x1="258" y1="66" x2="258" y2="57" />
           <line x1="279" y1="36" x2="288" y2="36" />
@@ -74,11 +81,19 @@ export default function HeroIllustration() {
         opacity="0.45"
       />
 
-      {/* Pin -- drops in at the end of the trail, landing on the card. */}
+      {/* Pin -- drops in at the end of the trail, landing on the card.
+          var(--av), not var(--slate)/var(--brand) -- the pin is red on
+          request, and --av is now wine/red-family since the dominant/
+          AsliVastu colour swap, so this stays inside the token system
+          rather than introducing a new hardcoded hex. If this reads as
+          too muted a red once you see it live, that's a shade call on
+          --av itself (it's meant to double as AsliVastu's colour
+          elsewhere), not something to fix by hardcoding a brighter red
+          just here. */}
       <g className="hero-pin-g" style={{ filter: 'drop-shadow(0 7px 11px rgba(28,24,18,0.24))' }}>
         <path
           d="M110 250c-14 0-25.4 11.2-25.4 25.2 0 18.8 25.4 43.6 25.4 43.6s25.4-24.8 25.4-43.6c0-14-11.4-25.2-25.4-25.2z"
-          fill="var(--slate)"
+          fill="var(--av)"
         />
         <circle cx="110" cy="274" r="9" fill="var(--paper)" />
       </g>
