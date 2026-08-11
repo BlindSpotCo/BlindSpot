@@ -44,7 +44,7 @@
     --av-fill:#7C2839;  /* AsliVastu large-fill variant (this was the parent's old --brand-fill value -- the twice-tightened "brighter wine" from CTA tuning) */
     --ss:#AF5F30;       /* SunScout — the light. AA-safe for text/icons (4.59:1 on paper) */
     --ss-fill:#D1901F;  /* SunScout large-type/fill variant. Shifted more yellow (was #C56B36, a burnt orange that read as "just orange" in the CTA gradient) -- boosted green/reduced red toward gold rather than orange. Contrast against white text drops further as a result (~2.6:1, down from the original 3.74:1) -- still fine as a large decorative fill behind bold button text, but genuinely below AA even at "large text" size now, so don't reuse this token anywhere small text would sit on it directly. */
-    --ss-sun:#FFC100;   /* illustration fill only — never text or UI (1.60:1) */
+    --ss-sun:#E9A94A;   /* illustration fill only — never text or UI. Matches the hero building's own lit-face yellow (components/HeroIllustration.js) so the sun and the building read as one consistent illustration instead of two different yellows -- was a brighter #FFC100 before. */
     --plum:#451B3B;     /* Not Recommended / deep ground — AAA everywhere */
 
     /* Legacy aliases so every existing --sun/--slate usage below keeps
