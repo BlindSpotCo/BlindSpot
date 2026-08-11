@@ -220,51 +220,41 @@
   /* The one unified CTA — replaces the separate "Open SunScout"/"Open
      AsliVastu" links everywhere on the page now that this landing page's
      job is to funnel into the combined 3-step tool, not two standalone
-     products. Gradient echoes the sun/slate combined-score styling used
-     elsewhere (the verdict badge, the active "combo" tab) so it visually
-     reads as "both engines, one place" rather than a generic button. */
-  /* Gradient is a travelling background, not a fixed two-stop fill --
-     ss-fill/brand-fill/ss-fill/brand-fill on a 400%-wide background sheet,
-     swept over 4s. Uses the brighter --ss-fill/--brand-fill pair instead
-     of the AA-text-safe --sun/--slate aliases: those two are deliberately
-     desaturated so they pass contrast as small text and icons, which also
-     made the sweep read as muddy and barely-there on a big flat button
-     fill. A large solid-colour area with white text on top doesn't have
-     that same small-text contrast constraint, so it can carry the more
-     saturated "fill" tier instead -- same colour family, same hue,
-     genuinely brighter. saturate()+brightness() on top of that for extra
-     punch, and a wider/more saturated glow to match. Respects
-     prefers-reduced-motion below, same as every other animation in this
-     file. */
+     products.
+     Went through a travelling-gradient version of this button before
+     (ss-fill/brand-fill swept via animated background-position) -- retired
+     it in favour of a flat solid fill, per the brand research doc's own
+     stated rule: "Forbidden are glows, glassmorphism beyond the header,
+     noise/grain, and multi-stop gradients. The three-stop gradient in the
+     v2 mockup read as muddy." Solid --brand (the dominant colour) with the
+     arrow rendered in --ss (SunScout orange, via .btn-cta-arrow below)
+     keeps the "both engines, one action" idea the gradient was going for,
+     without the gradient itself -- one flat field, one accent detail,
+     restraint over range. */
   .btn-cta{
-    background:linear-gradient(90deg, var(--ss-fill), var(--brand-fill), var(--ss-fill), var(--brand-fill));
-    background-size:400% 100%;
-    animation:ctaGradientShift 4s linear infinite;
-    filter:saturate(1.25) brightness(1.04);
+    background:var(--brand);
     color:#fff; border:none;
-    box-shadow:0 12px 30px -10px rgba(197,107,54,0.65);
-    transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+    box-shadow:0 12px 28px -12px rgba(75,79,26,0.55);
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
   }
-  .btn-cta:hover{ transform:translateY(-1px); box-shadow:0 16px 36px -10px rgba(197,107,54,0.75); filter:saturate(1.35) brightness(1.1) }
+  .btn-cta:hover{ transform:translateY(-1px); box-shadow:0 16px 34px -12px rgba(75,79,26,0.65); background:#404318 }
   .btn-cta-sm{
     display:inline-flex; align-items:center;
     padding:8px 16px; border-radius:var(--radius); font-size:13.5px; font-weight:600;
-    background:linear-gradient(90deg, var(--ss-fill), var(--brand-fill), var(--ss-fill), var(--brand-fill));
-    background-size:400% 100%;
-    animation:ctaGradientShift 4s linear infinite;
-    filter:saturate(1.25) brightness(1.04);
+    background:var(--brand);
     color:#fff; text-decoration:none;
-    white-space:nowrap; box-shadow:0 8px 20px -6px rgba(197,107,54,0.65);
-    transition:transform .15s ease, box-shadow .15s ease;
+    white-space:nowrap; box-shadow:0 8px 18px -8px rgba(75,79,26,0.55);
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
   }
-  .btn-cta-sm:hover{ transform:translateY(-1px); box-shadow:0 12px 24px -6px rgba(197,107,54,0.75); filter:saturate(1.35) brightness(1.1) }
-  @keyframes ctaGradientShift{
-    0%{ background-position:0% 50% }
-    100%{ background-position:100% 50% }
-  }
-  @media (prefers-reduced-motion: reduce){
-    .btn-cta, .btn-cta-sm{ animation:none !important; background-position:0% 50% }
-  }
+  .btn-cta-sm:hover{ transform:translateY(-1px); box-shadow:0 10px 22px -8px rgba(75,79,26,0.65); background:#404318 }
+  /* The one deliberate accent on an otherwise flat button -- the arrow
+     glyph in the button label ("Uncover Your BlindSpot →") gets its own
+     span so it can carry the SunScout orange while the rest of the label
+     stays white. Nudges right on hover, same idiom as .pcard-cta svg
+     elsewhere in this file, so the motion lives in a small icon detail
+     instead of the whole button face. */
+  .btn-cta-arrow{ color:var(--ss); display:inline-block; transition:transform .18s ease }
+  .btn-cta:hover .btn-cta-arrow, .btn-cta-sm:hover .btn-cta-arrow{ transform:translateX(3px) }
 
   /* Scroll-triggered reveal — sections/cards fade and rise into place once,
      the first time they enter the viewport. Respects reduced motion. */
@@ -1156,22 +1146,17 @@
   /* Same note as .hero-ctas above: no background/color here on purpose —
      .btn-cta owns the gradient, and a class-based background here would
      silently outrank it (two classes beats one). */
-  /* On the parent-colour field, .btn-cta's own sun→slate gradient loses
-     almost all contrast at its parent-colour end (same colour meeting the
-     same colour). Swap to solid white with parent-colour text here
-     specifically -- still reads as the one obvious action on the tile,
-     just inverted instead of invisible. */
-  /* animation:none here too -- the `background:#fff` above already resets
-     background-image/size/position to solid white via the shorthand, so
-     the travelling-gradient keyframes from the base .btn-cta rule would
-     keep running for no visible effect (animating background-position
-     under a flat colour). Turning it off outright instead of leaving a
-     pointless animation ticking in the background. */
+  /* On the parent-colour field, .btn-cta's own solid --brand fill would
+     vanish outright (same colour meeting the same colour). Swap to solid
+     white with parent-colour text here specifically -- still reads as the
+     one obvious action on the tile, just inverted instead of invisible.
+     (No animation/filter to reset here any more, now that the base
+     .btn-cta is a flat fill rather than a travelling gradient.) */
   .closing-inner.bento .btn-cta{
     background:#fff; color:var(--brand); box-shadow:0 10px 24px -12px rgba(0,0,0,0.35);
-    animation:none; filter:none;
   }
-  .closing-inner.bento .btn-cta:hover{ filter:none; background:#fff; transform:translateY(-1px) }
+  .closing-inner.bento .btn-cta:hover{ background:#fff; transform:translateY(-1px) }
+  .closing-inner.bento .btn-cta-arrow{ color:var(--ss) }
 
   footer{padding:44px 0; border-top:1px solid var(--line-soft)}
   .footer-row{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px}

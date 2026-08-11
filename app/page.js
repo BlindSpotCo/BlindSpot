@@ -78,7 +78,7 @@ export default function Home() {
             <p className="hero-tagline"><span className="seg sun">One pin</span><span className="sep"></span><span className="seg slate">Two answers</span></p>
             <p className="hero-sub">Drop a pin. See exactly what the neighbourhood around it is really like, and exactly how sunlight moves through the unit. Real government records. Real solar geometry. No broker spin.</p>
             <div className="hero-ctas">
-              <Link href="/property-score" className="btn btn-lg btn-cta">Uncover Your BlindSpot →</Link>
+              <Link href="/property-score" className="btn btn-lg btn-cta">Uncover Your BlindSpot <span className="btn-cta-arrow">→</span></Link>
             </div>
             <div className="coord-readout"><span className="blink"></span><span ref={coordRef} className="mono">12.9716° N, 77.5946° E — checking Bengaluru</span></div>
           </div>
@@ -234,7 +234,7 @@ export default function Home() {
           <h2>See the sunlight. Know the neighbourhood.</h2>
           <p>Two free tools. One pin. Everything the listing wasn&apos;t going to mention.</p>
           <div className="closing-ctas">
-            <Link href="/property-score" className="btn btn-lg btn-cta">Uncover Your BlindSpot →</Link>
+            <Link href="/property-score" className="btn btn-lg btn-cta">Uncover Your BlindSpot <span className="btn-cta-arrow">→</span></Link>
           </div>
         </div>
 
