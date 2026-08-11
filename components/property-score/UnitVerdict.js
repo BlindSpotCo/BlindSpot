@@ -170,7 +170,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
 
           <button onClick={() => computeCombined()} disabled={loadingCombined || floor == null || !facing} className="uv-getscore-btn"
             style={{
-              background: (floor == null || !facing) ? 'var(--line)' : 'linear-gradient(90deg, var(--sun), var(--slate))',
+              background: (floor == null || !facing) ? 'var(--line)' : 'var(--brand)',
               color: '#fff', border: 'none', borderRadius: 3, padding: '14px 24px', fontSize: 13, fontWeight: 700,
               cursor: (floor == null || !facing) ? 'default' : 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
               opacity: loadingCombined ? .6 : 1, marginBottom: 20,
@@ -203,7 +203,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                     {combined.combinedScore}<span style={{ fontSize: 20, color: 'var(--text-dim)' }}>/100</span>
                   </div>
                 </div>
-                <div className="uv-verdict-badge" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 20, color: '#fff', background: 'linear-gradient(90deg, var(--sun), var(--slate))', padding: '8px 18px', borderRadius: 3 }}>
+                <div className="uv-verdict-badge" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 20, color: '#fff', background: 'var(--brand)', padding: '8px 18px', borderRadius: 3 }}>
                   {combined.verdict.label}
                 </div>
               </div>
@@ -243,7 +243,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               <button
                 onClick={() => sunScoutRef.current?.openReport({ floor: combined.unit.floor, facing: combined.unit.facing })}
                 style={{
-                  background: 'linear-gradient(90deg, var(--sun), var(--slate))', color: '#fff', border: 'none',
+                  background: 'var(--brand)', color: '#fff', border: 'none',
                   borderRadius: 3, padding: '13px 22px', fontSize: 12.5, fontWeight: 700, cursor: 'pointer',
                   letterSpacing: '.03em', textTransform: 'uppercase', width: '100%',
                 }}>

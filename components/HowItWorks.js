@@ -267,7 +267,11 @@ function VerdictPanel() {
             80<span style={{ fontSize: 18, color: 'var(--text-mute)' }}>/100</span>
           </div>
         </div>
-        <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 18, color: '#fff', background: 'linear-gradient(90deg, var(--sun), var(--slate))', padding: '8px 16px', borderRadius: 3 }}>
+        {/* Solid --brand fill, not the old sun→slate gradient -- matches the
+            .hsc-badge cleanup in globals.css. This one was hardcoded as an
+            inline style here rather than sharing that class, which is why
+            it got missed the first time. */}
+        <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 18, color: '#fff', background: 'var(--brand)', padding: '8px 16px', borderRadius: 3 }}>
           Recommended
         </div>
       </div>
