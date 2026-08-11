@@ -16,14 +16,73 @@
        --bg (roughly 2.2:1), which is a real chunk of why small mono
        labels read as "thin, not visible" — this gets it closer to 4:1. */
     --text-dim:#726A54;
-    /* Accent colors, per reference: a deep maroon/burgundy and a warm
-       amber, replacing the old orange/green pair everywhere in one place —
-       every button, badge, gradient and accent on the site is built on
-       these two CSS variables, so this swap alone re-themes the whole
-       site without hunting down individual hex values. */
-    --sun:#C9812E;
-    --slate:#6B2430;
-    --radius:6px;
+    /* ===== BRAND TOKENS — one-variable-hue architecture =====
+       See BlindSpot_Brand_Core_v1.md. The mechanism (borrowed from how
+       Swiggy holds one system constant across Swiggy/Instamart/Dineout and
+       only ever moves the hue): one parent colour (--brand) plus one hue
+       per engine (--av for AsliVastu, --ss for SunScout). Everything else —
+       type, spacing, radius, layout — stays identical across all three.
+       --brand is the mandatory secondary: it must appear somewhere in every
+       engine-coloured layout (the badge/CTA gradients already do this). */
+    --brand:#6B2232;   /* BlindSpot (parent) — the judgment */
+    --av:#4B4F1A;       /* AsliVastu — the area. AAA on paper (8.49:1) */
+    --av-fill:#ADA846;  /* AsliVastu light fill — decorative/large only, fails text contrast */
+    --ss:#AF5F30;       /* SunScout — the light. AA-safe for text/icons (4.59:1 on paper) */
+    --ss-fill:#C56B36;  /* SunScout large-type/fill variant (3.74:1 — 24px+ or bold 18.7px+ only) */
+    --ss-sun:#FFC100;   /* illustration fill only — never text or UI (1.60:1) */
+    --plum:#451B3B;     /* Not Recommended / deep ground — AAA everywhere */
+
+    /* Legacy aliases so every existing --sun/--slate usage below keeps
+       working during migration, but with the accessible values:
+       --slate was already ≈ --brand (#6B2430 vs #6B2232 — imperceptible).
+       --sun previously pointed at #C9812E, which fails WCAG AA as text/icon
+       colour (2.92:1 on --bg, needs 4.5:1) — e.g. .hero-tagline .seg.sun
+       and .hsc-item.sun .hsc-item-icon. Aliasing it to --ss fixes that
+       failure everywhere at once instead of hunting down each call site. */
+    --slate: var(--brand);
+    --sun: var(--ss);
+
+    /* Tightened from 6px per the brand research doc's "pills only for
+       status" recommendation: 6 was an orphan value sitting between the
+       clean 4/8/12 progression below, used on the same buttons/inputs
+       that scale already covers. Dropping it to 4 retires the odd value
+       out instead of adding a fifth number to the scale. */
+    --radius:4px;
+    --radius-sm:4px;
+    --radius-md:8px;
+    --radius-lg:12px;
+    --radius-pill:999px;
+
+    /* ===== SPACING SCALE ===== Swiggy holds one 8-point-derived scale
+       everywhere (their own audit found 20+ ungoverned pixel values before
+       they enforced this); this file has the same drift already (see the
+       hand-tuned-pixel comments throughout). Defining the scale here is
+       the first step -- it is NOT yet applied everywhere below, since
+       retrofitting every existing padding/margin without being able to
+       see the result live risks silently breaking a lot of hand-tuned
+       spacing at once. New work should use these; existing values get
+       migrated incrementally, on review. */
+    --space-1:4px;
+    --space-2:8px;
+    --space-3:12px;
+    --space-4:16px;
+    --space-5:24px;
+    --space-6:32px;
+    --space-7:48px;
+    --space-8:64px;
+    --space-9:96px;
+
+    /* ===== LEADING FORMULA ===== Swiggy's rule: display = size × 1.1,
+       body = size × 1.4 (unitless line-height IS that multiplier, so this
+       is applied directly as a default, not as a literal formula). Set at
+       the shared h1/h2/h3/.disp and body level as a fallback ONLY --
+       every existing per-element line-height below (.hero h1's 1.04,
+       .section h2's 1.2, .pcard p's 1.7, etc.) is a more specific selector
+       and keeps winning the cascade untouched. This gives any new heading
+       or paragraph a sane default without silently overriding the
+       hand-tuned ones that already exist. */
+    --leading-display:1.1;
+    --leading-body:1.4;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -51,16 +110,26 @@
      UI elements (buttons, nav links, badges, etc.) already declare their
      own explicit weight, so they aren't affected by this; only running
      text that wasn't setting a weight picks it up. */
+  /* line-height:var(--leading-body) here is a fallback via inheritance,
+     not an override -- every element below that already sets its own
+     line-height (most paragraph/desc classes do) keeps its own value
+     regardless, since an explicit declaration always beats an inherited
+     one. Only genuinely bare text picks this default up. */
   body{
     font-family:'Inter',sans-serif; font-weight:500;
     background:var(--bg);
     color:var(--text);
+    line-height:var(--leading-body);
     -webkit-font-smoothing:antialiased;
   }
   /* Bumped from 600 — this is meant to read as a bold, high-contrast
      "intelligence" system, and 600 at these sizes was reading soft/thin
-     next to the reference. */
-  h1,h2,h3,.disp{font-family:'Bricolage Grotesque',sans-serif;letter-spacing:-0.01em; font-weight:700}
+     next to the reference.
+     line-height:var(--leading-display) is likewise a fallback only -- every
+     specific heading below (.hero h1, .section h2, .closing-inner h2,
+     .howworks-step-block h3, etc.) is a more specific selector and keeps
+     winning the cascade with its own hand-tuned value untouched. */
+  h1,h2,h3,.disp{font-family:'Bricolage Grotesque',sans-serif;letter-spacing:-0.01em; font-weight:700; line-height:var(--leading-display)}
   /* IBM Plex Mono defaults to 400 if unset, which looks thin at the small
      sizes used for eyebrows/labels site-wide — 500 as the baseline for
      every .mono element fixes that in one place. */
@@ -426,9 +495,14 @@
   }
   .hsc-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px }
   .hsc-label{ font-family:'IBM Plex Mono',monospace; font-size:12.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim) }
+  /* This is a genuine status pill (the verdict badge: Prime Pick / Location
+     Play / etc.), so it gets the real --radius-pill token now instead of a
+     hardcoded 20px that happened to look pill-ish -- per the doc's "pills
+     only for status" rule, this is exactly the kind of element that
+     should be one. */
   .hsc-badge{
     font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:13px; color:#fff;
-    background:linear-gradient(90deg, var(--sun), var(--slate)); padding:6px 14px; border-radius:20px;
+    background:linear-gradient(90deg, var(--sun), var(--slate)); padding:6px 14px; border-radius:var(--radius-pill);
   }
   .hsc-number{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:56px; line-height:1; color:var(--ink); margin-bottom:10px }
   .hsc-number span{ font-size:18px; color:var(--text-dim); font-family:'Inter',sans-serif; font-weight:500 }
@@ -441,11 +515,16 @@
      rather than being the first thing you read. */
   .hsc-row{ display:flex; flex-direction:column; gap:10px; margin-bottom:18px }
   .hsc-item{ display:flex; align-items:center; gap:12px; border:1px solid var(--line); border-radius:8px; padding:11px 14px }
-  .hsc-item.slate{ border-left:3px solid var(--slate) }
-  .hsc-item.sun{ border-left:3px solid var(--sun) }
+  /* This row is genuinely AsliVastu content (neighbourhood/safety), so it
+     gets the AsliVastu engine hue (--av, olive) rather than the parent
+     --brand/--slate wine — the two were previously conflated into one
+     colour here. This is the one-variable-hue system actually showing up
+     as three distinct engine colours instead of two. */
+  .hsc-item.slate{ border-left:3px solid var(--av) }
+  .hsc-item.sun{ border-left:3px solid var(--ss) }
   .hsc-item-icon{ width:19px; height:19px; flex-shrink:0 }
-  .hsc-item.slate .hsc-item-icon{ color:var(--slate) }
-  .hsc-item.sun .hsc-item-icon{ color:var(--sun) }
+  .hsc-item.slate .hsc-item-icon{ color:var(--av) }
+  .hsc-item.sun .hsc-item-icon{ color:var(--ss) }
   .hsc-item-label{ display:block; font-family:'Inter',sans-serif; font-weight:600; font-size:14.5px; color:var(--ink) }
   .hsc-item-sub{ display:block; font-family:'IBM Plex Mono',monospace; font-weight:500; font-size:11.5px; letter-spacing:.05em; color:var(--text-dim); margin-top:3px }
   .hsc-foot{ font-size:12.5px; color:var(--text-mute); line-height:1.6; border-top:1px solid var(--line-soft); padding-top:14px }
@@ -454,10 +533,12 @@
      occupies the card's top-right corner, and this tag used to collide
      with it there. (Mobile already anchored it left, below -- desktop now
      matches instead of contradicting it.) */
+  /* Also a genuine status label ("LIVE PREVIEW"), same reasoning as
+     .hsc-badge above -- real pill token instead of a hardcoded 20px. */
   .hero-visual-tag{
     position:absolute; top:-16px; left:22px; z-index:2; background:var(--ink); color:var(--paper);
     font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase;
-    padding:7px 12px; border-radius:20px; box-shadow:0 10px 24px -12px rgba(28,24,18,0.5);
+    padding:7px 12px; border-radius:var(--radius-pill); box-shadow:0 10px 24px -12px rgba(28,24,18,0.5);
   }
   @media (max-width:900px){ .hero-score-card{ transform:none; max-width:420px; margin:0 auto } .hero-visual-tag{ right:auto; left:22px } }
 
@@ -490,8 +571,17 @@
   /* ---------- PRODUCT PANELS ---------- */
   .products{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line-soft); border:1px solid var(--line-soft); border-radius:10px; overflow:hidden}
   @media (max-width:820px){.products{grid-template-columns:1fr}}
+  /* border-left in the parent wine, on BOTH engine cards -- Swiggy's rule
+     that the parent colour is a mandatory secondary in every sub-brand
+     layout, not just a decoration. Reuses the same border-left-accent
+     idiom already established elsewhere in this file (.hsc-item,
+     .ss-result, .hw-route-marker) rather than inventing a new device, and
+     is deliberately the SAME on both .pcard.sun and .pcard.slate: this
+     accent says "this is a BlindSpot product," not "which engine," so it
+     doesn't vary with the card's own engine hue. */
   .pcard{
-    background:var(--paper); padding:38px; display:flex; flex-direction:column; height:100%;
+    background:var(--paper); padding:38px; border-left:3px solid var(--brand);
+    display:flex; flex-direction:column; height:100%;
     transition:background .25s ease, transform .25s ease, box-shadow .25s ease;
   }
   .pcard:hover{
@@ -504,8 +594,12 @@
   }
   .pcard-tag .dot{width:6px; height:6px; border-radius:50%; animation:tagPulse 3.2s ease-in-out infinite}
   @keyframes tagPulse{0%,100%{opacity:.55; transform:scale(1)} 50%{opacity:1; transform:scale(1.25)}}
-  .pcard.sun .dot{background:var(--sun)}
-  .pcard.slate .dot{background:var(--slate)}
+  /* .pcard.sun is literally the SunScout product card and .pcard.slate is
+     literally the AsliVastu card (see the "products" section in page.js) --
+     genuine per-engine content, same reasoning as the score-card row fix,
+     so these get the engine hues instead of the parent wine/orange pair. */
+  .pcard.sun .dot{background:var(--ss)}
+  .pcard.slate .dot{background:var(--av)}
   .pcard h3{font-size:24px; font-weight:700; margin-bottom:14px; color:var(--ink); transition:transform .25s ease}
   .pcard:hover h3{transform:translateX(2px)}
   .pcard p{font-size:15px; line-height:1.7; color:var(--text-mute); margin-bottom:28px; flex:1}
@@ -522,6 +616,15 @@
   .pcard-cta:hover svg{transform:translateX(3px)}
 
   /* ---------- HOW IT WORKS ---------- */
+  /* NOTE (pill audit): this hardcoded 20px reads as a pill, and the brand
+     doc's "pills only for status" rule would technically say to move it to
+     --radius-lg (12px) since a tab/filter control isn't a status badge.
+     Left as-is deliberately -- pill-shaped tab/segmented controls are a
+     well-established, expected pattern on their own terms, and swapping
+     the shape of an interactive control is a bigger visual call than the
+     unambiguous status-badge fixes above (.hsc-badge, .hero-visual-tag).
+     Flagging this rather than silently changing it -- worth a deliberate
+     yes/no, not a default. */
   .howworks-tabs{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:36px}
   .howworks-tab{
     background:var(--paper); color:var(--text); border:1px solid var(--line); border-radius:20px;
@@ -529,8 +632,13 @@
     transition:border-color .15s ease, background .15s ease, color .15s ease;
   }
   .howworks-tab:hover{border-color:rgba(28,24,18,0.4)}
-  .howworks-tab.active-slate{background:var(--slate); border-color:var(--slate); color:#fff}
-  .howworks-tab.active-sun{background:var(--sun); border-color:var(--sun); color:#fff}
+  /* accent-slate = the "area" step (AsliVastu), accent-sun = the "unit" step
+     (SunScout) -- see the steps array in HowItWorks.js. Genuine per-engine
+     content, so these move to --av/--ss; active-combo (step 3, the
+     verdict) is deliberately left as the sun/slate gradient since it's
+     both engines merged into one score, not either one alone. */
+  .howworks-tab.active-slate{background:var(--av); border-color:var(--av); color:#fff}
+  .howworks-tab.active-sun{background:var(--ss); border-color:var(--ss); color:#fff}
   .howworks-tab.active-combo{background:linear-gradient(90deg, var(--sun), var(--slate)); border-color:transparent; color:#fff}
 
   /* Scroll-driven layout: sticky panel on the left, step copy blocks
@@ -631,8 +739,9 @@
   .hw-route-marker{
     position:relative; border-left:2px solid var(--line); transition:border-color .4s ease;
   }
-  .hw-route-marker.reached.accent-slate{ border-color:var(--slate) }
-  .hw-route-marker.reached.accent-sun{ border-color:var(--sun) }
+  /* Same accent-slate/accent-sun = area/unit step mapping as the tabs above. */
+  .hw-route-marker.reached.accent-slate{ border-color:var(--av) }
+  .hw-route-marker.reached.accent-sun{ border-color:var(--ss) }
   .hw-route-marker.reached.accent-combo{ border-color:var(--ink) }
 
   /* A real teardrop pin (not a plain dot) for each step, positioned near
@@ -644,8 +753,8 @@
     color:var(--text-dim); filter:drop-shadow(0 2px 3px rgba(28,24,18,.25));
     transition:color .4s ease;
   }
-  .hw-route-marker.reached.accent-slate .hw-route-pin{ color:var(--slate) }
-  .hw-route-marker.reached.accent-sun .hw-route-pin{ color:var(--sun) }
+  .hw-route-marker.reached.accent-slate .hw-route-pin{ color:var(--av) }
+  .hw-route-marker.reached.accent-sun .hw-route-pin{ color:var(--ss) }
   .hw-route-marker.reached.accent-combo .hw-route-pin{ color:var(--ink) }
   .hw-route-pin svg path{ fill:currentColor }
   .hw-route-pin-hole{ fill:var(--bg) }
@@ -685,8 +794,8 @@
   .howworks-step-block.active{opacity:1}
 
   .howworks-step-eyebrow{font-size:13.5px; font-weight:600; letter-spacing:.12em; margin-bottom:14px}
-  .howworks-step-eyebrow.accent-slate{color:var(--slate)}
-  .howworks-step-eyebrow.accent-sun{color:var(--sun)}
+  .howworks-step-eyebrow.accent-slate{color:var(--av)}
+  .howworks-step-eyebrow.accent-sun{color:var(--ss)}
   .howworks-step-eyebrow.accent-combo{color:var(--text)}
   .howworks-step-block h3{font-size:22px; font-weight:700; color:var(--ink); line-height:1.3; margin-bottom:14px}
   .howworks-step-block p{font-size:15px; line-height:1.7; color:var(--text-mute); margin-bottom:20px}
@@ -831,7 +940,11 @@
   .ss-map-bldg{ fill:rgba(255,255,255,0.14); stroke:rgba(255,255,255,0.26); stroke-width:1 }
   .ss-map-bldg-target{ fill:rgba(224,123,0,0.4); stroke:#E07B00; stroke-width:1.5 }
   .ss-map-sunpath{ fill:none; stroke:rgba(233,169,74,0.7); stroke-width:1.5; stroke-dasharray:2 6; stroke-linecap:round }
-  .ss-map-sun{ fill:var(--sun) }
+  /* Illustration fill, not text/UI -- this is exactly what --ss-sun exists
+     for (see the token comments in :root): a small sun glyph inside the
+     map strip doesn't need to hit text contrast ratios the way an icon
+     paired with a label does. */
+  .ss-map-sun{ fill:var(--ss-sun) }
   .ss-map-pin{ fill:#E07B00 }
   .ss-map-pin-hole{ fill:#1b1509 }
   .ss-map-ping{ fill:none; stroke:#E07B00; stroke-width:1.5; opacity:.55; animation:ssMapPing 2.6s ease-out infinite }
@@ -877,15 +990,27 @@
   @media (max-width:700px){ .why-row{grid-template-columns:24px 1fr; row-gap:8px; padding:30px 16px; margin:0 -16px} .why-row .why-desc{grid-column:2} }
   .why-icon{width:20px; height:20px; color:var(--text-dim); margin-top:2px; transition:transform .2s ease}
   .why-row:hover .why-icon{transform:scale(1.15)}
-  .why-row:nth-child(1) .why-icon, .why-row:nth-child(3) .why-icon{color:var(--sun)}
-  .why-row:nth-child(2) .why-icon, .why-row:nth-child(4) .why-icon{color:var(--slate)}
+  /* Was nth-child(1)/(3) = sun, nth-child(2)/(4) = slate -- purely
+     alternating by position, not by what each row is actually about. Only
+     rows 1 ("Sunlight is data, not vibes") and 2 ("Brokers don't tell you
+     everything") are genuinely single-engine content, so only those get an
+     engine hue now (via explicit .ss/.av classes in page.js, not position).
+     Rows 3 ("One pin. Two answers.") and 4 ("Zero cost. No catch.") are
+     about both engines or neither, so they fall back to the same neutral
+     --text-dim as every other icon instead of being forced into one
+     engine's colour just because of where they sit in the list. */
+  .why-row.ss .why-icon{color:var(--ss)}
+  .why-row.av .why-icon{color:var(--av)}
   .why-title{font-family:'Bricolage Grotesque',sans-serif; font-size:16px; font-weight:700; color:var(--ink)}
   .why-desc{font-size:15px; line-height:1.7; color:var(--text-mute)}
 
   /* ---------- TEAM ---------- */
   .team-grid{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line-soft); border:1px solid var(--line-soft); border-radius:10px; overflow:hidden}
   @media (max-width:820px){.team-grid{grid-template-columns:1fr}}
-  .team-card{background:var(--paper); padding:38px; display:flex; gap:20px; align-items:flex-start; transition:background .25s ease}
+  /* Same mandatory-wine border-left as .pcard above, same reasoning: each
+     team member's role text carries their engine hue, but the card itself
+     is framed in the parent wine either way. */
+  .team-card{background:var(--paper); padding:38px; border-left:3px solid var(--brand); display:flex; gap:20px; align-items:flex-start; transition:background .25s ease}
   .team-card:hover{background:#FFFEFB}
   .team-avatar{
     width:56px; height:56px; flex-shrink:0; border:1.5px solid var(--line); border-radius:50%;
@@ -896,22 +1021,92 @@
   .team-card:hover .team-avatar{border-color:var(--ink); color:var(--ink); transform:rotate(-4deg)}
   .team-name{font-size:18px; font-weight:700; color:var(--ink); font-family:'Bricolage Grotesque',sans-serif; margin-bottom:3px}
   .team-role{font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:12.5px; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:12px}
-  .team-role.sun{color:var(--sun)}
-  .team-role.slate{color:var(--slate)}
+  /* "Builds SunScout" / "Builds AsliVastu" -- genuine per-founder engine
+     content (see the team section in page.js), same treatment as the
+     product cards. */
+  .team-role.sun{color:var(--ss)}
+  .team-role.slate{color:var(--av)}
   .team-desc{font-size:14.5px; color:var(--text-mute); line-height:1.65; margin-bottom:14px}
   .team-link{display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:600; color:var(--text); text-decoration:none; border-bottom:1px solid var(--line); padding-bottom:2px}
   .team-link:hover{border-color:var(--text)}
 
+  /* ---------- BENTO BOX ----------
+     The doc's highest-leverage single item (Section 5.5): one reusable
+     rounded-rectangle container, a contrasting field colour, left-aligned
+     copy on top of it -- Swiggy's own template for hero, social post,
+     pitch slide and report cover alike. This is a generic, hue-agnostic
+     base: pass one of the three modifier classes below (or none, which
+     defaults to the parent wine) to get a specific engine's field colour.
+     Radius uses --radius-lg (12px) as a stand-in for "derived from the
+     logo's geometry" -- the logo lockup itself is still undecided (see the
+     brand doc's open questions), so this is the closest real token until
+     that's locked; revisit once the mark's own geometry is finalised.
+     Padding uses the new spacing scale rather than one-off pixel values,
+     per the same doc section. */
+  .bento{
+    background:var(--brand); color:#fff;
+    border-radius:var(--radius-lg);
+    padding:var(--space-7) var(--space-6);
+    text-align:left;
+  }
+  .bento h1, .bento h2, .bento h3{ color:#fff }
+  .bento p{ color:rgba(255,255,255,0.82) }
+  .bento.av{ background:var(--av) }
+  .bento.ss{ background:var(--ss) }
+  @media (max-width:640px){ .bento{ padding:var(--space-6) var(--space-4) } }
+
   /* ---------- CLOSING ---------- */
+  /* First real instance of .bento: the closing CTA is exactly the "poster
+     moment" the pattern is meant for -- one unavoidable field colour, one
+     line, one action, nothing else competing for attention. Previously
+     plain centred text on the page background with no card treatment at
+     all. .closing-inner keeps its max-width/padding scaffolding; the
+     .closing-inner.bento pair below overrides the parts that conflict
+     with plain .bento (text-align, the CTA's own gradient, which would
+     nearly vanish at its wine end against a wine field) -- kept as
+     compound selectors rather than relying on source order, since this
+     file has been bitten by same-specificity/later-wins bugs before (see
+     the .howworks-panel-sticky and .nav-cta .nav-user notes elsewhere in
+     this file) and a plain second `.closing-inner{ text-align:center }`
+     rule already exists just below. */
   .closing-inner{text-align:center; max-width:600px; margin:0 auto; padding:96px 0}
+  /* padding is explicit here, not inherited from either single-class rule
+     above -- .closing-inner's own `padding:96px 0` is same-specificity and
+     later in source than .bento's, so it would silently win outright and
+     leave the coloured box with zero horizontal inset (text touching the
+     rounded corners) if this compound rule didn't restate it. Same trap
+     the .bento comment above already calls out. */
+  .closing-inner.bento{
+    text-align:left; max-width:720px;
+    padding:var(--space-7) var(--space-6);
+  }
+  @media (max-width:640px){ .closing-inner.bento{ padding:var(--space-6) var(--space-4) } }
   .closing-inner h2{font-size:40px; font-weight:700; color:var(--ink); line-height:1.25; margin-bottom:28px}
   @media (max-width:900px){ .closing-inner h2{ font-size:32px } }
   @media (max-width:480px){ .closing-inner h2{ font-size:26px } }
   .closing-inner p{color:var(--text-mute); font-size:15px; line-height:1.6; margin-bottom:40px}
+  /* Same cascade trap again, this time on text colour: `.closing-inner h2`
+     and `.closing-inner p` above are equal specificity to `.bento h2`/
+     `.bento p` (one class + one element each) and come later in source, so
+     they'd silently win and render dark ink text on the wine field without
+     these compound overrides -- not a hypothetical, this is exactly the
+     bug class every other same-specificity comment in this file warns
+     about, just caught here before shipping instead of after. */
+  .closing-inner.bento h2{ color:#fff }
+  .closing-inner.bento p{ color:rgba(255,255,255,0.82) }
   .closing-ctas{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+  .closing-inner.bento .closing-ctas{ justify-content:flex-start }
   /* Same note as .hero-ctas above: no background/color here on purpose —
      .btn-cta owns the gradient, and a class-based background here would
      silently outrank it (two classes beats one). */
+  /* On a wine field, .btn-cta's own sun→slate gradient loses almost all
+     contrast at its wine end (wine button edge on wine background). Swap
+     to solid white with wine text here specifically -- still reads as the
+     one obvious action on the tile, just inverted instead of invisible. */
+  .closing-inner.bento .btn-cta{
+    background:#fff; color:var(--brand); box-shadow:0 10px 24px -12px rgba(0,0,0,0.35);
+  }
+  .closing-inner.bento .btn-cta:hover{ filter:none; background:#fff; transform:translateY(-1px) }
 
   footer{padding:44px 0; border-top:1px solid var(--line-soft)}
   .footer-row{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px}
@@ -961,15 +1156,24 @@
 
 .reports-page{ min-height:100vh; background:var(--bg); padding:100px 32px 60px }
 .reports-inner{ max-width:900px; margin:0 auto }
-.reports-inner h1{ font-size:28px; font-weight:600; color:var(--ink); margin-bottom:8px }
-.reports-inner .sub{ font-size:15px; color:var(--text-mute); margin-bottom:44px }
+/* Wine frames the page before the two engine-coloured groups below it --
+   same mandatory-secondary rule as .pcard/.team-card, applied at the page
+   level here instead of per-card since the two groups on this page are
+   both entirely engine-coloured content (see .reports-group h2 below),
+   with nothing else on the page to carry the parent hue otherwise. */
+.reports-inner h1{ font-size:28px; font-weight:600; color:var(--ink); margin-bottom:8px; border-left:3px solid var(--brand); padding-left:14px }
+.reports-inner .sub{ font-size:15px; color:var(--text-mute); margin-bottom:44px; padding-left:14px }
 .reports-empty{
   border:1px dashed var(--line); border-radius:var(--radius); padding:48px;
   text-align:center; color:var(--text-mute); font-size:14px;
 }
 .reports-group{ margin-bottom:40px }
-.reports-group h2{ font-size:14px; text-transform:uppercase; letter-spacing:0.1em; color:var(--sun); margin-bottom:16px }
-.reports-group.av h2{ color:var(--slate) }
+/* Default group here is literally the SunScout list and .av is literally
+   the AsliVastu list (see my-reports/page.js) -- this was the same bug as
+   the score-card row: the .av-labelled group was colored with the parent
+   wine instead of its own engine hue. Fixed the same way. */
+.reports-group h2{ font-size:14px; text-transform:uppercase; letter-spacing:0.1em; color:var(--ss); margin-bottom:16px }
+.reports-group.av h2{ color:var(--av) }
 .report-row{
   display:flex; justify-content:space-between; align-items:center; padding:16px 0;
   border-bottom:1px solid var(--line-soft); cursor:pointer; transition:background 0.15s ease;

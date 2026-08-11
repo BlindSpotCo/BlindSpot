@@ -172,12 +172,12 @@ export default function Home() {
             </div>
           </div>
           <div className="why-list">
-            <div className="why-row reveal">
+            <div className="why-row ss reveal">
               <svg className="why-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M4 20 L10 14 M20 20 L14 14"/></svg>
               <div className="why-title">Sunlight is data, not vibes</div>
               <div className="why-desc">Listing photos are taken on sunny days, at the best angle, in summer. SunScout shows what light actually looks like at 9am in December — before you sign anything.</div>
             </div>
-            <div className="why-row reveal">
+            <div className="why-row av reveal">
               <svg className="why-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="14" rx="1"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
               <div className="why-title">Brokers don&apos;t tell you everything</div>
               <div className="why-desc">Crime rates, AQI readings, power-cut frequency — AsliVastu pulls these straight from government records, not from someone with a commission riding on your decision.</div>
@@ -230,7 +230,7 @@ export default function Home() {
       </section>
 
       <section className="section">
-        <div className="wrap closing-inner reveal">
+        <div className="wrap closing-inner bento reveal">
           <h2>See the sunlight. Know the neighbourhood.</h2>
           <p>Two free tools. One pin. Everything the listing wasn&apos;t going to mention.</p>
           <div className="closing-ctas">
