@@ -65,7 +65,7 @@ export default function AVAreaCard({ record, city }) {
       <a
         href={`/neighbourhood-report/${record.pin_code}`}
         target="_blank"
-        rel="noopener noreferrer"
+        rel="noreferrer"
         style={{ display: 'inline-block', background: 'var(--slate)', color: '#fff', border: '1px solid var(--slate)', borderRadius: 3, padding: '12px 22px', fontSize: 13.5, fontWeight: 700, textDecoration: 'none' }}
       >
         See Full AsliVastu Report ↗

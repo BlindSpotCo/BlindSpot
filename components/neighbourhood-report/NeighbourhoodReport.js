@@ -99,6 +99,7 @@ function highlights(r) {
 export default function NeighbourhoodReport({ record, nearby }) {
   const [persona, setPersona] = useState('Default');
   const [customWeights, setCustomWeights] = useState({ ...WEIGHT_PRESETS.Default });
+  const [closeHint, setCloseHint] = useState(false);
 
   const { nqi, grade, rows } = useMemo(() => {
     const w = persona === 'Custom' ? customWeights : WEIGHT_PRESETS[persona];
@@ -116,6 +117,18 @@ export default function NeighbourhoodReport({ record, nearby }) {
   const { good, bad } = highlights(record);
   const pc = record.price_context;
 
+  // window.close() only works on a tab the browser considers "opened by
+  // script" (i.e. window.opener is set) — that's why AVAreaCard's link now
+  // drops rel="noopener". If the tab was still opened some other way (a
+  // browser's own "open in new tab" context-menu action, a bookmark, etc.),
+  // there's no opener either way and the browser silently refuses to close
+  // it — so fall back to telling the person to close the tab themselves
+  // instead of a dead button.
+  function handleClose() {
+    window.close();
+    setTimeout(() => setCloseHint(true), 300);
+  }
+
   return (
     <div className="nr" style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)' }}>
       <style>{CSS}</style>
@@ -125,7 +138,10 @@ export default function NeighbourhoodReport({ record, nearby }) {
         {/* ── Header ── */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 28, paddingBottom: 18, borderBottom: '1px solid color-mix(in srgb, var(--slate) 55%, transparent)' }}>
           <p className="kick" style={{ fontSize: 12 }}>Neighbourhood Intelligence · Spec Sheet</p>
-          <a href="javascript:window.close()" style={{ fontSize: 12.5, fontWeight: 600, border: '1px solid color-mix(in srgb, var(--slate) 45%, transparent)', borderRadius: 3, padding: '9px 16px', color: 'var(--text-mute)', flexShrink: 0, textDecoration: 'none' }}>← Close</a>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+            {closeHint && <span style={{ fontSize: 11.5, color: 'var(--text-dim)' }}>Couldn&apos;t close automatically — you can close this tab yourself.</span>}
+            <button onClick={handleClose} style={{ fontSize: 12.5, fontWeight: 600, border: '1px solid color-mix(in srgb, var(--slate) 45%, transparent)', borderRadius: 3, padding: '9px 16px', color: 'var(--text-mute)', background: 'transparent' }}>← Close</button>
+          </div>
         </div>
 
         {/* ── Hero: 3 cards (Identity / Score / Verdict) ── */}
