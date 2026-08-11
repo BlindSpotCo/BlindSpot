@@ -543,9 +543,14 @@
      hardcoded 20px that happened to look pill-ish -- per the doc's "pills
      only for status" rule, this is exactly the kind of element that
      should be one. */
+  /* Solid fill, not the old sun→slate gradient -- same cleanup as .btn-cta:
+     the brand doc forbids multi-stop gradients, and this status pill has
+     the same small-area problem the CTA button did (a two-tone sweep on a
+     tag this size reads as a smudge, not a gradient). var(--brand), same
+     dominant colour as every other "primary" surface post-cleanup. */
   .hsc-badge{
     font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:13px; color:#fff;
-    background:linear-gradient(90deg, var(--sun), var(--slate)); padding:6px 14px; border-radius:var(--radius-pill);
+    background:var(--brand); padding:6px 14px; border-radius:var(--radius-pill);
   }
   .hsc-number{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:56px; line-height:1; color:var(--ink); margin-bottom:10px }
   .hsc-number span{ font-size:18px; color:var(--text-dim); font-family:'Inter',sans-serif; font-weight:500 }
