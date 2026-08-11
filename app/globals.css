@@ -16,14 +16,37 @@
        --bg (roughly 2.2:1), which is a real chunk of why small mono
        labels read as "thin, not visible" — this gets it closer to 4:1. */
     --text-dim:#726A54;
-    /* Accent colors, per reference: a deep maroon/burgundy and a warm
-       amber, replacing the old orange/green pair everywhere in one place —
-       every button, badge, gradient and accent on the site is built on
-       these two CSS variables, so this swap alone re-themes the whole
-       site without hunting down individual hex values. */
-    --sun:#C9812E;
-    --slate:#6B2430;
+    /* ===== BRAND TOKENS — one-variable-hue architecture =====
+       See BlindSpot_Brand_Core_v1.md. The mechanism (borrowed from how
+       Swiggy holds one system constant across Swiggy/Instamart/Dineout and
+       only ever moves the hue): one parent colour (--brand) plus one hue
+       per engine (--av for AsliVastu, --ss for SunScout). Everything else —
+       type, spacing, radius, layout — stays identical across all three.
+       --brand is the mandatory secondary: it must appear somewhere in every
+       engine-coloured layout (the badge/CTA gradients already do this). */
+    --brand:#6B2232;   /* BlindSpot (parent) — the judgment */
+    --av:#4B4F1A;       /* AsliVastu — the area. AAA on paper (8.49:1) */
+    --av-fill:#ADA846;  /* AsliVastu light fill — decorative/large only, fails text contrast */
+    --ss:#AF5F30;       /* SunScout — the light. AA-safe for text/icons (4.59:1 on paper) */
+    --ss-fill:#C56B36;  /* SunScout large-type/fill variant (3.74:1 — 24px+ or bold 18.7px+ only) */
+    --ss-sun:#FFC100;   /* illustration fill only — never text or UI (1.60:1) */
+    --plum:#451B3B;     /* Not Recommended / deep ground — AAA everywhere */
+
+    /* Legacy aliases so every existing --sun/--slate usage below keeps
+       working during migration, but with the accessible values:
+       --slate was already ≈ --brand (#6B2430 vs #6B2232 — imperceptible).
+       --sun previously pointed at #C9812E, which fails WCAG AA as text/icon
+       colour (2.92:1 on --bg, needs 4.5:1) — e.g. .hero-tagline .seg.sun
+       and .hsc-item.sun .hsc-item-icon. Aliasing it to --ss fixes that
+       failure everywhere at once instead of hunting down each call site. */
+    --slate: var(--brand);
+    --sun: var(--ss);
+
     --radius:6px;
+    --radius-sm:4px;
+    --radius-md:8px;
+    --radius-lg:12px;
+    --radius-pill:999px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -441,11 +464,16 @@
      rather than being the first thing you read. */
   .hsc-row{ display:flex; flex-direction:column; gap:10px; margin-bottom:18px }
   .hsc-item{ display:flex; align-items:center; gap:12px; border:1px solid var(--line); border-radius:8px; padding:11px 14px }
-  .hsc-item.slate{ border-left:3px solid var(--slate) }
-  .hsc-item.sun{ border-left:3px solid var(--sun) }
+  /* This row is genuinely AsliVastu content (neighbourhood/safety), so it
+     gets the AsliVastu engine hue (--av, olive) rather than the parent
+     --brand/--slate wine — the two were previously conflated into one
+     colour here. This is the one-variable-hue system actually showing up
+     as three distinct engine colours instead of two. */
+  .hsc-item.slate{ border-left:3px solid var(--av) }
+  .hsc-item.sun{ border-left:3px solid var(--ss) }
   .hsc-item-icon{ width:19px; height:19px; flex-shrink:0 }
-  .hsc-item.slate .hsc-item-icon{ color:var(--slate) }
-  .hsc-item.sun .hsc-item-icon{ color:var(--sun) }
+  .hsc-item.slate .hsc-item-icon{ color:var(--av) }
+  .hsc-item.sun .hsc-item-icon{ color:var(--ss) }
   .hsc-item-label{ display:block; font-family:'Inter',sans-serif; font-weight:600; font-size:14.5px; color:var(--ink) }
   .hsc-item-sub{ display:block; font-family:'IBM Plex Mono',monospace; font-weight:500; font-size:11.5px; letter-spacing:.05em; color:var(--text-dim); margin-top:3px }
   .hsc-foot{ font-size:12.5px; color:var(--text-mute); line-height:1.6; border-top:1px solid var(--line-soft); padding-top:14px }
