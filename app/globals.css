@@ -532,8 +532,12 @@
   }
   .pcard-tag .dot{width:6px; height:6px; border-radius:50%; animation:tagPulse 3.2s ease-in-out infinite}
   @keyframes tagPulse{0%,100%{opacity:.55; transform:scale(1)} 50%{opacity:1; transform:scale(1.25)}}
-  .pcard.sun .dot{background:var(--sun)}
-  .pcard.slate .dot{background:var(--slate)}
+  /* .pcard.sun is literally the SunScout product card and .pcard.slate is
+     literally the AsliVastu card (see the "products" section in page.js) --
+     genuine per-engine content, same reasoning as the score-card row fix,
+     so these get the engine hues instead of the parent wine/orange pair. */
+  .pcard.sun .dot{background:var(--ss)}
+  .pcard.slate .dot{background:var(--av)}
   .pcard h3{font-size:24px; font-weight:700; margin-bottom:14px; color:var(--ink); transition:transform .25s ease}
   .pcard:hover h3{transform:translateX(2px)}
   .pcard p{font-size:15px; line-height:1.7; color:var(--text-mute); margin-bottom:28px; flex:1}
@@ -557,8 +561,13 @@
     transition:border-color .15s ease, background .15s ease, color .15s ease;
   }
   .howworks-tab:hover{border-color:rgba(28,24,18,0.4)}
-  .howworks-tab.active-slate{background:var(--slate); border-color:var(--slate); color:#fff}
-  .howworks-tab.active-sun{background:var(--sun); border-color:var(--sun); color:#fff}
+  /* accent-slate = the "area" step (AsliVastu), accent-sun = the "unit" step
+     (SunScout) -- see the steps array in HowItWorks.js. Genuine per-engine
+     content, so these move to --av/--ss; active-combo (step 3, the
+     verdict) is deliberately left as the sun/slate gradient since it's
+     both engines merged into one score, not either one alone. */
+  .howworks-tab.active-slate{background:var(--av); border-color:var(--av); color:#fff}
+  .howworks-tab.active-sun{background:var(--ss); border-color:var(--ss); color:#fff}
   .howworks-tab.active-combo{background:linear-gradient(90deg, var(--sun), var(--slate)); border-color:transparent; color:#fff}
 
   /* Scroll-driven layout: sticky panel on the left, step copy blocks
@@ -659,8 +668,9 @@
   .hw-route-marker{
     position:relative; border-left:2px solid var(--line); transition:border-color .4s ease;
   }
-  .hw-route-marker.reached.accent-slate{ border-color:var(--slate) }
-  .hw-route-marker.reached.accent-sun{ border-color:var(--sun) }
+  /* Same accent-slate/accent-sun = area/unit step mapping as the tabs above. */
+  .hw-route-marker.reached.accent-slate{ border-color:var(--av) }
+  .hw-route-marker.reached.accent-sun{ border-color:var(--ss) }
   .hw-route-marker.reached.accent-combo{ border-color:var(--ink) }
 
   /* A real teardrop pin (not a plain dot) for each step, positioned near
@@ -672,8 +682,8 @@
     color:var(--text-dim); filter:drop-shadow(0 2px 3px rgba(28,24,18,.25));
     transition:color .4s ease;
   }
-  .hw-route-marker.reached.accent-slate .hw-route-pin{ color:var(--slate) }
-  .hw-route-marker.reached.accent-sun .hw-route-pin{ color:var(--sun) }
+  .hw-route-marker.reached.accent-slate .hw-route-pin{ color:var(--av) }
+  .hw-route-marker.reached.accent-sun .hw-route-pin{ color:var(--ss) }
   .hw-route-marker.reached.accent-combo .hw-route-pin{ color:var(--ink) }
   .hw-route-pin svg path{ fill:currentColor }
   .hw-route-pin-hole{ fill:var(--bg) }
@@ -713,8 +723,8 @@
   .howworks-step-block.active{opacity:1}
 
   .howworks-step-eyebrow{font-size:13.5px; font-weight:600; letter-spacing:.12em; margin-bottom:14px}
-  .howworks-step-eyebrow.accent-slate{color:var(--slate)}
-  .howworks-step-eyebrow.accent-sun{color:var(--sun)}
+  .howworks-step-eyebrow.accent-slate{color:var(--av)}
+  .howworks-step-eyebrow.accent-sun{color:var(--ss)}
   .howworks-step-eyebrow.accent-combo{color:var(--text)}
   .howworks-step-block h3{font-size:22px; font-weight:700; color:var(--ink); line-height:1.3; margin-bottom:14px}
   .howworks-step-block p{font-size:15px; line-height:1.7; color:var(--text-mute); margin-bottom:20px}
@@ -859,7 +869,11 @@
   .ss-map-bldg{ fill:rgba(255,255,255,0.14); stroke:rgba(255,255,255,0.26); stroke-width:1 }
   .ss-map-bldg-target{ fill:rgba(224,123,0,0.4); stroke:#E07B00; stroke-width:1.5 }
   .ss-map-sunpath{ fill:none; stroke:rgba(233,169,74,0.7); stroke-width:1.5; stroke-dasharray:2 6; stroke-linecap:round }
-  .ss-map-sun{ fill:var(--sun) }
+  /* Illustration fill, not text/UI -- this is exactly what --ss-sun exists
+     for (see the token comments in :root): a small sun glyph inside the
+     map strip doesn't need to hit text contrast ratios the way an icon
+     paired with a label does. */
+  .ss-map-sun{ fill:var(--ss-sun) }
   .ss-map-pin{ fill:#E07B00 }
   .ss-map-pin-hole{ fill:#1b1509 }
   .ss-map-ping{ fill:none; stroke:#E07B00; stroke-width:1.5; opacity:.55; animation:ssMapPing 2.6s ease-out infinite }
@@ -905,8 +919,17 @@
   @media (max-width:700px){ .why-row{grid-template-columns:24px 1fr; row-gap:8px; padding:30px 16px; margin:0 -16px} .why-row .why-desc{grid-column:2} }
   .why-icon{width:20px; height:20px; color:var(--text-dim); margin-top:2px; transition:transform .2s ease}
   .why-row:hover .why-icon{transform:scale(1.15)}
-  .why-row:nth-child(1) .why-icon, .why-row:nth-child(3) .why-icon{color:var(--sun)}
-  .why-row:nth-child(2) .why-icon, .why-row:nth-child(4) .why-icon{color:var(--slate)}
+  /* Was nth-child(1)/(3) = sun, nth-child(2)/(4) = slate -- purely
+     alternating by position, not by what each row is actually about. Only
+     rows 1 ("Sunlight is data, not vibes") and 2 ("Brokers don't tell you
+     everything") are genuinely single-engine content, so only those get an
+     engine hue now (via explicit .ss/.av classes in page.js, not position).
+     Rows 3 ("One pin. Two answers.") and 4 ("Zero cost. No catch.") are
+     about both engines or neither, so they fall back to the same neutral
+     --text-dim as every other icon instead of being forced into one
+     engine's colour just because of where they sit in the list. */
+  .why-row.ss .why-icon{color:var(--ss)}
+  .why-row.av .why-icon{color:var(--av)}
   .why-title{font-family:'Bricolage Grotesque',sans-serif; font-size:16px; font-weight:700; color:var(--ink)}
   .why-desc{font-size:15px; line-height:1.7; color:var(--text-mute)}
 
@@ -924,8 +947,11 @@
   .team-card:hover .team-avatar{border-color:var(--ink); color:var(--ink); transform:rotate(-4deg)}
   .team-name{font-size:18px; font-weight:700; color:var(--ink); font-family:'Bricolage Grotesque',sans-serif; margin-bottom:3px}
   .team-role{font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:12.5px; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:12px}
-  .team-role.sun{color:var(--sun)}
-  .team-role.slate{color:var(--slate)}
+  /* "Builds SunScout" / "Builds AsliVastu" -- genuine per-founder engine
+     content (see the team section in page.js), same treatment as the
+     product cards. */
+  .team-role.sun{color:var(--ss)}
+  .team-role.slate{color:var(--av)}
   .team-desc{font-size:14.5px; color:var(--text-mute); line-height:1.65; margin-bottom:14px}
   .team-link{display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:600; color:var(--text); text-decoration:none; border-bottom:1px solid var(--line); padding-bottom:2px}
   .team-link:hover{border-color:var(--text)}
@@ -996,8 +1022,12 @@
   text-align:center; color:var(--text-mute); font-size:14px;
 }
 .reports-group{ margin-bottom:40px }
-.reports-group h2{ font-size:14px; text-transform:uppercase; letter-spacing:0.1em; color:var(--sun); margin-bottom:16px }
-.reports-group.av h2{ color:var(--slate) }
+/* Default group here is literally the SunScout list and .av is literally
+   the AsliVastu list (see my-reports/page.js) -- this was the same bug as
+   the score-card row: the .av-labelled group was colored with the parent
+   wine instead of its own engine hue. Fixed the same way. */
+.reports-group h2{ font-size:14px; text-transform:uppercase; letter-spacing:0.1em; color:var(--ss); margin-bottom:16px }
+.reports-group.av h2{ color:var(--av) }
 .report-row{
   display:flex; justify-content:space-between; align-items:center; padding:16px 0;
   border-bottom:1px solid var(--line-soft); cursor:pointer; transition:background 0.15s ease;
