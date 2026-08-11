@@ -230,7 +230,7 @@ export default function Home() {
       </section>
 
       <section className="section">
-        <div className="wrap closing-inner reveal">
+        <div className="wrap closing-inner bento reveal">
           <h2>See the sunlight. Know the neighbourhood.</h2>
           <p>Two free tools. One pin. Everything the listing wasn&apos;t going to mention.</p>
           <div className="closing-ctas">
