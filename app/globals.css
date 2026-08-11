@@ -38,7 +38,7 @@
        below) uses --brand-fill, so its punch will read noticeably
        lighter/softer now, with weaker contrast than before the swap --
        worth a live look, not just trusting this comment. */
-    --brand:#4B4F1A;   /* BlindSpot (parent) — the judgment. AAA on paper (8.49:1) */
+    --brand:#3D4116;   /* BlindSpot (parent) — the judgment. Darkened from #4B4F1A on request; still AAA on paper, even higher contrast than before. */
     --brand-fill:#ADA846; /* brighter/lighter parent fill -- decorative/large only, fails text contrast (this was AsliVastu's old --av-fill value) */
     --av:#6B2232;       /* AsliVastu — the area. Even higher contrast on paper than the old olive value (~11:1) */
     --av-fill:#7C2839;  /* AsliVastu large-fill variant (this was the parent's old --brand-fill value -- the twice-tightened "brighter wine" from CTA tuning) */
@@ -234,19 +234,19 @@
   .btn-cta{
     background:var(--brand);
     color:#fff; border:none;
-    box-shadow:0 12px 28px -12px rgba(75,79,26,0.55);
+    box-shadow:0 12px 28px -12px rgba(61,65,22,0.55);
     transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
   }
-  .btn-cta:hover{ transform:translateY(-1px); box-shadow:0 16px 34px -12px rgba(75,79,26,0.65); background:#404318 }
+  .btn-cta:hover{ transform:translateY(-1px); box-shadow:0 16px 34px -12px rgba(61,65,22,0.65); background:#2E310F }
   .btn-cta-sm{
     display:inline-flex; align-items:center;
     padding:8px 16px; border-radius:var(--radius); font-size:13.5px; font-weight:600;
     background:var(--brand);
     color:#fff; text-decoration:none;
-    white-space:nowrap; box-shadow:0 8px 18px -8px rgba(75,79,26,0.55);
+    white-space:nowrap; box-shadow:0 8px 18px -8px rgba(61,65,22,0.55);
     transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
   }
-  .btn-cta-sm:hover{ transform:translateY(-1px); box-shadow:0 10px 22px -8px rgba(75,79,26,0.65); background:#404318 }
+  .btn-cta-sm:hover{ transform:translateY(-1px); box-shadow:0 10px 22px -8px rgba(61,65,22,0.65); background:#2E310F }
   /* The one deliberate accent on an otherwise flat button -- the arrow
      glyph in the button label ("Uncover Your BlindSpot →") gets its own
      span so it can carry the SunScout orange while the rest of the label
