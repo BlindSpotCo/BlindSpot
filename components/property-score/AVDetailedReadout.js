@@ -1,0 +1,261 @@
+'use client';
+// components/property-score/AVDetailedReadout.js
+//
+// The full per-category AsliVastu detail breakdown, ported field-for-field
+// (including AV's own tooltip copy) from aslivastu/web/pages/report/[pin].js
+// — every stat AV's master_by_pin.json carries, laid out as one box per
+// category (Crime, Air Quality, Power, Connectivity & Infrastructure,
+// Water, Roads, Drainage & Sewerage), plus Schools and Methodology. Only
+// the colours changed: BlindSpot's paper/ink/var(--slate) tokens instead of
+// AV's own dark theme + wine accent.
+//
+// Shared by AVAreaCard (inline on the property-score page) and
+// NeighbourhoodReport (the standalone full-page report) so both places show
+// identically detailed data. source()/scoreColor()/waterloggingLabel() are
+// also exported for NeighbourhoodReport's dimension-readout + highlights
+// sections, so the two files never define the same mapping twice.
+//
+// Needs a `record` that has BOTH the nqi_scores.json fields AND the
+// master_by_pin.json fields merged in (see /api/av-localities and
+// lib/neighbourhood-report/getReportData.js — both merge master_by_pin.json
+// the same way AV's own /api/report.js does: `{ ...score, ...master }`).
+
+import { FACTOR_LABELS } from '@/lib/property-score/ui';
+
+export function BPF({ children, style, className = '' }) {
+  return (
+    <div className={`bpf-av ${className}`} style={{ position: 'relative', border: '1px solid color-mix(in srgb, var(--slate) 55%, transparent)', background: 'var(--paper)', ...style }}>
+      <span style={bpfMark('tl')}>+</span><span style={bpfMark('tr')}>+</span>
+      <span style={bpfMark('bl')}>+</span><span style={bpfMark('br')}>+</span>
+      {children}
+    </div>
+  );
+}
+function bpfMark(pos) {
+  const base = { position: 'absolute', color: 'var(--slate)', fontSize: 12, lineHeight: 1, opacity: .5 };
+  const offsets = { tl: { top: -7, left: -5 }, tr: { top: -7, right: -5 }, bl: { bottom: -8, left: -5 }, br: { bottom: -8, right: -5 } };
+  return { ...base, ...offsets[pos] };
+}
+
+export function Info({ text }) {
+  if (!text) return null;
+  return (
+    <span className="nr-info" style={{ position: 'relative', display: 'inline-flex', marginLeft: 5 }}>
+      <span style={{ fontSize: 9, width: 13, height: 13, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--slate)', color: 'var(--slate)', borderRadius: '50%', cursor: 'help', lineHeight: 1, opacity: .8, flexShrink: 0 }}>?</span>
+      <span className="nr-tip" style={{ position: 'absolute', bottom: 'calc(100% + 9px)', left: '50%', transform: 'translateX(-50%)', width: 230, background: 'var(--paper)', border: '1.5px solid var(--slate)', padding: '10px 12px', fontSize: 11.5, fontWeight: 400, color: 'var(--text)', lineHeight: 1.5, zIndex: 300, boxShadow: '0 10px 34px rgba(28,24,18,0.18)', display: 'none' }}>{text}</span>
+      <style jsx>{`.nr-info:hover .nr-tip { display: block !important; }`}</style>
+    </span>
+  );
+}
+
+// One box per category — title + a grid of label/value pairs, each with its
+// own hover tooltip. Matches AV's own StatCard exactly (label, value, tip).
+function CategoryCard({ title, tip, stats }) {
+  return (
+    <BPF style={{ padding: '18px 20px' }}>
+      <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', margin: '0 0 14px', display: 'flex', alignItems: 'center' }}>{title}<Info text={tip} /></p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '14px 20px' }}>
+        {stats.filter(Boolean).map(([label, val, itemTip]) => (
+          <div key={label}>
+            <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '.05em', color: 'var(--text-dim)', display: 'flex', alignItems: 'center' }}>{label}<Info text={itemTip} /></div>
+            <div className="cond" style={{ fontSize: 15.5, fontWeight: 700, marginTop: 3, color: 'var(--text)' }}>{val ?? '—'}</div>
+          </div>
+        ))}
+      </div>
+    </BPF>
+  );
+}
+
+// AQI category → plain-English meaning, verbatim from AV.
+export const AQI_PLAIN = {
+  'Good': 'Air is clean — safe for everyone.',
+  'Satisfactory': 'Air is acceptable — fine for most; sensitive individuals may feel minor irritation.',
+  'Moderate': 'Okay for healthy people; asthma/heart/lung patients should limit long outdoor exertion.',
+  'Poor': 'Unhealthy — prolonged outdoor activity can cause breathing discomfort.',
+  'Very Poor': 'Unhealthy for everyone — avoid outdoor exertion.',
+  'Severe': 'Hazardous — a serious health risk; stay indoors.',
+};
+
+export function source(k, city) {
+  const blr = city === 'Bangalore';
+  const m = {
+    crime: blr ? 'Bengaluru City Police / NCRB · est. 2023' : 'Delhi Police Annual Report · est. 2023',
+    infrastructure: blr ? 'BBMP plans · BMRCL Namma Metro · est. 2024' : 'DDA Master Plan · DMRC · est. 2024',
+    air: blr ? 'CPCB / KSPCB live AQI · updated daily' : 'CPCB live AQI · updated daily',
+    power: blr ? 'BESCOM annual reports · est. 2023' : 'BSES / Tata Power · est. 2023',
+    schools: 'CBSE affiliation database · est. 2023',
+    water: blr ? 'BWSSB (Cauvery) supply & quality · est. 2023' : 'Delhi Jal Board supply & quality · est. 2023',
+    roads: blr ? 'BBMP road-condition surveys · est. 2023' : 'MCD / PWD road surveys · est. 2023',
+    sewerage: blr ? 'BWSSB waterlogging records · est. 2023' : 'Drainage & waterlogging records · est. 2023',
+  };
+  return m[k] || '';
+}
+// Autumn palette, worst → best: brick red, pumpkin orange, forest green,
+// mid green, light green. Replaces the earlier 4-tier scale on request —
+// same idea (weak scores read as hot colours, strong scores read as green,
+// hatch pattern still kicks in below 50), just a warmer 5-step ramp instead
+// of the flatter green/lime/amber/red set.
+// Bright autumn ramp, stepped every ~10 points, red (weak) → light green
+// (strong). Brighter/more saturated than the previous pass, which read as
+// muddy rather than "good" at the green end.
+// User-supplied autumn photo palette: first red, first orange from that
+// swatch set, then all three greens (weakest → strongest) for the top
+// bands — deepest olive reserved for the best scores.
+export function scoreColor(v) {
+  if (v == null) return 'var(--text-dim)';
+  if (v >= 90) return '#5C6B00'; // deep olive green — best
+  if (v >= 75) return '#B3B232'; // olive
+  if (v >= 60) return '#D8CB34'; // yellow-green
+  if (v >= 40) return '#F4AE42'; // orange
+  return '#8F0000';              // red — weakest
+}
+export function waterloggingLabel(v) {
+  if (v == null) return '—';
+  return v >= 4 ? 'Low risk' : v >= 3 ? 'Moderate risk' : 'High risk';
+}
+
+// Plain-JS date formatting, deliberately NOT toLocaleDateString(): that
+// reads the *runtime's* default locale/ICU data, which can differ between
+// the Node server (SSR) and the browser (CSR) even with an explicit locale
+// argument if the server's Node build only ships small-icu — exactly what
+// caused the earlier hydration mismatch (28/7/2026 vs 28/07/2026). These
+// always produce the same string everywhere, so use them instead of
+// toLocaleDateString/toLocaleString anywhere in the report.
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+export function formatDate(iso) {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  const dd = String(d.getUTCDate()).padStart(2, '0');
+  const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+  return `${dd}/${mm}/${d.getUTCFullYear()}`;
+}
+export function formatDateLong(iso) {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+}
+// Indian-numbering (lakh/crore) grouping, written out by hand instead of
+// toLocaleString('en-IN') for the same reason as the date formatters above.
+export function inr(n) {
+  if (n == null) return '—';
+  const num = Math.round(n);
+  const s = Math.abs(num).toString();
+  let out;
+  if (s.length <= 3) {
+    out = s;
+  } else {
+    const last3 = s.slice(-3);
+    const rest = s.slice(0, -3).replace(/\B(?=(\d{2})+(?!\d))/g, ',');
+    out = `${rest},${last3}`;
+  }
+  return '₹' + (num < 0 ? '-' : '') + out;
+}
+
+export default function AVDetailedReadout({ record }) {
+  const s = record.scores || {};
+
+  return (
+    <div className="av-detail-readout">
+      <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', marginBottom: 14 }}>
+        Detailed Readings
+      </p>
+      <div style={{ display: 'grid', gap: 20, marginBottom: 28 }}>
+
+        <CategoryCard title="Crime" tip={source('crime', record.city)} stats={[
+          ['Total crimes', record.total_cognizable_crimes, "Total cognizable crimes reported annually for this pin's police-station catchment, which can span a wider area than any one colony."],
+          ['Safety score', s.crime != null ? `${s.crime}/100` : '—', 'Inverse-normalized against total crimes: 250 or fewer scores 100, 650 or more scores 0, linear in between.'],
+          ['Safer than', record.crime_percentile != null ? `${record.crime_percentile}%` : '—', "Percentile rank of this pin's crime count against other tracked areas in the same city (cities ranked separately)."],
+          ['Crime tier', record.crime_tier, 'Very Low / Low / Moderate / High / Very High, based on the percentile rank.'],
+          ['Source year', '2022–23', 'Reporting year of the source crime data.'],
+        ]} />
+
+        <CategoryCard title="Air Quality" tip={source('air', record.city)} stats={[
+          ['AQI', record.aqi_avg != null ? Math.round(record.aqi_avg) : '—', 'Air Quality Index, CPCB/KSPCB daily average.'],
+          ['Category', record.aqi_category, record.aqi_category ? (AQI_PLAIN[record.aqi_category] || '') : 'Good / Satisfactory / Moderate / Poor / Very Poor / Severe, per CPCB bands.'],
+          ['Score', s.air != null ? `${s.air}/100` : '—', 'Normalized against the CPCB AQI band for this reading.'],
+        ]} />
+
+        <CategoryCard title="Power Supply" tip={source('power', record.city)} stats={[
+          ['Discom', record.discom, 'The electricity distribution company serving this area.'],
+          ['Reliability', record.reliability, 'Qualitative reliability rating derived from outage frequency and consumer complaint data.'],
+          ['Avg cut hrs', record.avg_outage_hours != null ? `${record.avg_outage_hours} /mo` : '—', 'Average monthly power-outage hours from DISCOM reports — not live-metered.'],
+          ['Score', s.power != null ? `${s.power}/100` : '—', 'Weighted blend of outage frequency (60%) and average outage duration (40%).'],
+        ]} />
+
+        <CategoryCard title="Connectivity & Infrastructure" tip={source('infrastructure', record.city)} stats={[
+          ['Zone', record.zone_type, 'Land-use zone type — residential, mixed, commercial or industrial.'],
+          ['Metro nearby', record.metro_stations_nearby, 'Number of operational metro stations near this pin.'],
+          ['Metro planned', record.metro_planned_stations, 'Approved but not-yet-open metro stations nearby.'],
+          ['Highway', record.highway_proximity, 'Proximity to major highways / arterial roads.'],
+          ['Smart city', record.smart_city_project ? 'Yes' : 'No', 'Whether the area falls under the Smart Cities Mission.'],
+          ['Infra score', (record.infra_score_raw ?? s.infrastructure) != null ? `${record.infra_score_raw ?? s.infrastructure}/100` : '—', 'Composite of metro access, highway proximity, zone type and smart-city status.'],
+        ]} />
+
+        <CategoryCard title="Water Supply" tip={source('water', record.city)} stats={[
+          ['Daily supply', record.supply_hours != null ? `${record.supply_hours} hrs` : '—', 'Average hours of piped water supply available per day.'],
+          ['Quality', record.tds_level ? `${record.tds_level} TDS` : '—', 'TDS = Total Dissolved Solids. Low = ideal drinking water; High = hard water needing filtration.'],
+          ['Coverage', (record.water_coverage ?? record.coverage_pct) != null ? `${record.water_coverage ?? record.coverage_pct}%` : '—', '% of households with a piped municipal water connection. Below 80% means heavy tanker/borewell reliance.'],
+          ['Complaints', record.complaints_per_1000 != null ? `${record.complaints_per_1000}/1k` : '—', 'Water-supply complaints per 1,000 households annually. Lower is better.'],
+          ['Quality score', (record.water_quality ?? record.quality_score) != null ? `${record.water_quality ?? record.quality_score}/5` : '—', 'Composite 1–5 water-quality rating from TDS, complaints and supply hours.'],
+        ]} />
+
+        <CategoryCard title="Roads" tip={source('roads', record.city)} stats={[
+          ['Condition', record.road_condition, 'Overall road-surface condition rating (Excellent → Very Poor).'],
+          ['Potholes/km', record.pothole_density, 'Estimated potholes per km. Below 2 = good; above 5 = poor; above 10 = dangerous.'],
+          ['Connectivity', record.connectivity, 'How well the area connects to arterial roads and highways.'],
+          ['Authority', record.authority, 'Government body responsible for road maintenance here.'],
+          ['Last resurfaced', record.last_resurfaced, 'Year the main roads were last resurfaced (every 5–7 years is typical).'],
+          ['Quality score', (record.road_quality ?? record.quality_score) != null ? `${record.road_quality ?? record.quality_score}/5` : '—', 'Composite 1–5 road-quality rating from condition and pothole density.'],
+        ]} />
+
+        <CategoryCard title="Drainage & Sewerage" tip={source('sewerage', record.city)} stats={[
+          ['Sewer coverage', (record.sewerage_coverage ?? record.coverage_pct) != null ? `${record.sewerage_coverage ?? record.coverage_pct}%` : '—', '% of households connected to the underground sewerage network.'],
+          ['Treatment', record.treatment, 'Whether sewage reaches a treatment plant — Adequate / Partial / Inadequate.'],
+          ['Waterlogging', waterloggingLabel(record.waterlogging_risk), 'Monsoon waterlogging risk from drainage capacity, elevation and flooding history.'],
+          ['Open drains', record.open_drains == null ? '—' : (record.open_drains ? 'Yes' : 'No'), 'Whether the area has uncovered drains — a health and flooding hazard.'],
+          ['Flood incidents', record.flooding_incidents_annual != null ? `${record.flooding_incidents_annual}/yr` : '—', 'Significant waterlogging/flooding incidents recorded per year.'],
+        ]} />
+
+      </div>
+
+      {/* ── Schools ── */}
+      {record.schools_list?.length > 0 && (
+        <div style={{ marginBottom: 28 }}>
+          <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', marginBottom: 14 }}>
+            Schools · {record.schools_count} mapped
+          </p>
+          <BPF style={{ padding: 0, overflow: 'hidden' }}>
+            {record.schools_list.map((sc, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, fontSize: 13, padding: '11px 18px', borderTop: i ? '1px dashed var(--line-soft)' : 'none' }}>
+                <span style={{ color: 'var(--text)' }}>{sc.name}</span>
+                <span style={{ color: 'var(--slate)', fontSize: 11, flexShrink: 0, fontWeight: 700, letterSpacing: '.03em' }}>{sc.board || 'CBSE'}</span>
+              </div>
+            ))}
+          </BPF>
+        </div>
+      )}
+
+      {/* ── Methodology ── */}
+      <div>
+        <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', marginBottom: 14 }}>
+          Methodology · Data Sources
+        </p>
+        <BPF style={{ padding: 0, overflow: 'hidden' }}>
+          {Object.entries(record.weights_applied || {}).map(([k, w], i) => (
+            <div key={k} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12.5, padding: '10px 18px', borderTop: i ? '1px dashed var(--line-soft)' : 'none', flexWrap: 'wrap', gap: 8 }}>
+              <span style={{ color: 'var(--text)', fontWeight: 600, minWidth: 150 }}>{FACTOR_LABELS[k] || k}</span>
+              <span className="cond" style={{ fontWeight: 700, color: 'var(--slate)', width: 44 }}>{Math.round(w * 100)}%</span>
+              <span style={{ color: 'var(--text-dim)', flex: 1, minWidth: 200 }}>{source(k, record.city)}</span>
+              <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: '.06em', color: k === 'air' ? '#3D6B2E' : 'var(--text-dim)', border: `1px solid ${k === 'air' ? '#3D6B2E' : 'var(--line)'}`, borderRadius: 2, padding: '2px 6px' }}>{k === 'air' ? 'LIVE' : 'EST'}</span>
+            </div>
+          ))}
+        </BPF>
+        <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 10 }}>
+          Scored {formatDate(record.scored_at) || '—'}. Area-level — the same for every unit in this pincode.
+        </div>
+      </div>
+    </div>
+  );
+}

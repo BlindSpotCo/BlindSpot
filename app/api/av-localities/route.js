@@ -15,11 +15,26 @@ export async function GET() {
     const filePath = path.join(process.cwd(), 'data', 'aslivastu', 'nqi_scores.json');
     const scores = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
+    // master_by_pin.json holds the granular per-category fields (discom,
+    // AQI reading, water TDS/coverage, road condition, waterlogging risk,
+    // etc.) that the AsliVastu detail cards need — same file AV's own
+    // /api/report.js merges in (`{ ...score, ...master }`). Optional: if
+    // it's ever missing, the detail cards just show em-dashes for the
+    // fields they can't find instead of failing the whole route.
+    const masterPath = path.join(process.cwd(), 'data', 'aslivastu', 'master_by_pin.json');
+    let masterByPin = {};
+    try {
+      const master = JSON.parse(fs.readFileSync(masterPath, 'utf8'));
+      masterByPin = Object.fromEntries(master.map(m => [m.pin_code, m]));
+    } catch { /* master file optional */ }
+
     const byCity = {};
     for (const r of scores) {
       const meta = PIN_META[r.pin_code];
       const coords = AREA_COORDS[r.pin_code];
+      const master = masterByPin[r.pin_code] || {};
       const enriched = {
+        ...master,
         pin_code: r.pin_code,
         name: meta?.name || r.pin_code,
         area: meta?.area || null,
