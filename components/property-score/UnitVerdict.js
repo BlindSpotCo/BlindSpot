@@ -131,6 +131,18 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               />
             </div>
 
+            <a
+              href="/floor-plan-analysis"
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: 'block', textAlign: 'center', background: 'transparent', color: 'var(--sun)',
+                border: '1px solid var(--sun)', borderRadius: 3, padding: '12px 22px', fontSize: 12.5, fontWeight: 700,
+                letterSpacing: '.03em', textTransform: 'uppercase', textDecoration: 'none', marginTop: 14,
+              }}>
+              Furnish This Unit — Upload Floor Plan ↗
+            </a>
+
             {capturedFromSS && (
               <div className="mono" style={{ fontSize: 11, color: '#4ADE80', marginTop: 14 }}>
                 ✓ Using floor {floor}, {facing}-facing — picked above.
