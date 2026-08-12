@@ -249,6 +249,44 @@ export default function AddressPicker({ onConfirmed }) {
       </div>
       {searchError && <div style={{ color: '#f87171', fontSize: 12, marginBottom: 12 }}>{searchError}</div>}
 
+      {/* Detected-pincode confirmation, right under the search bar and made
+          deliberately prominent (not a small muted mono line) -- this is
+          the single point where a wrong Nominatim postcode (confirmed real
+          case: correct pin, wrong district-level postcode -- see the commit
+          this was introduced in) turns into a misleading AsliVastu score if
+          it goes unnoticed, so it needs to be seen, not just present. */}
+      {resolved && (
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+          background: 'var(--bg-2)', border: '1.5px solid var(--brand)', borderRadius: 4,
+          padding: '12px 16px', marginBottom: 20,
+        }}>
+          <span className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', letterSpacing: '.06em', textTransform: 'uppercase' }}>Detected pincode</span>
+          {!editingPincode ? (
+            <>
+              <span className="mono" style={{ fontSize: 18, fontWeight: 700, color: 'var(--brand)' }}>{pincodeOverride || 'none found'}</span>
+              <button type="button" onClick={() => setEditingPincode(true)}
+                style={{ background: 'none', border: 'none', color: 'var(--ss)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600, textDecoration: 'underline', padding: 0 }}>
+                not right? correct it
+              </button>
+            </>
+          ) : (
+            <>
+              <input
+                type="text" inputMode="numeric" value={pincodeOverride} maxLength={6} autoFocus
+                onChange={e => setPincodeOverride(e.target.value.replace(/\D/g, ''))}
+                onKeyDown={e => { if (e.key === 'Enter') applyPincodeOverride(); if (e.key === 'Escape') setEditingPincode(false); }}
+                style={{ width: 100, background: 'var(--paper)', border: '1px solid var(--line)', borderRadius: 3, padding: '6px 10px', color: 'var(--text)', fontSize: 15, fontWeight: 700 }}
+              />
+              <button type="button" onClick={applyPincodeOverride}
+                style={{ background: 'var(--brand)', color: '#fff', border: 'none', borderRadius: 3, padding: '7px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
+                Apply
+              </button>
+            </>
+          )}
+        </div>
+      )}
+
       {pin && (
         <>
           <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 10, marginTop: 22 }}>
@@ -278,38 +316,7 @@ export default function AddressPicker({ onConfirmed }) {
 
           {resolved && (
             <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-mute)', marginBottom: locationConfirmed ? 20 : 14, lineHeight: 1.6 }}>
-              <div style={{ marginBottom: 6 }}>{resolved.displayName || `${pin.lat.toFixed(5)}, ${pin.lon.toFixed(5)}`}</div>
-              {/* Auto-detected postcode is Nominatim's best guess, not ground
-                  truth -- it's wrong often enough for India (confirmed case:
-                  a correctly-placed pin still returning a stale district-level
-                  postcode instead of the actual local one) that we surface it
-                  explicitly and editable here, rather than letting a silent
-                  wrong match produce a misleading AsliVastu score below. */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                <span style={{ color: 'var(--text-dim)' }}>Detected pincode:</span>
-                {!editingPincode ? (
-                  <>
-                    <strong style={{ color: 'var(--text)' }}>{pincodeOverride || 'none found'}</strong>
-                    <button type="button" onClick={() => setEditingPincode(true)}
-                      style={{ background: 'none', border: 'none', color: 'var(--ss)', cursor: 'pointer', fontSize: 11, textDecoration: 'underline', padding: 0 }}>
-                      not right? correct it
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <input
-                      type="text" inputMode="numeric" value={pincodeOverride} maxLength={6} autoFocus
-                      onChange={e => setPincodeOverride(e.target.value.replace(/\D/g, ''))}
-                      onKeyDown={e => { if (e.key === 'Enter') applyPincodeOverride(); if (e.key === 'Escape') setEditingPincode(false); }}
-                      style={{ width: 90, background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 3, padding: '5px 8px', color: 'var(--text)', fontSize: 12 }}
-                    />
-                    <button type="button" onClick={applyPincodeOverride}
-                      style={{ background: 'var(--brand)', color: '#fff', border: 'none', borderRadius: 3, padding: '5px 12px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
-                      Apply
-                    </button>
-                  </>
-                )}
-              </div>
+              {resolved.displayName || `${pin.lat.toFixed(5)}, ${pin.lon.toFixed(5)}`}
             </div>
           )}
 
