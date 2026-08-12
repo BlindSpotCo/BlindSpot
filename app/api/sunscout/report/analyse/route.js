@@ -48,7 +48,8 @@ Note: the neighbourhood score is the same for every unit in this pincode — it 
 }
 
 export async function POST(req) {
-  const { screenshots, lat, lon, address, floor, facing, tzOffset, avRecord, combinedScore, unitScore, areaWeight, unitWeight } = await req.json();
+  const { screenshots, lat, lon, address, floor, facing, tzOffset, avRecord, combinedScore, unitScore, areaWeight, unitWeight, personaId } = await req.json();
+  const persona = personaId ? (await import('@/lib/personas')).getPersona(personaId) : null;
 
   if (!screenshots || screenshots.length === 0) {
     return NextResponse.json({ analysis: 'No screenshots provided.' }, { status: 400 });
@@ -114,6 +115,7 @@ ${combinedGroundTruth}
 You also have ${screenshots.length} screenshots of the actual 3D map at this location. The orange circle/dot marks the exact property location; darker areas are rendered shadows from OpenStreetMap building data. Use these images ONLY for narrative color and visual confirmation (e.g. "as the images show, a taller block sits to the southeast") — do NOT estimate hours of sun, shadow duration, or building heights from the images; use the ground-truth numbers above for all figures. If a screenshot looks blank, black, or unreadable, say so explicitly rather than guessing what it would show.
 
 Write personally, not clinically — like a knowledgeable friend giving honest advice, not a data report reciting fields. Address the reader as "you" where it reads naturally. Be thorough and specific, not brief. This report is a defensible artifact a buyer will rely on — do not compress away detail to save space, and do not pad it with generic real-estate filler that could apply to any property.
+${persona ? `\nWHO'S READING THIS: ${persona.reportFocus}\n` : ''}
 
 FORMATTING RULES (follow exactly, every time, regardless of location):
 - Never use emoji, anywhere, in any section, under any circumstances — not as bullet markers, not as decoration, not inline in a sentence. Plain text only.

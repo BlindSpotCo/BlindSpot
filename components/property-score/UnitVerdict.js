@@ -7,10 +7,12 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import SunScoutPanel from '@/components/sunscout/SunScoutPanel';
+import { getPersona, PERSONA_ORDER } from '@/lib/personas';
 
 const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'North-West', 'South-West'];
 
-export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel }) {
+export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId }) {
+  const persona = getPersona(personaId) || getPersona(PERSONA_ORDER[0]);
   const sunScoutRef = useRef(null);
   const [floor, setFloor] = useState(null);
   const [facing, setFacing] = useState(null);
@@ -20,9 +22,16 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   const [combined, setCombined] = useState(null);
   const [loadingCombined, setLoadingCombined] = useState(false);
   const [combinedError, setCombinedError] = useState('');
-  const [areaWeight, setAreaWeight] = useState(50);
+  const [areaWeight, setAreaWeight] = useState(persona.defaultAreaWeight);
 
   const [gpsError, setGpsError] = useState('');
+
+  // A persona switch resets the area/unit split back to that persona's
+  // default — same idea as picking a new location, since the previous
+  // slider position was tuned for a different persona's starting point.
+  useEffect(() => {
+    setAreaWeight(persona.defaultAreaWeight);
+  }, [personaId]);
 
   // A new location (new locality pick, or a fresh address confirm) should
   // clear out any stale verdict from the previous one.
@@ -66,6 +75,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
         const params = new URLSearchParams({
           pin_code: pinCode, lat, lon, floor: String(useFloor), facing: useFacing, tzOffset: '330',
           weightArea: String(aw / 100), weightUnit: String((100 - aw) / 100),
+          persona: personaId,
         });
         const res = await fetch(`/api/property-score?${params}`);
         if (!res.ok) throw new Error('failed');
@@ -89,7 +99,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
     } finally {
       setLoadingCombined(false);
     }
-  }, [pinCode, lat, lon, floor, facing, areaWeight]);
+  }, [pinCode, lat, lon, floor, facing, areaWeight, personaId]);
 
   return (
     <>
@@ -128,6 +138,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                 verdictLabel={combined?.verdict?.label}
                 areaWeight={areaRecord ? areaWeight / 100 : undefined}
                 unitWeight={areaRecord ? (100 - areaWeight) / 100 : undefined}
+                personaId={personaId}
               />
             </div>
 

@@ -53,7 +53,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
   // weights) forwarded straight through to ReportModal when the AI Report
   // is triggered from the Property Score flow via openReport(), rather than
   // from this panel's own toolbar (that button now lives in UnitVerdict).
-  areaRecord, combinedScore, unitScore, areaWeight, unitWeight, unitSubScores, verdictLabel,
+  areaRecord, combinedScore, unitScore, areaWeight, unitWeight, unitSubScores, verdictLabel, personaId,
 }, ref) {
   const [targetDate, setTargetDate] = useState(getLocalDateStr);
   const [simTime, setSimTime] = useState(() => {
@@ -248,6 +248,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
           areaRecord={areaRecord} combinedScore={combinedScore} unitScore={unitScore}
           areaWeight={areaWeight} unitWeight={unitWeight}
           unitSubScores={unitSubScores} verdictLabel={verdictLabel}
+          personaId={personaId}
           prefillFloor={reportPrefill?.floor} prefillFacing={reportPrefill?.facing}
         />
       )}

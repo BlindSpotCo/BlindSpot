@@ -6,6 +6,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'node:fs';
 import path from 'node:path';
+import { getPersona, recomputeAreaScore, gradeFor } from '@/lib/personas';
 
 const DEFAULT_WEIGHT_AREA = 0.5;
 const DEFAULT_WEIGHT_UNIT = 0.5;
@@ -31,6 +32,7 @@ export async function GET(req) {
   const weightArea = parseFloat(searchParams.get('weightArea')) || DEFAULT_WEIGHT_AREA;
   const weightUnit = parseFloat(searchParams.get('weightUnit')) || DEFAULT_WEIGHT_UNIT;
   const totalWeight = weightArea + weightUnit || 1;
+  const persona = getPersona(searchParams.get('persona'));
 
   if (!pinCode) {
     return NextResponse.json({ error: 'pin_code is required' }, { status: 400 });
@@ -62,7 +64,10 @@ export async function GET(req) {
     }
     const ssResult = await ssRes.json();
 
-    const areaScore = avRecord.nqi_composite;
+    const areaScore = persona
+      ? (recomputeAreaScore(avRecord.scores, persona.avWeights) ?? avRecord.nqi_composite)
+      : avRecord.nqi_composite;
+    const areaGrade = persona ? gradeFor(areaScore) : avRecord.grade;
     const unitScore = ssResult.liveScore;
 
     const weighted = (areaScore * weightArea + unitScore * weightUnit) / totalWeight;
@@ -72,13 +77,14 @@ export async function GET(req) {
     return NextResponse.json({
       combinedScore,
       verdict,
+      persona: persona ? { id: persona.id, label: persona.label } : null,
       area: {
         source: 'AsliVastu',
         pinCode: avRecord.pin_code,
         name: meta?.name || avRecord.pin_code,
         city: avRecord.city,
         score: areaScore,
-        grade: avRecord.grade,
+        grade: areaGrade,
         weight: Math.round((weightArea / totalWeight) * 100),
         factors: avRecord.scores,
       },
@@ -94,6 +100,7 @@ export async function GET(req) {
       formula: `(${areaScore} × ${Math.round((weightArea/totalWeight)*100)}%) + (${unitScore} × ${Math.round((weightUnit/totalWeight)*100)}%) = ${combinedScore}`,
       dataNotes: [
         'Area score is the same for every unit in this pincode — only the unit score changes with floor/facing.',
+        ...(persona ? [`Neighbourhood score re-weighted for ${persona.label} priorities — not AsliVastu's default weighting.`] : []),
         ...(ssResult.dataNotes || []),
       ],
       generatedAt: new Date().toISOString(),

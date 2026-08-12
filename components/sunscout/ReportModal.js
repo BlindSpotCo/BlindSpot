@@ -26,6 +26,7 @@ export default function ReportModal({
   // SunScout used standalone). When avRecord is present, the generated
   // report covers the neighbourhood too, not just this unit.
   areaRecord, combinedScore, unitScore, areaWeight, unitWeight, unitSubScores, verdictLabel,
+  personaId,
   prefillFloor, prefillFacing,
 }) {
   const [floor, setFloor]     = useState(prefillFloor != null ? String(prefillFloor) : '5');
@@ -88,6 +89,7 @@ export default function ReportModal({
         body: JSON.stringify({
           screenshots, lat, lon, address: addr, floor, facing, tzOffset,
           avRecord: areaRecord || undefined, combinedScore, unitScore, areaWeight, unitWeight,
+          personaId,
         }),
       });
       if (!analyseRes.ok) throw new Error('analysis-failed');
