@@ -35,7 +35,37 @@ export default function AddressPicker({ onConfirmed }) {
   const [matchedArea, setMatchedArea] = useState(null); // AsliVastu record, or null if uncovered
   const [matchCity, setMatchCity] = useState(null);
 
+  // Nominatim's postcode tagging for India is genuinely unreliable at the
+  // building level -- a named society can resolve to the right lat/lon but
+  // a stale/wrong district-level postcode (confirmed case: "ATS Advantage"
+  // in Indirapuram, pin lands correctly, Nominatim's reverse lookup returns
+  // locality:null and postcode:201001 -- central Ghaziabad, 47/C -- instead
+  // of the correct 201014 Indirapuram, 78/B+). Rather than silently trust
+  // that postcode into an AsliVastu match, surface it and let the user
+  // correct it -- pincodeOverride starts seeded from Nominatim's answer but
+  // is editable, and re-running the match against it is the actual fix.
+  const [pincodeOverride, setPincodeOverride] = useState('');
+  const [editingPincode, setEditingPincode] = useState(false);
+
   const citiesDataRef = useRef(null);
+
+  const matchPincode = useCallback((pc) => {
+    const cities = citiesDataRef.current;
+    if (pc && cities) {
+      for (const city of Object.keys(cities)) {
+        const rec = cities[city].find(r => r.pin_code === pc);
+        if (rec) { setMatchedArea(rec); setMatchCity(city); return; }
+      }
+    }
+    setMatchedArea(null);
+    setMatchCity(null);
+  }, []);
+
+  const applyPincodeOverride = () => {
+    const trimmed = pincodeOverride.trim();
+    setEditingPincode(false);
+    matchPincode(trimmed);
+  };
 
   useEffect(() => {
     fetch('/api/av-localities')
@@ -81,26 +111,23 @@ export default function AddressPicker({ onConfirmed }) {
     setResolved(null);
     setMatchedArea(null);
     setMatchCity(null);
+    setPincodeOverride('');
+    setEditingPincode(false);
     try {
       const res = await fetch(`/api/sunscout/reverse-geocode?lat=${lat}&lon=${lon}`);
       const data = await res.json();
       if (data?.result) {
         setResolved(data.result);
-        const postcode = data.result.postcode;
-        const cities = citiesDataRef.current;
-        if (postcode && cities) {
-          for (const city of Object.keys(cities)) {
-            const rec = cities[city].find(r => r.pin_code === postcode);
-            if (rec) { setMatchedArea(rec); setMatchCity(city); break; }
-          }
-        }
+        const postcode = data.result.postcode || '';
+        setPincodeOverride(postcode);
+        matchPincode(postcode);
       }
     } catch {
       // Non-fatal -- the user can still continue with a SunScout-only score.
     } finally {
       setResolving(false);
     }
-  }, []);
+  }, [matchPincode]);
 
   const lockInLocation = (lat, lon) => {
     setPin({ lat, lon });
@@ -250,8 +277,39 @@ export default function AddressPicker({ onConfirmed }) {
           )}
 
           {resolved && (
-            <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-mute)', marginBottom: locationConfirmed ? 20 : 0 }}>
-              {resolved.displayName || `${pin.lat.toFixed(5)}, ${pin.lon.toFixed(5)}`}
+            <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-mute)', marginBottom: locationConfirmed ? 20 : 14, lineHeight: 1.6 }}>
+              <div style={{ marginBottom: 6 }}>{resolved.displayName || `${pin.lat.toFixed(5)}, ${pin.lon.toFixed(5)}`}</div>
+              {/* Auto-detected postcode is Nominatim's best guess, not ground
+                  truth -- it's wrong often enough for India (confirmed case:
+                  a correctly-placed pin still returning a stale district-level
+                  postcode instead of the actual local one) that we surface it
+                  explicitly and editable here, rather than letting a silent
+                  wrong match produce a misleading AsliVastu score below. */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <span style={{ color: 'var(--text-dim)' }}>Detected pincode:</span>
+                {!editingPincode ? (
+                  <>
+                    <strong style={{ color: 'var(--text)' }}>{pincodeOverride || 'none found'}</strong>
+                    <button type="button" onClick={() => setEditingPincode(true)}
+                      style={{ background: 'none', border: 'none', color: 'var(--ss)', cursor: 'pointer', fontSize: 11, textDecoration: 'underline', padding: 0 }}>
+                      not right? correct it
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <input
+                      type="text" inputMode="numeric" value={pincodeOverride} maxLength={6} autoFocus
+                      onChange={e => setPincodeOverride(e.target.value.replace(/\D/g, ''))}
+                      onKeyDown={e => { if (e.key === 'Enter') applyPincodeOverride(); if (e.key === 'Escape') setEditingPincode(false); }}
+                      style={{ width: 90, background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 3, padding: '5px 8px', color: 'var(--text)', fontSize: 12 }}
+                    />
+                    <button type="button" onClick={applyPincodeOverride}
+                      style={{ background: 'var(--brand)', color: '#fff', border: 'none', borderRadius: 3, padding: '5px 12px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
+                      Apply
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           )}
 
@@ -266,7 +324,7 @@ export default function AddressPicker({ onConfirmed }) {
               ) : (
                 <div style={{ marginBottom: 24, border: '1px solid var(--line)', borderLeft: '4px solid var(--line)', borderRadius: 3, padding: '18px 20px' }}>
                   <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
-                    No AsliVastu coverage for pincode {resolved?.postcode || 'this location'} yet — you&apos;ll still get SunScout&apos;s Home Comfort Score for the unit, just without an area score to combine it with.
+                    No AsliVastu coverage for pincode {pincodeOverride || resolved?.postcode || 'this location'} yet — you&apos;ll still get SunScout&apos;s Home Comfort Score for the unit, just without an area score to combine it with. If that pincode looks wrong, scroll up and correct it above.
                   </div>
                 </div>
               )}
