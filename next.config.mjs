@@ -1,12 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // pdf-to-img (used by the floor-plan furnishing advisor to render a PDF's
-  // first page to an image) wraps pdfjs-dist, which loads worker/wasm
-  // assets in a way Turbopack's server bundler can't statically analyse --
-  // without this it fails at build time with a bogus "path argument must
-  // be of type string" error. Keeping it un-bundled and required at
-  // runtime like a normal Node dependency avoids that.
-  serverExternalPackages: ['pdf-to-img'],
+  // @napi-rs/canvas ships native .node binaries per-platform — bundlers
+  // that try to statically analyse/inline it break the build. Keeping it
+  // (and unpdf, which requires it as an optional peer for PDF rendering)
+  // un-bundled and required at runtime like a normal Node dependency
+  // avoids that. This replaced pdf-to-img, which built fine but threw
+  // "DOMMatrix is not defined" specifically on Vercel's serverless
+  // runtime — see the comment in lib/floorplan/toImage.js for why.
+  serverExternalPackages: ['@napi-rs/canvas', 'unpdf'],
 
   // Next.js's dev server only trusts requests from localhost/127.0.0.1 by
   // default -- a request coming in via a LAN IP (e.g. testing on a phone on
