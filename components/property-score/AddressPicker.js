@@ -195,7 +195,7 @@ export default function AddressPicker({ onConfirmed }) {
 
   return (
     <div style={{ marginBottom: 36 }}>
-      <div className="mono" style={{ fontSize: 11, color: 'var(--sun)', letterSpacing: '.12em', marginBottom: 12 }}>STEP 1 — ENTER YOUR ADDRESS</div>
+      <div className="mono" style={{ fontSize: 11, color: 'var(--sun)', letterSpacing: '.12em', marginBottom: 12 }}>ENTER YOUR ADDRESS</div>
       <div ref={wrapRef} style={{ position: 'relative', display: 'flex', gap: 10, marginBottom: 10, flexWrap: 'wrap' }}>
         <div style={{ flex: '1 1 260px', position: 'relative' }}>
           <input
@@ -253,7 +253,7 @@ export default function AddressPicker({ onConfirmed }) {
       {pin && (
         <>
           <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 10, marginTop: 22 }}>
-            STEP 2 — CONFIRM THE EXACT PIN
+            CONFIRM THE EXACT PIN
           </div>
           <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 10 }}>
             Drag the pin or click the map to fine-tune the exact building, then confirm.
@@ -317,7 +317,7 @@ export default function AddressPicker({ onConfirmed }) {
           {locationConfirmed && (
             <>
               <div className="mono" style={{ fontSize: 11, color: 'var(--sun)', letterSpacing: '.12em', marginBottom: 12, marginTop: 8 }}>
-                STEP 3 — ASLIVASTU AREA SCORE
+                NEIGHBOURHOOD SCORE FOR THIS PIN
               </div>
 
               {matchedArea ? (

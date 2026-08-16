@@ -14,6 +14,7 @@ import LocalityPicker from './LocalityPicker';
 import AddressPicker from './AddressPicker';
 import UnitVerdict from './UnitVerdict';
 import PersonaPicker from './PersonaPicker';
+import PropertyScoreProgress from './PropertyScoreProgress';
 import HeroMap from '@/components/HeroMap';
 
 const SCREEN_H = 'calc(100vh - 66px)'; // 66px = the sticky header's own height
@@ -64,8 +65,16 @@ export default function PropertyScoreFlow() {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   }
 
+  // Coarse but reliable -- derived straight from state this component
+  // already owns, no scroll-spying needed. Persona picking itself isn't a
+  // hard gate (you can still continue without one), so it's just the
+  // first stage that hasn't happened yet vs. has.
+  const progressStage = !personaId ? 'angle' : (!(lat && lon) ? 'location' : 'verdict');
+
   return (
     <section className="section" id="property-score-flow" style={{ paddingTop: 0 }}>
+      <PropertyScoreProgress current={progressStage} />
+
       {/* ── snap sequence: 3 full screens ── */}
       <div style={{ scrollSnapType: 'y proximity' }}>
 

@@ -41,9 +41,9 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
 
   return (
     <>
-      {/* STEP 1 -- CITY */}
+      {/* CITY */}
       <div style={{ marginBottom: 36 }}>
-        <div className="mono" style={{ fontSize: 11, color: 'var(--slate)', letterSpacing: '.12em', marginBottom: 12 }}>STEP 1 — CITY</div>
+        <div className="mono" style={{ fontSize: 11, color: 'var(--slate)', letterSpacing: '.12em', marginBottom: 12 }}>CITY</div>
         {citiesError && <div style={{ color: '#f87171', fontSize: 13 }}>{citiesError}</div>}
         {!citiesData && !citiesError && <div className="mono" style={{ fontSize: 12, color: 'var(--text-dim)' }}>Loading…</div>}
         {citiesData && (
@@ -62,10 +62,10 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
         )}
       </div>
 
-      {/* STEP 2 -- LOCALITY, SEARCHABLE BY NAME */}
+      {/* LOCALITY, SEARCHABLE BY NAME */}
       {city && citiesData && (
         <div style={{ marginBottom: 36 }}>
-          <div className="mono" style={{ fontSize: 11, color: 'var(--slate)', letterSpacing: '.12em', marginBottom: 12 }}>STEP 2 — LOCALITY</div>
+          <div className="mono" style={{ fontSize: 11, color: 'var(--slate)', letterSpacing: '.12em', marginBottom: 12 }}>LOCALITY</div>
           <input
             type="text" placeholder="Search by area name — Koramangala, Whitefield, Vasant Kunj…"
             value={search} onChange={e => setSearch(e.target.value)}
