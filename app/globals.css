@@ -1372,6 +1372,52 @@
   .closing-inner p{ font-size:13px; margin-bottom:22px }
 }
 
+/* ---------- PROPERTY SCORE PAGE — INTERACTIVE POLISH ----------
+   The property-score screens are built with inline styles (see the note
+   below on why plain selectors can't touch most of their properties), so
+   none of these buttons/rows had a `transition` declared anywhere -- every
+   state change (selecting a mode, picking a city, hovering a button)
+   snapped instantly instead of easing, which is what read as "not smooth."
+   Each button/row below keeps its inline style for colour/background
+   (data-driven, e.g. "selected" vs not) and picks up hover motion + easing
+   from one of these three shared classes layered on top, matching the same
+   idiom already used site-wide (.btn:hover, .btn-cta:hover, .pcard:hover). */
+  .ps-btn{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease, color .15s ease;
+  }
+  .ps-btn:hover{
+    transform:translateY(-1px);
+    box-shadow:0 10px 22px -14px rgba(28,24,18,0.45);
+  }
+  .ps-btn:active{ transform:translateY(0); box-shadow:none }
+  /* Solid brand-filled CTAs (Get Score, Confirm Pin, Continue, Generate
+     Report, Furnish This Unit) -- same darken-on-hover idiom as .btn-cta's
+     background:#2E310F, stacked on top of the lift so the biggest actions
+     on the page read as the most responsive, not the least. */
+  .ps-cta-btn:hover{ filter:brightness(0.92) }
+  /* List rows (locality results, address suggestions) — a lift/shadow reads
+     wrong on a full-width row sitting flush against its neighbours, so
+     these just get a background wash on hover instead. */
+  .ps-row-btn{ transition:background .12s ease }
+  .ps-row-btn:hover{ background:var(--bg-2) }
+  /* Small text-only actions ("not right? correct it") — opacity fade only. */
+  .ps-link-btn{ transition:opacity .15s ease }
+  .ps-link-btn:hover{ opacity:.7 }
+  /* Facing-grid buttons sit edge-to-edge with negative margins to fake a
+     shared border between cells -- a transform lift would pop a cell above
+     its neighbours and break that illusion, so these get a border/background
+     ease only, no motion. */
+  .uv-facing-btn{ transition:background .15s ease, border-color .15s ease, color .15s ease }
+  .uv-facing-btn:hover{ border-color:var(--sun) }
+  /* Persona dial nodes (PersonaPicker.js) — subtle scale-up on hover so the
+     first interactive thing on the page also feels responsive, not just
+     the buttons further down. */
+  .ps-persona-node{ transition:transform .15s ease; transform-origin:center; transform-box:fill-box }
+  .ps-persona-node:hover{ transform:scale(1.06) }
+  @media (prefers-reduced-motion: reduce){
+    .ps-btn, .ps-btn:hover, .ps-row-btn, .uv-facing-btn, .ps-persona-node{ transition:none !important; transform:none !important }
+  }
+
 /* ---------- APP SCREENS (Property Score / SunScout) — MOBILE SCALE-DOWN
    (<=640px) ----------
    Unlike the landing/auth/reports pages above, these screens are built with

@@ -106,6 +106,7 @@ export default function PersonaPicker({ personaId, onSelect, big = false }) {
               onClick={() => onSelect(pos.id)}
               onMouseEnter={() => setHoverId(pos.id)}
               onMouseLeave={() => setHoverId(null)}
+              className="ps-persona-node"
               style={{ cursor: 'pointer' }}
             >
               <circle cx={pos.x} cy={pos.y} r={NODE_R} fill={p.color}

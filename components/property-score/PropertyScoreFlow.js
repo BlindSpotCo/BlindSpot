@@ -74,7 +74,7 @@ export default function PropertyScoreFlow() {
             <div className="hero-grid" style={{ alignItems: 'center' }}>
               <div>
                 <span className="hero-eyebrow">Combined Verdict</span>
-                <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 'clamp(36px, 4.5vw, 52px)', lineHeight: 1.12, margin: '18px 0 18px', maxWidth: 600 }}>
+                <h1 style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 'clamp(36px, 4.5vw, 52px)', lineHeight: 1.12, margin: '18px 0 18px', maxWidth: 600 }}>
                   One score for the neighbourhood. One score for the flat.
                 </h1>
                 <p style={{ fontSize: 16, color: 'var(--text-mute)', maxWidth: 540, lineHeight: 1.7 }}>
@@ -89,7 +89,7 @@ export default function PropertyScoreFlow() {
                   ['Unit', '3D sun & shadow analysis, per floor and facing.'],
                   ['BlindSpot', 'The two combined into one verdict, weighted your way.'],
                 ].map(([label, desc], i) => (
-                  <div key={label} style={{ display: 'flex', gap: 14, alignItems: 'flex-start', padding: '16px 18px', border: '1px solid var(--line)', borderRadius: 3, background: 'var(--bg-2)' }}>
+                  <div key={label} style={{ display: 'flex', gap: 14, alignItems: 'flex-start', padding: '16px 18px', border: '1px solid var(--line)', borderRadius: 'var(--radius)', background: 'var(--bg-2)' }}>
                     <span className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', paddingTop: 2 }}>{String(i + 1).padStart(2, '0')}</span>
                     <div>
                       <div style={{ fontSize: 14.5, fontWeight: 700, marginBottom: 3 }}>{label}</div>
@@ -128,19 +128,19 @@ export default function PropertyScoreFlow() {
           <div className="wrap" style={{ width: '100%' }}>
             <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', letterSpacing: '.12em', marginBottom: 20, textAlign: 'center' }}>HOW DO YOU WANT TO START?</div>
             <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', justifyContent: 'center', maxWidth: 900, margin: '0 auto' }}>
-              <button onClick={() => chooseMode('locality')} className="ps-mode-btn"
+              <button onClick={() => chooseMode('locality')} className="ps-mode-btn ps-btn"
                 style={{
                   flex: '1 1 320px', maxWidth: 400, textAlign: 'left', background: mode === 'locality' ? 'rgba(175,47,64,0.14)' : 'var(--bg-2)',
-                  border: `1px solid ${mode === 'locality' ? 'var(--slate)' : 'var(--line)'}`, borderRadius: 4, padding: '32px 28px', cursor: 'pointer',
+                  border: `1px solid ${mode === 'locality' ? 'var(--slate)' : 'var(--line)'}`, borderRadius: 'var(--radius)', padding: '32px 28px', cursor: 'pointer',
                 }}>
                 <div className="mono" style={{ fontSize: 10.5, color: 'var(--slate)', letterSpacing: '.1em', marginBottom: 10 }}>OPTION A</div>
                 <div className="ps-mode-btn-title" style={{ fontSize: 19, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>City → Locality → Unit</div>
                 <div className="ps-mode-btn-sub" style={{ fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.6 }}>Browse scored neighbourhoods, then pick a floor/facing.</div>
               </button>
-              <button onClick={() => chooseMode('address')} className="ps-mode-btn"
+              <button onClick={() => chooseMode('address')} className="ps-mode-btn ps-btn"
                 style={{
                   flex: '1 1 320px', maxWidth: 400, textAlign: 'left', background: mode === 'address' ? 'rgba(224,123,0,0.12)' : 'var(--bg-2)',
-                  border: `1px solid ${mode === 'address' ? 'var(--sun)' : 'var(--line)'}`, borderRadius: 4, padding: '32px 28px', cursor: 'pointer',
+                  border: `1px solid ${mode === 'address' ? 'var(--sun)' : 'var(--line)'}`, borderRadius: 'var(--radius)', padding: '32px 28px', cursor: 'pointer',
                 }}>
                 <div className="mono" style={{ fontSize: 10.5, color: 'var(--sun)', letterSpacing: '.1em', marginBottom: 10 }}>OPTION B</div>
                 <div className="ps-mode-btn-title" style={{ fontSize: 19, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>I have the exact address</div>

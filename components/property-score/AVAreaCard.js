@@ -27,7 +27,7 @@ function BigBar({ label, score }) {
         <span>{label}</span>
         <span className="cond" style={{ fontWeight: 700, fontSize: 20, color }}>{score}</span>
       </div>
-      <div style={{ background: 'var(--line-soft)', height: 10, borderRadius: 4, overflow: 'hidden' }}>
+      <div style={{ background: 'var(--line-soft)', height: 10, borderRadius: 'var(--radius)', overflow: 'hidden' }}>
         <div style={{
           width: `${score}%`, height: '100%',
           background: weak ? undefined : color,
@@ -40,7 +40,7 @@ function BigBar({ label, score }) {
 
 export default function AVAreaCard({ record, city }) {
   return (
-    <div className="av-card" style={{ marginBottom: 36, border: '1px solid var(--line)', borderLeft: '4px solid var(--slate)', borderRadius: 3, padding: '28px 30px' }}>
+    <div className="av-card" style={{ marginBottom: 36, border: '1px solid var(--line)', borderLeft: '4px solid var(--slate)', borderRadius: 'var(--radius)', padding: '28px 30px' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&display=swap');
         .av-card .cond { font-family: 'Barlow Condensed', sans-serif; }
@@ -66,7 +66,8 @@ export default function AVAreaCard({ record, city }) {
         href={`/neighbourhood-report/${record.pin_code}`}
         target="_blank"
         rel="noreferrer"
-        style={{ display: 'inline-block', background: 'var(--slate)', color: '#fff', border: '1px solid var(--slate)', borderRadius: 3, padding: '12px 22px', fontSize: 13.5, fontWeight: 700, textDecoration: 'none' }}
+        className="ps-btn ps-cta-btn"
+        style={{ display: 'inline-block', background: 'var(--slate)', color: '#fff', border: '1px solid var(--slate)', borderRadius: 'var(--radius)', padding: '12px 22px', fontSize: 13.5, fontWeight: 700, textDecoration: 'none' }}
       >
         See Full AsliVastu Report ↗
       </a>

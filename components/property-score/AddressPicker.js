@@ -206,13 +206,13 @@ export default function AddressPicker({ onConfirmed }) {
             onKeyDown={handleKeyDown}
             onFocus={() => { if (suggestions.length > 0) setSuggestOpen(true); }}
             autoComplete="off"
-            style={{ width: '100%', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 3, padding: '12px 14px', color: 'var(--text)', fontSize: 14, boxSizing: 'border-box' }}
+            style={{ width: '100%', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '12px 14px', color: 'var(--text)', fontSize: 14, boxSizing: 'border-box' }}
           />
 
           {suggestOpen && (suggestLoading || suggestions.length > 0) && (
             <div style={{
               position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 4, zIndex: 20,
-              background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 3,
+              background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)',
               maxHeight: 320, overflowY: 'auto', boxShadow: '0 8px 24px rgba(0,0,0,.35)',
             }}>
               {suggestLoading && suggestions.length === 0 && (
@@ -223,6 +223,7 @@ export default function AddressPicker({ onConfirmed }) {
                   key={`${s.lat}-${s.lon}-${i}`}
                   onMouseDown={(e) => { e.preventDefault(); pickSuggestion(s); }}
                   onMouseEnter={() => setHighlightIndex(i)}
+                  className="ps-row-btn"
                   style={{
                     display: 'block', width: '100%', textAlign: 'left', background: i === highlightIndex ? 'rgba(224,123,0,0.12)' : 'transparent',
                     border: 'none', borderBottom: i < suggestions.length - 1 ? '1px solid var(--line-soft)' : 'none',
@@ -235,9 +236,9 @@ export default function AddressPicker({ onConfirmed }) {
             </div>
           )}
         </div>
-        <button onClick={handleSearch} disabled={searching || !query.trim()}
+        <button onClick={handleSearch} disabled={searching || !query.trim()} className="ps-btn ps-cta-btn"
           style={{
-            background: 'var(--sun)', color: '#fff', border: 'none', borderRadius: 3,
+            background: 'var(--sun)', color: '#fff', border: 'none', borderRadius: 'var(--radius)',
             padding: '12px 22px', fontSize: 13, fontWeight: 700, cursor: searching ? 'default' : 'pointer',
             opacity: searching ? .6 : 1,
           }}>
@@ -257,7 +258,7 @@ export default function AddressPicker({ onConfirmed }) {
           <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 10 }}>
             Drag the pin or click the map to fine-tune the exact building, then confirm.
           </div>
-          <div style={{ height: 360, border: '1px solid var(--line)', borderRadius: 3, overflow: 'hidden', marginBottom: 16 }}>
+          <div style={{ height: 360, border: '1px solid var(--line)', borderRadius: 'var(--radius)', overflow: 'hidden', marginBottom: 16 }}>
             <AddressConfirmMap lat={pin.lat} lon={pin.lon} onMove={handleMove} />
           </div>
 
@@ -266,9 +267,9 @@ export default function AddressPicker({ onConfirmed }) {
           )}
 
           {!resolving && !locationConfirmed && (
-            <button onClick={confirmLocation}
+            <button onClick={confirmLocation} className="ps-btn ps-cta-btn"
               style={{
-                background: 'var(--slate)', color: '#fff', border: 'none', borderRadius: 3,
+                background: 'var(--slate)', color: '#fff', border: 'none', borderRadius: 'var(--radius)',
                 padding: '13px 22px', fontSize: 13, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
                 marginBottom: 20,
               }}>
@@ -290,7 +291,7 @@ export default function AddressPicker({ onConfirmed }) {
                 {!editingPincode ? (
                   <>
                     <strong style={{ color: 'var(--text)' }}>{pincodeOverride || 'none found'}</strong>
-                    <button type="button" onClick={() => setEditingPincode(true)}
+                    <button type="button" onClick={() => setEditingPincode(true)} className="ps-link-btn"
                       style={{ background: 'none', border: 'none', color: 'var(--ss)', cursor: 'pointer', fontSize: 11, textDecoration: 'underline', padding: 0 }}>
                       not right? correct it
                     </button>
@@ -301,10 +302,10 @@ export default function AddressPicker({ onConfirmed }) {
                       type="text" inputMode="numeric" value={pincodeOverride} maxLength={6} autoFocus
                       onChange={e => setPincodeOverride(e.target.value.replace(/\D/g, ''))}
                       onKeyDown={e => { if (e.key === 'Enter') applyPincodeOverride(); if (e.key === 'Escape') setEditingPincode(false); }}
-                      style={{ width: 90, background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 3, padding: '5px 8px', color: 'var(--text)', fontSize: 12 }}
+                      style={{ width: 90, background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '5px 8px', color: 'var(--text)', fontSize: 12 }}
                     />
-                    <button type="button" onClick={applyPincodeOverride}
-                      style={{ background: 'var(--brand)', color: '#fff', border: 'none', borderRadius: 3, padding: '5px 12px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
+                    <button type="button" onClick={applyPincodeOverride} className="ps-btn ps-cta-btn"
+                      style={{ background: 'var(--brand)', color: '#fff', border: 'none', borderRadius: 'var(--radius)', padding: '5px 12px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
                       Apply
                     </button>
                   </>
@@ -322,16 +323,16 @@ export default function AddressPicker({ onConfirmed }) {
               {matchedArea ? (
                 <AVAreaCard record={matchedArea} city={matchCity} citiesData={citiesDataRef.current} />
               ) : (
-                <div style={{ marginBottom: 24, border: '1px solid var(--line)', borderLeft: '4px solid var(--line)', borderRadius: 3, padding: '18px 20px' }}>
+                <div style={{ marginBottom: 24, border: '1px solid var(--line)', borderLeft: '4px solid var(--line)', borderRadius: 'var(--radius)', padding: '18px 20px' }}>
                   <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
                     No AsliVastu coverage for pincode {pincodeOverride || resolved?.postcode || 'this location'} yet — you&apos;ll still get SunScout&apos;s Home Comfort Score for the unit, just without an area score to combine it with. If that pincode looks wrong, scroll up and correct it above.
                   </div>
                 </div>
               )}
 
-              <button onClick={continueToSunScout}
+              <button onClick={continueToSunScout} className="ps-btn ps-cta-btn"
                 style={{
-                  background: 'var(--brand)', color: '#fff', border: 'none', borderRadius: 3,
+                  background: 'var(--brand)', color: '#fff', border: 'none', borderRadius: 'var(--radius)',
                   padding: '14px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
                 }}>
                 Continue to Sun &amp; Shadow →
