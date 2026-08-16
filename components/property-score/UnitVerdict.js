@@ -42,15 +42,14 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   }, [personaId]);
 
   // A new location (new locality pick, or a fresh address confirm) should
-  // clear out any stale verdict from the previous one. The SunScout panel
-  // below renders (and starts its shadow animation) as soon as lat/lon
-  // are set, so that's also the moment "Unit" counts as seen -- no extra
-  // gate needed since the animation autoplays on mount.
+  // clear out any stale verdict from the previous one, and reset both
+  // ticks -- "Unit" ticks on the Get Score click below, "Verdict" ticks
+  // when the full AI report is generated.
   useEffect(() => {
     setCombined(null); setFloor(null); setFacing(null);
     setCapturedFromSS(false); setSsPreview(null); setAreaWeight(50);
+    onUnitSeen?.(false);
     onVerdictStart?.(false);
-    onUnitSeen?.(!!(lat && lon));
   }, [pinCode, lat, lon]);
 
   const handleUnitSelected = useCallback((f, d) => {
@@ -80,7 +79,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
     const useFloor = floorOverride ?? floor;
     const useFacing = facingOverride ?? facing;
     if (!lat || !lon || useFloor == null || !useFacing) return;
-    onVerdictStart?.(true);
+    onUnitSeen?.(true);
     const aw = customAreaWeight ?? areaWeight;
     setLoadingCombined(true);
     setCombinedError('');
@@ -292,7 +291,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               )}
 
               <button
-                onClick={() => sunScoutRef.current?.openReport({ floor: combined.unit.floor, facing: combined.unit.facing })}
+                onClick={() => { onVerdictStart?.(true); sunScoutRef.current?.openReport({ floor: combined.unit.floor, facing: combined.unit.facing }); }}
                 className="ps-btn ps-cta-btn"
                 style={{
                   background: 'var(--brand)', color: '#fff', border: 'none',

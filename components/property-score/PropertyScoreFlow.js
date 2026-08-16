@@ -29,9 +29,8 @@ export default function PropertyScoreFlow() {
   const [addressLabel, setAddressLabel] = useState('');
   const [lat, setLat] = useState('');
   const [lon, setLon] = useState('');
-  // "Unit" ticks once the SunScout panel has appeared and started its
-  // shadow animation; "Verdict" ticks the moment the combined-score
-  // button is clicked, not once the fetch behind it resolves.
+  // "Unit" ticks when Get Combined/Home Comfort Score is clicked;
+  // "Verdict" ticks when the full AI report is generated.
   const [unitSeen, setUnitSeen] = useState(false);
   const [verdictStarted, setVerdictStarted] = useState(false);
 
