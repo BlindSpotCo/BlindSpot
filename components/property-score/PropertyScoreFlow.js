@@ -167,12 +167,19 @@ export default function PropertyScoreFlow() {
           </div>
         </div>
 
-        {/* Screen 2 — persona dial */}
-        <div id="ps-screen-persona" style={{ minHeight: SCREEN_H, display: 'flex', alignItems: 'center', scrollSnapAlign: 'start' }}>
-          <div className="wrap" style={{ width: '100%' }}>
+        {/* Screen 2 — persona dial.
+            `alignItems:center` on a fixed-height flex box clips overflow at
+            BOTH ends rather than just the bottom, which is how the dial
+            ended up cutting "Pick your angle." off above the fold on
+            shorter viewports. The vertical padding plus `marginBlock:auto`
+            on the child means it still centres when there's room, but
+            degrades to normal top-aligned scrolling when there isn't --
+            instead of hiding the headline. */}
+        <div id="ps-screen-persona" style={{ minHeight: SCREEN_H, display: 'flex', alignItems: 'center', scrollSnapAlign: 'start', padding: '28px 0' }}>
+          <div className="wrap" style={{ width: '100%', marginBlock: 'auto' }}>
             <PersonaPicker personaId={personaId} onSelect={setPersonaId} big />
             <button onClick={() => scrollToNext('ps-screen-location')} className="mono"
-              style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '32px auto 0', background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: 12, letterSpacing: '.1em', cursor: 'pointer' }}>
+              style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '24px auto 0', background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: 12, letterSpacing: '.1em', cursor: 'pointer' }}>
               SCROLL TO PICK A LOCATION <span style={{ fontSize: 14 }}>↓</span>
             </button>
           </div>

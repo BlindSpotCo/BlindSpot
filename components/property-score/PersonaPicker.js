@@ -22,12 +22,23 @@ export default function PersonaPicker({ personaId, onSelect, big = false }) {
   const previewId = hoverId || personaId;
   const preview = PERSONAS[previewId];
 
-  const SIZE = big ? 520 : 300;
+  // Sized so the WHOLE screen (eyebrow + headline + paragraph + dial +
+  // preview line + scroll hint) fits inside `calc(100vh - 66px)` on a
+  // normal laptop. The previous `big` dial was 520px + 60px padding =
+  // 580px of SVG alone, which pushed total content to ~880px -- inside a
+  // centred flex box that meant it silently clipped at BOTH ends, so you
+  // landed on a half-sentence with "Pick your angle." cut off above the
+  // fold. Geometry check at these numbers (CX=CY=210):
+  //   node outer edge   132+52    = 184  < 210 ✓
+  //   outer ring        132+52+4  = 188  < 210 ✓
+  //   tick outer edge   132+52+18 = 202  < 210 ✓
+  //   hub to node gap   (132-52)-58 = 22       ✓
+  const SIZE = big ? 420 : 300;
   const CX = SIZE / 2;
   const CY = SIZE / 2;
-  const NODE_R = big ? 62 : 34;
-  const ORBIT_R = big ? 178 : 104;
-  const HUB_R = big ? 72 : 46;
+  const NODE_R = big ? 52 : 34;
+  const ORBIT_R = big ? 132 : 104;
+  const HUB_R = big ? 58 : 46;
 
   const ANGLE_STEP = 360 / PERSONA_ORDER.length;
   const positions = PERSONA_ORDER.map((id, i) => {
@@ -47,15 +58,17 @@ export default function PersonaPicker({ personaId, onSelect, big = false }) {
     };
   });
 
-  const pad = big ? 60 : 50;
+  // `big` no longer renders labels outside the nodes, so the SVG only
+  // needs enough padding to clear the tick ring, not a whole text row.
+  const pad = big ? 24 : 50;
 
   return (
     <div style={{
       display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center',
     }}>
-      <div className="mono" style={{ fontSize: big ? 12 : 11, color: 'var(--sun)', letterSpacing: '.14em', marginBottom: big ? 14 : 10 }}>WHO&apos;S HOUSE-HUNTING?</div>
-      <h1 style={{ fontSize: big ? 'clamp(34px, 5vw, 48px)' : 'clamp(28px, 4vw, 40px)', marginBottom: big ? 12 : 8 }}>Pick your angle.</h1>
-      <p style={{ fontSize: big ? 15 : 13, color: 'var(--text-mute)', maxWidth: big ? 480 : 400, marginBottom: big ? 30 : 20, lineHeight: 1.55 }}>
+      <div className="mono" style={{ fontSize: big ? 12 : 11, color: 'var(--sun)', letterSpacing: '.14em', marginBottom: big ? 10 : 10 }}>WHO&apos;S HOUSE-HUNTING?</div>
+      <h1 style={{ fontSize: big ? 'clamp(30px, 3.6vw, 40px)' : 'clamp(28px, 4vw, 40px)', marginBottom: big ? 10 : 8 }}>Pick your angle.</h1>
+      <p style={{ fontSize: big ? 14.5 : 13, color: 'var(--text-mute)', maxWidth: big ? 500 : 400, marginBottom: big ? 20 : 20, lineHeight: 1.55 }}>
         Same address, different blind spots — this sets how the combined score and the sun/shadow weighting are tuned for you. You can still drag any slider by hand later.
       </p>
 
@@ -120,14 +133,31 @@ export default function PersonaPicker({ personaId, onSelect, big = false }) {
                   stroke={active ? 'var(--text)' : 'none'}
                   strokeWidth={active ? 3 : 0}
                 />
-                <text x={pos.x} y={pos.y} textAnchor="middle" dominantBaseline="central"
-                  style={{ fontSize: big ? 20 : 14, fontWeight: 700, fill: '#fff', pointerEvents: 'none' }}>
-                  {p.short[0]}
-                </text>
-                <text x={pos.x} y={pos.y + NODE_R + (big ? 22 : 17)} textAnchor="middle"
-                  className="mono" style={{ fontSize: big ? 12 : 9.5, letterSpacing: '.07em', fill: 'var(--text-mute)', pointerEvents: 'none' }}>
-                  {p.short.toUpperCase()}
-                </text>
+                {/* At `big` the name goes INSIDE the node. It used to be a
+                    single initial (Y / B / F / I) in the circle with the
+                    real name floating below it -- the initial told you
+                    nothing on its own, and the outside label pushed the
+                    dial's bounding box out by ~40px on every side for text
+                    that fits in the circle anyway. The small variant keeps
+                    the initial + external label, since its 34px nodes are
+                    genuinely too small for a word. */}
+                {big ? (
+                  <text x={pos.x} y={pos.y} textAnchor="middle" dominantBaseline="central"
+                    className="mono" style={{ fontSize: 11, fontWeight: 600, letterSpacing: '.06em', fill: '#fff', pointerEvents: 'none' }}>
+                    {p.short.toUpperCase()}
+                  </text>
+                ) : (
+                  <>
+                    <text x={pos.x} y={pos.y} textAnchor="middle" dominantBaseline="central"
+                      style={{ fontSize: 14, fontWeight: 700, fill: '#fff', pointerEvents: 'none' }}>
+                      {p.short[0]}
+                    </text>
+                    <text x={pos.x} y={pos.y + NODE_R + 17} textAnchor="middle"
+                      className="mono" style={{ fontSize: 9.5, letterSpacing: '.07em', fill: 'var(--text-mute)', pointerEvents: 'none' }}>
+                      {p.short.toUpperCase()}
+                    </text>
+                  </>
+                )}
               </g>
             );
           })}
