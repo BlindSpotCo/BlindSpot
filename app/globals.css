@@ -677,6 +677,65 @@
   @keyframes ps-arrive{ from{ opacity:0; transform:translateY(8px) } to{ opacity:1; transform:none } }
   @media (prefers-reduced-motion: reduce){ .ps-arrive{ animation:none } }
 
+  /* ===== PROPERTY-SCORE THRESHOLD SCREEN =====
+     Screen 1 of the flow. Every choice here is deliberately unlike the
+     landing page hero, because the complaint this solves is that arriving
+     felt like nothing had happened: solid --bg-2 field (the surface
+     colour itself changes on arrival, which is the single strongest "you
+     moved" signal), centred single column instead of the hero's
+     two-column split, and a smaller headline than the hero's
+     clamp(36px,4.5vw,52px). Sized to its content rather than forced to
+     100vh, so the persona screen below peeks in and the page doesn't read
+     as another full-height wall. */
+  .ps-threshold{
+    background:var(--bg-2); border-bottom:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    padding:72px 0 64px;
+  }
+  .ps-threshold-eyebrow{
+    display:inline-block; font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--text-dim);
+  }
+  .ps-threshold-h{
+    font-family:'Bricolage Grotesque',sans-serif; font-weight:700;
+    font-size:clamp(28px,3.2vw,38px); line-height:1.15; margin:14px 0 16px; color:var(--ink);
+  }
+  .ps-threshold-sub{
+    font-size:15.5px; line-height:1.7; color:var(--text-mute);
+    max-width:620px; margin:0 auto 30px;
+  }
+
+  /* Four steps as a list, not as cards -- the hero already uses bordered
+     left-accent cards for its three engine blocks, so reusing that shape
+     here is exactly what made the two screens twin. A numbered list reads
+     as a sequence (which this is) rather than a set of parallel features
+     (which the hero's cards are). */
+  .ps-threshold-steps{
+    list-style:none; margin:0 auto 34px; padding:0; max-width:520px; text-align:left;
+    display:flex; flex-direction:column; gap:2px;
+  }
+  .ps-threshold-step{
+    display:flex; gap:14px; align-items:flex-start; padding:13px 0;
+    border-top:1px dashed var(--line);
+  }
+  .ps-threshold-step:first-child{ border-top:none }
+  .ps-threshold-step-n{
+    width:22px; height:22px; border-radius:50%; flex-shrink:0; color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:11.5px; font-weight:700; margin-top:1px;
+  }
+  .ps-threshold-step-label{ display:block; font-size:15px; font-weight:700; color:var(--ink) }
+  .ps-threshold-step-desc{ display:block; font-size:13.5px; color:var(--text-mute); line-height:1.5; margin-top:2px }
+
+  .ps-threshold-cta{ display:inline-flex; align-items:center; gap:9px }
+
+  @media (max-width:640px){
+    .ps-threshold{ padding:48px 0 44px }
+    .ps-threshold-sub{ font-size:14.5px; margin-bottom:24px }
+    .ps-threshold-steps{ margin-bottom:28px }
+    .ps-threshold-step-label{ font-size:14.5px }
+  }
+
   @media (prefers-reduced-motion: reduce){
     .coord-readout .blink, .pcard-tag .dot{animation:none !important}
     .pcard, .why-row, .team-card, .eyebrow::after, .nav-links a::after, .brand-mark-img{transition:none !important}
