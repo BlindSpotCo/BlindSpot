@@ -68,7 +68,7 @@ export default function AVAreaCard({ record, city }) {
         {/* Verdict fill stays scoreColor(nqi) -- the autumn score-colour
             ramp, never AsliVastu's own wine/red brand colour. */}
         <div style={{ background: scoreColor(record.nqi_composite), color: '#fff', padding: 24, borderRadius: 'var(--radius)' }}>
-          <div className="mono" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.1em', color: 'rgba(255,255,255,.8)' }}>Verdict</div>
+          <div className="mono" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.1em', color: 'rgba(255,255,255,.8)' }}>Area Verdict</div>
           <div className="cond" style={{ fontSize: 26, fontWeight: 700, textTransform: 'uppercase', margin: '8px 0 8px' }}>{verdict.label}</div>
           <div style={{ fontSize: 13, lineHeight: 1.5, color: 'rgba(255,255,255,.92)' }}>{verdict.why}</div>
         </div>

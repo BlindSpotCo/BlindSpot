@@ -25,6 +25,14 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   const [areaWeight, setAreaWeight] = useState(persona.defaultAreaWeight);
 
   const [gpsError, setGpsError] = useState('');
+  // Lat/lon are already populated by the time this panel renders -- from
+  // the locality's area record, or the pin the user just confirmed on the
+  // map in AddressPicker. Showing them up front as two blank-looking
+  // required text inputs reads as "something I still have to fill in" to
+  // a first-time visitor. Default to a plain, human-readable location
+  // line instead; the raw coordinate fields (and "use my location") stay
+  // one click away for the rare case someone needs to correct them.
+  const [showCoords, setShowCoords] = useState(false);
 
   // A persona switch resets the area/unit split back to that persona's
   // default — same idea as picking a new location, since the previous
@@ -107,15 +115,31 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
       <div style={{ marginBottom: 36 }}>
         <div className="mono" style={{ fontSize: 11, color: 'var(--sun)', letterSpacing: '.12em', marginBottom: 12 }}>SUN &amp; SHADOW FOR THIS FLAT</div>
 
-        <div style={{ display: 'flex', gap: 10, marginBottom: 14, flexWrap: 'wrap' }}>
-          <input type="text" placeholder="Latitude" value={lat} onChange={e => setLat(e.target.value)} className="uv-latlon-input"
-            style={{ flex: '1 1 140px', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '9px 12px', color: 'var(--text)', fontSize: 12.5, fontFamily: "'IBM Plex Mono', monospace" }} />
-          <input type="text" placeholder="Longitude" value={lon} onChange={e => setLon(e.target.value)} className="uv-latlon-input"
-            style={{ flex: '1 1 140px', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '9px 12px', color: 'var(--text)', fontSize: 12.5, fontFamily: "'IBM Plex Mono', monospace" }} />
-          <button onClick={useMyLocation} className="uv-mylocation-btn ps-btn" style={{ background: 'transparent', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '9px 16px', color: 'var(--text)', fontSize: 12, cursor: 'pointer' }}>
-            Use my location
-          </button>
-        </div>
+        {lat && lon && addressLabel && !showCoords ? (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 14, background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '10px 14px' }}>
+            <div style={{ fontSize: 13, color: 'var(--text)' }}>
+              <span style={{ color: 'var(--text-dim)' }}>📍 </span>{addressLabel}
+            </div>
+            <button onClick={() => setShowCoords(true)} className="ps-link-btn" style={{ background: 'none', border: 'none', color: 'var(--text-mute)', fontSize: 11.5, textDecoration: 'underline', cursor: 'pointer', flexShrink: 0 }}>
+              Edit exact location
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', gap: 10, marginBottom: 14, flexWrap: 'wrap' }}>
+            <input type="text" placeholder="Latitude" value={lat} onChange={e => setLat(e.target.value)} className="uv-latlon-input"
+              style={{ flex: '1 1 140px', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '9px 12px', color: 'var(--text)', fontSize: 12.5, fontFamily: "'IBM Plex Mono', monospace" }} />
+            <input type="text" placeholder="Longitude" value={lon} onChange={e => setLon(e.target.value)} className="uv-latlon-input"
+              style={{ flex: '1 1 140px', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '9px 12px', color: 'var(--text)', fontSize: 12.5, fontFamily: "'IBM Plex Mono', monospace" }} />
+            <button onClick={useMyLocation} className="uv-mylocation-btn ps-btn" style={{ background: 'transparent', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '9px 16px', color: 'var(--text)', fontSize: 12, cursor: 'pointer' }}>
+              Use my location
+            </button>
+            {addressLabel && (
+              <button onClick={() => setShowCoords(false)} className="ps-link-btn" style={{ flex: '0 0 100%', background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: 11, textAlign: 'left', textDecoration: 'underline', cursor: 'pointer', padding: 0 }}>
+                Done editing — show location name
+              </button>
+            )}
+          </div>
+        )}
         {gpsError && <div style={{ color: '#f87171', fontSize: 11.5, marginBottom: 10 }}>{gpsError}</div>}
         <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 14 }}>
           Use the <strong style={{ color: 'var(--sun)' }}>LIVESCORE</strong> button below for the Home Comfort breakdown — once you have a verdict below, you can generate the <strong style={{ color: 'var(--sun)' }}>full AI report</strong> covering both the neighbourhood and this unit.
@@ -171,7 +195,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
       {/* VERDICT */}
       {lat && lon && (
         <div style={{ marginBottom: 20 }}>
-          <div className="mono" style={{ fontSize: 11, color: 'var(--text)', letterSpacing: '.12em', marginBottom: 12 }}>THE VERDICT</div>
+          <div className="mono" style={{ fontSize: 11, color: 'var(--text)', letterSpacing: '.12em', marginBottom: 12 }}>THE COMBINED VERDICT</div>
 
           {!capturedFromSS && (
             <div style={{ marginBottom: 20 }}>
