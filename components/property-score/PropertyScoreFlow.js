@@ -83,7 +83,10 @@ export default function PropertyScoreFlow() {
             opening screen of the property-score flow (the one that was
             plain/unbranded before), not the standalone AsliVastu report
             page, which keeps its own plain header. */}
-        <div style={{ minHeight: SCREEN_H, display: 'flex', alignItems: 'center', scrollSnapAlign: 'start', position: 'relative', overflow: 'hidden' }}>
+        {/* .ps-arrive: short settle-in on load so arriving from the
+            landing page's pin-drop transition (components/PinDropTransition.js)
+            reads as one continuous move rather than a hard cut. */}
+        <div className="ps-arrive" style={{ minHeight: SCREEN_H, display: 'flex', alignItems: 'center', scrollSnapAlign: 'start', position: 'relative', overflow: 'hidden' }}>
           <HeroMap />
           <div className="wrap" style={{ width: '100%', position: 'relative', zIndex: 1 }}>
             <div className="hero-grid" style={{ alignItems: 'center' }}>

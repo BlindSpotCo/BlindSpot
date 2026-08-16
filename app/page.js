@@ -1,11 +1,11 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import SiteHeader from '@/components/SiteHeader';
 import HowItWorks from '@/components/HowItWorks';
 import HeroMap from '@/components/HeroMap';
 import HeroIllustration from '@/components/HeroIllustration';
+import PinDropTransition from '@/components/PinDropTransition';
 
 export default function Home() {
   // Auth state, scroll-reveal and the mobile menu all now live in
@@ -84,7 +84,9 @@ export default function Home() {
               <span className="dot" />Live in Delhi NCR &amp; Bangalore — more cities coming
             </span>
             <div className="hero-ctas" style={{ marginTop: 18 }}>
-              <Link href="/property-score" className="btn btn-lg btn-cta">Uncover Your BlindSpot <span className="btn-cta-arrow">→</span></Link>
+              <PinDropTransition href="/property-score" className="btn btn-lg btn-cta">
+                Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
+              </PinDropTransition>
             </div>
             <div className="coord-readout"><span className="blink"></span><span ref={coordRef} className="mono">12.9716° N, 77.5946° E — checking Bengaluru</span></div>
           </div>
@@ -240,7 +242,9 @@ export default function Home() {
           <h2>See the sunlight. Know the neighbourhood.</h2>
           <p>Two free tools. One pin. Everything the listing wasn&apos;t going to mention.</p>
           <div className="closing-ctas">
-            <Link href="/property-score" className="btn btn-lg btn-cta">Uncover Your BlindSpot <span className="btn-cta-arrow">→</span></Link>
+            <PinDropTransition href="/property-score" className="btn btn-lg btn-cta">
+              Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
+            </PinDropTransition>
           </div>
         </div>
 

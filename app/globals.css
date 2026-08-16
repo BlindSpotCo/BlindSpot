@@ -610,6 +610,73 @@
   }
   .coverage-pill .dot{ width:6px; height:6px; border-radius:50%; background:#4ADE80; flex-shrink:0 }
 
+  /* ===== PIN-DROP TRANSITION (components/PinDropTransition.js) =====
+     Plays on the "Uncover Your BlindSpot" CTA. A survey instrument
+     locking onto a pin: solid --brand field wipes up, blueprint grid
+     resolves, crosshairs converge from the four edges, ring scales down
+     and locks, mono readout ticks in. No gradients/glow anywhere -- one
+     flat field, white line work, one --ss accent (the pin), same idiom
+     as .btn-cta itself. */
+  .pdt{ position:fixed; inset:0; z-index:9999; pointer-events:all; overflow:hidden }
+  .pdt-field{
+    position:absolute; inset:0; background:var(--brand);
+    clip-path:inset(100% 0 0 0);
+    animation:pdt-wipe .44s cubic-bezier(.7,0,.2,1) forwards;
+  }
+  @keyframes pdt-wipe{ to{ clip-path:inset(0 0 0 0) } }
+
+  .pdt-svg{ position:absolute; inset:0; width:100%; height:100%; opacity:0; animation:pdt-in .3s ease .34s forwards }
+  @keyframes pdt-in{ to{ opacity:1 } }
+
+  .pdt-grid line{ stroke:rgba(255,255,255,.14); stroke-width:1 }
+  .pdt-cross line{ stroke:rgba(255,255,255,.5); stroke-width:1.5 }
+  .pdt-cross-t{ transform:translateY(-100%); animation:pdt-slide-y .5s cubic-bezier(.16,.9,.3,1) .4s forwards }
+  .pdt-cross-b{ transform:translateY(100%);  animation:pdt-slide-y .5s cubic-bezier(.16,.9,.3,1) .4s forwards }
+  .pdt-cross-l{ transform:translateX(-100%); animation:pdt-slide-x .5s cubic-bezier(.16,.9,.3,1) .4s forwards }
+  .pdt-cross-r{ transform:translateX(100%);  animation:pdt-slide-x .5s cubic-bezier(.16,.9,.3,1) .4s forwards }
+  @keyframes pdt-slide-y{ to{ transform:translateY(0) } }
+  @keyframes pdt-slide-x{ to{ transform:translateX(0) } }
+
+  .pdt-ring{ fill:none; stroke:#fff; transform-origin:500px 500px; opacity:0 }
+  .pdt-ring-outer{ stroke-width:1.5; stroke-dasharray:14 10; animation:pdt-lock .58s cubic-bezier(.16,.9,.3,1) .5s forwards }
+  .pdt-ring-inner{ stroke-width:2.5; animation:pdt-lock .58s cubic-bezier(.16,.9,.3,1) .62s forwards }
+  @keyframes pdt-lock{ from{ transform:scale(2.6); opacity:0 } to{ transform:scale(1); opacity:1 } }
+
+  .pdt-ticks path{ stroke:rgba(255,255,255,.75); stroke-width:2; fill:none; opacity:0; animation:pdt-in .26s ease .82s forwards }
+
+  .pdt-pin{ fill:var(--ss); transform-origin:500px 500px; opacity:0; animation:pdt-pin .34s cubic-bezier(.2,1.5,.4,1) .78s forwards }
+  @keyframes pdt-pin{ from{ transform:scale(0); opacity:0 } to{ transform:scale(1); opacity:1 } }
+
+  .pdt-readout{
+    position:absolute; left:0; right:0; bottom:14%; text-align:center; color:#fff;
+    opacity:0; animation:pdt-in .3s ease .88s forwards;
+  }
+  .pdt-readout-line{ display:block; font-size:13px; font-weight:600; letter-spacing:.22em; text-transform:uppercase }
+  .pdt-readout-sub{ display:block; font-size:12px; letter-spacing:.1em; color:rgba(255,255,255,.6); margin-top:7px }
+
+  /* Reduced motion: no sweeping, scaling or sliding at all -- the field
+     just fades up and the navigation still happens (the component cuts
+     its own timer down to match). */
+  @media (prefers-reduced-motion: reduce){
+    .pdt-field{ clip-path:none; animation:pdt-in .18s ease forwards; opacity:0 }
+    .pdt-svg, .pdt-readout, .pdt-ticks path{ animation:none !important; opacity:0 !important }
+    .pdt-cross-t, .pdt-cross-b, .pdt-cross-l, .pdt-cross-r,
+    .pdt-ring-outer, .pdt-ring-inner, .pdt-pin{ animation:none !important }
+  }
+
+  @media (max-width:640px){
+    .pdt-readout-line{ font-size:12px; letter-spacing:.16em }
+    .pdt-readout-sub{ font-size:11px }
+  }
+
+  /* Arrival side of the same transition -- the property-score intro
+     screen settles in rather than hard-cutting, so the two pages read as
+     one move. Deliberately small (8px, 420ms): the pin-drop already did
+     the work, this just takes the edge off the seam. */
+  .ps-arrive{ animation:ps-arrive .42s cubic-bezier(.16,.9,.3,1) both }
+  @keyframes ps-arrive{ from{ opacity:0; transform:translateY(8px) } to{ opacity:1; transform:none } }
+  @media (prefers-reduced-motion: reduce){ .ps-arrive{ animation:none } }
+
   @media (prefers-reduced-motion: reduce){
     .coord-readout .blink, .pcard-tag .dot{animation:none !important}
     .pcard, .why-row, .team-card, .eyebrow::after, .nav-links a::after, .brand-mark-img{transition:none !important}
