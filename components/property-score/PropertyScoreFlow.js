@@ -199,7 +199,10 @@ export default function PropertyScoreFlow() {
             <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', justifyContent: 'center', maxWidth: 900, margin: '0 auto' }}>
               <button onClick={() => chooseMode('locality')} className="ps-mode-btn ps-btn"
                 style={{
-                  flex: '1 1 320px', maxWidth: 400, textAlign: 'left', background: mode === 'locality' ? 'rgba(175,47,64,0.14)' : 'var(--bg-2)',
+                  // Was a hardcoded rgba(175,47,64) -- an off-brand hot
+                  // pink unrelated to any token. A tint of --slate matches
+                  // the rest of the site's selection states.
+                  flex: '1 1 320px', maxWidth: 400, textAlign: 'left', background: mode === 'locality' ? 'color-mix(in srgb, var(--slate) 14%, var(--bg-2))' : 'var(--bg-2)',
                   border: `1px solid ${mode === 'locality' ? 'var(--slate)' : 'var(--line)'}`, borderRadius: 'var(--radius)', padding: '32px 28px', cursor: 'pointer',
                 }}>
                 <div className="mono" style={{ fontSize: 11.5, color: 'var(--slate)', letterSpacing: '.1em', marginBottom: 10 }}>OPTION A</div>
@@ -208,7 +211,7 @@ export default function PropertyScoreFlow() {
               </button>
               <button onClick={() => chooseMode('address')} className="ps-mode-btn ps-btn"
                 style={{
-                  flex: '1 1 320px', maxWidth: 400, textAlign: 'left', background: mode === 'address' ? 'rgba(224,123,0,0.12)' : 'var(--bg-2)',
+                  flex: '1 1 320px', maxWidth: 400, textAlign: 'left', background: mode === 'address' ? 'color-mix(in srgb, var(--sun) 14%, var(--bg-2))' : 'var(--bg-2)',
                   border: `1px solid ${mode === 'address' ? 'var(--sun)' : 'var(--line)'}`, borderRadius: 'var(--radius)', padding: '32px 28px', cursor: 'pointer',
                 }}>
                 <div className="mono" style={{ fontSize: 11.5, color: 'var(--sun)', letterSpacing: '.1em', marginBottom: 10 }}>OPTION B</div>

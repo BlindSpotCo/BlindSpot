@@ -117,7 +117,10 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
             {filteredLocalities.slice(0, 30).map(r => (
               <button key={rowKey(r)} onClick={() => pick(r)} className="ps-row-btn"
                 style={{
-                  textAlign: 'left', background: selectedKey === rowKey(r) ? 'rgba(175,47,64,0.14)' : 'transparent',
+                  // Was a hardcoded rgba(175,47,64) -- an off-brand hot pink
+                  // with no relation to any design token. A tint of --slate
+                  // matches every other selection/accent state on the site.
+                  textAlign: 'left', background: selectedKey === rowKey(r) ? 'color-mix(in srgb, var(--slate) 14%, var(--paper))' : 'transparent',
                   border: 'none', borderBottom: '1px solid var(--line-soft)', padding: '11px 14px', cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
                 }}>
