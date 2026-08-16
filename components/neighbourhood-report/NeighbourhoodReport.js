@@ -19,7 +19,7 @@
 // is here.
 
 import { useState, useMemo } from 'react';
-import AVDetailedReadout, { BPF, source, scoreColor, verdictFor, AQI_PLAIN, formatDateLong, inr } from '@/components/property-score/AVDetailedReadout';
+import AVDetailedReadout, { BPF, source, scoreColor, verdictFor, explain, AQI_PLAIN, formatDateLong, inr } from '@/components/property-score/AVDetailedReadout';
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
 
 const CSS = `
@@ -57,23 +57,6 @@ const WEIGHT_PRESETS = {
   Safety: { crime: 40, infrastructure: 15, air: 12, power: 8, schools: 5, water: 8, roads: 5, sewerage: 7 },
 };
 function gradeFor(s) { return s == null ? '—' : s >= 80 ? 'A' : s >= 70 ? 'B+' : s >= 60 ? 'B' : s >= 50 ? 'C+' : s >= 40 ? 'C' : 'D'; }
-function explain(k, r) {
-  const city = r.city || 'Delhi NCR';
-  switch (k) {
-    case 'crime': return r.crime_percentile != null
-      ? `${r.total_cognizable_crimes} crimes reported — safer than ${r.crime_percentile}% of tracked ${city} areas (${(r.crime_tier || '').toLowerCase()} tier).`
-      : 'Cognizable crimes reported for the police catchment.';
-    case 'infrastructure': return `${r.metro_stations_nearby || 0} operational metro station(s) · ${(r.highway_proximity || '—').toLowerCase()} highway access · ${(r.zone_type || 'mixed').toLowerCase()} zone.`;
-    case 'air': return r.aqi_category ? `AQI ~${Math.round(r.aqi_avg)}, ${r.aqi_category} — ${AQI_PLAIN[r.aqi_category] || 'CPCB band.'}` : 'Live CPCB air-quality reading.';
-    case 'power': return `${r.reliability || '—'} reliability · ~${r.avg_outage_hours ?? '—'} outage hrs/month via ${r.discom || 'the local DISCOM'}.`;
-    case 'schools': return r.schools_count ? `${r.schools_count} CBSE school(s) mapped to this pin.` : 'No CBSE-affiliated school in this exact pin.';
-    case 'water': return `${r.supply_hours ?? '—'} hrs daily supply · ${(r.tds_level || '—')} TDS · ${(r.water_coverage ?? r.coverage_pct) ?? '—'}% piped coverage.`;
-    case 'roads': return `${r.road_condition || '—'} condition · ~${r.pothole_density ?? '—'} potholes/km · last resurfaced ${r.last_resurfaced || '—'}.`;
-    case 'sewerage': { const wl = r.waterlogging_risk; const lvl = wl == null ? '—' : wl >= 4 ? 'low' : wl >= 3 ? 'moderate' : 'high';
-      return `${lvl} monsoon waterlogging risk${r.flooding_incidents_annual ? ` — ~${r.flooding_incidents_annual} flooding incidents a year` : ''}.`; }
-    default: return '';
-  }
-}
 function highlights(r) {
   const good = [], bad = [], s = r.scores || {};
   if (s.crime >= 80) good.push('Very low crime — one of the safer areas.');

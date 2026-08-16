@@ -123,6 +123,26 @@ export function verdictFor(nqi) {
   if (nqi >= 45) return { label: 'Below Average', why: 'Below the tracked-area average — compare nearby areas before committing.' };
   return { label: 'Avoid', why: 'Multiple dimensions score poorly — strongly recommend comparing alternatives.' };
 }
+// Moved here from NeighbourhoodReport.js (was a local, unexported function)
+// for the same reason as verdictFor -- AVAreaCard's dimension rows need the
+// exact same per-dimension explain sentence the full report uses.
+export function explain(k, r) {
+  const city = r.city || 'Delhi NCR';
+  switch (k) {
+    case 'crime': return r.crime_percentile != null
+      ? `${r.total_cognizable_crimes} crimes reported — safer than ${r.crime_percentile}% of tracked ${city} areas (${(r.crime_tier || '').toLowerCase()} tier).`
+      : 'Cognizable crimes reported for the police catchment.';
+    case 'infrastructure': return `${r.metro_stations_nearby || 0} operational metro station(s) · ${(r.highway_proximity || '—').toLowerCase()} highway access · ${(r.zone_type || 'mixed').toLowerCase()} zone.`;
+    case 'air': return r.aqi_category ? `AQI ~${Math.round(r.aqi_avg)}, ${r.aqi_category} — ${AQI_PLAIN[r.aqi_category] || 'CPCB band.'}` : 'Live CPCB air-quality reading.';
+    case 'power': return `${r.reliability || '—'} reliability · ~${r.avg_outage_hours ?? '—'} outage hrs/month via ${r.discom || 'the local DISCOM'}.`;
+    case 'schools': return r.schools_count ? `${r.schools_count} CBSE school(s) mapped to this pin.` : 'No CBSE-affiliated school in this exact pin.';
+    case 'water': return `${r.supply_hours ?? '—'} hrs daily supply · ${(r.tds_level || '—')} TDS · ${(r.water_coverage ?? r.coverage_pct) ?? '—'}% piped coverage.`;
+    case 'roads': return `${r.road_condition || '—'} condition · ~${r.pothole_density ?? '—'} potholes/km · last resurfaced ${r.last_resurfaced || '—'}.`;
+    case 'sewerage': { const wl = r.waterlogging_risk; const lvl = wl == null ? '—' : wl >= 4 ? 'low' : wl >= 3 ? 'moderate' : 'high';
+      return `${lvl} monsoon waterlogging risk${r.flooding_incidents_annual ? ` — ~${r.flooding_incidents_annual} flooding incidents a year` : ''}.`; }
+    default: return '';
+  }
+}
 
 // Plain-JS date formatting, deliberately NOT toLocaleDateString(): that
 // reads the *runtime's* default locale/ICU data, which can differ between
