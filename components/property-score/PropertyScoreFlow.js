@@ -74,8 +74,13 @@ export default function PropertyScoreFlow() {
             <div className="hero-grid" style={{ alignItems: 'center' }}>
               <div>
                 <span className="hero-eyebrow">Combined Verdict</span>
+                {/* Colour-coded exactly like the deck (Slide 02: "Where?" in
+                    --av, "Which?" in --ss) -- the two words that ARE the two
+                    engines get the engine colour, same device, so the page
+                    reads as the same product instead of a plain black
+                    headline with no accent anywhere. */}
                 <h1 style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 'clamp(36px, 4.5vw, 52px)', lineHeight: 1.12, margin: '18px 0 18px', maxWidth: 600 }}>
-                  One score for the neighbourhood. One score for the flat.
+                  One score for the <span style={{ color: 'var(--av)' }}>neighbourhood</span>. One score for the <span style={{ color: 'var(--ss)' }}>flat</span>.
                 </h1>
                 <p style={{ fontSize: 16, color: 'var(--text-mute)', maxWidth: 540, lineHeight: 1.7 }}>
                   Start however you know the property — browse a scored locality, or search the exact
@@ -84,15 +89,23 @@ export default function PropertyScoreFlow() {
                 </p>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {/* Left-accent + coloured number per card, same idiom as the
+                    hero score card's .hsc-item rows (border-left:3px solid
+                    var(--av)/var(--ss)) and the deck's Slide 04 two-colour
+                    engine blocks -- Neighbourhood=AsliVastu(wine),
+                    Unit=SunScout(orange), BlindSpot=the combined
+                    verdict(brand olive). Flat beige boxes with no colour
+                    were the single biggest reason this screen read as an
+                    unbranded, generic page. */}
                 {[
-                  ['Neighbourhood', 'Crime, air, power, water, schools, roads — scored for the area.'],
-                  ['Unit', '3D sun & shadow analysis, per floor and facing.'],
-                  ['BlindSpot', 'The two combined into one verdict, weighted your way.'],
-                ].map(([label, desc], i) => (
-                  <div key={label} style={{ display: 'flex', gap: 14, alignItems: 'flex-start', padding: '16px 18px', border: '1px solid var(--line)', borderRadius: 'var(--radius)', background: 'var(--bg-2)' }}>
-                    <span className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', paddingTop: 2 }}>{String(i + 1).padStart(2, '0')}</span>
+                  ['Neighbourhood', 'Crime, air, power, water, schools, roads — scored for the area.', 'var(--av)'],
+                  ['Unit', '3D sun & shadow analysis, per floor and facing.', 'var(--ss)'],
+                  ['BlindSpot', 'The two combined into one verdict, weighted your way.', 'var(--brand)'],
+                ].map(([label, desc, color], i) => (
+                  <div key={label} style={{ display: 'flex', gap: 14, alignItems: 'flex-start', padding: '16px 18px', border: '1px solid var(--line)', borderLeft: `3px solid ${color}`, borderRadius: 'var(--radius)', background: 'var(--bg-2)' }}>
+                    <span className="mono" style={{ fontSize: 11, fontWeight: 700, color, paddingTop: 2 }}>{String(i + 1).padStart(2, '0')}</span>
                     <div>
-                      <div style={{ fontSize: 14.5, fontWeight: 700, marginBottom: 3 }}>{label}</div>
+                      <div style={{ fontSize: 14.5, fontWeight: 700, marginBottom: 3, color: 'var(--ink)' }}>{label}</div>
                       <div style={{ fontSize: 12.5, color: 'var(--text-mute)', lineHeight: 1.5 }}>{desc}</div>
                     </div>
                   </div>
