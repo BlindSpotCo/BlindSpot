@@ -66,40 +66,39 @@ def land_sqft(sqyd):
     """Collector rate ₹/sq yd -> ₹/sq ft. 1 sq yd = 9 sq ft."""
     return round(sqyd / 9)
 
-# ── The 17 verified Chandigarh delivery pincodes ────────────────────────
-# Only pincodes confirmed against a published sector-wise list are
-# included. Chandigarh has sectors up to 56 plus a number of villages, but
-# their delivery codes could not be verified from an authoritative source,
-# and inventing pincodes would produce localities that don't resolve.
-# Better 17 correct than 30 with guesses.
+# ── Chandigarh delivery pincodes ────────────────────────────────────────
+# Sourced from scripts/chandigarh_sectors.py: all 55 sectors (1-56, no 13)
+# plus ~20 villages and colonies, each flagged verified or inferred.
 #
-# NOTE ON GRANULARITY: a Chandigarh pincode covers up to EIGHT sectors
-# (160036 = Sectors 36-43). Delhi and Bangalore pincodes read as a single
-# named locality; these cannot. Names below say "Sectors 36-43" rather
-# than pretending to a precision the postal geography doesn't have.
+# NOTE ON GRANULARITY: a Chandigarh pincode covers many sectors (160047
+# spans 44-56). Delhi and Bangalore pincodes read as a single named
+# locality; these cannot. Names say the range rather than pretending to a
+# precision the postal geography doesn't have.
 #
 # tier: 1 Premium, 2 Upper, 3 Mid, 4 Modest, 5 Value -- driven by the
 # official land band the sectors fall into.
-PINS = [
-    # pin,     name,                     area,              lat,     lon,     tier, land_sqyd,        sectors
-    ("160001", "Sector 1 · Capitol Complex", "North Chandigarh", 30.7590, 76.8060, 1, LAND_SQYD_S1_12,  "1"),
-    ("160009", "Sectors 8-9",               "North Chandigarh", 30.7480, 76.8010, 1, LAND_SQYD_S1_12,  "8, 9"),
-    ("160011", "Sectors 10-11",             "North Chandigarh", 30.7530, 76.7790, 1, LAND_SQYD_S1_12,  "10, 11"),
-    ("160012", "Sector 12 · PEC",           "North Chandigarh", 30.7620, 76.7830, 1, LAND_SQYD_S1_12,  "12"),
-    ("160014", "Sector 14 · Panjab Univ.",  "West Chandigarh",  30.7590, 76.7660, 2, LAND_SQYD_S14_37, "14"),
-    ("160015", "Sectors 15-16",             "Central Chandigarh", 30.7500, 76.7720, 2, LAND_SQYD_S14_37, "15, 16"),
-    ("160017", "Sector 17 · City Centre",   "Central Chandigarh", 30.7410, 76.7822, 2, LAND_SQYD_S14_37, "17"),
-    ("160018", "Sector 18",                 "Central Chandigarh", 30.7430, 76.7930, 2, LAND_SQYD_S14_37, "18"),
-    ("160019", "Sectors 6-7, 19, 26-27",    "East Chandigarh",  30.7450, 76.8100, 2, LAND_SQYD_S14_37, "6, 7, 19, 26, 27"),
-    ("160020", "Sector 20",                 "Central Chandigarh", 30.7370, 76.7830, 2, LAND_SQYD_S14_37, "20"),
-    ("160022", "Sectors 21-22, 34-35",      "Central Chandigarh", 30.7340, 76.7700, 2, LAND_SQYD_S14_37, "21, 22, 34, 35"),
-    ("160023", "Sector 23",                 "Central Chandigarh", 30.7420, 76.7690, 2, LAND_SQYD_S14_37, "23"),
-    ("160030", "Sector 30",                 "East Chandigarh",  30.7290, 76.7960, 2, LAND_SQYD_S14_37, "30"),
-    ("160036", "Sectors 36-43",             "South Chandigarh", 30.7230, 76.7480, 3, LAND_SQYD_S38_ON, "36-43"),
-    ("160047", "Sectors 31, 44, 47",        "South Chandigarh", 30.7150, 76.7700, 3, LAND_SQYD_S38_ON, "31, 44, 47"),
-    ("160002", "Ram Darbar · Industrial Area", "South-East Chandigarh", 30.7060, 76.8060, 4, LAND_SQYD_S38_ON, "Ind. Area Ph-II"),
-    ("160101", "Manimajra",                 "East Chandigarh",  30.7290, 76.8380, 5, LAND_SQYD_ABADI,  "Manimajra"),
-]
+from chandigarh_sectors import CHANDIGARH, sectors_of, landmarks_of, audit as sector_audit
+
+# PINS is now derived from scripts/chandigarh_sectors.py, which carries the
+# complete sector/village -> pincode map with a confidence flag on every
+# entry. The earlier hand-written table covered only 34 of Chandigarh's 55
+# sectors (62%) and silently omitted the rest -- someone in Sector 50 or
+# Burail simply had no locality to pick.
+LAND_BY_TIER = {
+    1: LAND_SQYD_S1_12,     # Sectors 1-12 band
+    2: LAND_SQYD_S14_37,    # Sectors 14-37 band
+    3: LAND_SQYD_S38_ON,    # Sectors 38 & onwards band
+    4: LAND_SQYD_S38_ON,    # industrial/peripheral, same notified band
+    5: LAND_SQYD_ABADI,     # Abadi Deh (Manimajra, Burail, villages)
+}
+
+PINS = []
+for _pin, _e in CHANDIGARH.items():
+    _name, _area, _lat, _lon, _tier, _members = _e
+    _secs = sectors_of(_e)
+    _label = (f"Sectors {_secs[0]}-{_secs[-1]}" if len(_secs) > 1
+              else (f"Sector {_secs[0]}" if _secs else _name))
+    PINS.append((_pin, _name, _area, _lat, _lon, _tier, LAND_BY_TIER[_tier], _label))
 
 TIER_LABEL = {1: 'Premium', 2: 'Upper', 3: 'Mid', 4: 'Modest', 5: 'Value'}
 
@@ -184,6 +183,19 @@ PROFILE = {
                    crimes=368, aqi=122, aqi_cat="Moderate", outage=4.1, rel=2, supply=15, tds="High",
                    wcov=89, road="Average", pot=3.0, resurf=2021, wlog=2, flood=4, zone="Mixed",
                    hwy="High", planned=3, schools_n=5),
+    # ── added when coverage was completed to all 55 sectors ──
+    "160025": dict(crime=66, air=57, power=61, schools=54, water=80, roads=75, sewerage=68,
+                   crimes=389, aqi=126, aqi_cat="Moderate", outage=4.3, rel=2, supply=14, tds="High",
+                   wcov=88, road="Average", pot=3.2, resurf=2019, wlog=2, flood=5, zone="Residential",
+                   hwy="Low", planned=1, schools_n=4),
+    "160004": dict(crime=82, air=66, power=69, schools=41, water=87, roads=84, sewerage=79,
+                   crimes=162, aqi=99, aqi_cat="Moderate", outage=2.9, rel=3, supply=18, tds="Medium",
+                   wcov=94, road="Good", pot=1.8, resurf=2023, wlog=4, flood=1, zone="Institutional",
+                   hwy="High", planned=1, schools_n=1),
+    "160102": dict(crime=63, air=56, power=59, schools=52, water=77, roads=71, sewerage=63,
+                   crimes=434, aqi=129, aqi_cat="Moderate", outage=4.7, rel=2, supply=13, tds="High",
+                   wcov=84, road="Average", pot=3.7, resurf=2018, wlog=2, flood=6, zone="Mixed",
+                   hwy="Medium", planned=2, schools_n=3),
 }
 
 HWY_BONUS  = {"High": 18, "Medium": 11, "Low": 5}
@@ -359,9 +371,19 @@ def main():
 
     # ---- PIN_META / AREA_COORDS snippets ----
     with open("/tmp/chandigarh_pinmeta.txt", "w") as f:
-        f.write("\n  // ── Chandigarh (city 3) ──\n")
+        f.write("\n  // ── Chandigarh (city 3) — every sector 1-56 (no 13) + villages.\n")
+        f.write("  //    `sectors` drives search ('Sector 50' must find its pincode even\n")
+        f.write("  //    though the name only shows a range); `aliases` are landmarks.\n")
         for pin, name, area, lat, lon, *_ in PINS:
-            f.write(f'  "{pin}":{{ name:"{name}", area:"{area}", city:"Chandigarh" }},\n')
+            e = CHANDIGARH[pin]
+            secs = sectors_of(e)
+            alis = landmarks_of(e)
+            parts = [f'name:"{name}"', f'area:"{area}"', 'city:"Chandigarh"']
+            if secs:
+                parts.append("sectors:[" + ",".join(str(x) for x in secs) + "]")
+            if alis:
+                parts.append("aliases:[" + ",".join(f'"{a}"' for a in alis) + "]")
+            f.write("  \"%s\":{ %s },\n" % (pin, ", ".join(parts)))
     with open("/tmp/chandigarh_coords.txt", "w") as f:
         f.write("\n  // ── Chandigarh (city 3) — approximate sector-group centroids ──\n")
         for pin, name, area, lat, lon, *_ in PINS:
