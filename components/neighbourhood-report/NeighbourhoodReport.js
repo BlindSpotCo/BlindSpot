@@ -138,6 +138,10 @@ export default function NeighbourhoodReport({ record, nearby }) {
               <span className="cond" style={{ fontSize: 30, fontWeight: 700, color: 'var(--slate)', marginBottom: 12 }}>{grade}</span>
             </div>
             <p style={{ fontSize: 13, color: 'var(--text-dim)', margin: 0, lineHeight: 1.5 }}>NQI · weighted mean of {rows.length} dimensions — switch profile to re-weight.</p>
+            {/* Present on AsliVastu's own live report card, missing here --
+                a real, load-bearing caveat (this is a PIN-level assessment,
+                not building-specific), not just decoration. */}
+            <p style={{ fontSize: 11.5, color: 'var(--text-dim)', margin: '10px 0 0', lineHeight: 1.5, paddingTop: 10, borderTop: '1px dashed var(--line-soft)' }}>First-pass area assessment · reflects this PIN, not a specific building or street.</p>
           </BPF>
 
           {/* Verdict fill stays scoreColor(nqi) -- the same autumn
@@ -296,6 +300,26 @@ export default function NeighbourhoodReport({ record, nearby }) {
 
         {/* ── Full detailed breakdown (category cards + schools + methodology) ── */}
         <AVDetailedReadout record={record} />
+
+        {/* ── About the builder -- present on AsliVastu's own live report,
+            missing here. Reuses the homepage's own .team-card/.team-avatar
+            idiom (initials badge, same as the Team section in app/page.js)
+            instead of hotlinking AsliVastu's externally-hosted photo --
+            keeps this on-brand and doesn't add an external image
+            dependency for an asset BlindSpot doesn't actually host. ── */}
+        <BPF style={{ marginTop: 24, marginBottom: 24, padding: 24 }}>
+          <p className="kick" style={{ marginBottom: 14 }}>About the builder</p>
+          <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+            <div className="team-avatar" style={{ flexShrink: 0 }}>GB</div>
+            <div>
+              <div className="team-name" style={{ fontSize: 16 }}>Gurshaan Singh Baweja</div>
+              <p style={{ fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.6, margin: '4px 0 10px', maxWidth: 560 }}>
+                Buying a home in Delhi NCR or Bangalore means digging through a dozen government portals. AsliVastu — the neighbourhood engine behind BlindSpot — puts it all in one place: real data, one score, no guesswork.
+              </p>
+              <a href="https://www.linkedin.com/in/gurshaan-singh-baweja" target="_blank" rel="noopener noreferrer" className="team-link">Connect on LinkedIn →</a>
+            </div>
+          </div>
+        </BPF>
 
         {/* ── Footer / scope note ── */}
         <div style={{ marginTop: 16, paddingTop: 20, borderTop: '1px solid color-mix(in srgb, var(--slate) 35%, transparent)' }}>

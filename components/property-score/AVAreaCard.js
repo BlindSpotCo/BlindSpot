@@ -17,13 +17,8 @@
 // reached via the link at the bottom. This card is the same look, not a
 // second full copy.
 
-import { GradeBadge } from '@/lib/property-score/ui';
+import { GradeBadge, FACTOR_LABELS } from '@/lib/property-score/ui';
 import { scoreColor, verdictFor, explain, source, formatDateLong, BPF } from './AVDetailedReadout';
-
-const FACTOR_LABELS = {
-  crime: 'Crime', infrastructure: 'Infrastructure', air: 'Air Quality',
-  power: 'Power', schools: 'Schools', water: 'Water', roads: 'Roads', sewerage: 'Sewerage',
-};
 
 export default function AVAreaCard({ record, city }) {
   const verdict = verdictFor(record.nqi_composite);
@@ -67,6 +62,7 @@ export default function AVAreaCard({ record, city }) {
             <GradeBadge grade={record.grade} color="var(--slate)" />
           </div>
           <div style={{ fontSize: 13, color: 'var(--text-dim)', lineHeight: 1.5 }}>NQI · weighted mean of {rows.length} dimensions.</div>
+          <div style={{ fontSize: 11, color: 'var(--text-dim)', margin: '10px 0 0', lineHeight: 1.5, paddingTop: 10, borderTop: '1px dashed var(--line-soft)' }}>First-pass area assessment · reflects this PIN, not a specific building or street.</div>
         </BPF>
 
         {/* Verdict fill stays scoreColor(nqi) -- the autumn score-colour

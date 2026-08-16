@@ -193,7 +193,7 @@ export default function AVDetailedReadout({ record }) {
       </p>
       <div style={{ display: 'grid', gap: 20, marginBottom: 28 }}>
 
-        <CategoryCard title="Crime" tip={source('crime', record.city)} stats={[
+        <CategoryCard title="Safety" tip={source('crime', record.city)} stats={[
           ['Total crimes', record.total_cognizable_crimes, "Total cognizable crimes reported annually for this pin's police-station catchment, which can span a wider area than any one colony."],
           ['Safety score', s.crime != null ? `${s.crime}/100` : '—', 'Inverse-normalized against total crimes: 250 or fewer scores 100, 650 or more scores 0, linear in between.'],
           ['Safer than', record.crime_percentile != null ? `${record.crime_percentile}%` : '—', "Percentile rank of this pin's crime count against other tracked areas in the same city (cities ranked separately)."],
