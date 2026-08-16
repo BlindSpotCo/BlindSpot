@@ -30,8 +30,24 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
     if (!city || !citiesData) return [];
     const list = citiesData[city];
     if (!search.trim()) return list;
-    const s = search.toLowerCase();
-    return list.filter(r => r.name.toLowerCase().includes(s) || (r.area || '').toLowerCase().includes(s) || r.pin_code.includes(s));
+    const s = search.toLowerCase().trim();
+    // "sector 40", "sec-40", "40" -> 40
+    const sectorNum = s.replace(/^sec(tor)?\.?\s*-?\s*/, '');
+    const wantsSector = /^\d{1,2}$/.test(sectorNum);
+
+    return list.filter(r => {
+      if (r.name.toLowerCase().includes(s)) return true;
+      if ((r.area || '').toLowerCase().includes(s)) return true;
+      if (r.pin_code.includes(s)) return true;
+      // Landmarks: "PEC", "Panjab University", "Elante", "GPO"...
+      if ((r.aliases || []).some(a => a.toLowerCase().includes(s))) return true;
+      // Individual sectors inside a multi-sector pincode. A Chandigarh
+      // pincode covers up to eight sectors and its name only shows the
+      // range ("Sectors 36-43"), so without this someone searching their
+      // own sector number gets no result at all.
+      if (wantsSector && (r.sectors || []).includes(Number(sectorNum))) return true;
+      return false;
+    });
   }, [city, citiesData, search]);
 
   const pick = (record) => {
@@ -67,7 +83,14 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
         <div style={{ marginBottom: 36 }}>
           <div className="mono" style={{ fontSize: 12, color: 'var(--slate)', letterSpacing: '.12em', marginBottom: 12 }}>LOCALITY</div>
           <input
-            type="text" placeholder="Search by area name — Koramangala, Whitefield, Vasant Kunj…"
+            type="text" placeholder={
+              // Chandigarh has no named localities to speak of -- people
+              // navigate by sector number or pincode -- so prompting them
+              // with "Koramangala, Whitefield" would be actively unhelpful.
+              city === 'Chandigarh'
+                ? 'Search by sector or PIN — "Sector 40", "40", "160036", "PEC"…'
+                : 'Search by area name or PIN — Koramangala, Whitefield, Vasant Kunj…'
+            }
             value={search} onChange={e => setSearch(e.target.value)}
             style={{ width: '100%', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '12px 14px', color: 'var(--text)', fontSize: 14, marginBottom: 14, boxSizing: 'border-box' }}
           />
@@ -82,6 +105,15 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
                 <div>
                   <div style={{ fontSize: 14, color: 'var(--text)', fontWeight: 600 }}>{r.name}</div>
                   <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)' }}>{r.area ? `${r.area} · ` : ''}{r.pin_code}</div>
+                  {/* Spell out what a multi-sector pincode actually covers.
+                      "Sectors 36-43" is ONE score shared by eight sectors --
+                      saying so plainly is better than letting someone assume
+                      the number is specific to theirs. */}
+                  {(r.sectors || []).length > 1 && (
+                    <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 3 }}>
+                      covers Sectors {r.sectors.join(', ')}
+                    </div>
+                  )}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
                   <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 16, color: 'var(--slate)' }}>{r.nqi_composite}</span>

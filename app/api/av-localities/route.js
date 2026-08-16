@@ -38,6 +38,15 @@ export async function GET() {
         pin_code: r.pin_code,
         name: meta?.name || r.pin_code,
         area: meta?.area || null,
+        // Chandigarh pincodes cover several sectors each (160036 = Sectors
+        // 36-43), so `name` shows a RANGE. These are the individual
+        // sectors and landmarks inside it, so searching "Sector 40" or
+        // "PEC" finds the pin that actually covers them -- otherwise a
+        // resident of Sector 40 searches their own sector and gets
+        // nothing back. Empty for Delhi/Bangalore, where one pincode
+        // already reads as one named locality.
+        sectors: meta?.sectors || [],
+        aliases: meta?.aliases || [],
         city: r.city,
         lat: coords ? coords[0] : null,
         lon: coords ? coords[1] : null,
