@@ -33,20 +33,13 @@ export async function GET() {
       const meta = PIN_META[r.pin_code];
       const coords = AREA_COORDS[r.pin_code];
       const master = masterByPin[r.pin_code] || {};
-      const enriched = {
+      const sectors = meta?.sectors || [];
+      const aliases = meta?.aliases || [];
+      const base = {
         ...master,
         pin_code: r.pin_code,
-        name: meta?.name || r.pin_code,
         area: meta?.area || null,
-        // Chandigarh pincodes cover several sectors each (160036 = Sectors
-        // 36-43), so `name` shows a RANGE. These are the individual
-        // sectors and landmarks inside it, so searching "Sector 40" or
-        // "PEC" finds the pin that actually covers them -- otherwise a
-        // resident of Sector 40 searches their own sector and gets
-        // nothing back. Empty for Delhi/Bangalore, where one pincode
-        // already reads as one named locality.
-        sectors: meta?.sectors || [],
-        aliases: meta?.aliases || [],
+        aliases,
         city: r.city,
         lat: coords ? coords[0] : null,
         lon: coords ? coords[1] : null,
@@ -63,11 +56,55 @@ export async function GET() {
         price_context: r.price_context,
         scored_at: r.scored_at,
       };
+
       if (!byCity[r.city]) byCity[r.city] = [];
-      byCity[r.city].push(enriched);
+
+      if (sectors.length > 0) {
+        // Real-estate portals (99acres, MagicBricks, Housing) all organise
+        // Chandigarh browsing by INDIVIDUAL sector -- "Sector 22", "Sector
+        // 44" -- never by the compressed pincode ranges we used to show
+        // ("Sectors 21-22, 32-35"). Nobody searches for a range; they
+        // search for their own sector number and expect to land directly
+        // on it. So one pincode with N sectors becomes N rows here, each
+        // its own sector, all correctly sharing the one real score that
+        // pincode actually has (that sharing is real, not fabricated --
+        // AsliVastu only has pincode-level data, this just presents it the
+        // way people actually look for it).
+        const sorted = [...sectors].sort((a, b) => a - b);
+        for (const n of sorted) {
+          byCity[r.city].push({
+            ...base,
+            name: `Sector ${n}`,
+            sectorNum: n,
+            sectors: sorted,
+          });
+        }
+      } else {
+        // Village/colony pincodes with no sector numbers at all (Manimajra,
+        // Ram Darbar, Mauli Jagran, Air Force Station...) -- keep as one
+        // named row, same as Delhi/Bangalore.
+        byCity[r.city].push({
+          ...base,
+          name: meta?.name || r.pin_code,
+          sectorNum: null,
+          sectors: [],
+        });
+      }
     }
     for (const city of Object.keys(byCity)) {
-      byCity[city].sort((a, b) => b.nqi_composite - a.nqi_composite);
+      const hasSectors = byCity[city].some(row => row.sectorNum != null);
+      byCity[city].sort((a, b) => {
+        if (hasSectors) {
+          // Numeric sector order (1, 2, 3...) reads like an actual sector
+          // list; sorting this by score would scatter "Sector 5, Sector
+          // 41, Sector 12..." in a way nobody browsing sectors expects.
+          // Non-sector village rows sort after, alphabetically.
+          const an = a.sectorNum ?? 9999, bn = b.sectorNum ?? 9999;
+          if (an !== bn) return an - bn;
+          return a.name.localeCompare(b.name);
+        }
+        return b.nqi_composite - a.nqi_composite;
+      });
     }
 
     return NextResponse.json({ cities: byCity });

@@ -9,11 +9,17 @@ import { useState, useEffect, useMemo } from 'react';
 import { GradeBadge } from '@/lib/property-score/ui';
 import AVAreaCard from './AVAreaCard';
 
+// Each row's identity is pin_code + sector (several sectors share one
+// pincode/score now that Chandigarh rows are sector-first, so pin_code
+// alone is no longer unique).
+const rowKey = (r) => `${r.pin_code}::${r.sectorNum ?? r.name}`;
+
 export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
   const [citiesData, setCitiesData] = useState(null);
   const [citiesError, setCitiesError] = useState('');
   const [city, setCity] = useState(null);
   const [search, setSearch] = useState('');
+  const [selectedKey, setSelectedKey] = useState(null);
 
   useEffect(() => {
     fetch('/api/av-localities')
@@ -22,8 +28,9 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
       .catch(() => setCitiesError('Could not load AsliVastu locality data right now.'));
   }, []);
 
-  const selectedAreaRecord = city && selectedPinCode && citiesData
-    ? citiesData[city].find(r => r.pin_code === selectedPinCode)
+  const selectedAreaRecord = city && citiesData
+    ? (citiesData[city].find(r => rowKey(r) === selectedKey)
+       || citiesData[city].find(r => r.pin_code === selectedPinCode))
     : null;
 
   const filteredLocalities = useMemo(() => {
@@ -32,26 +39,38 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
     if (!search.trim()) return list;
     const s = search.toLowerCase().trim();
     // "sector 40", "sec-40", "40" -> 40
-    const sectorNum = s.replace(/^sec(tor)?\.?\s*-?\s*/, '');
-    const wantsSector = /^\d{1,2}$/.test(sectorNum);
+    const sectorDigits = s.replace(/^sec(tor)?\.?\s*-?\s*/, '');
+    const wantsSector = /^\d{1,2}$/.test(sectorDigits);
+    const sectorQuery = wantsSector ? Number(sectorDigits) : null;
 
-    return list.filter(r => {
+    const matched = list.filter(r => {
+      // Exact sector match first -- typing "22" or "Sector 22" should hit
+      // ONLY that sector's own row, not its pincode-siblings (Sector 22's
+      // pincode also covers 21/34/35, but searching "22" means Sector 22).
+      if (sectorQuery != null && r.sectorNum === sectorQuery) return true;
       if (r.name.toLowerCase().includes(s)) return true;
       if ((r.area || '').toLowerCase().includes(s)) return true;
       if (r.pin_code.includes(s)) return true;
       // Landmarks: "PEC", "Panjab University", "Elante", "GPO"...
       if ((r.aliases || []).some(a => a.toLowerCase().includes(s))) return true;
-      // Individual sectors inside a multi-sector pincode. A Chandigarh
-      // pincode covers up to eight sectors and its name only shows the
-      // range ("Sectors 36-43"), so without this someone searching their
-      // own sector number gets no result at all.
-      if (wantsSector && (r.sectors || []).includes(Number(sectorNum))) return true;
       return false;
     });
+
+    // Exact sector hits float to the top so "22" doesn't bury Sector 22
+    // under substring noise like Sector 2, 12, 21, 24...29.
+    if (sectorQuery != null) {
+      matched.sort((a, b) => {
+        const ae = a.sectorNum === sectorQuery ? 0 : 1;
+        const be = b.sectorNum === sectorQuery ? 0 : 1;
+        return ae - be;
+      });
+    }
+    return matched;
   }, [city, citiesData, search]);
 
   const pick = (record) => {
     setSearch(record.name);
+    setSelectedKey(rowKey(record));
     onAreaSelected(record, city);
   };
 
@@ -96,15 +115,22 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
           />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 320, overflowY: 'auto', border: '1px solid var(--line)', borderRadius: 'var(--radius)' }}>
             {filteredLocalities.slice(0, 30).map(r => (
-              <button key={r.pin_code} onClick={() => pick(r)} className="ps-row-btn"
+              <button key={rowKey(r)} onClick={() => pick(r)} className="ps-row-btn"
                 style={{
-                  textAlign: 'left', background: selectedPinCode === r.pin_code ? 'rgba(175,47,64,0.14)' : 'transparent',
+                  textAlign: 'left', background: selectedKey === rowKey(r) ? 'rgba(175,47,64,0.14)' : 'transparent',
                   border: 'none', borderBottom: '1px solid var(--line-soft)', padding: '11px 14px', cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
                 }}>
                 <div>
                   <div style={{ fontSize: 14, color: 'var(--text)', fontWeight: 600 }}>{r.name}</div>
                   <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)' }}>{r.area ? `${r.area} · ` : ''}{r.pin_code}</div>
+                  {/* Landmarks here are genuinely new info (not a restated
+                      title) since the title is now just the sector number. */}
+                  {(r.aliases || []).length > 0 && (
+                    <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 3 }}>
+                      near {r.aliases.slice(0, 3).join(', ')}
+                    </div>
+                  )}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
                   <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 16, color: 'var(--slate)' }}>{r.nqi_composite}</span>
