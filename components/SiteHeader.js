@@ -21,9 +21,18 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
 export default function SiteHeader({ homeHref = '/' }) {
+  // The CTA is an entry point into /property-score -- pointing at the page
+  // you're already on is dead weight in the nav, and (with the progress
+  // stepper right below it) actively confusing, since it reads as another
+  // step rather than the thing you already did to get here. Derived from
+  // the route so it self-manages rather than needing a prop at each usage.
+  const pathname = usePathname();
+  const onFlow = pathname?.startsWith('/property-score');
+
   const [user, setUser] = useState(null);
   const [checkedAuth, setCheckedAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -83,10 +92,12 @@ export default function SiteHeader({ homeHref = '/' }) {
               <Link href="/#team">The Team</Link>
             </div>
             <div className="nav-cta">
-              <Link href="/property-score" className="btn-cta-sm">
-                <span className="btn-cta-full">Uncover Your BlindSpot</span>
-                <span className="btn-cta-short">Start</span>
-              </Link>
+              {!onFlow && (
+                <Link href="/property-score" className="btn-cta-sm">
+                  <span className="btn-cta-full">Uncover Your BlindSpot</span>
+                  <span className="btn-cta-short">Start</span>
+                </Link>
+              )}
               {/* .nav-user / .btn-auth are hidden below 640px (see globals.css) --
                   "My Reports" + "Sign out" together were the widest thing in
                   this row and had nowhere to shrink to, which is what pushed
@@ -127,7 +138,7 @@ export default function SiteHeader({ homeHref = '/' }) {
             <Link href="/#products" onClick={closeMobile}>Tools</Link>
             <Link href="/#why" onClick={closeMobile}>Why BlindSpot</Link>
             <Link href="/#team" onClick={closeMobile}>The Team</Link>
-            <Link href="/property-score" onClick={closeMobile}>Uncover Your BlindSpot</Link>
+            {!onFlow && <Link href="/property-score" onClick={closeMobile}>Uncover Your BlindSpot</Link>}
             {checkedAuth && (
               user ? (
                 <>
