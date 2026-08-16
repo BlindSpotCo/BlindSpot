@@ -117,7 +117,7 @@ export default function AVAreaCard({ record, city }) {
         className="ps-btn ps-cta-btn"
         style={{ display: 'inline-block', background: 'var(--slate)', color: '#fff', border: '1px solid var(--slate)', borderRadius: 'var(--radius)', padding: '12px 22px', fontSize: 14, fontWeight: 700, textDecoration: 'none' }}
       >
-        See Full AsliVastu Report ↗
+        See Detailed Neighbourhood Report ↗
       </a>
     </div>
   );

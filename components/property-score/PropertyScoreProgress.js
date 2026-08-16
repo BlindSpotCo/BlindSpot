@@ -6,14 +6,15 @@
 // to 1 every time -- so a user who'd already picked a persona and a
 // location would see "STEP 1" again inside AddressPicker with no sense
 // of how far into the overall journey that actually was. This is the
-// single authoritative 3-stage indicator instead: Your Angle -> Location
-// -> Verdict, sticky under the site header so it stays visible the whole
-// way through, including while scrolling through the variable-height
-// content below the intro screens.
+// single authoritative 4-stage indicator instead: Your Angle -> Location
+// -> Unit -> Verdict, sticky under the site header so it stays visible
+// the whole way through, including while scrolling through the
+// variable-height content below the intro screens.
 
 const STAGES = [
   { key: 'angle', label: 'Your Angle' },
   { key: 'location', label: 'Location' },
+  { key: 'unit', label: 'Unit' },
   { key: 'verdict', label: 'Verdict' },
 ];
 
