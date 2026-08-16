@@ -40,7 +40,11 @@ function BigBar({ label, score }) {
 
 export default function AVAreaCard({ record, city }) {
   return (
-    <div className="av-card" style={{ marginBottom: 36, border: '1px solid var(--line)', borderLeft: '4px solid var(--slate)', borderRadius: 'var(--radius)', padding: '28px 30px' }}>
+    {/* background:var(--bg-2) -- one step darker than the page's own --bg
+        (#F1E9DA vs #FAF6EE, both already-defined tokens, nothing new) --
+        previously had no background at all and was invisible as a card,
+        reading as the exact same colour as the page around it. */}
+    <div className="av-card" style={{ marginBottom: 36, border: '1px solid var(--line)', borderLeft: '4px solid var(--slate)', borderRadius: 'var(--radius)', padding: '28px 30px', background: 'var(--bg-2)' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&display=swap');
         .av-card .cond { font-family: 'Barlow Condensed', sans-serif; }
