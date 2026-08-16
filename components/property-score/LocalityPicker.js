@@ -105,15 +105,6 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
                 <div>
                   <div style={{ fontSize: 14, color: 'var(--text)', fontWeight: 600 }}>{r.name}</div>
                   <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)' }}>{r.area ? `${r.area} · ` : ''}{r.pin_code}</div>
-                  {/* Spell out what a multi-sector pincode actually covers.
-                      "Sectors 36-43" is ONE score shared by eight sectors --
-                      saying so plainly is better than letting someone assume
-                      the number is specific to theirs. */}
-                  {(r.sectors || []).length > 1 && (
-                    <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 3 }}>
-                      covers Sectors {r.sectors.join(', ')}
-                    </div>
-                  )}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
                   <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 16, color: 'var(--slate)' }}>{r.nqi_composite}</span>
