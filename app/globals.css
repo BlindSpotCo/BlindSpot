@@ -595,6 +595,21 @@
   }
   @media (max-width:900px){ .hero-score-card{ transform:none; max-width:420px; margin:0 auto } .hero-visual-tag{ right:auto; left:22px } }
 
+  /* City-coverage disclosure -- BlindSpot only has AsliVastu data for
+     Delhi NCR and Bangalore right now, but the hero copy/CTA reads as if
+     it works anywhere. Once this is being shared outside a controlled
+     demo, someone in a third city clicking through only finds out there's
+     no coverage several steps in (AddressPicker's "no coverage" message).
+     This surfaces the two-city scope up front, right by the CTA, instead
+     of letting people discover it as a dead end. */
+  .coverage-pill{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--text-mute); background:var(--bg-2); border:1px solid var(--line);
+    padding:7px 13px; border-radius:var(--radius-pill);
+  }
+  .coverage-pill .dot{ width:6px; height:6px; border-radius:50%; background:#4ADE80; flex-shrink:0 }
+
   @media (prefers-reduced-motion: reduce){
     .coord-readout .blink, .pcard-tag .dot{animation:none !important}
     .pcard, .why-row, .team-card, .eyebrow::after, .nav-links a::after, .brand-mark-img{transition:none !important}

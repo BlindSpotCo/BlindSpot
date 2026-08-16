@@ -102,6 +102,13 @@ export default function PropertyScoreFlow() {
                   address. Either way you&apos;ll land on the same sun/shadow analysis and a combined
                   verdict you control the weighting of.
                 </p>
+                {/* Shared with the landing page hero (app/page.js) -- surfaces
+                    the two-city scope right where someone decides whether to
+                    keep going, instead of them finding out several steps in
+                    via AddressPicker's "no coverage" message. */}
+                <span className="coverage-pill" style={{ marginTop: 20 }}>
+                  <span className="dot" />Live in Delhi NCR &amp; Bangalore — more cities coming
+                </span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {/* Left-accent + coloured number per card, same idiom as the
