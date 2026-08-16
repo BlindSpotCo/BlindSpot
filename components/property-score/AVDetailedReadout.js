@@ -21,6 +21,7 @@
 // the same way AV's own /api/report.js does: `{ ...score, ...master }`).
 
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
+import { sourceFor } from '@/lib/aslivastu/cityMeta';
 
 export function BPF({ children, style, className = '' }) {
   return (
@@ -81,9 +82,15 @@ export const AQI_PLAIN = {
 // meant any third city silently rendered "Delhi Police Annual Report",
 // "Delhi Jal Board" and "MCD / PWD road surveys" purely because it wasn't
 // Bangalore. Nothing threw; the report just cited the wrong government
-// department for every dimension. Kept as a thin re-export so existing
-// `source(k, city)` call sites don't all have to change.
-export { sourceFor as source } from '@/lib/aslivastu/cityMeta';
+// department for every dimension. Kept as a thin wrapper so existing
+// `source(k, city)` call sites don't all have to change. A bare
+// `export {...} from` re-export (instead of a real local function) inside
+// a 'use client' file is a fragile pattern across Next's RSC client-
+// boundary compiler -- can work in dev and silently break in a production
+// build. A normal function avoids that.
+export function source(dimension, city) {
+  return sourceFor(dimension, city);
+}
 // Autumn palette, worst → best: brick red, pumpkin orange, forest green,
 // mid green, light green. Replaces the earlier 4-tier scale on request —
 // same idea (weak scores read as hot colours, strong scores read as green,
