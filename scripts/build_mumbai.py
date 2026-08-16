@@ -88,8 +88,8 @@ ZONE_BASELINE = {
 }
 
 # Pincodes with their OWN documented fact overriding the zone baseline.
-AIR_WORST = {"400073", "400074", "400085", "400088", "400043", "400071", "400089"}  # Trombay/Mahul/Deonar/Govandi/Chembur belt — WRI Mumbai CAP
-WATER_247 = {"400077", "400086", "400078", "400080", "400081", "400082", "400083", "400087"}  # Ghatkopar / Bhandup / Mulund + immediate Vikhroli neighbours on the same 24x7 DMA
+AIR_WORST = {"400073", "400074", "400085", "400088", "400043", "400071", "400089", "400094"}  # Trombay/Mahul/Deonar/Govandi/Chembur belt — WRI Mumbai CAP (400094 Anushakti Nagar sits inside this belt, borders Mankhurd/Govandi)
+WATER_247 = {"400077", "400086", "400078", "400080", "400081", "400082", "400083", "400087", "400042"}  # Ghatkopar / Bhandup (both East 400042 and West 400078) / Mulund + immediate Vikhroli neighbours on the same 24x7 DMA
 
 # Real, currently-operational metro stations near each pincode (Line 1
 # Blue / Line 2A+2B Yellow / Line 3 Aqua / Line 7 Red). Conservative --
