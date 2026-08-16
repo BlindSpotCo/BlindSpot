@@ -17,6 +17,7 @@ import AddressPicker from './AddressPicker';
 import UnitVerdict from './UnitVerdict';
 import PersonaPicker from './PersonaPicker';
 import PropertyScoreProgress from './PropertyScoreProgress';
+import { coverageLabel } from '@/lib/aslivastu/cityMeta';
 
 const SCREEN_H = 'calc(100vh - 66px)'; // 66px = the sticky header's own height
 
@@ -161,7 +162,7 @@ export default function PropertyScoreFlow() {
                 via AddressPicker's "no coverage" message. */}
             <div style={{ marginTop: 22 }}>
               <span className="coverage-pill">
-                <span className="dot" />Live in Delhi NCR &amp; Bangalore — more cities coming
+                <span className="dot" />Live in {coverageLabel()} — more cities coming
               </span>
             </div>
           </div>

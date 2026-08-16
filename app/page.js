@@ -6,6 +6,7 @@ import HowItWorks from '@/components/HowItWorks';
 import HeroMap from '@/components/HeroMap';
 import HeroIllustration from '@/components/HeroIllustration';
 import PinDropTransition from '@/components/PinDropTransition';
+import { coverageLabel } from '@/lib/aslivastu/cityMeta';
 
 export default function Home() {
   // Auth state, scroll-reveal and the mobile menu all now live in
@@ -16,14 +17,15 @@ export default function Home() {
   // Rotating coordinate readout in the hero — ported directly from the
   // original inline script.
   useEffect(() => {
-    // Only Delhi NCR and Bangalore spots -- this readout runs live on the
-    // homepage, so citing an uncovered city (Mumbai used to be here) sets
-    // an expectation the product can't back up the moment someone tries it.
+    // Only covered cities -- this readout runs live on the homepage, so
+    // citing an uncovered city (Mumbai used to be here) sets an
+    // expectation the product can't back up the moment someone tries it.
     const spots = [
       { c: '12.9716° N, 77.5946° E', l: 'checking Bengaluru' },
       { c: '28.5245° N, 77.1855° E', l: 'scoring Vasant Kunj, Delhi' },
       { c: '28.4595° N, 77.0266° E', l: 'pulling AQI + power data, Gurugram' },
       { c: '12.9784° N, 77.6408° E', l: 'mapping shadow hours, Indiranagar' },
+      { c: '30.7410° N, 76.7822° E', l: 'reading collector rates, Chandigarh' },
     ];
     let i = 0;
     const el = coordRef.current;
@@ -81,7 +83,7 @@ export default function Home() {
             <p className="hero-tagline"><span className="seg sun">One pin</span><span className="sep"></span><span className="seg slate">Two answers</span></p>
             <p className="hero-sub">Drop a pin. See exactly what the neighbourhood around it is really like, and exactly how sunlight moves through the unit. Real government records. Real solar geometry. No broker spin.</p>
             <span className="coverage-pill" style={{ marginTop: 18, marginBottom: 4 }}>
-              <span className="dot" />Live in Delhi NCR &amp; Bangalore — more cities coming
+              <span className="dot" />Live in {coverageLabel()} — more cities coming
             </span>
             <div className="hero-ctas" style={{ marginTop: 18 }}>
               <PinDropTransition href="/property-score" className="btn btn-lg btn-cta">
