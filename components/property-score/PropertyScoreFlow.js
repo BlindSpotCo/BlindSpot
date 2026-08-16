@@ -57,18 +57,18 @@ export default function PropertyScoreFlow() {
         <div style={{ marginBottom: 36 }}>
           <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', letterSpacing: '.12em', marginBottom: 12 }}>HOW DO YOU WANT TO START?</div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <button onClick={() => chooseMode('locality')} className="ps-mode-btn"
+            <button onClick={() => chooseMode('locality')} className="ps-mode-btn ps-btn"
               style={{
                 flex: '1 1 240px', textAlign: 'left', background: mode === 'locality' ? 'rgba(175,47,64,0.14)' : 'transparent',
-                border: `1px solid ${mode === 'locality' ? 'var(--slate)' : 'var(--line)'}`, borderRadius: 3, padding: '16px 18px', cursor: 'pointer',
+                border: `1px solid ${mode === 'locality' ? 'var(--slate)' : 'var(--line)'}`, borderRadius: 'var(--radius)', padding: '16px 18px', cursor: 'pointer',
               }}>
               <div className="ps-mode-btn-title" style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>City → Locality → Unit</div>
               <div className="ps-mode-btn-sub" style={{ fontSize: 12, color: 'var(--text-mute)' }}>Browse AsliVastu-scored neighbourhoods, then pick a floor/facing.</div>
             </button>
-            <button onClick={() => chooseMode('address')} className="ps-mode-btn"
+            <button onClick={() => chooseMode('address')} className="ps-mode-btn ps-btn"
               style={{
                 flex: '1 1 240px', textAlign: 'left', background: mode === 'address' ? 'rgba(224,123,0,0.12)' : 'transparent',
-                border: `1px solid ${mode === 'address' ? 'var(--sun)' : 'var(--line)'}`, borderRadius: 3, padding: '16px 18px', cursor: 'pointer',
+                border: `1px solid ${mode === 'address' ? 'var(--sun)' : 'var(--line)'}`, borderRadius: 'var(--radius)', padding: '16px 18px', cursor: 'pointer',
               }}>
               <div className="ps-mode-btn-title" style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>I have the exact address</div>
               <div className="ps-mode-btn-sub" style={{ fontSize: 12, color: 'var(--text-mute)' }}>Search it directly — we&apos;ll place the pin and detect the area for you.</div>

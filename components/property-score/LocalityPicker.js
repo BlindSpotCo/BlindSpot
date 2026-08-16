@@ -49,10 +49,10 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
         {citiesData && (
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             {Object.keys(citiesData).map(c => (
-              <button key={c} onClick={() => { setCity(c); setSearch(''); }}
+              <button key={c} onClick={() => { setCity(c); setSearch(''); }} className="ps-btn"
                 style={{
                   background: city === c ? 'var(--slate)' : 'transparent', color: city === c ? '#fff' : 'var(--text)',
-                  border: `1px solid ${city === c ? 'var(--slate)' : 'var(--line)'}`, borderRadius: 3,
+                  border: `1px solid ${city === c ? 'var(--slate)' : 'var(--line)'}`, borderRadius: 'var(--radius)',
                   padding: '10px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
                 }}>
                 {c} <span className="mono" style={{ fontSize: 10.5, opacity: .7 }}>({citiesData[c].length})</span>
@@ -69,11 +69,11 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
           <input
             type="text" placeholder="Search by area name — Koramangala, Whitefield, Vasant Kunj…"
             value={search} onChange={e => setSearch(e.target.value)}
-            style={{ width: '100%', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 3, padding: '12px 14px', color: 'var(--text)', fontSize: 14, marginBottom: 14, boxSizing: 'border-box' }}
+            style={{ width: '100%', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '12px 14px', color: 'var(--text)', fontSize: 14, marginBottom: 14, boxSizing: 'border-box' }}
           />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 320, overflowY: 'auto', border: '1px solid var(--line)', borderRadius: 3 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 320, overflowY: 'auto', border: '1px solid var(--line)', borderRadius: 'var(--radius)' }}>
             {filteredLocalities.slice(0, 30).map(r => (
-              <button key={r.pin_code} onClick={() => pick(r)}
+              <button key={r.pin_code} onClick={() => pick(r)} className="ps-row-btn"
                 style={{
                   textAlign: 'left', background: selectedPinCode === r.pin_code ? 'rgba(175,47,64,0.14)' : 'transparent',
                   border: 'none', borderBottom: '1px solid var(--line-soft)', padding: '11px 14px', cursor: 'pointer',
@@ -84,7 +84,7 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
                   <div className="mono" style={{ fontSize: 10.5, color: 'var(--text-dim)' }}>{r.area ? `${r.area} · ` : ''}{r.pin_code}</div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                  <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 16, color: 'var(--slate)' }}>{r.nqi_composite}</span>
+                  <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 16, color: 'var(--slate)' }}>{r.nqi_composite}</span>
                   <GradeBadge grade={r.grade} color="var(--slate)" />
                 </div>
               </button>

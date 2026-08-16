@@ -13,10 +13,10 @@ export default function AVAreaCard({ record, city, citiesData }) {
   const [showAvFullReport, setShowAvFullReport] = useState(false);
 
   return (
-    <div className="av-card" style={{ marginBottom: 36, border: '1px solid var(--line)', borderLeft: '4px solid var(--slate)', borderRadius: 3, padding: '22px 24px' }}>
+    <div className="av-card" style={{ marginBottom: 36, border: '1px solid var(--line)', borderLeft: '4px solid var(--slate)', borderRadius: 'var(--radius)', padding: '22px 24px' }}>
       <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', letterSpacing: '.12em', marginBottom: 10 }}>ASLIVASTU — {record.name.toUpperCase()}</div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 20 }}>
-        <span className="av-score-number" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 44, color: 'var(--slate)' }}>{record.nqi_composite}</span>
+        <span className="av-score-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 44, color: 'var(--slate)' }}>{record.nqi_composite}</span>
         <GradeBadge grade={record.grade} color="var(--slate)" />
         <span style={{ fontSize: 12.5, color: 'var(--text-mute)' }}>Pincode {record.pin_code}{city ? `, ${city}` : ''}</span>
       </div>
@@ -29,8 +29,8 @@ export default function AVAreaCard({ record, city, citiesData }) {
         Area-level — the same for every unit in this pincode.
       </div>
 
-      <button onClick={() => setShowAvFullReport(v => !v)}
-        style={{ background: showAvFullReport ? 'var(--slate)' : 'transparent', color: showAvFullReport ? '#fff' : 'var(--slate)', border: '1px solid var(--slate)', borderRadius: 3, padding: '10px 18px', fontSize: 12.5, fontWeight: 700, cursor: 'pointer' }}>
+      <button onClick={() => setShowAvFullReport(v => !v)} className="ps-btn"
+        style={{ background: showAvFullReport ? 'var(--slate)' : 'transparent', color: showAvFullReport ? '#fff' : 'var(--slate)', border: '1px solid var(--slate)', borderRadius: 'var(--radius)', padding: '10px 18px', fontSize: 12.5, fontWeight: 700, cursor: 'pointer' }}>
         {showAvFullReport ? 'Hide Full AsliVastu Report' : 'View Full AsliVastu Report'}
       </button>
 
@@ -78,7 +78,7 @@ export default function AVAreaCard({ record, city, citiesData }) {
               <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', letterSpacing: '.1em', marginBottom: 10 }}>PRICE CONTEXT · GUIDANCE VALUE</div>
               {pc?.rate_sqft ? (
                 <>
-                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 22, color: 'var(--text)' }}>
+                  <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 22, color: 'var(--text)' }}>
                     {inr(pc.rate_sqft[0])}–{inr(pc.rate_sqft[1])} <span style={{ fontSize: 12, color: 'var(--text-dim)', fontWeight: 400 }}>per sq ft · {pc.label} band</span>
                   </div>
                   <div style={{ fontSize: 11.5, color: 'var(--text-dim)', marginTop: 6, lineHeight: 1.6 }}>
@@ -97,7 +97,7 @@ export default function AVAreaCard({ record, city, citiesData }) {
                   ['Safer than', record.crime_percentile != null ? `${record.crime_percentile}% of areas` : '—'],
                   ['Crime tier', record.crime_tier ?? '—'],
                 ].map(([label, val]) => (
-                  <div key={label} style={{ border: '1px solid var(--line-soft)', borderRadius: 3, padding: '10px 12px' }}>
+                  <div key={label} style={{ border: '1px solid var(--line-soft)', borderRadius: 'var(--radius)', padding: '10px 12px' }}>
                     <div className="mono" style={{ fontSize: 9.5, color: 'var(--text-dim)', marginBottom: 4 }}>{label.toUpperCase()}</div>
                     <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>{val}</div>
                   </div>
@@ -108,7 +108,7 @@ export default function AVAreaCard({ record, city, citiesData }) {
             {record.schools_list?.length > 0 && (
               <div>
                 <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', letterSpacing: '.1em', marginBottom: 10 }}>SCHOOLS · {record.schools_count} MAPPED</div>
-                <div style={{ border: '1px solid var(--line-soft)', borderRadius: 3 }}>
+                <div style={{ border: '1px solid var(--line-soft)', borderRadius: 'var(--radius)' }}>
                   {record.schools_list.slice(0, 8).map((s, i) => (
                     <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, fontSize: 12.5, padding: '9px 12px', borderTop: i ? '1px dashed var(--line-soft)' : 'none' }}>
                       <span style={{ color: 'var(--text)' }}>{s.name}</span>
@@ -121,7 +121,7 @@ export default function AVAreaCard({ record, city, citiesData }) {
 
             <div>
               <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', letterSpacing: '.1em', marginBottom: 10 }}>METHODOLOGY · WEIGHTS</div>
-              <div style={{ border: '1px solid var(--line-soft)', borderRadius: 3 }}>
+              <div style={{ border: '1px solid var(--line-soft)', borderRadius: 'var(--radius)' }}>
                 {Object.entries(record.weights_applied || {}).map(([k, w], i) => (
                   <div key={k} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, padding: '8px 12px', borderTop: i ? '1px dashed var(--line-soft)' : 'none' }}>
                     <span style={{ color: 'var(--text)' }}>{FACTOR_LABELS[k] || k}</span>
