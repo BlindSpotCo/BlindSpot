@@ -34,13 +34,13 @@ export default function PropertyScoreProgress({ current }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span className="mono" style={{
                   width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 10.5, fontWeight: 700, flexShrink: 0,
+                  fontSize: 11.5, fontWeight: 700, flexShrink: 0,
                   background: done || active ? 'var(--brand)' : 'transparent',
                   color: done || active ? '#fff' : 'var(--text-dim)',
                   border: done || active ? 'none' : '1px solid var(--line)',
                 }}>{done ? '✓' : i + 1}</span>
                 <span className="mono" style={{
-                  fontSize: 11, letterSpacing: '.08em', textTransform: 'uppercase',
+                  fontSize: 12, letterSpacing: '.08em', textTransform: 'uppercase',
                   color: active ? 'var(--ink)' : (done ? 'var(--text-mute)' : 'var(--text-dim)'),
                   fontWeight: active ? 700 : 500,
                 }}>{s.label}</span>

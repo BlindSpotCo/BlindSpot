@@ -12,10 +12,14 @@
        even though the weight bump on headings alone is a big contrast
        jump. Paragraphs get darker + heavier below, not just headings. */
     --text-mute:#5A5140;
-    /* Darkened from the original #A79C88 — that was low-contrast against
-       --bg (roughly 2.2:1), which is a real chunk of why small mono
-       labels read as "thin, not visible" — this gets it closer to 4:1. */
-    --text-dim:#726A54;
+    /* Darkened again from #726A54 (itself darkened from #A79C88) --
+       #726A54 measured ~4.5:1 against --bg but only ~4.46:1 against
+       --bg-2, i.e. borderline-failing AA for the small mono labels that
+       are this token's main use. Someone squinting to read the site
+       during a live demo is exactly what borderline contrast at 10-13px
+       produces. This gets it to ~6.2:1 against --bg-2, comfortably clear
+       at small sizes, same warm hue. */
+    --text-dim:#5B5443;
     /* ===== BRAND TOKENS — one-variable-hue architecture =====
        See BlindSpot_Brand_Core_v1.md. The mechanism (borrowed from how
        Swiggy holds one system constant across Swiggy/Instamart/Dineout and
@@ -240,7 +244,7 @@
   .btn-cta:hover{ transform:translateY(-1px); box-shadow:0 16px 34px -12px rgba(61,65,22,0.65); background:#2E310F }
   .btn-cta-sm{
     display:inline-flex; align-items:center;
-    padding:8px 16px; border-radius:var(--radius); font-size:13.5px; font-weight:600;
+    padding:8px 16px; border-radius:var(--radius); font-size:14px; font-weight:600;
     background:var(--brand);
     color:#fff; text-decoration:none;
     white-space:nowrap; box-shadow:0 8px 18px -8px rgba(61,65,22,0.55);
@@ -402,7 +406,7 @@
 
   .hero-eyebrow{
     display:inline-flex; align-items:center; gap:10px;
-    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13.5px; letter-spacing:0.14em; text-transform:uppercase;
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:14px; letter-spacing:0.14em; text-transform:uppercase;
     color:var(--slate); margin-bottom:22px;
   }
   .hero-eyebrow::before{content:''; width:22px; height:1px; background:var(--slate)}
@@ -464,10 +468,10 @@
      outrank `.btn-cta`'s gradient (two classes beats one, same cascade
      trap as elsewhere in this file) — same bug class, different property. */
   .hero-ctas .btn{ padding:12px 22px; border-radius:var(--radius) }
-  .btn-lg{font-size:13px; font-weight:600}
+  .btn-lg{font-size:13.5px; font-weight:600}
 
   .coord-readout{
-    margin-top:20px; font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--text-mute);
+    margin-top:20px; font-family:'IBM Plex Mono',monospace; font-size:13.5px; color:var(--text-mute);
     display:inline-flex; align-items:center; gap:9px; min-height:16px;
   }
   .coord-readout .blink{width:5px; height:5px; background:var(--slate); animation:blink 1.4s steps(1) infinite}
@@ -537,7 +541,7 @@
     transform:rotate(1.2deg);
   }
   .hsc-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px }
-  .hsc-label{ font-family:'IBM Plex Mono',monospace; font-size:12.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim) }
+  .hsc-label{ font-family:'IBM Plex Mono',monospace; font-size:13.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim) }
   /* This is a genuine status pill (the verdict badge: Prime Pick / Location
      Play / etc.), so it gets the real --radius-pill token now instead of a
      hardcoded 20px that happened to look pill-ish -- per the doc's "pills
@@ -549,7 +553,7 @@
      tag this size reads as a smudge, not a gradient). var(--brand), same
      dominant colour as every other "primary" surface post-cleanup. */
   .hsc-badge{
-    font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:13px; color:#fff;
+    font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:13.5px; color:#fff;
     background:var(--brand); padding:6px 14px; border-radius:var(--radius-pill);
   }
   .hsc-number{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:56px; line-height:1; color:var(--ink); margin-bottom:10px }
@@ -575,8 +579,8 @@
   .hsc-item.slate .hsc-item-icon{ color:var(--av) }
   .hsc-item.sun .hsc-item-icon{ color:var(--ss) }
   .hsc-item-label{ display:block; font-family:'Inter',sans-serif; font-weight:600; font-size:14.5px; color:var(--ink) }
-  .hsc-item-sub{ display:block; font-family:'IBM Plex Mono',monospace; font-weight:500; font-size:11.5px; letter-spacing:.05em; color:var(--text-dim); margin-top:3px }
-  .hsc-foot{ font-size:12.5px; color:var(--text-mute); line-height:1.6; border-top:1px solid var(--line-soft); padding-top:14px }
+  .hsc-item-sub{ display:block; font-family:'IBM Plex Mono',monospace; font-weight:500; font-size:12.5px; letter-spacing:.05em; color:var(--text-dim); margin-top:3px }
+  .hsc-foot{ font-size:13.5px; color:var(--text-mute); line-height:1.6; border-top:1px solid var(--line-soft); padding-top:14px }
 
   /* Sits top-LEFT, not top-right: the hero illustration's building now
      occupies the card's top-right corner, and this tag used to collide
@@ -586,7 +590,7 @@
      .hsc-badge above -- real pill token instead of a hardcoded 20px. */
   .hero-visual-tag{
     position:absolute; top:-16px; left:22px; z-index:2; background:var(--ink); color:var(--paper);
-    font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.08em; text-transform:uppercase;
     padding:7px 12px; border-radius:var(--radius-pill); box-shadow:0 10px 24px -12px rgba(28,24,18,0.5);
   }
   @media (max-width:900px){ .hero-score-card{ transform:none; max-width:420px; margin:0 auto } .hero-visual-tag{ right:auto; left:22px } }
@@ -600,7 +604,7 @@
   .section{padding:0}
   .section-inner{padding:88px 0; border-top:1px solid var(--line-soft)}
   .eyebrow{
-    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13.5px; letter-spacing:0.12em; text-transform:uppercase;
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:14px; letter-spacing:0.12em; text-transform:uppercase;
     color:var(--text-mute); margin-bottom:14px; display:block; position:relative; padding-bottom:10px;
   }
   .eyebrow::after{
@@ -640,7 +644,7 @@
   }
   .pcard-tag{
     display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace;
-    font-size:11.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-dim); margin-bottom:20px;
+    font-size:12.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-dim); margin-bottom:20px;
   }
   .pcard-tag .dot{width:6px; height:6px; border-radius:50%; animation:tagPulse 3.2s ease-in-out infinite}
   @keyframes tagPulse{0%,100%{opacity:.55; transform:scale(1)} 50%{opacity:1; transform:scale(1.25)}}
@@ -655,7 +659,7 @@
   .pcard p{font-size:15px; line-height:1.7; color:var(--text-mute); margin-bottom:28px; flex:1}
   .pcard-stats{display:flex; gap:26px; padding-top:22px; border-top:1px solid var(--line-soft); margin-bottom:26px}
   .pstat-num{font-family:'IBM Plex Mono',monospace; font-size:17px; font-weight:600; color:var(--ink)}
-  .pstat-lbl{font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-top:3px}
+  .pstat-lbl{font-size:13px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-top:3px}
   .pcard-cta{
     display:inline-flex; align-items:center; gap:8px; font-size:14.5px; font-weight:600; text-decoration:none;
     color:var(--text); border-bottom:1px solid var(--line); padding-bottom:2px; align-self:flex-start;
@@ -843,7 +847,7 @@
   .howworks-step-block.last{min-height:40vh}
   .howworks-step-block.active{opacity:1}
 
-  .howworks-step-eyebrow{font-size:13.5px; font-weight:600; letter-spacing:.12em; margin-bottom:14px}
+  .howworks-step-eyebrow{font-size:14px; font-weight:600; letter-spacing:.12em; margin-bottom:14px}
   .howworks-step-eyebrow.accent-slate{color:var(--av)}
   .howworks-step-eyebrow.accent-sun{color:var(--ss)}
   .howworks-step-eyebrow.accent-combo{color:var(--text)}
@@ -873,8 +877,8 @@
   .av-corner.bl{ bottom:14px; left:14px; border-bottom:1.5px solid #B23A46; border-left:1.5px solid #B23A46 }
   .av-corner.br{ bottom:14px; right:14px; border-bottom:1.5px solid #B23A46; border-right:1.5px solid #B23A46 }
 
-  .av-brandline{ font-size:11px; font-weight:600; letter-spacing:.14em; color:rgba(237,237,236,0.65); margin-bottom:12px }
-  .av-sheet-label{ font-size:12px; font-weight:600; letter-spacing:.12em; color:#B23A46; margin-bottom:4px }
+  .av-brandline{ font-size:12px; font-weight:600; letter-spacing:.14em; color:rgba(237,237,236,0.65); margin-bottom:12px }
+  .av-sheet-label{ font-size:13px; font-weight:600; letter-spacing:.12em; color:#B23A46; margin-bottom:4px }
   /* No mobile breakpoints needed here (there used to be two) -- the
      card this belongs to is hidden entirely below 901px now (see
      .howworks-panel-sticky above), so this only ever renders at desktop
@@ -884,24 +888,24 @@
   .av-score-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px }
   .av-score-block, .av-verdict-block{ border:1px solid rgba(255,255,255,0.14); border-radius:4px; padding:11px 16px }
   .av-verdict-block{ background:#B23A46; border-color:#B23A46 }
-  .av-tiny{ font-size:11.5px; font-weight:600; letter-spacing:.12em; color:rgba(237,237,236,0.6) }
+  .av-tiny{ font-size:12.5px; font-weight:600; letter-spacing:.12em; color:rgba(237,237,236,0.6) }
   .av-verdict-block .av-tiny{ color:rgba(255,255,255,0.75) }
   .av-score-num{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:28px; color:#fff; margin-top:6px }
-  .av-score-num span{ font-size:12px; margin-left:8px; color:#fff; border:1px solid #B23A46; background:rgba(178,58,70,0.35); padding:2px 7px; border-radius:3px; vertical-align:middle }
+  .av-score-num span{ font-size:13px; margin-left:8px; color:#fff; border:1px solid #B23A46; background:rgba(178,58,70,0.35); padding:2px 7px; border-radius:3px; vertical-align:middle }
   .av-verdict-word{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:19px; color:#fff; margin-top:6px }
 
   .av-dim-row{ margin-bottom:9px }
-  .av-dim-head{ display:flex; justify-content:space-between; font-size:13px; font-weight:500; letter-spacing:.04em; color:#e4e4e2; margin-bottom:4px }
+  .av-dim-head{ display:flex; justify-content:space-between; font-size:13.5px; font-weight:500; letter-spacing:.04em; color:#e4e4e2; margin-bottom:4px }
   .av-dim-track{ height:5px; border-radius:3px; background:rgba(255,255,255,0.1); overflow:hidden; margin-bottom:3px }
   .av-dim-fill{ height:100%; border-radius:3px }
   .av-dim-fill.good{ background:#3ecf6e }
   .av-dim-fill.mid{ background:#e0a72e }
   .av-dim-fill.bad{ background:repeating-linear-gradient(135deg,#e0524a,#e0524a 4px,#b7413c 4px,#b7413c 8px) }
-  .av-dim-source{ font-size:11px; color:rgba(237,237,236,0.5); letter-spacing:.04em }
+  .av-dim-source{ font-size:12px; color:rgba(237,237,236,0.5); letter-spacing:.04em }
 
   .av-list{ margin-top:4px }
   .av-list-row{
-    display:flex; justify-content:space-between; padding:7px 4px; font-size:13.5px; color:#cfcfcd;
+    display:flex; justify-content:space-between; padding:7px 4px; font-size:14px; color:#cfcfcd;
     border-top:1px dashed rgba(255,255,255,0.12);
   }
   .av-list-row em{ font-style:normal; color:rgba(237,237,236,0.6); margin-left:5px }
@@ -917,15 +921,15 @@
     position:absolute; top:-5px; left:50%; width:8px; height:8px; border-radius:50%;
     background:#B23A46; transform:translateX(-50%); box-shadow:0 0 0 4px rgba(178,58,70,0.22);
   }
-  .av-locked-eyebrow{ color:#B23A46; font-size:11px; font-weight:700; letter-spacing:.14em; margin-bottom:6px }
+  .av-locked-eyebrow{ color:#B23A46; font-size:12px; font-weight:700; letter-spacing:.14em; margin-bottom:6px }
   .av-locked-heading{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:17px; color:#fff; margin-bottom:10px }
   .av-locked-features{
     display:flex; justify-content:center; gap:16px; margin:0 auto 10px;
   }
-  .av-locked-feature{ position:relative; padding-left:15px; font-size:12px; color:#cfcfcd; line-height:1.5 }
+  .av-locked-feature{ position:relative; padding-left:15px; font-size:13px; color:#cfcfcd; line-height:1.5 }
   .av-locked-feature::before{ content:'+'; position:absolute; left:0; top:0; color:#B23A46; font-weight:700 }
   .av-locked-cta{
-    display:inline-block; background:#B23A46; color:#fff; font-weight:700; font-size:13px;
+    display:inline-block; background:#B23A46; color:#fff; font-weight:700; font-size:13.5px;
     letter-spacing:.03em; padding:10px 22px; border-radius:6px;
   }
 
@@ -937,10 +941,10 @@
   /* Map strip replaces the card's own accent bar at the top — no need for
      both. */
   .ss-panel::before{ display:none; }
-  .ss-tag{ color:#E07B00; font-size:12.5px; font-weight:700; letter-spacing:.12em; margin-bottom:12px }
+  .ss-tag{ color:#E07B00; font-size:13.5px; font-weight:700; letter-spacing:.12em; margin-bottom:12px }
   .ss-heading{ font-size:21px; font-weight:700; color:#16130E; line-height:1.28; margin-bottom:22px }
   .ss-field{ margin-bottom:22px }
-  .ss-label{ font-size:12px; font-weight:600; letter-spacing:.1em; color:#736c5a; margin-bottom:11px }
+  .ss-label{ font-size:13px; font-weight:600; letter-spacing:.1em; color:#736c5a; margin-bottom:11px }
   .ss-slider-row{ display:flex; align-items:center; gap:12px }
   .ss-slider-track{ flex:1; height:6px; border-radius:4px; background:#211d16; position:relative }
   .ss-slider-handle{
@@ -948,12 +952,12 @@
     border:3px solid var(--paper); transform:translate(-50%,-50%); box-shadow:0 2px 6px rgba(0,0,0,.35);
   }
   .ss-value-chip{
-    background:#211d16; color:#fff; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px;
+    background:#211d16; color:#fff; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13.5px;
     padding:6px 13px; border-radius:6px; min-width:14px; text-align:center;
   }
   .ss-facing-grid{ display:grid; grid-template-columns:repeat(4,1fr); border:1px solid rgba(28,24,18,0.16); border-radius:4px; overflow:hidden }
   .ss-facing-cell{
-    padding:10px 4px; font-size:11.5px; font-weight:700; text-align:center; color:#16130E;
+    padding:10px 4px; font-size:12.5px; font-weight:700; text-align:center; color:#16130E;
     background:#fff; border:1px solid rgba(28,24,18,0.1); margin:-0.5px; cursor:default;
   }
   .ss-facing-cell.active{ background:#E07B00; color:#fff; border-color:#E07B00 }
@@ -964,8 +968,8 @@
   }
   .ss-result{ border:1px solid rgba(28,24,18,0.14); border-left:3px solid #E07B00; border-radius:6px; padding:14px 16px }
   .ss-result-num{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:30px; color:#E07B00 }
-  .ss-result-num span{ font-size:13px; color:#736c5a; margin-left:4px; font-family:'Inter',sans-serif; font-weight:500 }
-  .ss-result-desc{ font-size:13.5px; color:#544f42; line-height:1.6; margin-top:6px }
+  .ss-result-num span{ font-size:13.5px; color:#736c5a; margin-left:4px; font-family:'Inter',sans-serif; font-weight:500 }
+  .ss-result-desc{ font-size:14px; color:#544f42; line-height:1.6; margin-top:6px }
 
   /* ---------- SUNSCOUT MAP STRIP (step 2) ----------
      Lives INSIDE the card (bled to its top edge, same border-radius) so
@@ -980,7 +984,7 @@
   }
   .ss-map-toolbar{ position:absolute; top:10px; left:12px; z-index:1; display:flex; gap:6px }
   .ss-map-chip{
-    font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; letter-spacing:.08em;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600; letter-spacing:.08em;
     text-transform:uppercase; color:rgba(255,255,255,0.5); background:rgba(255,255,255,0.07);
     border:1px solid rgba(255,255,255,0.14); padding:4px 8px; border-radius:4px;
   }
@@ -1000,7 +1004,7 @@
   .ss-map-ping{ fill:none; stroke:#E07B00; stroke-width:1.5; opacity:.55; animation:ssMapPing 2.6s ease-out infinite }
   @keyframes ssMapPing{ 0%{ transform:scale(.35); opacity:.7 } 100%{ transform:scale(1.9); opacity:0 } }
   .ss-map-time{
-    position:absolute; right:12px; bottom:9px; z-index:1; font-family:'IBM Plex Mono',monospace; font-size:9.5px;
+    position:absolute; right:12px; bottom:9px; z-index:1; font-family:'IBM Plex Mono',monospace; font-size:11px;
     color:rgba(255,255,255,0.45); letter-spacing:.05em;
   }
   @media (prefers-reduced-motion: reduce){ .ss-map-ping{ animation:none !important } }
@@ -1019,15 +1023,15 @@
     display:flex; flex-direction:column; align-items:flex-start;
   }
   .ss-ai-col svg{ color:#E07B00; margin-bottom:10px }
-  .ss-ai-col-tag{ color:#E07B00; font-size:11px; font-weight:700; letter-spacing:.1em; margin-bottom:6px }
+  .ss-ai-col-tag{ color:#E07B00; font-size:12px; font-weight:700; letter-spacing:.1em; margin-bottom:6px }
   .ss-ai-col-heading{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:16px; color:#16130E; line-height:1.25 }
-  .ss-ai-col-desc{ font-size:12px; color:#736c5a; line-height:1.55; margin:10px 0 16px }
+  .ss-ai-col-desc{ font-size:13px; color:#736c5a; line-height:1.55; margin:10px 0 16px }
   .ss-ai-col-cta{
     width:100%; box-sizing:border-box; text-align:center; background:transparent; color:#E07B00;
-    border:1.5px solid #E07B00; border-radius:20px; padding:9px 6px; font-weight:700; font-size:12px;
+    border:1.5px solid #E07B00; border-radius:20px; padding:9px 6px; font-weight:700; font-size:13px;
     letter-spacing:.02em; margin-bottom:9px;
   }
-  .ss-ai-col-meta{ width:100%; text-align:center; font-size:10px; color:#9a9182; letter-spacing:.06em }
+  .ss-ai-col-meta{ width:100%; text-align:center; font-size:11.5px; color:#9a9182; letter-spacing:.06em }
 
   /* ---------- WHY LIST ---------- */
   .why-list{border-top:1px solid var(--line-soft)}
@@ -1070,14 +1074,14 @@
   }
   .team-card:hover .team-avatar{border-color:var(--ink); color:var(--ink); transform:rotate(-4deg)}
   .team-name{font-size:18px; font-weight:700; color:var(--ink); font-family:'Bricolage Grotesque',sans-serif; margin-bottom:3px}
-  .team-role{font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:12.5px; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:12px}
+  .team-role{font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13.5px; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:12px}
   /* "Builds SunScout" / "Builds AsliVastu" -- genuine per-founder engine
      content (see the team section in page.js), same treatment as the
      product cards. */
   .team-role.sun{color:var(--ss)}
   .team-role.slate{color:var(--av)}
   .team-desc{font-size:14.5px; color:var(--text-mute); line-height:1.65; margin-bottom:14px}
-  .team-link{display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:600; color:var(--text); text-decoration:none; border-bottom:1px solid var(--line); padding-bottom:2px}
+  .team-link{display:inline-flex; align-items:center; gap:6px; font-size:14px; font-weight:600; color:var(--text); text-decoration:none; border-bottom:1px solid var(--line); padding-bottom:2px}
   .team-link:hover{border-color:var(--text)}
 
   /* ---------- BENTO BOX ----------
@@ -1166,17 +1170,17 @@
   footer{padding:44px 0; border-top:1px solid var(--line-soft)}
   .footer-row{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px}
   .footer-brand{display:flex; align-items:center; gap:10px}
-  .footer-links{display:flex; gap:24px; font-size:13.5px}
+  .footer-links{display:flex; gap:24px; font-size:14px}
   .footer-links a{color:var(--text-mute); text-decoration:none}
   .footer-links a:hover{color:var(--text)}
-  .footer-fine{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--text-dim); margin-top:22px; text-align:center; letter-spacing:0.03em}
+  .footer-fine{font-family:'IBM Plex Mono',monospace; font-size:13.5px; color:var(--text-dim); margin-top:22px; text-align:center; letter-spacing:0.03em}
 
 /* ---------- AUTH (added for account/login feature) ---------- */
 .btn-auth{
   background:var(--ink); color:var(--paper); border-color:var(--ink);
 }
 .btn-auth:hover{ background:#332c22; border-color:#332c22; }
-.nav-user{ font-size:12.5px; color:var(--text-mute); display:flex; align-items:center; gap:12px }
+.nav-user{ font-size:13.5px; color:var(--text-mute); display:flex; align-items:center; gap:12px }
 .nav-user a{ color:var(--text); text-decoration:none; border-bottom:1px solid var(--line) }
 .nav-user a:hover{ border-color:var(--text) }
 
@@ -1191,7 +1195,7 @@
 .auth-card h1{ font-size:22px; font-weight:600; color:var(--ink); margin-bottom:8px }
 .auth-card p{ font-size:14.5px; color:var(--text-mute); margin-bottom:28px; line-height:1.6 }
 .auth-field{ margin-bottom:16px }
-.auth-field label{ display:block; font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-dim); margin-bottom:8px }
+.auth-field label{ display:block; font-size:13px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-dim); margin-bottom:8px }
 .auth-field input{
   width:100%; padding:11px 14px; border-radius:var(--radius); border:1px solid var(--line);
   background:var(--bg); color:var(--text); font-size:14px; font-family:'Inter',sans-serif;
@@ -1203,8 +1207,8 @@
 }
 .auth-submit:hover{ background:#332c22 }
 .auth-submit:disabled{ opacity:0.5; cursor:default }
-.auth-note{ font-size:13.5px; color:var(--text-dim); margin-top:18px; line-height:1.6 }
-.auth-success{ color:var(--ink); font-size:13.5px; line-height:1.6 }
+.auth-note{ font-size:14px; color:var(--text-dim); margin-top:18px; line-height:1.6 }
+.auth-success{ color:var(--ink); font-size:14px; line-height:1.6 }
 .auth-links{ display:flex; flex-direction:column; gap:10px; margin-top:20px }
 .auth-links a{ font-size:14px; color:var(--text-mute); text-decoration:none; border-bottom:1px solid var(--line) }
 .auth-links a:hover{ color:var(--ink); border-color:var(--ink) }
@@ -1235,7 +1239,7 @@
 }
 .report-row:hover{ background: rgba(28,24,18,0.03) }
 .report-row .label{ font-size:14px; color:var(--ink) }
-.report-row .meta{ font-size:13px; color:var(--text-dim) }
+.report-row .meta{ font-size:13.5px; color:var(--text-dim) }
 
 /* ---------- MOBILE TYPE SCALE-DOWN (<=640px) ----------
    The site-wide text bump above (done to fix the desktop landing page
@@ -1251,10 +1255,10 @@
    wins, instead of silently losing the way the .nav-user hide rule did
    earlier (see the note above .nav-cta .nav-user for that whole story). */
 @media (max-width:640px){
-  .hero-eyebrow{ font-size:12.5px }
-  .hero-tagline{ font-size:13px }
+  .hero-eyebrow{ font-size:13.5px }
+  .hero-tagline{ font-size:13.5px }
   .hero-sub{ font-size:15px; margin-top:14px }
-  .eyebrow{ font-size:12.5px; margin-bottom:12px }
+  .eyebrow{ font-size:13.5px; margin-bottom:12px }
   .section-head{ margin-bottom:36px }
   .section-head p{ font-size:14px }
   .section-inner{ padding:56px 0 }
@@ -1274,10 +1278,10 @@
      once the card's own padding is subtracted. */
   .pcard-stats{ gap:16px }
 
-  .howworks-step-eyebrow{ font-size:12.5px; margin-bottom:10px }
+  .howworks-step-eyebrow{ font-size:13.5px; margin-bottom:10px }
   .howworks-step-block h3{ font-size:19px; margin-bottom:10px }
   .howworks-step-block p{ font-size:14px; line-height:1.65; margin-bottom:16px }
-  .howworks-bullets li{ font-size:13.5px; margin-bottom:6px }
+  .howworks-bullets li{ font-size:14px; margin-bottom:6px }
   /* No .howworks-panel / .ss-map-strip mobile overrides needed here
      anymore -- both only ever applied to the visual card that used to
      render inline per-step, which is gone now (tabs + copy only below
@@ -1288,10 +1292,10 @@
   .why-desc{ font-size:14px }
 
   .team-card{ padding:26px }
-  .team-desc{ font-size:13.5px }
+  .team-desc{ font-size:14px }
 
-  .footer-links{ font-size:12.5px; gap:16px }
-  .footer-fine{ font-size:11.5px }
+  .footer-links{ font-size:13.5px; gap:16px }
+  .footer-fine{ font-size:12.5px }
 
   /* Tap targets -- 38px is under the ~44px comfortable minimum, and the
      nav CTA pill's desktop padding runs a little tight for a thumb once
@@ -1330,38 +1334,38 @@
   .wrap{ padding:0 16px }
 
   .hero{ padding:40px 0 44px }
-  .hero-eyebrow{ font-size:11px; margin-bottom:16px }
-  .hero-sub{ font-size:13.5px; margin-top:12px }
+  .hero-eyebrow{ font-size:12px; margin-bottom:16px }
+  .hero-sub{ font-size:14px; margin-top:12px }
   .hero-grid{ gap:28px }
   .hero-score-card{ padding:18px 16px }
   .hsc-number{ font-size:36px }
-  .hsc-verdict{ font-size:13.5px; margin-bottom:16px }
+  .hsc-verdict{ font-size:14px; margin-bottom:16px }
   .hsc-item{ padding:9px 11px }
-  .hsc-item-label{ font-size:13px }
-  .hsc-badge{ font-size:11.5px; padding:5px 11px }
+  .hsc-item-label{ font-size:13.5px }
+  .hsc-badge{ font-size:12.5px; padding:5px 11px }
 
   .section-inner{ padding:40px 0 }
   .section-head{ margin-bottom:28px }
-  .eyebrow{ font-size:11px; margin-bottom:10px }
+  .eyebrow{ font-size:12px; margin-bottom:10px }
 
   .pcard{ padding:20px }
-  .pcard p{ font-size:13px; margin-bottom:16px }
-  .pcard-tag{ font-size:10.5px; margin-bottom:14px }
+  .pcard p{ font-size:13.5px; margin-bottom:16px }
+  .pcard-tag{ font-size:11.5px; margin-bottom:14px }
 
   .howworks-step-block h3{ font-size:17px }
-  .howworks-step-block p{ font-size:13px; margin-bottom:12px }
-  .howworks-bullets li{ font-size:12.5px }
+  .howworks-step-block p{ font-size:13.5px; margin-bottom:12px }
+  .howworks-bullets li{ font-size:13.5px }
 
   .why-row{ padding:16px 14px }
   .why-title{ font-size:14px }
-  .why-desc{ font-size:13px }
+  .why-desc{ font-size:13.5px }
 
   .team-card{ padding:18px }
-  .team-desc{ font-size:12.5px }
+  .team-desc{ font-size:13.5px }
 
   footer{ padding:28px 0 }
-  .footer-links{ font-size:11.5px; gap:12px }
-  .footer-fine{ font-size:10.5px }
+  .footer-links{ font-size:12.5px; gap:12px }
+  .footer-fine{ font-size:11.5px }
 
   .auth-card{ padding:24px 18px }
   .auth-card h1{ font-size:19px }
@@ -1369,7 +1373,7 @@
   .reports-inner h1{ font-size:22px }
 
   .closing-inner{ padding:44px 0 }
-  .closing-inner p{ font-size:13px; margin-bottom:22px }
+  .closing-inner p{ font-size:13.5px; margin-bottom:22px }
 }
 
 /* ---------- PROPERTY SCORE PAGE — INTERACTIVE POLISH ----------
@@ -1440,7 +1444,7 @@
 @media (max-width:640px){
   .uv-combined-card{ padding:20px 18px !important; }
   .uv-score-number{ font-size:32px !important; }
-  .uv-verdict-badge{ font-size:13px !important; padding:6px 10px !important; }
+  .uv-verdict-badge{ font-size:13.5px !important; padding:6px 10px !important; }
   .uv-score-grid{ gap:10px !important; }
   .uv-score-box{ padding:12px 14px !important; }
   .uv-score-box-number{ font-size:17px !important; }
@@ -1461,13 +1465,13 @@
   .modal-title{ font-size:17px !important; }
 
   .ps-mode-btn{ padding:12px 14px !important; }
-  .ps-mode-btn-title{ font-size:13px !important; }
-  .ps-mode-btn-sub{ font-size:11px !important; }
+  .ps-mode-btn-title{ font-size:13.5px !important; }
+  .ps-mode-btn-sub{ font-size:12px !important; }
 
-  .uv-latlon-input{ font-size:12px !important; padding:8px 10px !important; }
-  .uv-mylocation-btn{ font-size:11px !important; padding:8px 12px !important; }
-  .uv-facing-btn{ font-size:9.5px !important; padding:7px 2px !important; }
-  .uv-getscore-btn{ padding:12px 18px !important; font-size:12px !important; }
+  .uv-latlon-input{ font-size:13px !important; padding:8px 10px !important; }
+  .uv-mylocation-btn{ font-size:12px !important; padding:8px 12px !important; }
+  .uv-facing-btn{ font-size:11px !important; padding:7px 2px !important; }
+  .uv-getscore-btn{ padding:12px 18px !important; font-size:13px !important; }
 }
 
 /* Second, harder pass on the same app screens -- matches the landing
@@ -1478,7 +1482,7 @@
   .uv-score-number{ font-size:26px !important; }
   .uv-score-box{ padding:9px 10px !important; }
   .uv-score-box-number{ font-size:15px !important; }
-  .uv-getscore-btn{ padding:11px 14px !important; font-size:11.5px !important; }
+  .uv-getscore-btn{ padding:11px 14px !important; font-size:12.5px !important; }
 
   .av-card{ padding:14px 12px !important; }
   .av-score-number{ font-size:24px !important; }
@@ -1493,7 +1497,7 @@
   .modal-title{ font-size:15.5px !important; }
 
   .ps-mode-btn{ padding:10px 12px !important; }
-  .uv-facing-btn{ font-size:8.5px !important; }
+  .uv-facing-btn{ font-size:10px !important; }
 }
 
 /* ---------- THIRD PASS — decisive, applies to every phone up to 640px
@@ -1507,31 +1511,31 @@
   .brand-mark-img{ height:18px }
   .brand-word-img{ height:9px }
   .nav-burger{ width:38px; height:38px }
-  .btn-cta-sm{ font-size:12px !important; padding:9px 12px !important; }
+  .btn-cta-sm{ font-size:13px !important; padding:9px 12px !important; }
 
   .hero{ padding:32px 0 36px }
   .hero h1{ font-size:26px !important; line-height:1.15 }
-  .hero-eyebrow{ font-size:10px !important }
-  .hero-sub{ font-size:12.5px !important }
-  .hero-ctas .btn{ font-size:12.5px; padding:11px 16px }
+  .hero-eyebrow{ font-size:11.5px !important }
+  .hero-sub{ font-size:13.5px !important }
+  .hero-ctas .btn{ font-size:13.5px; padding:11px 16px }
   .hero-score-card{ padding:14px 12px !important }
   .hsc-number{ font-size:28px !important }
-  .hsc-verdict{ font-size:12px !important }
-  .hsc-item-label{ font-size:11.5px !important }
-  .hsc-item-sub{ font-size:10px !important }
+  .hsc-verdict{ font-size:13px !important }
+  .hsc-item-label{ font-size:12.5px !important }
+  .hsc-item-sub{ font-size:11.5px !important }
 
   .section-inner{ padding:32px 0 !important }
   .section h2{ font-size:20px !important }
-  .eyebrow{ font-size:10px !important }
+  .eyebrow{ font-size:11.5px !important }
 
   .pcard{ padding:16px !important }
   .pcard h3{ font-size:17px }
-  .pcard p{ font-size:12px !important }
+  .pcard p{ font-size:13px !important }
 
   .why-row{ padding:14px 12px !important }
   .team-card{ padding:14px !important }
 
-  .btn-cta, .btn-lg{ font-size:12.5px !important; padding:12px 18px !important }
+  .btn-cta, .btn-lg{ font-size:13.5px !important; padding:12px 18px !important }
 
   .closing-inner{ padding:36px 0 !important }
   .closing-inner h2{ font-size:20px !important }

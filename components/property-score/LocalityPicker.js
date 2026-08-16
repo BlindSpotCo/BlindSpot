@@ -43,9 +43,9 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
     <>
       {/* CITY */}
       <div style={{ marginBottom: 36 }}>
-        <div className="mono" style={{ fontSize: 11, color: 'var(--slate)', letterSpacing: '.12em', marginBottom: 12 }}>CITY</div>
-        {citiesError && <div style={{ color: '#f87171', fontSize: 13 }}>{citiesError}</div>}
-        {!citiesData && !citiesError && <div className="mono" style={{ fontSize: 12, color: 'var(--text-dim)' }}>Loading…</div>}
+        <div className="mono" style={{ fontSize: 12, color: 'var(--slate)', letterSpacing: '.12em', marginBottom: 12 }}>CITY</div>
+        {citiesError && <div style={{ color: '#f87171', fontSize: 13.5 }}>{citiesError}</div>}
+        {!citiesData && !citiesError && <div className="mono" style={{ fontSize: 13, color: 'var(--text-dim)' }}>Loading…</div>}
         {citiesData && (
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             {Object.keys(citiesData).map(c => (
@@ -53,9 +53,9 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
                 style={{
                   background: city === c ? 'var(--slate)' : 'transparent', color: city === c ? '#fff' : 'var(--text)',
                   border: `1px solid ${city === c ? 'var(--slate)' : 'var(--line)'}`, borderRadius: 'var(--radius)',
-                  padding: '10px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                  padding: '10px 20px', fontSize: 13.5, fontWeight: 600, cursor: 'pointer',
                 }}>
-                {c} <span className="mono" style={{ fontSize: 10.5, opacity: .7 }}>({citiesData[c].length})</span>
+                {c} <span className="mono" style={{ fontSize: 11.5, opacity: .7 }}>({citiesData[c].length})</span>
               </button>
             ))}
           </div>
@@ -65,7 +65,7 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
       {/* LOCALITY, SEARCHABLE BY NAME */}
       {city && citiesData && (
         <div style={{ marginBottom: 36 }}>
-          <div className="mono" style={{ fontSize: 11, color: 'var(--slate)', letterSpacing: '.12em', marginBottom: 12 }}>LOCALITY</div>
+          <div className="mono" style={{ fontSize: 12, color: 'var(--slate)', letterSpacing: '.12em', marginBottom: 12 }}>LOCALITY</div>
           <input
             type="text" placeholder="Search by area name — Koramangala, Whitefield, Vasant Kunj…"
             value={search} onChange={e => setSearch(e.target.value)}
@@ -80,8 +80,8 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
                 }}>
                 <div>
-                  <div style={{ fontSize: 13.5, color: 'var(--text)', fontWeight: 600 }}>{r.name}</div>
-                  <div className="mono" style={{ fontSize: 10.5, color: 'var(--text-dim)' }}>{r.area ? `${r.area} · ` : ''}{r.pin_code}</div>
+                  <div style={{ fontSize: 14, color: 'var(--text)', fontWeight: 600 }}>{r.name}</div>
+                  <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)' }}>{r.area ? `${r.area} · ` : ''}{r.pin_code}</div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
                   <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 16, color: 'var(--slate)' }}>{r.nqi_composite}</span>
@@ -90,7 +90,7 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
               </button>
             ))}
             {filteredLocalities.length === 0 && (
-              <div style={{ padding: 16, fontSize: 12.5, color: 'var(--text-dim)' }}>No localities match &ldquo;{search}&rdquo;.</div>
+              <div style={{ padding: 16, fontSize: 13.5, color: 'var(--text-dim)' }}>No localities match &ldquo;{search}&rdquo;.</div>
             )}
           </div>
         </div>

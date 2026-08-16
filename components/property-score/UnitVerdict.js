@@ -113,35 +113,35 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
     <>
       {/* SUNSCOUT PANEL */}
       <div style={{ marginBottom: 36 }}>
-        <div className="mono" style={{ fontSize: 11, color: 'var(--sun)', letterSpacing: '.12em', marginBottom: 12 }}>SUN &amp; SHADOW FOR THIS FLAT</div>
+        <div className="mono" style={{ fontSize: 12, color: 'var(--sun)', letterSpacing: '.12em', marginBottom: 12 }}>SUN &amp; SHADOW FOR THIS FLAT</div>
 
         {lat && lon && addressLabel && !showCoords ? (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 14, background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '10px 14px' }}>
-            <div style={{ fontSize: 13, color: 'var(--text)' }}>
+            <div style={{ fontSize: 13.5, color: 'var(--text)' }}>
               <span style={{ color: 'var(--text-dim)' }}>📍 </span>{addressLabel}
             </div>
-            <button onClick={() => setShowCoords(true)} className="ps-link-btn" style={{ background: 'none', border: 'none', color: 'var(--text-mute)', fontSize: 11.5, textDecoration: 'underline', cursor: 'pointer', flexShrink: 0 }}>
+            <button onClick={() => setShowCoords(true)} className="ps-link-btn" style={{ background: 'none', border: 'none', color: 'var(--text-mute)', fontSize: 12.5, textDecoration: 'underline', cursor: 'pointer', flexShrink: 0 }}>
               Edit exact location
             </button>
           </div>
         ) : (
           <div style={{ display: 'flex', gap: 10, marginBottom: 14, flexWrap: 'wrap' }}>
             <input type="text" placeholder="Latitude" value={lat} onChange={e => setLat(e.target.value)} className="uv-latlon-input"
-              style={{ flex: '1 1 140px', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '9px 12px', color: 'var(--text)', fontSize: 12.5, fontFamily: "'IBM Plex Mono', monospace" }} />
+              style={{ flex: '1 1 140px', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '9px 12px', color: 'var(--text)', fontSize: 13.5, fontFamily: "'IBM Plex Mono', monospace" }} />
             <input type="text" placeholder="Longitude" value={lon} onChange={e => setLon(e.target.value)} className="uv-latlon-input"
-              style={{ flex: '1 1 140px', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '9px 12px', color: 'var(--text)', fontSize: 12.5, fontFamily: "'IBM Plex Mono', monospace" }} />
-            <button onClick={useMyLocation} className="uv-mylocation-btn ps-btn" style={{ background: 'transparent', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '9px 16px', color: 'var(--text)', fontSize: 12, cursor: 'pointer' }}>
+              style={{ flex: '1 1 140px', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '9px 12px', color: 'var(--text)', fontSize: 13.5, fontFamily: "'IBM Plex Mono', monospace" }} />
+            <button onClick={useMyLocation} className="uv-mylocation-btn ps-btn" style={{ background: 'transparent', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '9px 16px', color: 'var(--text)', fontSize: 13, cursor: 'pointer' }}>
               Use my location
             </button>
             {addressLabel && (
-              <button onClick={() => setShowCoords(false)} className="ps-link-btn" style={{ flex: '0 0 100%', background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: 11, textAlign: 'left', textDecoration: 'underline', cursor: 'pointer', padding: 0 }}>
+              <button onClick={() => setShowCoords(false)} className="ps-link-btn" style={{ flex: '0 0 100%', background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: 12, textAlign: 'left', textDecoration: 'underline', cursor: 'pointer', padding: 0 }}>
                 Done editing — show location name
               </button>
             )}
           </div>
         )}
-        {gpsError && <div style={{ color: '#f87171', fontSize: 11.5, marginBottom: 10 }}>{gpsError}</div>}
-        <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 14 }}>
+        {gpsError && <div style={{ color: '#f87171', fontSize: 12.5, marginBottom: 10 }}>{gpsError}</div>}
+        <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 14 }}>
           Use the <strong style={{ color: 'var(--sun)' }}>LIVESCORE</strong> button below for the Home Comfort breakdown — once you have a verdict below, you can generate the <strong style={{ color: 'var(--sun)' }}>full AI report</strong> covering both the neighbourhood and this unit.
         </div>
 
@@ -173,19 +173,19 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               className="ps-btn"
               style={{
                 display: 'block', textAlign: 'center', background: 'transparent', color: 'var(--sun)',
-                border: '1px solid var(--sun)', borderRadius: 'var(--radius)', padding: '12px 22px', fontSize: 12.5, fontWeight: 700,
+                border: '1px solid var(--sun)', borderRadius: 'var(--radius)', padding: '12px 22px', fontSize: 13.5, fontWeight: 700,
                 letterSpacing: '.03em', textTransform: 'uppercase', textDecoration: 'none', marginTop: 14,
               }}>
               Furnish This Unit — Upload Floor Plan ↗
             </a>
 
             {capturedFromSS && (
-              <div className="mono" style={{ fontSize: 11, color: '#4ADE80', marginTop: 14 }}>
+              <div className="mono" style={{ fontSize: 12, color: '#4ADE80', marginTop: 14 }}>
                 ✓ Using floor {floor}, {facing}-facing — picked above.
                 {ssPreview && <> LiveScore came back {ssPreview.liveScore}/100 ({ssPreview.grade}).</>}
               </div>
             )}
-            <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', lineHeight: 1.6, marginTop: capturedFromSS ? 4 : 14 }}>
+            <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', lineHeight: 1.6, marginTop: capturedFromSS ? 4 : 14 }}>
               {!capturedFromSS && "Skip AI Report/LiveScore if you want — you'll be asked for floor/facing directly at the verdict step below instead."}
             </div>
           </>
@@ -195,21 +195,21 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
       {/* VERDICT */}
       {lat && lon && (
         <div style={{ marginBottom: 20 }}>
-          <div className="mono" style={{ fontSize: 11, color: 'var(--text)', letterSpacing: '.12em', marginBottom: 12 }}>THE COMBINED VERDICT</div>
+          <div className="mono" style={{ fontSize: 12, color: 'var(--text)', letterSpacing: '.12em', marginBottom: 12 }}>THE COMBINED VERDICT</div>
 
           {!capturedFromSS && (
             <div style={{ marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
-                <span className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', flexShrink: 0 }}>Floor</span>
+                <span className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', flexShrink: 0 }}>Floor</span>
                 <input type="range" min="0" max="30" value={floor ?? 5} onChange={e => setFloor(Number(e.target.value))} style={{ flex: 1, accentColor: 'var(--sun)' }} />
-                <div style={{ background: 'var(--sun)', color: '#fff', borderRadius: 'var(--radius)', padding: '4px 12px', fontSize: 13, fontWeight: 700, minWidth: 36, textAlign: 'center' }}>{floor ?? 5}</div>
+                <div style={{ background: 'var(--sun)', color: '#fff', borderRadius: 'var(--radius)', padding: '4px 12px', fontSize: 13.5, fontWeight: 700, minWidth: 36, textAlign: 'center' }}>{floor ?? 5}</div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0 }}>
                 {FACING_OPTS.map(dir => (
                   <button key={dir} onClick={() => setFacing(dir)} className="uv-facing-btn" style={{
                     background: facing === dir ? 'var(--sun)' : 'transparent', color: facing === dir ? '#fff' : 'var(--text)',
                     border: `1px solid ${facing === dir ? 'var(--sun)' : 'var(--line)'}`,
-                    padding: '8px 4px', fontSize: 11, fontWeight: 700, cursor: 'pointer', marginLeft: -1, marginTop: -1,
+                    padding: '8px 4px', fontSize: 12, fontWeight: 700, cursor: 'pointer', marginLeft: -1, marginTop: -1,
                   }}>{dir}</button>
                 ))}
               </div>
@@ -219,32 +219,32 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
           <button onClick={() => computeCombined()} disabled={loadingCombined || floor == null || !facing} className="uv-getscore-btn ps-btn ps-cta-btn"
             style={{
               background: (floor == null || !facing) ? 'var(--line)' : 'var(--brand)',
-              color: '#fff', border: 'none', borderRadius: 'var(--radius)', padding: '14px 24px', fontSize: 13, fontWeight: 700,
+              color: '#fff', border: 'none', borderRadius: 'var(--radius)', padding: '14px 24px', fontSize: 13.5, fontWeight: 700,
               cursor: (floor == null || !facing) ? 'default' : 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
               opacity: loadingCombined ? .6 : 1, marginBottom: 20,
             }}>
             {loadingCombined ? 'Computing…' : (areaRecord ? 'Get Combined Score' : 'Get Home Comfort Score')}
           </button>
-          {combinedError && <div style={{ color: '#f87171', fontSize: 12, marginBottom: 16 }}>{combinedError}</div>}
+          {combinedError && <div style={{ color: '#f87171', fontSize: 13, marginBottom: 16 }}>{combinedError}</div>}
 
           {combined && (
             <div className="uv-combined-card" style={{ border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '28px 26px', background: 'var(--bg-2)' }}>
               {combined.area && (
                 <div style={{ marginBottom: 24 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11.5, marginBottom: 8 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, marginBottom: 8 }}>
                     <span className="mono" style={{ color: 'var(--slate)' }}>AREA {areaWeight}%</span>
                     <span className="mono" style={{ color: 'var(--sun)' }}>UNIT {100 - areaWeight}%</span>
                   </div>
                   <input type="range" min="0" max="100" value={areaWeight}
                     onChange={e => { const v = Number(e.target.value); setAreaWeight(v); computeCombined(v); }}
                     style={{ width: '100%', accentColor: 'var(--slate)' }} />
-                  <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 6 }}>Starts 50/50 — drag anytime to change how much the neighbourhood matters vs. the specific flat.</div>
+                  <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginTop: 6 }}>Starts 50/50 — drag anytime to change how much the neighbourhood matters vs. the specific flat.</div>
                 </div>
               )}
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 14 }}>
                 <div>
-                  <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', letterSpacing: '.12em', marginBottom: 6 }}>
+                  <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', letterSpacing: '.12em', marginBottom: 6 }}>
                     {combined.area ? 'BLINDSPOT COMBINED SCORE' : 'HOME COMFORT SCORE'}
                   </div>
                   <div className="uv-score-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 56, lineHeight: 1, color: 'var(--text)' }}>
@@ -256,34 +256,34 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                 </div>
               </div>
 
-              <p style={{ fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 24 }}>{combined.verdict.detail}</p>
+              <p style={{ fontSize: 14, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 24 }}>{combined.verdict.detail}</p>
 
               {combined.area ? (
                 <div className="uv-score-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
                   <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--slate)', borderRadius: 'var(--radius)', padding: '14px 16px' }}>
-                    <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 6 }}>AREA — {combined.area.name} — {combined.area.weight}%</div>
+                    <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>AREA — {combined.area.name} — {combined.area.weight}%</div>
                     <div className="uv-score-box-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 24, color: 'var(--slate)' }}>{combined.area.score}</div>
                   </div>
                   <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 'var(--radius)', padding: '14px 16px' }}>
-                    <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT (HOME COMFORT) — FL {combined.unit.floor}, {combined.unit.facing} — {combined.unit.weight}%</div>
+                    <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT (HOME COMFORT) — FL {combined.unit.floor}, {combined.unit.facing} — {combined.unit.weight}%</div>
                     <div className="uv-score-box-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 24, color: 'var(--sun)' }}>{combined.unit.score}</div>
                   </div>
                 </div>
               ) : (
                 <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 'var(--radius)', padding: '14px 16px', marginBottom: 20 }}>
-                  <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT (HOME COMFORT) — FL {combined.unit.floor}, {combined.unit.facing}</div>
+                  <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT (HOME COMFORT) — FL {combined.unit.floor}, {combined.unit.facing}</div>
                   <div className="uv-score-box-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 24, color: 'var(--sun)' }}>{combined.unit.score}</div>
                 </div>
               )}
 
               {combined.formula && (
-                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', background: 'var(--bg)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '12px 16px', marginBottom: 16 }}>
+                <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', background: 'var(--bg)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '12px 16px', marginBottom: 16 }}>
                   {combined.formula}
                 </div>
               )}
 
               {combined.dataNotes?.length > 0 && (
-                <div style={{ fontSize: 11, color: 'var(--text-dim)', lineHeight: 1.7, marginBottom: 20 }}>
+                <div style={{ fontSize: 12, color: 'var(--text-dim)', lineHeight: 1.7, marginBottom: 20 }}>
                   {combined.dataNotes.map((n, i) => <div key={i}>— {n}</div>)}
                 </div>
               )}
@@ -293,7 +293,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                 className="ps-btn ps-cta-btn"
                 style={{
                   background: 'var(--brand)', color: '#fff', border: 'none',
-                  borderRadius: 'var(--radius)', padding: '13px 22px', fontSize: 12.5, fontWeight: 700, cursor: 'pointer',
+                  borderRadius: 'var(--radius)', padding: '13px 22px', fontSize: 13.5, fontWeight: 700, cursor: 'pointer',
                   letterSpacing: '.03em', textTransform: 'uppercase', width: '100%',
                 }}>
                 {combined.area ? 'Generate Full AI Report — Neighbourhood + Unit' : 'Generate AI Report — Unit'}

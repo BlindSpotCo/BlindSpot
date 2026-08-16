@@ -118,17 +118,17 @@ export default function PropertyScoreFlow() {
                   ['BlindSpot', 'The two combined into one verdict, weighted your way.', 'var(--brand)'],
                 ].map(([label, desc, color], i) => (
                   <div key={label} style={{ display: 'flex', gap: 14, alignItems: 'flex-start', padding: '16px 18px', border: '1px solid var(--line)', borderLeft: `3px solid ${color}`, borderRadius: 'var(--radius)', background: 'var(--bg-2)' }}>
-                    <span className="mono" style={{ fontSize: 11, fontWeight: 700, color, paddingTop: 2 }}>{String(i + 1).padStart(2, '0')}</span>
+                    <span className="mono" style={{ fontSize: 12, fontWeight: 700, color, paddingTop: 2 }}>{String(i + 1).padStart(2, '0')}</span>
                     <div>
                       <div style={{ fontSize: 14.5, fontWeight: 700, marginBottom: 3, color: 'var(--ink)' }}>{label}</div>
-                      <div style={{ fontSize: 12.5, color: 'var(--text-mute)', lineHeight: 1.5 }}>{desc}</div>
+                      <div style={{ fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.5 }}>{desc}</div>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
             <button onClick={() => scrollToNext('ps-screen-persona')} className="mono"
-              style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 40, background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: 11, letterSpacing: '.1em', cursor: 'pointer' }}>
+              style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 40, background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: 12, letterSpacing: '.1em', cursor: 'pointer' }}>
               SCROLL TO PICK YOUR ANGLE <span style={{ fontSize: 14 }}>↓</span>
             </button>
           </div>
@@ -139,7 +139,7 @@ export default function PropertyScoreFlow() {
           <div className="wrap" style={{ width: '100%' }}>
             <PersonaPicker personaId={personaId} onSelect={setPersonaId} big />
             <button onClick={() => scrollToNext('ps-screen-location')} className="mono"
-              style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '32px auto 0', background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: 11, letterSpacing: '.1em', cursor: 'pointer' }}>
+              style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '32px auto 0', background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: 12, letterSpacing: '.1em', cursor: 'pointer' }}>
               SCROLL TO PICK A LOCATION <span style={{ fontSize: 14 }}>↓</span>
             </button>
           </div>
@@ -154,29 +154,29 @@ export default function PropertyScoreFlow() {
           scrollSnapAlign: 'start', padding: mode ? '48px 0' : 0,
         }}>
           <div className="wrap" style={{ width: '100%' }}>
-            <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', letterSpacing: '.12em', marginBottom: 20, textAlign: 'center' }}>HOW DO YOU WANT TO START?</div>
+            <div className="mono" style={{ fontSize: 13, color: 'var(--text-mute)', letterSpacing: '.12em', marginBottom: 20, textAlign: 'center' }}>HOW DO YOU WANT TO START?</div>
             <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', justifyContent: 'center', maxWidth: 900, margin: '0 auto' }}>
               <button onClick={() => chooseMode('locality')} className="ps-mode-btn ps-btn"
                 style={{
                   flex: '1 1 320px', maxWidth: 400, textAlign: 'left', background: mode === 'locality' ? 'rgba(175,47,64,0.14)' : 'var(--bg-2)',
                   border: `1px solid ${mode === 'locality' ? 'var(--slate)' : 'var(--line)'}`, borderRadius: 'var(--radius)', padding: '32px 28px', cursor: 'pointer',
                 }}>
-                <div className="mono" style={{ fontSize: 10.5, color: 'var(--slate)', letterSpacing: '.1em', marginBottom: 10 }}>OPTION A</div>
+                <div className="mono" style={{ fontSize: 11.5, color: 'var(--slate)', letterSpacing: '.1em', marginBottom: 10 }}>OPTION A</div>
                 <div className="ps-mode-btn-title" style={{ fontSize: 19, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>City → Locality → Unit</div>
-                <div className="ps-mode-btn-sub" style={{ fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.6 }}>Browse scored neighbourhoods, then pick a floor/facing.</div>
+                <div className="ps-mode-btn-sub" style={{ fontSize: 14, color: 'var(--text-mute)', lineHeight: 1.6 }}>Browse scored neighbourhoods, then pick a floor/facing.</div>
               </button>
               <button onClick={() => chooseMode('address')} className="ps-mode-btn ps-btn"
                 style={{
                   flex: '1 1 320px', maxWidth: 400, textAlign: 'left', background: mode === 'address' ? 'rgba(224,123,0,0.12)' : 'var(--bg-2)',
                   border: `1px solid ${mode === 'address' ? 'var(--sun)' : 'var(--line)'}`, borderRadius: 'var(--radius)', padding: '32px 28px', cursor: 'pointer',
                 }}>
-                <div className="mono" style={{ fontSize: 10.5, color: 'var(--sun)', letterSpacing: '.1em', marginBottom: 10 }}>OPTION B</div>
+                <div className="mono" style={{ fontSize: 11.5, color: 'var(--sun)', letterSpacing: '.1em', marginBottom: 10 }}>OPTION B</div>
                 <div className="ps-mode-btn-title" style={{ fontSize: 19, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>I have the exact address</div>
-                <div className="ps-mode-btn-sub" style={{ fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.6 }}>Search it directly — we&apos;ll place the pin and detect the area for you.</div>
+                <div className="ps-mode-btn-sub" style={{ fontSize: 14, color: 'var(--text-mute)', lineHeight: 1.6 }}>Search it directly — we&apos;ll place the pin and detect the area for you.</div>
               </button>
             </div>
             {!mode && (
-              <p style={{ textAlign: 'center', fontSize: 12.5, color: 'var(--text-dim)', marginTop: 28 }}>Pick one to continue — the rest of the flow opens below.</p>
+              <p style={{ textAlign: 'center', fontSize: 13.5, color: 'var(--text-dim)', marginTop: 28 }}>Pick one to continue — the rest of the flow opens below.</p>
             )}
           </div>
         </div>

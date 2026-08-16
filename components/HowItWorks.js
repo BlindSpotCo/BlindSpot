@@ -250,19 +250,19 @@ function VerdictPanel() {
   return (
     <div className="howworks-panel">
       <div style={{ marginBottom: 20 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, fontWeight: 600, marginBottom: 8 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13.5, fontWeight: 600, marginBottom: 8 }}>
           <span className="mono" style={{ color: 'var(--slate)' }}>AREA 50%</span>
           <span className="mono" style={{ color: 'var(--sun)' }}>UNIT 50%</span>
         </div>
         <div style={{ height: 4, borderRadius: 3, background: 'linear-gradient(90deg, var(--slate) 50%, var(--sun) 50%)' }} />
-        <div className="mono" style={{ fontSize: 11.5, fontWeight: 500, color: 'var(--text-mute)', marginTop: 6 }}>
+        <div className="mono" style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-mute)', marginTop: 6 }}>
           Starts 50/50 — drag anytime to change how much the neighbourhood matters vs. the specific flat.
         </div>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18, flexWrap: 'wrap', gap: 14 }}>
         <div>
-          <div className="mono" style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-mute)', letterSpacing: '.12em', marginBottom: 6 }}>BLINDSPOT COMBINED SCORE</div>
+          <div className="mono" style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-mute)', letterSpacing: '.12em', marginBottom: 6 }}>BLINDSPOT COMBINED SCORE</div>
           <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 800, fontSize: 46, lineHeight: 1, color: 'var(--text)' }}>
             80<span style={{ fontSize: 18, color: 'var(--text-mute)' }}>/100</span>
           </div>
@@ -276,17 +276,17 @@ function VerdictPanel() {
         </div>
       </div>
 
-      <p style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 20 }}>
+      <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 20 }}>
         Solid area score with a genuinely bright unit — good light most of the year, no major shadow issues at this floor.
       </p>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
         <div className="hw-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--slate)', borderRadius: 3, padding: '14px 16px' }}>
-          <div className="mono" style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-mute)', marginBottom: 6 }}>AREA — KORAMANGALA — 50%</div>
+          <div className="mono" style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-mute)', marginBottom: 6 }}>AREA — KORAMANGALA — 50%</div>
           <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 22, color: 'var(--slate)' }}>78</div>
         </div>
         <div className="hw-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 3, padding: '14px 16px' }}>
-          <div className="mono" style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-mute)', marginBottom: 6 }}>UNIT — FL 7, SE — 50%</div>
+          <div className="mono" style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-mute)', marginBottom: 6 }}>UNIT — FL 7, SE — 50%</div>
           <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 22, color: 'var(--sun)' }}>82</div>
         </div>
       </div>

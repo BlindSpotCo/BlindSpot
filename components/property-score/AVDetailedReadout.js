@@ -32,7 +32,7 @@ export function BPF({ children, style, className = '' }) {
   );
 }
 function bpfMark(pos) {
-  const base = { position: 'absolute', color: 'var(--slate)', fontSize: 12, lineHeight: 1, opacity: .5 };
+  const base = { position: 'absolute', color: 'var(--slate)', fontSize: 13, lineHeight: 1, opacity: .5 };
   const offsets = { tl: { top: -7, left: -5 }, tr: { top: -7, right: -5 }, bl: { bottom: -8, left: -5 }, br: { bottom: -8, right: -5 } };
   return { ...base, ...offsets[pos] };
 }
@@ -42,7 +42,7 @@ export function Info({ text }) {
   return (
     <span className="nr-info" style={{ position: 'relative', display: 'inline-flex', marginLeft: 5 }}>
       <span style={{ fontSize: 9, width: 13, height: 13, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--slate)', color: 'var(--slate)', borderRadius: '50%', cursor: 'help', lineHeight: 1, opacity: .8, flexShrink: 0 }}>?</span>
-      <span className="nr-tip" style={{ position: 'absolute', bottom: 'calc(100% + 9px)', left: '50%', transform: 'translateX(-50%)', width: 230, background: 'var(--paper)', border: '1.5px solid var(--slate)', padding: '10px 12px', fontSize: 11.5, fontWeight: 400, color: 'var(--text)', lineHeight: 1.5, zIndex: 300, boxShadow: '0 10px 34px rgba(28,24,18,0.18)', display: 'none' }}>{text}</span>
+      <span className="nr-tip" style={{ position: 'absolute', bottom: 'calc(100% + 9px)', left: '50%', transform: 'translateX(-50%)', width: 230, background: 'var(--paper)', border: '1.5px solid var(--slate)', padding: '10px 12px', fontSize: 12.5, fontWeight: 400, color: 'var(--text)', lineHeight: 1.5, zIndex: 300, boxShadow: '0 10px 34px rgba(28,24,18,0.18)', display: 'none' }}>{text}</span>
       <style jsx>{`.nr-info:hover .nr-tip { display: block !important; }`}</style>
     </span>
   );
@@ -53,11 +53,11 @@ export function Info({ text }) {
 function CategoryCard({ title, tip, stats }) {
   return (
     <BPF style={{ padding: '18px 20px' }}>
-      <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', margin: '0 0 14px', display: 'flex', alignItems: 'center' }}>{title}<Info text={tip} /></p>
+      <p style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', margin: '0 0 14px', display: 'flex', alignItems: 'center' }}>{title}<Info text={tip} /></p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '14px 20px' }}>
         {stats.filter(Boolean).map(([label, val, itemTip]) => (
           <div key={label}>
-            <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '.05em', color: 'var(--text-dim)', display: 'flex', alignItems: 'center' }}>{label}<Info text={itemTip} /></div>
+            <div style={{ fontSize: 11.5, textTransform: 'uppercase', letterSpacing: '.05em', color: 'var(--text-dim)', display: 'flex', alignItems: 'center' }}>{label}<Info text={itemTip} /></div>
             <div className="cond" style={{ fontSize: 15.5, fontWeight: 700, marginTop: 3, color: 'var(--text)' }}>{val ?? '—'}</div>
           </div>
         ))}
@@ -188,7 +188,7 @@ export default function AVDetailedReadout({ record }) {
 
   return (
     <div className="av-detail-readout">
-      <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', marginBottom: 14 }}>
+      <p style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', marginBottom: 14 }}>
         Detailed Readings
       </p>
       <div style={{ display: 'grid', gap: 20, marginBottom: 28 }}>
@@ -253,14 +253,14 @@ export default function AVDetailedReadout({ record }) {
       {/* ── Schools ── */}
       {record.schools_list?.length > 0 && (
         <div style={{ marginBottom: 28 }}>
-          <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', marginBottom: 14 }}>
+          <p style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', marginBottom: 14 }}>
             Schools · {record.schools_count} mapped
           </p>
           <BPF style={{ padding: 0, overflow: 'hidden' }}>
             {record.schools_list.map((sc, i) => (
-              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, fontSize: 13, padding: '11px 18px', borderTop: i ? '1px dashed var(--line-soft)' : 'none' }}>
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, fontSize: 13.5, padding: '11px 18px', borderTop: i ? '1px dashed var(--line-soft)' : 'none' }}>
                 <span style={{ color: 'var(--text)' }}>{sc.name}</span>
-                <span style={{ color: 'var(--slate)', fontSize: 11, flexShrink: 0, fontWeight: 700, letterSpacing: '.03em' }}>{sc.board || 'CBSE'}</span>
+                <span style={{ color: 'var(--slate)', fontSize: 12, flexShrink: 0, fontWeight: 700, letterSpacing: '.03em' }}>{sc.board || 'CBSE'}</span>
               </div>
             ))}
           </BPF>
@@ -269,20 +269,20 @@ export default function AVDetailedReadout({ record }) {
 
       {/* ── Methodology ── */}
       <div>
-        <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', marginBottom: 14 }}>
+        <p style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', marginBottom: 14 }}>
           Methodology · Data Sources
         </p>
         <BPF style={{ padding: 0, overflow: 'hidden' }}>
           {Object.entries(record.weights_applied || {}).map(([k, w], i) => (
-            <div key={k} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12.5, padding: '10px 18px', borderTop: i ? '1px dashed var(--line-soft)' : 'none', flexWrap: 'wrap', gap: 8 }}>
+            <div key={k} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13.5, padding: '10px 18px', borderTop: i ? '1px dashed var(--line-soft)' : 'none', flexWrap: 'wrap', gap: 8 }}>
               <span style={{ color: 'var(--text)', fontWeight: 600, minWidth: 150 }}>{FACTOR_LABELS[k] || k}</span>
               <span className="cond" style={{ fontWeight: 700, color: 'var(--slate)', width: 44 }}>{Math.round(w * 100)}%</span>
               <span style={{ color: 'var(--text-dim)', flex: 1, minWidth: 200 }}>{source(k, record.city)}</span>
-              <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: '.06em', color: k === 'air' ? '#3D6B2E' : 'var(--text-dim)', border: `1px solid ${k === 'air' ? '#3D6B2E' : 'var(--line)'}`, borderRadius: 2, padding: '2px 6px' }}>{k === 'air' ? 'LIVE' : 'EST'}</span>
+              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.06em', color: k === 'air' ? '#3D6B2E' : 'var(--text-dim)', border: `1px solid ${k === 'air' ? '#3D6B2E' : 'var(--line)'}`, borderRadius: 2, padding: '2px 6px' }}>{k === 'air' ? 'LIVE' : 'EST'}</span>
             </div>
           ))}
         </BPF>
-        <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 10 }}>
+        <div style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 10 }}>
           Scored {formatDate(record.scored_at) || '—'}. Area-level — the same for every unit in this pincode.
         </div>
       </div>

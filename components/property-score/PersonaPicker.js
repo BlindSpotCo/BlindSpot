@@ -166,7 +166,7 @@ export default function PersonaPicker({ personaId, onSelect, big = false }) {
               }}>{p.short[0]}</span>
               <span>
                 <span style={{ display: 'block', fontSize: 14.5, fontWeight: 700, color: active ? p.color : 'var(--ink)' }}>{p.label}</span>
-                <span style={{ display: 'block', fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.4, marginTop: 2 }}>{p.blurb}</span>
+                <span style={{ display: 'block', fontSize: 13, color: 'var(--text-mute)', lineHeight: 1.4, marginTop: 2 }}>{p.blurb}</span>
               </span>
             </button>
           );

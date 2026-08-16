@@ -195,7 +195,7 @@ export default function AddressPicker({ onConfirmed }) {
 
   return (
     <div style={{ marginBottom: 36 }}>
-      <div className="mono" style={{ fontSize: 11, color: 'var(--sun)', letterSpacing: '.12em', marginBottom: 12 }}>ENTER YOUR ADDRESS</div>
+      <div className="mono" style={{ fontSize: 12, color: 'var(--sun)', letterSpacing: '.12em', marginBottom: 12 }}>ENTER YOUR ADDRESS</div>
       <div ref={wrapRef} style={{ position: 'relative', display: 'flex', gap: 10, marginBottom: 10, flexWrap: 'wrap' }}>
         <div style={{ flex: '1 1 260px', position: 'relative' }}>
           <input
@@ -216,7 +216,7 @@ export default function AddressPicker({ onConfirmed }) {
               maxHeight: 320, overflowY: 'auto', boxShadow: '0 8px 24px rgba(0,0,0,.35)',
             }}>
               {suggestLoading && suggestions.length === 0 && (
-                <div className="mono" style={{ padding: '10px 14px', fontSize: 11.5, color: 'var(--text-dim)' }}>Searching…</div>
+                <div className="mono" style={{ padding: '10px 14px', fontSize: 12.5, color: 'var(--text-dim)' }}>Searching…</div>
               )}
               {suggestions.map((s, i) => (
                 <button
@@ -227,10 +227,10 @@ export default function AddressPicker({ onConfirmed }) {
                   style={{
                     display: 'block', width: '100%', textAlign: 'left', background: i === highlightIndex ? 'rgba(224,123,0,0.12)' : 'transparent',
                     border: 'none', borderBottom: i < suggestions.length - 1 ? '1px solid var(--line-soft)' : 'none',
-                    padding: '10px 14px', cursor: 'pointer', fontSize: 12.5, color: 'var(--text)', lineHeight: 1.4,
+                    padding: '10px 14px', cursor: 'pointer', fontSize: 13.5, color: 'var(--text)', lineHeight: 1.4,
                   }}>
                   {s.displayName}
-                  {s.postcode && <span className="mono" style={{ color: 'var(--text-dim)', fontSize: 10.5 }}> · {s.postcode}</span>}
+                  {s.postcode && <span className="mono" style={{ color: 'var(--text-dim)', fontSize: 11.5 }}> · {s.postcode}</span>}
                 </button>
               ))}
             </div>
@@ -239,23 +239,23 @@ export default function AddressPicker({ onConfirmed }) {
         <button onClick={handleSearch} disabled={searching || !query.trim()} className="ps-btn ps-cta-btn"
           style={{
             background: 'var(--sun)', color: '#fff', border: 'none', borderRadius: 'var(--radius)',
-            padding: '12px 22px', fontSize: 13, fontWeight: 700, cursor: searching ? 'default' : 'pointer',
+            padding: '12px 22px', fontSize: 13.5, fontWeight: 700, cursor: searching ? 'default' : 'pointer',
             opacity: searching ? .6 : 1,
           }}>
           {searching ? 'Searching…' : 'Search'}
         </button>
       </div>
-      <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 10 }}>
+      <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 10 }}>
         Pick a suggestion as you type, or press Search / Enter for the best match.
       </div>
-      {searchError && <div style={{ color: '#f87171', fontSize: 12, marginBottom: 12 }}>{searchError}</div>}
+      {searchError && <div style={{ color: '#f87171', fontSize: 13, marginBottom: 12 }}>{searchError}</div>}
 
       {pin && (
         <>
-          <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 10, marginTop: 22 }}>
+          <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 10, marginTop: 22 }}>
             CONFIRM THE EXACT PIN
           </div>
-          <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 10 }}>
+          <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 10 }}>
             Drag the pin or click the map to fine-tune the exact building, then confirm.
           </div>
           <div style={{ height: 360, border: '1px solid var(--line)', borderRadius: 'var(--radius)', overflow: 'hidden', marginBottom: 16 }}>
@@ -263,14 +263,14 @@ export default function AddressPicker({ onConfirmed }) {
           </div>
 
           {resolving && (
-            <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 16 }}>Looking up this location…</div>
+            <div className="mono" style={{ fontSize: 12.5, color: 'var(--text-dim)', marginBottom: 16 }}>Looking up this location…</div>
           )}
 
           {!resolving && !locationConfirmed && (
             <button onClick={confirmLocation} className="ps-btn ps-cta-btn"
               style={{
                 background: 'var(--slate)', color: '#fff', border: 'none', borderRadius: 'var(--radius)',
-                padding: '13px 22px', fontSize: 13, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
+                padding: '13px 22px', fontSize: 13.5, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
                 marginBottom: 20,
               }}>
               Confirm This Pin →
@@ -278,7 +278,7 @@ export default function AddressPicker({ onConfirmed }) {
           )}
 
           {resolved && (
-            <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-mute)', marginBottom: locationConfirmed ? 20 : 14, lineHeight: 1.6 }}>
+            <div className="mono" style={{ fontSize: 12.5, color: 'var(--text-mute)', marginBottom: locationConfirmed ? 20 : 14, lineHeight: 1.6 }}>
               <div style={{ marginBottom: 6 }}>{resolved.displayName || `${pin.lat.toFixed(5)}, ${pin.lon.toFixed(5)}`}</div>
               {/* Auto-detected postcode is Nominatim's best guess, not ground
                   truth -- it's wrong often enough for India (confirmed case:
@@ -292,7 +292,7 @@ export default function AddressPicker({ onConfirmed }) {
                   <>
                     <strong style={{ color: 'var(--text)' }}>{pincodeOverride || 'none found'}</strong>
                     <button type="button" onClick={() => setEditingPincode(true)} className="ps-link-btn"
-                      style={{ background: 'none', border: 'none', color: 'var(--ss)', cursor: 'pointer', fontSize: 11, textDecoration: 'underline', padding: 0 }}>
+                      style={{ background: 'none', border: 'none', color: 'var(--ss)', cursor: 'pointer', fontSize: 12, textDecoration: 'underline', padding: 0 }}>
                       not right? correct it
                     </button>
                   </>
@@ -302,10 +302,10 @@ export default function AddressPicker({ onConfirmed }) {
                       type="text" inputMode="numeric" value={pincodeOverride} maxLength={6} autoFocus
                       onChange={e => setPincodeOverride(e.target.value.replace(/\D/g, ''))}
                       onKeyDown={e => { if (e.key === 'Enter') applyPincodeOverride(); if (e.key === 'Escape') setEditingPincode(false); }}
-                      style={{ width: 90, background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '5px 8px', color: 'var(--text)', fontSize: 12 }}
+                      style={{ width: 90, background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '5px 8px', color: 'var(--text)', fontSize: 13 }}
                     />
                     <button type="button" onClick={applyPincodeOverride} className="ps-btn ps-cta-btn"
-                      style={{ background: 'var(--brand)', color: '#fff', border: 'none', borderRadius: 'var(--radius)', padding: '5px 12px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
+                      style={{ background: 'var(--brand)', color: '#fff', border: 'none', borderRadius: 'var(--radius)', padding: '5px 12px', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
                       Apply
                     </button>
                   </>
@@ -316,7 +316,7 @@ export default function AddressPicker({ onConfirmed }) {
 
           {locationConfirmed && (
             <>
-              <div className="mono" style={{ fontSize: 11, color: 'var(--sun)', letterSpacing: '.12em', marginBottom: 12, marginTop: 8 }}>
+              <div className="mono" style={{ fontSize: 12, color: 'var(--sun)', letterSpacing: '.12em', marginBottom: 12, marginTop: 8 }}>
                 NEIGHBOURHOOD SCORE FOR THIS PIN
               </div>
 
@@ -324,7 +324,7 @@ export default function AddressPicker({ onConfirmed }) {
                 <AVAreaCard record={matchedArea} city={matchCity} citiesData={citiesDataRef.current} />
               ) : (
                 <div style={{ marginBottom: 24, border: '1px solid var(--line)', borderLeft: '4px solid var(--line)', borderRadius: 'var(--radius)', padding: '18px 20px' }}>
-                  <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+                  <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6 }}>
                     No AsliVastu coverage for pincode {pincodeOverride || resolved?.postcode || 'this location'} yet — you&apos;ll still get SunScout&apos;s Home Comfort Score for the unit, just without an area score to combine it with. If that pincode looks wrong, scroll up and correct it above.
                   </div>
                 </div>
@@ -333,7 +333,7 @@ export default function AddressPicker({ onConfirmed }) {
               <button onClick={continueToSunScout} className="ps-btn ps-cta-btn"
                 style={{
                   background: 'var(--brand)', color: '#fff', border: 'none', borderRadius: 'var(--radius)',
-                  padding: '14px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
+                  padding: '14px 24px', fontSize: 13.5, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
                 }}>
                 Continue to Sun &amp; Shadow →
               </button>
