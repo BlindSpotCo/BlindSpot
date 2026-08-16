@@ -1,5 +1,6 @@
 import { redirect, notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { cityMeta } from '@/lib/aslivastu/cityMeta';
 
 export default async function ReportDetailPage({ params }) {
   const { id } = await params;
@@ -225,18 +226,22 @@ export default async function ReportDetailPage({ params }) {
                 stat('Flood incidents', d.flooding_incidents_annual, d.flooding_incidents_annual != null ? '/yr' : ''),
               ])}
 
-              {d.price_context && d.price_context.rate_sqft && card('Price context · guidance value', (() => {
+              {d.price_context && d.price_context.rate_sqft && card(`Price context · ${cityMeta(d.city).rateTerm}`, (() => {
                 const pc = d.price_context;
                 const [lo, hi] = pc.rate_sqft;
                 const bands = ['Premium', 'Upper', 'Mid', 'Modest', 'Value'];
                 const inr = n => '₹' + Number(n).toLocaleString('en-IN');
-                const mLo = Math.round(lo * 1.2 / 100) * 100, mHi = Math.round(hi * 1.6 / 100) * 100;
-                const blr = d.city === 'Bangalore';
+                // Was `d.city === 'Bangalore' ? bengaluru : ncr` -- any third
+                // city rendered "band for the NCR" against a circle rate it
+                // doesn't use. Now keyed off the record's own city.
+                const cm = cityMeta(d.city);
+                const [mktLo, mktHi] = cm.marketMultiplier;
+                const mLo = Math.round(lo * mktLo / 100) * 100, mHi = Math.round(hi * mktHi / 100) * 100;
                 return (
                   <>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
                       <span style={{ fontSize: 28, fontWeight: 700, color: 'var(--ink)' }}>{inr(lo)}–{inr(hi)}</span>
-                      <span style={{ fontSize: 12, color: 'var(--text-dim)' }}>per sq ft · {(pc.label || '').toLowerCase()} band for {blr ? 'Bengaluru' : 'the NCR'}</span>
+                      <span style={{ fontSize: 12, color: 'var(--text-dim)' }}>per sq ft · {(pc.label || '').toLowerCase()} band for {cm.shortName}</span>
                     </div>
                     <div style={{ display: 'flex', gap: 5, margin: '14px 0 6px' }}>
                       {bands.map((b, i) => (
@@ -249,7 +254,7 @@ export default async function ReportDetailPage({ params }) {
                       ))}
                     </div>
                     <p style={{ fontSize: 13, color: 'var(--text-mute)', margin: '12px 0 0', lineHeight: 1.5 }}>
-                      Market prices run <strong style={{ color: 'var(--ink)' }}>20–70% above</strong> the {blr ? 'guidance value' : 'circle rate'} — expect roughly <strong style={{ color: 'var(--ink)' }}>{inr(mLo)}–{inr(mHi)}/sq ft</strong> in practice. Indicative government valuation, not a market quote.
+                      Market prices run <strong style={{ color: 'var(--ink)' }}>{cm.marketGapLabel}</strong> the {cm.rateTerm} — expect roughly <strong style={{ color: 'var(--ink)' }}>{inr(mLo)}–{inr(mHi)}/sq ft</strong> in practice. Indicative government valuation, not a market quote.
                     </p>
                   </>
                 );

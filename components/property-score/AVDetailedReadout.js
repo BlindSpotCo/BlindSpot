@@ -76,20 +76,14 @@ export const AQI_PLAIN = {
   'Severe': 'Hazardous — a serious health risk; stay indoors.',
 };
 
-export function source(k, city) {
-  const blr = city === 'Bangalore';
-  const m = {
-    crime: blr ? 'Bengaluru City Police / NCRB · est. 2023' : 'Delhi Police Annual Report · est. 2023',
-    infrastructure: blr ? 'BBMP plans · BMRCL Namma Metro · est. 2024' : 'DDA Master Plan · DMRC · est. 2024',
-    air: blr ? 'CPCB / KSPCB live AQI · updated daily' : 'CPCB live AQI · updated daily',
-    power: blr ? 'BESCOM annual reports · est. 2023' : 'BSES / Tata Power · est. 2023',
-    schools: 'CBSE affiliation database · est. 2023',
-    water: blr ? 'BWSSB (Cauvery) supply & quality · est. 2023' : 'Delhi Jal Board supply & quality · est. 2023',
-    roads: blr ? 'BBMP road-condition surveys · est. 2023' : 'MCD / PWD road surveys · est. 2023',
-    sewerage: blr ? 'BWSSB waterlogging records · est. 2023' : 'Drainage & waterlogging records · est. 2023',
-  };
-  return m[k] || '';
-}
+// Attribution now lives in lib/aslivastu/cityMeta.js, keyed by city.
+// This used to be `city === 'Bangalore' ? bengaluru : delhi` -- which
+// meant any third city silently rendered "Delhi Police Annual Report",
+// "Delhi Jal Board" and "MCD / PWD road surveys" purely because it wasn't
+// Bangalore. Nothing threw; the report just cited the wrong government
+// department for every dimension. Kept as a thin re-export so existing
+// `source(k, city)` call sites don't all have to change.
+export { sourceFor as source } from '@/lib/aslivastu/cityMeta';
 // Autumn palette, worst → best: brick red, pumpkin orange, forest green,
 // mid green, light green. Replaces the earlier 4-tier scale on request —
 // same idea (weak scores read as hot colours, strong scores read as green,

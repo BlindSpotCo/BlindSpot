@@ -21,6 +21,7 @@
 import { useState, useMemo } from 'react';
 import AVDetailedReadout, { BPF, source, scoreColor, verdictFor, explain, AQI_PLAIN, formatDateLong, inr } from '@/components/property-score/AVDetailedReadout';
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
+import { cityMeta } from '@/lib/aslivastu/cityMeta';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap');
@@ -229,18 +230,22 @@ export default function NeighbourhoodReport({ record, nearby }) {
           </BPF>
 
           <BPF style={{ padding: '20px 22px' }}>
-            <p className="kick">Price Context · Guidance Value</p>
+            {/* Heading used to hardcode "Guidance Value" -- Karnataka's
+                term -- on every city including Delhi, whose own records
+                say circle rate. Now follows the record's city. */}
+            <p className="kick">Price Context · {cityMeta(record.city).rateTermTitle}</p>
             {pc?.rate_sqft ? (() => {
               const [lo, hi] = pc.rate_sqft;
               const bands = ['Premium', 'Upper', 'Mid', 'Modest', 'Value'];
               const ops = [1, .55, .3, .15, .07];
-              const mLo = Math.round(lo * 1.2 / 100) * 100, mHi = Math.round(hi * 1.6 / 100) * 100;
-              const blr = record.city === 'Bangalore';
+              const cm = cityMeta(record.city);
+              const [mktLo, mktHi] = cm.marketMultiplier;
+              const mLo = Math.round(lo * mktLo / 100) * 100, mHi = Math.round(hi * mktHi / 100) * 100;
               return (
                 <>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, margin: '8px 0 2px', flexWrap: 'wrap' }}>
                     <span className="cond" style={{ fontSize: 30, fontWeight: 700 }}>{inr(lo)}–{inr(hi)}</span>
-                    <span style={{ fontSize: 12, color: 'var(--text-dim)' }}>per sq ft · {pc.label?.toLowerCase()} band for {blr ? 'Bengaluru' : 'the NCR'}</span>
+                    <span style={{ fontSize: 12, color: 'var(--text-dim)' }}>per sq ft · {pc.label?.toLowerCase()} band for {cm.shortName}</span>
                   </div>
                   <div style={{ display: 'flex', gap: 5, margin: '14px 0 6px' }}>
                     {bands.map((b, i) => (
@@ -251,7 +256,7 @@ export default function NeighbourhoodReport({ record, nearby }) {
                     ))}
                   </div>
                   <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '12px 0 0', lineHeight: 1.5 }}>
-                    Market prices run <strong style={{ color: 'var(--text)' }}>20–70% above</strong> the {blr ? 'guidance value' : 'circle rate'} — expect roughly <strong style={{ color: 'var(--text)' }}>{inr(mLo)}–{inr(mHi)}/sq ft</strong> in practice. Indicative government valuation, not a market quote; does not affect the score.
+                    Market prices run <strong style={{ color: 'var(--text)' }}>{cm.marketGapLabel}</strong> the {cm.rateTerm} — expect roughly <strong style={{ color: 'var(--text)' }}>{inr(mLo)}–{inr(mHi)}/sq ft</strong> in practice. Indicative government valuation, not a market quote; does not affect the score.
                   </p>
                 </>
               );
