@@ -1418,6 +1418,15 @@
     .ps-btn, .ps-btn:hover, .ps-row-btn, .uv-facing-btn, .ps-persona-node{ transition:none !important; transform:none !important }
   }
 
+  /* Persona picker: dial on desktop, plain button list on phones (no hover
+     state on touch, and a circular dial is a lot to parse as someone's
+     first interaction with the product). Both markups render always;
+     this just swaps which one is visible at the breakpoint. */
+  @media (max-width:640px){
+    .pw-wheel-wrap{ display:none !important }
+    .pw-mobile-list{ display:flex !important }
+  }
+
 /* ---------- APP SCREENS (Property Score / SunScout) — MOBILE SCALE-DOWN
    (<=640px) ----------
    Unlike the landing/auth/reports pages above, these screens are built with
