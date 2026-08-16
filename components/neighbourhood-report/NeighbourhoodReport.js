@@ -21,7 +21,6 @@
 import { useState, useMemo } from 'react';
 import AVDetailedReadout, { BPF, source, scoreColor, verdictFor, AQI_PLAIN, formatDateLong, inr } from '@/components/property-score/AVDetailedReadout';
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
-import HeroMap from '@/components/HeroMap';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap');
@@ -130,56 +129,42 @@ export default function NeighbourhoodReport({ record, nearby }) {
 
       <div className="nr-wrap" style={{ maxWidth: 1120, margin: '0 auto', padding: '48px 32px 64px' }}>
 
-        {/* ── Opening: header + hero cards sit over the same city-map
-            texture as the homepage hero (components/HeroMap.js) -- same
-            idiom the whole site already uses to signal "this is a map you
-            just dropped a pin on," so the report's opening reads as the
-            same product instead of a plain white/cream block. Low-contrast
-            and masked to an ellipse by its own .hero-map CSS, so it sits
-            under the header/cards without competing with either. */}
-        <div style={{ position: 'relative', overflow: 'hidden', margin: '0 -32px', padding: '0 32px' }}>
-          <HeroMap />
-          <div style={{ position: 'relative', zIndex: 1 }}>
+        {/* ── Header ── */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 28, paddingBottom: 18, borderBottom: '1px solid color-mix(in srgb, var(--slate) 55%, transparent)' }}>
+          <p className="kick" style={{ fontSize: 12 }}>Neighbourhood Intelligence · Spec Sheet</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+            {closeHint && <span style={{ fontSize: 11.5, color: 'var(--text-dim)' }}>Couldn&apos;t close automatically — you can close this tab yourself.</span>}
+            <button onClick={handleClose} style={{ fontSize: 12.5, fontWeight: 600, border: '1px solid color-mix(in srgb, var(--slate) 45%, transparent)', borderRadius: 3, padding: '9px 16px', color: 'var(--text-mute)', background: 'transparent' }}>← Close</button>
+          </div>
+        </div>
 
-            {/* ── Header ── */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 28, paddingTop: 8, paddingBottom: 18, borderBottom: '1px solid color-mix(in srgb, var(--slate) 55%, transparent)' }}>
-              <p className="kick" style={{ fontSize: 12 }}>Neighbourhood Intelligence · Spec Sheet</p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-                {closeHint && <span style={{ fontSize: 11.5, color: 'var(--text-dim)' }}>Couldn&apos;t close automatically — you can close this tab yourself.</span>}
-                <button onClick={handleClose} style={{ fontSize: 12.5, fontWeight: 600, border: '1px solid color-mix(in srgb, var(--slate) 45%, transparent)', borderRadius: 3, padding: '9px 16px', color: 'var(--text-mute)', background: 'transparent' }}>← Close</button>
-              </div>
+        {/* ── Hero: 3 cards (Identity / Score / Verdict) ── */}
+        <div className="nr-hero3" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 24 }}>
+          <BPF style={{ padding: 24 }}>
+            <p className="kick">Sheet 01 · {record.area || record.city} · PIN {record.pin_code}</p>
+            <h1 className="nr-hero-name cond" style={{ fontSize: 54, fontWeight: 700, lineHeight: .95, margin: '10px 0 8px', textTransform: 'uppercase' }}>{record.name}</h1>
+            <p style={{ fontSize: 13, color: 'var(--text-dim)', margin: 0 }}>
+              {record.dimensions_scored || Object.keys(record.scores || {}).length}/{record.dimensions_total || Object.keys(record.scores || {}).length} dimensions · scored {formatDateLong(record.scored_at) || '—'}
+            </p>
+          </BPF>
+
+          <BPF style={{ padding: 24 }}>
+            <p className="kick">Composite index · {persona} weighting</p>
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, margin: '8px 0 6px' }}>
+              <span className="nr-hero-score cond" style={{ fontSize: 84, fontWeight: 700, lineHeight: .85, color: 'var(--text)' }}>{nqi}</span>
+              <span className="cond" style={{ fontSize: 30, fontWeight: 700, color: 'var(--slate)', marginBottom: 12 }}>{grade}</span>
             </div>
+            <p style={{ fontSize: 13, color: 'var(--text-dim)', margin: 0, lineHeight: 1.5 }}>NQI · weighted mean of {rows.length} dimensions — switch profile to re-weight.</p>
+          </BPF>
 
-            {/* ── Hero: 3 cards (Identity / Score / Verdict) ── */}
-            <div className="nr-hero3" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 24 }}>
-              <BPF style={{ padding: 24 }}>
-                <p className="kick">Sheet 01 · {record.area || record.city} · PIN {record.pin_code}</p>
-                <h1 className="nr-hero-name cond" style={{ fontSize: 54, fontWeight: 700, lineHeight: .95, margin: '10px 0 8px', textTransform: 'uppercase' }}>{record.name}</h1>
-                <p style={{ fontSize: 13, color: 'var(--text-dim)', margin: 0 }}>
-                  {record.dimensions_scored || Object.keys(record.scores || {}).length}/{record.dimensions_total || Object.keys(record.scores || {}).length} dimensions · scored {formatDateLong(record.scored_at) || '—'}
-                </p>
-              </BPF>
-
-              <BPF style={{ padding: 24 }}>
-                <p className="kick">Composite index · {persona} weighting</p>
-                <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, margin: '8px 0 6px' }}>
-                  <span className="nr-hero-score cond" style={{ fontSize: 84, fontWeight: 700, lineHeight: .85, color: 'var(--text)' }}>{nqi}</span>
-                  <span className="cond" style={{ fontSize: 30, fontWeight: 700, color: 'var(--slate)', marginBottom: 12 }}>{grade}</span>
-                </div>
-                <p style={{ fontSize: 13, color: 'var(--text-dim)', margin: 0, lineHeight: 1.5 }}>NQI · weighted mean of {rows.length} dimensions — switch profile to re-weight.</p>
-              </BPF>
-
-              {/* Verdict fill stays scoreColor(nqi) -- the same autumn
-                  score-colour ramp used everywhere else on the report
-                  (deep olive → olive → yellow-green → orange → red),
-                  never AsliVastu's own wine/red brand colour. */}
-              <div style={{ background: scoreColor(nqi), color: '#fff', padding: 24, position: 'relative' }}>
-                <p className="kick" style={{ color: 'rgba(255,255,255,.8)' }}>Verdict</p>
-                <h2 className="cond" style={{ fontSize: 34, fontWeight: 700, margin: '8px 0 10px', textTransform: 'uppercase' }}>{verdict.label}</h2>
-                <p style={{ fontSize: 13, lineHeight: 1.5, margin: 0, color: 'rgba(255,255,255,.92)' }}>{verdict.why}</p>
-              </div>
-            </div>
-
+          {/* Verdict fill stays scoreColor(nqi) -- the same autumn
+              score-colour ramp used everywhere else on the report
+              (deep olive → olive → yellow-green → orange → red),
+              never AsliVastu's own wine/red brand colour. */}
+          <div style={{ background: scoreColor(nqi), color: '#fff', padding: 24, position: 'relative' }}>
+            <p className="kick" style={{ color: 'rgba(255,255,255,.8)' }}>Verdict</p>
+            <h2 className="cond" style={{ fontSize: 34, fontWeight: 700, margin: '8px 0 10px', textTransform: 'uppercase' }}>{verdict.label}</h2>
+            <p style={{ fontSize: 13, lineHeight: 1.5, margin: 0, color: 'rgba(255,255,255,.92)' }}>{verdict.why}</p>
           </div>
         </div>
 

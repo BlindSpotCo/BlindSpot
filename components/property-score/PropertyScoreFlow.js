@@ -14,6 +14,7 @@ import LocalityPicker from './LocalityPicker';
 import AddressPicker from './AddressPicker';
 import UnitVerdict from './UnitVerdict';
 import PersonaPicker from './PersonaPicker';
+import HeroMap from '@/components/HeroMap';
 
 const SCREEN_H = 'calc(100vh - 66px)'; // 66px = the sticky header's own height
 
@@ -68,9 +69,14 @@ export default function PropertyScoreFlow() {
       {/* ── snap sequence: 3 full screens ── */}
       <div style={{ scrollSnapType: 'y proximity' }}>
 
-        {/* Screen 1 — intro */}
-        <div style={{ minHeight: SCREEN_H, display: 'flex', alignItems: 'center', scrollSnapAlign: 'start' }}>
-          <div className="wrap" style={{ width: '100%' }}>
+        {/* Screen 1 — intro. Same city-map texture as the homepage hero
+            (components/HeroMap.js) sits behind it -- this is the actual
+            opening screen of the property-score flow (the one that was
+            plain/unbranded before), not the standalone AsliVastu report
+            page, which keeps its own plain header. */}
+        <div style={{ minHeight: SCREEN_H, display: 'flex', alignItems: 'center', scrollSnapAlign: 'start', position: 'relative', overflow: 'hidden' }}>
+          <HeroMap />
+          <div className="wrap" style={{ width: '100%', position: 'relative', zIndex: 1 }}>
             <div className="hero-grid" style={{ alignItems: 'center' }}>
               <div>
                 <span className="hero-eyebrow">Combined Verdict</span>
