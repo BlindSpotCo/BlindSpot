@@ -11,7 +11,7 @@ import { getPersona, PERSONA_ORDER } from '@/lib/personas';
 
 const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'North-West', 'South-West'];
 
-export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId, onVerdict }) {
+export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId, onUnitSeen, onVerdictStart }) {
   const persona = getPersona(personaId) || getPersona(PERSONA_ORDER[0]);
   const sunScoutRef = useRef(null);
   const [floor, setFloor] = useState(null);
@@ -42,19 +42,16 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   }, [personaId]);
 
   // A new location (new locality pick, or a fresh address confirm) should
-  // clear out any stale verdict from the previous one.
+  // clear out any stale verdict from the previous one. The SunScout panel
+  // below renders (and starts its shadow animation) as soon as lat/lon
+  // are set, so that's also the moment "Unit" counts as seen -- no extra
+  // gate needed since the animation autoplays on mount.
   useEffect(() => {
     setCombined(null); setFloor(null); setFacing(null);
     setCapturedFromSS(false); setSsPreview(null); setAreaWeight(50);
-    onVerdict?.(false);
+    onVerdictStart?.(false);
+    onUnitSeen?.(!!(lat && lon));
   }, [pinCode, lat, lon]);
-
-  // Tell the parent progress strip whether a verdict now exists, so it
-  // can show a "Unit" stage while floor/facing are still being picked
-  // and only advance to "Verdict" once combined actually resolves.
-  useEffect(() => {
-    onVerdict?.(!!combined);
-  }, [combined]);
 
   const handleUnitSelected = useCallback((f, d) => {
     setFloor(f); setFacing(d); setCapturedFromSS(true); setCombined(null);
@@ -83,6 +80,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
     const useFloor = floorOverride ?? floor;
     const useFacing = facingOverride ?? facing;
     if (!lat || !lon || useFloor == null || !useFacing) return;
+    onVerdictStart?.(true);
     const aw = customAreaWeight ?? areaWeight;
     setLoadingCombined(true);
     setCombinedError('');
