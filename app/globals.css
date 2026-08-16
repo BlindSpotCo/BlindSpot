@@ -617,39 +617,47 @@
      and locks, mono readout ticks in. No gradients/glow anywhere -- one
      flat field, white line work, one --ss accent (the pin), same idiom
      as .btn-cta itself. */
+  /* Timing note: the navigation fires at 1560ms (NAV_AT_MS in
+     PinDropTransition.js), deliberately AFTER the last element finishes
+     at ~1400ms. The earlier version pushed the route at 900ms while the
+     ring, pin and readout were all still animating in -- on a fast load
+     the new page replaced the overlay mid-motion, so the sequence never
+     resolved and read as an abrupt cut. Everything now settles, holds
+     briefly, and only then navigates. Keep that ordering if you retune
+     these numbers. */
   .pdt{ position:fixed; inset:0; z-index:9999; pointer-events:all; overflow:hidden }
   .pdt-field{
     position:absolute; inset:0; background:var(--brand);
     clip-path:inset(100% 0 0 0);
-    animation:pdt-wipe .44s cubic-bezier(.7,0,.2,1) forwards;
+    animation:pdt-wipe .58s cubic-bezier(.7,0,.2,1) forwards;
   }
   @keyframes pdt-wipe{ to{ clip-path:inset(0 0 0 0) } }
 
-  .pdt-svg{ position:absolute; inset:0; width:100%; height:100%; opacity:0; animation:pdt-in .3s ease .34s forwards }
+  .pdt-svg{ position:absolute; inset:0; width:100%; height:100%; opacity:0; animation:pdt-in .38s ease .46s forwards }
   @keyframes pdt-in{ to{ opacity:1 } }
 
   .pdt-grid line{ stroke:rgba(255,255,255,.14); stroke-width:1 }
   .pdt-cross line{ stroke:rgba(255,255,255,.5); stroke-width:1.5 }
-  .pdt-cross-t{ transform:translateY(-100%); animation:pdt-slide-y .5s cubic-bezier(.16,.9,.3,1) .4s forwards }
-  .pdt-cross-b{ transform:translateY(100%);  animation:pdt-slide-y .5s cubic-bezier(.16,.9,.3,1) .4s forwards }
-  .pdt-cross-l{ transform:translateX(-100%); animation:pdt-slide-x .5s cubic-bezier(.16,.9,.3,1) .4s forwards }
-  .pdt-cross-r{ transform:translateX(100%);  animation:pdt-slide-x .5s cubic-bezier(.16,.9,.3,1) .4s forwards }
+  .pdt-cross-t{ transform:translateY(-100%); animation:pdt-slide-y .64s cubic-bezier(.16,.9,.3,1) .56s forwards }
+  .pdt-cross-b{ transform:translateY(100%);  animation:pdt-slide-y .64s cubic-bezier(.16,.9,.3,1) .56s forwards }
+  .pdt-cross-l{ transform:translateX(-100%); animation:pdt-slide-x .64s cubic-bezier(.16,.9,.3,1) .56s forwards }
+  .pdt-cross-r{ transform:translateX(100%);  animation:pdt-slide-x .64s cubic-bezier(.16,.9,.3,1) .56s forwards }
   @keyframes pdt-slide-y{ to{ transform:translateY(0) } }
   @keyframes pdt-slide-x{ to{ transform:translateX(0) } }
 
   .pdt-ring{ fill:none; stroke:#fff; transform-origin:500px 500px; opacity:0 }
-  .pdt-ring-outer{ stroke-width:1.5; stroke-dasharray:14 10; animation:pdt-lock .58s cubic-bezier(.16,.9,.3,1) .5s forwards }
-  .pdt-ring-inner{ stroke-width:2.5; animation:pdt-lock .58s cubic-bezier(.16,.9,.3,1) .62s forwards }
+  .pdt-ring-outer{ stroke-width:1.5; stroke-dasharray:14 10; animation:pdt-lock .66s cubic-bezier(.16,.9,.3,1) .64s forwards }
+  .pdt-ring-inner{ stroke-width:2.5; animation:pdt-lock .66s cubic-bezier(.16,.9,.3,1) .78s forwards }
   @keyframes pdt-lock{ from{ transform:scale(2.6); opacity:0 } to{ transform:scale(1); opacity:1 } }
 
-  .pdt-ticks path{ stroke:rgba(255,255,255,.75); stroke-width:2; fill:none; opacity:0; animation:pdt-in .26s ease .82s forwards }
+  .pdt-ticks path{ stroke:rgba(255,255,255,.75); stroke-width:2; fill:none; opacity:0; animation:pdt-in .32s ease .98s forwards }
 
-  .pdt-pin{ fill:var(--ss); transform-origin:500px 500px; opacity:0; animation:pdt-pin .34s cubic-bezier(.2,1.5,.4,1) .78s forwards }
+  .pdt-pin{ fill:var(--ss); transform-origin:500px 500px; opacity:0; animation:pdt-pin .42s cubic-bezier(.2,1.5,.4,1) 1s forwards }
   @keyframes pdt-pin{ from{ transform:scale(0); opacity:0 } to{ transform:scale(1); opacity:1 } }
 
   .pdt-readout{
     position:absolute; left:0; right:0; bottom:14%; text-align:center; color:#fff;
-    opacity:0; animation:pdt-in .3s ease .88s forwards;
+    opacity:0; animation:pdt-in .36s ease 1.06s forwards;
   }
   .pdt-readout-line{ display:block; font-size:13px; font-weight:600; letter-spacing:.22em; text-transform:uppercase }
   .pdt-readout-sub{ display:block; font-size:12px; letter-spacing:.1em; color:rgba(255,255,255,.6); margin-top:7px }

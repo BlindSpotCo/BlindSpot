@@ -20,9 +20,16 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
-const TOTAL_MS = 1150;   // full animation
-const NAV_AT_MS = 900;   // push the route just before the ring finishes locking
-const REDUCED_MS = 260;  // reduced-motion: brief fade, then go
+// The last element (the pin, then the readout) finishes at ~1400ms -- see
+// the timing note above .pdt in globals.css. Navigation deliberately fires
+// AFTER that, with a short hold, so the sequence resolves before the new
+// page takes over. The previous 900ms push cut the ring, pin and readout
+// off mid-motion whenever the destination loaded quickly, which is what
+// made it feel abrupt. If you retune the CSS delays, keep NAV_AT_MS
+// greater than the last animation's end time.
+const TOTAL_MS = 1560;
+const NAV_AT_MS = 1560;  // ~1400ms of animation + ~160ms hold on the resolved frame
+const REDUCED_MS = 320;  // reduced-motion: brief fade, then go
 
 export default function PinDropTransition({ href = '/property-score', className, children }) {
   const router = useRouter();
