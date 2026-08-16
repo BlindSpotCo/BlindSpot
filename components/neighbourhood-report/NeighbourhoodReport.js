@@ -19,7 +19,7 @@
 // is here.
 
 import { useState, useMemo } from 'react';
-import AVDetailedReadout, { BPF, source, scoreColor, AQI_PLAIN, formatDateLong, inr } from '@/components/property-score/AVDetailedReadout';
+import AVDetailedReadout, { BPF, source, scoreColor, verdictFor, AQI_PLAIN, formatDateLong, inr } from '@/components/property-score/AVDetailedReadout';
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
 import HeroMap from '@/components/HeroMap';
 
@@ -58,12 +58,6 @@ const WEIGHT_PRESETS = {
   Safety: { crime: 40, infrastructure: 15, air: 12, power: 8, schools: 5, water: 8, roads: 5, sewerage: 7 },
 };
 function gradeFor(s) { return s == null ? '—' : s >= 80 ? 'A' : s >= 70 ? 'B+' : s >= 60 ? 'B' : s >= 50 ? 'C+' : s >= 40 ? 'C' : 'D'; }
-function verdictFor(nqi) {
-  if (nqi >= 80) return { label: 'Strong Buy', why: 'Scores well across the board — few weak spots to worry about.' };
-  if (nqi >= 60) return { label: 'Consider', why: 'Decent overall, with some weak dimensions worth inspecting on site before deciding.' };
-  if (nqi >= 45) return { label: 'Below Average', why: 'Below the tracked-area average — compare nearby areas before committing.' };
-  return { label: 'Avoid', why: 'Multiple dimensions score poorly — strongly recommend comparing alternatives.' };
-}
 function explain(k, r) {
   const city = r.city || 'Delhi NCR';
   switch (k) {

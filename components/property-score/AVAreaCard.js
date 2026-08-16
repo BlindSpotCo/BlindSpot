@@ -7,7 +7,7 @@
 // locality mode) and AddressPicker (direct-address mode).
 
 import { GradeBadge } from '@/lib/property-score/ui';
-import { scoreColor } from './AVDetailedReadout';
+import { scoreColor, verdictFor, BPF } from './AVDetailedReadout';
 
 const FACTOR_LABELS = {
   crime: 'Crime', infrastructure: 'Infrastructure', air: 'Air Quality',
@@ -39,21 +39,40 @@ function BigBar({ label, score }) {
 }
 
 export default function AVAreaCard({ record, city }) {
+  const verdict = verdictFor(record.nqi_composite);
   return (
-    {/* background:var(--bg-2) -- one step darker than the page's own --bg
-        (#F1E9DA vs #FAF6EE, both already-defined tokens, nothing new) --
-        previously had no background at all and was invisible as a card,
-        reading as the exact same colour as the page around it. */}
-    <div className="av-card" style={{ marginBottom: 36, border: '1px solid var(--line)', borderLeft: '4px solid var(--slate)', borderRadius: 'var(--radius)', padding: '28px 30px', background: 'var(--bg-2)' }}>
+    // Same BPF "blueprint frame" box (corner + marks, same border treatment)
+    // as every card on the full report page -- this used to be a plain
+    // bordered div with no relation to the report's visual language at all,
+    // which is why the inline card and the full report read as two
+    // different products. background:var(--bg-2) keeps the "one step
+    // darker than the page" treatment this card already had.
+    <BPF className="av-card" style={{ marginBottom: 36, padding: '28px 30px', background: 'var(--bg-2)' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&display=swap');
         .av-card .cond { font-family: 'Barlow Condensed', sans-serif; }
       `}</style>
-      <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', letterSpacing: '.12em', marginBottom: 10 }}>ASLIVASTU — {record.name.toUpperCase()}</div>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 28 }}>
-        <span className="av-score-number cond" style={{ fontWeight: 700, fontSize: 60, color: 'var(--slate)' }}>{record.nqi_composite}</span>
-        <GradeBadge grade={record.grade} color="var(--slate)" />
-        <span style={{ fontSize: 14, color: 'var(--text-mute)' }}>Pincode {record.pin_code}{city ? `, ${city}` : ''}</span>
+      <div className="mono" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 600, color: 'var(--slate)', marginBottom: 14 }}>
+        Sheet · AsliVastu — {record.name.toUpperCase()}
+      </div>
+
+      {/* Composite-index block + coloured Verdict block side by side --
+          same pairing as the full report's hero cards (Composite Index +
+          Verdict), just compacted to fit an inline card instead of two
+          full-width cards. */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'stretch', marginBottom: 28 }}>
+        <div style={{ flex: '1 1 260px' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 16 }}>
+            <span className="av-score-number cond" style={{ fontWeight: 700, fontSize: 60, lineHeight: 1, color: 'var(--slate)' }}>{record.nqi_composite}</span>
+            <GradeBadge grade={record.grade} color="var(--slate)" />
+          </div>
+          <span style={{ fontSize: 14, color: 'var(--text-mute)' }}>Pincode {record.pin_code}{city ? `, ${city}` : ''}</span>
+        </div>
+        <div style={{ flex: '1 1 220px', background: scoreColor(record.nqi_composite), color: '#fff', padding: '16px 20px', borderRadius: 'var(--radius)' }}>
+          <div className="mono" style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '.1em', color: 'rgba(255,255,255,.8)', marginBottom: 6 }}>Verdict</div>
+          <div className="cond" style={{ fontSize: 22, fontWeight: 700, textTransform: 'uppercase', marginBottom: 6 }}>{verdict.label}</div>
+          <div style={{ fontSize: 12.5, lineHeight: 1.5, color: 'rgba(255,255,255,.92)' }}>{verdict.why}</div>
+        </div>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20, marginBottom: 22 }}>
@@ -75,6 +94,6 @@ export default function AVAreaCard({ record, city }) {
       >
         See Full AsliVastu Report ↗
       </a>
-    </div>
+    </BPF>
   );
 }

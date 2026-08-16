@@ -113,6 +113,16 @@ export function waterloggingLabel(v) {
   if (v == null) return '—';
   return v >= 4 ? 'Low risk' : v >= 3 ? 'Moderate risk' : 'High risk';
 }
+// Moved here from NeighbourhoodReport.js (was a local, unexported function)
+// so AVAreaCard's inline card on the property-score page can show the same
+// verdict label/colour block the full report uses, instead of drifting out
+// of sync with a duplicate copy.
+export function verdictFor(nqi) {
+  if (nqi >= 80) return { label: 'Strong Buy', why: 'Scores well across the board — few weak spots to worry about.' };
+  if (nqi >= 60) return { label: 'Consider', why: 'Decent overall, with some weak dimensions worth inspecting on site before deciding.' };
+  if (nqi >= 45) return { label: 'Below Average', why: 'Below the tracked-area average — compare nearby areas before committing.' };
+  return { label: 'Avoid', why: 'Multiple dimensions score poorly — strongly recommend comparing alternatives.' };
+}
 
 // Plain-JS date formatting, deliberately NOT toLocaleDateString(): that
 // reads the *runtime's* default locale/ICU data, which can differ between
