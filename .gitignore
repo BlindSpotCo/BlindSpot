@@ -5,3 +5,7 @@ node_modules/
 .vercel
 .env*
 !.env.local.example
+
+# Python bytecode cache (from scripts/*.py)
+__pycache__/
+*.pyc

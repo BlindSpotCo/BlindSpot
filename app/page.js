@@ -26,6 +26,7 @@ export default function Home() {
       { c: '28.4595° N, 77.0266° E', l: 'pulling AQI + power data, Gurugram' },
       { c: '12.9784° N, 77.6408° E', l: 'mapping shadow hours, Indiranagar' },
       { c: '30.7410° N, 76.7822° E', l: 'reading collector rates, Chandigarh' },
+      { c: '18.9339° N, 72.8352° E', l: 'checking Ready Reckoner rates, Fort' },
     ];
     let i = 0;
     const el = coordRef.current;
@@ -153,7 +154,7 @@ export default function Home() {
               <h3>AsliVastu</h3>
               <p>Government data, not broker spin. Every area scored 0–100 across safety, air quality, power reliability, water, schools and infrastructure — pulled from public records, not a commission-driven source.</p>
               <div className="pcard-stats">
-                <div><div className="pstat-num">150+</div><div className="pstat-lbl">Areas covered</div></div>
+                <div><div className="pstat-num">260+</div><div className="pstat-lbl">Areas covered</div></div>
                 <div><div className="pstat-num">8</div><div className="pstat-lbl">Dimensions</div></div>
                 <div><div className="pstat-num">Govt.</div><div className="pstat-lbl">Data source</div></div>
               </div>

@@ -21,7 +21,7 @@
 import { useState, useMemo } from 'react';
 import AVDetailedReadout, { BPF, source, scoreColor, verdictFor, explain, AQI_PLAIN, formatDateLong, inr } from '@/components/property-score/AVDetailedReadout';
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
-import { cityMeta } from '@/lib/aslivastu/cityMeta';
+import { cityMeta, coverageLabel } from '@/lib/aslivastu/cityMeta';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap');
@@ -319,7 +319,7 @@ export default function NeighbourhoodReport({ record, nearby }) {
             <div>
               <div className="team-name" style={{ fontSize: 16 }}>Gurshaan Singh Baweja</div>
               <p style={{ fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.6, margin: '4px 0 10px', maxWidth: 560 }}>
-                Buying a home in Delhi NCR or Bangalore means digging through a dozen government portals. AsliVastu — the neighbourhood engine behind BlindSpot — puts it all in one place: real data, one score, no guesswork.
+                Buying a home in {coverageLabel()} means digging through a dozen government portals. AsliVastu — the neighbourhood engine behind BlindSpot — puts it all in one place: real data, one score, no guesswork.
               </p>
               <a href="https://www.linkedin.com/in/gurshaan-singh-baweja" target="_blank" rel="noopener noreferrer" className="team-link">Connect on LinkedIn →</a>
             </div>
