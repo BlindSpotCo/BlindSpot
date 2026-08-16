@@ -11,7 +11,7 @@ import { getPersona, PERSONA_ORDER } from '@/lib/personas';
 
 const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'North-West', 'South-West'];
 
-export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId }) {
+export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId, onUnitSeen, onVerdictStart }) {
   const persona = getPersona(personaId) || getPersona(PERSONA_ORDER[0]);
   const sunScoutRef = useRef(null);
   const [floor, setFloor] = useState(null);
@@ -42,10 +42,14 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   }, [personaId]);
 
   // A new location (new locality pick, or a fresh address confirm) should
-  // clear out any stale verdict from the previous one.
+  // clear out any stale verdict from the previous one, and reset both
+  // ticks -- "Unit" ticks on the Get Score click below, "Verdict" ticks
+  // when the full AI report is generated.
   useEffect(() => {
     setCombined(null); setFloor(null); setFacing(null);
     setCapturedFromSS(false); setSsPreview(null); setAreaWeight(50);
+    onUnitSeen?.(false);
+    onVerdictStart?.(false);
   }, [pinCode, lat, lon]);
 
   const handleUnitSelected = useCallback((f, d) => {
@@ -75,6 +79,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
     const useFloor = floorOverride ?? floor;
     const useFacing = facingOverride ?? facing;
     if (!lat || !lon || useFloor == null || !useFacing) return;
+    onUnitSeen?.(true);
     const aw = customAreaWeight ?? areaWeight;
     setLoadingCombined(true);
     setCombinedError('');
@@ -185,9 +190,6 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                 {ssPreview && <> LiveScore came back {ssPreview.liveScore}/100 ({ssPreview.grade}).</>}
               </div>
             )}
-            <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', lineHeight: 1.6, marginTop: capturedFromSS ? 4 : 14 }}>
-              {!capturedFromSS && "Skip AI Report/LiveScore if you want — you'll be asked for floor/facing directly at the verdict step below instead."}
-            </div>
           </>
         )}
       </div>
@@ -289,7 +291,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               )}
 
               <button
-                onClick={() => sunScoutRef.current?.openReport({ floor: combined.unit.floor, facing: combined.unit.facing })}
+                onClick={() => { onVerdictStart?.(true); sunScoutRef.current?.openReport({ floor: combined.unit.floor, facing: combined.unit.facing }); }}
                 className="ps-btn ps-cta-btn"
                 style={{
                   background: 'var(--brand)', color: '#fff', border: 'none',

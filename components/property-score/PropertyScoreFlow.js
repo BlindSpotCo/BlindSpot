@@ -29,10 +29,14 @@ export default function PropertyScoreFlow() {
   const [addressLabel, setAddressLabel] = useState('');
   const [lat, setLat] = useState('');
   const [lon, setLon] = useState('');
+  // "Unit" ticks when Get Combined/Home Comfort Score is clicked;
+  // "Verdict" ticks when the full AI report is generated.
+  const [unitSeen, setUnitSeen] = useState(false);
+  const [verdictStarted, setVerdictStarted] = useState(false);
 
   const resetLocation = () => {
     setAreaRecord(null); setPinCode(null); setCity(null); setAddressLabel('');
-    setLat(''); setLon('');
+    setLat(''); setLon(''); setUnitSeen(false); setVerdictStarted(false);
   };
 
   const chooseMode = (m) => {
@@ -68,12 +72,24 @@ export default function PropertyScoreFlow() {
   // Coarse but reliable -- derived straight from state this component
   // already owns, no scroll-spying needed. Persona picking itself isn't a
   // hard gate (you can still continue without one), so it's just the
-  // first stage that hasn't happened yet vs. has.
-  const progressStage = !personaId ? 'angle' : (!(lat && lon) ? 'location' : 'verdict');
+  // first stage that hasn't happened yet vs. has. "Unit" and "Verdict"
+  // are ticked (done) independently of which stage is currently active --
+  // see PropertyScoreProgress's `done` prop -- so the active pointer
+  // moves straight to Verdict as soon as Unit is marked seen.
+  const progressStage = !personaId ? 'angle'
+    : !(lat && lon) ? 'location'
+    : !unitSeen ? 'unit'
+    : 'verdict';
+  const progressDone = [
+    ...(personaId ? ['angle'] : []),
+    ...(lat && lon ? ['location'] : []),
+    ...(unitSeen ? ['unit'] : []),
+    ...(verdictStarted ? ['verdict'] : []),
+  ];
 
   return (
     <section className="section" id="property-score-flow" style={{ paddingTop: 0 }}>
-      <PropertyScoreProgress current={progressStage} />
+      <PropertyScoreProgress current={progressStage} done={progressDone} />
 
       {/* ── snap sequence: 3 full screens ── */}
       <div style={{ scrollSnapType: 'y proximity' }}>
@@ -213,6 +229,8 @@ export default function PropertyScoreFlow() {
             setLon={setLon}
             addressLabel={addressLabel}
             personaId={personaId}
+            onUnitSeen={setUnitSeen}
+            onVerdictStart={setVerdictStarted}
           />
         )}
       </div>

@@ -6,18 +6,19 @@
 // to 1 every time -- so a user who'd already picked a persona and a
 // location would see "STEP 1" again inside AddressPicker with no sense
 // of how far into the overall journey that actually was. This is the
-// single authoritative 3-stage indicator instead: Your Angle -> Location
-// -> Verdict, sticky under the site header so it stays visible the whole
-// way through, including while scrolling through the variable-height
-// content below the intro screens.
+// single authoritative 4-stage indicator instead: Your Angle -> Location
+// -> Unit -> Verdict, sticky under the site header so it stays visible
+// the whole way through, including while scrolling through the
+// variable-height content below the intro screens.
 
 const STAGES = [
   { key: 'angle', label: 'Your Angle' },
   { key: 'location', label: 'Location' },
+  { key: 'unit', label: 'Unit' },
   { key: 'verdict', label: 'Verdict' },
 ];
 
-export default function PropertyScoreProgress({ current }) {
+export default function PropertyScoreProgress({ current, done = [] }) {
   const idx = Math.max(0, STAGES.findIndex(s => s.key === current));
 
   return (
@@ -27,7 +28,13 @@ export default function PropertyScoreProgress({ current }) {
     }}>
       <div className="wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0, flexWrap: 'wrap' }}>
         {STAGES.map((s, i) => {
-          const done = i < idx;
+          // A stage counts as done either because an earlier stage is
+          // active (the old positional rule) or because the flow
+          // explicitly marked it complete (e.g. "Unit" ticks once the
+          // shadow animation has been shown, "Verdict" ticks on click --
+          // both can happen before/without moving the active pointer
+          // forward in the usual 1-2-3 sense).
+          const isDone = done.includes(s.key) || i < idx;
           const active = i === idx;
           return (
             <div key={s.key} style={{ display: 'flex', alignItems: 'center' }}>
@@ -35,18 +42,18 @@ export default function PropertyScoreProgress({ current }) {
                 <span className="mono" style={{
                   width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 11.5, fontWeight: 700, flexShrink: 0,
-                  background: done || active ? 'var(--brand)' : 'transparent',
-                  color: done || active ? '#fff' : 'var(--text-dim)',
-                  border: done || active ? 'none' : '1px solid var(--line)',
-                }}>{done ? '✓' : i + 1}</span>
+                  background: isDone || active ? 'var(--brand)' : 'transparent',
+                  color: isDone || active ? '#fff' : 'var(--text-dim)',
+                  border: isDone || active ? 'none' : '1px solid var(--line)',
+                }}>{isDone ? '✓' : i + 1}</span>
                 <span className="mono" style={{
                   fontSize: 12, letterSpacing: '.08em', textTransform: 'uppercase',
-                  color: active ? 'var(--ink)' : (done ? 'var(--text-mute)' : 'var(--text-dim)'),
+                  color: active ? 'var(--ink)' : (isDone ? 'var(--text-mute)' : 'var(--text-dim)'),
                   fontWeight: active ? 700 : 500,
                 }}>{s.label}</span>
               </div>
               {i < STAGES.length - 1 && (
-                <div style={{ width: 40, height: 1, background: done ? 'var(--brand)' : 'var(--line)', margin: '0 14px' }} />
+                <div style={{ width: 40, height: 1, background: isDone ? 'var(--brand)' : 'var(--line)', margin: '0 14px' }} />
               )}
             </div>
           );
