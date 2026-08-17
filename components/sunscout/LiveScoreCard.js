@@ -43,7 +43,7 @@ export default function LiveScoreCard({ result }) {
       }}>
         <div>
           <div style={{ fontFamily: MONO, fontSize: 10, fontWeight: 500, color: SUB, letterSpacing: '.14em', marginBottom: 6 }}>
-            LIVESCORE — COMPOSITE
+            HOME COMFORT SCORE — COMPOSITE
           </div>
           <div className="ls-score-number" style={{ fontFamily: DISPLAY, fontSize: 52, fontWeight: 800, color: INK, lineHeight: 1 }}>
             {result.liveScore}<span style={{ fontSize: 18, color: SUB, fontWeight: 700 }}>/100</span>

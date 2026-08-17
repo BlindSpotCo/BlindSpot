@@ -164,7 +164,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
         )}
         {gpsError && <div style={{ color: '#f87171', fontSize: 12.5, marginBottom: 10 }}>{gpsError}</div>}
         <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 14 }}>
-          Use the <strong style={{ color: 'var(--sun)' }}>LIVESCORE</strong> button below for the Home Comfort breakdown — once you have a verdict below, you can generate the <strong style={{ color: 'var(--sun)' }}>full AI report</strong> covering both the neighbourhood and this unit.
+          Use the <strong style={{ color: 'var(--sun)' }}>HOME COMFORT SCORE</strong> button below for the breakdown — once you have a verdict below, you can generate the <strong style={{ color: 'var(--sun)' }}>full AI report</strong> covering both the neighbourhood and this unit.
         </div>
 
         {lat && lon && (
@@ -204,7 +204,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
             {capturedFromSS && (
               <div className="mono" style={{ fontSize: 12, color: '#4ADE80', marginTop: 14 }}>
                 ✓ Using floor {floor}, {facing}-facing — picked above.
-                {ssPreview && <> LiveScore came back {ssPreview.liveScore}/100 ({ssPreview.grade}).</>}
+                {ssPreview && <> Home Comfort Score came back {ssPreview.liveScore}/100 ({ssPreview.grade}).</>}
               </div>
             )}
           </>

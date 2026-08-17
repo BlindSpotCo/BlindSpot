@@ -199,7 +199,7 @@ function UnitPanel() {
 
       <div className="ss-body">
         <div className="ss-main">
-          <div className="mono ss-tag">LIVESCORE</div>
+          <div className="mono ss-tag">HOME COMFORT SCORE</div>
           <h4 className="ss-heading">Will This Unit Work For You?</h4>
 
           <div className="ss-field">
@@ -221,7 +221,7 @@ function UnitPanel() {
             </div>
           </div>
 
-          <div className="ss-cta hw-pulse">GET MY LIVESCORE</div>
+          <div className="ss-cta hw-pulse">GET MY HOME COMFORT SCORE</div>
 
           <div className="hw-box ss-result">
             <div className="mono ss-label">HOME COMFORT SCORE</div>

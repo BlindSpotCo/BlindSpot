@@ -212,11 +212,11 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: INK, fontWeight: 700, flexShrink: 0 }}>{simTime}</span>
 
         <div style={{ flex: '1 1 0', minWidth: 4 }} />
-        <button onClick={() => setShowLiveScore(true)} style={{ background: INK, color: '#fff', border: 'none', borderRadius: 0, padding: '7px 12px', fontWeight: 700, fontSize: 12, cursor: 'pointer', letterSpacing: '.03em', flexShrink: 0 }}>LIVESCORE</button>
+        <button onClick={() => setShowLiveScore(true)} style={{ background: INK, color: '#fff', border: 'none', borderRadius: 0, padding: '7px 12px', fontWeight: 700, fontSize: 12, cursor: 'pointer', letterSpacing: '.03em', flexShrink: 0 }}>HOME COMFORT SCORE</button>
       </div>
 
       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, color: TEXT_SUB, padding: '5px 10px', background: '#FFFBF5', borderBottom: '1px solid rgba(224,123,0,0.08)' }}>
-        Click anywhere on the map to move the pin — LiveScore below and the AI Report (further down, once you confirm floor/facing) use wherever it lands.
+        Click anywhere on the map to move the pin — Home Comfort Score below and the AI Report (further down, once you confirm floor/facing) use wherever it lands.
       </div>
 
       <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>

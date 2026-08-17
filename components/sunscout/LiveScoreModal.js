@@ -70,7 +70,7 @@ export default function LiveScoreModal({ lat, lon, tzOffset, onClose, onFloorFac
 
         <div className="modal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '24px 24px 18px', borderBottom: `1px solid ${LINE}` }}>
           <div>
-            <div style={{ fontFamily: MONO, fontSize: 10, fontWeight: 500, color: ORG, letterSpacing: '.14em', marginBottom: 6 }}>LIVESCORE</div>
+            <div style={{ fontFamily: MONO, fontSize: 10, fontWeight: 500, color: ORG, letterSpacing: '.14em', marginBottom: 6 }}>HOME COMFORT SCORE</div>
             <h2 className="modal-title" style={{ fontFamily: DISPLAY, fontSize: 21, fontWeight: 800, color: INK, margin: 0 }}>Will This Unit Work For You?</h2>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: SUB, lineHeight: 1, padding: 4 }}>✕</button>
@@ -141,7 +141,7 @@ export default function LiveScoreModal({ lat, lon, tzOffset, onClose, onFloorFac
 
               <div style={{ display: 'flex', gap: 0 }}>
                 <button onClick={generate} style={{ flex: 1, background: ORG, color: '#fff', border: 'none', padding: '14px', fontSize: 13, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase' }}>
-                  Get My LiveScore
+                  Get My Home Comfort Score
                 </button>
                 <button onClick={onClose} style={{ background: 'transparent', color: SUB, border: `1px solid ${LINE}`, borderLeft: 'none', padding: '14px 20px', fontSize: 13, cursor: 'pointer' }}>Cancel</button>
               </div>
