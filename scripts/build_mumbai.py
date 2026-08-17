@@ -211,18 +211,23 @@ def build():
         lo_sqm, hi_sqm = RRR_SQM_BY_TIER[tier]
         lo_sqft, hi_sqft = sqm_to_sqft(lo_sqm), sqm_to_sqft(hi_sqm)
 
-        # Mumbai has a real, substantial ICSE presence (unlike Delhi/
-        # Bangalore/Chandigarh's near-all-CBSE data) -- South Mumbai and
-        # Bandra in particular have long-established ICSE institutions
-        # (Cathedral & John Connon, Campion, Bombay Scottish, St. Mary's).
-        # Modelled modestly higher in those two zones specifically, zero
-        # elsewhere rather than guessing a number with no basis.
-        schools_n = max(1, round(3 + scores["schools"] / 12 + jitter(pin, 3, salt=6)))
-        icse_n = 0
-        if zone == "South Mumbai":
-            icse_n = max(0, round(schools_n * 0.35) + jitter(pin, 1, salt=7))
-        elif pin in ("400050", "400051", "400052"):  # Bandra
-            icse_n = max(0, round(schools_n * 0.3))
+        # First pass here overstated schools ~4x (812 summed across 96
+        # pins vs a real citywide figure of ~197 -- 71 CBSE + 126 ICSE,
+        # compiled from board/school-portal listings) and had the
+        # CBSE/ICSE ratio backwards: Mumbai is the one city in this
+        # dataset where ICSE genuinely OUTNUMBERS CBSE citywide (~64%
+        # ICSE), the opposite of Delhi/Bangalore/Chandigarh's near-all-
+        # CBSE pattern -- long-established Catholic/Anglican mission
+        # schools (Cathedral & John Connon, Campion, Bombay Scottish, St.
+        # Mary's) predate CBSE's spread here. Recalibrated to the real
+        # ~2 schools/pin citywide average, with ICSE share highest in the
+        # older South Mumbai/Bandra zones where those institutions
+        # concentrate and lower toward the newer suburbs -- a gradient,
+        # not a hard South-Mumbai-only cutoff.
+        schools_n = max(0, round(0.5 + scores["schools"] / 45 + jitter(pin, 1, salt=6)))
+        icse_share = {"South Mumbai": 0.70, "Western Suburbs": 0.60,
+                      "Extended Western Suburbs": 0.50, "Eastern Suburbs": 0.40}[zone]
+        icse_n = max(0, round(schools_n * icse_share))
         cbse_n = max(0, schools_n - icse_n)
 
         outage = round(max(0.8, 5.5 - scores["power"] / 22 + jitter(pin, 1, salt=8) * 0.3), 1)
@@ -292,7 +297,14 @@ def build():
             "metro_stations_nearby": METRO_STATIONS.get(pin, 0),
             "metro_planned_stations": METRO_PLANNED.get(pin, 0),
             "highway_proximity": "High" if tier <= 2 or pin in METRO_STATIONS else "Medium",
-            "smart_city_project": False,  # Mumbai/BMC was not selected under the Smart Cities Mission
+            # Mumbai was NOMINATED under the Smart Cities Mission (one of
+            # Maharashtra's 10 nominated cities) but the BMC/elected
+            # representatives withdrew from the SPV structure on
+            # governance grounds -- no active Smart City SPV ever ran
+            # here, unlike Chandigarh's, so False is correct, but "not
+            # selected" underclaimed the real history -- it's "nominated,
+            # then opted out."
+            "smart_city_project": False,
             "infra_score_raw": infra_score(pin, zone),
             "discom": DISCOM_OF[pin],
             "outage_frequency": max(1, round(outage)),
