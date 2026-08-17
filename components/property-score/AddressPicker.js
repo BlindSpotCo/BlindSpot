@@ -362,7 +362,7 @@ export default function AddressPicker({ onConfirmed }) {
               ) : (
                 <div style={{ marginBottom: 24, border: '1px solid var(--line)', borderLeft: '4px solid var(--line)', borderRadius: 'var(--radius)', padding: '18px 20px' }}>
                   <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6 }}>
-                    No Neighbourhood Score coverage for pincode {pincodeOverride || resolved?.postcode || 'this location'} yet — you&apos;ll still get SunScout&apos;s Home Comfort Score for the unit, just without an area score to combine it with. If that pincode looks wrong, scroll up and correct it above.
+                    No Neighbourhood Score coverage for pincode {pincodeOverride || resolved?.postcode || 'this location'} yet — you&apos;ll still get a Home Comfort Score for the unit, just without an area score to combine it with. If that pincode looks wrong, scroll up and correct it above.
                   </div>
                 </div>
               )}

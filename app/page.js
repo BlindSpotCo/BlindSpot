@@ -162,7 +162,7 @@ export default function Home() {
 
             <div className="pcard sun reveal">
               <div className="pcard-tag"><span className="dot"></span>Solar &amp; Shadow Analysis</div>
-              <h3>SunScout</h3>
+              <h3>Home Comfort Score</h3>
               <p>Drop a pin on any property and watch the sun&apos;s real path arc across it — hour by hour, season by season, rendered against actual 3D building shadows. See exactly when direct light reaches a specific floor.</p>
               <div className="pcard-stats">
                 <div><div className="pstat-num">365</div><div className="pstat-lbl">Days modeled</div></div>
@@ -186,7 +186,7 @@ export default function Home() {
             <div className="why-row ss reveal">
               <svg className="why-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M4 20 L10 14 M20 20 L14 14"/></svg>
               <div className="why-title">Sunlight is data, not vibes</div>
-              <div className="why-desc">Listing photos are taken on sunny days, at the best angle, in summer. SunScout shows what light actually looks like at 9am in December — before you sign anything.</div>
+              <div className="why-desc">Listing photos are taken on sunny days, at the best angle, in summer. Home Comfort Score shows what light actually looks like at 9am in December — before you sign anything.</div>
             </div>
             <div className="why-row av reveal">
               <svg className="why-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="14" rx="1"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
@@ -221,8 +221,8 @@ export default function Home() {
               <div className="team-avatar">AG</div>
               <div>
                 <div className="team-name">Arushri Gangji</div>
-                <div className="team-role sun">Co-founder · Builds SunScout</div>
-                <div className="team-desc">Leads SunScout, the solar and shadow-analysis engine behind BlindSpot — modelling real sun paths and floor-level shadow hours for a unit, so buyers know exactly how much light a space gets before they sign anything.</div>
+                <div className="team-role sun">Co-founder · Builds Home Comfort Score</div>
+                <div className="team-desc">Leads Home Comfort Score, the solar and shadow-analysis engine behind BlindSpot — modelling real sun paths and floor-level shadow hours for a unit, so buyers know exactly how much light a space gets before they sign anything.</div>
                 <a href="https://www.linkedin.com/in/arushri-gangji-056108381/" target="_blank" rel="noopener" className="team-link">Connect on LinkedIn <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
               </div>
             </div>

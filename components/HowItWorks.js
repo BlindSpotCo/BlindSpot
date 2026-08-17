@@ -32,7 +32,7 @@ const STEPS = [
     eyebrow: 'STEP 2 — UNIT',
     accent: 'sun',
     heading: 'Then check the specific flat — floor, facing, and how much sun it actually gets.',
-    copy: "The area score is the same for every flat on the block. This step is what makes it personal: pick a floor and facing, and SunScout's real solar geometry returns a Home Comfort Score for that exact unit.",
+    copy: "The area score is the same for every flat on the block. This step is what makes it personal: pick a floor and facing, and real solar geometry returns a Home Comfort Score for that exact unit.",
     bullets: [
       'Real sun-path modelling, not a guess',
       'Change the floor or facing, get a new score instantly',

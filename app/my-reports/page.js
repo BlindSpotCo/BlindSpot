@@ -65,13 +65,13 @@ export default async function MyReportsPage() {
 
         {!fetchFailed && reports.length === 0 && (
           <div className="reports-empty">
-            Nothing saved yet. Run a report on SunScout or Neighbourhood Score and hit &quot;Save to BlindSpot&quot; to see it here.
+            Nothing saved yet. Run a report on Home Comfort Score or Neighbourhood Score and hit &quot;Save to BlindSpot&quot; to see it here.
           </div>
         )}
 
         {sunscoutReports.length > 0 && (
           <div className="reports-group">
-            <h2>SunScout</h2>
+            <h2>Home Comfort Score</h2>
             {sunscoutReports.map((r) => (
               <a href={`/my-reports/${r.id}`} className="report-row" key={r.id} style={{ textDecoration: 'none', display: 'flex' }}>
                 <span className="label">{r.title || 'Untitled report'}</span>

@@ -34,7 +34,7 @@ export default async function ReportDetailPage({ params }) {
 
         <h1>{report.title || 'Untitled report'}</h1>
         <p className="sub">
-          {report.source === 'sunscout' ? 'SunScout' : 'Neighbourhood Score'} · Saved {new Date(report.created_at).toLocaleDateString()}
+          {report.source === 'sunscout' ? 'Home Comfort Score' : 'Neighbourhood Score'} · Saved {new Date(report.created_at).toLocaleDateString()}
         </p>
 
         {report.source === 'sunscout' && (

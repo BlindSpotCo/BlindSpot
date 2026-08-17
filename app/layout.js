@@ -4,7 +4,7 @@ import { Analytics } from '@vercel/analytics/next';
 export const metadata = {
   title: "BlindSpot — See What Listings Don't Tell You",
   description:
-    'Know the neighbourhood. See the sunlight. Property intelligence from Neighbourhood Score and SunScout — free, data-backed, no broker spin.',
+    'Know the neighbourhood. See the sunlight. Property intelligence from Neighbourhood Score and Home Comfort Score — free, data-backed, no broker spin.',
   icons: { icon: '/favicon.png' },
 };
 
