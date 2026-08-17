@@ -1043,40 +1043,56 @@
 
   /* ---------- NEIGHBOURHOOD-SCORE-STYLE PANEL (step 1) ----------
      Matches the real property-score page's area card (AVAreaCard.js)
-     directly: light BPF blueprint-frame paper tone, "+" corner marks in
-     --slate (=--brand, the mandatory secondary), and a verdict block
-     filled with the same scoreColor() ramp the real card uses — never a
-     fixed brand hue for the verdict fill. --av (wine) is still the
-     legitimate area-engine accent and is used for the top accent bar and
-     the locked-report teaser below. */
+     structurally, not just tonally: the same 3-box hero row (Sheet
+     identity / Composite Index / Verdict), each box its own BPF
+     blueprint-frame with "+" corner marks in --slate (=--brand, the
+     mandatory secondary), and a verdict fill using the same scoreColor()
+     ramp the real card uses — never a fixed brand hue. Verdict text
+     colour is computed per-instance in JS via readableTextColor() (dark
+     ink on the bright mid-tier fills, white only on the two genuinely
+     dark tiers) and passed down as `color`, so nothing here hardcodes a
+     text colour that could go unreadable against a different score's
+     fill. --av (wine) remains the legitimate area-engine accent, used
+     for the panel's top bar and the locked-report teaser below. */
   .av-panel{
     background:var(--paper); border-color:var(--line);
     box-shadow:0 24px 48px -30px rgba(28,24,18,0.18), 0 1px 0 rgba(28,24,18,0.04);
   }
   .av-panel::before{ background:var(--av); }
-  .av-corner{ position:absolute; width:13px; height:13px; pointer-events:none; z-index:2 }
-  .av-corner::before{ content:'+'; color:var(--slate); font-size:14px; line-height:1; opacity:.55 }
-  .av-corner.tl{ top:12px; left:12px }
-  .av-corner.tr{ top:12px; right:12px }
-  .av-corner.bl{ bottom:12px; left:12px }
-  .av-corner.br{ bottom:12px; right:12px }
 
-  .av-sheet-label{ font-size:13px; font-weight:600; letter-spacing:.12em; color:var(--slate); margin-bottom:4px }
+  .av-hero3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:18px; align-items:stretch }
+  .av-box{
+    position:relative; border:1px solid var(--line); border-radius:6px; padding:14px 14px 12px;
+    background:var(--bg-2); display:flex; flex-direction:column;
+  }
+  .av-box-corner{ position:absolute; width:11px; height:11px; pointer-events:none; z-index:2 }
+  .av-box-corner::before{ content:'+'; color:var(--slate); font-size:12px; line-height:1; opacity:.5 }
+  .av-box-corner.tl{ top:6px; left:6px }
+  .av-box-corner.tr{ top:6px; right:6px }
+  .av-box-corner.bl{ bottom:6px; left:6px }
+  .av-box-corner.br{ bottom:6px; right:6px }
+  /* Verdict box's own corner marks switch to the dynamic text colour too,
+     so they stay visible against whichever scoreColor() fill lands here. */
+  .av-verdict-box .av-box-corner::before{ color:inherit; opacity:.55 }
+
   /* No mobile breakpoints needed here (there used to be two) -- the
      card this belongs to is hidden entirely below 901px now (see
      .howworks-panel-sticky above), so this only ever renders at desktop
-     sizes where the fixed 38px is correct. */
-  .av-city{ font-family:'Anton',sans-serif; font-weight:400; font-size:38px; line-height:1.02; color:var(--ink); margin-bottom:14px }
+     sizes where the fixed sizes below are correct. */
+  .av-city{ font-family:'Anton',sans-serif; font-weight:400; font-size:26px; line-height:1.05; color:var(--ink); margin:8px 0 6px }
 
-  .av-score-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px }
-  .av-score-block, .av-verdict-block{ border:1px solid var(--line); border-radius:4px; padding:11px 16px }
-  /* .av-verdict-block's background/border-color are set inline per-instance
-     (scoreColor(score)) -- see AreaPanel in HowItWorks.js. */
-  .av-tiny{ font-size:12.5px; font-weight:600; letter-spacing:.12em; color:var(--text-dim) }
-  .av-verdict-block .av-tiny{ color:rgba(255,255,255,0.8) }
-  .av-score-num{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:28px; color:var(--ink); margin-top:6px }
+  .av-tiny{ font-size:11.5px; font-weight:600; letter-spacing:.12em; color:var(--slate); text-transform:uppercase }
+  /* Fixed top margin, not margin-top:auto -- these boxes get stretched to
+     match the tallest of the 3 (grid align-items:stretch), and pinning
+     the caption to the bottom would open an ugly gap right under the
+     score/verdict word on the shorter boxes. Leftover space just sits
+     blank below the caption instead, which matches the real card's look
+     closely enough at this compact size. */
+  .av-box-sub{ font-size:12px; color:var(--text-dim); line-height:1.45; margin-top:6px }
+  .av-box-divider{ font-size:11px; color:var(--text-dim); line-height:1.45; margin-top:8px; padding-top:8px; border-top:1px dashed var(--line-soft) }
+  .av-score-num{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:28px; color:var(--ink); margin-top:6px; display:flex; align-items:center }
   .av-score-num span{ font-size:13px; margin-left:8px; color:var(--slate); border:1px solid var(--slate); background:color-mix(in srgb, var(--slate) 10%, transparent); padding:2px 7px; border-radius:3px; vertical-align:middle }
-  .av-verdict-word{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:19px; color:#fff; margin-top:6px; text-transform:uppercase }
+  .av-verdict-word{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:19px; margin-top:6px; text-transform:uppercase; color:inherit }
 
   .av-dim-row{ margin-bottom:9px }
   .av-dim-head{ display:flex; justify-content:space-between; font-size:13.5px; font-weight:500; letter-spacing:.04em; color:var(--ink); margin-bottom:4px }

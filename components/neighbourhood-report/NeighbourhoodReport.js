@@ -19,7 +19,7 @@
 // is here.
 
 import { useState, useMemo } from 'react';
-import AVDetailedReadout, { BPF, source, scoreColor, verdictFor, explain, AQI_PLAIN, formatDateLong, inr } from '@/components/property-score/AVDetailedReadout';
+import AVDetailedReadout, { BPF, source, scoreColor, verdictFor, explain, AQI_PLAIN, formatDateLong, inr, readableTextColor } from '@/components/property-score/AVDetailedReadout';
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
 import { cityMeta, coverageLabel } from '@/lib/aslivastu/cityMeta';
 
@@ -148,11 +148,15 @@ export default function NeighbourhoodReport({ record, nearby }) {
           {/* Verdict fill stays scoreColor(nqi) -- the same autumn
               score-colour ramp used everywhere else on the report
               (deep olive → olive → yellow-green → orange → red),
-              never AsliVastu's own wine/red brand colour. */}
-          <div style={{ background: scoreColor(nqi), color: '#fff', padding: 24, position: 'relative' }}>
-            <p className="kick" style={{ color: 'rgba(255,255,255,.8)' }}>Verdict</p>
-            <h2 className="cond" style={{ fontSize: 34, fontWeight: 700, margin: '8px 0 10px', textTransform: 'uppercase' }}>{verdict.label}</h2>
-            <p style={{ fontSize: 13, lineHeight: 1.5, margin: 0, color: 'rgba(255,255,255,.92)' }}>{verdict.why}</p>
+              never AsliVastu's own wine/red brand colour. Text colour is
+              computed from that fill via readableTextColor() (perceptual
+              luminance) rather than hardcoded white -- the bright
+              mid-tier fills need dark ink, only the two darkest tiers
+              need white. */}
+          <div style={{ background: scoreColor(nqi), color: readableTextColor(scoreColor(nqi)), padding: 24, position: 'relative' }}>
+            <p className="kick" style={{ color: 'inherit', opacity: .75 }}>Verdict</p>
+            <h2 className="cond" style={{ fontSize: 34, fontWeight: 700, margin: '8px 0 10px', textTransform: 'uppercase', color: 'inherit' }}>{verdict.label}</h2>
+            <p style={{ fontSize: 13, lineHeight: 1.5, margin: 0, color: 'inherit', opacity: .92 }}>{verdict.why}</p>
           </div>
         </div>
 

@@ -18,7 +18,7 @@
 // second full copy.
 
 import { GradeBadge, FACTOR_LABELS } from '@/lib/property-score/ui';
-import { scoreColor, verdictFor, explain, source, formatDateLong, BPF } from './AVDetailedReadout';
+import { scoreColor, verdictFor, explain, source, formatDateLong, BPF, readableTextColor } from './AVDetailedReadout';
 
 export default function AVAreaCard({ record, city }) {
   const verdict = verdictFor(record.nqi_composite);
@@ -32,6 +32,8 @@ export default function AVAreaCard({ record, city }) {
   const rows = Object.keys(scores)
     .map(k => ({ k, score: scores[k], weight: Math.round((weights[k] || 0) / totalW * 100) }))
     .sort((a, b) => b.weight - a.weight || b.score - a.score);
+  const verdictCol = scoreColor(record.nqi_composite);
+  const verdictText = readableTextColor(verdictCol);
 
   return (
     <div className="av-card" style={{ marginBottom: 36 }}>
@@ -66,11 +68,15 @@ export default function AVAreaCard({ record, city }) {
         </BPF>
 
         {/* Verdict fill stays scoreColor(nqi) -- the autumn score-colour
-            ramp, never AsliVastu's own wine/red brand colour. */}
-        <div style={{ background: scoreColor(record.nqi_composite), color: '#fff', padding: 24, borderRadius: 'var(--radius)' }}>
-          <div className="mono" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.1em', color: 'rgba(255,255,255,.8)' }}>Area Verdict</div>
-          <div className="cond" style={{ fontSize: 26, fontWeight: 700, textTransform: 'uppercase', margin: '8px 0 8px' }}>{verdict.label}</div>
-          <div style={{ fontSize: 13.5, lineHeight: 1.5, color: 'rgba(255,255,255,.92)' }}>{verdict.why}</div>
+            ramp, never AsliVastu's own wine/red brand colour. Text colour
+            is computed from that same fill via readableTextColor()
+            (perceptual luminance) rather than hardcoded white -- the
+            bright mid-tier fills (olive/yellow-green/orange) need dark
+            ink, only the two darkest tiers (deep olive, red) need white. */}
+        <div style={{ background: verdictCol, color: verdictText, padding: 24, borderRadius: 'var(--radius)' }}>
+          <div className="mono" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.1em', color: 'inherit', opacity: .75 }}>Area Verdict</div>
+          <div className="cond" style={{ fontSize: 26, fontWeight: 700, textTransform: 'uppercase', margin: '8px 0 8px', color: 'inherit' }}>{verdict.label}</div>
+          <div style={{ fontSize: 13.5, lineHeight: 1.5, color: 'inherit', opacity: .92 }}>{verdict.why}</div>
         </div>
       </div>
 

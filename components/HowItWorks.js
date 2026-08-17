@@ -10,7 +10,7 @@
 // in CombinedScoreFlow on the product branch.
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { scoreColor, verdictFor } from '@/components/property-score/AVDetailedReadout';
+import { scoreColor, verdictFor, readableTextColor } from '@/components/property-score/AVDetailedReadout';
 
 const STEPS = [
   {
@@ -65,13 +65,25 @@ const SAMPLE_LOCALITIES = [
 const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'North-West', 'South-West'];
 
 // The real property-score page's area card (AVAreaCard.js) is a light
-// "blueprint-frame" spec sheet on the site's own paper/cream tone -- not a
-// separate dark theme. This mock now matches that directly: the same
-// BPF-style "+" corner marks, the same Sheet/PIN mono label, a composite
-// index next to a verdict block, and dimension bars coloured with the
-// exact same scoreColor() ramp the real card uses (imported, not
-// re-implemented, so this can't drift out of sync with the real thing
-// again).
+// "blueprint-frame" spec sheet: a 3-box hero row (Sheet identity /
+// Composite Index / Verdict, each its own BPF box with "+" corner marks),
+// then a dimension readout below. This mock now mirrors that structure
+// directly instead of the old 2-column layout it used to have, and reuses
+// the real scoreColor()/verdictFor()/readableTextColor() helpers so colour
+// and contrast can't drift out of sync with the live card again -- the
+// verdict fill's text colour in particular is computed the same way the
+// real card computes it (dark ink on the bright mid-tier fills, white only
+// on the two genuinely dark tiers), not hardcoded white.
+function Box({ className = '', style, children }) {
+  return (
+    <div className={`av-box hw-box${className ? ' ' + className : ''}`} style={style}>
+      <span className="av-box-corner tl" aria-hidden="true" /><span className="av-box-corner tr" aria-hidden="true" />
+      <span className="av-box-corner bl" aria-hidden="true" /><span className="av-box-corner br" aria-hidden="true" />
+      {children}
+    </div>
+  );
+}
+
 function AvDim({ label, score, source }) {
   const col = scoreColor(score);
   const weak = score < 50;
@@ -98,27 +110,32 @@ function AreaPanel() {
   const others = SAMPLE_LOCALITIES.filter((l) => !l.selected);
   const verdict = verdictFor(selected.score);
   const verdictCol = scoreColor(selected.score);
+  const verdictText = readableTextColor(verdictCol);
 
   return (
     <div className="howworks-panel av-panel">
-      <span className="av-corner tl" aria-hidden="true" /><span className="av-corner tr" aria-hidden="true" />
-      <span className="av-corner bl" aria-hidden="true" /><span className="av-corner br" aria-hidden="true" />
+      <div className="av-hero3">
+        <Box>
+          <div className="mono av-tiny">SHEET · {selected.meta.toUpperCase()}</div>
+          <div className="av-city">{selected.name.toUpperCase()}</div>
+          <div className="av-box-sub">4/8 dimensions shown here · full report has all 8</div>
+        </Box>
 
-      <div className="mono av-sheet-label">SHEET 01 · {selected.meta.toUpperCase()}</div>
-      <div className="av-city">{selected.name.toUpperCase()}</div>
-
-      <div className="av-score-row">
-        <div className="av-score-block hw-box">
+        <Box>
           <div className="mono av-tiny">COMPOSITE INDEX</div>
           <div className="av-score-num">{selected.score}<span>{selected.grade}</span></div>
-        </div>
-        <div className="av-verdict-block hw-box" style={{ background: verdictCol, borderColor: verdictCol }}>
-          <div className="mono av-tiny">VERDICT</div>
+          <div className="av-box-sub">NQI · weighted mean of 8 dimensions.</div>
+          <div className="av-box-divider">First-pass area assessment · reflects this locality, not one building.</div>
+        </Box>
+
+        <Box className="av-verdict-box" style={{ background: verdictCol, borderColor: verdictCol, color: verdictText }}>
+          <div className="mono av-tiny" style={{ color: 'inherit', opacity: .75 }}>AREA VERDICT</div>
           <div className="av-verdict-word">{verdict.label}</div>
-        </div>
+          <div className="av-box-sub" style={{ color: 'inherit', opacity: .88 }}>{verdict.why}</div>
+        </Box>
       </div>
 
-      <div className="mono av-tiny" style={{ margin: '14px 0 8px' }}>DIMENSION READOUT</div>
+      <div className="mono av-tiny" style={{ margin: '4px 0 10px' }}>DIMENSION READOUT</div>
       <div className="av-dims">
         <AvDim label="Crime" score={81} source="Delhi Police Annual Report" />
         <AvDim label="Air Quality" score={64} source="CPCB live AQI" />

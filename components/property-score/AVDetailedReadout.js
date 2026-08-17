@@ -114,6 +114,17 @@ export function waterloggingLabel(v) {
   if (v == null) return '—';
   return v >= 4 ? 'Low risk' : v >= 3 ? 'Moderate risk' : 'High risk';
 }
+// scoreColor()'s ramp spans deep-dark olive (best) through bright
+// yellow-green/orange (mid) to dark red (weakest) -- a single hardcoded
+// text colour doesn't stay readable across all of that. Perceptual-luma
+// threshold picks ink on the light/bright mid-tiers (olive, yellow-green,
+// orange) and white on the two genuinely dark ends (deep olive, red).
+export function readableTextColor(hex) {
+  if (!hex || hex[0] !== '#') return '#fff';
+  const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+  const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return luma > 140 ? 'var(--ink)' : '#fff';
+}
 // Moved here from NeighbourhoodReport.js (was a local, unexported function)
 // so AVAreaCard's inline card on the property-score page can show the same
 // verdict label/colour block the full report uses, instead of drifting out
