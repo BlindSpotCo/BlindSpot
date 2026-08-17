@@ -81,7 +81,7 @@ export default function LoginPage() {
           <img src="/wordmark.png" alt="BlindSpot" style={{ height: 11 }} />
         </a>
         <h1>Sign in</h1>
-        <p>Use the same email whether you&apos;re saving from SunScout or AsliVastu.</p>
+        <p>Use the same email whether you&apos;re saving from SunScout or Neighbourhood Score.</p>
 
         <button
           type="button"

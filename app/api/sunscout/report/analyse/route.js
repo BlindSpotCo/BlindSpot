@@ -38,7 +38,7 @@ function buildNeighbourhoodGroundTruth(avRecord) {
   const schoolNames = (avRecord.schools_list || []).slice(0, 6).map(s => s.name).join('; ');
   const pc = avRecord.price_context;
   return `
-NEIGHBOURHOOD GROUND TRUTH (from AsliVastu, for ${avRecord.name || avRecord.pin_code} — treat every figure below as fact, do NOT re-derive or override it):
+NEIGHBOURHOOD GROUND TRUTH (from Neighbourhood Score, for ${avRecord.name || avRecord.pin_code} — treat every figure below as fact, do NOT re-derive or override it):
 Composite neighbourhood score: ${avRecord.nqi_composite}/100 (Grade ${avRecord.grade})
 Factor breakdown: ${factorLines || 'not available'}
 Crime: ${avRecord.total_cognizable_crimes ?? 'unknown'} recorded cognizable crimes/yr, safer than ${avRecord.crime_percentile ?? 'unknown'}% of comparable areas, tier "${avRecord.crime_tier ?? 'unknown'}"

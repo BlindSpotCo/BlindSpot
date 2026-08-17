@@ -46,7 +46,7 @@ export async function GET(req) {
     const avRecords = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     const avRecord = avRecords.find(r => r.pin_code === pinCode);
     if (!avRecord) {
-      return NextResponse.json({ error: `No AsliVastu data for pincode ${pinCode}` }, { status: 404 });
+      return NextResponse.json({ error: `No neighbourhood data for pincode ${pinCode}` }, { status: 404 });
     }
 
     const { PIN_META } = await import('@/lib/aslivastu/pinMeta');
@@ -79,7 +79,7 @@ export async function GET(req) {
       verdict,
       persona: persona ? { id: persona.id, label: persona.label } : null,
       area: {
-        source: 'AsliVastu',
+        source: 'Neighbourhood Score',
         pinCode: avRecord.pin_code,
         name: meta?.name || avRecord.pin_code,
         city: avRecord.city,
@@ -100,7 +100,7 @@ export async function GET(req) {
       formula: `(${areaScore} × ${Math.round((weightArea/totalWeight)*100)}%) + (${unitScore} × ${Math.round((weightUnit/totalWeight)*100)}%) = ${combinedScore}`,
       dataNotes: [
         'Area score is the same for every unit in this pincode — only the unit score changes with floor/facing.',
-        ...(persona ? [`Neighbourhood score re-weighted for ${persona.label} priorities — not AsliVastu's default weighting.`] : []),
+        ...(persona ? [`Neighbourhood score re-weighted for ${persona.label} priorities — not the default weighting.`] : []),
         ...(ssResult.dataNotes || []),
       ],
       generatedAt: new Date().toISOString(),

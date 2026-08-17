@@ -110,6 +110,6 @@ export async function GET() {
     return NextResponse.json({ cities: byCity });
   } catch (err) {
     console.error('[av-localities] Failed to read local AsliVastu data:', err?.message || err);
-    return NextResponse.json({ error: 'Could not load AsliVastu data' }, { status: 500 });
+    return NextResponse.json({ error: 'Could not load neighbourhood data' }, { status: 500 });
   }
 }

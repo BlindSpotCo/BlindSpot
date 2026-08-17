@@ -18,7 +18,7 @@ const STEPS = [
     eyebrow: 'STEP 1 — AREA',
     accent: 'slate',
     heading: 'Search a locality, see the score before you see the flat.',
-    copy: "AsliVastu scores every locality 0–100 across crime, air quality, power, water, schools and infrastructure — pulled from government records, not what a broker tells you. Type an area name, get the number in seconds.",
+    copy: "Neighbourhood Score rates every locality 0–100 across crime, air quality, power, water, schools and infrastructure — pulled from government records, not what a broker tells you. Type an area name, get the number in seconds.",
     bullets: [
       'Searchable by name, not just pincode',
       '8 weighted dimensions, one composite score',

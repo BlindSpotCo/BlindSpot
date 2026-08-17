@@ -73,7 +73,7 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
     fetch('/api/av-localities')
       .then(res => res.ok ? res.json() : Promise.reject(res.status))
       .then(data => setCitiesData(data.cities))
-      .catch(() => setCitiesError('Could not load AsliVastu locality data right now.'));
+      .catch(() => setCitiesError('Could not load locality data right now.'));
   }, []);
 
   const selectedAreaRecord = city && citiesData

@@ -111,7 +111,7 @@ export default function AVAreaCard({ record, city }) {
       </div>
 
       <a
-        href={`/neighbourhood-report/${record.pin_code}`}
+        href={`/neighbourhood-report/${record.pin_code}${record.sectorNum != null ? `?sector=${record.sectorNum}` : ''}`}
         target="_blank"
         rel="noreferrer"
         className="ps-btn ps-cta-btn"

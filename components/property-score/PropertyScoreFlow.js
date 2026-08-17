@@ -233,7 +233,7 @@ export default function PropertyScoreFlow() {
                 <ul style={{ margin: '0 0 0 0', padding: 0, fontSize: 13.5, color: 'var(--text-dim)', lineHeight: 1.9, listStyle: 'none', marginTop: 'auto' }}>
                   {[
                     'Compare against a full scored shortlist first',
-                    'See all 8 AsliVastu metrics before committing to one address',
+                    'See all 8 Neighbourhood Score metrics before committing to one address',
                     'Best if you’re still deciding between areas',
                   ].map(line => (
                     <li key={line} style={{ position: 'relative', paddingLeft: 16 }}>

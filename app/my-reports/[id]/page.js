@@ -34,7 +34,7 @@ export default async function ReportDetailPage({ params }) {
 
         <h1>{report.title || 'Untitled report'}</h1>
         <p className="sub">
-          {report.source === 'sunscout' ? 'SunScout' : 'AsliVastu'} · Saved {new Date(report.created_at).toLocaleDateString()}
+          {report.source === 'sunscout' ? 'SunScout' : 'Neighbourhood Score'} · Saved {new Date(report.created_at).toLocaleDateString()}
         </p>
 
         {report.source === 'sunscout' && (
@@ -146,7 +146,7 @@ export default async function ReportDetailPage({ params }) {
             <>
               {d.url && (
                 <p style={{ fontSize: 12, marginBottom: 20 }}>
-                  <a href={d.url} style={{ color: 'var(--slate)' }}>View live report on AsliVastu →</a>
+                  <a href={d.url} style={{ color: 'var(--slate)' }}>View live neighbourhood report →</a>
                 </p>
               )}
 

@@ -65,7 +65,7 @@ export default async function MyReportsPage() {
 
         {!fetchFailed && reports.length === 0 && (
           <div className="reports-empty">
-            Nothing saved yet. Run a report on SunScout or AsliVastu and hit &quot;Save to BlindSpot&quot; to see it here.
+            Nothing saved yet. Run a report on SunScout or Neighbourhood Score and hit &quot;Save to BlindSpot&quot; to see it here.
           </div>
         )}
 
@@ -83,7 +83,7 @@ export default async function MyReportsPage() {
 
         {aslivastuReports.length > 0 && (
           <div className="reports-group av">
-            <h2>AsliVastu</h2>
+            <h2>Neighbourhood Score</h2>
             {aslivastuReports.map((r) => (
               <a href={`/my-reports/${r.id}`} className="report-row" key={r.id} style={{ textDecoration: 'none', display: 'flex' }}>
                 <span className="label">{r.title || 'Untitled report'}</span>

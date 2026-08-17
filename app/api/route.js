@@ -18,7 +18,7 @@ export async function GET() {
       next: { revalidate: 3600 },
     });
     if (!res.ok) {
-      return NextResponse.json({ error: `AsliVastu returned HTTP ${res.status}` }, { status: 502 });
+      return NextResponse.json({ error: `Neighbourhood Score returned HTTP ${res.status}` }, { status: 502 });
     }
     const records = await res.json();
 
@@ -40,6 +40,6 @@ export async function GET() {
     return NextResponse.json({ cities: byCity });
   } catch (err) {
     console.error('[av-localities] Failed to fetch AV data:', err?.message || err);
-    return NextResponse.json({ error: 'Could not reach AsliVastu' }, { status: 502 });
+    return NextResponse.json({ error: 'Could not reach Neighbourhood Score' }, { status: 502 });
   }
 }

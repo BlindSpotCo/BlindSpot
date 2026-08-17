@@ -100,7 +100,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
         const ss = await res.json();
         setCombined({
           combinedScore: ss.liveScore,
-          verdict: { label: 'Home Comfort Score', detail: 'No AsliVastu neighbourhood data for this pincode yet — this is the unit-only SunScout score.' },
+          verdict: { label: 'Home Comfort Score', detail: 'No Neighbourhood Score data for this pincode yet — this is the unit-only SunScout score.' },
           area: null,
           unit: { source: 'Home Comfort Score', floor: ss.unit?.floor ?? useFloor, facing: ss.unit?.facing ?? useFacing, score: ss.liveScore, grade: ss.grade, weight: 100, subScores: ss.subScores },
           formula: null,

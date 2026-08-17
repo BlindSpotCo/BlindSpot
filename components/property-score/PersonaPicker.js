@@ -209,7 +209,7 @@ export default function PersonaPicker({ personaId, onSelect, big = false }) {
             {preview ? `${preview.short.toUpperCase()}'S WEIGHTING` : 'DEFAULT WEIGHTING'}
           </div>
           <div style={{ fontSize: 12.5, color: 'var(--text-dim)', marginBottom: 18, lineHeight: 1.5 }}>
-            {preview ? 'How this angle re-weights AsliVastu’s 8 factors.' : 'Hover a point on the dial to preview its weighting.'}
+            {preview ? 'How this angle re-weights the Neighbourhood Score’s 8 factors.' : 'Hover a point on the dial to preview its weighting.'}
           </div>
           {Object.entries(FACTOR_LABELS).map(([key, label]) => (
             <WeightBar

@@ -598,7 +598,7 @@ export async function POST(req) {
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${WINE}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
         <h2 style="font-size:16px;font-weight:800;color:${INK};font-family:${DISPLAY};">Neighbourhood Analysis — ${safeAreaName}</h2>
       </div>
-      <div style="font-size:11px;color:${DIM};margin-bottom:18px;">Area-level — the same for every unit in this pincode. Source: AsliVastu.</div>
+      <div style="font-size:11px;color:${DIM};margin-bottom:18px;">Area-level — the same for every unit in this pincode. Source: Neighbourhood Score.</div>
       <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:20px;">
         ${neighbourhoodFactorRows}
       </div>
@@ -731,7 +731,7 @@ export async function POST(req) {
       <div style="border:1px solid ${LINE_SOFT};padding:20px 24px;">
         <div style="font-size:11px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">How this report was built</div>
         <ul style="margin:0;padding-left:18px;font-size:11.5px;color:${DIM};line-height:1.7;">
-          ${hasNeighbourhood ? `<li>Neighbourhood factor scores, crime, schools, and price context come from AsliVastu — the same for every unit in this pincode, deterministic, not AI-generated.</li>` : ''}
+          ${hasNeighbourhood ? `<li>Neighbourhood factor scores, crime, schools, and price context come from Neighbourhood Score — the same for every unit in this pincode, deterministic, not AI-generated.</li>` : ''}
           ${hasNeighbourhood ? `<li>The Combined Score is (${avRecord.nqi_composite} × ${Math.round((areaWeight ?? 0.5) * 100)}%) + (${unitScore ?? '—'} × ${Math.round((unitWeight ?? 0.5) * 100)}%) = ${combinedScore ?? '—'} — a weighted average, not AI-generated.</li>` : ''}
           <li>Sun position and monthly sunlight hours come from a NOAA solar-geometry algorithm — deterministic, not AI-generated.</li>
           <li>Floor clearance uses a generic urban-obstruction estimate, not a measurement of this property's specific neighboring buildings.</li>

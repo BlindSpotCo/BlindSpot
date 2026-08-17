@@ -151,7 +151,7 @@ export default function Home() {
           <div className="products">
             <div className="pcard slate reveal">
               <div className="pcard-tag"><span className="dot"></span>Neighbourhood Intelligence</div>
-              <h3>AsliVastu</h3>
+              <h3>Neighbourhood Score</h3>
               <p>Government data, not broker spin. Every area scored 0–100 across safety, air quality, power reliability, water, schools and infrastructure — pulled from public records, not a commission-driven source.</p>
               <div className="pcard-stats">
                 <div><div className="pstat-num">260+</div><div className="pstat-lbl">Areas covered</div></div>
@@ -191,7 +191,7 @@ export default function Home() {
             <div className="why-row av reveal">
               <svg className="why-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="14" rx="1"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
               <div className="why-title">Brokers don&apos;t tell you everything</div>
-              <div className="why-desc">Crime rates, AQI readings, power-cut frequency — AsliVastu pulls these straight from government records, not from someone with a commission riding on your decision.</div>
+              <div className="why-desc">Crime rates, AQI readings, power-cut frequency — Neighbourhood Score pulls these straight from government records, not from someone with a commission riding on your decision.</div>
             </div>
             <div className="why-row reveal">
               <svg className="why-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-5.4-7-11a7 7 0 1 1 14 0c0 5.6-7 11-7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>
@@ -231,8 +231,8 @@ export default function Home() {
               <div className="team-avatar">GB</div>
               <div>
                 <div className="team-name">Gurshaan Singh Baweja</div>
-                <div className="team-role slate">Co-founder · Builds AsliVastu</div>
-                <div className="team-desc">Leads AsliVastu, the neighbourhood-intelligence engine behind BlindSpot — pulling government data on safety, air quality, power and water into one score, so buyers stop relying on a broker&apos;s word for it.</div>
+                <div className="team-role slate">Co-founder · Builds Neighbourhood Score</div>
+                <div className="team-desc">Leads Neighbourhood Score, the neighbourhood-intelligence engine behind BlindSpot — pulling government data on safety, air quality, power and water into one score, so buyers stop relying on a broker&apos;s word for it.</div>
                 <a href="https://www.linkedin.com/in/gurshaan-singh-baweja" target="_blank" rel="noopener" className="team-link">Connect on LinkedIn <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
               </div>
             </div>
