@@ -291,34 +291,35 @@ export default function AddressPicker({ onConfirmed }) {
             <div className="mono" style={{ fontSize: 12.5, color: 'var(--text-dim)', marginBottom: 16 }}>Looking up this location…</div>
           )}
 
-          {!resolving && !locationConfirmed && (
-            <button onClick={confirmLocation} className="ps-btn ps-cta-btn"
-              style={{
-                background: 'var(--slate)', color: '#fff', border: 'none', borderRadius: 'var(--radius)',
-                padding: '13px 22px', fontSize: 13.5, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
-                marginBottom: 20,
-              }}>
-              Confirm This Pin →
-            </button>
-          )}
-
+          {/* Moved above the Confirm button -- it used to render AFTER it,
+              so the pincode-correction control sat below the button that
+              visually reads as "the next step," easy to skip right past
+              even though wrong-pincode is exactly the case you'd want to
+              catch BEFORE confirming. Same reason the "correct it" trigger
+              is now a bordered button instead of small underlined text --
+              it used to be easy to miss entirely next to the bold detected
+              value. */}
           {resolved && (
-            <div className="mono" style={{ fontSize: 12.5, color: 'var(--text-mute)', marginBottom: locationConfirmed ? 20 : 14, lineHeight: 1.6 }}>
-              <div style={{ marginBottom: 6 }}>{resolved.displayName || `${pin.lat.toFixed(5)}, ${pin.lon.toFixed(5)}`}</div>
+            <div className="mono" style={{ fontSize: 12.5, color: 'var(--text-mute)', marginBottom: 16, lineHeight: 1.6 }}>
+              <div style={{ marginBottom: 8 }}>{resolved.displayName || `${pin.lat.toFixed(5)}, ${pin.lon.toFixed(5)}`}</div>
               {/* Auto-detected postcode is Nominatim's best guess, not ground
                   truth -- it's wrong often enough for India (confirmed case:
                   a correctly-placed pin still returning a stale district-level
                   postcode instead of the actual local one) that we surface it
                   explicitly and editable here, rather than letting a silent
                   wrong match produce a misleading AsliVastu score below. */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                 <span style={{ color: 'var(--text-dim)' }}>Detected pincode:</span>
                 {!editingPincode ? (
                   <>
-                    <strong style={{ color: 'var(--text)' }}>{pincodeOverride || 'none found'}</strong>
-                    <button type="button" onClick={() => setEditingPincode(true)} className="ps-link-btn"
-                      style={{ background: 'none', border: 'none', color: 'var(--ss)', cursor: 'pointer', fontSize: 12, textDecoration: 'underline', padding: 0 }}>
-                      not right? correct it
+                    <strong style={{ color: 'var(--text)', fontSize: 14 }}>{pincodeOverride || 'none found'}</strong>
+                    <button type="button" onClick={() => setEditingPincode(true)} className="ps-btn"
+                      style={{
+                        background: 'var(--bg-2)', border: '1px solid var(--ss)', color: 'var(--ss)',
+                        borderRadius: 'var(--radius)', padding: '6px 13px', fontSize: 12, fontWeight: 700,
+                        cursor: 'pointer', letterSpacing: '.02em',
+                      }}>
+                      Not right? Correct it
                     </button>
                   </>
                 ) : (
@@ -337,6 +338,17 @@ export default function AddressPicker({ onConfirmed }) {
                 )}
               </div>
             </div>
+          )}
+
+          {!resolving && !locationConfirmed && (
+            <button onClick={confirmLocation} className="ps-btn ps-cta-btn"
+              style={{
+                background: 'var(--slate)', color: '#fff', border: 'none', borderRadius: 'var(--radius)',
+                padding: '13px 22px', fontSize: 13.5, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
+                marginBottom: 20,
+              }}>
+              Confirm This Pin →
+            </button>
           )}
 
           {locationConfirmed && (
