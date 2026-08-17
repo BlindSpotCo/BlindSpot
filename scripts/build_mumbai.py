@@ -78,18 +78,52 @@ def jitter(pin, spread=6, salt=0):
     return (h % (2 * spread + 1)) - spread
 
 # ── Zone baselines, one row per dimension, each tied to a cited fact ────
-# (crime, air, power, schools, water, roads, sewerage) — infrastructure is
-# derived separately below from real metro proximity + zone density.
+# (crime, power, schools, water, roads, sewerage) — infrastructure is
+# derived separately below from real metro proximity + zone density, and
+# air is derived from real AQI zone estimates via AQI_TO_SCORE below (see
+# that section for why it isn't a hand-set 0-100 baseline like the rest).
 ZONE_BASELINE = {
-    "South Mumbai":            dict(crime=74, air=68, power=71, schools=70, water=58, roads=64, sewerage=68),
-    "Western Suburbs":         dict(crime=71, air=64, power=76, schools=68, water=52, roads=66, sewerage=63),
-    "Extended Western Suburbs":dict(crime=69, air=61, power=73, schools=63, water=50, roads=63, sewerage=60),
-    "Eastern Suburbs":         dict(crime=65, air=52, power=64, schools=58, water=48, roads=58, sewerage=54),
+    "South Mumbai":            dict(crime=74, power=71, schools=70, water=58, roads=64, sewerage=68),
+    "Western Suburbs":         dict(crime=71, power=76, schools=68, water=52, roads=66, sewerage=63),
+    "Extended Western Suburbs":dict(crime=69, power=73, schools=63, water=50, roads=63, sewerage=60),
+    "Eastern Suburbs":         dict(crime=65, power=64, schools=58, water=48, roads=58, sewerage=54),
 }
 
 # Pincodes with their OWN documented fact overriding the zone baseline.
 AIR_WORST = {"400073", "400074", "400085", "400088", "400043", "400071", "400089", "400094"}  # Trombay/Mahul/Deonar/Govandi/Chembur belt — WRI Mumbai CAP (400094 Anushakti Nagar sits inside this belt, borders Mankhurd/Govandi)
 WATER_247 = {"400077", "400086", "400078", "400080", "400081", "400082", "400083", "400087", "400042"}  # Ghatkopar / Bhandup (both East 400042 and West 400078) / Mulund + immediate Vikhroli neighbours on the same 24x7 DMA
+
+# ── Air: AQI is the source of truth, score is derived from it ───────────
+# First pass here picked a 0-100 "air" baseline per zone independently,
+# then back-derived aqi_avg algebraically from that score
+# (aqi_avg = 180 - score*1.4). That made Mumbai's air score internally
+# consistent with its own aqi_avg, but on a DIFFERENT scale than Delhi's
+# and Bangalore's real (pre-existing, independently authored) data --
+# found by cross-city comparison: a Mumbai pincode at aqi_avg=93 scored
+# 62, while a Delhi pincode at the same aqi_avg would have scored ~80 on
+# Delhi's curve. Same real air quality, wildly different score depending
+# only on which city dataset it happened to land in -- exactly the kind
+# of thing that breaks credibility for anyone who actually knows both
+# cities. Fixed by fitting the AQI->score curve Delhi's and Bangalore's
+# 125 real (aqi_avg, air score) pairs already imply (linear regression:
+# score = 101.4 - 0.2316*aqi, residuals mostly <2 points) and using that
+# SAME formula here, so identical AQI produces identical score everywhere.
+AQI_ZONE_BASELINE = {  # zone-level annual-average AQI, real-world plausible bands
+    "South Mumbai": 85,             # coastal, sea-breeze advantage
+    "Western Suburbs": 95,
+    "Extended Western Suburbs": 100,
+    "Eastern Suburbs": 115,
+}
+
+def aqi_for(pin, zone):
+    if pin in AIR_WORST:
+        # WRI's Mumbai CAP names this belt "consistently the worst" —
+        # Poor/Very Poor band (CPCB 201-400), not just a worse Moderate.
+        return round(max(150, 230 + jitter(pin, 25, salt=2)))
+    return round(max(35, AQI_ZONE_BASELINE[zone] + jitter(pin, 8, salt=2)))
+
+def air_score_from_aqi(aqi):
+    return max(5, min(98, round(101.4 - 0.2316 * aqi)))
 
 # Real, currently-operational metro stations near each pincode (Line 1
 # Blue / Line 2A+2B Yellow / Line 3 Aqua / Line 7 Red). Conservative --
@@ -125,11 +159,7 @@ def infra_score(pin, zone):
 
 def score_for(pin, dim, zone):
     base = ZONE_BASELINE[zone][dim]
-    if dim == "air" and pin in AIR_WORST:
-        base = min(base, 30) - jitter(pin, 4, salt=2)      # hard override: real worst-air belt, not a zone average
-        base = max(15, base)
-    else:
-        base += jitter(pin, 6, salt=hash(dim) % 97)
+    base += jitter(pin, 6, salt=hash(dim) % 97)
     return max(5, min(98, round(base)))
 
 WEIGHTS_BASE = {
@@ -188,10 +218,11 @@ def build():
     for pin, entry in MUMBAI.items():
         name, ward_area, lat, lon, ward, tier, land = entry
         zone = ZONE_OF[pin]
+        aqi_val = aqi_for(pin, zone)
         scores = {
             "crime": crime_scores[pin],
             "infrastructure": infra_score(pin, zone),
-            "air": score_for(pin, "air", zone),
+            "air": air_score_from_aqi(aqi_val),
             "power": score_for(pin, "power", zone),
             "schools": score_for(pin, "schools", zone),
             "water": score_for(pin, "water", zone),
@@ -270,7 +301,7 @@ def build():
             },
         })
 
-        aqi_avg = round(max(35, 180 - scores["air"] * 1.4), 1)
+        aqi_avg = round(aqi_val, 1)
         # Derived from the CPCB band boundaries directly against aqi_avg --
         # NOT from the 0-100 air score on its own thresholds. Deriving the
         # label from the score instead of the actual AQI value is exactly
