@@ -11,6 +11,23 @@ import { getPersona, PERSONA_ORDER } from '@/lib/personas';
 
 const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'North-West', 'South-West'];
 
+// The pitch deck's "05 — THE VERDICT SYSTEM" slide defines these four
+// verdicts as a flat 2x2 colour quadrant, not four labels sharing one
+// colour: olive (Prime Pick, strong+strong), wine (Location Play, strong
+// area/weak unit), burnt orange (Hidden Gem, weak area/strong unit),
+// olive-gold (Reconsider, weak+weak). The badge below used to render
+// every one of the four in var(--brand) regardless of which verdict it
+// was -- correct for Prime Pick, but Location Play/Hidden Gem/Reconsider
+// all looked identical to it instead of carrying their own quadrant's
+// colour the way the deck's own reference slide (and its live-product
+// screenshot on the following slide) both show.
+const VERDICT_COLOR = {
+  'Prime Pick': 'var(--brand)',
+  'Location Play': 'var(--av)',
+  'Hidden Gem': 'var(--ss)',
+  'Reconsider': 'var(--olive-gold)',
+};
+
 export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId, onUnitSeen, onVerdictStart }) {
   const persona = getPersona(personaId) || getPersona(PERSONA_ORDER[0]);
   const sunScoutRef = useRef(null);
@@ -253,7 +270,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                     {combined.combinedScore}<span style={{ fontSize: 20, color: 'var(--text-dim)' }}>/100</span>
                   </div>
                 </div>
-                <div className="uv-verdict-badge" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 20, color: '#fff', background: 'var(--brand)', padding: '8px 18px', borderRadius: 'var(--radius)' }}>
+                <div className="uv-verdict-badge" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 20, color: '#fff', background: VERDICT_COLOR[combined.verdict.label] || 'var(--brand)', padding: '8px 18px', borderRadius: 'var(--radius)' }}>
                   {combined.verdict.label}
                 </div>
               </div>
