@@ -10,6 +10,7 @@
 // in CombinedScoreFlow on the product branch.
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { scoreColor, verdictFor } from '@/components/property-score/AVDetailedReadout';
 
 const STEPS = [
   {
@@ -63,21 +64,30 @@ const SAMPLE_LOCALITIES = [
 
 const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'North-West', 'South-West'];
 
-// AsliVastu's real UI is a near-black "spec sheet": condensed poster-style
-// locality name, a mono SHEET/PIN label, a composite index next to a solid
-// verdict block, and dimension bars in green/amber/red with the source
-// named underneath. This mock is styled to match that directly, rather
-// than the light BlindSpot theme the rest of the page uses — it reads as
-// a preview of AsliVastu itself, not a re-skin of it.
+// The real property-score page's area card (AVAreaCard.js) is a light
+// "blueprint-frame" spec sheet on the site's own paper/cream tone -- not a
+// separate dark theme. This mock now matches that directly: the same
+// BPF-style "+" corner marks, the same Sheet/PIN mono label, a composite
+// index next to a verdict block, and dimension bars coloured with the
+// exact same scoreColor() ramp the real card uses (imported, not
+// re-implemented, so this can't drift out of sync with the real thing
+// again).
 function AvDim({ label, score, source }) {
-  const tier = score >= 70 ? 'good' : score >= 45 ? 'mid' : 'bad';
+  const col = scoreColor(score);
+  const weak = score < 50;
   return (
     <div className="av-dim-row hw-box">
       <div className="av-dim-head">
         <span>{label.toUpperCase()}</span>
-        <span className="mono">{score}</span>
+        <span className="mono" style={{ color: col }}>{score}</span>
       </div>
-      <div className="av-dim-track"><div className={`av-dim-fill ${tier}`} style={{ width: `${score}%` }} /></div>
+      <div className="av-dim-track">
+        <div className="av-dim-fill" style={{
+          width: `${score}%`,
+          background: weak ? undefined : col,
+          backgroundImage: weak ? `repeating-linear-gradient(45deg, ${col} 0 3px, transparent 3px 6px)` : undefined,
+        }} />
+      </div>
       {source && <div className="mono av-dim-source">{source}</div>}
     </div>
   );
@@ -86,14 +96,14 @@ function AvDim({ label, score, source }) {
 function AreaPanel() {
   const selected = SAMPLE_LOCALITIES.find((l) => l.selected);
   const others = SAMPLE_LOCALITIES.filter((l) => !l.selected);
-  const verdictWord = selected.score >= 80 ? 'STRONG' : selected.score >= 65 ? 'CONSIDER' : 'CAUTION';
+  const verdict = verdictFor(selected.score);
+  const verdictCol = scoreColor(selected.score);
 
   return (
     <div className="howworks-panel av-panel">
       <span className="av-corner tl" aria-hidden="true" /><span className="av-corner tr" aria-hidden="true" />
       <span className="av-corner bl" aria-hidden="true" /><span className="av-corner br" aria-hidden="true" />
 
-      <div className="mono av-brandline">ASLIVASTU BY BLINDSPOT · NEIGHBOURHOOD INTELLIGENCE</div>
       <div className="mono av-sheet-label">SHEET 01 · {selected.meta.toUpperCase()}</div>
       <div className="av-city">{selected.name.toUpperCase()}</div>
 
@@ -102,9 +112,9 @@ function AreaPanel() {
           <div className="mono av-tiny">COMPOSITE INDEX</div>
           <div className="av-score-num">{selected.score}<span>{selected.grade}</span></div>
         </div>
-        <div className="av-verdict-block hw-box">
+        <div className="av-verdict-block hw-box" style={{ background: verdictCol, borderColor: verdictCol }}>
           <div className="mono av-tiny">VERDICT</div>
-          <div className="av-verdict-word">{verdictWord}</div>
+          <div className="av-verdict-word">{verdict.label}</div>
         </div>
       </div>
 
@@ -125,9 +135,10 @@ function AreaPanel() {
         ))}
       </div>
 
-      {/* Locked full-report teaser, matching the real AsliVastu paywall
-          block — kept short (a couple of features, no caption line) so it
-          doesn't blow the card's height past the SunScout card next to it. */}
+      {/* Locked full-report teaser, matching the real property-score page's
+          paywall block — kept short (a couple of features, no caption line)
+          so it doesn't blow the card's height past the Home Comfort Score
+          card next to it. */}
       <div className="av-locked">
         <span className="av-locked-dot" aria-hidden="true" />
         <div className="mono av-locked-eyebrow">LOCKED · SHEET 02</div>
