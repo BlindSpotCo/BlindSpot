@@ -25,6 +25,7 @@ export default function AddressPicker({ onConfirmed }) {
   const [suggestLoading, setSuggestLoading] = useState(false);
   const [highlightIndex, setHighlightIndex] = useState(-1);
   const debounceRef = useRef(null);
+  const abortRef = useRef(null); // cancels the previous keystroke's in-flight fetch
   const suppressNextFetch = useRef(false); // don't re-suggest right after picking one
   const wrapRef = useRef(null);
 
@@ -75,28 +76,52 @@ export default function AddressPicker({ onConfirmed }) {
   }, []);
 
   // Debounced live suggestions as the user types.
+  //
+  // The debounce alone only stops a NEW timer from firing while you keep
+  // typing -- it doesn't stop a fetch that had already gone out. Network
+  // responses aren't guaranteed to come back in the order they were sent,
+  // so typing fast enough that two requests are ever in flight together
+  // (e.g. one for "S", triggered right before you typed the rest, and one
+  // for "Sec") can land the SHORTER query's broader, less relevant
+  // results AFTER the more specific ones, silently overwriting them. That
+  // was the actual cause of the dropdown "appearing, disappearing,
+  // glitching, mixing places from different cities" -- not a rendering
+  // bug, a stale response winning the race. Aborting the previous
+  // request whenever a new one starts means a stale response never has
+  // the chance to land at all.
   useEffect(() => {
     if (suppressNextFetch.current) { suppressNextFetch.current = false; return; }
     if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (abortRef.current) abortRef.current.abort();
+
     if (query.trim().length < 3) {
       setSuggestions([]); setSuggestOpen(false); setSuggestLoading(false);
       return;
     }
     setSuggestLoading(true);
     debounceRef.current = setTimeout(async () => {
+      const controller = new AbortController();
+      abortRef.current = controller;
       try {
-        const res = await fetch(`/api/sunscout/geocode-suggest?q=${encodeURIComponent(query)}`);
+        const res = await fetch(`/api/sunscout/geocode-suggest?q=${encodeURIComponent(query)}`, { signal: controller.signal });
         const data = await res.json();
         setSuggestions(data?.results || []);
         setSuggestOpen(true);
         setHighlightIndex(-1);
-      } catch {
+        setSuggestLoading(false);
+      } catch (err) {
+        // Aborted because a newer keystroke superseded this request --
+        // leave whatever's currently on screen alone instead of flashing
+        // it to empty (that flash-to-empty was the "disappears" part).
+        if (err?.name === 'AbortError') return;
         setSuggestions([]);
-      } finally {
         setSuggestLoading(false);
       }
     }, 300);
-    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (abortRef.current) abortRef.current.abort();
+    };
   }, [query]);
 
   // Close the dropdown on outside click.
