@@ -14,6 +14,54 @@ import AVAreaCard from './AVAreaCard';
 // alone is no longer unique).
 const rowKey = (r) => `${r.pin_code}::${r.sectorNum ?? r.name}`;
 
+// ── Typo-tolerant name search ────────────────────────────────────────────
+// Plain substring matching meant a real, present area could be
+// unfindable by name over one wrong letter -- "Ville Parle" (a common
+// misspelling/mishearing of "Vile Parle") matched nothing, even though
+// Vile Parle West/East are both in the data, because pincode search
+// still worked. "Every area available by name" means the common way
+// someone actually types a name has to work, not just the one exact
+// spelling in our records.
+//
+// Two additions over plain .includes(): (1) word-level matching, so
+// "parle" or "kurla complex" finds a multi-word name/alias without
+// needing the whole phrase typed in order; (2) a 1-edit tolerance
+// (single insertion/deletion/substitution) per word of 4+ letters, so
+// one dropped, doubled, or swapped letter doesn't return zero results.
+function editDistanceLE1(a, b) {
+  if (a === b) return true;
+  const la = a.length, lb = b.length;
+  if (Math.abs(la - lb) > 1) return false;
+  let i = 0, j = 0, mismatches = 0;
+  while (i < la && j < lb) {
+    if (a[i] === b[j]) { i++; j++; continue; }
+    if (++mismatches > 1) return false;
+    if (la === lb) { i++; j++; }        // substitution
+    else if (la > lb) { i++; }          // extra letter in a (e.g. "ville" -> "vile")
+    else { j++; }                       // missing letter in a
+  }
+  if (i < la || j < lb) mismatches++;
+  return mismatches <= 1;
+}
+function wordMatches(queryWord, targetWord) {
+  if (targetWord.includes(queryWord)) return true;
+  if (queryWord.length >= 4 && targetWord.length >= 4) return editDistanceLE1(queryWord, targetWord);
+  return false;
+}
+const tokenize = (s) => s.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+
+function nameSearchMatches(query, fields) {
+  const qWords = tokenize(query);
+  if (qWords.length === 0) return false;
+  const targetWords = fields.filter(Boolean).flatMap(tokenize);
+  // Whole-query fallback (no spaces removed) catches run-together typing
+  // like "vileparle" that word-splitting alone would miss.
+  const joined = fields.filter(Boolean).join(' ').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const queryJoined = query.toLowerCase().replace(/[^a-z0-9]/g, '');
+  if (queryJoined && joined.includes(queryJoined)) return true;
+  return qWords.every(qw => targetWords.some(tw => wordMatches(qw, tw)));
+}
+
 export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
   const [citiesData, setCitiesData] = useState(null);
   const [citiesError, setCitiesError] = useState('');
@@ -48,11 +96,12 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
       // ONLY that sector's own row, not its pincode-siblings (Sector 22's
       // pincode also covers 21/34/35, but searching "22" means Sector 22).
       if (sectorQuery != null && r.sectorNum === sectorQuery) return true;
-      if (r.name.toLowerCase().includes(s)) return true;
-      if ((r.area || '').toLowerCase().includes(s)) return true;
       if (r.pin_code.includes(s)) return true;
-      // Landmarks: "PEC", "Panjab University", "Elante", "GPO"...
-      if ((r.aliases || []).some(a => a.toLowerCase().includes(s))) return true;
+      // Name, area/ward, and landmarks ("PEC", "Panjab University",
+      // "Elante", "GPO"...) all go through the typo-tolerant matcher —
+      // exact substrings still match (fast path, same as before), plus
+      // near-misses like "Ville Parle" for "Vile Parle".
+      if (nameSearchMatches(search, [r.name, r.area, ...(r.aliases || [])])) return true;
       return false;
     });
 
