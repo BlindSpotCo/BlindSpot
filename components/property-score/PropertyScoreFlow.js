@@ -17,6 +17,8 @@ import AddressPicker from './AddressPicker';
 import UnitVerdict from './UnitVerdict';
 import PersonaPicker from './PersonaPicker';
 import PropertyScoreProgress from './PropertyScoreProgress';
+import SideDataStrip from './SideDataStrip';
+import HeroMap from '@/components/HeroMap';
 import { coverageLabel } from '@/lib/aslivastu/cityMeta';
 
 const SCREEN_H = 'calc(100vh - 66px)'; // 66px = the sticky header's own height
@@ -92,6 +94,7 @@ export default function PropertyScoreFlow() {
   return (
     <section className="section" id="property-score-flow" style={{ paddingTop: 0 }}>
       <PropertyScoreProgress current={progressStage} done={progressDone} />
+      <SideDataStrip />
 
       {/* ── snap sequence: 3 full screens ── */}
       <div style={{ scrollSnapType: 'y proximity' }}>
@@ -116,7 +119,8 @@ export default function PropertyScoreFlow() {
             centred single column instead of the two-column split, and a
             smaller headline. */}
         <div className="ps-arrive ps-threshold" style={{ scrollSnapAlign: 'start' }}>
-          <div className="wrap" style={{ width: '100%', maxWidth: 780, textAlign: 'center' }}>
+          <HeroMap variant="dim" />
+          <div className="wrap" style={{ width: '100%', maxWidth: 780, textAlign: 'center', position: 'relative', zIndex: 1 }}>
             <span className="mono ps-threshold-eyebrow">You&apos;re in · takes about a minute</span>
 
             <h1 className="ps-threshold-h">Let&apos;s find the blind spot.</h1>
@@ -177,7 +181,7 @@ export default function PropertyScoreFlow() {
             degrades to normal top-aligned scrolling when there isn't --
             instead of hiding the headline. */}
         <div id="ps-screen-persona" style={{ minHeight: SCREEN_H, display: 'flex', alignItems: 'center', scrollSnapAlign: 'start', padding: '28px 0' }}>
-          <div className="wrap" style={{ width: '100%', marginBlock: 'auto' }}>
+          <div className="ps-flow-wrap" style={{ width: '100%', marginBlock: 'auto' }}>
             <PersonaPicker personaId={personaId} onSelect={setPersonaId} big />
             <button onClick={() => scrollToNext('ps-screen-location')} className="mono"
               style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '24px auto 0', background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: 12, letterSpacing: '.1em', cursor: 'pointer' }}>
@@ -194,7 +198,7 @@ export default function PropertyScoreFlow() {
           minHeight: mode ? 0 : SCREEN_H, display: 'flex', alignItems: 'center',
           scrollSnapAlign: 'start', padding: mode ? '48px 0' : 0,
         }}>
-          <div className="wrap" style={{ width: '100%' }}>
+          <div className="ps-flow-wrap" style={{ width: '100%' }}>
             <div className="mono" style={{ fontSize: 13, color: 'var(--text-mute)', letterSpacing: '.12em', marginBottom: 28, textAlign: 'center' }}>HOW DO YOU WANT TO START?</div>
             {/* Cards used to be a title + one line of copy inside a big
                 padded box -- on a full-height screen that read as mostly
@@ -203,7 +207,7 @@ export default function PropertyScoreFlow() {
                 actually informative (the real sub-steps, and the reasons
                 to pick one path over the other), not decoration added
                 just to occupy space. */}
-            <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', justifyContent: 'center', maxWidth: 980, margin: '0 auto' }}>
+            <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', justifyContent: 'center', maxWidth: 1080, margin: '0 auto' }}>
               <button onClick={() => chooseMode('locality')} className="ps-mode-btn ps-btn"
                 style={{
                   // Was a hardcoded rgba(175,47,64) -- an off-brand hot

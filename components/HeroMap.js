@@ -9,10 +9,13 @@
 // Masked to a soft ellipse so it dissolves toward the edges instead of
 // ending on a hard line, and kept deliberately low-contrast: it must sit
 // under the headline and the score card without competing with either.
-// Purely decorative (aria-hidden).
-export default function HeroMap() {
+// Purely decorative (aria-hidden). `variant="dim"` is a lower-contrast,
+// river-free version used behind the property-score threshold screen
+// (see globals.css .hero-map--dim) -- same grid, deliberately less
+// prominent so that screen doesn't read as a clone of this hero.
+export default function HeroMap({ variant }) {
   return (
-    <div className="hero-map" aria-hidden="true">
+    <div className={`hero-map${variant ? ` hero-map--${variant}` : ''}`} aria-hidden="true">
       <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
         <g className="hero-map-roads">
           <path d="M0,150 H1600 M0,330 H1600 M0,520 H1600 M0,700 H1600" />

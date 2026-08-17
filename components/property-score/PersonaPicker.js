@@ -15,6 +15,28 @@
 
 import { useState } from 'react';
 import { PERSONAS, PERSONA_ORDER } from '@/lib/personas';
+import { FACTOR_LABELS } from '@/lib/property-score/ui';
+
+// Weight scale is out of 100 across the 8 factors; 30 is the highest any
+// single factor ever hits across all four personas (family_buyer's crime,
+// young_professional's infrastructure) -- used as the bar's fill scale so
+// a full bar always means "as high as this ever goes", not an arbitrary
+// 100% that no persona ever reaches.
+const MAX_WEIGHT = 30;
+
+function WeightBar({ label, weight, color }) {
+  const pct = Math.max(4, Math.round((weight / MAX_WEIGHT) * 100));
+  return (
+    <div className="pw-weight-row">
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-mute)', marginBottom: 4 }}>
+        <span>{label}</span><span className="mono" style={{ color: 'var(--text)' }}>{weight}%</span>
+      </div>
+      <div style={{ background: 'var(--line-soft)', height: 5, borderRadius: 3, overflow: 'hidden' }}>
+        <div style={{ width: `${pct}%`, height: '100%', background: color, transition: 'width .25s ease, background .25s ease' }} />
+      </div>
+    </div>
+  );
+}
 
 export default function PersonaPicker({ personaId, onSelect, big = false }) {
   const [hoverId, setHoverId] = useState(null);
@@ -78,6 +100,7 @@ export default function PersonaPicker({ personaId, onSelect, big = false }) {
           discoverable pattern than a plain list for a first-time visitor).
           Kept as-is on desktop since it's the stronger, more memorable
           version of this step there. */}
+      <div className={big ? 'pw-desktop-row' : undefined}>
       <div className="pw-wheel-wrap">
         <svg width={SIZE + pad} height={SIZE + pad} viewBox={`${-pad / 2} ${-pad / 2} ${SIZE + pad} ${SIZE + pad}`} style={{ overflow: 'visible', maxWidth: '100%', height: 'auto' }}>
           <circle cx={CX} cy={CY} r={ORBIT_R + NODE_R + 4} fill="none" stroke="var(--line)" strokeWidth="1" />
@@ -173,6 +196,31 @@ export default function PersonaPicker({ personaId, onSelect, big = false }) {
             <p style={{ fontSize: big ? 13.5 : 12.5, color: 'var(--text-dim)' }}>Hover or tap a point on the dial.</p>
           )}
         </div>
+      </div>
+
+      {/* Live weights panel -- desktop `big` only (hidden under 900px via
+          CSS, since dial + panel side by side genuinely needs the room).
+          Shows the real avWeights this persona applies, defaulting to the
+          neutral Broker weighting (AsliVastu's own baseline) when nothing
+          is hovered yet, so the panel is never just blank. */}
+      {big && (
+        <div className="pw-weights-panel">
+          <div className="mono" style={{ fontSize: 11, color: preview ? preview.color : 'var(--text-dim)', letterSpacing: '.1em', marginBottom: 4 }}>
+            {preview ? `${preview.short.toUpperCase()}'S WEIGHTING` : 'DEFAULT WEIGHTING'}
+          </div>
+          <div style={{ fontSize: 12.5, color: 'var(--text-dim)', marginBottom: 18, lineHeight: 1.5 }}>
+            {preview ? 'How this angle re-weights AsliVastu’s 8 factors.' : 'Hover a point on the dial to preview its weighting.'}
+          </div>
+          {Object.entries(FACTOR_LABELS).map(([key, label]) => (
+            <WeightBar
+              key={key}
+              label={label}
+              weight={(preview || PERSONAS.broker).avWeights[key]}
+              color={preview ? preview.color : 'var(--slate)'}
+            />
+          ))}
+        </div>
+      )}
       </div>
 
       {/* Mobile only (shown below 640px via CSS) -- plain tap-to-select

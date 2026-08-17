@@ -168,6 +168,15 @@
   .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
   @media (max-width:640px){.wrap{padding:0 20px}}
 
+  /* Wider container for the property-score flow's opening screens only.
+     1180px is the right cap for text-heavy marketing sections, but on
+     the flow's threshold/persona/mode-select screens it compounded with
+     an even narrower inner column (a 780px paragraph, a 420px dial) and
+     read as a strip of content in an otherwise-empty page on a real
+     desktop monitor. Not swapped in for .wrap site-wide -- just here. */
+  .ps-flow-wrap{max-width:1400px;margin:0 auto;padding:0 32px}
+  @media (max-width:640px){.ps-flow-wrap{padding:0 20px}}
+
   /* ---------- NAV ---------- */
   /* Starts fully transparent with no border — at rest, the header is
      nothing but the centered logo floating over the hero. Once `scrolled`
@@ -397,6 +406,18 @@
   .hero-map-roads-minor{ stroke:rgba(28,24,18,0.09); stroke-width:1.5 }
   .hero-map-blocks rect{ fill:rgba(28,24,18,0.05); stroke:rgba(28,24,18,0.09); stroke-width:1 }
   .hero-map-water{ fill:rgba(107,36,48,0.06) }
+
+  /* Dimmed variant for the property-score threshold screen -- same
+     road-grid SVG as the homepage hero, but the whole point of that
+     screen's copy (see PropertyScoreFlow.js) is that arriving here
+     should NOT read as "the hero again". Kept lower-contrast, sits on
+     --bg-2 instead of --bg, and drops the river (a coastal-hero detail
+     that doesn't belong behind generic step-by-step copy). */
+  .hero-map--dim{ opacity:.6 }
+  .hero-map--dim .hero-map-roads{ stroke:rgba(28,24,18,0.10) }
+  .hero-map--dim .hero-map-roads-minor{ stroke:rgba(28,24,18,0.05) }
+  .hero-map--dim .hero-map-blocks rect{ fill:rgba(28,24,18,0.025); stroke:rgba(28,24,18,0.05) }
+  .hero-map--dim .hero-map-water{ display:none }
 
   .hero-grid{
     position:relative; z-index:1;
@@ -696,6 +717,7 @@
      100vh, so the persona screen below peeks in and the page doesn't read
      as another full-height wall. */
   .ps-threshold{
+    position:relative; overflow:hidden;
     background:var(--bg-2); border-bottom:1px solid var(--line);
     display:flex; align-items:center; justify-content:center;
     padding:72px 0 64px;
@@ -1578,6 +1600,45 @@
   @media (max-width:640px){
     .pw-wheel-wrap{ display:none !important }
     .pw-mobile-list{ display:flex !important }
+  }
+
+  /* Live weights panel next to the dial (desktop `big` only) -- the dial
+     alone in a wide empty screen was decoration; this makes the same
+     real estate show what picking a persona actually DOES (re-weighting
+     lib/personas.js's real avWeights), which is both more honest and
+     fills the space with content instead of padding. Row layout needs
+     genuine width for dial + panel side by side, so it collapses to
+     dial-only (panel hidden) below 900px rather than squeezing both. */
+  .pw-desktop-row{ display:flex; align-items:center; justify-content:center; gap:56px; width:100%; flex-wrap:wrap }
+  .pw-weights-panel{
+    width:290px; flex-shrink:0; text-align:left; background:var(--bg-2);
+    border:1px solid var(--line); border-radius:var(--radius); padding:26px 24px;
+  }
+  .pw-weight-row{ margin-bottom:13px }
+  .pw-weight-row:last-child{ margin-bottom:0 }
+  @media (max-width:900px){
+    .pw-weights-panel{ display:none }
+  }
+
+  /* Corner live-data readouts -- reuses the homepage hero's rotating
+     coordinate-readout idea (real scored pincodes, not invented copy),
+     placed in the flow's side gutters. Only shown on genuinely wide
+     viewports: the 1400px .ps-flow-wrap plus the weights panel already
+     close most of the empty-space gap on a normal 1440-1600px laptop, so
+     this only kicks in where real margin is still left over. */
+  .ps-side-strip{
+    position:fixed; bottom:26px; display:none; align-items:center; gap:9px;
+    font-size:12px; color:var(--text-dim); z-index:2; pointer-events:none;
+    transition:opacity .26s ease;
+  }
+  .ps-side-strip-left{ left:28px }
+  .ps-side-strip-right{ right:28px }
+  .ps-side-strip-dot{ width:5px; height:5px; border-radius:50%; background:var(--slate); flex-shrink:0; animation:blink 1.4s steps(1) infinite }
+  @media (min-width:1700px){
+    .ps-side-strip{ display:flex }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .ps-side-strip-dot{ animation:none }
   }
 
 /* ---------- APP SCREENS (Property Score / SunScout) — MOBILE SCALE-DOWN
