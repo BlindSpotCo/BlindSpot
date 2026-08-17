@@ -195,32 +195,83 @@ export default function PropertyScoreFlow() {
           scrollSnapAlign: 'start', padding: mode ? '48px 0' : 0,
         }}>
           <div className="wrap" style={{ width: '100%' }}>
-            <div className="mono" style={{ fontSize: 13, color: 'var(--text-mute)', letterSpacing: '.12em', marginBottom: 20, textAlign: 'center' }}>HOW DO YOU WANT TO START?</div>
-            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', justifyContent: 'center', maxWidth: 900, margin: '0 auto' }}>
+            <div className="mono" style={{ fontSize: 13, color: 'var(--text-mute)', letterSpacing: '.12em', marginBottom: 28, textAlign: 'center' }}>HOW DO YOU WANT TO START?</div>
+            {/* Cards used to be a title + one line of copy inside a big
+                padded box -- on a full-height screen that read as mostly
+                empty field with two small labels floating in the middle.
+                Grown to a fixed min-height and filled with content that's
+                actually informative (the real sub-steps, and the reasons
+                to pick one path over the other), not decoration added
+                just to occupy space. */}
+            <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', justifyContent: 'center', maxWidth: 980, margin: '0 auto' }}>
               <button onClick={() => chooseMode('locality')} className="ps-mode-btn ps-btn"
                 style={{
                   // Was a hardcoded rgba(175,47,64) -- an off-brand hot
                   // pink unrelated to any token. A tint of --slate matches
                   // the rest of the site's selection states.
-                  flex: '1 1 320px', maxWidth: 400, textAlign: 'left', background: mode === 'locality' ? 'color-mix(in srgb, var(--slate) 14%, var(--bg-2))' : 'var(--bg-2)',
-                  border: `1px solid ${mode === 'locality' ? 'var(--slate)' : 'var(--line)'}`, borderRadius: 'var(--radius)', padding: '32px 28px', cursor: 'pointer',
+                  flex: '1 1 380px', maxWidth: 460, minHeight: 320, textAlign: 'left', background: mode === 'locality' ? 'color-mix(in srgb, var(--slate) 14%, var(--bg-2))' : 'var(--bg-2)',
+                  border: `1px solid ${mode === 'locality' ? 'var(--slate)' : 'var(--line)'}`, borderRadius: 'var(--radius)', padding: '40px 34px', cursor: 'pointer',
+                  display: 'flex', flexDirection: 'column',
                 }}>
-                <div className="mono" style={{ fontSize: 11.5, color: 'var(--slate)', letterSpacing: '.1em', marginBottom: 10 }}>OPTION A</div>
-                <div className="ps-mode-btn-title" style={{ fontSize: 19, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>City → Locality → Unit</div>
-                <div className="ps-mode-btn-sub" style={{ fontSize: 14, color: 'var(--text-mute)', lineHeight: 1.6 }}>Browse scored neighbourhoods, then pick a floor/facing.</div>
+                <div className="mono" style={{ fontSize: 11.5, color: 'var(--slate)', letterSpacing: '.1em', marginBottom: 14 }}>OPTION A</div>
+                <div className="ps-mode-btn-title" style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>City → Locality → Unit</div>
+                <div className="ps-mode-btn-sub" style={{ fontSize: 14.5, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 26 }}>Browse scored neighbourhoods, then pick a floor/facing.</div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 26 }}>
+                  {['City', 'Locality', 'Unit'].map((step, i) => (
+                    <span key={step} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span className="mono" style={{ fontSize: 11.5, padding: '7px 13px', borderRadius: 'var(--radius)', background: 'var(--paper)', border: '1px solid var(--line)', color: 'var(--text)' }}>{step}</span>
+                      {i < 2 && <span style={{ color: 'var(--text-dim)', fontSize: 13 }}>→</span>}
+                    </span>
+                  ))}
+                </div>
+
+                <ul style={{ margin: '0 0 0 0', padding: 0, fontSize: 13.5, color: 'var(--text-dim)', lineHeight: 1.9, listStyle: 'none', marginTop: 'auto' }}>
+                  {[
+                    'Compare against a full scored shortlist first',
+                    'See all 8 AsliVastu metrics before committing to one address',
+                    'Best if you’re still deciding between areas',
+                  ].map(line => (
+                    <li key={line} style={{ position: 'relative', paddingLeft: 16 }}>
+                      <span style={{ position: 'absolute', left: 0, color: 'var(--slate)' }}>—</span>{line}
+                    </li>
+                  ))}
+                </ul>
               </button>
               <button onClick={() => chooseMode('address')} className="ps-mode-btn ps-btn"
                 style={{
-                  flex: '1 1 320px', maxWidth: 400, textAlign: 'left', background: mode === 'address' ? 'color-mix(in srgb, var(--sun) 14%, var(--bg-2))' : 'var(--bg-2)',
-                  border: `1px solid ${mode === 'address' ? 'var(--sun)' : 'var(--line)'}`, borderRadius: 'var(--radius)', padding: '32px 28px', cursor: 'pointer',
+                  flex: '1 1 380px', maxWidth: 460, minHeight: 320, textAlign: 'left', background: mode === 'address' ? 'color-mix(in srgb, var(--sun) 14%, var(--bg-2))' : 'var(--bg-2)',
+                  border: `1px solid ${mode === 'address' ? 'var(--sun)' : 'var(--line)'}`, borderRadius: 'var(--radius)', padding: '40px 34px', cursor: 'pointer',
+                  display: 'flex', flexDirection: 'column',
                 }}>
-                <div className="mono" style={{ fontSize: 11.5, color: 'var(--sun)', letterSpacing: '.1em', marginBottom: 10 }}>OPTION B</div>
-                <div className="ps-mode-btn-title" style={{ fontSize: 19, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>I have the exact address</div>
-                <div className="ps-mode-btn-sub" style={{ fontSize: 14, color: 'var(--text-mute)', lineHeight: 1.6 }}>Search it directly — we&apos;ll place the pin and detect the area for you.</div>
+                <div className="mono" style={{ fontSize: 11.5, color: 'var(--sun)', letterSpacing: '.1em', marginBottom: 14 }}>OPTION B</div>
+                <div className="ps-mode-btn-title" style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>I have the exact address</div>
+                <div className="ps-mode-btn-sub" style={{ fontSize: 14.5, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 26 }}>Search it directly — we&apos;ll place the pin and detect the area for you.</div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 26 }}>
+                  {['Address', 'Auto-detect area', 'Unit'].map((step, i) => (
+                    <span key={step} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span className="mono" style={{ fontSize: 11.5, padding: '7px 13px', borderRadius: 'var(--radius)', background: 'var(--paper)', border: '1px solid var(--line)', color: 'var(--text)' }}>{step}</span>
+                      {i < 2 && <span style={{ color: 'var(--text-dim)', fontSize: 13 }}>→</span>}
+                    </span>
+                  ))}
+                </div>
+
+                <ul style={{ margin: '0 0 0 0', padding: 0, fontSize: 13.5, color: 'var(--text-dim)', lineHeight: 1.9, listStyle: 'none', marginTop: 'auto' }}>
+                  {[
+                    'Fastest if you already have one building in mind',
+                    'We match it to the nearest scored locality automatically',
+                    'No need to browse a list first',
+                  ].map(line => (
+                    <li key={line} style={{ position: 'relative', paddingLeft: 16 }}>
+                      <span style={{ position: 'absolute', left: 0, color: 'var(--sun)' }}>—</span>{line}
+                    </li>
+                  ))}
+                </ul>
               </button>
             </div>
             {!mode && (
-              <p style={{ textAlign: 'center', fontSize: 13.5, color: 'var(--text-dim)', marginTop: 28 }}>Pick one to continue — the rest of the flow opens below.</p>
+              <p style={{ textAlign: 'center', fontSize: 13.5, color: 'var(--text-dim)', marginTop: 32 }}>Pick one to continue — the rest of the flow opens below.</p>
             )}
           </div>
         </div>
