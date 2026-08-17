@@ -213,8 +213,17 @@ export default function PropertyScoreFlow() {
                   // Was a hardcoded rgba(175,47,64) -- an off-brand hot
                   // pink unrelated to any token. A tint of --slate matches
                   // the rest of the site's selection states.
-                  flex: '1 1 380px', maxWidth: 460, minHeight: 320, textAlign: 'left', background: mode === 'locality' ? 'color-mix(in srgb, var(--slate) 14%, var(--bg-2))' : 'var(--bg-2)',
-                  border: `1px solid ${mode === 'locality' ? 'var(--slate)' : 'var(--line)'}`, borderRadius: 'var(--radius)', padding: '40px 34px', cursor: 'pointer',
+                  // Used to only pick up colour once clicked -- unselected,
+                  // both cards sat in plain --bg-2 with no colour at all.
+                  // Now permanently tinted + left-bordered in --slate
+                  // (olive, one of the pitch deck's three brand hues),
+                  // deepening further on selection instead of switching on
+                  // from nothing.
+                  flex: '1 1 380px', maxWidth: 460, minHeight: 320, textAlign: 'left',
+                  background: mode === 'locality' ? 'color-mix(in srgb, var(--slate) 14%, var(--bg-2))' : 'color-mix(in srgb, var(--slate) 5%, var(--bg-2))',
+                  border: `1px solid ${mode === 'locality' ? 'var(--slate)' : 'var(--line)'}`,
+                  borderLeft: `4px solid var(--slate)`,
+                  borderRadius: 'var(--radius)', padding: '40px 34px 40px 30px', cursor: 'pointer',
                   display: 'flex', flexDirection: 'column',
                 }}>
                 <div className="mono" style={{ fontSize: 11.5, color: 'var(--slate)', letterSpacing: '.1em', marginBottom: 14 }}>OPTION A</div>
@@ -224,7 +233,7 @@ export default function PropertyScoreFlow() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 26 }}>
                   {['City', 'Locality', 'Unit'].map((step, i) => (
                     <span key={step} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span className="mono" style={{ fontSize: 11.5, padding: '7px 13px', borderRadius: 'var(--radius)', background: 'var(--paper)', border: '1px solid var(--line)', color: 'var(--text)' }}>{step}</span>
+                      <span className="mono" style={{ fontSize: 11.5, padding: '7px 13px', borderRadius: 'var(--radius)', background: 'color-mix(in srgb, var(--slate) 8%, var(--paper))', border: '1px solid color-mix(in srgb, var(--slate) 30%, var(--line))', color: 'var(--text)' }}>{step}</span>
                       {i < 2 && <span style={{ color: 'var(--text-dim)', fontSize: 13 }}>→</span>}
                     </span>
                   ))}
@@ -244,8 +253,11 @@ export default function PropertyScoreFlow() {
               </button>
               <button onClick={() => chooseMode('address')} className="ps-mode-btn ps-btn"
                 style={{
-                  flex: '1 1 380px', maxWidth: 460, minHeight: 320, textAlign: 'left', background: mode === 'address' ? 'color-mix(in srgb, var(--sun) 14%, var(--bg-2))' : 'var(--bg-2)',
-                  border: `1px solid ${mode === 'address' ? 'var(--sun)' : 'var(--line)'}`, borderRadius: 'var(--radius)', padding: '40px 34px', cursor: 'pointer',
+                  flex: '1 1 380px', maxWidth: 460, minHeight: 320, textAlign: 'left',
+                  background: mode === 'address' ? 'color-mix(in srgb, var(--sun) 14%, var(--bg-2))' : 'color-mix(in srgb, var(--sun) 5%, var(--bg-2))',
+                  border: `1px solid ${mode === 'address' ? 'var(--sun)' : 'var(--line)'}`,
+                  borderLeft: `4px solid var(--sun)`,
+                  borderRadius: 'var(--radius)', padding: '40px 34px 40px 30px', cursor: 'pointer',
                   display: 'flex', flexDirection: 'column',
                 }}>
                 <div className="mono" style={{ fontSize: 11.5, color: 'var(--sun)', letterSpacing: '.1em', marginBottom: 14 }}>OPTION B</div>
@@ -255,7 +267,7 @@ export default function PropertyScoreFlow() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 26 }}>
                   {['Address', 'Auto-detect area', 'Unit'].map((step, i) => (
                     <span key={step} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span className="mono" style={{ fontSize: 11.5, padding: '7px 13px', borderRadius: 'var(--radius)', background: 'var(--paper)', border: '1px solid var(--line)', color: 'var(--text)' }}>{step}</span>
+                      <span className="mono" style={{ fontSize: 11.5, padding: '7px 13px', borderRadius: 'var(--radius)', background: 'color-mix(in srgb, var(--sun) 8%, var(--paper))', border: '1px solid color-mix(in srgb, var(--sun) 30%, var(--line))', color: 'var(--text)' }}>{step}</span>
                       {i < 2 && <span style={{ color: 'var(--text-dim)', fontSize: 13 }}>→</span>}
                     </span>
                   ))}
