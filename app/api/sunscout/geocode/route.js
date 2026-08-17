@@ -8,8 +8,17 @@ export async function GET(req) {
   if (!q) return NextResponse.json({ result: null });
 
   try {
+    // Was missing &countrycodes=in -- the sibling geocode-suggest endpoint
+    // already has it. Without it, a short query like "Sector 17" (a name
+    // that exists in dozens of Indian cities plus, per Nominatim's global
+    // index, wholly unrelated places) resolves to whatever the single top
+    // global match is, not anything BlindSpot actually covers. That's what
+    // "search a Chandigarh area, a random map came up" looks like: this is
+    // the endpoint hit whenever someone presses Search/Enter directly
+    // instead of clicking one of the (already India-scoped) autocomplete
+    // suggestions first.
     const r = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1`,
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=in`,
       { headers: { 'User-Agent': 'BlindSpot_NextJS/1.0 (+https://blindspotco.net)' } }
     );
     // TEMP DIAGNOSTIC — remove once we've confirmed the cause.
