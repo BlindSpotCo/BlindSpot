@@ -114,7 +114,14 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
             style={{ width: '100%', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '12px 14px', color: 'var(--text)', fontSize: 14, marginBottom: 14, boxSizing: 'border-box' }}
           />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 320, overflowY: 'auto', border: '1px solid var(--line)', borderRadius: 'var(--radius)' }}>
-            {filteredLocalities.slice(0, 30).map(r => (
+            {/* Was capped at the first 30 (by score, since that's the
+                default sort) -- harmless with ~20-30 localities per city,
+                but with Mumbai's 96 it silently hid two-thirds of the
+                city unless you already knew the exact name to search for
+                (Vile Parle ranks 58th/66th by score -- invisible while
+                just browsing). The list is already a scrollable box, so
+                there's no real reason to truncate it at all. */}
+            {filteredLocalities.map(r => (
               <button key={rowKey(r)} onClick={() => pick(r)} className="ps-row-btn"
                 style={{
                   // Was a hardcoded rgba(175,47,64) -- an off-brand hot pink
