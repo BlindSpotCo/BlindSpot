@@ -100,13 +100,24 @@ export function source(dimension, city) {
 // (strong). Brighter/more saturated than the previous pass, which read as
 // muddy rather than "good" at the green end.
 // User-supplied autumn photo palette: first red, first orange from that
-// swatch set, then all three greens (weakest → strongest) for the top
-// bands — deepest olive reserved for the best scores.
+// swatch set, then olive/deep-olive for the top bands — deepest olive
+// reserved for the best scores.
+//
+// Collapsed from 5 tiers to 4 (dropped the yellow-green middle tier and
+// the old 90+ break) after checking the real nqi_scores.json distribution:
+// 268 records, min 39, max 87, zero records >=90, exactly one below 40.
+// The old boundaries wasted two tiers (red, deep-olive-at-90+) on ranges
+// that are essentially empty in real data, while the actual 60-89 cluster
+// (the vast majority of areas) got split across yellow-green/olive in a
+// way that read as muddy rather than useful. Olive now starts at 60
+// (where yellow-green used to start) and deep olive now starts at 75
+// (where plain olive used to start) and runs through 100 -- so the
+// visually "best" color is achievable by real areas instead of sitting on
+// an unreachable 90+ shelf.
 export function scoreColor(v) {
   if (v == null) return 'var(--text-dim)';
-  if (v >= 90) return '#5C6B00'; // deep olive green — best
-  if (v >= 75) return '#B3B232'; // olive
-  if (v >= 60) return '#D8CB34'; // yellow-green
+  if (v >= 75) return '#5C6B00'; // deep olive green — best (was 90+)
+  if (v >= 60) return '#B3B232'; // olive (was 75+)
   if (v >= 40) return '#F4AE42'; // orange
   return '#8F0000';              // red — weakest
 }
