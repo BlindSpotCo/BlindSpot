@@ -2,8 +2,10 @@ import SiteHeader from '@/components/SiteHeader';
 import PropertyScoreFlow from '@/components/property-score/PropertyScoreFlow';
 
 export const metadata = {
-  title: 'Property Score — BlindSpot',
+  title: 'Property Score',
   description: 'One score for the neighbourhood, one score for the flat — combined into a single verdict, weighted your way.',
+  alternates: { canonical: '/property-score' },
+  openGraph: { title: 'Property Score | BlindSpot', description: 'One score for the neighbourhood, one score for the flat — combined into a single verdict, weighted your way.' },
 };
 
 // The old "Combined Verdict" intro block now lives inside

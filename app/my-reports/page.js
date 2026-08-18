@@ -1,6 +1,11 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 
+export const metadata = {
+  title: 'My Reports',
+  robots: { index: false, follow: false },
+};
+
 export default async function MyReportsPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
