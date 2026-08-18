@@ -100,8 +100,8 @@ html,body{background:var(--bg-2);overflow:hidden;}
     </svg>
   </div>
   <svg id="arc-svg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:18;overflow:visible;"></svg>
-  <div id="sun" style="line-height:1;pointer-events:none;position:absolute;transform:translate(-50%,-50%);display:none;text-align:center;">
-    <svg width="44" height="44" viewBox="-26 -26 52 52" style="filter:drop-shadow(0 0 14px rgba(255,209,60,.9));">
+  <div id="sun" style="pointer-events:none;position:absolute;left:0;top:0;display:none;">
+    <svg width="44" height="44" viewBox="-26 -26 52 52" style="position:absolute;left:0;top:0;transform:translate(-50%,-50%);filter:drop-shadow(0 0 14px rgba(255,209,60,.9));">
       <circle cx="0" cy="0" r="14" fill="none" stroke="#FFFDF8" stroke-width="2.5" opacity="0.95"/>
       <circle cx="0" cy="0" r="12" fill="#FFD23C"/>
       <g stroke="#FFD23C" stroke-width="2.5" stroke-linecap="round" opacity="0.9">
@@ -111,7 +111,7 @@ html,body{background:var(--bg-2);overflow:hidden;}
         <line x1="-11.3" y1="11.3" x2="-15.6" y2="15.6"/><line x1="11.3" y1="-11.3" x2="15.6" y2="-15.6"/>
       </g>
     </svg>
-    <div id="sun-time" style="font-size:12.5px;font-weight:600;font-family:'IBM Plex Mono',monospace;background:rgba(255,253,248,.96);color:#1C1812;border:1px solid rgba(28,24,18,0.14);border-radius:7px;padding:3px 10px;margin-top:2px;white-space:nowrap;">--:--</div>
+    <div id="sun-time" style="position:absolute;left:0;top:26px;transform:translate(-50%,0);font-size:12.5px;font-weight:600;font-family:'IBM Plex Mono',monospace;background:rgba(255,253,248,.96);color:#1C1812;border:1px solid rgba(28,24,18,0.14);border-radius:7px;padding:3px 10px;white-space:nowrap;">--:--</div>
   </div>
   <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:22;">
     <div style="width:14px;height:14px;border-radius:50%;background:#AF5F30;border:3px solid #FFFDF8;box-shadow:0 0 0 3px rgba(175,95,48,0.35);"></div>
@@ -359,7 +359,12 @@ function animTick(ts){
   if(p0.el<-5&&p1.el<-5){
     placeSunXY(0,0,false);
   }else{
-    var s0=projectToScreen(p0.az,p0.el), s1=projectToScreen(p1.az,p1.el);
+    // drawArc() only plots points with el>=0. If one side of this pair
+    // falls below that (just past sunrise/before sunset), interpolating
+    // toward its projection slides the icon toward a point that was never
+    // actually drawn. Clamp each side's elevation to >=0 for this
+    // projection so the icon never targets anywhere off the visible line.
+    var s0=projectToScreen(p0.az,Math.max(0,p0.el)), s1=projectToScreen(p1.az,Math.max(0,p1.el));
     placeSunXY(lerp(s0[0],s1[0],t), lerp(s0[1],s1[1],t), true);
   }
   try{map.setDate(interpDate(p0.iso,p1.iso,t));}catch(e){}
