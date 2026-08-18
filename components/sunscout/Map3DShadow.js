@@ -184,28 +184,6 @@ function saveCamera(){
 function setT(m){if(m===curT)return;curT=m;if(tL)map.remove(tL);tL=map.addMapTiles(TILES[m]);document.getElementById('bs').className='tile-btn'+(m==='s'?' on':'');document.getElementById('bsat').className='tile-btn'+(m==='sat'?' on':'');}
 
 const allPts=${allPtsJs};
-// The sun's real compass bearing (az) can swing very fast near solar noon
-// at low latitudes when the sun passes close to zenith (common for tropical
-// locations in summer) -- azimuth can flip ~180 degrees within one sample,
-// which is real astronomy, not a bug, but plotted directly it produces a
-// sharp visual kink in the arc. For the arc'S SHAPE we instead sweep
-// smoothly (monotonically, by time) between the true rise and set bearings
-// -- so the endpoints still point in the real sunrise/sunset compass
-// directions and still rotate correctly with the camera, but the path
-// between them can never kink or reverse, at any latitude or season.
-// Elevation-based sizing (how far from center) still uses the real data,
-// only the *angle* is smoothed.
-(function(){
-  const day=allPts.filter(function(p){return p.el>=0;});
-  if(day.length<2)return;
-  const a0=day[0].az, a1=day[day.length-1].az;
-  let d=((a1-a0+540)%360)-180; // shortest signed delta, handles any wrap
-  const i0=allPts.indexOf(day[0]), i1=allPts.indexOf(day[day.length-1]);
-  for(let i=0;i<allPts.length;i++){
-    const t=Math.max(0,Math.min(1,(i-i0)/(i1-i0)));
-    allPts[i].sweepAz=a0+d*t;
-  }
-})();
 const sunEl=document.getElementById('sun');
 const arcSvg=document.getElementById('arc-svg');
 let curEl=${mel}, curAz=${maz};
@@ -243,7 +221,7 @@ function drawArc(){
   while(arcSvg.firstChild)arcSvg.removeChild(arcSvg.firstChild);
   const ab=allPts.filter(function(p){return p.el>=0;});
   if(ab.length<2)return;
-  const sc=ab.map(function(p){return projectToScreen(p.sweepAz,p.el);});
+  const sc=ab.map(function(p){return projectToScreen(p.az,p.el);});
   [['rgba(175,95,48,0.12)',14],['rgba(209,144,31,0.22)',6]].forEach(function(c){
     const g=document.createElementNS('http://www.w3.org/2000/svg','polyline');
     g.setAttribute('points',sc.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' '));
@@ -254,7 +232,7 @@ function drawArc(){
   arc.setAttribute('points',sc.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' '));
   arc.setAttribute('fill','none');arc.setAttribute('stroke','#AF5F30');arc.setAttribute('stroke-width','2.5');arc.setAttribute('stroke-dasharray','6 9');arc.setAttribute('opacity','0.85');
   arcSvg.appendChild(arc);
-  ab.forEach(function(p,i){if(i%3!==0)return;const s=projectToScreen(p.sweepAz,p.el);const d=document.createElementNS('http://www.w3.org/2000/svg','circle');d.setAttribute('cx',s[0].toFixed(1));d.setAttribute('cy',s[1].toFixed(1));d.setAttribute('r','2.5');d.setAttribute('fill','#FFD23C');d.setAttribute('opacity','0.85');arcSvg.appendChild(d);});
+  ab.forEach(function(p,i){if(i%3!==0)return;const s=projectToScreen(p.az,p.el);const d=document.createElementNS('http://www.w3.org/2000/svg','circle');d.setAttribute('cx',s[0].toFixed(1));d.setAttribute('cy',s[1].toFixed(1));d.setAttribute('r','2.5');d.setAttribute('fill','#FFD23C');d.setAttribute('opacity','0.85');arcSvg.appendChild(d);});
   var riseLabel='Rise ' + '${sunTimes.rise}', setLabel='Set ' + '${sunTimes.set}';
   [{pt:sc[0],txt:riseLabel,anchor:'end'},{pt:sc[sc.length-1],txt:setLabel,anchor:'start'}].forEach(function(lbl){
     const ci=document.createElementNS('http://www.w3.org/2000/svg','circle');ci.setAttribute('cx',lbl.pt[0].toFixed(1));ci.setAttribute('cy',lbl.pt[1].toFixed(1));ci.setAttribute('r','4.5');ci.setAttribute('fill','#AF5F30');arcSvg.appendChild(ci);
@@ -262,21 +240,21 @@ function drawArc(){
   });
 }
 
-function moveSun(sweepAz,el){
+function moveSun(az,el){
   if(el<-5){sunEl.style.display='none';return;}
-  const s=projectToScreen(sweepAz,el);
+  const s=projectToScreen(az,el);
   sunEl.style.display='block';sunEl.style.left=s[0]+'px';sunEl.style.top=s[1]+'px';
 }
 
 function updateView(p){
   if(p.iso)map.setDate(new Date(p.iso));
   curEl=p.el;curAz=p.az;
-  moveSun(p.sweepAz!=null?p.sweepAz:p.az,p.el);
+  moveSun(p.az,p.el);
   var stm=document.getElementById('stm');if(stm)stm.textContent=p.time;
   var st2=document.getElementById('sun-time');if(st2)st2.textContent=p.time;
 }
 
-updateView(allPts[${startIdx}]);
+updateView({el:${mel},az:${maz},time:'${simTime}',iso:'${simIso}'});
 drawArc();
 
 var _mmoved=false, _mdx=0, _mdy=0, _tsx=0, _tsy=0;
@@ -366,9 +344,9 @@ function animTick(ts){
   if(animStartT===null)animStartT=ts;
   var t=Math.min(1,(ts-animStartT)/POINT_MS);
   var p0=allPts[ai],p1=allPts[(ai+1)%allPts.length];
-  var el=lerp(p0.el,p1.el,t),sweepAz=lerpAngle(p0.sweepAz,p1.sweepAz,t);
-  curEl=el;curAz=lerpAngle(p0.az,p1.az,t);
-  moveSun(sweepAz,el);
+  var el=lerp(p0.el,p1.el,t),az=lerpAngle(p0.az,p1.az,t);
+  curEl=el;curAz=az;
+  moveSun(az,el);
   try{map.setDate(interpDate(p0.iso,p1.iso,t));}catch(e){}
   var stm=document.getElementById('stm');if(stm)stm.textContent=p0.time;
   var st2=document.getElementById('sun-time');if(st2)st2.textContent=p0.time;
