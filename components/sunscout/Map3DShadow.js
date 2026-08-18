@@ -280,9 +280,35 @@ document.getElementById('btn-left').onclick=function(){aR(-15);};
 document.getElementById('btn-right').onclick=function(){aR(15);};
 document.getElementById('btn-n').onclick=function(){rst();};
 
-var ai=${startIdx},isAnimating=${animating?'true':'false'},animInterval=null;
-function startAnim(){if(animInterval)return;animInterval=setInterval(function(){updateView(allPts[ai]);drawArc();ai=(ai+1)%allPts.length;},150);}
-function stopAnim(){if(animInterval){clearInterval(animInterval);animInterval=null;}}
+var ai=${startIdx},isAnimating=${animating?'true':'false'};
+// Smooth animation: the old version snapped straight from one path point to
+// the next every 150ms, so both the sun icon and the shadows visibly jumped
+// (choppy, "antediluvian" per feedback) instead of gliding. This drives a
+// requestAnimationFrame loop that linearly interpolates elevation/azimuth/date
+// between consecutive path points, so the sun and shadows move continuously
+// at display refresh rate while still advancing through the real data once
+// per POINT_MS -- same overall speed, far smoother motion.
+var animFrame=null, animStartT=null, POINT_MS=150;
+function lerp(a,b,t){return a+(b-a)*t;}
+function lerpAngle(a,b,t){var d=((b-a+540)%360)-180;return a+d*t;}
+function interpDate(isoA,isoB,t){var ta=new Date(isoA).getTime(),tb=new Date(isoB).getTime();return new Date(ta+(tb-ta)*t);}
+function animTick(ts){
+  if(!isAnimating){animFrame=null;return;}
+  if(animStartT===null)animStartT=ts;
+  var t=Math.min(1,(ts-animStartT)/POINT_MS);
+  var p0=allPts[ai],p1=allPts[(ai+1)%allPts.length];
+  var el=lerp(p0.el,p1.el,t),az=lerpAngle(p0.az,p1.az,t);
+  curEl=el;curAz=az;
+  moveSun(az,el);
+  try{map.setDate(interpDate(p0.iso,p1.iso,t));}catch(e){}
+  var stm=document.getElementById('stm');if(stm)stm.textContent=p0.time;
+  var st2=document.getElementById('sun-time');if(st2)st2.textContent=p0.time;
+  drawArc();
+  if(t>=1){ai=(ai+1)%allPts.length;animStartT=ts;}
+  animFrame=requestAnimationFrame(animTick);
+}
+function startAnim(){if(animFrame)return;animStartT=null;animFrame=requestAnimationFrame(animTick);}
+function stopAnim(){if(animFrame){cancelAnimationFrame(animFrame);animFrame=null;}}
 if(isAnimating)startAnim();
 
 window.addEventListener('message',function(e){
@@ -299,7 +325,7 @@ window.addEventListener('message',function(e){
     var capTime=e.data.time;
     var capDate=e.data.date;
     isAnimating=false;
-    if(animInterval){clearInterval(animInterval);animInterval=null;}
+    stopAnim();
     if(capDate){
       try{ map.setDate(new Date(capDate+'T'+capTime+':00')); }catch(err){}
     }
