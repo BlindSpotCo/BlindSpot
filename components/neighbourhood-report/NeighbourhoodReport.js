@@ -138,8 +138,16 @@ export default function NeighbourhoodReport({ record, nearby }) {
             <p className="kick" style={{ color: 'rgba(255,253,248,0.65)' }}>Sheet 01 · {record.area || record.city} · PIN {record.pin_code}</p>
             {/* Plain Inter bold, matching .hero h1 / .section h2 -- the
                 rest of the site has no display font, Anton was never
-                actually used anywhere real. */}
-            <h1 className="nr-hero-name" style={{ fontWeight: 700, fontSize: 54, lineHeight: .95, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)' }}>{record.name}</h1>
+                actually used anywhere real. Font-size dropped from 54 to
+                40 -- at 54 a single 9-letter word ("CONNAUGHT") didn't
+                fit this box's ~290px text width, and the site's global
+                `h1,h2,h3{word-break:break-word}` rule (meant to stop long
+                URLs/strings overflowing elsewhere) was breaking it mid-
+                word ("CONNAUG"/"HT PLACE") instead of wrapping at the
+                space. Explicit word-break/overflow-wrap:normal override
+                here so a two-word name that still doesn't fit on one
+                line wraps cleanly between words instead. */}
+            <h1 className="nr-hero-name" style={{ fontWeight: 700, fontSize: 40, lineHeight: 1.05, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)', wordBreak: 'normal', overflowWrap: 'normal' }}>{record.name}</h1>
             <p style={{ fontSize: 13, color: 'rgba(255,253,248,0.55)', margin: 0 }}>
               {record.dimensions_scored || Object.keys(record.scores || {}).length}/{record.dimensions_total || Object.keys(record.scores || {}).length} dimensions · scored {formatDateLong(record.scored_at) || '—'}
             </p>

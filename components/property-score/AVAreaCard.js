@@ -64,7 +64,14 @@ export default function AVAreaCard({ record, city }) {
               face. Anton was an unfounded choice (only ever used in this
               card's own earlier version and the homepage mockup, nowhere
               else on the real site), so it read as off-brand too. */}
-          <h3 style={{ fontWeight: 700, fontSize: 32, lineHeight: .95, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)' }}>{record.name}</h3>
+          {/* wordBreak/overflowWrap:normal overrides the site's global
+              h1,h2,h3{word-break:break-word} rule -- fine for most names
+              at this size, but a long single word in a narrower box
+              (e.g. the full report page's version of this heading, at
+              54px, mid-word-broke "CONNAUGHT" into "CONNAUG"/"HT") would
+              otherwise silently do the same here. Wraps at spaces
+              between words instead, never mid-word. */}
+          <h3 style={{ fontWeight: 700, fontSize: 32, lineHeight: .95, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)', wordBreak: 'normal', overflowWrap: 'normal' }}>{record.name}</h3>
           <div style={{ fontSize: 13.5, color: 'rgba(255,253,248,0.55)' }}>
             {Object.keys(scores).length}/{record.dimensions_total || Object.keys(scores).length} dimensions · scored {formatDateLong(record.scored_at) || '—'}
           </div>

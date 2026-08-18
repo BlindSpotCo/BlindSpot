@@ -1090,7 +1090,12 @@
      this mockup was the actual source of that mismatch, not a reference
      for it. Fixed here to match the real property-score card and full
      report page, all three now identical. */
-  .av-city{ font-weight:700; font-size:26px; line-height:1.05; color:var(--paper); margin:8px 0 6px }
+  /* word-break/overflow-wrap:normal overrides the site's global
+     h1,h2,h3{word-break:break-word} rule -- without it, a long single
+     word in this narrow card can get mid-word-broken instead of wrapping
+     at a space (this is what happened on the full report page's version
+     of this heading at 54px: "CONNAUGHT" split into "CONNAUG"/"HT"). */
+  .av-city{ font-weight:700; font-size:26px; line-height:1.05; color:var(--paper); margin:8px 0 6px; word-break:normal; overflow-wrap:normal }
 
   /* Base .av-tiny stays slate-on-paper -- it's also used standalone for
      the "DIMENSION READOUT" label, which sits directly on the page
