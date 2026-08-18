@@ -69,7 +69,7 @@ function CategoryCard({ title, tip, stats }) {
         {stats.filter(Boolean).map(([label, val, itemTip]) => (
           <div key={label}>
             <div style={{ fontSize: 11.5, textTransform: 'uppercase', letterSpacing: '.05em', color: 'var(--text-dim)', display: 'flex', alignItems: 'center' }}>{label}<Info text={itemTip} /></div>
-            <div className="cond" style={{ fontSize: 15.5, fontWeight: 700, marginTop: 3, color: 'var(--text)' }}>{val ?? '—'}</div>
+            <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 15.5, fontWeight: 700, marginTop: 3, color: 'var(--text)' }}>{val ?? '—'}</div>
           </div>
         ))}
       </div>
@@ -309,7 +309,7 @@ export default function AVDetailedReadout({ record }) {
           {Object.entries(record.weights_applied || {}).map(([k, w], i) => (
             <div key={k} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13.5, padding: '10px 18px', borderTop: i ? '1px dashed var(--line-soft)' : 'none', flexWrap: 'wrap', gap: 8 }}>
               <span style={{ color: 'var(--text)', fontWeight: 600, minWidth: 150 }}>{FACTOR_LABELS[k] || k}</span>
-              <span className="cond" style={{ fontWeight: 700, color: 'var(--slate)', width: 44 }}>{Math.round(w * 100)}%</span>
+              <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, color: 'var(--slate)', width: 44 }}>{Math.round(w * 100)}%</span>
               <span style={{ color: 'var(--text-dim)', flex: 1, minWidth: 200 }}>{source(k, record.city)}</span>
               <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.06em', color: k === 'air' ? '#3D6B2E' : 'var(--text-dim)', border: `1px solid ${k === 'air' ? '#3D6B2E' : 'var(--line)'}`, borderRadius: 2, padding: '2px 6px' }}>{k === 'air' ? 'LIVE' : 'EST'}</span>
             </div>

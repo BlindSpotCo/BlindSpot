@@ -23,14 +23,22 @@ import AVDetailedReadout, { BPF, source, scoreColor, verdictFor, explain, AQI_PL
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
 import { cityMeta, coverageLabel } from '@/lib/aslivastu/cityMeta';
 
+/* Used to import Barlow/Barlow Condensed and set them as this page's
+   body/heading fonts -- a pair the rest of the site never loads
+   (layout.js loads Anton, Bricolage Grotesque, Inter, IBM Plex Mono).
+   That's why this report page read as visibly off-brand from the rest
+   of BlindSpot. Body font is now Inter (the site's actual body font,
+   already loaded globally, no import needed); .kick now matches the
+   site's own .mono eyebrow treatment (IBM Plex Mono); every former
+   `.cond` heading/number is fixed individually inline further down,
+   using the same Anton-for-display-names / Bricolage-Grotesque-for-
+   numbers mapping the property-score card and the homepage mockup use. */
 const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap');
-.nr { font-family: 'Barlow', sans-serif; }
-.nr .cond { font-family: 'Barlow Condensed', sans-serif; }
-.nr .kick { font-size: 11px; text-transform: uppercase; letter-spacing: .14em; font-weight: 600; color: var(--slate); margin: 0; }
+.nr { font-family: 'Inter', sans-serif; }
+.nr .kick { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .14em; font-weight: 600; color: var(--slate); margin: 0; }
 .nr a { color: var(--slate); text-decoration: none; }
 .nr a:hover { opacity: .75; }
-.nr button { font-family: 'Barlow', sans-serif; cursor: pointer; }
+.nr button { font-family: 'Inter', sans-serif; cursor: pointer; }
 .bpf-av { position: relative; }
 .bpf-av > .m { position: absolute; color: var(--slate); font-size: 12px; line-height: 1; opacity: .5; }
 @media (max-width: 900px) {
@@ -126,7 +134,7 @@ export default function NeighbourhoodReport({ record, nearby }) {
         <div className="nr-hero3" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 24 }}>
           <BPF dark style={{ padding: 24 }}>
             <p className="kick" style={{ color: 'rgba(255,253,248,0.65)' }}>Sheet 01 · {record.area || record.city} · PIN {record.pin_code}</p>
-            <h1 className="nr-hero-name cond" style={{ fontSize: 54, fontWeight: 700, lineHeight: .95, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)' }}>{record.name}</h1>
+            <h1 className="nr-hero-name" style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 54, lineHeight: .95, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)' }}>{record.name}</h1>
             <p style={{ fontSize: 13, color: 'rgba(255,253,248,0.55)', margin: 0 }}>
               {record.dimensions_scored || Object.keys(record.scores || {}).length}/{record.dimensions_total || Object.keys(record.scores || {}).length} dimensions · scored {formatDateLong(record.scored_at) || '—'}
             </p>
@@ -135,8 +143,8 @@ export default function NeighbourhoodReport({ record, nearby }) {
           <BPF dark style={{ padding: 24 }}>
             <p className="kick" style={{ color: 'rgba(255,253,248,0.65)' }}>Composite index · {persona} weighting</p>
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, margin: '8px 0 6px' }}>
-              <span className="nr-hero-score cond" style={{ fontSize: 84, fontWeight: 700, lineHeight: .85, color: 'var(--paper)' }}>{nqi}</span>
-              <span className="cond" style={{ fontSize: 30, fontWeight: 700, color: 'var(--paper)', marginBottom: 12 }}>{grade}</span>
+              <span className="nr-hero-score" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 84, fontWeight: 700, lineHeight: .85, color: 'var(--paper)' }}>{nqi}</span>
+              <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 30, fontWeight: 700, color: 'var(--paper)', marginBottom: 12 }}>{grade}</span>
             </div>
             <p style={{ fontSize: 13, color: 'rgba(255,253,248,0.55)', margin: 0, lineHeight: 1.5 }}>NQI · weighted mean of {rows.length} dimensions — switch profile to re-weight.</p>
             {/* Present on AsliVastu's own live report card, missing here --
@@ -155,7 +163,7 @@ export default function NeighbourhoodReport({ record, nearby }) {
               need white. */}
           <div style={{ background: scoreColor(nqi), color: readableTextColor(scoreColor(nqi)), padding: 24, position: 'relative' }}>
             <p className="kick" style={{ color: 'inherit', opacity: .75 }}>Verdict</p>
-            <h2 className="cond" style={{ fontSize: 34, fontWeight: 700, margin: '8px 0 10px', textTransform: 'uppercase', color: 'inherit' }}>{verdict.label}</h2>
+            <h2 style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 34, fontWeight: 700, margin: '8px 0 10px', textTransform: 'uppercase', color: 'inherit' }}>{verdict.label}</h2>
             <p style={{ fontSize: 13, lineHeight: 1.5, margin: 0, color: 'inherit', opacity: .92 }}>{verdict.why}</p>
           </div>
         </div>
@@ -204,7 +212,7 @@ export default function NeighbourhoodReport({ record, nearby }) {
             return (
               <div key={row.k} className="nr-dim-row" style={{ display: 'grid', gridTemplateColumns: '200px 52px 1fr 76px', gap: 14, alignItems: 'start', padding: '11px 0', borderTop: '1px dashed rgba(255,253,248,0.16)' }}>
                 <div>
-                  <div className="cond" style={{ fontSize: 18, fontWeight: 600, textTransform: 'uppercase', lineHeight: 1.1, color: 'var(--paper)' }}>{FACTOR_LABELS[row.k]}</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.1, color: 'var(--paper)' }}>{FACTOR_LABELS[row.k]}</div>
                   <div style={{ fontSize: 11, color: 'rgba(255,253,248,0.5)', marginTop: 2 }}>{source(row.k, record.city)}</div>
                 </div>
                 <div style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,253,248,0.75)', paddingTop: 4 }}>{row.weight}%</div>
@@ -219,7 +227,7 @@ export default function NeighbourhoodReport({ record, nearby }) {
                 {/* Fixed light text, not scoreColor(row.score) -- see the
                     matching note in AVAreaCard.js: red/deep-olive are
                     themselves dark and would vanish as text on this box. */}
-                <div className="nr-dim-score cond" style={{ fontSize: 26, fontWeight: 700, textAlign: 'right', color: 'var(--paper)' }}>{row.score}</div>
+                <div className="nr-dim-score" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 26, fontWeight: 700, textAlign: 'right', color: 'var(--paper)' }}>{row.score}</div>
               </div>
             );
           })}
@@ -251,7 +259,7 @@ export default function NeighbourhoodReport({ record, nearby }) {
               return (
                 <>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, margin: '8px 0 2px', flexWrap: 'wrap' }}>
-                    <span className="cond" style={{ fontSize: 30, fontWeight: 700 }}>{inr(lo)}–{inr(hi)}</span>
+                    <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 30, fontWeight: 700 }}>{inr(lo)}–{inr(hi)}</span>
                     <span style={{ fontSize: 12, color: 'var(--text-dim)' }}>per sq ft · {pc.label?.toLowerCase()} band for {cm.shortName}</span>
                   </div>
                   <div style={{ display: 'flex', gap: 5, margin: '14px 0 6px' }}>

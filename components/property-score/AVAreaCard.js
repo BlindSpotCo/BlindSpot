@@ -37,9 +37,16 @@ export default function AVAreaCard({ record, city }) {
 
   return (
     <div className="av-card" style={{ marginBottom: 36 }}>
+      {/* No local font import -- this used to pull in Barlow Condensed for
+          every `.cond` element, a font the rest of the site never loads
+          (layout.js loads Anton, Bricolage Grotesque, Inter, IBM Plex
+          Mono). That's what made this card visibly off-brand. Every
+          heading/number below now uses one of those four instead, inline,
+          matching the exact same mapping the homepage mockup already
+          uses: Anton for the big display name, Bricolage Grotesque for
+          every numeric readout, plain Inter (the page's own body font)
+          for row labels. */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&display=swap');
-        .av-card .cond { font-family: 'Barlow Condensed', sans-serif; }
         @media (max-width: 900px) { .av-card .av-hero3 { grid-template-columns: 1fr !important; } }
         @media (max-width: 640px) { .av-card .av-dim-row { grid-template-columns: 1fr !important; gap: 6px !important; } }
       `}</style>
@@ -51,7 +58,7 @@ export default function AVAreaCard({ record, city }) {
           <div className="mono" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 600, color: 'rgba(255,253,248,0.65)' }}>
             Sheet · {record.area || city || record.city} · PIN {record.pin_code}
           </div>
-          <h3 className="cond" style={{ fontSize: 32, fontWeight: 700, lineHeight: .95, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)' }}>{record.name}</h3>
+          <h3 style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 32, lineHeight: .95, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)' }}>{record.name}</h3>
           <div style={{ fontSize: 13.5, color: 'rgba(255,253,248,0.55)' }}>
             {Object.keys(scores).length}/{record.dimensions_total || Object.keys(scores).length} dimensions · scored {formatDateLong(record.scored_at) || '—'}
           </div>
@@ -60,7 +67,7 @@ export default function AVAreaCard({ record, city }) {
         <BPF dark style={{ padding: 24 }}>
           <div className="mono" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 600, color: 'rgba(255,253,248,0.65)' }}>Composite index</div>
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, margin: '8px 0 6px' }}>
-            <span className="av-score-number cond" style={{ fontSize: 60, fontWeight: 700, lineHeight: .85, color: 'var(--paper)' }}>{record.nqi_composite}</span>
+            <span className="av-score-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 60, fontWeight: 700, lineHeight: .85, color: 'var(--paper)' }}>{record.nqi_composite}</span>
             <GradeBadge grade={record.grade} color="var(--paper)" />
           </div>
           <div style={{ fontSize: 13.5, color: 'rgba(255,253,248,0.55)', lineHeight: 1.5 }}>NQI · weighted mean of {rows.length} dimensions.</div>
@@ -75,7 +82,7 @@ export default function AVAreaCard({ record, city }) {
             ink, only the two darkest tiers (deep olive, red) need white. */}
         <div style={{ background: verdictCol, color: verdictText, padding: 24, borderRadius: 'var(--radius)' }}>
           <div className="mono" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.1em', color: 'inherit', opacity: .75 }}>Area Verdict</div>
-          <div className="cond" style={{ fontSize: 26, fontWeight: 700, textTransform: 'uppercase', margin: '8px 0 8px', color: 'inherit' }}>{verdict.label}</div>
+          <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 26, fontWeight: 700, textTransform: 'uppercase', margin: '8px 0 8px', color: 'inherit' }}>{verdict.label}</div>
           <div style={{ fontSize: 13.5, lineHeight: 1.5, color: 'inherit', opacity: .92 }}>{verdict.why}</div>
         </div>
       </div>
@@ -92,7 +99,7 @@ export default function AVAreaCard({ record, city }) {
           return (
             <div key={row.k} className="av-dim-row" style={{ display: 'grid', gridTemplateColumns: '180px 46px 1fr 60px', gap: 14, alignItems: 'start', padding: '11px 0', borderTop: '1px dashed rgba(255,253,248,0.16)' }}>
               <div>
-                <div className="cond" style={{ fontSize: 17, fontWeight: 600, textTransform: 'uppercase', lineHeight: 1.1, color: 'var(--paper)' }}>{FACTOR_LABELS[row.k] || row.k}</div>
+                <div style={{ fontSize: 17, fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.1, color: 'var(--paper)' }}>{FACTOR_LABELS[row.k] || row.k}</div>
                 <div style={{ fontSize: 11.5, color: 'rgba(255,253,248,0.5)', marginTop: 2 }}>{source(row.k, record.city)}</div>
               </div>
               <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,253,248,0.75)', paddingTop: 4 }}>{row.weight}%</div>
@@ -115,7 +122,7 @@ export default function AVAreaCard({ record, city }) {
                   are themselves dark and would nearly disappear as text on
                   this near-black box. The bar above still carries the color
                   signal; this number just needs to be legible. */}
-              <div className="cond" style={{ fontSize: 24, fontWeight: 700, textAlign: 'right', color: 'var(--paper)' }}>{row.score}</div>
+              <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 24, fontWeight: 700, textAlign: 'right', color: 'var(--paper)' }}>{row.score}</div>
             </div>
           );
         })}
