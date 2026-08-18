@@ -118,7 +118,7 @@ function AreaPanel() {
         <Box>
           <div className="mono av-tiny">SHEET · {selected.meta.toUpperCase()}</div>
           <div className="av-city">{selected.name.toUpperCase()}</div>
-          <div className="av-box-sub">4/8 dimensions shown here · full report has all 8</div>
+          <div className="av-box-sub">3/8 dimensions shown here · full report has all 8</div>
         </Box>
 
         <Box>
@@ -135,36 +135,30 @@ function AreaPanel() {
         </Box>
       </div>
 
-      <div className="mono av-tiny" style={{ margin: '4px 0 10px' }}>DIMENSION READOUT</div>
+      <div className="mono av-tiny" style={{ margin: '4px 0 8px' }}>DIMENSION READOUT</div>
       <div className="av-dims">
         <AvDim label="Crime" score={81} source="Delhi Police Annual Report" />
         <AvDim label="Air Quality" score={64} source="CPCB live AQI" />
         <AvDim label="Power" score={88} source="BSES / Tata Power" />
-        <AvDim label="Schools" score={76} source="CBSE affiliation database" />
       </div>
 
-      <div className="av-list">
-        {others.map((l) => (
-          <div key={l.name} className="av-list-row hw-box">
-            <span>{l.name}</span>
-            <span className="mono">{l.score} <em>{l.grade}</em></span>
-          </div>
-        ))}
-      </div>
-
-      {/* Locked full-report teaser, matching the real property-score page's
-          paywall block — kept short (a couple of features, no caption line)
-          so it doesn't blow the card's height past the Home Comfort Score
-          card next to it. */}
-      <div className="av-locked">
-        <span className="av-locked-dot" aria-hidden="true" />
-        <div className="mono av-locked-eyebrow">LOCKED · SHEET 02</div>
-        <div className="av-locked-heading">Full Neighbourhood Report</div>
-        <div className="av-locked-features">
-          <span className="av-locked-feature">Plan-view map + nearby pins</span>
-          <span className="av-locked-feature">Price context &amp; market gap</span>
+      {/* Compact single-strip footer -- the real card has neither a
+          nearby-locality list nor a locked-report teaser (those are
+          homepage-only marketing additions), so both are folded into one
+          tight row instead of the two full-height blocks this used to be.
+          That was the fix for the area card ending up visibly taller than
+          the Home Comfort Score card next to it once the hero/dimension
+          section grew to match the real 3-box layout. */}
+      <div className="av-more">
+        <div className="av-more-list">
+          {others.map((l) => (
+            <span key={l.name} className="av-more-chip">{l.name} <b>{l.score}</b></span>
+          ))}
         </div>
-        <div className="av-locked-cta">VIEW FULL REPORT →</div>
+        <div className="av-more-cta hw-box">
+          <span className="av-locked-dot" aria-hidden="true" />
+          Full report — map, price &amp; more →
+        </div>
       </div>
     </div>
   );

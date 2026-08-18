@@ -1060,9 +1060,9 @@
   }
   .av-panel::before{ background:var(--av); }
 
-  .av-hero3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:18px; align-items:stretch }
+  .av-hero3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:14px; align-items:stretch }
   .av-box{
-    position:relative; border:1px solid var(--line); border-radius:6px; padding:14px 14px 12px;
+    position:relative; border:1px solid var(--line); border-radius:6px; padding:12px 12px 10px;
     background:var(--bg-2); display:flex; flex-direction:column;
   }
   .av-box-corner{ position:absolute; width:11px; height:11px; pointer-events:none; z-index:2 }
@@ -1094,41 +1094,34 @@
   .av-score-num span{ font-size:13px; margin-left:8px; color:var(--slate); border:1px solid var(--slate); background:color-mix(in srgb, var(--slate) 10%, transparent); padding:2px 7px; border-radius:3px; vertical-align:middle }
   .av-verdict-word{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:19px; margin-top:6px; text-transform:uppercase; color:inherit }
 
-  .av-dim-row{ margin-bottom:9px }
+  .av-dim-row{ margin-bottom:7px }
   .av-dim-head{ display:flex; justify-content:space-between; font-size:13.5px; font-weight:500; letter-spacing:.04em; color:var(--ink); margin-bottom:4px }
   .av-dim-track{ height:5px; border-radius:3px; background:var(--line-soft); overflow:hidden; margin-bottom:3px }
   .av-dim-fill{ height:100%; border-radius:3px }
   .av-dim-source{ font-size:12px; color:var(--text-dim); letter-spacing:.04em }
 
-  .av-list{ margin-top:4px }
-  .av-list-row{
-    display:flex; justify-content:space-between; padding:7px 4px; font-size:14px; color:var(--text-mute);
-    border-top:1px dashed var(--line-soft);
+  /* Compact footer strip -- folds the nearby-locality comparison and the
+     locked full-report teaser (the real card has neither; both are
+     homepage-only marketing additions) into one row instead of two
+     separate full-height blocks. This is what actually brought the area
+     card's total height back in line with the Home Comfort Score card
+     next to it -- the 3-box hero + dimension readout above already
+     matches the real card 1:1, so the fix belonged here, not there. */
+  .av-more{
+    margin-top:12px; padding-top:10px; border-top:1px dashed var(--line-soft);
+    display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
   }
-  .av-list-row em{ font-style:normal; color:var(--text-dim); margin-left:5px }
-
-  /* Locked full-report teaser at the bottom of the card, matching the real
-     property-score page's paywall block (dashed divider, wine status dot,
-     feature list, solid CTA) — kept short so it doesn't blow the card's
-     height out. */
-  .av-locked{
-    margin-top:14px; padding-top:12px; border-top:1px dashed var(--line-soft);
-    text-align:center; position:relative;
+  .av-more-list{ display:flex; gap:10px; flex-wrap:wrap }
+  .av-more-chip{ font-size:12.5px; color:var(--text-mute) }
+  .av-more-chip b{ font-weight:600; color:var(--text-dim); margin-left:2px }
+  .av-more-cta{
+    position:relative; display:inline-flex; align-items:center; gap:8px;
+    background:var(--av); color:#fff; font-weight:700; font-size:12.5px;
+    letter-spacing:.02em; padding:8px 14px; border-radius:6px; white-space:nowrap;
   }
   .av-locked-dot{
-    position:absolute; top:-5px; left:50%; width:8px; height:8px; border-radius:50%;
-    background:var(--av); transform:translateX(-50%); box-shadow:0 0 0 4px color-mix(in srgb, var(--av) 22%, transparent);
-  }
-  .av-locked-eyebrow{ color:var(--av); font-size:12px; font-weight:700; letter-spacing:.14em; margin-bottom:6px }
-  .av-locked-heading{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:17px; color:var(--ink); margin-bottom:10px }
-  .av-locked-features{
-    display:flex; justify-content:center; gap:16px; margin:0 auto 10px;
-  }
-  .av-locked-feature{ position:relative; padding-left:15px; font-size:13px; color:var(--text-mute); line-height:1.5 }
-  .av-locked-feature::before{ content:'+'; position:absolute; left:0; top:0; color:var(--av); font-weight:700 }
-  .av-locked-cta{
-    display:inline-block; background:var(--av); color:#fff; font-weight:700; font-size:13.5px;
-    letter-spacing:.03em; padding:10px 22px; border-radius:6px;
+    width:6px; height:6px; border-radius:50%; background:#fff;
+    box-shadow:0 0 0 3px color-mix(in srgb, #fff 25%, transparent);
   }
 
   /* ---------- SUNSCOUT-STYLE PANEL (step 2) ----------
