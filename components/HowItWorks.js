@@ -56,10 +56,28 @@ const STEPS = [
   },
 ];
 
+// Real record, not invented -- data/aslivastu/nqi_scores.json +
+// master_by_pin.json, PIN 110001 (Connaught Place / Central Delhi),
+// scored_at 2026-07-28. Every field below (score, grade, weight, source,
+// explain sentence) is pulled straight from that record or the same
+// source()/explain() logic AVDetailedReadout.js uses for the real card,
+// so this mockup can't drift from what the live property-score page
+// actually shows for this exact PIN.
 const SAMPLE_LOCALITIES = [
-  { name: 'Koramangala 5th Block', meta: 'Bengaluru · 560095', score: 78, grade: 'B+', selected: true },
-  { name: 'Whitefield', meta: 'Bengaluru · 560066', score: 71, grade: 'B', selected: false },
-  { name: 'Indiranagar', meta: 'Bengaluru · 560038', score: 84, grade: 'A-', selected: false },
+  { name: 'Connaught Place', meta: 'Central Delhi · PIN 110001', score: 82, grade: 'A', selected: true },
+  { name: 'PIN 110010', meta: 'Delhi NCR', score: 87, grade: 'A', selected: false },
+  { name: 'PIN 110021', meta: 'Delhi NCR', score: 85, grade: 'A', selected: false },
+];
+
+const SAMPLE_DIMENSIONS = [
+  { label: 'Safety', weight: 25, score: 90, source: 'Delhi Police Annual Report · est. 2023', explain: '290 crimes reported — safer than 73% of tracked Delhi NCR areas (low tier).' },
+  { label: 'Infrastructure', weight: 20, score: 45, source: 'DDA Master Plan · DMRC · est. 2024', explain: '0 operational metro station(s) · low highway access · commercial zone.' },
+  { label: 'Air Quality', weight: 15, score: 75, source: 'CPCB live AQI · updated daily', explain: 'AQI ~113, Moderate — okay for healthy people; asthma/heart/lung patients should limit long outdoor exertion.' },
+  { label: 'Schools', weight: 10, score: 100, source: 'CBSE affiliation database · est. 2023', explain: '15 CBSE school(s) mapped to this pin.' },
+  { label: 'Power', weight: 10, score: 94, source: 'BSES / Tata Power · est. 2023', explain: 'Excellent reliability · ~1.2 outage hrs/month via NDMC.' },
+  { label: 'Water Supply', weight: 8, score: 100, source: 'Delhi Jal Board supply & quality · est. 2023', explain: '22 hrs daily supply · Low TDS · 99% piped coverage.' },
+  { label: 'Roads', weight: 7, score: 100, source: 'MCD / PWD road surveys · est. 2023', explain: 'Excellent condition · ~0.2 potholes/km · last resurfaced 2023.' },
+  { label: 'Drainage & Sewerage', weight: 5, score: 100, source: 'Drainage & waterlogging records · est. 2023', explain: 'Low monsoon waterlogging risk.' },
 ];
 
 const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'North-West', 'South-West'];
@@ -84,23 +102,34 @@ function Box({ className = '', style, children }) {
   );
 }
 
-function AvDim({ label, score, source }) {
+// Same 4-column grid as the real card's dimension rows (label+source /
+// weight% / bar+explain sentence / score) -- the old 2-line version only
+// showed label+bar+source, dropping the weight and the explain sentence
+// that make the real readout legible on its own. Score number is fixed
+// light text, not scoreColor(score), for the same reason as the real
+// card: red/deep-olive tiers are dark enough to nearly vanish as text on
+// this near-black box -- the bar still carries that signal.
+function AvDim({ label, weight, score, source, explain }) {
   const col = scoreColor(score);
   const weak = score < 50;
   return (
     <div className="av-dim-row hw-box">
-      <div className="av-dim-head">
-        <span>{label.toUpperCase()}</span>
-        <span className="mono" style={{ color: col }}>{score}</span>
+      <div>
+        <div className="av-dim-label">{label.toUpperCase()}</div>
+        <div className="av-dim-source">{source}</div>
       </div>
-      <div className="av-dim-track">
-        <div className="av-dim-fill" style={{
-          width: `${score}%`,
-          background: weak ? undefined : col,
-          backgroundImage: weak ? `repeating-linear-gradient(45deg, ${col} 0 3px, transparent 3px 6px)` : undefined,
-        }} />
+      <div className="av-dim-weight mono">{weight}%</div>
+      <div>
+        <div className="av-dim-track">
+          <div className="av-dim-fill" style={{
+            width: `${score}%`,
+            background: weak ? undefined : col,
+            backgroundImage: weak ? `repeating-linear-gradient(45deg, ${col} 0 3px, transparent 3px 6px)` : undefined,
+          }} />
+        </div>
+        <div className="av-dim-explain">{explain}</div>
       </div>
-      {source && <div className="mono av-dim-source">{source}</div>}
+      <div className="av-dim-score">{score}</div>
     </div>
   );
 }
@@ -118,7 +147,7 @@ function AreaPanel() {
         <Box>
           <div className="mono av-tiny">SHEET · {selected.meta.toUpperCase()}</div>
           <div className="av-city">{selected.name.toUpperCase()}</div>
-          <div className="av-box-sub">3/8 dimensions shown here · full report has all 8</div>
+          <div className="av-box-sub">8/8 dimensions · scored 28 Jul 2026</div>
         </Box>
 
         <Box>
@@ -135,20 +164,19 @@ function AreaPanel() {
         </Box>
       </div>
 
-      <div className="mono av-tiny" style={{ margin: '4px 0 8px' }}>DIMENSION READOUT</div>
-      <div className="av-dims">
-        <AvDim label="Crime" score={81} source="Delhi Police Annual Report" />
-        <AvDim label="Air Quality" score={64} source="CPCB live AQI" />
-        <AvDim label="Power" score={88} source="BSES / Tata Power" />
-      </div>
+      {/* Dimension readout is now its own dark box, same as the real
+          card -- all 8 real dimensions for this exact PIN, not a
+          trimmed preview. This does mean the area card is taller again
+          than the Home Comfort Score card next to it (the tradeoff a
+          previous pass traded away to keep the two step-cards the same
+          height) -- flagging that, not silently reintroducing it. */}
+      <Box className="av-dims-box">
+        <div className="mono av-tiny" style={{ marginBottom: 4 }}>DIMENSION READOUT · WEIGHT = EXACT CONTRIBUTION TO THE {selected.score}</div>
+        <div className="av-dims">
+          {SAMPLE_DIMENSIONS.map((d) => <AvDim key={d.label} {...d} />)}
+        </div>
+      </Box>
 
-      {/* Compact single-strip footer -- the real card has neither a
-          nearby-locality list nor a locked-report teaser (those are
-          homepage-only marketing additions), so both are folded into one
-          tight row instead of the two full-height blocks this used to be.
-          That was the fix for the area card ending up visibly taller than
-          the Home Comfort Score card next to it once the hero/dimension
-          section grew to match the real 3-box layout. */}
       <div className="av-more">
         <div className="av-more-list">
           {others.map((l) => (
