@@ -896,9 +896,26 @@
 
   .howworks-panel-sticky{position:sticky; top:98px; align-self:start}
 
+  /* min-height is the actual fix for "the two cards don't match size" --
+     the 3 panels (area / unit / verdict) swap into this exact same slot
+     one at a time (see Panel key={active} in HowItWorks.js), and their
+     natural content heights are genuinely different (the unit panel's
+     map+form+result is the tallest of the three). Trimming the area
+     panel's content to force it shorter was the old fix and it's why it
+     used to only show 3 of 8 dimensions -- that traded completeness for
+     size-matching. This instead sizes the shared box itself to the
+     tallest panel's natural height, so every step shows the same-size
+     white card and no panel needs to hide real data to fit. Content
+     stays top-aligned (not vertically centred) so the unit panel's map
+     strip -- which bleeds to the card's top/side edges via a negative
+     margin -- isn't pushed away from the edge it needs to touch.
+     680px was sized against the unit panel's actual content (map 152px +
+     tag/heading ~75px + floor field ~62px + facing field ~114px + CTA
+     ~85px + result box ~140px + panel padding ~46px), rounded up for a
+     safety margin against font-rendering variance. */
   .howworks-panel{
     position:relative; border:1.5px solid rgba(28,24,18,0.16); border-radius:10px; padding:24px 24px 22px;
-    background:var(--paper);
+    background:var(--paper); min-height:680px; box-sizing:border-box;
     box-shadow:0 34px 68px -36px rgba(28,24,18,0.34), 0 2px 0 rgba(28,24,18,0.04), 0 0 0 1px rgba(28,24,18,0.02);
     animation:panelPop .5s cubic-bezier(.22,.68,0,1) both;
   }
@@ -1148,12 +1165,10 @@
   .av-dim-source{ font-size:9.5px; color:var(--text-dim); letter-spacing:.02em }
 
   /* Compact footer strip -- folds the nearby-locality comparison and the
-     locked full-report teaser (the real card has neither; both are
-     homepage-only marketing additions) into one row instead of two
-     separate full-height blocks. This is what actually brought the area
-     card's total height back in line with the Home Comfort Score card
-     next to it -- the 3-box hero + dimension readout above already
-     matches the real card 1:1, so the fix belonged here, not there. */
+     full-report link (the real card has neither; both are homepage-only
+     marketing additions) into one row instead of two separate blocks.
+     Card-to-card height matching is handled by .howworks-panel's shared
+     min-height now, not by trimming this section. */
   .av-more{
     margin-top:12px; padding-top:10px; border-top:1px dashed var(--line-soft);
     display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
@@ -1165,6 +1180,7 @@
     position:relative; display:inline-flex; align-items:center; gap:8px;
     background:var(--av); color:#fff; font-weight:700; font-size:12.5px;
     letter-spacing:.02em; padding:8px 14px; border-radius:6px; white-space:nowrap;
+    text-decoration:none; cursor:pointer;
   }
   .av-locked-dot{
     width:6px; height:6px; border-radius:50%; background:#fff;

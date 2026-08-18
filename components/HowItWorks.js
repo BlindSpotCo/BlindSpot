@@ -79,11 +79,15 @@ const SAMPLE_DIMENSIONS = [
   { label: 'Roads', weight: 7, score: 100, source: 'MCD / PWD road surveys · est. 2023', explain: 'Excellent condition · ~0.2 potholes/km · last resurfaced 2023.' },
   { label: 'Drainage & Sewerage', weight: 5, score: 100, source: 'Drainage & waterlogging records · est. 2023', explain: 'Low monsoon waterlogging risk.' },
 ];
-// Top 3 by weight -- Safety (strong), Infrastructure (weak, shows the
-// striped/hatched bar variant for score<50), Air Quality (mid) -- real
-// scores, just not all 8 rows. See the AvDim comment for why this panel
-// only shows a subset instead of the full readout.
-const SHOWN_DIMENSIONS = SAMPLE_DIMENSIONS.slice(0, 3);
+// All 8 real dimensions now shown, not a trimmed subset -- this used to
+// slice to just the top 3 by weight to keep this panel's height down to
+// roughly match the Home Comfort Score panel next to it, but that made
+// the card visibly incomplete (and the "full report has all 8" caption
+// read as a downgrade rather than a preview). Height-matching between
+// panels is now handled structurally instead, via a shared min-height on
+// .howworks-panel (see globals.css) -- so there's no longer a tradeoff
+// between "shows everything" and "same size as the other card."
+const SHOWN_DIMENSIONS = SAMPLE_DIMENSIONS;
 
 const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'North-West', 'South-West'];
 
@@ -153,7 +157,7 @@ function AreaPanel() {
         <Box>
           <div className="mono av-tiny">SHEET · {selected.meta.toUpperCase()}</div>
           <div className="av-city">{selected.name.toUpperCase()}</div>
-          <div className="av-box-sub">{SHOWN_DIMENSIONS.length}/8 dimensions shown · full report has all 8</div>
+          <div className="av-box-sub">All {SHOWN_DIMENSIONS.length} dimensions, weighted into one score below.</div>
         </Box>
 
         <Box>
@@ -187,10 +191,19 @@ function AreaPanel() {
             <span key={l.name} className="av-more-chip">{l.name} <b>{l.score}</b></span>
           ))}
         </div>
-        <div className="av-more-cta hw-box">
+        {/* Real link now, not a static div -- matches the actual footer CTA
+            on the live property-score card (AVAreaCard.js), which links to
+            /neighbourhood-report/[pin]. Renamed from the vaguer "Full
+            report — map, price & more" to match that card's own wording. */}
+        <a
+          href="/neighbourhood-report/110001"
+          target="_blank"
+          rel="noreferrer"
+          className="av-more-cta hw-box"
+        >
           <span className="av-locked-dot" aria-hidden="true" />
-          Full report — map, price &amp; more →
-        </div>
+          Full Neighbourhood Report →
+        </a>
       </div>
     </div>
   );
