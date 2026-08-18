@@ -36,7 +36,19 @@ export default function AVAreaCard({ record, city }) {
   const verdictText = readableTextColor(verdictCol);
 
   return (
-    <div className="av-card" style={{ marginBottom: 36 }}>
+    // maxWidth pinned to 1056px -- the full report's actual usable content
+    // width (its .nr-wrap is maxWidth:1120 with 32px side padding, so
+    // 1120-64=1056). Without this, this card was rendering at whatever
+    // width its parent (.wrap, maxWidth:1180, 32px padding = 1116px) gave
+    // it -- about 60px wider per row. Same JSX, same font-sizes, but at
+    // that extra width, captions like "NQI · weighted mean of..." that
+    // wrap to 2 lines on the full report fit on 1 line here instead, so
+    // the grid's align-items:stretch left more empty space at the bottom
+    // of each box -- boxes read as visually "stretched"/loose instead of
+    // "squared up" even though not a single style value actually
+    // differed. Constraining the width makes every line-wrap, and so
+    // every box's actual proportions, match pixel-for-pixel.
+    <div className="av-card" style={{ marginBottom: 36, maxWidth: 1056 }}>
       {/* No local font import -- this used to pull in Barlow Condensed for
           every `.cond` element, a font the rest of the site never loads
           (layout.js loads Bricolage Grotesque, Inter, IBM Plex Mono).
