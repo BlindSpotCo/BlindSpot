@@ -126,7 +126,7 @@ function AvDim({ label, score, source }) {
     <div className="av-dim-row hw-box">
       <div className="av-dim-head">
         <span>{label.toUpperCase()}</span>
-        <span className="av-dim-score">{score}</span>
+        <span className="av-dim-score" style={{ color: col }}>{score}</span>
       </div>
       <div className="av-dim-track">
         <div className="av-dim-fill" style={{

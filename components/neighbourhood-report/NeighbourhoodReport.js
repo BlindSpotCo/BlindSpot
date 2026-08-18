@@ -217,30 +217,32 @@ export default function NeighbourhoodReport({ record, nearby }) {
         )}
 
         {/* ── Dimension readout ── */}
-        <BPF dark style={{ marginBottom: 24, padding: '0 24px 8px' }}>
-          <p className="kick" style={{ padding: '16px 0 4px', color: 'rgba(255,253,248,0.65)' }}>Dimension readout · weight = exact contribution to the {nqi}</p>
+        {/* Deliberately NOT dark -- mixed theme, same as AVAreaCard.js:
+            dark hero cards (Identity/Composite/Verdict) on top, light
+            data table below, not an all-dark page. Score number goes
+            back to scoreColor(row.score) as its own text colour -- fine
+            on light paper even for the darkest tiers. */}
+        <BPF style={{ marginBottom: 24, padding: '0 24px 8px' }}>
+          <p className="kick" style={{ padding: '16px 0 4px' }}>Dimension readout · weight = exact contribution to the {nqi}</p>
           {rows.map(row => {
             const weak = row.score < 50;
             const col = scoreColor(row.score);
             return (
-              <div key={row.k} className="nr-dim-row" style={{ display: 'grid', gridTemplateColumns: '200px 52px 1fr 76px', gap: 14, alignItems: 'start', padding: '11px 0', borderTop: '1px dashed rgba(255,253,248,0.16)' }}>
+              <div key={row.k} className="nr-dim-row" style={{ display: 'grid', gridTemplateColumns: '200px 52px 1fr 76px', gap: 14, alignItems: 'start', padding: '11px 0', borderTop: '1px dashed color-mix(in srgb, var(--slate) 35%, transparent)' }}>
                 <div>
-                  <div style={{ fontSize: 18, fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.1, color: 'var(--paper)' }}>{FACTOR_LABELS[row.k]}</div>
-                  <div style={{ fontSize: 11, color: 'rgba(255,253,248,0.5)', marginTop: 2 }}>{source(row.k, record.city)}</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.1, color: 'var(--ink)' }}>{FACTOR_LABELS[row.k]}</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 2 }}>{source(row.k, record.city)}</div>
                 </div>
-                <div style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,253,248,0.75)', paddingTop: 4 }}>{row.weight}%</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--slate)', paddingTop: 4 }}>{row.weight}%</div>
                 <div style={{ paddingTop: 2 }}>
-                  <div style={{ height: 8, border: '1px solid rgba(255,253,248,0.2)', position: 'relative', overflow: 'hidden' }}>
+                  <div style={{ height: 8, border: '1px solid color-mix(in srgb, var(--slate) 35%, transparent)', position: 'relative', overflow: 'hidden' }}>
                     <div style={{ position: 'absolute', inset: 0, width: `${row.score}%`,
                       background: weak ? undefined : col,
                       backgroundImage: weak ? `repeating-linear-gradient(45deg, ${col} 0 3px, transparent 3px 6px)` : undefined }} />
                   </div>
-                  <p style={{ fontSize: 12, color: 'rgba(255,253,248,0.55)', margin: '6px 0 0', lineHeight: 1.45 }}>{explain(row.k, record)}</p>
+                  <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '6px 0 0', lineHeight: 1.45 }}>{explain(row.k, record)}</p>
                 </div>
-                {/* Fixed light text, not scoreColor(row.score) -- see the
-                    matching note in AVAreaCard.js: red/deep-olive are
-                    themselves dark and would vanish as text on this box. */}
-                <div className="nr-dim-score" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 26, fontWeight: 700, textAlign: 'right', color: 'var(--paper)' }}>{row.score}</div>
+                <div className="nr-dim-score" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 26, fontWeight: 700, textAlign: 'right', color: col }}>{row.score}</div>
               </div>
             );
           })}
