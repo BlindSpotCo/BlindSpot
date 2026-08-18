@@ -32,26 +32,40 @@ export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTi
 
     const steps=20, rd=0.000035, ring=[];
     for(let i=0;i<=steps;i++){const a=2*Math.PI*i/steps;ring.push([lon+rd*Math.cos(a)/Math.cos(lat*Math.PI/180),lat+rd*Math.sin(a)]);}
-    const obsGj = JSON.stringify({type:'FeatureCollection',features:[{type:'Feature',properties:{color:'#F39C12',height:0.6,minHeight:0},geometry:{type:'Polygon',coordinates:[ring]}}]});
+    const obsGj = JSON.stringify({type:'FeatureCollection',features:[{type:'Feature',properties:{color:'#D1901F',height:0.6,minHeight:0},geometry:{type:'Polygon',coordinates:[ring]}}]});
 
     return `<!DOCTYPE html><html><head><meta charset="utf-8"/>
 <link href="https://cdn.osmbuildings.org/4.1.1/OSMBuildings.css" rel="stylesheet"/>
 <script src="https://cdn.osmbuildings.org/4.1.1/OSMBuildings.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}html,body{background:#0A0C10;overflow:hidden;}
+/* This iframe is a separate document (srcDoc), so it can't inherit the
+   parent page's CSS custom properties via cascade -- these mirror the
+   real brand tokens in app/globals.css so the map's chrome (badges,
+   buttons, panel, sun, compass) reads as the same product instead of a
+   bolted-on dark/neon-orange tool. Keep these in sync if globals.css
+   changes. */
+:root{
+  --bg-2:#F1E9DA; --paper:#FFFDF8; --ink:#1C1812;
+  --line:rgba(28,24,18,0.14); --text-mute:#5A5140; --text-dim:#5B5443;
+  --ss:#AF5F30; --ss-fill:#D1901F; --ss-sun:#E9A94A;
+  --radius:4px; --radius-md:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+html,body{background:var(--bg-2);overflow:hidden;}
 #map{width:100%;height:100vh;}
-.tbadge{position:absolute;top:14px;left:14px;z-index:25;background:rgba(7,9,16,0.92);border:1px solid rgba(243,156,18,.25);border-radius:10px;padding:7px 14px;color:#F39C12;font-size:13px;font-weight:600;font-family:monospace;pointer-events:none;}
-.hint{position:absolute;bottom:12px;left:14px;z-index:25;color:rgba(255,255,255,.3);font-size:10px;pointer-events:none;font-family:monospace;background:rgba(7,9,16,.7);padding:4px 14px;border-radius:20px;white-space:nowrap;}
+.tbadge{position:absolute;top:14px;left:14px;z-index:25;background:rgba(255,253,248,0.94);border:1px solid var(--line);border-radius:var(--radius-md);padding:7px 14px;color:var(--ss);font-size:13px;font-weight:600;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em;pointer-events:none;}
+.hint{position:absolute;bottom:12px;left:14px;z-index:25;color:var(--text-mute);font-size:11px;pointer-events:none;font-family:'IBM Plex Mono',monospace;background:rgba(255,253,248,.92);border:1px solid var(--line);padding:5px 14px;border-radius:20px;white-space:nowrap;}
 .tile-row{position:absolute;top:14px;left:14px;z-index:25;display:flex;gap:6px;}
-.tile-btn{background:rgba(7,9,16,.92);border:1px solid rgba(255,255,255,.07);color:#6B7280;font-size:13px;font-weight:600;font-family:monospace;padding:7px 16px;border-radius:9px;cursor:pointer;}
-.tile-btn.on{border-color:rgba(243,156,18,.4);color:#F39C12;background:rgba(243,156,18,.08);}
-.cb{background:#fff;border:1.5px solid #E5E7EB;color:#555;font-size:13px;font-weight:700;padding:7px 11px;border-radius:9px;cursor:pointer;line-height:1;}
-.cb:hover{border-color:#E07B00;color:#E07B00;background:#FFF3E0;}
-.cb.N{border-color:rgba(224,123,0,.4);color:#E07B00;font-size:10px;font-weight:800;}
+.tile-btn{background:rgba(255,253,248,.94);border:1px solid var(--line);color:var(--text-mute);font-size:13px;font-weight:600;font-family:'IBM Plex Mono',monospace;padding:7px 16px;border-radius:var(--radius-md);cursor:pointer;}
+.tile-btn.on{border-color:var(--ss);color:var(--ss);background:rgba(175,95,48,.08);}
+.cb{background:var(--paper);border:1.5px solid var(--line);color:var(--text-mute);font-size:13px;font-weight:700;padding:7px 11px;border-radius:var(--radius-md);cursor:pointer;line-height:1;}
+.cb:hover{border-color:var(--ss);color:var(--ss);background:rgba(175,95,48,.08);}
+.cb.N{border-color:var(--ss);color:var(--ss);font-size:10px;font-weight:800;font-family:'IBM Plex Mono',monospace;}
 .leaflet-control-attribution,.osmb-attribution{display:none!important;}
-.sdk-error{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#0A0C10;color:#F39C12;font-family:monospace;text-align:center;padding:24px;}
+.sdk-error{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg-2);color:var(--ink);font-family:'Inter',sans-serif;text-align:center;padding:24px;}
 .sdk-error.show{display:flex;}
-.sdk-error button{background:#E07B00;color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+.sdk-error button{background:var(--ss);color:#fff;border:none;border-radius:var(--radius-md);padding:10px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
 @media(max-width:768px){.view-controls{display:none!important;}}</style></head><body>
 <div id="sdk-error" class="sdk-error">
   <div style="font-size:32px;">🌐</div>
@@ -65,8 +79,8 @@ export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTi
     <button class="tile-btn" id="bsat" onclick="setT('sat')">Satellite</button>
   </div>
   <div class="hint">Click map to move pin · Drag · Scroll zoom · Use buttons to tilt/rotate</div>
-  <div class="view-controls" style="position:absolute;top:14px;right:14px;z-index:25;display:flex;flex-direction:column;gap:5px;align-items:center;background:rgba(255,255,255,0.97);border:1.5px solid rgba(224,123,0,0.2);border-radius:14px;padding:10px 9px;box-shadow:0 2px 12px rgba(0,0,0,0.1);">
-    <div style="font-size:16px;font-weight:800;color:#e23744;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;white-space:nowrap;line-height:1.3;">SET VIEW ANGLE<br/><span style="font-size:11px;font-weight:500;color:#e23744;text-transform:none;letter-spacing:0;opacity:0.8;">e.g. Set balcony view</span></div>
+  <div class="view-controls" style="position:absolute;top:14px;right:14px;z-index:25;display:flex;flex-direction:column;gap:5px;align-items:center;background:rgba(255,253,248,0.97);border:1px solid var(--line);border-radius:var(--radius-md);padding:10px 9px;box-shadow:0 2px 12px rgba(28,24,18,0.08);">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;white-space:nowrap;line-height:1.4;text-align:center;">Set view angle<br/><span style="font-size:10.5px;font-weight:500;color:var(--text-mute);text-transform:none;letter-spacing:0;opacity:0.85;">e.g. balcony view</span></div>
     <button class="cb" id="btn-up">▲</button>
     <div style="display:flex;gap:4px;">
       <button class="cb" id="btn-left">◀</button>
@@ -75,20 +89,31 @@ export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTi
     </div>
     <button class="cb" id="btn-down">▼</button>
   </div>
-  <div style="position:absolute;top:192px;right:20px;z-index:25;width:38px;height:38px;pointer-events:none;background:rgba(7,9,16,.88);border:1px solid rgba(255,255,255,.07);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+  <div style="position:absolute;top:192px;right:20px;z-index:25;width:38px;height:38px;pointer-events:none;background:rgba(255,253,248,.94);border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;">
     <svg id="cmp" width="30" height="30" viewBox="-20 -20 40 40" style="transition:transform .2s;">
-      <polygon points="0,-12 3,0 0,3 -3,0" fill="#E74C3C"/>
-      <polygon points="0,12 3,0 0,-3 -3,0" fill="#374151"/>
-      <text x="0" y="-14" text-anchor="middle" fill="#E74C3C" font-size="5.5" font-weight="bold" font-family="monospace">N</text>
-      <text x="0" y="19" text-anchor="middle" fill="#374151" font-size="5.5" font-family="monospace">S</text>
-      <text x="15" y="3" text-anchor="middle" fill="#374151" font-size="5.5" font-family="monospace">E</text>
-      <text x="-15" y="3" text-anchor="middle" fill="#374151" font-size="5.5" font-family="monospace">W</text>
+      <polygon points="0,-12 3,0 0,3 -3,0" fill="#AF5F30"/>
+      <polygon points="0,12 3,0 0,-3 -3,0" fill="#5A5140"/>
+      <text x="0" y="-14" text-anchor="middle" fill="#AF5F30" font-size="5.5" font-weight="bold" font-family="'IBM Plex Mono',monospace">N</text>
+      <text x="0" y="19" text-anchor="middle" fill="#5A5140" font-size="5.5" font-family="'IBM Plex Mono',monospace">S</text>
+      <text x="15" y="3" text-anchor="middle" fill="#5A5140" font-size="5.5" font-family="'IBM Plex Mono',monospace">E</text>
+      <text x="-15" y="3" text-anchor="middle" fill="#5A5140" font-size="5.5" font-family="'IBM Plex Mono',monospace">W</text>
     </svg>
   </div>
   <svg id="arc-svg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:18;overflow:visible;"></svg>
-  <div id="sun" style="font-size:32px;line-height:1;pointer-events:none;position:absolute;transform:translate(-50%,-50%);display:none;filter:drop-shadow(0 0 18px rgba(255,200,0,.95));text-align:center;">☀️<div id="sun-time" style="font-size:13px;font-weight:700;font-family:monospace;background:#F39C12;color:#000;border-radius:7px;padding:3px 10px;margin-top:4px;white-space:nowrap;">--:--</div></div>
+  <div id="sun" style="line-height:1;pointer-events:none;position:absolute;transform:translate(-50%,-50%);display:none;text-align:center;">
+    <svg width="30" height="30" viewBox="-18 -18 36 36" style="filter:drop-shadow(0 0 8px rgba(233,169,74,.65));">
+      <circle cx="0" cy="0" r="8" fill="#E9A94A"/>
+      <g stroke="#E9A94A" stroke-width="2" stroke-linecap="round" opacity="0.75">
+        <line x1="0" y1="-12" x2="0" y2="-16"/><line x1="0" y1="12" x2="0" y2="16"/>
+        <line x1="-12" y1="0" x2="-16" y2="0"/><line x1="12" y1="0" x2="16" y2="0"/>
+        <line x1="-8.5" y1="-8.5" x2="-11.3" y2="-11.3"/><line x1="8.5" y1="8.5" x2="11.3" y2="11.3"/>
+        <line x1="-8.5" y1="8.5" x2="-11.3" y2="11.3"/><line x1="8.5" y1="-8.5" x2="11.3" y2="-11.3"/>
+      </g>
+    </svg>
+    <div id="sun-time" style="font-size:12.5px;font-weight:600;font-family:'IBM Plex Mono',monospace;background:rgba(255,253,248,.96);color:#1C1812;border:1px solid rgba(28,24,18,0.14);border-radius:7px;padding:3px 10px;margin-top:2px;white-space:nowrap;">--:--</div>
+  </div>
   <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:22;">
-    <div style="width:14px;height:14px;border-radius:50%;background:#E07B00;border:3px solid #fff;box-shadow:0 0 0 3px rgba(224,123,0,0.45);"></div>
+    <div style="width:14px;height:14px;border-radius:50%;background:#AF5F30;border:3px solid #FFFDF8;box-shadow:0 0 0 3px rgba(175,95,48,0.35);"></div>
   </div>
 </div>
 <script>
@@ -175,7 +200,7 @@ function drawArc(){
   const ab=allPts.filter(function(p){return p.el>=0;});
   if(ab.length<2)return;
   const sc=ab.map(function(p){return projectToScreen(p.az,p.el);});
-  [['rgba(255,180,0,0.15)',14],['rgba(255,200,80,0.25)',6]].forEach(function(c){
+  [['rgba(175,95,48,0.12)',14],['rgba(209,144,31,0.22)',6]].forEach(function(c){
     const g=document.createElementNS('http://www.w3.org/2000/svg','polyline');
     g.setAttribute('points',sc.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' '));
     g.setAttribute('fill','none');g.setAttribute('stroke',c[0]);g.setAttribute('stroke-width',c[1]);g.setAttribute('stroke-linecap','round');
@@ -183,13 +208,13 @@ function drawArc(){
   });
   const arc=document.createElementNS('http://www.w3.org/2000/svg','polyline');
   arc.setAttribute('points',sc.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' '));
-  arc.setAttribute('fill','none');arc.setAttribute('stroke','#F39C12');arc.setAttribute('stroke-width','2.5');arc.setAttribute('stroke-dasharray','6 9');arc.setAttribute('opacity','0.92');
+  arc.setAttribute('fill','none');arc.setAttribute('stroke','#AF5F30');arc.setAttribute('stroke-width','2.5');arc.setAttribute('stroke-dasharray','6 9');arc.setAttribute('opacity','0.85');
   arcSvg.appendChild(arc);
-  ab.forEach(function(p,i){if(i%3!==0)return;const s=projectToScreen(p.az,p.el);const d=document.createElementNS('http://www.w3.org/2000/svg','circle');d.setAttribute('cx',s[0].toFixed(1));d.setAttribute('cy',s[1].toFixed(1));d.setAttribute('r','2.5');d.setAttribute('fill','#FFD06D');d.setAttribute('opacity','0.85');arcSvg.appendChild(d);});
-  var riseLabel='🌅 Rise ' + '${sunTimes.rise}', setLabel='Set 🌇 ' + '${sunTimes.set}';
+  ab.forEach(function(p,i){if(i%3!==0)return;const s=projectToScreen(p.az,p.el);const d=document.createElementNS('http://www.w3.org/2000/svg','circle');d.setAttribute('cx',s[0].toFixed(1));d.setAttribute('cy',s[1].toFixed(1));d.setAttribute('r','2.5');d.setAttribute('fill','#E9A94A');d.setAttribute('opacity','0.85');arcSvg.appendChild(d);});
+  var riseLabel='Rise ' + '${sunTimes.rise}', setLabel='Set ' + '${sunTimes.set}';
   [{pt:sc[0],txt:riseLabel,anchor:'end'},{pt:sc[sc.length-1],txt:setLabel,anchor:'start'}].forEach(function(lbl){
-    const ci=document.createElementNS('http://www.w3.org/2000/svg','circle');ci.setAttribute('cx',lbl.pt[0].toFixed(1));ci.setAttribute('cy',lbl.pt[1].toFixed(1));ci.setAttribute('r','4.5');ci.setAttribute('fill','#F39C12');arcSvg.appendChild(ci);
-    const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',(lbl.pt[0]+(lbl.anchor==='end'?-10:10)).toFixed(1));t.setAttribute('y',(lbl.pt[1]-8).toFixed(1));t.setAttribute('fill',lbl.anchor==='end'?'#E74C3C':'#3498DB');t.setAttribute('font-size','14');t.setAttribute('font-family','monospace');t.setAttribute('font-weight','800');t.setAttribute('text-anchor',lbl.anchor);t.setAttribute('opacity','1');t.textContent=lbl.txt;arcSvg.appendChild(t);
+    const ci=document.createElementNS('http://www.w3.org/2000/svg','circle');ci.setAttribute('cx',lbl.pt[0].toFixed(1));ci.setAttribute('cy',lbl.pt[1].toFixed(1));ci.setAttribute('r','4.5');ci.setAttribute('fill','#AF5F30');arcSvg.appendChild(ci);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',(lbl.pt[0]+(lbl.anchor==='end'?-10:10)).toFixed(1));t.setAttribute('y',(lbl.pt[1]-8).toFixed(1));t.setAttribute('fill','#1C1812');t.setAttribute('font-size','13');t.setAttribute('font-family',"'IBM Plex Mono',monospace");t.setAttribute('font-weight','600');t.setAttribute('text-anchor',lbl.anchor);t.setAttribute('opacity','0.9');t.textContent=lbl.txt;arcSvg.appendChild(t);
   });
 }
 
@@ -345,7 +370,7 @@ window.addEventListener('message',function(e){
         var raw=document.createElement('canvas');
         raw.width=liveW; raw.height=liveH;
         var rctx=raw.getContext('2d');
-        rctx.fillStyle='#0A0C10';
+        rctx.fillStyle='#F1E9DA';
         rctx.fillRect(0,0,liveW,liveH);
         try{
           var glCanvas=document.querySelector('#map canvas');
@@ -386,17 +411,28 @@ window.addEventListener('message',function(e){
           URL.revokeObjectURL(svgUrl);
           var sunDiv=document.getElementById('sun');
           if(sunDiv&&sunDiv.style.display!=='none'){
-            rctx.font='32px serif';
-            rctx.fillText('☀️',parseFloat(sunDiv.style.left||'0')-16,parseFloat(sunDiv.style.top||'0')+8);
+            // Matches the on-screen #sun SVG (circle + rays, brand gold) instead
+            // of the old emoji glyph, so exported report images look like what
+            // the user actually saw in the live view.
+            var sx=parseFloat(sunDiv.style.left||'0'), sy=parseFloat(sunDiv.style.top||'0');
+            rctx.save();
+            rctx.translate(sx,sy);
+            rctx.strokeStyle='#E9A94A';rctx.lineWidth=2;rctx.lineCap='round';rctx.globalAlpha=0.75;
+            [[0,-12,0,-16],[0,12,0,16],[-12,0,-16,0],[12,0,16,0],[-8.5,-8.5,-11.3,-11.3],[8.5,8.5,11.3,11.3],[-8.5,8.5,-11.3,11.3],[8.5,-8.5,11.3,-11.3]].forEach(function(r){
+              rctx.beginPath();rctx.moveTo(r[0],r[1]);rctx.lineTo(r[2],r[3]);rctx.stroke();
+            });
+            rctx.globalAlpha=1;rctx.fillStyle='#E9A94A';
+            rctx.beginPath();rctx.arc(0,0,8,0,Math.PI*2);rctx.fill();
+            rctx.restore();
           }
-          rctx.fillStyle='rgba(243,156,18,0.9)';
+          rctx.fillStyle='rgba(175,95,48,0.9)';
           rctx.font='bold 16px monospace';
           rctx.fillText(lbl,20,40);
           finish();
         };
         svgImg.onerror=function(){
           console.warn('[Map3DShadow iframe] svgImg.onerror fired for "'+lbl+'"');
-          rctx.fillStyle='rgba(243,156,18,0.9)';
+          rctx.fillStyle='rgba(175,95,48,0.9)';
           rctx.font='bold 20px monospace';
           rctx.fillText(lbl+' — map render unavailable',40,liveH/2);
           finish();
