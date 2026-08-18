@@ -51,40 +51,32 @@ export default function AVAreaCard({ record, city }) {
         @media (max-width: 640px) { .av-card .av-dim-row { grid-template-columns: 1fr !important; gap: 6px !important; } }
       `}</style>
 
-      {/* ── Hero: 3 cards (Identity / Composite Index / Verdict) -- same
-          grid + same three boxes as the full report's nr-hero3 ── */}
-      <div className="av-hero3" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 20 }}>
+      {/* ── Hero: 3 cards (Identity / Composite Index / Verdict) -- now a
+          direct match to the full report's nr-hero3, not just the same
+          structure. Sizes/colours were drifting (60px composite number
+          here vs 84px there, a bordered GradeBadge here vs plain text
+          there, "Area Verdict" vs "Verdict", different dashed-line and
+          track-border tints) -- every value below is now copied straight
+          from NeighbourhoodReport.js's hero, not independently tuned. */}
+      <div className="av-hero3" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 24 }}>
         <BPF dark style={{ padding: 24 }}>
-          <div className="mono" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 600, color: 'rgba(255,253,248,0.65)' }}>
+          <div className="mono" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 600, color: 'rgba(255,253,248,0.65)' }}>
             Sheet · {record.area || city || record.city} · PIN {record.pin_code}
           </div>
-          {/* Plain Inter bold, not a display font -- checked what the rest
-              of the site actually uses for headings (.hero h1, .section
-              h2) and it's just Inter at font-weight 700, no special
-              face. Anton was an unfounded choice (only ever used in this
-              card's own earlier version and the homepage mockup, nowhere
-              else on the real site), so it read as off-brand too. */}
-          {/* wordBreak/overflowWrap:normal overrides the site's global
-              h1,h2,h3{word-break:break-word} rule -- fine for most names
-              at this size, but a long single word in a narrower box
-              (e.g. the full report page's version of this heading, at
-              54px, mid-word-broke "CONNAUGHT" into "CONNAUG"/"HT") would
-              otherwise silently do the same here. Wraps at spaces
-              between words instead, never mid-word. */}
-          <h3 style={{ fontWeight: 700, fontSize: 32, lineHeight: .95, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)', wordBreak: 'normal', overflowWrap: 'normal' }}>{record.name}</h3>
-          <div style={{ fontSize: 13.5, color: 'rgba(255,253,248,0.55)' }}>
+          <h3 style={{ fontWeight: 700, fontSize: 40, lineHeight: 1.05, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)', wordBreak: 'normal', overflowWrap: 'normal' }}>{record.name}</h3>
+          <div style={{ fontSize: 13, color: 'rgba(255,253,248,0.55)' }}>
             {Object.keys(scores).length}/{record.dimensions_total || Object.keys(scores).length} dimensions · scored {formatDateLong(record.scored_at) || '—'}
           </div>
         </BPF>
 
         <BPF dark style={{ padding: 24 }}>
-          <div className="mono" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 600, color: 'rgba(255,253,248,0.65)' }}>Composite index</div>
+          <div className="mono" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 600, color: 'rgba(255,253,248,0.65)' }}>Composite index</div>
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, margin: '8px 0 6px' }}>
-            <span className="av-score-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 60, fontWeight: 700, lineHeight: .85, color: 'var(--paper)' }}>{record.nqi_composite}</span>
-            <GradeBadge grade={record.grade} color="var(--paper)" />
+            <span className="av-score-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 84, fontWeight: 700, lineHeight: .85, color: 'var(--paper)' }}>{record.nqi_composite}</span>
+            <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 30, fontWeight: 700, color: 'var(--paper)', marginBottom: 12 }}>{record.grade}</span>
           </div>
-          <div style={{ fontSize: 13.5, color: 'rgba(255,253,248,0.55)', lineHeight: 1.5 }}>NQI · weighted mean of {rows.length} dimensions.</div>
-          <div style={{ fontSize: 12, color: 'rgba(255,253,248,0.45)', margin: '10px 0 0', lineHeight: 1.5, paddingTop: 10, borderTop: '1px dashed rgba(255,253,248,0.2)' }}>First-pass area assessment · reflects this PIN, not a specific building or street.</div>
+          <div style={{ fontSize: 13, color: 'rgba(255,253,248,0.55)', lineHeight: 1.5 }}>NQI · weighted mean of {rows.length} dimensions.</div>
+          <div style={{ fontSize: 11.5, color: 'rgba(255,253,248,0.45)', margin: '10px 0 0', lineHeight: 1.5, paddingTop: 10, borderTop: '1px dashed rgba(255,253,248,0.2)' }}>First-pass area assessment · reflects this PIN, not a specific building or street.</div>
         </BPF>
 
         {/* Verdict fill stays scoreColor(nqi) -- the autumn score-colour
@@ -92,49 +84,49 @@ export default function AVAreaCard({ record, city }) {
             is computed from that same fill via readableTextColor()
             (perceptual luminance) rather than hardcoded white -- the
             bright mid-tier fills (olive/yellow-green/orange) need dark
-            ink, only the two darkest tiers (deep olive, red) need white. */}
-        <div style={{ background: verdictCol, color: verdictText, padding: 24, borderRadius: 'var(--radius)' }}>
-          <div className="mono" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.1em', color: 'inherit', opacity: .75 }}>Area Verdict</div>
-          <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 26, fontWeight: 700, textTransform: 'uppercase', margin: '8px 0 8px', color: 'inherit' }}>{verdict.label}</div>
-          <div style={{ fontSize: 13.5, lineHeight: 1.5, color: 'inherit', opacity: .92 }}>{verdict.why}</div>
+            ink, only the two darkest tiers (deep olive, red) need white.
+            No border-radius, matching the full report's square-cornered
+            version (and its own BPF siblings, which have no rounding
+            either -- this used to have var(--radius), a subtle mismatch
+            with its own row). */}
+        <div style={{ background: verdictCol, color: verdictText, padding: 24, position: 'relative' }}>
+          <div className="mono" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.14em', color: 'inherit', opacity: .75 }}>Verdict</div>
+          <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 34, fontWeight: 700, textTransform: 'uppercase', margin: '8px 0 10px', color: 'inherit' }}>{verdict.label}</div>
+          <div style={{ fontSize: 13, lineHeight: 1.5, margin: 0, color: 'inherit', opacity: .92 }}>{verdict.why}</div>
         </div>
       </div>
 
       {/* ── Dimension readout -- same row layout as the full report's:
-          label+source / weight% / bar+explain sentence / score ── */}
-      {/* Deliberately NOT dark -- mixed theme: the Sheet/Composite/Verdict
-          hero row above stays dark (var(--ink)), but the dimension
-          readout goes back to light (var(--bg-2)), matching the intended
-          design (dark hero cards on top, a light data table below), not
-          an all-dark card. Score number goes back to scoreColor(row.score)
-          as its own text colour too -- on light paper even the two
-          darkest tiers (red, deep olive) have plenty of contrast; the
-          fixed-white-text workaround was only needed for the dark box. */}
+          label+source / weight% / bar+explain sentence / score, same
+          column widths (200/52/1fr/76), same font sizes, same
+          slate-tinted dashed dividers and track borders (was plain
+          var(--line)/var(--line-soft) here, a flatter grey that read as
+          less colourful than the full report's version). */}
       <BPF style={{ padding: '0 24px 8px', marginBottom: 22, background: 'var(--bg-2)' }}>
-        <div className="mono" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 600, color: 'var(--slate)', padding: '16px 0 4px' }}>
+        <div className="mono" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 600, color: 'var(--slate)', padding: '16px 0 4px' }}>
           Dimension readout · weight = exact contribution to the {record.nqi_composite}
         </div>
         {rows.map(row => {
           const weak = row.score < 50;
           const col = scoreColor(row.score);
           return (
-            <div key={row.k} className="av-dim-row" style={{ display: 'grid', gridTemplateColumns: '180px 46px 1fr 60px', gap: 14, alignItems: 'start', padding: '11px 0', borderTop: '1px dashed var(--line-soft)' }}>
+            <div key={row.k} className="av-dim-row" style={{ display: 'grid', gridTemplateColumns: '200px 52px 1fr 76px', gap: 14, alignItems: 'start', padding: '11px 0', borderTop: '1px dashed color-mix(in srgb, var(--slate) 35%, transparent)' }}>
               <div>
-                <div style={{ fontSize: 17, fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.1, color: 'var(--ink)' }}>{FACTOR_LABELS[row.k] || row.k}</div>
-                <div style={{ fontSize: 11.5, color: 'var(--text-dim)', marginTop: 2 }}>{source(row.k, record.city)}</div>
+                <div style={{ fontSize: 18, fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.1, color: 'var(--ink)' }}>{FACTOR_LABELS[row.k] || row.k}</div>
+                <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 2 }}>{source(row.k, record.city)}</div>
               </div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--slate)', paddingTop: 4 }}>{row.weight}%</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--slate)', paddingTop: 4 }}>{row.weight}%</div>
               <div style={{ paddingTop: 2 }}>
-                <div style={{ height: 8, border: '1px solid var(--line)', position: 'relative', overflow: 'hidden', borderRadius: 'var(--radius)' }}>
+                <div style={{ height: 8, border: '1px solid color-mix(in srgb, var(--slate) 35%, transparent)', position: 'relative', overflow: 'hidden' }}>
                   <div style={{
                     position: 'absolute', inset: 0, width: `${row.score}%`,
                     background: weak ? undefined : col,
                     backgroundImage: weak ? `repeating-linear-gradient(45deg, ${col} 0 3px, transparent 3px 6px)` : undefined,
                   }} />
                 </div>
-                <div style={{ fontSize: 13, color: 'var(--text-mute)', margin: '6px 0 0', lineHeight: 1.45 }}>{explain(row.k, record)}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '6px 0 0', lineHeight: 1.45 }}>{explain(row.k, record)}</div>
               </div>
-              <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 24, fontWeight: 700, textAlign: 'right', color: col }}>{row.score}</div>
+              <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 26, fontWeight: 700, textAlign: 'right', color: col }}>{row.score}</div>
             </div>
           );
         })}
