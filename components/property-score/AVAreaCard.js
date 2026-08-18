@@ -22,9 +22,17 @@
 // link at the bottom. Same sheet, not a second full copy of the page.
 
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
+import useLiveAqi from '@/lib/aslivastu/useLiveAqi';
 import { scoreColor, verdictFor, explain, source, formatDateLong, BPF, readableTextColor } from './AVDetailedReadout';
 
-export default function AVAreaCard({ record, city }) {
+export default function AVAreaCard({ record: rawRecord, city }) {
+  // Air quality is the one dimension that actually changes day to day, so
+  // it's resolved live from this pin's coordinates rather than read from
+  // the stored snapshot. Returns the record untouched until (and unless) a
+  // reading arrives, so there's no loading or error state to render.
+  // This is also what gives the 27 pins that never had a stored AQI
+  // reading -- all in the NCR satellite cities -- their 8th dimension.
+  const record = useLiveAqi(rawRecord);
   const verdict = verdictFor(record.nqi_composite);
   const scores = record.scores || {};
   const weights = record.weights_applied || {};

@@ -166,7 +166,12 @@ export function explain(k, r) {
       ? `${r.total_cognizable_crimes} crimes reported — safer than ${r.crime_percentile}% of tracked ${city} areas (${(r.crime_tier || '').toLowerCase()} tier).`
       : 'Cognizable crimes reported for the police catchment.';
     case 'infrastructure': return `${r.metro_stations_nearby || 0} operational metro station(s) · ${(r.highway_proximity || '—').toLowerCase()} highway access · ${(r.zone_type || 'mixed').toLowerCase()} zone.`;
-    case 'air': return r.aqi_category ? `AQI ~${Math.round(r.aqi_avg)}, ${r.aqi_category} — ${AQI_PLAIN[r.aqi_category] || 'CPCB band.'}` : 'Live CPCB air-quality reading.';
+    // Names the station a live reading came from -- a "nearest station"
+    // can be several km away, so attributing it matters. Falls back to the
+    // plain band sentence for stored readings.
+    case 'air': return r.aqi_category
+      ? `AQI ~${Math.round(r.aqi_avg)}, ${r.aqi_category} — ${AQI_PLAIN[r.aqi_category] || 'CPCB band.'}${r.aqi_is_live && r.aqi_station ? ` Nearest station: ${r.aqi_station}.` : ''}`
+      : 'Awaiting an air-quality reading for this area.';
     case 'power': return `${r.reliability || '—'} reliability · ~${r.avg_outage_hours ?? '—'} outage hrs/month via ${r.discom || 'the local DISCOM'}.`;
     case 'schools': return r.schools_count ? `${r.schools_count} CBSE school(s) mapped to this pin.` : 'No CBSE-affiliated school in this exact pin.';
     case 'water': return `${r.supply_hours ?? '—'} hrs daily supply · ${(r.tds_level || '—')} TDS · ${(r.water_coverage ?? r.coverage_pct) ?? '—'}% piped coverage.`;
@@ -311,7 +316,23 @@ export default function AVDetailedReadout({ record }) {
               <span style={{ color: 'var(--text)', fontWeight: 600, minWidth: 150 }}>{FACTOR_LABELS[k] || k}</span>
               <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, color: 'var(--slate)', width: 44 }}>{Math.round(w * 100)}%</span>
               <span style={{ color: 'var(--text-dim)', flex: 1, minWidth: 200 }}>{source(k, record.city)}</span>
-              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.06em', color: k === 'air' ? '#3D6B2E' : 'var(--text-dim)', border: `1px solid ${k === 'air' ? '#3D6B2E' : 'var(--line)'}`, borderRadius: 2, padding: '2px 6px' }}>{k === 'air' ? 'LIVE' : 'EST'}</span>
+              {/* The air row used to be hardcoded to "LIVE" regardless of
+                  where its number actually came from -- while aqi_avg was
+                  a static field in master_by_pin.json that nothing ever
+                  refreshed, so the badge was claiming something the
+                  product didn't do. Air is genuinely live now (see
+                  /api/aqi), but only when a reading actually resolves:
+                  without a configured token, or if the upstream is down,
+                  the stored snapshot is used and this correctly reads
+                  STORED rather than asserting freshness it doesn't have. */}
+              {(() => {
+                const live = k === 'air' && record.aqi_is_live;
+                const label = k !== 'air' ? 'EST' : live ? 'LIVE' : 'STORED';
+                const accent = live ? '#3D6B2E' : 'var(--text-dim)';
+                return (
+                  <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.06em', color: accent, border: `1px solid ${live ? '#3D6B2E' : 'var(--line)'}`, borderRadius: 2, padding: '2px 6px' }}>{label}</span>
+                );
+              })()}
             </div>
           ))}
         </BPF>

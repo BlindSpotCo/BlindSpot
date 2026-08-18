@@ -22,6 +22,8 @@ import { useState, useMemo } from 'react';
 import AVDetailedReadout, { BPF, source, scoreColor, verdictFor, explain, AQI_PLAIN, formatDateLong, inr, readableTextColor } from '@/components/property-score/AVDetailedReadout';
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
 import { cityMeta, coverageLabel } from '@/lib/aslivastu/cityMeta';
+import useLiveAqi from '@/lib/aslivastu/useLiveAqi';
+import { gradeFor } from '@/lib/aslivastu/aqi';
 
 /* Used to import Barlow/Barlow Condensed and set them as this page's
    body/heading fonts -- a pair the rest of the site never loads
@@ -67,7 +69,10 @@ const WEIGHT_PRESETS = {
   Investor: { crime: 12, infrastructure: 28, air: 8, power: 18, schools: 10, water: 6, roads: 12, sewerage: 6 },
   Safety: { crime: 40, infrastructure: 15, air: 12, power: 8, schools: 5, water: 8, roads: 5, sewerage: 7 },
 };
-function gradeFor(s) { return s == null ? '—' : s >= 80 ? 'A' : s >= 70 ? 'B+' : s >= 60 ? 'B' : s >= 50 ? 'C+' : s >= 40 ? 'C' : 'D'; }
+// gradeFor used to be defined here too, byte-identical to the copy in the
+// scoring pipeline. Now imported from lib/aslivastu/aqi.js so the live
+// merge and the persona re-weighting below can't grade the same composite
+// differently.
 function highlights(r) {
   const good = [], bad = [], s = r.scores || {};
   if (s.crime >= 80) good.push('Very low crime — one of the safer areas.');
@@ -84,7 +89,12 @@ function highlights(r) {
   return { good: good.slice(0, 3), bad: bad.slice(0, 3) };
 }
 
-export default function NeighbourhoodReport({ record, nearby }) {
+export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
+  // Same live-AQI merge the property-score card uses (shared hook), so
+  // both surfaces show the same reading and the same recomputed composite
+  // for a given pin. Falls back to the stored snapshot when no live
+  // reading is available.
+  const record = useLiveAqi(rawRecord);
   const [persona, setPersona] = useState('Default');
   const [customWeights, setCustomWeights] = useState({ ...WEIGHT_PRESETS.Default });
   const [closeHint, setCloseHint] = useState(false);
