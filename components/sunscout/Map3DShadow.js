@@ -191,22 +191,25 @@ let curEl=${mel}, curAz=${maz};
 function projectToScreen(az,el){
   const mapEl=document.getElementById('map');
   const W=mapEl.clientWidth||800,H=mapEl.clientHeight||window.innerHeight||600;
-  const ar=(az-curRot)*D2R;
-  // Direction of this point from screen center. Previously rx/ry were fixed
-  // W- and H-based radii applied to sin/cos directly, which only produces a
-  // screen-filling arc when curRot is ~0 -- at other rotations the same
-  // fixed-orientation ellipse gets sampled at a different phase and can look
-  // squashed/short instead of rotating together with the camera. Casting a
-  // ray from the center out to the container's edge along this direction
-  // instead means the horizon points (el=0, start/end of the arc) always
-  // land right at the map's edge, at every rotation.
-  const dx=Math.sin(ar), dy=-Math.cos(ar)*0.6;
-  const halfW=W/2*0.94, halfH=H/2*0.90;
-  let tMax=Infinity;
-  if(Math.abs(dx)>1e-6) tMax=Math.min(tMax, halfW/Math.abs(dx));
-  if(Math.abs(dy)>1e-6) tMax=Math.min(tMax, halfH/Math.abs(dy));
-  const f=Math.max(0,el)/90, r=tMax*(1-f);
-  return[W/2+dx*r,H/2+dy*r];
+  // Previous attempt (ray-cast to container edge, picking whichever of
+  // width/height was the binding constraint via Math.min) was WRONG: which
+  // constraint binds switches abruptly as the sun sweeps across the sky, so
+  // the radius has real direction discontinuities -- that's what produced
+  // the zigzag/switchback path instead of a clean arc.
+  // Correct approach: compute the point on a fixed, screen-shaped ellipse
+  // using the sun's real (camera-independent) bearing, then rigidly ROTATE
+  // that resulting POINT by the camera angle. Rotating a point preserves its
+  // distance from center exactly, so every real sun position ends up the
+  // same distance from center at every camera rotation (arc reach no longer
+  // depends on rotation) -- and because it's pure sin/cos composition with
+  // no branching, it's smooth everywhere, matching the very first
+  // (unrotated) version at curRot=0.
+  const f=Math.max(0,el)/90;
+  const A=W*0.48*(1-f), B=H*0.44*0.6*(1-f);
+  const ar0=az*D2R;
+  const x0=A*Math.sin(ar0), y0=-B*Math.cos(ar0);
+  const th=-curRot*D2R, cs=Math.cos(th), sn=Math.sin(th);
+  return[W/2+(x0*cs-y0*sn),H/2+(x0*sn+y0*cs)];
 }
 
 function drawArc(){
