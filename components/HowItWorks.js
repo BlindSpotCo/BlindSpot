@@ -79,6 +79,11 @@ const SAMPLE_DIMENSIONS = [
   { label: 'Roads', weight: 7, score: 100, source: 'MCD / PWD road surveys · est. 2023', explain: 'Excellent condition · ~0.2 potholes/km · last resurfaced 2023.' },
   { label: 'Drainage & Sewerage', weight: 5, score: 100, source: 'Drainage & waterlogging records · est. 2023', explain: 'Low monsoon waterlogging risk.' },
 ];
+// Top 3 by weight -- Safety (strong), Infrastructure (weak, shows the
+// striped/hatched bar variant for score<50), Air Quality (mid) -- real
+// scores, just not all 8 rows. See the AvDim comment for why this panel
+// only shows a subset instead of the full readout.
+const SHOWN_DIMENSIONS = SAMPLE_DIMENSIONS.slice(0, 3);
 
 const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'North-West', 'South-West'];
 
@@ -102,34 +107,35 @@ function Box({ className = '', style, children }) {
   );
 }
 
-// Same 4-column grid as the real card's dimension rows (label+source /
-// weight% / bar+explain sentence / score) -- the old 2-line version only
-// showed label+bar+source, dropping the weight and the explain sentence
-// that make the real readout legible on its own. Score number is fixed
-// light text, not scoreColor(score), for the same reason as the real
-// card: red/deep-olive tiers are dark enough to nearly vanish as text on
-// this near-black box -- the bar still carries that signal.
-function AvDim({ label, weight, score, source, explain }) {
+// Back to a compact 2-row format (label+score / bar / source), not the
+// real card's spacious 4-column grid (label+source / weight% / bar+
+// explain sentence / score). That 4-column layout is built for the real
+// card's ~1000px-wide box; this panel's actual content width is only
+// ~470px (.howworks-scroll's 1fr column, minus panel padding), so the
+// same layout there was cramming a wide-format table into a narrow
+// card -- every column fighting for space, text wrapping hard, reading
+// as "too big" even though the font-sizes themselves hadn't changed.
+// Real numbers stay real (still Connaught Place's actual per-dimension
+// scores/sources), just fewer dimensions shown and no weight%/explain
+// columns -- those stay exclusive to the real card and full report,
+// which actually have the width for them.
+function AvDim({ label, score, source }) {
   const col = scoreColor(score);
   const weak = score < 50;
   return (
     <div className="av-dim-row hw-box">
-      <div>
-        <div className="av-dim-label">{label.toUpperCase()}</div>
-        <div className="av-dim-source">{source}</div>
+      <div className="av-dim-head">
+        <span>{label.toUpperCase()}</span>
+        <span className="av-dim-score">{score}</span>
       </div>
-      <div className="av-dim-weight mono">{weight}%</div>
-      <div>
-        <div className="av-dim-track">
-          <div className="av-dim-fill" style={{
-            width: `${score}%`,
-            background: weak ? undefined : col,
-            backgroundImage: weak ? `repeating-linear-gradient(45deg, ${col} 0 3px, transparent 3px 6px)` : undefined,
-          }} />
-        </div>
-        <div className="av-dim-explain">{explain}</div>
+      <div className="av-dim-track">
+        <div className="av-dim-fill" style={{
+          width: `${score}%`,
+          background: weak ? undefined : col,
+          backgroundImage: weak ? `repeating-linear-gradient(45deg, ${col} 0 3px, transparent 3px 6px)` : undefined,
+        }} />
       </div>
-      <div className="av-dim-score">{score}</div>
+      <div className="av-dim-source">{source}</div>
     </div>
   );
 }
@@ -147,7 +153,7 @@ function AreaPanel() {
         <Box>
           <div className="mono av-tiny">SHEET · {selected.meta.toUpperCase()}</div>
           <div className="av-city">{selected.name.toUpperCase()}</div>
-          <div className="av-box-sub">8/8 dimensions · scored 28 Jul 2026</div>
+          <div className="av-box-sub">{SHOWN_DIMENSIONS.length}/8 dimensions shown · full report has all 8</div>
         </Box>
 
         <Box>
@@ -164,16 +170,14 @@ function AreaPanel() {
         </Box>
       </div>
 
-      {/* Dimension readout is now its own dark box, same as the real
-          card -- all 8 real dimensions for this exact PIN, not a
-          trimmed preview. This does mean the area card is taller again
-          than the Home Comfort Score card next to it (the tradeoff a
-          previous pass traded away to keep the two step-cards the same
-          height) -- flagging that, not silently reintroducing it. */}
+      {/* Dimension readout box, same dark BPF treatment as the real card
+          -- but only the top 3 by weight, not all 8. Back to a trimmed
+          preview (real numbers, fewer rows) instead of a full replica --
+          see the SHOWN_DIMENSIONS/AvDim comments above for why. */}
       <Box className="av-dims-box">
-        <div className="mono av-tiny" style={{ marginBottom: 4 }}>DIMENSION READOUT · WEIGHT = EXACT CONTRIBUTION TO THE {selected.score}</div>
+        <div className="mono av-tiny" style={{ marginBottom: 4 }}>DIMENSION READOUT</div>
         <div className="av-dims">
-          {SAMPLE_DIMENSIONS.map((d) => <AvDim key={d.label} {...d} />)}
+          {SHOWN_DIMENSIONS.map((d) => <AvDim key={d.label} {...d} />)}
         </div>
       </Box>
 
