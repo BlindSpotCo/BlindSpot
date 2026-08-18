@@ -124,25 +124,25 @@ export default function NeighbourhoodReport({ record, nearby }) {
 
         {/* ── Hero: 3 cards (Identity / Score / Verdict) ── */}
         <div className="nr-hero3" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 24 }}>
-          <BPF style={{ padding: 24 }}>
-            <p className="kick">Sheet 01 · {record.area || record.city} · PIN {record.pin_code}</p>
-            <h1 className="nr-hero-name cond" style={{ fontSize: 54, fontWeight: 700, lineHeight: .95, margin: '10px 0 8px', textTransform: 'uppercase' }}>{record.name}</h1>
-            <p style={{ fontSize: 13, color: 'var(--text-dim)', margin: 0 }}>
+          <BPF dark style={{ padding: 24 }}>
+            <p className="kick" style={{ color: 'rgba(255,253,248,0.65)' }}>Sheet 01 · {record.area || record.city} · PIN {record.pin_code}</p>
+            <h1 className="nr-hero-name cond" style={{ fontSize: 54, fontWeight: 700, lineHeight: .95, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)' }}>{record.name}</h1>
+            <p style={{ fontSize: 13, color: 'rgba(255,253,248,0.55)', margin: 0 }}>
               {record.dimensions_scored || Object.keys(record.scores || {}).length}/{record.dimensions_total || Object.keys(record.scores || {}).length} dimensions · scored {formatDateLong(record.scored_at) || '—'}
             </p>
           </BPF>
 
-          <BPF style={{ padding: 24 }}>
-            <p className="kick">Composite index · {persona} weighting</p>
+          <BPF dark style={{ padding: 24 }}>
+            <p className="kick" style={{ color: 'rgba(255,253,248,0.65)' }}>Composite index · {persona} weighting</p>
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, margin: '8px 0 6px' }}>
-              <span className="nr-hero-score cond" style={{ fontSize: 84, fontWeight: 700, lineHeight: .85, color: 'var(--text)' }}>{nqi}</span>
-              <span className="cond" style={{ fontSize: 30, fontWeight: 700, color: 'var(--slate)', marginBottom: 12 }}>{grade}</span>
+              <span className="nr-hero-score cond" style={{ fontSize: 84, fontWeight: 700, lineHeight: .85, color: 'var(--paper)' }}>{nqi}</span>
+              <span className="cond" style={{ fontSize: 30, fontWeight: 700, color: 'var(--paper)', marginBottom: 12 }}>{grade}</span>
             </div>
-            <p style={{ fontSize: 13, color: 'var(--text-dim)', margin: 0, lineHeight: 1.5 }}>NQI · weighted mean of {rows.length} dimensions — switch profile to re-weight.</p>
+            <p style={{ fontSize: 13, color: 'rgba(255,253,248,0.55)', margin: 0, lineHeight: 1.5 }}>NQI · weighted mean of {rows.length} dimensions — switch profile to re-weight.</p>
             {/* Present on AsliVastu's own live report card, missing here --
                 a real, load-bearing caveat (this is a PIN-level assessment,
                 not building-specific), not just decoration. */}
-            <p style={{ fontSize: 11.5, color: 'var(--text-dim)', margin: '10px 0 0', lineHeight: 1.5, paddingTop: 10, borderTop: '1px dashed var(--line-soft)' }}>First-pass area assessment · reflects this PIN, not a specific building or street.</p>
+            <p style={{ fontSize: 11.5, color: 'rgba(255,253,248,0.45)', margin: '10px 0 0', lineHeight: 1.5, paddingTop: 10, borderTop: '1px dashed rgba(255,253,248,0.2)' }}>First-pass area assessment · reflects this PIN, not a specific building or street.</p>
           </BPF>
 
           {/* Verdict fill stays scoreColor(nqi) -- the same autumn
@@ -196,27 +196,30 @@ export default function NeighbourhoodReport({ record, nearby }) {
         )}
 
         {/* ── Dimension readout ── */}
-        <BPF style={{ marginBottom: 24, padding: '0 24px 8px' }}>
-          <p className="kick" style={{ padding: '16px 0 4px' }}>Dimension readout · weight = exact contribution to the {nqi}</p>
+        <BPF dark style={{ marginBottom: 24, padding: '0 24px 8px' }}>
+          <p className="kick" style={{ padding: '16px 0 4px', color: 'rgba(255,253,248,0.65)' }}>Dimension readout · weight = exact contribution to the {nqi}</p>
           {rows.map(row => {
             const weak = row.score < 50;
             const col = scoreColor(row.score);
             return (
-              <div key={row.k} className="nr-dim-row" style={{ display: 'grid', gridTemplateColumns: '200px 52px 1fr 76px', gap: 14, alignItems: 'start', padding: '11px 0', borderTop: '1px dashed color-mix(in srgb, var(--slate) 35%, transparent)' }}>
+              <div key={row.k} className="nr-dim-row" style={{ display: 'grid', gridTemplateColumns: '200px 52px 1fr 76px', gap: 14, alignItems: 'start', padding: '11px 0', borderTop: '1px dashed rgba(255,253,248,0.16)' }}>
                 <div>
-                  <div className="cond" style={{ fontSize: 18, fontWeight: 600, textTransform: 'uppercase', lineHeight: 1.1 }}>{FACTOR_LABELS[row.k]}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 2 }}>{source(row.k, record.city)}</div>
+                  <div className="cond" style={{ fontSize: 18, fontWeight: 600, textTransform: 'uppercase', lineHeight: 1.1, color: 'var(--paper)' }}>{FACTOR_LABELS[row.k]}</div>
+                  <div style={{ fontSize: 11, color: 'rgba(255,253,248,0.5)', marginTop: 2 }}>{source(row.k, record.city)}</div>
                 </div>
-                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--slate)', paddingTop: 4 }}>{row.weight}%</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,253,248,0.75)', paddingTop: 4 }}>{row.weight}%</div>
                 <div style={{ paddingTop: 2 }}>
-                  <div style={{ height: 8, border: '1px solid color-mix(in srgb, var(--slate) 35%, transparent)', position: 'relative', overflow: 'hidden' }}>
+                  <div style={{ height: 8, border: '1px solid rgba(255,253,248,0.2)', position: 'relative', overflow: 'hidden' }}>
                     <div style={{ position: 'absolute', inset: 0, width: `${row.score}%`,
                       background: weak ? undefined : col,
                       backgroundImage: weak ? `repeating-linear-gradient(45deg, ${col} 0 3px, transparent 3px 6px)` : undefined }} />
                   </div>
-                  <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '6px 0 0', lineHeight: 1.45 }}>{explain(row.k, record)}</p>
+                  <p style={{ fontSize: 12, color: 'rgba(255,253,248,0.55)', margin: '6px 0 0', lineHeight: 1.45 }}>{explain(row.k, record)}</p>
                 </div>
-                <div className="nr-dim-score cond" style={{ fontSize: 26, fontWeight: 700, textAlign: 'right', color: col }}>{row.score}</div>
+                {/* Fixed light text, not scoreColor(row.score) -- see the
+                    matching note in AVAreaCard.js: red/deep-olive are
+                    themselves dark and would vanish as text on this box. */}
+                <div className="nr-dim-score cond" style={{ fontSize: 26, fontWeight: 700, textAlign: 'right', color: 'var(--paper)' }}>{row.score}</div>
               </div>
             );
           })}

@@ -47,24 +47,24 @@ export default function AVAreaCard({ record, city }) {
       {/* ── Hero: 3 cards (Identity / Composite Index / Verdict) -- same
           grid + same three boxes as the full report's nr-hero3 ── */}
       <div className="av-hero3" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 20 }}>
-        <BPF style={{ padding: 24, background: 'var(--bg-2)' }}>
-          <div className="mono" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 600, color: 'var(--slate)' }}>
+        <BPF dark style={{ padding: 24 }}>
+          <div className="mono" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 600, color: 'rgba(255,253,248,0.65)' }}>
             Sheet · {record.area || city || record.city} · PIN {record.pin_code}
           </div>
-          <h3 className="cond" style={{ fontSize: 32, fontWeight: 700, lineHeight: .95, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--ink)' }}>{record.name}</h3>
-          <div style={{ fontSize: 13.5, color: 'var(--text-dim)' }}>
+          <h3 className="cond" style={{ fontSize: 32, fontWeight: 700, lineHeight: .95, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)' }}>{record.name}</h3>
+          <div style={{ fontSize: 13.5, color: 'rgba(255,253,248,0.55)' }}>
             {Object.keys(scores).length}/{record.dimensions_total || Object.keys(scores).length} dimensions · scored {formatDateLong(record.scored_at) || '—'}
           </div>
         </BPF>
 
-        <BPF style={{ padding: 24, background: 'var(--bg-2)' }}>
-          <div className="mono" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 600, color: 'var(--slate)' }}>Composite index</div>
+        <BPF dark style={{ padding: 24 }}>
+          <div className="mono" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 600, color: 'rgba(255,253,248,0.65)' }}>Composite index</div>
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, margin: '8px 0 6px' }}>
-            <span className="av-score-number cond" style={{ fontSize: 60, fontWeight: 700, lineHeight: .85, color: 'var(--ink)' }}>{record.nqi_composite}</span>
-            <GradeBadge grade={record.grade} color="var(--slate)" />
+            <span className="av-score-number cond" style={{ fontSize: 60, fontWeight: 700, lineHeight: .85, color: 'var(--paper)' }}>{record.nqi_composite}</span>
+            <GradeBadge grade={record.grade} color="var(--paper)" />
           </div>
-          <div style={{ fontSize: 13.5, color: 'var(--text-dim)', lineHeight: 1.5 }}>NQI · weighted mean of {rows.length} dimensions.</div>
-          <div style={{ fontSize: 12, color: 'var(--text-dim)', margin: '10px 0 0', lineHeight: 1.5, paddingTop: 10, borderTop: '1px dashed var(--line-soft)' }}>First-pass area assessment · reflects this PIN, not a specific building or street.</div>
+          <div style={{ fontSize: 13.5, color: 'rgba(255,253,248,0.55)', lineHeight: 1.5 }}>NQI · weighted mean of {rows.length} dimensions.</div>
+          <div style={{ fontSize: 12, color: 'rgba(255,253,248,0.45)', margin: '10px 0 0', lineHeight: 1.5, paddingTop: 10, borderTop: '1px dashed rgba(255,253,248,0.2)' }}>First-pass area assessment · reflects this PIN, not a specific building or street.</div>
         </BPF>
 
         {/* Verdict fill stays scoreColor(nqi) -- the autumn score-colour
@@ -82,31 +82,40 @@ export default function AVAreaCard({ record, city }) {
 
       {/* ── Dimension readout -- same row layout as the full report's:
           label+source / weight% / bar+explain sentence / score ── */}
-      <BPF style={{ padding: '0 24px 8px', marginBottom: 22, background: 'var(--bg-2)' }}>
-        <div className="mono" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 600, color: 'var(--slate)', padding: '16px 0 4px' }}>
+      <BPF dark style={{ padding: '0 24px 8px', marginBottom: 22 }}>
+        <div className="mono" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 600, color: 'rgba(255,253,248,0.65)', padding: '16px 0 4px' }}>
           Dimension readout · weight = exact contribution to the {record.nqi_composite}
         </div>
         {rows.map(row => {
           const weak = row.score < 50;
           const col = scoreColor(row.score);
           return (
-            <div key={row.k} className="av-dim-row" style={{ display: 'grid', gridTemplateColumns: '180px 46px 1fr 60px', gap: 14, alignItems: 'start', padding: '11px 0', borderTop: '1px dashed var(--line-soft)' }}>
+            <div key={row.k} className="av-dim-row" style={{ display: 'grid', gridTemplateColumns: '180px 46px 1fr 60px', gap: 14, alignItems: 'start', padding: '11px 0', borderTop: '1px dashed rgba(255,253,248,0.16)' }}>
               <div>
-                <div className="cond" style={{ fontSize: 17, fontWeight: 600, textTransform: 'uppercase', lineHeight: 1.1, color: 'var(--ink)' }}>{FACTOR_LABELS[row.k] || row.k}</div>
-                <div style={{ fontSize: 11.5, color: 'var(--text-dim)', marginTop: 2 }}>{source(row.k, record.city)}</div>
+                <div className="cond" style={{ fontSize: 17, fontWeight: 600, textTransform: 'uppercase', lineHeight: 1.1, color: 'var(--paper)' }}>{FACTOR_LABELS[row.k] || row.k}</div>
+                <div style={{ fontSize: 11.5, color: 'rgba(255,253,248,0.5)', marginTop: 2 }}>{source(row.k, record.city)}</div>
               </div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--slate)', paddingTop: 4 }}>{row.weight}%</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,253,248,0.75)', paddingTop: 4 }}>{row.weight}%</div>
               <div style={{ paddingTop: 2 }}>
-                <div style={{ height: 8, border: '1px solid var(--line)', position: 'relative', overflow: 'hidden', borderRadius: 'var(--radius)' }}>
+                {/* Track border is white-tinted now (was var(--line), tuned
+                    for a light box) -- the bar fill itself still uses
+                    scoreColor() unchanged, that's the primary color signal
+                    and reads fine on dark. */}
+                <div style={{ height: 8, border: '1px solid rgba(255,253,248,0.2)', position: 'relative', overflow: 'hidden', borderRadius: 'var(--radius)' }}>
                   <div style={{
                     position: 'absolute', inset: 0, width: `${row.score}%`,
                     background: weak ? undefined : col,
                     backgroundImage: weak ? `repeating-linear-gradient(45deg, ${col} 0 3px, transparent 3px 6px)` : undefined,
                   }} />
                 </div>
-                <div style={{ fontSize: 13, color: 'var(--text-mute)', margin: '6px 0 0', lineHeight: 1.45 }}>{explain(row.k, record)}</div>
+                <div style={{ fontSize: 13, color: 'rgba(255,253,248,0.55)', margin: '6px 0 0', lineHeight: 1.45 }}>{explain(row.k, record)}</div>
               </div>
-              <div className="cond" style={{ fontSize: 24, fontWeight: 700, textAlign: 'right', color: col }}>{row.score}</div>
+              {/* Score number is fixed light text, not scoreColor(row.score)
+                  -- two of the four tiers (red #8F0000, deep olive #5C6B00)
+                  are themselves dark and would nearly disappear as text on
+                  this near-black box. The bar above still carries the color
+                  signal; this number just needs to be legible. */}
+              <div className="cond" style={{ fontSize: 24, fontWeight: 700, textAlign: 'right', color: 'var(--paper)' }}>{row.score}</div>
             </div>
           );
         })}

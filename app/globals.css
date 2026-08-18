@@ -1061,12 +1061,18 @@
   .av-panel::before{ background:var(--av); }
 
   .av-hero3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:14px; align-items:stretch }
+  /* Sheet + Composite Index boxes go dark (near-black, matching the real
+     AVAreaCard.js/NeighbourhoodReport.js boxes -- see the `dark` prop on
+     BPF there) -- the old var(--bg-2) cream fill read as barely-whiter
+     than the page's own background, not a deliberate surface. The verdict
+     box keeps managing its own background/text colour inline (scoreColor
+     fill + readableTextColor text), so it's excluded here. */
   .av-box{
-    position:relative; border:1px solid var(--line); border-radius:6px; padding:12px 12px 10px;
-    background:var(--bg-2); display:flex; flex-direction:column;
+    position:relative; border:1px solid rgba(255,253,248,0.16); border-radius:6px; padding:12px 12px 10px;
+    background:var(--ink); display:flex; flex-direction:column;
   }
   .av-box-corner{ position:absolute; width:11px; height:11px; pointer-events:none; z-index:2 }
-  .av-box-corner::before{ content:'+'; color:var(--slate); font-size:12px; line-height:1; opacity:.5 }
+  .av-box-corner::before{ content:'+'; color:rgba(255,253,248,0.55); font-size:12px; line-height:1; opacity:.5 }
   .av-box-corner.tl{ top:6px; left:6px }
   .av-box-corner.tr{ top:6px; right:6px }
   .av-box-corner.bl{ bottom:6px; left:6px }
@@ -1079,19 +1085,26 @@
      card this belongs to is hidden entirely below 901px now (see
      .howworks-panel-sticky above), so this only ever renders at desktop
      sizes where the fixed sizes below are correct. */
-  .av-city{ font-family:'Anton',sans-serif; font-weight:400; font-size:26px; line-height:1.05; color:var(--ink); margin:8px 0 6px }
+  .av-city{ font-family:'Anton',sans-serif; font-weight:400; font-size:26px; line-height:1.05; color:var(--paper); margin:8px 0 6px }
 
+  /* Base .av-tiny stays slate-on-paper -- it's also used standalone for
+     the "DIMENSION READOUT" label, which sits directly on the page
+     background outside any box, not inside a dark one. Only the copy
+     inside .av-box gets the light-on-dark override below. */
   .av-tiny{ font-size:11.5px; font-weight:600; letter-spacing:.12em; color:var(--slate); text-transform:uppercase }
+  .av-box .av-tiny{ color:rgba(255,253,248,0.65) }
+  .av-verdict-box .av-tiny{ color:inherit }
   /* Fixed top margin, not margin-top:auto -- these boxes get stretched to
      match the tallest of the 3 (grid align-items:stretch), and pinning
      the caption to the bottom would open an ugly gap right under the
      score/verdict word on the shorter boxes. Leftover space just sits
      blank below the caption instead, which matches the real card's look
      closely enough at this compact size. */
-  .av-box-sub{ font-size:12px; color:var(--text-dim); line-height:1.45; margin-top:6px }
-  .av-box-divider{ font-size:11px; color:var(--text-dim); line-height:1.45; margin-top:8px; padding-top:8px; border-top:1px dashed var(--line-soft) }
-  .av-score-num{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:28px; color:var(--ink); margin-top:6px; display:flex; align-items:center }
-  .av-score-num span{ font-size:13px; margin-left:8px; color:var(--slate); border:1px solid var(--slate); background:color-mix(in srgb, var(--slate) 10%, transparent); padding:2px 7px; border-radius:3px; vertical-align:middle }
+  .av-box-sub{ font-size:12px; color:rgba(255,253,248,0.55); line-height:1.45; margin-top:6px }
+  .av-verdict-box .av-box-sub{ color:inherit }
+  .av-box-divider{ font-size:11px; color:rgba(255,253,248,0.45); line-height:1.45; margin-top:8px; padding-top:8px; border-top:1px dashed rgba(255,253,248,0.2) }
+  .av-score-num{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:28px; color:var(--paper); margin-top:6px; display:flex; align-items:center }
+  .av-score-num span{ font-size:13px; margin-left:8px; color:var(--paper); border:1px solid rgba(255,253,248,0.4); background:rgba(255,253,248,0.08); padding:2px 7px; border-radius:3px; vertical-align:middle }
   .av-verdict-word{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:19px; margin-top:6px; text-transform:uppercase; color:inherit }
 
   .av-dim-row{ margin-bottom:7px }

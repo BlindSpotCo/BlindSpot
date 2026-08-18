@@ -23,17 +23,27 @@
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
 import { sourceFor } from '@/lib/aslivastu/cityMeta';
 
-export function BPF({ children, style, className = '' }) {
+// `dark` flips a box to the near-black ink card used for the Sheet
+// identity / Composite Index / Dimension readout boxes -- requested
+// because the default `var(--paper)` fill read as barely-there-whiter
+// than the page's own `var(--bg)`, not as a deliberate surface. Border
+// and corner marks switch to white-tinted so they stay visible against
+// `var(--ink)` instead of disappearing (the default olive border/marks
+// are tuned for contrast on paper, not on ink).
+export function BPF({ children, style, className = '', dark = false }) {
+  const surface = dark
+    ? { background: 'var(--ink)', border: '1px solid rgba(255,253,248,0.16)' }
+    : { background: 'var(--paper)', border: '1px solid color-mix(in srgb, var(--slate) 55%, transparent)' };
   return (
-    <div className={`bpf-av ${className}`} style={{ position: 'relative', border: '1px solid color-mix(in srgb, var(--slate) 55%, transparent)', background: 'var(--paper)', ...style }}>
-      <span style={bpfMark('tl')}>+</span><span style={bpfMark('tr')}>+</span>
-      <span style={bpfMark('bl')}>+</span><span style={bpfMark('br')}>+</span>
+    <div className={`bpf-av ${className}`} style={{ position: 'relative', ...surface, ...style }}>
+      <span style={bpfMark('tl', dark)}>+</span><span style={bpfMark('tr', dark)}>+</span>
+      <span style={bpfMark('bl', dark)}>+</span><span style={bpfMark('br', dark)}>+</span>
       {children}
     </div>
   );
 }
-function bpfMark(pos) {
-  const base = { position: 'absolute', color: 'var(--slate)', fontSize: 13, lineHeight: 1, opacity: .5 };
+function bpfMark(pos, dark = false) {
+  const base = { position: 'absolute', color: dark ? 'rgba(255,253,248,0.55)' : 'var(--slate)', fontSize: 13, lineHeight: 1, opacity: .5 };
   const offsets = { tl: { top: -7, left: -5 }, tr: { top: -7, right: -5 }, bl: { bottom: -8, left: -5 }, br: { bottom: -8, right: -5 } };
   return { ...base, ...offsets[pos] };
 }
