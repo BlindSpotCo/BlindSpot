@@ -240,10 +240,14 @@ function drawArc(){
   });
 }
 
+function placeSunXY(x,y,visible){
+  if(!visible){sunEl.style.display='none';return;}
+  sunEl.style.display='block';sunEl.style.left=x+'px';sunEl.style.top=y+'px';
+}
 function moveSun(az,el){
-  if(el<-5){sunEl.style.display='none';return;}
+  if(el<-5){placeSunXY(0,0,false);return;}
   const s=projectToScreen(az,el);
-  sunEl.style.display='block';sunEl.style.left=s[0]+'px';sunEl.style.top=s[1]+'px';
+  placeSunXY(s[0],s[1],true);
 }
 
 function updateView(p){
@@ -346,7 +350,18 @@ function animTick(ts){
   var p0=allPts[ai],p1=allPts[(ai+1)%allPts.length];
   var el=lerp(p0.el,p1.el,t),az=lerpAngle(p0.az,p1.az,t);
   curEl=el;curAz=az;
-  moveSun(az,el);
+  // Interpolating az/el then re-projecting doesn't trace the same path as
+  // the drawn arc: projectToScreen is non-linear (sin/cos), so a straight
+  // line in az/el space is a curved line on screen -- the icon would drift
+  // off the polyline drawArc() actually draws between these two points.
+  // Interpolating the two points' own screen positions instead guarantees
+  // the icon always sits exactly on that same straight segment.
+  if(p0.el<-5&&p1.el<-5){
+    placeSunXY(0,0,false);
+  }else{
+    var s0=projectToScreen(p0.az,p0.el), s1=projectToScreen(p1.az,p1.el);
+    placeSunXY(lerp(s0[0],s1[0],t), lerp(s0[1],s1[1],t), true);
+  }
   try{map.setDate(interpDate(p0.iso,p1.iso,t));}catch(e){}
   var stm=document.getElementById('stm');if(stm)stm.textContent=p0.time;
   var st2=document.getElementById('sun-time');if(st2)st2.textContent=p0.time;
