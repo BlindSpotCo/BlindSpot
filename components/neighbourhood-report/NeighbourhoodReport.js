@@ -43,16 +43,16 @@ const CSS = `
 .nr button { font-family: 'Inter', sans-serif; cursor: pointer; }
 .bpf-av { position: relative; }
 .bpf-av > .m { position: absolute; color: var(--slate); font-size: 12px; line-height: 1; opacity: .5; }
+/* The hero row, its 3 boxes and the dimension-readout rows used to have
+   their own .nr-hero3/.nr-hero-name/.nr-hero-score/.nr-dim-row rules
+   here, duplicating what AVAreaCard.js had under different class names.
+   Both now render the shared .avsheet-* classes in globals.css instead
+   (mobile breakpoints included), so there's nothing left to duplicate. */
 @media (max-width: 900px) {
-  .nr-hero3 { grid-template-columns: 1fr !important; }
   .nr-2col { grid-template-columns: 1fr !important; }
 }
 @media (max-width: 640px) {
   .nr-wrap { padding: 0 18px 48px !important; }
-  .nr-hero-score { font-size: 60px !important; }
-  .nr-hero-name { font-size: 38px !important; }
-  .nr-dim-row { grid-template-columns: 1fr !important; gap: 6px !important; }
-  .nr-dim-row .nr-dim-score { text-align: left !important; }
   .nr-table-scroll table th:nth-child(5), .nr-table-scroll table td:nth-child(5),
   .nr-table-scroll table th:nth-child(6), .nr-table-scroll table td:nth-child(6) { display: none; }
 }
@@ -132,52 +132,47 @@ export default function NeighbourhoodReport({ record, nearby }) {
           </div>
         </div>
 
-        {/* ── Hero: 3 cards (Identity / Score / Verdict) ── */}
-        <div className="nr-hero3" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 24 }}>
-          <BPF dark style={{ padding: 24 }}>
-            <p className="kick" style={{ color: 'rgba(255,253,248,0.65)' }}>Sheet 01 · {record.area || record.city} · PIN {record.pin_code}</p>
-            {/* Plain Inter bold, matching .hero h1 / .section h2 -- the
-                rest of the site has no display font, Anton was never
-                actually used anywhere real. Font-size dropped from 54 to
-                40 -- at 54 a single 9-letter word ("CONNAUGHT") didn't
-                fit this box's ~290px text width, and the site's global
-                `h1,h2,h3{word-break:break-word}` rule (meant to stop long
-                URLs/strings overflowing elsewhere) was breaking it mid-
-                word ("CONNAUG"/"HT PLACE") instead of wrapping at the
-                space. Explicit word-break/overflow-wrap:normal override
-                here so a two-word name that still doesn't fit on one
-                line wraps cleanly between words instead. */}
-            <h1 className="nr-hero-name" style={{ fontWeight: 700, fontSize: 40, lineHeight: 1.05, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)', wordBreak: 'normal', overflowWrap: 'normal' }}>{record.name}</h1>
-            <p style={{ fontSize: 13, color: 'rgba(255,253,248,0.55)', margin: 0 }}>
+        {/* ── Hero: 3 boxes (Identity / Score / Verdict) ──
+            Every size/spacing/colour here comes from the shared
+            `.avsheet-*` block in globals.css, which AVAreaCard.js (the
+            same sheet, inside the property-score flow) renders against
+            too. Nothing sizing-related is set inline anymore -- that
+            duplication is exactly why the two surfaces kept drifting
+            apart. See the comment on that CSS block for the full
+            reasoning. */}
+        <div className="avsheet-hero">
+          <BPF dark className="avsheet-box">
+            <p className="avsheet-label" style={{ color: 'rgba(255,253,248,0.65)' }}>Sheet 01 · {record.area || record.city} · PIN {record.pin_code}</p>
+            <h1 className="avsheet-name">{record.name}</h1>
+            <p className="avsheet-meta">
               {record.dimensions_scored || Object.keys(record.scores || {}).length}/{record.dimensions_total || Object.keys(record.scores || {}).length} dimensions · scored {formatDateLong(record.scored_at) || '—'}
             </p>
           </BPF>
 
-          <BPF dark style={{ padding: 24 }}>
-            <p className="kick" style={{ color: 'rgba(255,253,248,0.65)' }}>Composite index · {persona} weighting</p>
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, margin: '8px 0 6px' }}>
-              <span className="nr-hero-score" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 84, fontWeight: 700, lineHeight: .85, color: 'var(--paper)' }}>{nqi}</span>
-              <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 30, fontWeight: 700, color: 'var(--paper)', marginBottom: 12 }}>{grade}</span>
+          <BPF dark className="avsheet-box">
+            <p className="avsheet-label" style={{ color: 'rgba(255,253,248,0.65)' }}>Composite index · {persona} weighting</p>
+            <div className="avsheet-scorerow">
+              <span className="avsheet-score">{nqi}</span>
+              <span className="avsheet-grade">{grade}</span>
             </div>
-            <p style={{ fontSize: 13, color: 'rgba(255,253,248,0.55)', margin: 0, lineHeight: 1.5 }}>NQI · weighted mean of {rows.length} dimensions — switch profile to re-weight.</p>
+            <p className="avsheet-cap">NQI · weighted mean of {rows.length} dimensions — switch profile to re-weight.</p>
             {/* Present on AsliVastu's own live report card, missing here --
                 a real, load-bearing caveat (this is a PIN-level assessment,
                 not building-specific), not just decoration. */}
-            <p style={{ fontSize: 11.5, color: 'rgba(255,253,248,0.45)', margin: '10px 0 0', lineHeight: 1.5, paddingTop: 10, borderTop: '1px dashed rgba(255,253,248,0.2)' }}>First-pass area assessment · reflects this PIN, not a specific building or street.</p>
+            <p className="avsheet-note">First-pass area assessment · reflects this PIN, not a specific building or street.</p>
           </BPF>
 
           {/* Verdict fill stays scoreColor(nqi) -- the same autumn
-              score-colour ramp used everywhere else on the report
-              (deep olive → olive → yellow-green → orange → red),
+              score-colour ramp used everywhere else on the report,
               never AsliVastu's own wine/red brand colour. Text colour is
               computed from that fill via readableTextColor() (perceptual
               luminance) rather than hardcoded white -- the bright
               mid-tier fills need dark ink, only the two darkest tiers
-              need white. */}
-          <div style={{ background: scoreColor(nqi), color: readableTextColor(scoreColor(nqi)), padding: 24, position: 'relative' }}>
-            <p className="kick" style={{ color: 'inherit', opacity: .75 }}>Verdict</p>
-            <h2 style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 34, fontWeight: 700, margin: '8px 0 10px', textTransform: 'uppercase', color: 'inherit' }}>{verdict.label}</h2>
-            <p style={{ fontSize: 13, lineHeight: 1.5, margin: 0, color: 'inherit', opacity: .92 }}>{verdict.why}</p>
+              need white. Per-record, so these two stay inline. */}
+          <div className="avsheet-verdict" style={{ background: scoreColor(nqi), color: readableTextColor(scoreColor(nqi)) }}>
+            <p className="avsheet-label" style={{ color: 'inherit', opacity: .75 }}>Verdict</p>
+            <h2 className="avsheet-verdict-word">{verdict.label}</h2>
+            <p className="avsheet-verdict-why" style={{ opacity: .92 }}>{verdict.why}</p>
           </div>
         </div>
 
@@ -222,27 +217,27 @@ export default function NeighbourhoodReport({ record, nearby }) {
             data table below, not an all-dark page. Score number goes
             back to scoreColor(row.score) as its own text colour -- fine
             on light paper even for the darkest tiers. */}
-        <BPF style={{ marginBottom: 24, padding: '0 24px 8px' }}>
-          <p className="kick" style={{ padding: '16px 0 4px' }}>Dimension readout · weight = exact contribution to the {nqi}</p>
+        <BPF className="avsheet-readout">
+          <p className="avsheet-label avsheet-readout-label">Dimension readout · weight = exact contribution to the {nqi}</p>
           {rows.map(row => {
             const weak = row.score < 50;
             const col = scoreColor(row.score);
             return (
-              <div key={row.k} className="nr-dim-row" style={{ display: 'grid', gridTemplateColumns: '200px 52px 1fr 76px', gap: 14, alignItems: 'start', padding: '11px 0', borderTop: '1px dashed color-mix(in srgb, var(--slate) 35%, transparent)' }}>
+              <div key={row.k} className="avsheet-row">
                 <div>
-                  <div style={{ fontSize: 18, fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.1, color: 'var(--ink)' }}>{FACTOR_LABELS[row.k]}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 2 }}>{source(row.k, record.city)}</div>
+                  <div className="avsheet-row-label">{FACTOR_LABELS[row.k]}</div>
+                  <div className="avsheet-row-src">{source(row.k, record.city)}</div>
                 </div>
-                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--slate)', paddingTop: 4 }}>{row.weight}%</div>
+                <div className="avsheet-row-weight">{row.weight}%</div>
                 <div style={{ paddingTop: 2 }}>
-                  <div style={{ height: 8, border: '1px solid color-mix(in srgb, var(--slate) 35%, transparent)', position: 'relative', overflow: 'hidden' }}>
+                  <div className="avsheet-track">
                     <div style={{ position: 'absolute', inset: 0, width: `${row.score}%`,
                       background: weak ? undefined : col,
                       backgroundImage: weak ? `repeating-linear-gradient(45deg, ${col} 0 3px, transparent 3px 6px)` : undefined }} />
                   </div>
-                  <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '6px 0 0', lineHeight: 1.45 }}>{explain(row.k, record)}</p>
+                  <p className="avsheet-explain">{explain(row.k, record)}</p>
                 </div>
-                <div className="nr-dim-score" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 26, fontWeight: 700, textAlign: 'right', color: col }}>{row.score}</div>
+                <div className="avsheet-row-score" style={{ color: col }}>{row.score}</div>
               </div>
             );
           })}

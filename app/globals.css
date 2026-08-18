@@ -1187,6 +1187,134 @@
     box-shadow:0 0 0 3px color-mix(in srgb, #fff 25%, transparent);
   }
 
+  /* ---------- SHARED AREA SPEC SHEET ----------
+     ONE source of truth for the area spec sheet, used by BOTH surfaces
+     that render it: AVAreaCard.js (inside the property-score flow) and
+     NeighbourhoodReport.js (the standalone /neighbourhood-report/[pin]
+     page). They are supposed to be pixel-identical.
+
+     They kept drifting apart because each file carried its OWN copy of
+     every size/colour as inline styles -- so "make them match" meant
+     hand-syncing ~25 numbers across two files, and any one of them
+     getting missed (or a stray globals.css rule leaking into only one of
+     them, which is exactly what `.av-dim-row{margin-bottom:6px}` -- a
+     homepage-mockup rule -- was quietly doing to the card's row spacing)
+     put them out of sync again. Both files now render the same class
+     names and set no sizing/colour inline, so there is nothing left to
+     keep in sync by hand: change a value here and both surfaces move
+     together, by construction.
+
+     Only genuinely per-instance values (the verdict fill from
+     scoreColor(), its readableTextColor() text colour, and each bar's
+     width/fill) stay inline, since those are computed per record. */
+
+  /* Same usable content width as the standalone report page's .nr-wrap
+     (max-width:1120 minus its 32px side padding = 1056), and centred the
+     same way. Without this the card inherited its parent .wrap's wider
+     1116px content box and sat left-aligned in it -- so it was both
+     off-centre AND ~60px wider, which changed where captions wrapped and
+     made every box look looser than the report's. */
+  .avsheet{ max-width:1056px; margin-left:auto; margin-right:auto }
+
+  .avsheet-hero{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; margin-bottom:24px }
+  /* Floor height for the 3 hero boxes. The two surfaces' captions differ
+     slightly in length (the standalone report's mentions re-weighting,
+     which doesn't apply on the card), so left to content alone one page's
+     caption wraps to 2 lines and the other's doesn't -- a one-line
+     difference that made the card's whole hero row ~19px shorter. Pinning
+     a shared floor keeps the row identical on both regardless of caption
+     length; anything genuinely taller still grows normally. */
+  .avsheet-hero > *{ min-height:218px }
+  .avsheet-box{ padding:24px }
+
+  /* Not .mono -- that class is also caught by the global
+     h1,h2,h3,.mono{word-break:break-word} rule, which only ever applied
+     to the card (the report page's equivalent label is a <p class="kick">
+     and isn't matched), i.e. another silent one-sided difference. This
+     sets the same font explicitly and stays out of that rule. */
+  .avsheet-label{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600;
+    letter-spacing:.14em; text-transform:uppercase; margin:0;
+  }
+  .avsheet-name{
+    font-size:40px; font-weight:700; line-height:1.05; margin:10px 0 8px;
+    text-transform:uppercase; color:var(--paper);
+    /* Overrides the global h1,h2,h3{word-break:break-word}: without it a
+       single long locality name ("CONNAUGHT") gets sliced mid-word rather
+       than wrapping at the space. */
+    word-break:normal; overflow-wrap:normal;
+  }
+  .avsheet-meta{ font-size:13px; color:rgba(255,253,248,0.55); margin:0 }
+  .avsheet-scorerow{ display:flex; align-items:flex-end; gap:14px; margin:8px 0 6px }
+  .avsheet-score{
+    font-family:'Bricolage Grotesque',sans-serif; font-size:84px; font-weight:700;
+    line-height:.85; color:var(--paper);
+  }
+  .avsheet-grade{
+    font-family:'Bricolage Grotesque',sans-serif; font-size:30px; font-weight:700;
+    color:var(--paper); margin-bottom:12px;
+  }
+  .avsheet-cap{ font-size:13px; color:rgba(255,253,248,0.55); line-height:1.5; margin:0 }
+  .avsheet-note{
+    font-size:11.5px; color:rgba(255,253,248,0.45); line-height:1.5;
+    margin:10px 0 0; padding-top:10px; border-top:1px dashed rgba(255,253,248,0.2);
+  }
+  /* Square corners, matching its BPF siblings in the same row (they have
+     no rounding either). Background/text colour are set inline per record
+     from scoreColor()/readableTextColor(). */
+  .avsheet-verdict{ padding:24px; position:relative }
+  .avsheet-verdict-word{
+    font-family:'Bricolage Grotesque',sans-serif; font-size:34px; font-weight:700;
+    /* Explicit, because one surface renders this as an <h2> (which picks
+       up the global h1,h2,h3 letter-spacing) and the other as a <div>
+       (which doesn't) -- stated here so the tag no longer matters. */
+    letter-spacing:-0.01em; line-height:1.15;
+    text-transform:uppercase; margin:8px 0 10px; color:inherit;
+    /* Same reason as the tag/letter-spacing note above: as an <h2> on one
+       surface it picks up the global h1,h2,h3{word-break:break-word} and
+       as a <div> on the other it doesn't. Stated once, so a long verdict
+       label can't wrap differently between the two. */
+    word-break:normal; overflow-wrap:normal;
+  }
+  .avsheet-verdict-why{ font-size:13px; line-height:1.5; margin:0; color:inherit }
+
+  /* Readout background is deliberately left to BPF's own light default
+     (var(--paper), #FFFDF8). The card used to override this to
+     var(--bg-2) (#F1E9DA) -- a visibly beiger, "off-white" panel next to
+     the report's near-white one. */
+  .avsheet-readout{ padding:0 24px 8px; margin-bottom:24px }
+  .avsheet-readout-label{ color:var(--slate); padding:16px 0 4px }
+  /* No margin-bottom here on purpose: rows are separated by their own
+     padding + dashed top border, exactly like the report's. The card's
+     rows used to also pick up .av-dim-row{margin-bottom:6px} (a rule
+     written for the compact homepage mockup, which happens to share that
+     class name), making every row ~6px taller than the report's. */
+  .avsheet-row{
+    display:grid; grid-template-columns:200px 52px 1fr 76px; gap:14px;
+    align-items:start; padding:11px 0;
+    border-top:1px dashed color-mix(in srgb, var(--slate) 35%, transparent);
+  }
+  .avsheet-row-label{ font-size:18px; font-weight:700; text-transform:uppercase; line-height:1.1; color:var(--ink) }
+  .avsheet-row-src{ font-size:11px; color:var(--text-dim); margin-top:2px }
+  .avsheet-row-weight{ font-size:12px; font-weight:600; color:var(--slate); padding-top:4px }
+  .avsheet-track{
+    height:8px; border:1px solid color-mix(in srgb, var(--slate) 35%, transparent);
+    position:relative; overflow:hidden;
+  }
+  .avsheet-explain{ font-size:12px; color:var(--text-mute); line-height:1.45; margin:6px 0 0 }
+  .avsheet-row-score{ font-family:'Bricolage Grotesque',sans-serif; font-size:26px; font-weight:700; text-align:right }
+
+  @media (max-width:900px){
+    .avsheet-hero{ grid-template-columns:1fr }
+    .avsheet-hero > *{ min-height:0 }
+  }
+  @media (max-width:640px){
+    .avsheet-score{ font-size:60px }
+    .avsheet-name{ font-size:38px }
+    .avsheet-row{ grid-template-columns:1fr; gap:6px }
+    .avsheet-row-score{ text-align:left }
+  }
+
   /* ---------- SUNSCOUT-STYLE PANEL (step 2) ----------
      Matches the real LiveScore modal: cream card (close to the page's own
      paper tone already), a hard orange accent distinct from the site's
@@ -1743,7 +1871,11 @@
   .uv-score-box-number{ font-size:17px !important; }
 
   .av-card{ padding:18px 16px !important; }
-  .av-score-number{ font-size:28px !important; }
+  /* .av-score-number rules removed here and in the two narrower
+     breakpoints below -- that class no longer exists. The area sheet's
+     composite number is .avsheet-score now, and its mobile size is set
+     alongside the rest of the shared .avsheet-* block rather than in a
+     separate override far from the desktop value. */
 
   .ls-score-box{ padding:16px 14px !important; }
   .ls-score-number{ font-size:30px !important; }
@@ -1778,7 +1910,6 @@
   .uv-getscore-btn{ padding:11px 14px !important; font-size:12.5px !important; }
 
   .av-card{ padding:14px 12px !important; }
-  .av-score-number{ font-size:24px !important; }
 
   .ls-score-box{ padding:12px 10px !important; }
   .ls-score-number{ font-size:24px !important; }
@@ -1839,7 +1970,6 @@
   .uv-combined-card{ padding:12px 10px !important }
   .uv-score-number{ font-size:22px !important }
   .av-card{ padding:12px 10px !important }
-  .av-score-number{ font-size:20px !important }
   .ls-score-number{ font-size:20px !important }
 }
 
