@@ -101,13 +101,13 @@ html,body{background:var(--bg-2);overflow:hidden;}
   </div>
   <svg id="arc-svg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:18;overflow:visible;"></svg>
   <div id="sun" style="line-height:1;pointer-events:none;position:absolute;transform:translate(-50%,-50%);display:none;text-align:center;">
-    <svg width="30" height="30" viewBox="-18 -18 36 36" style="filter:drop-shadow(0 0 8px rgba(233,169,74,.65));">
-      <circle cx="0" cy="0" r="8" fill="#E9A94A"/>
-      <g stroke="#E9A94A" stroke-width="2" stroke-linecap="round" opacity="0.75">
-        <line x1="0" y1="-12" x2="0" y2="-16"/><line x1="0" y1="12" x2="0" y2="16"/>
-        <line x1="-12" y1="0" x2="-16" y2="0"/><line x1="12" y1="0" x2="16" y2="0"/>
-        <line x1="-8.5" y1="-8.5" x2="-11.3" y2="-11.3"/><line x1="8.5" y1="8.5" x2="11.3" y2="11.3"/>
-        <line x1="-8.5" y1="8.5" x2="-11.3" y2="11.3"/><line x1="8.5" y1="-8.5" x2="11.3" y2="-11.3"/>
+    <svg width="44" height="44" viewBox="-26 -26 52 52" style="filter:drop-shadow(0 0 14px rgba(255,193,85,.85));">
+      <circle cx="0" cy="0" r="12" fill="#FFC155"/>
+      <g stroke="#FFC155" stroke-width="2.5" stroke-linecap="round" opacity="0.9">
+        <line x1="0" y1="-16" x2="0" y2="-22"/><line x1="0" y1="16" x2="0" y2="22"/>
+        <line x1="-16" y1="0" x2="-22" y2="0"/><line x1="16" y1="0" x2="22" y2="0"/>
+        <line x1="-11.3" y1="-11.3" x2="-15.6" y2="-15.6"/><line x1="11.3" y1="11.3" x2="15.6" y2="15.6"/>
+        <line x1="-11.3" y1="11.3" x2="-15.6" y2="15.6"/><line x1="11.3" y1="-11.3" x2="15.6" y2="-15.6"/>
       </g>
     </svg>
     <div id="sun-time" style="font-size:12.5px;font-weight:600;font-family:'IBM Plex Mono',monospace;background:rgba(255,253,248,.96);color:#1C1812;border:1px solid rgba(28,24,18,0.14);border-radius:7px;padding:3px 10px;margin-top:2px;white-space:nowrap;">--:--</div>
@@ -417,12 +417,12 @@ window.addEventListener('message',function(e){
             var sx=parseFloat(sunDiv.style.left||'0'), sy=parseFloat(sunDiv.style.top||'0');
             rctx.save();
             rctx.translate(sx,sy);
-            rctx.strokeStyle='#E9A94A';rctx.lineWidth=2;rctx.lineCap='round';rctx.globalAlpha=0.75;
-            [[0,-12,0,-16],[0,12,0,16],[-12,0,-16,0],[12,0,16,0],[-8.5,-8.5,-11.3,-11.3],[8.5,8.5,11.3,11.3],[-8.5,8.5,-11.3,11.3],[8.5,-8.5,11.3,-11.3]].forEach(function(r){
+            rctx.strokeStyle='#FFC155';rctx.lineWidth=2.5;rctx.lineCap='round';rctx.globalAlpha=0.9;
+            [[0,-16,0,-22],[0,16,0,22],[-16,0,-22,0],[16,0,22,0],[-11.3,-11.3,-15.6,-15.6],[11.3,11.3,15.6,15.6],[-11.3,11.3,-15.6,15.6],[11.3,-11.3,15.6,-15.6]].forEach(function(r){
               rctx.beginPath();rctx.moveTo(r[0],r[1]);rctx.lineTo(r[2],r[3]);rctx.stroke();
             });
-            rctx.globalAlpha=1;rctx.fillStyle='#E9A94A';
-            rctx.beginPath();rctx.arc(0,0,8,0,Math.PI*2);rctx.fill();
+            rctx.globalAlpha=1;rctx.fillStyle='#FFC155';
+            rctx.beginPath();rctx.arc(0,0,12,0,Math.PI*2);rctx.fill();
             rctx.restore();
           }
           rctx.fillStyle='rgba(175,95,48,0.9)';
