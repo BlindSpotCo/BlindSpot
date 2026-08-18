@@ -101,9 +101,10 @@ html,body{background:var(--bg-2);overflow:hidden;}
   </div>
   <svg id="arc-svg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:18;overflow:visible;"></svg>
   <div id="sun" style="line-height:1;pointer-events:none;position:absolute;transform:translate(-50%,-50%);display:none;text-align:center;">
-    <svg width="44" height="44" viewBox="-26 -26 52 52" style="filter:drop-shadow(0 0 14px rgba(255,193,85,.85));">
-      <circle cx="0" cy="0" r="12" fill="#FFC155"/>
-      <g stroke="#FFC155" stroke-width="2.5" stroke-linecap="round" opacity="0.9">
+    <svg width="44" height="44" viewBox="-26 -26 52 52" style="filter:drop-shadow(0 0 14px rgba(255,209,60,.9));">
+      <circle cx="0" cy="0" r="14" fill="none" stroke="#FFFDF8" stroke-width="2.5" opacity="0.95"/>
+      <circle cx="0" cy="0" r="12" fill="#FFD23C"/>
+      <g stroke="#FFD23C" stroke-width="2.5" stroke-linecap="round" opacity="0.9">
         <line x1="0" y1="-16" x2="0" y2="-22"/><line x1="0" y1="16" x2="0" y2="22"/>
         <line x1="-16" y1="0" x2="-22" y2="0"/><line x1="16" y1="0" x2="22" y2="0"/>
         <line x1="-11.3" y1="-11.3" x2="-15.6" y2="-15.6"/><line x1="11.3" y1="11.3" x2="15.6" y2="15.6"/>
@@ -188,9 +189,24 @@ const arcSvg=document.getElementById('arc-svg');
 let curEl=${mel}, curAz=${maz};
 
 function projectToScreen(az,el){
-  const W=document.getElementById('map').clientWidth||800,H=window.innerHeight||600;
-  const f=Math.max(0,el)/90,rx=W*0.48*(1-f),ry=H*0.44*(1-f),ar=(az-curRot)*D2R;
-  return[W/2+rx*Math.sin(ar),H/2-ry*Math.cos(ar)*0.6];
+  const mapEl=document.getElementById('map');
+  const W=mapEl.clientWidth||800,H=mapEl.clientHeight||window.innerHeight||600;
+  const ar=(az-curRot)*D2R;
+  // Direction of this point from screen center. Previously rx/ry were fixed
+  // W- and H-based radii applied to sin/cos directly, which only produces a
+  // screen-filling arc when curRot is ~0 -- at other rotations the same
+  // fixed-orientation ellipse gets sampled at a different phase and can look
+  // squashed/short instead of rotating together with the camera. Casting a
+  // ray from the center out to the container's edge along this direction
+  // instead means the horizon points (el=0, start/end of the arc) always
+  // land right at the map's edge, at every rotation.
+  const dx=Math.sin(ar), dy=-Math.cos(ar)*0.6;
+  const halfW=W/2*0.94, halfH=H/2*0.90;
+  let tMax=Infinity;
+  if(Math.abs(dx)>1e-6) tMax=Math.min(tMax, halfW/Math.abs(dx));
+  if(Math.abs(dy)>1e-6) tMax=Math.min(tMax, halfH/Math.abs(dy));
+  const f=Math.max(0,el)/90, r=tMax*(1-f);
+  return[W/2+dx*r,H/2+dy*r];
 }
 
 function drawArc(){
@@ -210,7 +226,7 @@ function drawArc(){
   arc.setAttribute('points',sc.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' '));
   arc.setAttribute('fill','none');arc.setAttribute('stroke','#AF5F30');arc.setAttribute('stroke-width','2.5');arc.setAttribute('stroke-dasharray','6 9');arc.setAttribute('opacity','0.85');
   arcSvg.appendChild(arc);
-  ab.forEach(function(p,i){if(i%3!==0)return;const s=projectToScreen(p.az,p.el);const d=document.createElementNS('http://www.w3.org/2000/svg','circle');d.setAttribute('cx',s[0].toFixed(1));d.setAttribute('cy',s[1].toFixed(1));d.setAttribute('r','2.5');d.setAttribute('fill','#E9A94A');d.setAttribute('opacity','0.85');arcSvg.appendChild(d);});
+  ab.forEach(function(p,i){if(i%3!==0)return;const s=projectToScreen(p.az,p.el);const d=document.createElementNS('http://www.w3.org/2000/svg','circle');d.setAttribute('cx',s[0].toFixed(1));d.setAttribute('cy',s[1].toFixed(1));d.setAttribute('r','2.5');d.setAttribute('fill','#FFD23C');d.setAttribute('opacity','0.85');arcSvg.appendChild(d);});
   var riseLabel='Rise ' + '${sunTimes.rise}', setLabel='Set ' + '${sunTimes.set}';
   [{pt:sc[0],txt:riseLabel,anchor:'end'},{pt:sc[sc.length-1],txt:setLabel,anchor:'start'}].forEach(function(lbl){
     const ci=document.createElementNS('http://www.w3.org/2000/svg','circle');ci.setAttribute('cx',lbl.pt[0].toFixed(1));ci.setAttribute('cy',lbl.pt[1].toFixed(1));ci.setAttribute('r','4.5');ci.setAttribute('fill','#AF5F30');arcSvg.appendChild(ci);
@@ -417,11 +433,13 @@ window.addEventListener('message',function(e){
             var sx=parseFloat(sunDiv.style.left||'0'), sy=parseFloat(sunDiv.style.top||'0');
             rctx.save();
             rctx.translate(sx,sy);
-            rctx.strokeStyle='#FFC155';rctx.lineWidth=2.5;rctx.lineCap='round';rctx.globalAlpha=0.9;
+            rctx.strokeStyle='#FFD23C';rctx.lineWidth=2.5;rctx.lineCap='round';rctx.globalAlpha=0.9;
             [[0,-16,0,-22],[0,16,0,22],[-16,0,-22,0],[16,0,22,0],[-11.3,-11.3,-15.6,-15.6],[11.3,11.3,15.6,15.6],[-11.3,11.3,-15.6,15.6],[11.3,-11.3,15.6,-15.6]].forEach(function(r){
               rctx.beginPath();rctx.moveTo(r[0],r[1]);rctx.lineTo(r[2],r[3]);rctx.stroke();
             });
-            rctx.globalAlpha=1;rctx.fillStyle='#FFC155';
+            rctx.globalAlpha=0.95;rctx.strokeStyle='#FFFDF8';rctx.lineWidth=2.5;
+            rctx.beginPath();rctx.arc(0,0,14,0,Math.PI*2);rctx.stroke();
+            rctx.globalAlpha=1;rctx.fillStyle='#FFD23C';
             rctx.beginPath();rctx.arc(0,0,12,0,Math.PI*2);rctx.fill();
             rctx.restore();
           }
