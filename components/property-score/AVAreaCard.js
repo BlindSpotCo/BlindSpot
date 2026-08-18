@@ -61,7 +61,7 @@ export default function AVAreaCard({ record, city }) {
       <div className="av-hero3" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 24 }}>
         <BPF dark style={{ padding: 24 }}>
           <div className="mono" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 600, color: 'rgba(255,253,248,0.65)' }}>
-            Sheet · {record.area || city || record.city} · PIN {record.pin_code}
+            Sheet 01 · {record.area || city || record.city} · PIN {record.pin_code}
           </div>
           <h3 style={{ fontWeight: 700, fontSize: 40, lineHeight: 1.05, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)', wordBreak: 'normal', overflowWrap: 'normal' }}>{record.name}</h3>
           <div style={{ fontSize: 13, color: 'rgba(255,253,248,0.55)' }}>
@@ -70,12 +70,12 @@ export default function AVAreaCard({ record, city }) {
         </BPF>
 
         <BPF dark style={{ padding: 24 }}>
-          <div className="mono" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 600, color: 'rgba(255,253,248,0.65)' }}>Composite index</div>
+          <div className="mono" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 600, color: 'rgba(255,253,248,0.65)' }}>Composite index · Default weighting</div>
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, margin: '8px 0 6px' }}>
             <span className="av-score-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 84, fontWeight: 700, lineHeight: .85, color: 'var(--paper)' }}>{record.nqi_composite}</span>
             <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 30, fontWeight: 700, color: 'var(--paper)', marginBottom: 12 }}>{record.grade}</span>
           </div>
-          <div style={{ fontSize: 13, color: 'rgba(255,253,248,0.55)', lineHeight: 1.5 }}>NQI · weighted mean of {rows.length} dimensions.</div>
+          <div style={{ fontSize: 13, color: 'rgba(255,253,248,0.55)', lineHeight: 1.5 }}>NQI · weighted mean of {rows.length} dimensions — switch profile to re-weight.</div>
           <div style={{ fontSize: 11.5, color: 'rgba(255,253,248,0.45)', margin: '10px 0 0', lineHeight: 1.5, paddingTop: 10, borderTop: '1px dashed rgba(255,253,248,0.2)' }}>First-pass area assessment · reflects this PIN, not a specific building or street.</div>
         </BPF>
 
@@ -94,6 +94,32 @@ export default function AVAreaCard({ record, city }) {
           <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 34, fontWeight: 700, textTransform: 'uppercase', margin: '8px 0 10px', color: 'inherit' }}>{verdict.label}</div>
           <div style={{ fontSize: 13, lineHeight: 1.5, margin: 0, color: 'inherit', opacity: .92 }}>{verdict.why}</div>
         </div>
+      </div>
+
+      {/* ── Persona toggle + legend -- visual match only, not wired up.
+          The full report's tabs actually recompute weights/composite
+          client-side (its own local WEIGHT_PRESETS + useMemo); this card
+          gets its composite from the record as-is and doesn't have that
+          recompute logic, so these tabs don't do anything yet -- Default
+          stays permanently selected. The persona picked in this flow's
+          own "Your Angle" step (step 1) isn't threaded down to here
+          either. Static for now by explicit choice, not an oversight --
+          revisit if/when this card should actually re-weight per
+          persona like the full report does. */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap', marginBottom: 16 }}>
+        <div style={{ display: 'inline-flex', border: '1px solid color-mix(in srgb, var(--slate) 45%, transparent)' }}>
+          {['Default', 'Family', 'Investor', 'Safety', 'Custom'].map((p, i) => (
+            <button key={p} type="button" style={{
+              fontSize: 12, fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', padding: '7px 14px', border: 'none',
+              cursor: 'default', fontFamily: "'Inter', sans-serif",
+              borderLeft: i ? '1px solid color-mix(in srgb, var(--slate) 45%, transparent)' : 'none',
+              background: p === 'Default' ? 'var(--slate)' : 'transparent', color: p === 'Default' ? '#fff' : 'var(--text-mute)',
+            }}>{p}</button>
+          ))}
+        </div>
+        <span style={{ fontSize: 12, color: 'var(--text-dim)', lineHeight: 1.5 }}>
+          <strong style={{ color: 'var(--ink)' }}>AIR = LIVE FEED</strong> (daily) · all other channels estimated, gov. reports verified 2023–24 · rows re-rank with the selected profile
+        </span>
       </div>
 
       {/* ── Dimension readout -- same row layout as the full report's:
