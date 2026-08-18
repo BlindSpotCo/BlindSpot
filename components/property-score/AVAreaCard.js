@@ -77,7 +77,7 @@ export default function AVAreaCard({ record, city }) {
           </div>
           <h3 style={{ fontWeight: 700, fontSize: 40, lineHeight: 1.05, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)', wordBreak: 'normal', overflowWrap: 'normal' }}>{record.name}</h3>
           <div style={{ fontSize: 13, color: 'rgba(255,253,248,0.55)' }}>
-            {Object.keys(scores).length}/{record.dimensions_total || Object.keys(scores).length} dimensions · scored {formatDateLong(record.scored_at) || '—'}
+            {record.dimensions_scored || Object.keys(scores).length}/{record.dimensions_total || Object.keys(scores).length} dimensions · scored {formatDateLong(record.scored_at) || '—'}
           </div>
         </BPF>
 

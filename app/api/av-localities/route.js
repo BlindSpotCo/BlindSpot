@@ -46,6 +46,18 @@ export async function GET() {
         nqi_composite: r.nqi_composite,
         grade: r.grade,
         scores: r.scores,
+        // Dropped previously -- this route hand-picks fields from `r`
+        // instead of spreading it, and these two were left off the list.
+        // nqi_scores.json already carries both correctly (e.g. PIN 122002
+        // is dimensions_scored:7, dimensions_total:8 -- one of the 8
+        // canonical dimensions genuinely isn't scored for that pin), and
+        // AVAreaCard.js already reads them -- it was just always falling
+        // back to Object.keys(scores).length (making "7/8" read as "7/7")
+        // because this API never forwarded the real total. The full
+        // report page never had this bug: its data path (getReportData.js)
+        // spreads the raw record instead of listing fields by hand.
+        dimensions_scored: r.dimensions_scored,
+        dimensions_total: r.dimensions_total,
         weights_applied: r.weights_applied,
         schools_count: r.schools_count,
         schools_list: r.schools_list || [],
