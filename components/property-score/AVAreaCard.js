@@ -39,13 +39,13 @@ export default function AVAreaCard({ record, city }) {
     <div className="av-card" style={{ marginBottom: 36 }}>
       {/* No local font import -- this used to pull in Barlow Condensed for
           every `.cond` element, a font the rest of the site never loads
-          (layout.js loads Anton, Bricolage Grotesque, Inter, IBM Plex
-          Mono). That's what made this card visibly off-brand. Every
-          heading/number below now uses one of those four instead, inline,
-          matching the exact same mapping the homepage mockup already
-          uses: Anton for the big display name, Bricolage Grotesque for
-          every numeric readout, plain Inter (the page's own body font)
-          for row labels. */}
+          (layout.js loads Bricolage Grotesque, Inter, IBM Plex Mono).
+          That's what made this card visibly off-brand. Every heading/
+          number below now uses one of those three instead, inline: plain
+          Inter bold for the locality name (matching .hero h1 / .section
+          h2 -- checked, the real site has no separate display font),
+          Bricolage Grotesque for every numeric readout, Inter for row
+          labels. */}
       <style>{`
         @media (max-width: 900px) { .av-card .av-hero3 { grid-template-columns: 1fr !important; } }
         @media (max-width: 640px) { .av-card .av-dim-row { grid-template-columns: 1fr !important; gap: 6px !important; } }
@@ -58,7 +58,13 @@ export default function AVAreaCard({ record, city }) {
           <div className="mono" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 600, color: 'rgba(255,253,248,0.65)' }}>
             Sheet · {record.area || city || record.city} · PIN {record.pin_code}
           </div>
-          <h3 style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 32, lineHeight: .95, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)' }}>{record.name}</h3>
+          {/* Plain Inter bold, not a display font -- checked what the rest
+              of the site actually uses for headings (.hero h1, .section
+              h2) and it's just Inter at font-weight 700, no special
+              face. Anton was an unfounded choice (only ever used in this
+              card's own earlier version and the homepage mockup, nowhere
+              else on the real site), so it read as off-brand too. */}
+          <h3 style={{ fontWeight: 700, fontSize: 32, lineHeight: .95, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)' }}>{record.name}</h3>
           <div style={{ fontSize: 13.5, color: 'rgba(255,253,248,0.55)' }}>
             {Object.keys(scores).length}/{record.dimensions_total || Object.keys(scores).length} dimensions · scored {formatDateLong(record.scored_at) || '—'}
           </div>

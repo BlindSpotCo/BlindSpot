@@ -25,14 +25,16 @@ import { cityMeta, coverageLabel } from '@/lib/aslivastu/cityMeta';
 
 /* Used to import Barlow/Barlow Condensed and set them as this page's
    body/heading fonts -- a pair the rest of the site never loads
-   (layout.js loads Anton, Bricolage Grotesque, Inter, IBM Plex Mono).
-   That's why this report page read as visibly off-brand from the rest
-   of BlindSpot. Body font is now Inter (the site's actual body font,
+   (layout.js loads Bricolage Grotesque, Inter, IBM Plex Mono). That's
+   why this report page read as visibly off-brand from the rest of
+   BlindSpot. Body font is now Inter (the site's actual body font,
    already loaded globally, no import needed); .kick now matches the
    site's own .mono eyebrow treatment (IBM Plex Mono); every former
-   `.cond` heading/number is fixed individually inline further down,
-   using the same Anton-for-display-names / Bricolage-Grotesque-for-
-   numbers mapping the property-score card and the homepage mockup use. */
+   `.cond` heading/number is fixed individually inline further down --
+   plain Inter bold for the locality name (matching .hero h1 / .section
+   h2, the real site has no separate display font), Bricolage Grotesque
+   for numeric readouts, same mapping the property-score card and the
+   homepage mockup use. */
 const CSS = `
 .nr { font-family: 'Inter', sans-serif; }
 .nr .kick { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .14em; font-weight: 600; color: var(--slate); margin: 0; }
@@ -134,7 +136,10 @@ export default function NeighbourhoodReport({ record, nearby }) {
         <div className="nr-hero3" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 24 }}>
           <BPF dark style={{ padding: 24 }}>
             <p className="kick" style={{ color: 'rgba(255,253,248,0.65)' }}>Sheet 01 · {record.area || record.city} · PIN {record.pin_code}</p>
-            <h1 className="nr-hero-name" style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 54, lineHeight: .95, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)' }}>{record.name}</h1>
+            {/* Plain Inter bold, matching .hero h1 / .section h2 -- the
+                rest of the site has no display font, Anton was never
+                actually used anywhere real. */}
+            <h1 className="nr-hero-name" style={{ fontWeight: 700, fontSize: 54, lineHeight: .95, margin: '10px 0 8px', textTransform: 'uppercase', color: 'var(--paper)' }}>{record.name}</h1>
             <p style={{ fontSize: 13, color: 'rgba(255,253,248,0.55)', margin: 0 }}>
               {record.dimensions_scored || Object.keys(record.scores || {}).length}/{record.dimensions_total || Object.keys(record.scores || {}).length} dimensions · scored {formatDateLong(record.scored_at) || '—'}
             </p>
