@@ -242,8 +242,8 @@ export default function Home() {
 
       <section className="section">
         <div className="wrap closing-inner bento reveal">
-          <h2>See the sunlight. Know the neighbourhood.</h2>
-          <p>Two free tools. One pin. Everything the listing wasn&apos;t going to mention.</p>
+          <h2>Because every property has a blindspot — and we&apos;re making it visible.</h2>
+          <p>See the sunlight. Know the neighbourhood. Two free tools. One pin. Everything the listing wasn&apos;t going to mention.</p>
           <div className="closing-ctas">
             <PinDropTransition href="/property-score" className="btn btn-lg btn-cta">
               Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
