@@ -191,25 +191,28 @@ let curEl=${mel}, curAz=${maz};
 function projectToScreen(az,el){
   const mapEl=document.getElementById('map');
   const W=mapEl.clientWidth||800,H=mapEl.clientHeight||window.innerHeight||600;
-  // Previous attempt (ray-cast to container edge, picking whichever of
-  // width/height was the binding constraint via Math.min) was WRONG: which
-  // constraint binds switches abruptly as the sun sweeps across the sky, so
-  // the radius has real direction discontinuities -- that's what produced
-  // the zigzag/switchback path instead of a clean arc.
-  // Correct approach: compute the point on a fixed, screen-shaped ellipse
-  // using the sun's real (camera-independent) bearing, then rigidly ROTATE
-  // that resulting POINT by the camera angle. Rotating a point preserves its
-  // distance from center exactly, so every real sun position ends up the
-  // same distance from center at every camera rotation (arc reach no longer
-  // depends on rotation) -- and because it's pure sin/cos composition with
-  // no branching, it's smooth everywhere, matching the very first
-  // (unrotated) version at curRot=0.
-  const f=Math.max(0,el)/90;
-  const A=W*0.48*(1-f), B=H*0.44*0.6*(1-f);
-  const ar0=az*D2R;
-  const x0=A*Math.sin(ar0), y0=-B*Math.cos(ar0);
-  const th=-curRot*D2R, cs=Math.cos(th), sn=Math.sin(th);
-  return[W/2+(x0*cs-y0*sn),H/2+(x0*sn+y0*cs)];
+  // Two earlier attempts here both had real problems:
+  //  1) Math.min() between width/height edge-distances: which one binds
+  //     switches abruptly as the sun sweeps -> jagged zigzag.
+  //  2) Rigidly rotating a fixed-shape ellipse's POINT: mathematically
+  //     preserves each point's distance from center regardless of curRot,
+  //     but the ellipse is very anisotropic on a landscape screen (much
+  //     wider than tall), so at some rotations that preserved distance
+  //     badly overflows the container's height -- the arc stopped
+  //     adapting its length to the rotation at all ("same length" as it
+  //     turns, extending well past the visible map).
+  // Fix: use the closed-form polar equation of the ellipse INSCRIBED IN
+  // THE CONTAINER, r(theta)=1/sqrt((sin/halfW)^2+(cos/halfH)^2), evaluated
+  // at the sun's screen-relative bearing theta=(az-curRot). This rotates
+  // smoothly with the camera (no branching, verified zigzag-free
+  // numerically) while always staying within the container -- so it
+  // genuinely shrinks/grows with rotation instead of holding constant
+  // length, without either the corner-jump bug or the overflow bug.
+  const halfW=W/2*0.90, halfH=H/2*0.72;
+  const th=(az-curRot)*D2R, s=Math.sin(th), c=Math.cos(th);
+  const rEdge=1/Math.sqrt((s/halfW)**2+(c/halfH)**2);
+  const f=Math.max(0,el)/90, r=rEdge*(1-f);
+  return[W/2+r*s,H/2-r*c];
 }
 
 function drawArc(){
