@@ -894,7 +894,17 @@
     .howworks-step-block{min-height:0 !important; opacity:1 !important; padding:0 0 32px !important}
   }
 
-  .howworks-panel-sticky{position:sticky; top:98px; align-self:start}
+  /* min-width:0 overrides the grid item's default auto min-width (which
+     otherwise equals its content's max-content size) -- without it, the
+     area panel's fixed-1056px-wide .avsheet-scale-inner (see ScaledAvSheet
+     in HowItWorks.js) forces THIS grid track to grow to fit 1056px rather
+     than staying at its intended ~1.05fr share, which both overflows the
+     page and feeds ScaledAvSheet's own width measurement a falsely-large
+     number (it measures its own now-oversized container), so the sheet
+     never actually scales down. min-width:0 lets this track size to its
+     fr share like normal, and .avsheet-scale-outer's overflow:hidden below
+     clips the still-1056px-wide inner div down to whatever that share is. */
+  .howworks-panel-sticky{position:sticky; top:98px; align-self:start; min-width:0}
 
   /* min-height is the actual fix for "the two cards don't match size" --
      the 3 panels (area / unit / verdict) swap into this exact same slot
@@ -1077,115 +1087,32 @@
   }
   .av-panel::before{ background:var(--av); }
 
-  /* This panel's actual content width is only ~470px (.howworks-scroll's
-     1fr column minus panel padding -- see the AvDim comment in
-     HowItWorks.js for the full math), so each of these 3 hero boxes gets
-     roughly 145px, not the ~330-450px the real card's boxes get on the
-     wider property-score/full-report pages. Every font-size below is
-     tuned down from what those pages use, specifically for that -- this
-     was the other half of the "text looks too big" complaint (the other
-     half was the dimension rows using the real card's spacious 4-column
-     layout in this much narrower box; see AvDim). */
-  .av-hero3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:12px; align-items:stretch }
-  /* Sheet + Composite Index boxes go dark (near-black, matching the real
-     AVAreaCard.js/NeighbourhoodReport.js boxes -- see the `dark` prop on
-     BPF there) -- the old var(--bg-2) cream fill read as barely-whiter
-     than the page's own background, not a deliberate surface. The verdict
-     box keeps managing its own background/text colour inline (scoreColor
-     fill + readableTextColor text), so it's excluded here. */
-  .av-box{
-    position:relative; border:1px solid rgba(255,253,248,0.16); border-radius:6px; padding:10px 10px 8px;
-    background:var(--ink); display:flex; flex-direction:column;
-  }
-  .av-box-corner{ position:absolute; width:11px; height:11px; pointer-events:none; z-index:2 }
-  .av-box-corner::before{ content:'+'; color:rgba(255,253,248,0.55); font-size:12px; line-height:1; opacity:.5 }
-  .av-box-corner.tl{ top:6px; left:6px }
-  .av-box-corner.tr{ top:6px; right:6px }
-  .av-box-corner.bl{ bottom:6px; left:6px }
-  .av-box-corner.br{ bottom:6px; right:6px }
-  /* Verdict box's own corner marks switch to the dynamic text colour too,
-     so they stay visible against whichever scoreColor() fill lands here. */
-  .av-verdict-box .av-box-corner::before{ color:inherit; opacity:.55 }
+  /* This panel used to carry its own, hand-tuned narrow-width copy of the
+     area card (a 3-box .av-hero3 row with its own .av-box/.av-tiny/
+     .av-score-num/etc styles, sized down for this panel's ~470px content
+     width, plus a compact .av-dims-box/.av-dim-row dimension list and a
+     homepage-only .av-more nearby-chips/CTA footer). All of that is gone
+     now: AreaPanel in HowItWorks.js renders the exact same markup as the
+     real card (AVAreaCard.js) against the shared .avsheet-* block below,
+     scaled to fit via .avsheet-scale-outer/-inner instead of being laid
+     out narrower and restyled. See ScaledAvSheet's comment in
+     HowItWorks.js for why scaling beats reflowing here.
 
-  /* No mobile breakpoints needed here (there used to be two) -- the
-     card this belongs to is hidden entirely below 901px now (see
-     .howworks-panel-sticky above), so this only ever renders at desktop
-     sizes where the fixed sizes below are correct. */
-  /* Plain Inter bold, not Anton -- Anton isn't used anywhere else on the
-     real site (checked .hero h1 / .section h2, both just Inter 700), so
-     this mockup was the actual source of that mismatch, not a reference
-     for it. Fixed here to match the real property-score card and full
-     report page, all three now identical. */
-  /* word-break/overflow-wrap:normal overrides the site's global
-     h1,h2,h3{word-break:break-word} rule -- without it, a long single
-     word in this narrow card can get mid-word-broken instead of wrapping
-     at a space (this is what happened on the full report page's version
-     of this heading at 54px: "CONNAUGHT" split into "CONNAUG"/"HT"). */
-  .av-city{ font-weight:700; font-size:18px; line-height:1.1; color:var(--paper); margin:6px 0 5px; word-break:normal; overflow-wrap:normal }
+     Fits inside a fixed-height box with no min-height/height/overflow
+     tricks -- the sheet's own ~24px-per-row inner spacing at 1056px,
+     scaled down to this panel's ~440-470px available width, comes out
+     well under .howworks-panel's 680px budget on its own. */
 
-  /* Base .av-tiny stays slate-on-paper -- it's also used standalone for
-     the "DIMENSION READOUT" label, which sits directly on the page
-     background outside any box, not inside a dark one. Only the copy
-     inside .av-box gets the light-on-dark override below. */
-  .av-tiny{ font-size:10px; font-weight:600; letter-spacing:.08em; color:var(--slate); text-transform:uppercase }
-  .av-box .av-tiny{ color:rgba(255,253,248,0.65) }
-  .av-verdict-box .av-tiny{ color:inherit }
-  /* Fixed top margin, not margin-top:auto -- these boxes get stretched to
-     match the tallest of the 3 (grid align-items:stretch), and pinning
-     the caption to the bottom would open an ugly gap right under the
-     score/verdict word on the shorter boxes. Leftover space just sits
-     blank below the caption instead, which matches the real card's look
-     closely enough at this compact size. */
-  .av-box-sub{ font-size:10.5px; color:rgba(255,253,248,0.55); line-height:1.4; margin-top:5px }
-  .av-verdict-box .av-box-sub{ color:inherit }
-  .av-box-divider{ font-size:9.5px; color:rgba(255,253,248,0.45); line-height:1.4; margin-top:7px; padding-top:7px; border-top:1px dashed rgba(255,253,248,0.2) }
-  .av-score-num{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:22px; color:var(--paper); margin-top:5px; display:flex; align-items:center }
-  .av-score-num span{ font-size:11px; margin-left:6px; color:var(--paper); border:1px solid rgba(255,253,248,0.4); background:rgba(255,253,248,0.08); padding:1px 6px; border-radius:3px; vertical-align:middle }
-  .av-verdict-word{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:16px; margin-top:5px; text-transform:uppercase; color:inherit }
-
-  /* Dimension readout box -- deliberately light, not dark like the hero
-     boxes above. Mixed theme: dark hero cards (Sheet/Composite/Verdict)
-     on top, a light data table below, matching the intended design (not
-     an all-dark card). Overrides the base .av-box dark fill/border/
-     corner-mark/label colours, which otherwise apply to every .av-box. */
-  .av-dims-box{
-    padding:10px 12px 4px; margin-bottom:10px;
-    background:var(--bg-2); border-color:var(--line);
-  }
-  .av-dims-box .av-tiny{ color:var(--slate) }
-  .av-dims-box .av-box-corner::before{ color:var(--slate) }
-  /* Compact 2-row rows (label+score / bar / source), not the real card's
-     4-column grid. See the AvDim comment in HowItWorks.js: that layout
-     needs ~1000px of width to breathe, this box only has ~440px. */
-  .av-dim-row{ margin-bottom:6px }
-  .av-dim-head{ display:flex; justify-content:space-between; align-items:baseline; font-size:11.5px; font-weight:600; letter-spacing:.03em; color:var(--ink); margin-bottom:3px }
-  .av-dim-score{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:13px }
-  .av-dim-track{ height:5px; border:1px solid var(--line); border-radius:3px; background:var(--line-soft); overflow:hidden; margin-bottom:3px }
-  .av-dim-fill{ height:100%; border-radius:3px }
-  .av-dim-source{ font-size:9.5px; color:var(--text-dim); letter-spacing:.02em }
-
-  /* Compact footer strip -- folds the nearby-locality comparison and the
-     full-report link (the real card has neither; both are homepage-only
-     marketing additions) into one row instead of two separate blocks.
-     Card-to-card height matching is handled by .howworks-panel's shared
-     min-height now, not by trimming this section. */
-  .av-more{
-    margin-top:12px; padding-top:10px; border-top:1px dashed var(--line-soft);
-    display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
-  }
-  .av-more-list{ display:flex; gap:10px; flex-wrap:wrap }
-  .av-more-chip{ font-size:12.5px; color:var(--text-mute) }
-  .av-more-chip b{ font-weight:600; color:var(--text-dim); margin-left:2px }
-  .av-more-cta{
-    position:relative; display:inline-flex; align-items:center; gap:8px;
-    background:var(--av); color:#fff; font-weight:700; font-size:12.5px;
-    letter-spacing:.02em; padding:8px 14px; border-radius:6px; white-space:nowrap;
-    text-decoration:none; cursor:pointer;
-  }
-  .av-locked-dot{
-    width:6px; height:6px; border-radius:50%; background:#fff;
-    box-shadow:0 0 0 3px color-mix(in srgb, #fff 25%, transparent);
-  }
+  /* Scale-to-fit wrapper for the shared .avsheet spec sheet: the inner
+     element always renders at .avsheet's real, natural 1056px width (see
+     the shared block below) so nothing inside it reflows or wraps
+     differently than it does on the actual property-score/full-report
+     pages -- only the visual footprint shrinks, via a CSS transform
+     computed in HowItWorks.js from the outer wrapper's actual width.
+     transform-origin:top left keeps the scaled content anchored to this
+     panel's own top-left padding edge instead of shrinking toward centre. */
+  .avsheet-scale-outer{ position:relative; overflow:hidden; width:100% }
+  .avsheet-scale-inner{ width:1056px; transform-origin:top left }
 
   /* ---------- SHARED AREA SPEC SHEET ----------
      ONE source of truth for the area spec sheet, used by BOTH surfaces
