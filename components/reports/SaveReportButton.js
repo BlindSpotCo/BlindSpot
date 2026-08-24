@@ -105,7 +105,7 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error || `save-failed-${res.status}`);
+        throw new Error(body.detail || body.error || `save-failed-${res.status}`);
       }
       setSaved(true);
       setTimeout(() => setOpen(false), 1200);
