@@ -14,25 +14,49 @@ export default async function MyReportsPage() {
     redirect('/login?next=/my-reports');
   }
 
-  // Empty until the "Save to BlindSpot" buttons on SunScout and AsliVastu
-  // are wired up (next phase) -- this table doesn't exist yet either; see
-  // SUPABASE_SETUP.md for the SQL to create it.
   let reports = [];
+  let folders = [];
   let fetchFailed = false;
   try {
-    const { data, error } = await supabase
-      .from('reports')
-      .select('id, source, title, created_at')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    reports = data ?? [];
+    const [{ data: reportData, error: reportErr }, { data: folderData, error: folderErr }] = await Promise.all([
+      supabase
+        .from('reports')
+        .select('id, folder_id, source, title, created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('folders')
+        .select('id, name')
+        .eq('user_id', user.id)
+        .order('name', { ascending: true }),
+    ]);
+    if (reportErr) throw reportErr;
+    if (folderErr) throw folderErr;
+    reports = reportData ?? [];
+    folders = folderData ?? [];
   } catch {
     fetchFailed = true;
   }
 
-  const sunscoutReports = reports.filter((r) => r.source === 'sunscout');
-  const aslivastuReports = reports.filter((r) => r.source === 'aslivastu');
+  const SOURCE_LABEL = {
+    sunscout: 'Home Comfort Score',
+    aslivastu: 'Neighbourhood Score',
+    neighbourhood: 'Neighbourhood Report',
+    'ai-report': 'AI Report',
+    furnishing: 'Furnishing Report',
+  };
+
+  const unfiled = reports.filter((r) => !r.folder_id);
+  const byFolder = folders
+    .map((f) => ({ ...f, reports: reports.filter((r) => r.folder_id === f.id) }))
+    .filter((f) => f.reports.length > 0);
+
+  const reportRow = (r) => (
+    <a href={`/my-reports/${r.id}`} className="report-row" key={r.id} style={{ textDecoration: 'none', display: 'flex' }}>
+      <span className="label">{r.title || 'Untitled report'} <span style={{ color: 'var(--text-dim)', fontSize: 12 }}>· {SOURCE_LABEL[r.source] || r.source}</span></span>
+      <span className="meta">{new Date(r.created_at).toLocaleDateString()}</span>
+    </a>
+  );
 
   async function signOut() {
     'use server';
@@ -70,31 +94,21 @@ export default async function MyReportsPage() {
 
         {!fetchFailed && reports.length === 0 && (
           <div className="reports-empty">
-            Nothing saved yet. Run a report on Home Comfort Score or Neighbourhood Score and hit &quot;Save to BlindSpot&quot; to see it here.
+            Nothing saved yet. Run a Neighbourhood, AI, or Furnishing report and hit &quot;Save report&quot; to see it here — save a few into the same folder (e.g. a flat number) to keep everything about one property together.
           </div>
         )}
 
-        {sunscoutReports.length > 0 && (
-          <div className="reports-group">
-            <h2>Home Comfort Score</h2>
-            {sunscoutReports.map((r) => (
-              <a href={`/my-reports/${r.id}`} className="report-row" key={r.id} style={{ textDecoration: 'none', display: 'flex' }}>
-                <span className="label">{r.title || 'Untitled report'}</span>
-                <span className="meta">{new Date(r.created_at).toLocaleDateString()}</span>
-              </a>
-            ))}
+        {byFolder.map((f) => (
+          <div className="reports-group" key={f.id}>
+            <h2>{f.name}</h2>
+            {f.reports.map(reportRow)}
           </div>
-        )}
+        ))}
 
-        {aslivastuReports.length > 0 && (
+        {unfiled.length > 0 && (
           <div className="reports-group av">
-            <h2>Neighbourhood Score</h2>
-            {aslivastuReports.map((r) => (
-              <a href={`/my-reports/${r.id}`} className="report-row" key={r.id} style={{ textDecoration: 'none', display: 'flex' }}>
-                <span className="label">{r.title || 'Untitled report'}</span>
-                <span className="meta">{new Date(r.created_at).toLocaleDateString()}</span>
-              </a>
-            ))}
+            <h2>{byFolder.length > 0 ? 'Unfiled' : 'All reports'}</h2>
+            {unfiled.map(reportRow)}
           </div>
         )}
       </div>

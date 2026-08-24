@@ -23,6 +23,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { openSignInPopup } from '@/lib/auth/popupSignIn';
 
 export default function SiteHeader({ homeHref = '/' }) {
   // The CTA is an entry point into /property-score -- pointing at the page
@@ -74,6 +75,35 @@ export default function SiteHeader({ homeHref = '/' }) {
     await supabase.auth.signOut();
   };
 
+  // Signing in used to be a plain <Link href="/login">, which navigated
+  // the whole tab away -- fine on most pages, but PropertyScoreFlow keeps
+  // its step (locality/address picked, unit floor/facing, generated
+  // verdict...) in plain React state with nothing in the URL. Landing back
+  // on /property-score after sign-in was a fresh page load, so that state
+  // was gone and the person was back at step 1 -- "once I sign in on the
+  // 2nd page it takes me back to first."
+  //
+  // Signing in via a popup (same /login page, same email+Google flow --
+  // see lib/auth/popupSignIn.js) means this tab never navigates, so
+  // whatever page/step someone was on is untouched. Falls back to a normal
+  // full-page redirect (with ?next= back to this exact page) if the popup
+  // gets blocked.
+  const [signingIn, setSigningIn] = useState(false);
+  const handleSignInClick = async (e) => {
+    e.preventDefault();
+    if (signingIn) return;
+    setSigningIn(true);
+    try {
+      const supabase = createClient();
+      const { access_token, refresh_token } = await openSignInPopup();
+      await supabase.auth.setSession({ access_token, refresh_token });
+    } catch {
+      window.location.href = `/login?next=${encodeURIComponent(pathname || '/')}`;
+    } finally {
+      setSigningIn(false);
+    }
+  };
+
   const closeMobile = () => setMobileOpen(false);
 
   return (
@@ -115,7 +145,7 @@ export default function SiteHeader({ homeHref = '/' }) {
                     </button>
                   </div>
                 ) : (
-                  <Link href="/login" className="btn btn-auth">Sign in</Link>
+                  <a href="/login" onClick={handleSignInClick} className="btn btn-auth">{signingIn ? 'Signing in…' : 'Sign in'}</a>
                 )
               )}
               <button
@@ -151,7 +181,7 @@ export default function SiteHeader({ homeHref = '/' }) {
                   </button>
                 </>
               ) : (
-                <Link href="/login" onClick={closeMobile}>Sign in</Link>
+                <a href="/login" onClick={(e) => { handleSignInClick(e); closeMobile(); }}>{signingIn ? 'Signing in…' : 'Sign in'}</a>
               )
             )}
           </div>

@@ -6,7 +6,12 @@ import { createClient } from '@/lib/supabase/client';
 // Only these origins are allowed to receive a session via postMessage from
 // a popup -- prevents some unrelated site from opening a login popup and
 // harvesting a session token back to itself.
-const ALLOWED_ORIGINS = ['https://sun-scout.com', 'https://aslivastu.com', 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'];
+//
+// BlindSpot's own domains are in here too now, not just SunScout/
+// AsliVastu's -- lib/auth/popupSignIn.js opens this same popup flow for
+// same-domain sign-in (e.g. from the header, or a "Save report" button),
+// so a person can sign in without the calling tab ever navigating away.
+const ALLOWED_ORIGINS = ['https://sun-scout.com', 'https://aslivastu.com', 'https://blindspotco.net', 'https://www.blindspotco.net', 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'];
 
 export default function PopupComplete() {
   const [message, setMessage] = useState('Finishing sign-in…');

@@ -8,6 +8,7 @@
 // the combined-score page can reuse the same values without postMessage.
 
 import { useState, useEffect, useRef } from 'react';
+import SaveReportButton from '@/components/reports/SaveReportButton';
 
 const FACING = ['North','South','East','West','North-East','South-East','North-West','South-West'];
 
@@ -41,6 +42,12 @@ export default function ReportModal({
   const [progress, setProgress] = useState(0);
   const [error, setError]     = useState('');
   const [reportUrl, setReportUrl] = useState(null);
+  // The report itself only exists as a blob: URL (see generate() below),
+  // which dies the moment this tab closes -- nothing to actually persist.
+  // savableData holds the pieces worth keeping (the written analysis +
+  // summary + the report's own HTML, so a saved report can be reopened
+  // later exactly as generated) for the Save button below.
+  const [savableData, setSavableData] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -124,6 +131,12 @@ export default function ReportModal({
       const blob = new Blob([finalMainHtml], { type: 'text/html' });
       const url = URL.createObjectURL(blob);
       setReportUrl(url);
+      setSavableData({
+        mainHtml: finalMainHtml, galleryHtml,
+        analysis, summary, address: addr, floor, facing,
+        lat, lon, verdictLabel, combinedScore, unitScore, areaWeight, unitWeight,
+        hasArea: !!areaRecord,
+      });
     } catch (e) {
       console.error('Report generation failed:', e);
       setError("Something went wrong generating your report. This sometimes happens when things are busy — please try again in a minute.");
@@ -141,7 +154,16 @@ export default function ReportModal({
           <div style={{ textAlign:'center', padding:'20px 0' }}>
             <div style={{ fontFamily:MONO, fontSize:11, fontWeight:500, color:'#16a34a', letterSpacing:'.1em', textTransform:'uppercase', marginBottom:14, border:'1px solid #16a34a', display:'inline-block', padding:'5px 14px' }}>Report Ready</div>
             <h3 style={{ fontFamily:DISPLAY, fontSize:18, fontWeight:800, color:INK, marginBottom:8 }}>Your report is ready</h3>
-            <p style={{ fontSize:13, color:SUB, lineHeight:1.6, marginBottom:24 }}>Opens in a new tab.</p>
+            <p style={{ fontSize:13, color:SUB, lineHeight:1.6, marginBottom:20 }}>Opens in a new tab.</p>
+            {savableData && (
+              <div style={{ display:'flex', justifyContent:'center', marginBottom:20 }}>
+                <SaveReportButton
+                  source="ai-report"
+                  data={savableData}
+                  defaultTitle={savableData.address}
+                />
+              </div>
+            )}
             <div style={{ display:'flex', flexDirection:'column', gap:0 }}>
               <button onClick={() => window.open(reportUrl, '_blank')} style={{ background:INK, color:'#fff', border:'none', padding:'13px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
                 Open Report

@@ -13,7 +13,7 @@ export default async function ReportDetailPage({ params }) {
 
   const { data: report, error } = await supabase
     .from('reports')
-    .select('id, source, title, data, created_at')
+    .select('id, folder_id, source, title, data, created_at')
     .eq('id', id)
     .eq('user_id', user.id) // RLS already enforces this, but belt and suspenders
     .single();
@@ -22,8 +22,25 @@ export default async function ReportDetailPage({ params }) {
     notFound();
   }
 
+  let folderName = null;
+  if (report.folder_id) {
+    const { data: folder } = await supabase
+      .from('folders')
+      .select('name')
+      .eq('id', report.folder_id)
+      .single();
+    folderName = folder?.name || null;
+  }
+
   const d = report.data || {};
   const verdict = d.summary?.solarFeasibility;
+  const SOURCE_LABEL = {
+    sunscout: 'Home Comfort Score',
+    aslivastu: 'Neighbourhood Score',
+    neighbourhood: 'Neighbourhood Report',
+    'ai-report': 'AI Report',
+    furnishing: 'Furnishing Report',
+  };
 
   return (
     <div className="reports-page">
@@ -34,7 +51,8 @@ export default async function ReportDetailPage({ params }) {
 
         <h1>{report.title || 'Untitled report'}</h1>
         <p className="sub">
-          {report.source === 'sunscout' ? 'Home Comfort Score' : 'Neighbourhood Score'} · Saved {new Date(report.created_at).toLocaleDateString()}
+          {SOURCE_LABEL[report.source] || report.source} · Saved {new Date(report.created_at).toLocaleDateString()}
+          {folderName && <> · Folder: <strong style={{ color: 'var(--ink)' }}>{folderName}</strong></>}
         </p>
 
         {report.source === 'sunscout' && (
@@ -113,7 +131,103 @@ export default async function ReportDetailPage({ params }) {
           </>
         )}
 
-        {report.source !== 'sunscout' && (() => {
+        {report.source === 'ai-report' && (
+          <>
+            <div style={{ display: 'flex', gap: 24, margin: '28px 0', flexWrap: 'wrap' }}>
+              {d.floor && (
+                <div>
+                  <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 4 }}>Floor</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>{d.floor}</div>
+                </div>
+              )}
+              {d.facing && (
+                <div>
+                  <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 4 }}>Facing</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>{d.facing}</div>
+                </div>
+              )}
+              {d.verdictLabel && (
+                <div>
+                  <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 4 }}>Verdict</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>{d.verdictLabel}</div>
+                </div>
+              )}
+              {d.combinedScore != null && (
+                <div>
+                  <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 4 }}>{d.hasArea ? 'Combined Score' : 'Home Comfort Score'}</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>{d.combinedScore}/100</div>
+                </div>
+              )}
+            </div>
+
+            {d.analysis && (
+              <div style={{ marginBottom: 28 }}>
+                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 10 }}>Summary</div>
+                <div style={{ fontSize: 14, color: 'var(--text-mute)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{d.analysis}</div>
+              </div>
+            )}
+
+            {d.mainHtml && (
+              <div style={{ marginBottom: 8 }}>
+                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 10 }}>Full Report</div>
+                <iframe
+                  srcDoc={d.mainHtml.replaceAll('__GALLERY_URL__', '#')}
+                  style={{ width: '100%', height: 900, border: '1px solid var(--line-soft)', borderRadius: 4 }}
+                  title="AI report"
+                />
+              </div>
+            )}
+          </>
+        )}
+
+        {report.source === 'furnishing' && (
+          <>
+            {d.confidence_note && (
+              <p style={{ fontSize: 13, color: 'var(--text-dim)', marginBottom: 20, lineHeight: 1.5 }}>{d.confidence_note}</p>
+            )}
+            {d.dream_home_vision && (
+              <div style={{ background: 'var(--bg-2)', border: '1px solid var(--line-soft)', padding: '18px 20px', marginBottom: 24 }}>
+                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 10 }}>Dream Home, Room to Room</div>
+                <p style={{ fontSize: 15, color: 'var(--ink)', lineHeight: 1.6, margin: 0 }}>{d.dream_home_vision}</p>
+              </div>
+            )}
+            {d.whole_home_palette && (
+              <div style={{ marginBottom: 24 }}>
+                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 10 }}>Whole-Home Palette</div>
+                <p style={{ fontSize: 14, color: 'var(--text-mute)', lineHeight: 1.6 }}>{d.whole_home_palette}</p>
+              </div>
+            )}
+            {Array.isArray(d.rooms) && d.rooms.length > 0 && (
+              <div style={{ marginBottom: 24 }}>
+                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 14 }}>Room-by-Room</div>
+                {d.rooms.map((room, i) => (
+                  <div key={i} style={{ background: 'var(--bg-2)', border: '1px solid var(--line-soft)', padding: '14px 18px', marginBottom: 12 }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 6 }}>{room.name || `Room ${i + 1}`}</div>
+                    {room.suggestions && <p style={{ fontSize: 13, color: 'var(--text-mute)', lineHeight: 1.6, margin: 0 }}>{room.suggestions}</p>}
+                  </div>
+                ))}
+              </div>
+            )}
+            {Array.isArray(d.shopping_priority) && d.shopping_priority.length > 0 && (
+              <div style={{ marginBottom: 24 }}>
+                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 10 }}>Shopping Priority</div>
+                <ul style={{ margin: 0, paddingLeft: 20, fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.8 }}>
+                  {d.shopping_priority.map((n, i) => <li key={i}>{n}</li>)}
+                </ul>
+              </div>
+            )}
+            {Array.isArray(d.layout_notes) && d.layout_notes.length > 0 && (
+              <div style={{ marginBottom: 24 }}>
+                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 10 }}>Layout Notes</div>
+                <ul style={{ margin: 0, paddingLeft: 20, fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.8 }}>
+                  {d.layout_notes.map((n, i) => <li key={i}>{n}</li>)}
+                </ul>
+              </div>
+            )}
+          </>
+        )}
+
+        {(report.source === 'aslivastu' || report.source === 'neighbourhood') && (() => {
           const LABEL = { crime:'Safety', infrastructure:'Infrastructure', air:'Air Quality', power:'Power', schools:'Schools', water:'Water Supply', roads:'Roads', sewerage:'Drainage & Sewerage' };
 
           const card = (title, children) => (

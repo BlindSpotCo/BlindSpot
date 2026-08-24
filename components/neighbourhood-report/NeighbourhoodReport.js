@@ -24,6 +24,7 @@ import { FACTOR_LABELS } from '@/lib/property-score/ui';
 import { cityMeta, coverageLabel } from '@/lib/aslivastu/cityMeta';
 import useLiveAqi from '@/lib/aslivastu/useLiveAqi';
 import { gradeFor } from '@/lib/aslivastu/aqi';
+import SaveReportButton from '@/components/reports/SaveReportButton';
 
 /* Used to import Barlow/Barlow Condensed and set them as this page's
    body/heading fonts -- a pair the rest of the site never loads
@@ -138,6 +139,11 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
           <p className="kick" style={{ fontSize: 12 }}>Neighbourhood Intelligence · Spec Sheet</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
             {closeHint && <span style={{ fontSize: 11.5, color: 'var(--text-dim)' }}>Couldn&apos;t close automatically — you can close this tab yourself.</span>}
+            <SaveReportButton
+              source="neighbourhood"
+              data={record}
+              defaultTitle={`${record.name} · PIN ${record.pin_code}`}
+            />
             <button onClick={handleClose} style={{ fontSize: 12.5, fontWeight: 600, border: '1px solid color-mix(in srgb, var(--slate) 45%, transparent)', borderRadius: 3, padding: '9px 16px', color: 'var(--text-mute)', background: 'transparent' }}>← Close</button>
           </div>
         </div>

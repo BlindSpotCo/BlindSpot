@@ -10,6 +10,7 @@
 // clearly different parts of the product.
 
 import { useState, useRef } from 'react';
+import SaveReportButton from '@/components/reports/SaveReportButton';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap');
@@ -198,8 +199,9 @@ export default function FloorPlanAnalysis() {
 
         {status === 'done' && result && (
           <>
-            <div style={{ marginBottom: 20 }}>
+            <div style={{ marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
               <button onClick={() => { setStatus('idle'); setResult(null); }} style={{ fontSize: 12.5, fontWeight: 600, border: '1px solid color-mix(in srgb, var(--sun) 45%, transparent)', borderRadius: 3, padding: '8px 14px', color: 'var(--text-mute)', background: 'transparent' }}>↺ Analyse a different plan</button>
+              <SaveReportButton source="furnishing" data={result} defaultTitle={result.dream_home_vision ? undefined : 'Furnishing report'} />
             </div>
 
             {result.confidence_note && (
