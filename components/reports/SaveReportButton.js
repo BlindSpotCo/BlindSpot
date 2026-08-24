@@ -103,11 +103,18 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ source, data, title: title.trim() || undefined, folderName: folderName || undefined }),
       });
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || `save-failed-${res.status}`);
+      }
       setSaved(true);
       setTimeout(() => setOpen(false), 1200);
-    } catch {
-      setError('Couldn\u2019t save that report — please try again.');
+    } catch (e) {
+      setError(
+        e.message === 'not-signed-in'
+          ? 'Signed-in session not found — please sign in again and retry.'
+          : `Couldn\u2019t save that report (${e.message || 'unknown error'}) — please try again.`
+      );
     } finally {
       setSaving(false);
     }
