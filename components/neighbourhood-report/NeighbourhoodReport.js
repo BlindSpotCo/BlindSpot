@@ -21,7 +21,7 @@
 import { useState, useMemo } from 'react';
 import AVDetailedReadout, { BPF, source, scoreColor, verdictFor, explain, AQI_PLAIN, formatDateLong, inr, readableTextColor } from '@/components/property-score/AVDetailedReadout';
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
-import { cityMeta, coverageLabel } from '@/lib/aslivastu/cityMeta';
+import { cityMeta } from '@/lib/aslivastu/cityMeta';
 import useLiveAqi from '@/lib/aslivastu/useLiveAqi';
 import { gradeFor } from '@/lib/aslivastu/aqi';
 import SaveReportButton from '@/components/reports/SaveReportButton';
@@ -346,26 +346,6 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
 
         {/* ── Full detailed breakdown (category cards + schools + methodology) ── */}
         <AVDetailedReadout record={record} />
-
-        {/* ── About the builder -- present on AsliVastu's own live report,
-            missing here. Reuses the homepage's own .team-card/.team-avatar
-            idiom (initials badge, same as the Team section in app/page.js)
-            instead of hotlinking AsliVastu's externally-hosted photo --
-            keeps this on-brand and doesn't add an external image
-            dependency for an asset BlindSpot doesn't actually host. ── */}
-        <BPF style={{ marginTop: 24, marginBottom: 24, padding: 24 }}>
-          <p className="kick" style={{ marginBottom: 14 }}>About the builder</p>
-          <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-            <div className="team-avatar" style={{ flexShrink: 0 }}>GB</div>
-            <div>
-              <div className="team-name" style={{ fontSize: 16 }}>Gurshaan Singh Baweja</div>
-              <p style={{ fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.6, margin: '4px 0 10px', maxWidth: 560 }}>
-                Buying a home in {coverageLabel()} means digging through a dozen government portals. Neighbourhood Score — the engine behind BlindSpot — puts it all in one place: real data, one score, no guesswork.
-              </p>
-              <a href="https://www.linkedin.com/in/gurshaan-singh-baweja" target="_blank" rel="noopener noreferrer" className="team-link">Connect on LinkedIn →</a>
-            </div>
-          </div>
-        </BPF>
 
         {/* ── Footer / scope note ── */}
         <div style={{ marginTop: 16, paddingTop: 20, borderTop: '1px solid color-mix(in srgb, var(--slate) 35%, transparent)' }}>
