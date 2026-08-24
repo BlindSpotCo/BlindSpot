@@ -1,6 +1,6 @@
 import { redirect, notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { cityMeta } from '@/lib/aslivastu/cityMeta';
+import NeighbourhoodReport from '@/components/neighbourhood-report/NeighbourhoodReport';
 
 export default async function ReportDetailPage({ params }) {
   const { id } = await params;
@@ -41,6 +41,17 @@ export default async function ReportDetailPage({ params }) {
     'ai-report': 'AI Report',
     furnishing: 'Furnishing Report',
   };
+
+  // The neighbourhood report has its own full, detailed layout (persona
+  // re-weighting, dimension readouts, price band, schools, etc.) --
+  // components/neighbourhood-report/NeighbourhoodReport.js. What was
+  // saved is that exact record shape, so render the real component
+  // instead of re-building a stripped-down summary of it here. It's a
+  // full-page layout with its own background/back control, so it's
+  // returned on its own rather than nested inside .reports-page below.
+  if (report.source === 'aslivastu' || report.source === 'neighbourhood') {
+    return <NeighbourhoodReport record={d} />;
+  }
 
   return (
     <div className="reports-page">
@@ -133,49 +144,14 @@ export default async function ReportDetailPage({ params }) {
 
         {report.source === 'ai-report' && (
           <>
-            <div style={{ display: 'flex', gap: 24, margin: '28px 0', flexWrap: 'wrap' }}>
-              {d.floor && (
-                <div>
-                  <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 4 }}>Floor</div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>{d.floor}</div>
-                </div>
-              )}
-              {d.facing && (
-                <div>
-                  <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 4 }}>Facing</div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>{d.facing}</div>
-                </div>
-              )}
-              {d.verdictLabel && (
-                <div>
-                  <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 4 }}>Verdict</div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>{d.verdictLabel}</div>
-                </div>
-              )}
-              {d.combinedScore != null && (
-                <div>
-                  <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 4 }}>{d.hasArea ? 'Combined Score' : 'Home Comfort Score'}</div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>{d.combinedScore}/100</div>
-                </div>
-              )}
-            </div>
-
-            {d.analysis && (
-              <div style={{ marginBottom: 28 }}>
-                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 10 }}>Summary</div>
-                <div style={{ fontSize: 14, color: 'var(--text-mute)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{d.analysis}</div>
-              </div>
-            )}
-
-            {d.mainHtml && (
-              <div style={{ marginBottom: 8 }}>
-                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 10 }}>Full Report</div>
-                <iframe
-                  srcDoc={d.mainHtml.replaceAll('__GALLERY_URL__', '#')}
-                  style={{ width: '100%', height: 900, border: '1px solid var(--line-soft)', borderRadius: 4 }}
-                  title="AI report"
-                />
-              </div>
+            {d.mainHtml ? (
+              <iframe
+                srcDoc={d.mainHtml.replaceAll('__GALLERY_URL__', '#')}
+                style={{ width: '100%', height: '85vh', border: '1px solid var(--line-soft)', borderRadius: 4 }}
+                title="AI report"
+              />
+            ) : (
+              <div className="reports-empty">This report&apos;s full content wasn&apos;t saved.</div>
             )}
           </>
         )}
@@ -186,9 +162,9 @@ export default async function ReportDetailPage({ params }) {
               <p style={{ fontSize: 13, color: 'var(--text-dim)', marginBottom: 20, lineHeight: 1.5 }}>{d.confidence_note}</p>
             )}
             {d.dream_home_vision && (
-              <div style={{ background: 'var(--bg-2)', border: '1px solid var(--line-soft)', padding: '18px 20px', marginBottom: 24 }}>
-                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 10 }}>Dream Home, Room to Room</div>
-                <p style={{ fontSize: 15, color: 'var(--ink)', lineHeight: 1.6, margin: 0 }}>{d.dream_home_vision}</p>
+              <div style={{ background: 'var(--sun)', color: '#fff', padding: '24px 26px', marginBottom: 24 }}>
+                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(255,255,255,.8)', marginBottom: 10 }}>Your Dream Home, Room to Room</div>
+                <p style={{ fontSize: 17, fontWeight: 600, lineHeight: 1.5, margin: 0 }}>{d.dream_home_vision}</p>
               </div>
             )}
             {d.whole_home_palette && (
@@ -197,17 +173,82 @@ export default async function ReportDetailPage({ params }) {
                 <p style={{ fontSize: 14, color: 'var(--text-mute)', lineHeight: 1.6 }}>{d.whole_home_palette}</p>
               </div>
             )}
+
+            {d.imageDataUrl && (
+              <div style={{ marginBottom: 24 }}>
+                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 10 }}>Uploaded Floor Plan</div>
+                <img src={d.imageDataUrl} alt="Floor plan" style={{ maxWidth: '100%', border: '1px solid var(--line-soft)', borderRadius: 4 }} />
+              </div>
+            )}
+
             {Array.isArray(d.rooms) && d.rooms.length > 0 && (
               <div style={{ marginBottom: 24 }}>
-                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 14 }}>Room-by-Room</div>
+                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 14 }}>Room-by-Room Design</div>
                 {d.rooms.map((room, i) => (
-                  <div key={i} style={{ background: 'var(--bg-2)', border: '1px solid var(--line-soft)', padding: '14px 18px', marginBottom: 12 }}>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 6 }}>{room.name || `Room ${i + 1}`}</div>
-                    {room.suggestions && <p style={{ fontSize: 13, color: 'var(--text-mute)', lineHeight: 1.6, margin: 0 }}>{room.suggestions}</p>}
+                  <div key={i} style={{ background: 'var(--bg-2)', border: '1px solid var(--line-soft)', padding: '18px 20px', marginBottom: 14 }}>
+                    <div style={{ fontSize: 17, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>{room.name || `Room ${i + 1}`}</div>
+                    {room.dimensions_note && <p style={{ fontSize: 12, color: 'var(--text-dim)', margin: '0 0 8px' }}>{room.dimensions_note}</p>}
+                    {room.vibe && <p style={{ fontSize: 13.5, color: 'var(--text-mute)', margin: '0 0 14px', lineHeight: 1.6 }}>{room.vibe}</p>}
+
+                    {room.color_palette && (room.color_palette.walls || room.color_palette.accents || room.color_palette.textiles) && (
+                      <div style={{ marginBottom: 14, padding: '10px 14px', background: 'var(--bg)', borderRadius: 3 }}>
+                        <div style={{ fontSize: 10.5, textTransform: 'uppercase', letterSpacing: '.06em', fontWeight: 700, color: 'var(--sun)', marginBottom: 6 }}>Colour &amp; Material Palette</div>
+                        {room.color_palette.walls && <div style={{ fontSize: 12.5, color: 'var(--text-mute)', marginBottom: 2 }}><strong style={{ color: 'var(--ink)' }}>Walls:</strong> {room.color_palette.walls}</div>}
+                        {room.color_palette.accents && <div style={{ fontSize: 12.5, color: 'var(--text-mute)', marginBottom: 2 }}><strong style={{ color: 'var(--ink)' }}>Accents:</strong> {room.color_palette.accents}</div>}
+                        {room.color_palette.textiles && <div style={{ fontSize: 12.5, color: 'var(--text-mute)' }}><strong style={{ color: 'var(--ink)' }}>Textiles:</strong> {room.color_palette.textiles}</div>}
+                      </div>
+                    )}
+
+                    {Array.isArray(room.furniture) && room.furniture.length > 0 && (
+                      <div style={{ marginBottom: 14 }}>
+                        <div style={{ fontSize: 10.5, textTransform: 'uppercase', letterSpacing: '.06em', fontWeight: 700, color: 'var(--sun)', marginBottom: 8 }}>Furniture</div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                          {room.furniture.map((f, j) => (
+                            <div key={j} style={{ borderTop: j ? '1px dashed var(--line-soft)' : 'none', paddingTop: j ? 10 : 0 }}>
+                              <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--ink)' }}>{f.item}</div>
+                              {f.placement && <div style={{ fontSize: 12.5, color: 'var(--text-mute)', lineHeight: 1.5 }}>{f.placement}</div>}
+                              {f.size_guidance && <div style={{ fontSize: 11.5, color: 'var(--text-dim)', marginTop: 2 }}>Size: {f.size_guidance}</div>}
+                              {f.material && <div style={{ fontSize: 11.5, color: 'var(--text-dim)' }}>Material: {f.material}</div>}
+                              {f.note && <div style={{ fontSize: 11.5, color: 'var(--text-dim)', marginTop: 2 }}>{f.note}</div>}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {Array.isArray(room.lighting_plan) && room.lighting_plan.length > 0 && (
+                      <div style={{ marginBottom: 14 }}>
+                        <div style={{ fontSize: 10.5, textTransform: 'uppercase', letterSpacing: '.06em', fontWeight: 700, color: 'var(--sun)', marginBottom: 8 }}>Lighting</div>
+                        {room.lighting_plan.map((l, j) => <p key={j} style={{ fontSize: 12.5, color: 'var(--text-mute)', margin: 0, lineHeight: 1.5 }}>· {l}</p>)}
+                      </div>
+                    )}
+
+                    {Array.isArray(room.textiles_and_decor) && room.textiles_and_decor.length > 0 && (
+                      <div style={{ marginBottom: 14 }}>
+                        <div style={{ fontSize: 10.5, textTransform: 'uppercase', letterSpacing: '.06em', fontWeight: 700, color: 'var(--sun)', marginBottom: 8 }}>Textiles &amp; Decor</div>
+                        {room.textiles_and_decor.map((t, j) => <p key={j} style={{ fontSize: 12.5, color: 'var(--text-mute)', margin: 0, lineHeight: 1.5 }}>· {t}</p>)}
+                      </div>
+                    )}
+
+                    {room.alternative_layout && (
+                      <div style={{ marginBottom: room.cautions?.length ? 14 : 0, padding: '10px 14px', border: '1px dashed var(--line)', borderRadius: 3 }}>
+                        <div style={{ fontSize: 10.5, textTransform: 'uppercase', letterSpacing: '.06em', fontWeight: 700, color: 'var(--sun)', marginBottom: 4 }}>Or Try Instead</div>
+                        <p style={{ fontSize: 12.5, color: 'var(--text-mute)', margin: 0, lineHeight: 1.5 }}>{room.alternative_layout}</p>
+                      </div>
+                    )}
+
+                    {Array.isArray(room.cautions) && room.cautions.length > 0 && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                        {room.cautions.map((c, j) => (
+                          <div key={j} style={{ fontSize: 12, color: '#C1732E', display: 'flex', gap: 6 }}><span>⚠</span><span>{c}</span></div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             )}
+
             {Array.isArray(d.shopping_priority) && d.shopping_priority.length > 0 && (
               <div style={{ marginBottom: 24 }}>
                 <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 10 }}>Shopping Priority</div>
@@ -227,166 +268,6 @@ export default async function ReportDetailPage({ params }) {
           </>
         )}
 
-        {(report.source === 'aslivastu' || report.source === 'neighbourhood') && (() => {
-          const LABEL = { crime:'Safety', infrastructure:'Infrastructure', air:'Air Quality', power:'Power', schools:'Schools', water:'Water Supply', roads:'Roads', sewerage:'Drainage & Sewerage' };
-
-          const card = (title, children) => (
-            <div style={{ background: 'var(--bg-2)', border: '1px solid var(--line-soft)', borderTop: '2px solid var(--slate)', padding: '18px 20px', marginBottom: 20 }}>
-              <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--slate)', fontWeight: 700, marginBottom: 14 }}>{title}</div>
-              {children}
-            </div>
-          );
-
-          const stat = (label, value, unit = '') => (
-            value === undefined || value === null || value === '' ? null : (
-              <div>
-                <div style={{ fontSize: 10.5, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-dim)' }}>{label}</div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', marginTop: 3, lineHeight: 1.15 }}>{String(value)}{unit}</div>
-              </div>
-            )
-          );
-
-          const statGrid = (title, stats) => {
-            const shown = stats.filter(Boolean);
-            if (!shown.length) return null;
-            return card(title, (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '16px 20px' }}>
-                {shown}
-              </div>
-            ));
-          };
-
-          return (
-            <>
-              {d.url && (
-                <p style={{ fontSize: 12, marginBottom: 20 }}>
-                  <a href={d.url} style={{ color: 'var(--slate)' }}>View live neighbourhood report →</a>
-                </p>
-              )}
-
-              {/* Headline card */}
-              {card('Overview', (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '16px 20px' }}>
-                  {stat('PIN', d.pin_code)}
-                  {stat('City', d.city)}
-                  {stat('NQI Composite', d.nqi_composite, '/100')}
-                  {stat('Grade', d.grade)}
-                  {(d.dimensions_scored != null && d.dimensions_total != null) && stat('Dimensions scored', `${d.dimensions_scored}/${d.dimensions_total}`)}
-                  {stat('Persona weighting', d.persona)}
-                </div>
-              ))}
-
-              {/* Per-dimension scores */}
-              {d.scores && card('Dimension scores', (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '16px 20px' }}>
-                  {Object.entries(d.scores).map(([k, v]) => (
-                    <div key={k}>
-                      <div style={{ fontSize: 10.5, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-dim)' }}>{LABEL[k] || k}</div>
-                      <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', marginTop: 3 }}>{v}/100</div>
-                      {d.weights && d.weights[k] != null && (
-                        <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 2 }}>{d.weights[k]}% weight</div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ))}
-
-              {/* Detailed readings -- same fields/labels/units as the live report's spec cards */}
-              {statGrid('Crime', [
-                stat('Total crimes', d.total_cognizable_crimes),
-                stat('Safety score', d.scores?.crime, '/100'),
-                stat('Safer than', d.crime_percentile != null ? d.crime_percentile : null, d.crime_percentile != null ? '%' : ''),
-                stat('Crime tier', d.crime_tier),
-              ])}
-
-              {statGrid('Power supply', [
-                stat('Discom', d.discom),
-                stat('Reliability', d.reliability),
-                stat('Avg cut hours', d.avg_outage_hours, ' /mo'),
-                stat('Score', d.scores?.power, '/100'),
-              ])}
-
-              {statGrid('Connectivity & infrastructure', [
-                stat('Zone', d.zone_type),
-                stat('Metro nearby', d.metro_stations_nearby),
-                stat('Metro planned', d.metro_planned_stations),
-                stat('Highway', d.highway_proximity),
-                stat('Smart city', d.smart_city_project === true ? 'Yes' : d.smart_city_project === false ? 'No' : null),
-                stat('Infra score', d.infra_score_raw, '/100'),
-              ])}
-
-              {statGrid('Water supply', [
-                stat('Daily supply', d.supply_hours, ' hrs'),
-                stat('Quality (TDS)', d.tds_level, d.tds_level ? ' TDS' : ''),
-                stat('Coverage', d.water_coverage, d.water_coverage != null ? '%' : ''),
-                stat('Complaints', d.complaints_per_1000, d.complaints_per_1000 != null ? '/1k' : ''),
-                stat('Quality score', d.water_quality, d.water_quality != null ? '/5' : ''),
-              ])}
-
-              {statGrid('Roads', [
-                stat('Condition', d.road_condition),
-                stat('Potholes/km', d.pothole_density),
-                stat('Connectivity', d.connectivity),
-                stat('Authority', d.authority),
-                stat('Last resurfaced', d.last_resurfaced),
-                stat('Quality score', d.road_quality, d.road_quality != null ? '/5' : ''),
-              ])}
-
-              {statGrid('Drainage & sewerage', [
-                stat('Sewer coverage', d.sewerage_coverage, d.sewerage_coverage != null ? '%' : ''),
-                stat('Treatment', d.treatment),
-                stat('Waterlogging risk', d.waterlogging_risk != null ? (d.waterlogging_risk >= 4 ? 'Low risk' : d.waterlogging_risk >= 3 ? 'Moderate' : 'High risk') : null),
-                stat('Open drains', d.open_drains === true ? 'Yes' : d.open_drains === false ? 'No' : null),
-                stat('Flood incidents', d.flooding_incidents_annual, d.flooding_incidents_annual != null ? '/yr' : ''),
-              ])}
-
-              {d.price_context && d.price_context.rate_sqft && card(`Price context · ${cityMeta(d.city).rateTerm}`, (() => {
-                const pc = d.price_context;
-                const [lo, hi] = pc.rate_sqft;
-                const bands = ['Premium', 'Upper', 'Mid', 'Modest', 'Value'];
-                const inr = n => '₹' + Number(n).toLocaleString('en-IN');
-                // Was `d.city === 'Bangalore' ? bengaluru : ncr` -- any third
-                // city rendered "band for the NCR" against a circle rate it
-                // doesn't use. Now keyed off the record's own city.
-                const cm = cityMeta(d.city);
-                const [mktLo, mktHi] = cm.marketMultiplier;
-                const mLo = Math.round(lo * mktLo / 100) * 100, mHi = Math.round(hi * mktHi / 100) * 100;
-                return (
-                  <>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: 28, fontWeight: 700, color: 'var(--ink)' }}>{inr(lo)}–{inr(hi)}</span>
-                      <span style={{ fontSize: 12, color: 'var(--text-dim)' }}>per sq ft · {(pc.label || '').toLowerCase()} band for {cm.shortName}</span>
-                    </div>
-                    <div style={{ display: 'flex', gap: 5, margin: '14px 0 6px' }}>
-                      {bands.map((b, i) => (
-                        <div key={b} style={{ flex: 1 }}>
-                          <div style={{ height: 6, background: 'var(--slate)', opacity: (i + 1) === pc.tier ? 1 : 0.25 }} />
-                          <div style={{ fontSize: 9.5, textTransform: 'uppercase', letterSpacing: '0.04em', color: (i + 1) === pc.tier ? 'var(--slate)' : 'var(--text-dim)', marginTop: 5, fontWeight: (i + 1) === pc.tier ? 700 : 400 }}>
-                            {b}{(i + 1) === pc.tier ? ' ▲' : ''}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <p style={{ fontSize: 13, color: 'var(--text-mute)', margin: '12px 0 0', lineHeight: 1.5 }}>
-                      Market prices run <strong style={{ color: 'var(--ink)' }}>{cm.marketGapLabel}</strong> the {cm.rateTerm} — expect roughly <strong style={{ color: 'var(--ink)' }}>{inr(mLo)}–{inr(mHi)}/sq ft</strong> in practice. Indicative government valuation, not a market quote.
-                    </p>
-                  </>
-                );
-              })())}
-
-              {Array.isArray(d.schools_list) && d.schools_list.length > 0 && card(`Schools · ${d.schools_count ?? d.schools_list.length} mapped`, (
-                <div>
-                  {d.schools_list.map((s, i) => (
-                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, fontSize: 13, padding: '9px 0', borderTop: i ? '1px dashed var(--line-soft)' : 'none' }}>
-                      <span style={{ color: 'var(--ink)' }}>{s.name}</span>
-                      <span style={{ color: 'var(--text-dim)', fontSize: 11 }}>{s.board || 'CBSE'}</span>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </>
-          );
-        })()}
 
       </div>
     </div>
