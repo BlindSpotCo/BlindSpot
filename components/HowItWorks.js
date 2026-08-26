@@ -9,8 +9,8 @@
 // this is the static main-branch explainer; the interactive version lives
 // in CombinedScoreFlow on the product branch.
 
-import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
-import { scoreColor, verdictFor, readableTextColor, BPF } from '@/components/property-score/AVDetailedReadout';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { scoreColor, verdictFor, readableTextColor } from '@/components/property-score/AVDetailedReadout';
 
 const STEPS = [
   {
@@ -87,158 +87,91 @@ const SAMPLE_DIMENSIONS = [
 
 const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'North-West', 'South-West'];
 
-// The homepage panel used to re-implement the real property-score card's
-// look by hand (a local Box() for the "+"-corner-mark boxes, a compact
-// AvDim() row instead of the real 4-column dimension row) because the
-// real layout is built for AVAreaCard.js's ~1056px-wide sheet and this
-// panel's actual content width is only ~470px (.howworks-scroll's 1fr
-// column minus panel padding) -- laid out at that narrow width directly,
-// the real 4-column dimension rows cramped and wrapped hard. That's why
-// this used to be a deliberately simplified, narrower-format copy rather
-// than the same component.
+// This used to render the exact same markup as the real report
+// (AVAreaCard.js's .avsheet-* sheet, built for a fixed 1056px layout)
+// shrunk down with a CSS transform to fit this panel. That solved the
+// width problem but created a worse one: shrinking the whole sheet
+// shrinks its text right along with it, so at this panel's actual width
+// the report text came out too small to comfortably read, while the
+// full report's per-row "data source" line and one-sentence "explain"
+// copy -- exactly the kind of load-bearing-for-a-full-report,
+// unnecessary-for-a-teaser detail -- ate width and height that would
+// otherwise go to making the important numbers bigger.
 //
-// It's the real component now, not a copy: AreaPanel renders the exact
-// same markup as AVAreaCard.js (same BPF boxes, same .avsheet-* classes,
-// same copy), and ScaledAvSheet below solves the width problem a
-// different way than the old rewritten-layout attempt did. Instead of
-// reflowing the content to fit ~470px, it lets the sheet lay out at its
-// real, natural 1056px width (so nothing cramps or wraps differently
-// than it does on the actual property-score page), measures that natural
-// size, and scales the whole thing down as one rigid unit with CSS
-// transform: scale() to fit whatever width this panel actually has. A
-// transform never triggers reflow, so the internals see 1056px the whole
-// time -- only the visual footprint shrinks.
-function ScaledAvSheet({ children }) {
-  const outerRef = useRef(null);
-  const innerRef = useRef(null);
-  const [scale, setScale] = useState(1);
-  const [naturalHeight, setNaturalHeight] = useState(0);
-
-  useLayoutEffect(() => {
-    const outer = outerRef.current;
-    const inner = innerRef.current;
-    if (!outer || !inner) return;
-
-    // inner is always rendered at its natural 1056px width (see
-    // .avsheet-scale-inner in globals.css), so inner.offsetHeight is the
-    // sheet's real, un-scaled height regardless of the transform below --
-    // CSS transform is paint-only and never affects the box model/layout
-    // size, which is exactly what makes this measurement reliable.
-    const measure = () => {
-      const outerWidth = outer.offsetWidth;
-      const nextScale = outerWidth > 0 ? Math.min(1, outerWidth / 1056) : 1;
-      setScale(nextScale);
-      setNaturalHeight(inner.offsetHeight);
-    };
-
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(outer);
-    return () => ro.disconnect();
-  }, []);
-
-  return (
-    <div ref={outerRef} className="avsheet-scale-outer" style={{ height: naturalHeight ? naturalHeight * scale : undefined }}>
-      <div ref={innerRef} className="avsheet-scale-inner" style={{ transform: `scale(${scale})` }}>
-        {children}
-      </div>
-    </div>
-  );
-}
-
+// This is a genuine introduction instead: its own simpler layout, built
+// natively at whatever width this panel actually has (no borrowed
+// 1056px markup, no scale transform), under its own `.hw-area-*` classes
+// so it can never be pulled on by changes to the real report's shared
+// `.avsheet-*` block. It keeps exactly what sells the product at a
+// glance -- the locality, the one big number, the verdict, and how the
+// 8 dimensions stack up -- and drops what only earns its place in the
+// full report: each dimension's data source, its one-line explanation,
+// its exact %-weight, and the "8/8 dimensions scored" methodology note.
 function AreaPanel() {
   const rec = SAMPLE_RECORD;
   const verdict = verdictFor(rec.nqi_composite);
   const verdictCol = scoreColor(rec.nqi_composite);
   const verdictText = readableTextColor(verdictCol);
 
-  // Everything from here down is the same markup as AVAreaCard.js --
-  // same BPF boxes, same avsheet-* classes, same copy -- just fed from
-  // SAMPLE_RECORD/SAMPLE_DIMENSIONS instead of a live record, and wrapped
-  // in ScaledAvSheet so it fits this panel's narrower column. This is
-  // meant to be a first-glance introduction to the full report, not a
-  // simplified stand-in for it.
   return (
     <div className="howworks-panel av-panel">
-      <ScaledAvSheet>
-        <div className="av-card avsheet">
-          <div className="avsheet-hero">
-            <BPF dark className="avsheet-box">
-              <p className="avsheet-label" style={{ color: 'rgba(255,253,248,0.65)' }}>
-                Sheet · {rec.area} · PIN {rec.pin_code}
-              </p>
-              <h3 className="avsheet-name">{rec.name}</h3>
-              <p className="avsheet-meta">
-                {rec.dimensions_scored}/{rec.dimensions_total} dimensions · scored {rec.scoredAt}
-              </p>
-            </BPF>
+      <div className="hw-area">
+        <div className="mono hw-area-tag">NEIGHBOURHOOD SCORE</div>
 
-            <BPF dark className="avsheet-box">
-              <p className="avsheet-label" style={{ color: 'rgba(255,253,248,0.65)' }}>Composite index</p>
-              <div className="avsheet-scorerow">
-                <span className="avsheet-score">{rec.nqi_composite}</span>
-                <span className="avsheet-grade">{rec.grade}</span>
-              </div>
-              <p className="avsheet-cap">NQI · weighted mean of {SAMPLE_DIMENSIONS.length} dimensions.</p>
-              <p className="avsheet-note">First-pass area assessment · reflects this PIN, not a specific building or street.</p>
-            </BPF>
-
-            <div className="avsheet-verdict" style={{ background: verdictCol, color: verdictText }}>
-              <p className="avsheet-label" style={{ color: 'inherit', opacity: .75 }}>Verdict</p>
-              <div className="avsheet-verdict-word">{verdict.label}</div>
-              <p className="avsheet-verdict-why" style={{ opacity: .92 }}>{verdict.why}</p>
-            </div>
+        <div className="hw-area-head">
+          <div className="hw-area-head-id">
+            <div className="hw-area-loc">{rec.name}</div>
+            <div className="mono hw-area-pin">{rec.area} · PIN {rec.pin_code}</div>
           </div>
-
-          <BPF className="avsheet-readout">
-            <p className="avsheet-label avsheet-readout-label">
-              Dimension readout · weight = exact contribution to the {rec.nqi_composite}
-            </p>
-            {SAMPLE_DIMENSIONS.map((d) => {
-              const weak = d.score < 50;
-              const col = scoreColor(d.score);
-              return (
-                <div key={d.label} className="avsheet-row">
-                  <div>
-                    <div className="avsheet-row-label">{d.label}</div>
-                    <div className="avsheet-row-src">{d.source}</div>
-                  </div>
-                  <div className="avsheet-row-weight">{d.weight}%</div>
-                  <div style={{ paddingTop: 2 }}>
-                    <div className="avsheet-track">
-                      <div style={{
-                        position: 'absolute', inset: 0, width: `${d.score}%`,
-                        background: weak ? undefined : col,
-                        backgroundImage: weak ? `repeating-linear-gradient(45deg, ${col} 0 3px, transparent 3px 6px)` : undefined,
-                      }} />
-                    </div>
-                    <p className="avsheet-explain">{d.explain}</p>
-                  </div>
-                  <div className="avsheet-row-score" style={{ color: col }}>{d.score}</div>
-                </div>
-              );
-            })}
-          </BPF>
-
-          <div style={{ fontSize: 13.5, color: 'var(--text-dim)', marginBottom: 22 }}>
-            Area-level — the same for every unit in this pincode.
+          <div className="hw-area-scorewrap">
+            <span className="hw-area-score">{rec.nqi_composite}</span>
+            <span className="hw-area-grade">{rec.grade}</span>
           </div>
-
-          {/* Same footer CTA as the real card, word for word, linking to
-              the same standalone full-report page -- this panel is meant
-              to read as a first look at that exact report, not a
-              different, homepage-only destination. */}
-          <a
-            href="/neighbourhood-report/110001"
-            target="_blank"
-            rel="noreferrer"
-            className="ps-btn ps-cta-btn"
-            style={{ display: 'inline-block', background: 'var(--slate)', color: '#fff', border: '1px solid var(--slate)', borderRadius: 'var(--radius)', padding: '12px 22px', fontSize: 14, fontWeight: 700, textDecoration: 'none' }}
-          >
-            See Detailed Neighbourhood Report ↗
-          </a>
         </div>
-      </ScaledAvSheet>
+
+        <div className="hw-area-verdict hw-box" style={{ background: verdictCol, color: verdictText }}>
+          <span className="hw-area-verdict-word">{verdict.label}</span>
+          <span className="hw-area-verdict-why" style={{ opacity: .92 }}>{verdict.why}</span>
+        </div>
+
+        <div className="mono hw-area-subhead">Score breakdown — 8 dimensions</div>
+        <div className="hw-area-grid">
+          {SAMPLE_DIMENSIONS.map((d) => {
+            const weak = d.score < 50;
+            const col = scoreColor(d.score);
+            return (
+              <div key={d.label} className="hw-area-cell hw-box">
+                <div className="hw-area-cell-top">
+                  <span className="hw-area-cell-label">{d.label}</span>
+                  <span className="hw-area-cell-score" style={{ color: col }}>{d.score}</span>
+                </div>
+                <div className="hw-area-cell-track">
+                  <div style={{
+                    position: 'absolute', inset: 0, width: `${d.score}%`,
+                    background: weak ? undefined : col,
+                    backgroundImage: weak ? `repeating-linear-gradient(45deg, ${col} 0 3px, transparent 3px 6px)` : undefined,
+                  }} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Links to the same standalone full-report page the real card's
+            CTA does -- this teaser is meant to read as a first look at
+            that exact report, not a different, homepage-only destination.
+            Copy says "Full" rather than "Detailed" now since this panel
+            no longer shows a near-copy of it -- the real report is where
+            the sources, explanations and exact weights actually live. */}
+        <a
+          href="/neighbourhood-report/110001"
+          target="_blank"
+          rel="noreferrer"
+          className="ps-btn ps-cta-btn hw-area-cta"
+        >
+          See Full Neighbourhood Report ↗
+        </a>
+      </div>
     </div>
   );
 }

@@ -827,21 +827,16 @@
      stacked on the right. Each block gets tall min-height so there's real
      scroll distance to trigger against, and dims when it's not the active
      step — the sticky panel swaps in sync via JS (see HowItWorks.js). */
-  /* Panel column deliberately gets most of the width (not an even-ish
-     1.05fr/1fr split) -- the area panel renders AVAreaCard.js's real,
-     fixed-1056px-wide sheet and scales it down with a CSS transform to
-     fit whatever width this column actually has (see ScaledAvSheet in
-     HowItWorks.js). At the old 1.05fr/1fr split the panel column only got
-     ~497px, scaling the sheet down to ~0.47x -- report text at roughly
-     half its real size, and a scaled height of ~440px sitting inside the
-     680px-tall shared panel box (see .howworks-panel below), leaving a
-     ~190px blank gap under the card. Skewing the split toward the panel
-     gets it to ~715-720px, closer to a 0.68x scale -- close to filling
-     the 680px box with real content instead of blank space, and closer
-     to the sheet's own natural text size. The steps column narrows to
-     compensate, which is fine: it only ever holds a heading, one
-     paragraph and a short bullet list. */
-  .howworks-scroll{display:grid; grid-template-columns:1fr 0.42fr; gap:48px; align-items:start; position:relative}
+  /* Panel column gets a bit more than half (not a heavy skew either
+     direction). Area/Unit/Verdict all now render natively at whatever
+     width this column gives them -- none of them are a fixed-width sheet
+     being scaled down anymore (see AreaPanel's comment in HowItWorks.js
+     for why that approach was dropped) -- so there's no scale-factor math
+     driving this ratio, just "give the panel a bit of a lead, keep the
+     steps column wide enough that the heading/paragraph/bullets don't feel
+     cramped." A too-narrow steps column reads as cluttered fast: its text
+     wraps hard and the bullet list stacks tight against the panel. */
+  .howworks-scroll{display:grid; grid-template-columns:1.15fr 1fr; gap:48px; align-items:start; position:relative}
 
   @media (max-width:900px){
     .howworks-scroll{grid-template-columns:1fr; gap:0}
@@ -857,15 +852,9 @@
   }
 
   /* min-width:0 overrides the grid item's default auto min-width (which
-     otherwise equals its content's max-content size) -- without it, the
-     area panel's fixed-1056px-wide .avsheet-scale-inner (see ScaledAvSheet
-     in HowItWorks.js) forces THIS grid track to grow to fit 1056px rather
-     than staying at its intended ~1.05fr share, which both overflows the
-     page and feeds ScaledAvSheet's own width measurement a falsely-large
-     number (it measures its own now-oversized container), so the sheet
-     never actually scales down. min-width:0 lets this track size to its
-     fr share like normal, and .avsheet-scale-outer's overflow:hidden below
-     clips the still-1056px-wide inner div down to whatever that share is. */
+     otherwise equals its content's max-content size) -- defensive against
+     any panel content that could otherwise force this track wider than
+     its fr share (a long unbroken token, a fixed-width child, etc). */
   .howworks-panel-sticky{position:sticky; top:98px; align-self:start; min-width:0}
 
   /* min-height is the actual fix for "the two cards don't match size" --
@@ -1030,51 +1019,63 @@
     content:''; position:absolute; left:0; top:9px; width:8px; height:1px; background:var(--line);
   }
 
-  /* ---------- NEIGHBOURHOOD-SCORE-STYLE PANEL (step 1) ----------
-     Matches the real property-score page's area card (AVAreaCard.js)
-     structurally, not just tonally: the same 3-box hero row (Sheet
-     identity / Composite Index / Verdict), each box its own BPF
-     blueprint-frame with "+" corner marks in --slate (=--brand, the
-     mandatory secondary), and a verdict fill using the same scoreColor()
-     ramp the real card uses — never a fixed brand hue. Verdict text
-     colour is computed per-instance in JS via readableTextColor() (dark
-     ink on the bright mid-tier fills, white only on the two genuinely
-     dark tiers) and passed down as `color`, so nothing here hardcodes a
-     text colour that could go unreadable against a different score's
-     fill. --av (wine) remains the legitimate area-engine accent, used
-     for the panel's top bar and the locked-report teaser below. */
+  /* ---------- NEIGHBOURHOOD-SCORE INTRODUCTION PANEL (step 1) ----------
+     Deliberately NOT the real property-score card (AVAreaCard.js) reused
+     or reshaped -- this panel used to render that card's exact .avsheet-*
+     markup scaled down with a CSS transform to fit here, which produced
+     small/blurry-reading numbers and dragged along per-dimension "data
+     source" + "explain" copy that only earns its place in the full report.
+     This is its own lighter design instead: same visual language as its
+     Unit/Verdict siblings (mono eyebrow tag, .hw-box pop-in cells) rather
+     than the report's dark BPF blueprint-frame boxes, built natively at
+     whatever width this column actually has. --av (wine) remains the
+     legitimate area-engine accent, used for the panel's top bar. */
   .av-panel{
     background:var(--paper); border-color:var(--line);
     box-shadow:0 24px 48px -30px rgba(28,24,18,0.18), 0 1px 0 rgba(28,24,18,0.04);
   }
   .av-panel::before{ background:var(--av); }
 
-  /* This panel used to carry its own, hand-tuned narrow-width copy of the
-     area card (a 3-box .av-hero3 row with its own .av-box/.av-tiny/
-     .av-score-num/etc styles, sized down for this panel's ~470px content
-     width, plus a compact .av-dims-box/.av-dim-row dimension list and a
-     homepage-only .av-more nearby-chips/CTA footer). All of that is gone
-     now: AreaPanel in HowItWorks.js renders the exact same markup as the
-     real card (AVAreaCard.js) against the shared .avsheet-* block below,
-     scaled to fit via .avsheet-scale-outer/-inner instead of being laid
-     out narrower and restyled. See ScaledAvSheet's comment in
-     HowItWorks.js for why scaling beats reflowing here.
+  .hw-area-tag{ font-size:12px; font-weight:600; letter-spacing:.12em; color:var(--av); margin-bottom:14px }
 
-     Fits inside a fixed-height box with no min-height/height/overflow
-     tricks -- the sheet's own ~24px-per-row inner spacing at 1056px,
-     scaled down to this panel's ~440-470px available width, comes out
-     well under .howworks-panel's 680px budget on its own. */
+  .hw-area-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:16px }
+  .hw-area-loc{ font-size:26px; font-weight:700; line-height:1.1; color:var(--text); text-transform:uppercase }
+  .hw-area-pin{ font-size:11.5px; color:var(--text-dim); margin-top:5px }
+  .hw-area-scorewrap{ display:flex; align-items:flex-end; gap:6px; flex-shrink:0 }
+  .hw-area-score{ font-family:'Bricolage Grotesque',sans-serif; font-size:46px; font-weight:700; line-height:.85; color:var(--text) }
+  .hw-area-grade{ font-family:'Bricolage Grotesque',sans-serif; font-size:20px; font-weight:700; color:var(--text-mute); margin-bottom:5px }
 
-  /* Scale-to-fit wrapper for the shared .avsheet spec sheet: the inner
-     element always renders at .avsheet's real, natural 1056px width (see
-     the shared block below) so nothing inside it reflows or wraps
-     differently than it does on the actual property-score/full-report
-     pages -- only the visual footprint shrinks, via a CSS transform
-     computed in HowItWorks.js from the outer wrapper's actual width.
-     transform-origin:top left keeps the scaled content anchored to this
-     panel's own top-left padding edge instead of shrinking toward centre. */
-  .avsheet-scale-outer{ position:relative; overflow:hidden; width:100% }
-  .avsheet-scale-inner{ width:1056px; transform-origin:top left }
+  /* Verdict word + one-line "why" only -- no separate label/eyebrow row,
+     no methodology footnote. That's the whole point of a teaser verdict:
+     the colour and the word already do most of the work. */
+  .hw-area-verdict{
+    display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+    padding:14px 18px; border-radius:6px; margin-bottom:22px;
+  }
+  .hw-area-verdict-word{ font-family:'Bricolage Grotesque',sans-serif; font-size:19px; font-weight:700; text-transform:uppercase; letter-spacing:-0.01em }
+  .hw-area-verdict-why{ font-size:13px; line-height:1.4 }
+
+  .hw-area-subhead{ font-size:11.5px; font-weight:600; letter-spacing:.1em; color:var(--text-dim); text-transform:uppercase; margin-bottom:10px }
+
+  /* 2-column grid of score-only cells -- label + number + a bare bar, no
+     source, no explain sentence, no %-weight. That detail is real and
+     correct (it's the same SAMPLE_DIMENSIONS data the full report uses),
+     it just doesn't belong in a first-glance teaser. */
+  .hw-area-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; margin-bottom:24px }
+  .hw-area-cell{ border:1px solid var(--line); border-radius:6px; padding:10px 12px; background:var(--paper) }
+  .hw-area-cell-top{ display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin-bottom:7px }
+  .hw-area-cell-label{ font-size:12.5px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+  .hw-area-cell-score{ font-family:'Bricolage Grotesque',sans-serif; font-size:16px; font-weight:700; flex-shrink:0 }
+  .hw-area-cell-track{ height:5px; border-radius:3px; background:var(--bg-2); position:relative; overflow:hidden }
+
+  .hw-area-cta{
+    display:inline-block; background:var(--slate); color:#fff; border:1px solid var(--slate);
+    border-radius:var(--radius); padding:12px 22px; font-size:14px; font-weight:700; text-decoration:none;
+  }
+
+  @media (max-width:520px){
+    .hw-area-grid{ grid-template-columns:1fr }
+  }
 
   /* ---------- SHARED AREA SPEC SHEET ----------
      ONE source of truth for the area spec sheet, used by BOTH surfaces
