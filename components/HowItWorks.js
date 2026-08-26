@@ -85,8 +85,6 @@ const SAMPLE_DIMENSIONS = [
   { label: 'Drainage & Sewerage', weight: 5, score: 100, source: 'Drainage & waterlogging records · est. 2023', explain: 'Low monsoon waterlogging risk.' },
 ];
 
-const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'North-West', 'South-West'];
-
 // Two earlier attempts at this, both wrong in opposite directions. First:
 // render the real report's exact .avsheet-* markup (built for a fixed
 // 1056px layout) and shrink it with a CSS transform to fit here -- looked
@@ -199,105 +197,99 @@ function AreaPanel() {
   );
 }
 
-// SunScout's real UI, at the point that matters here, is the LiveScore
-// modal: a cream card floating over the dark 3D map, an orange "LIVESCORE"
-// tag, a bold question as the headline, then a floor slider and a facing
-// grid feeding one big orange CTA. Matched directly, including the dark
-// slider track (only the handle is orange in the real thing, not the fill).
-// A small, legible vector map — real road grid, blocks of buildings sitting
-// between the streets, the unit's building picked out in orange with a pin,
-// and a dotted sun-path arc — rather than a scatter of unrelated boxes.
-function SsMap() {
-  return (
-    <div className="ss-map-strip" aria-hidden="true">
-      <div className="ss-map-toolbar">
-        <span className="ss-map-chip active">3D</span>
-        <span className="ss-map-chip">2D</span>
-      </div>
-      <svg className="ss-map-svg" viewBox="0 0 520 132" preserveAspectRatio="xMidYMid slice">
-        <path className="ss-map-road" d="M0,44 H520 M0,100 H520 M130,0 V132 M290,0 V132 M400,0 V132" />
+// Real record, not invented -- SAMPLE_LIVE_SCORE below is what
+// lib/sunscout/scoring/scoreAggregator.js's computeLiveScore() actually
+// returns for floor=5/South at this locality (sun/shadeHeat/view/privacy
+// straight from sunScore.js/shadeHeatScore.js/viewScore.js/privacyScore.js's
+// own formulas and copy; wind uses windScore.js's own no-live-data
+// fallback, since this static homepage explainer makes no live API calls --
+// see the file header). 30/25/20/15/10 weights are DEFAULT_WEIGHTS from
+// lib/sunscout/scoring/types.js, unmodified.
+const SAMPLE_LIVE_SCORE = {
+  liveScore: 50,
+  grade: 'Fair',
+  unit: { floor: 5, facing: 'South' },
+  subScores: [
+    { key: 'sun', label: 'Sun', weightPct: 30, score: 100 },
+    { key: 'shadeHeat', label: 'Shade & Heat', weightPct: 25, score: 0 },
+    { key: 'view', label: 'View', weightPct: 20, score: 41 },
+    { key: 'privacy', label: 'Privacy', weightPct: 15, score: 44 },
+    { key: 'wind', label: 'Wind & Ventilation', weightPct: 10, score: 50 },
+  ],
+};
 
-        <rect className="ss-map-bldg" x="14" y="8" width="48" height="24" rx="2" />
-        <rect className="ss-map-bldg" x="145" y="8" width="56" height="24" rx="2" />
-        <rect className="ss-map-bldg" x="212" y="8" width="46" height="24" rx="2" />
-        <rect className="ss-map-bldg" x="305" y="8" width="56" height="24" rx="2" />
-        <rect className="ss-map-bldg" x="415" y="8" width="44" height="24" rx="2" />
-        <rect className="ss-map-bldg" x="470" y="8" width="34" height="24" rx="2" />
-
-        <rect className="ss-map-bldg" x="14" y="52" width="42" height="36" rx="2" />
-        <rect className="ss-map-bldg" x="62" y="58" width="46" height="30" rx="2" />
-        <rect className="ss-map-bldg ss-map-bldg-target" x="150" y="50" width="60" height="38" rx="2" />
-        <rect className="ss-map-bldg" x="305" y="52" width="40" height="36" rx="2" />
-        <rect className="ss-map-bldg" x="410" y="52" width="44" height="36" rx="2" />
-        <rect className="ss-map-bldg" x="460" y="58" width="46" height="30" rx="2" />
-
-        <path className="ss-map-sunpath" d="M20,126 Q260,100 500,126" />
-        <circle className="ss-map-sun" cx="260" cy="102" r="4" />
-
-        <circle className="ss-map-ping" cx="180" cy="69" r="9" />
-        <path className="ss-map-pin" d="M180 56c-5.5 0-10 4.4-10 9.9 0 7.4 10 17.1 10 17.1s10-9.7 10-17.1c0-5.5-4.5-9.9-10-9.9z" />
-        <circle className="ss-map-pin-hole" cx="180" cy="66" r="3.6" />
-      </svg>
-      <span className="ss-map-time">04:52 PM</span>
-    </div>
-  );
+// The real "Home Comfort Score" result -- LiveScoreCard.js, opened from
+// the "Will This Unit Work For You?" floor/facing modal on the actual
+// /property-score page -- is a composite-score box (left accent bar in
+// the grade colour, big number/100, a grade pill) followed by one card per
+// weighted factor (label + its %-weight, a coloured bar, the score). This
+// used to instead show a decorative fake map, an interactive-looking but
+// non-functional floor slider and facing grid, and a single one-line
+// result next to an unrelated "AI Summary" panel -- none of which
+// resembles what the real modal actually shows. This reuses the real
+// component's own colours/fonts (ORG/INK/SUB/LINE and its Space Grotesk /
+// Plus Jakarta Sans / IBM Plex Mono stack -- SunScout's own type system,
+// separate from the rest of the site's Bricolage Grotesque/Inter) so the
+// composite box and factor rows are the same shapes and colours as the
+// real thing. What's dropped, same idea as the Area panel: each factor's
+// one-sentence "why" and its monospace BASIS calculation line -- real,
+// correct detail that belongs in the actual modal, not a homepage teaser
+// -- plus the "HOW THE COMPOSITE IS CALCULATED" and "DATA NOTES" boxes
+// underneath it. The floor/facing input itself collapses to a plain
+// readout line instead of a live-looking slider+grid, since simulating an
+// interaction the panel can't actually perform read as more misleading
+// than informative once the real result layout took the space it needs.
+const SS_ORG = '#E07B00';
+const SS_INK = '#1A0A00';
+const SS_SUB = '#8A8A8A';
+const SS_LINE = 'rgba(26,10,0,0.12)';
+const SS_GRADE_COLOR = { Excellent: '#16a34a', Good: '#65a30d', Fair: SS_ORG, Poor: '#dc2626' };
+function ssScoreColor(score) {
+  if (score >= 75) return '#16a34a';
+  if (score >= 50) return SS_ORG;
+  if (score >= 25) return '#ea580c';
+  return '#dc2626';
 }
 
-// SunScout's real UI, at the point that matters here, is the LiveScore
-// modal: a cream card over a dark 3D map, a bold question as the headline,
-// a floor slider and facing grid feeding one big orange CTA — and, next to
-// it, an AI Summary pane, matching the product's LiveScore / AI Solar
-// Report split screen. Matched directly, including the dark slider track
-// (only the handle is orange in the real thing, not the fill).
 function UnitPanel() {
+  const r = SAMPLE_LIVE_SCORE;
   return (
     <div className="howworks-panel ss-panel">
-      <SsMap />
+      <div className="mono ss-tag">HOME COMFORT SCORE</div>
+      <h4 className="ss-heading" style={{ marginBottom: 10 }}>Will This Unit Work For You?</h4>
+      <p className="hw-live-intro">
+        One score for this exact flat — sun, shade &amp; heat, view, privacy and wind — with the full calculation shown, not just a number.
+      </p>
+      <div className="mono hw-live-unit-readout">
+        FLOOR {r.unit.floor} · {r.unit.facing.toUpperCase()}-FACING
+      </div>
 
-      <div className="ss-body">
-        <div className="ss-main">
-          <div className="mono ss-tag">HOME COMFORT SCORE</div>
-          <h4 className="ss-heading">Will This Unit Work For You?</h4>
+      <div className="hw-live-score-box" style={{ borderLeftColor: SS_GRADE_COLOR[r.grade] }}>
+        <div>
+          <div className="mono hw-live-score-label">HOME COMFORT SCORE — COMPOSITE</div>
+          <div className="hw-live-score-number">{r.liveScore}<span>/100</span></div>
+        </div>
+        <div className="mono hw-live-grade-pill" style={{ borderColor: SS_GRADE_COLOR[r.grade], color: SS_GRADE_COLOR[r.grade] }}>
+          {r.grade}
+        </div>
+      </div>
 
-          <div className="ss-field">
-            <div className="mono ss-label">FLOOR NUMBER</div>
-            <div className="ss-slider-row">
-              <div className="ss-slider-track"><div className="ss-slider-handle" style={{ left: '23%' }} /></div>
-              <div className="ss-value-chip">7</div>
-            </div>
-          </div>
-
-          <div className="ss-field">
-            <div className="mono ss-label">FACING DIRECTION</div>
-            <div className="ss-facing-grid">
-              {FACING_OPTS.map((dir) => (
-                <div key={dir} className={`hw-box ss-facing-cell${dir === 'South-East' ? ' active' : ''}`}>
-                  {dir}
+      <div>
+        {r.subScores.map((s) => {
+          const col = ssScoreColor(s.score);
+          return (
+            <div key={s.key} className="hw-live-row">
+              <div className="hw-live-row-top">
+                <div className="hw-live-row-label">
+                  {s.label}
+                  <span className="mono hw-live-row-weight">weight {s.weightPct}%</span>
                 </div>
-              ))}
+                <div className="hw-live-row-score" style={{ color: col }}>{s.score}</div>
+              </div>
+              <div className="hw-live-row-track"><div style={{ width: `${s.score}%`, height: '100%', background: col }} /></div>
             </div>
-          </div>
-
-          <div className="ss-cta hw-pulse">GET MY HOME COMFORT SCORE</div>
-
-          <div className="hw-box ss-result">
-            <div className="mono ss-label">HOME COMFORT SCORE</div>
-            <div className="ss-result-num">82<span>/100</span></div>
-            <div className="ss-result-desc">Strong morning light, minimal shadow before 3pm, good cross-ventilation for this facing.</div>
-          </div>
-        </div>
-
-        {/* AI Summary pane, side by side with LiveScore — condensed version
-            of the real AI Solar Report pane (sun/shadow narration + report
-            CTA), not full report data. */}
-        <div className="ss-ai-col">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2l2.2 6.8L21 11l-6.8 2.2L12 20l-2.2-6.8L3 11l6.8-2.2z" /></svg>
-          <div className="mono ss-ai-col-tag">AI SOLAR</div>
-          <div className="ss-ai-col-heading">AI Summary</div>
-          <p className="ss-ai-col-desc">Real sun &amp; shadow data for this unit, narrated in plain English.</p>
-          <div className="ss-ai-col-cta">Generate Report</div>
-          <div className="mono ss-ai-col-meta">~30 SEC · FREE</div>
-        </div>
+          );
+        })}
       </div>
     </div>
   );

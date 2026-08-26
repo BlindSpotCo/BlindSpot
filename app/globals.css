@@ -1207,104 +1207,46 @@
   }
 
   /* ---------- SUNSCOUT-STYLE PANEL (step 2) ----------
-     Matches the real LiveScore modal: cream card (close to the page's own
-     paper tone already), a hard orange accent distinct from the site's
-     terracotta, a dark slider track with only the handle picked out in
-     orange, and a solid pill CTA. */
-  /* Map strip replaces the card's own accent bar at the top — no need for
-     both. */
+     Was matched to the real LiveScore MODAL's trigger point (a decorative
+     map + a slider/facing-grid input that looked interactive but wasn't)
+     rather than to what that modal actually shows once you tap "Get My
+     Home Comfort Score": a composite-score box and a list of weighted
+     factor cards (LiveScoreCard.js -- SunScout's own component, ported
+     with its own hardcoded colours/fonts rather than the site's --brand
+     tokens, which is why SS_ORG/SS_INK/etc are duplicated as JS consts in
+     HowItWorks.js instead of reading from globals.css custom properties).
+     Below reuses that same real accent orange (#E07B00, distinct from the
+     site's --sun terracotta) and the composite/row shapes directly -- see
+     UnitPanel's comment in HowItWorks.js for what's kept vs dropped. */
   .ss-panel::before{ display:none; }
   .ss-tag{ color:#E07B00; font-size:13.5px; font-weight:700; letter-spacing:.12em; margin-bottom:12px }
   .ss-heading{ font-size:21px; font-weight:700; color:#16130E; line-height:1.28; margin-bottom:22px }
-  .ss-field{ margin-bottom:22px }
-  .ss-label{ font-size:13px; font-weight:600; letter-spacing:.1em; color:#736c5a; margin-bottom:11px }
-  .ss-slider-row{ display:flex; align-items:center; gap:12px }
-  .ss-slider-track{ flex:1; height:6px; border-radius:4px; background:#211d16; position:relative }
-  .ss-slider-handle{
-    position:absolute; top:50%; width:16px; height:16px; border-radius:50%; background:#E07B00;
-    border:3px solid var(--paper); transform:translate(-50%,-50%); box-shadow:0 2px 6px rgba(0,0,0,.35);
-  }
-  .ss-value-chip{
-    background:#211d16; color:#fff; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13.5px;
-    padding:6px 13px; border-radius:6px; min-width:14px; text-align:center;
-  }
-  .ss-facing-grid{ display:grid; grid-template-columns:repeat(4,1fr); border:1px solid rgba(28,24,18,0.16); border-radius:4px; overflow:hidden }
-  .ss-facing-cell{
-    padding:10px 4px; font-size:12.5px; font-weight:700; text-align:center; color:#16130E;
-    background:#fff; border:1px solid rgba(28,24,18,0.1); margin:-0.5px; cursor:default;
-  }
-  .ss-facing-cell.active{ background:#E07B00; color:#fff; border-color:#E07B00 }
-  .ss-cta{
-    width:100%; box-sizing:border-box; text-align:center; background:#E07B00; color:#fff; border:none;
-    border-radius:24px; padding:13px; font-weight:700; font-size:14.5px; letter-spacing:.02em;
-    margin:24px 0 18px;
-  }
-  .ss-result{ border:1px solid rgba(28,24,18,0.14); border-left:3px solid #E07B00; border-radius:6px; padding:14px 16px }
-  .ss-result-num{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:30px; color:#E07B00 }
-  .ss-result-num span{ font-size:13.5px; color:#736c5a; margin-left:4px; font-family:'Inter',sans-serif; font-weight:500 }
-  .ss-result-desc{ font-size:14px; color:#544f42; line-height:1.6; margin-top:6px }
 
-  /* ---------- SUNSCOUT MAP STRIP (step 2) ----------
-     Lives INSIDE the card (bled to its top edge, same border-radius) so
-     the card's overall footprint matches the AsliVastu card exactly — no
-     outer wrapper adding extra width/height around it. A real small road
-     grid with building blocks sitting between the streets, the unit's own
-     building picked out in orange with a pin, and a dotted sun-path arc. */
-  .ss-map-strip{
-    position:relative; height:132px; margin:-24px -24px 20px; overflow:hidden;
-    border-radius:10px 10px 0 0;
-    background:radial-gradient(130% 150% at 24% 0%, #40311f 0%, #1b1509 74%);
-  }
-  .ss-map-toolbar{ position:absolute; top:10px; left:12px; z-index:1; display:flex; gap:6px }
-  .ss-map-chip{
-    font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600; letter-spacing:.08em;
-    text-transform:uppercase; color:rgba(255,255,255,0.5); background:rgba(255,255,255,0.07);
-    border:1px solid rgba(255,255,255,0.14); padding:4px 8px; border-radius:4px;
-  }
-  .ss-map-chip.active{ color:#171209; background:#E07B00; border-color:#E07B00 }
-  .ss-map-svg{ position:absolute; inset:0; width:100%; height:100% }
-  .ss-map-road{ stroke:rgba(255,255,255,0.2); stroke-width:2 }
-  .ss-map-bldg{ fill:rgba(255,255,255,0.14); stroke:rgba(255,255,255,0.26); stroke-width:1 }
-  .ss-map-bldg-target{ fill:rgba(224,123,0,0.4); stroke:#E07B00; stroke-width:1.5 }
-  .ss-map-sunpath{ fill:none; stroke:rgba(233,169,74,0.7); stroke-width:1.5; stroke-dasharray:2 6; stroke-linecap:round }
-  /* Illustration fill, not text/UI -- this is exactly what --ss-sun exists
-     for (see the token comments in :root): a small sun glyph inside the
-     map strip doesn't need to hit text contrast ratios the way an icon
-     paired with a label does. */
-  .ss-map-sun{ fill:var(--ss-sun) }
-  .ss-map-pin{ fill:#E07B00 }
-  .ss-map-pin-hole{ fill:#1b1509 }
-  .ss-map-ping{ fill:none; stroke:#E07B00; stroke-width:1.5; opacity:.55; animation:ssMapPing 2.6s ease-out infinite }
-  @keyframes ssMapPing{ 0%{ transform:scale(.35); opacity:.7 } 100%{ transform:scale(1.9); opacity:0 } }
-  .ss-map-time{
-    position:absolute; right:12px; bottom:9px; z-index:1; font-family:'IBM Plex Mono',monospace; font-size:11px;
-    color:rgba(255,255,255,0.45); letter-spacing:.05em;
-  }
-  @media (prefers-reduced-motion: reduce){ .ss-map-ping{ animation:none !important } }
+  .hw-live-intro{ font-size:13px; color:#544f42; line-height:1.55; margin:0 0 14px }
+  .hw-live-unit-readout{ font-size:11.5px; font-weight:600; letter-spacing:.08em; color:#736c5a; margin-bottom:16px }
 
-  /* AI Summary sits side by side with LiveScore, like the real product's
-     LiveScore / AI Solar Report split — not a separate floating note or a
-     tab you have to click away to. */
-  /* No mobile stacking breakpoint needed here (there used to be one, plus
-     a whole font-rescale pass to go with it) -- this card is hidden
-     entirely below 901px now (see .howworks-panel-sticky above), so the
-     fixed 172px column is only ever seen at desktop widths where it was
-     always fine. */
-  .ss-body{ display:grid; grid-template-columns:1fr 172px; column-gap:20px }
-  .ss-ai-col{
-    padding:2px 0 0 20px; border-left:1px dashed rgba(28,24,18,0.18);
-    display:flex; flex-direction:column; align-items:flex-start;
+  /* Same shape as the real composite box: 1px border, 4px accent bar in
+     the grade colour, big number + grade pill. */
+  .hw-live-score-box{
+    display:flex; align-items:center; justify-content:space-between;
+    border:1px solid rgba(26,10,0,0.12); border-left:4px solid #E07B00;
+    padding:16px 16px; margin-bottom:14px;
   }
-  .ss-ai-col svg{ color:#E07B00; margin-bottom:10px }
-  .ss-ai-col-tag{ color:#E07B00; font-size:12px; font-weight:700; letter-spacing:.1em; margin-bottom:6px }
-  .ss-ai-col-heading{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:16px; color:#16130E; line-height:1.25 }
-  .ss-ai-col-desc{ font-size:13px; color:#736c5a; line-height:1.55; margin:10px 0 16px }
-  .ss-ai-col-cta{
-    width:100%; box-sizing:border-box; text-align:center; background:transparent; color:#E07B00;
-    border:1.5px solid #E07B00; border-radius:20px; padding:9px 6px; font-weight:700; font-size:13px;
-    letter-spacing:.02em; margin-bottom:9px;
-  }
-  .ss-ai-col-meta{ width:100%; text-align:center; font-size:11.5px; color:#9a9182; letter-spacing:.06em }
+  .hw-live-score-label{ font-size:10px; font-weight:500; letter-spacing:.14em; color:#8A8A8A; margin-bottom:5px }
+  .hw-live-score-number{ font-family:'Space Grotesk',sans-serif; font-size:38px; font-weight:800; color:#1A0A00; line-height:1 }
+  .hw-live-score-number span{ font-size:15px; color:#8A8A8A; font-weight:700 }
+  .hw-live-grade-pill{ border:1px solid; font-size:11px; font-weight:500; padding:6px 12px; text-transform:uppercase; letter-spacing:.1em }
+
+  /* Same shape as the real factor cards (label + weight% / bar / score)
+     minus their one-sentence summary and monospace BASIS line -- see
+     UnitPanel's comment in HowItWorks.js for why those two are dropped. */
+  .hw-live-row{ border:1px solid rgba(26,10,0,0.12); border-top:none; padding:10px 16px }
+  .hw-live-row:first-child{ border-top:1px solid rgba(26,10,0,0.12) }
+  .hw-live-row-top{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:6px }
+  .hw-live-row-label{ font-weight:800; font-size:13px; color:#1A0A00; text-transform:uppercase; letter-spacing:.02em }
+  .hw-live-row-weight{ font-weight:400; font-size:11px; color:#8A8A8A; margin-left:9px; text-transform:none; letter-spacing:0 }
+  .hw-live-row-score{ font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:17px }
+  .hw-live-row-track{ background:#EFEBE3; height:4px }
 
   /* ---------- WHY LIST ---------- */
   .why-list{border-top:1px solid var(--line-soft)}
