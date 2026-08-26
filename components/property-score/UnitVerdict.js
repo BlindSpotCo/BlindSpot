@@ -261,7 +261,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                 </div>
               )}
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 14 }}>
+              <div className="uv-score-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 14 }}>
                 <div>
                   <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', letterSpacing: '.12em', marginBottom: 6 }}>
                     {combined.area ? 'BLINDSPOT COMBINED SCORE' : 'HOME COMFORT SCORE'}

@@ -1790,10 +1790,20 @@
    Desktop is completely unaffected: none of these classNames have a
    non-mobile rule anywhere else in this file. */
 @media (max-width:640px){
+  /* No horizontal score layouts on phone: every "big number next to a
+     badge/grade" row (the combined-verdict header, the SunScout live-score
+     box, the AsliVastu composite score row) switches from a side-by-side
+     flex row to a stacked column, and the AREA/UNIT sub-score pair drops
+     from 2 columns to 1. Score number stays first, badge/grade follows
+     underneath -- never side-by-side on a phone-width screen. */
+  .uv-score-header{ flex-direction:column !important; align-items:flex-start !important; }
+  .ls-score-box{ flex-direction:column !important; align-items:flex-start !important; gap:14px; }
+  .avsheet-scorerow{ flex-direction:column !important; align-items:flex-start !important; gap:2px !important; }
+  .uv-score-grid{ grid-template-columns:1fr !important; gap:10px !important; }
+
   .uv-combined-card{ padding:20px 18px !important; }
   .uv-score-number{ font-size:32px !important; }
   .uv-verdict-badge{ font-size:13.5px !important; padding:6px 10px !important; }
-  .uv-score-grid{ gap:10px !important; }
   .uv-score-box{ padding:12px 14px !important; }
   .uv-score-box-number{ font-size:17px !important; }
 
