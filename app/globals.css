@@ -827,7 +827,21 @@
      stacked on the right. Each block gets tall min-height so there's real
      scroll distance to trigger against, and dims when it's not the active
      step — the sticky panel swaps in sync via JS (see HowItWorks.js). */
-  .howworks-scroll{display:grid; grid-template-columns:1.05fr 1fr; gap:48px; align-items:start; position:relative}
+  /* Panel column deliberately gets most of the width (not an even-ish
+     1.05fr/1fr split) -- the area panel renders AVAreaCard.js's real,
+     fixed-1056px-wide sheet and scales it down with a CSS transform to
+     fit whatever width this column actually has (see ScaledAvSheet in
+     HowItWorks.js). At the old 1.05fr/1fr split the panel column only got
+     ~497px, scaling the sheet down to ~0.47x -- report text at roughly
+     half its real size, and a scaled height of ~440px sitting inside the
+     680px-tall shared panel box (see .howworks-panel below), leaving a
+     ~190px blank gap under the card. Skewing the split toward the panel
+     gets it to ~715-720px, closer to a 0.68x scale -- close to filling
+     the 680px box with real content instead of blank space, and closer
+     to the sheet's own natural text size. The steps column narrows to
+     compensate, which is fine: it only ever holds a heading, one
+     paragraph and a short bullet list. */
+  .howworks-scroll{display:grid; grid-template-columns:1fr 0.42fr; gap:48px; align-items:start; position:relative}
 
   @media (max-width:900px){
     .howworks-scroll{grid-template-columns:1fr; gap:0}
