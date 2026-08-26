@@ -1020,61 +1020,41 @@
   }
 
   /* ---------- NEIGHBOURHOOD-SCORE INTRODUCTION PANEL (step 1) ----------
-     Deliberately NOT the real property-score card (AVAreaCard.js) reused
-     or reshaped -- this panel used to render that card's exact .avsheet-*
-     markup scaled down with a CSS transform to fit here, which produced
-     small/blurry-reading numbers and dragged along per-dimension "data
-     source" + "explain" copy that only earns its place in the full report.
-     This is its own lighter design instead: same visual language as its
-     Unit/Verdict siblings (mono eyebrow tag, .hw-box pop-in cells) rather
-     than the report's dark BPF blueprint-frame boxes, built natively at
-     whatever width this column actually has. --av (wine) remains the
-     legitimate area-engine accent, used for the panel's top bar. */
+     Same visual system as the real property-score card (AVAreaCard.js) --
+     BPF blueprint-frame boxes with "+" corner marks, the same
+     Bricolage Grotesque hero-score type, the same dashed-border dimension
+     rows -- reusing AVAreaCard.js's own .avsheet-label/-name/-score/
+     -grade/-verdict-word/-verdict-why/-row-label/-track/-row-score classes
+     directly (see AreaPanel's comment in HowItWorks.js) so this is
+     pixel-identical to the real card in font/colour/proportion, not a
+     different design that merely nods at it. Only two things differ from
+     the real card: it renders natively at whatever width this panel
+     column actually has instead of a fixed-1056px sheet + transform:
+     scale(), via the .hw-area-* structural classes below, and its hero
+     is 2 boxes (identity+score, verdict) instead of 3 -- the identity and
+     composite-index boxes merged into one now that their meta/cap/note
+     sub-lines are gone, so there's no third box's worth of content left
+     to justify a third box. --av (wine) remains the legitimate
+     area-engine accent, used for the panel's top bar. */
   .av-panel{
     background:var(--paper); border-color:var(--line);
     box-shadow:0 24px 48px -30px rgba(28,24,18,0.18), 0 1px 0 rgba(28,24,18,0.04);
   }
   .av-panel::before{ background:var(--av); }
 
-  .hw-area-tag{ font-size:12px; font-weight:600; letter-spacing:.12em; color:var(--av); margin-bottom:14px }
+  .hw-area-hero{ display:grid; grid-template-columns:1.15fr 1fr; gap:20px; margin-bottom:24px }
+  .hw-area-hero > *{ min-height:180px }
 
-  .hw-area-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:16px }
-  .hw-area-loc{ font-size:26px; font-weight:700; line-height:1.1; color:var(--text); text-transform:uppercase }
-  .hw-area-pin{ font-size:11.5px; color:var(--text-dim); margin-top:5px }
-  .hw-area-scorewrap{ display:flex; align-items:flex-end; gap:6px; flex-shrink:0 }
-  .hw-area-score{ font-family:'Bricolage Grotesque',sans-serif; font-size:46px; font-weight:700; line-height:.85; color:var(--text) }
-  .hw-area-grade{ font-family:'Bricolage Grotesque',sans-serif; font-size:20px; font-weight:700; color:var(--text-mute); margin-bottom:5px }
-
-  /* Verdict word + one-line "why" only -- no separate label/eyebrow row,
-     no methodology footnote. That's the whole point of a teaser verdict:
-     the colour and the word already do most of the work. */
-  .hw-area-verdict{
-    display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
-    padding:14px 18px; border-radius:6px; margin-bottom:22px;
-  }
-  .hw-area-verdict-word{ font-family:'Bricolage Grotesque',sans-serif; font-size:19px; font-weight:700; text-transform:uppercase; letter-spacing:-0.01em }
-  .hw-area-verdict-why{ font-size:13px; line-height:1.4 }
-
-  .hw-area-subhead{ font-size:11.5px; font-weight:600; letter-spacing:.1em; color:var(--text-dim); text-transform:uppercase; margin-bottom:10px }
-
-  /* 2-column grid of score-only cells -- label + number + a bare bar, no
-     source, no explain sentence, no %-weight. That detail is real and
-     correct (it's the same SAMPLE_DIMENSIONS data the full report uses),
-     it just doesn't belong in a first-glance teaser. */
-  .hw-area-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; margin-bottom:24px }
-  .hw-area-cell{ border:1px solid var(--line); border-radius:6px; padding:10px 12px; background:var(--paper) }
-  .hw-area-cell-top{ display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin-bottom:7px }
-  .hw-area-cell-label{ font-size:12.5px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
-  .hw-area-cell-score{ font-family:'Bricolage Grotesque',sans-serif; font-size:16px; font-weight:700; flex-shrink:0 }
-  .hw-area-cell-track{ height:5px; border-radius:3px; background:var(--bg-2); position:relative; overflow:hidden }
-
-  .hw-area-cta{
-    display:inline-block; background:var(--slate); color:#fff; border:1px solid var(--slate);
-    border-radius:var(--radius); padding:12px 22px; font-size:14px; font-weight:700; text-decoration:none;
-  }
-
-  @media (max-width:520px){
-    .hw-area-grid{ grid-template-columns:1fr }
+  /* Same row shape as the real card's .avsheet-row (label / bar / score,
+     dashed top border), just 3 columns instead of 4 -- no 52px weight
+     column, and no explain-paragraph row underneath the bar, since this
+     card drops both. Reuses .avsheet-row-label/.avsheet-track/
+     .avsheet-row-score directly for the same type/colour as the real
+     rows. */
+  .hw-area-row{
+    display:grid; grid-template-columns:180px 1fr 64px; gap:14px;
+    align-items:center; padding:11px 0;
+    border-top:1px dashed color-mix(in srgb, var(--slate) 35%, transparent);
   }
 
   /* ---------- SHARED AREA SPEC SHEET ----------
