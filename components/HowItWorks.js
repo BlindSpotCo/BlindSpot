@@ -101,17 +101,18 @@ const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East
 // with "+" corner marks, the same Bricolage Grotesque hero-score type, the
 // same dashed-border dimension rows -- reusing AVAreaCard.js's own
 // .avsheet-label/-name/-score/-grade/-verdict-word/-row-label/-track/
-// -row-score classes directly, so the fonts/colours/proportions are
-// pixel-identical to the real card. What's different is only the layout
-// shape (this renders natively at the panel's real width instead of a
-// fixed 1056px sheet + scale, via its own `.hw-area-*` structural classes)
-// and the content density: each dimension row keeps its bold label, its
-// bar and its big score number -- the three things that read at a glance
-// -- and drops only the two things that don't (the one-line data-source
-// caption and the one-sentence "explain" paragraph), along with the
-// "8/8 dimensions scored" methodology line. Those stay real and correct
-// in SAMPLE_DIMENSIONS, they just don't render here -- the full report
-// (one tap away via the CTA below) is where that detail belongs.
+// -row-score/-row-weight classes directly, so the fonts/colours match the
+// real card exactly (sizes are scaled down via inline style where a box is
+// meaningfully narrower here than on the real 1056px-wide sheet -- see the
+// per-element comments below). The 3-box hero (Sheet identity / Composite
+// Index / Verdict) and each row's %-weight are both back, matching the
+// real card's structure -- an earlier pass had merged the first two boxes
+// and dropped weight, which read as missing real information rather than
+// just a lighter version of it. Two things still don't render: the
+// per-row data-source caption and one-sentence "explain" paragraph. Those
+// stay real and correct in SAMPLE_DIMENSIONS, they just don't render here
+// -- the full report (one tap away via the CTA below) is where that
+// belongs.
 function AreaPanel() {
   const rec = SAMPLE_RECORD;
   const verdict = verdictFor(rec.nqi_composite);
@@ -121,35 +122,52 @@ function AreaPanel() {
   return (
     <div className="howworks-panel av-panel">
       <div className="hw-area">
-        <div className="hw-area-hero">
-          <BPF dark className="avsheet-box">
+        {/* 3 equal boxes, like the real card's .avsheet-hero -- but this
+            panel's actual width is well under the real sheet's 1056px, so
+            each box only gets ~1/3 of that. Rather than let the real
+            card's 84px score / 40px name / 24px box padding cramp or
+            overflow at this width, both boxes' type and padding are
+            explicitly scaled down here via inline style (same font family/
+            weight/colour as .avsheet-score/-name -- only the size differs,
+            same idea as the real card's own max-width:640px mobile
+            override, just tuned for this box's width instead of the
+            viewport's). */}
+        <div className="hw-area-hero3">
+          <BPF dark className="avsheet-box" style={{ padding: '16px 14px' }}>
             <p className="avsheet-label" style={{ color: 'rgba(255,253,248,0.65)' }}>
               Sheet · PIN {rec.pin_code}
             </p>
-            <h3 className="avsheet-name">{rec.name}</h3>
-            <div className="avsheet-scorerow" style={{ marginTop: 14 }}>
-              <span className="avsheet-score">{rec.nqi_composite}</span>
-              <span className="avsheet-grade">{rec.grade}</span>
+            <h3 className="avsheet-name" style={{ fontSize: 22, marginTop: 8 }}>{rec.name}</h3>
+          </BPF>
+
+          <BPF dark className="avsheet-box" style={{ padding: '16px 14px' }}>
+            <p className="avsheet-label" style={{ color: 'rgba(255,253,248,0.65)' }}>Composite index</p>
+            <div className="avsheet-scorerow" style={{ marginTop: 10 }}>
+              <span className="avsheet-score" style={{ fontSize: 42 }}>{rec.nqi_composite}</span>
+              <span className="avsheet-grade" style={{ fontSize: 18 }}>{rec.grade}</span>
             </div>
           </BPF>
 
-          <div className="avsheet-verdict" style={{ background: verdictCol, color: verdictText }}>
+          <div className="avsheet-verdict" style={{ background: verdictCol, color: verdictText, padding: '16px 14px' }}>
             <p className="avsheet-label" style={{ color: 'inherit', opacity: .75 }}>Verdict</p>
-            <div className="avsheet-verdict-word">{verdict.label}</div>
+            <div className="avsheet-verdict-word" style={{ fontSize: 18, marginTop: 8 }}>{verdict.label}</div>
             <p className="avsheet-verdict-why" style={{ opacity: .92 }}>{verdict.why}</p>
           </div>
         </div>
 
         <BPF className="avsheet-readout">
-          <p className="avsheet-label avsheet-readout-label">Dimension readout</p>
+          <p className="avsheet-label avsheet-readout-label">
+            Dimension readout · weight = exact contribution to the {rec.nqi_composite}
+          </p>
           {SAMPLE_DIMENSIONS.map((d) => {
             const weak = d.score < 50;
             const col = scoreColor(d.score);
             return (
               <div key={d.label} className="hw-area-row">
-                <div className="avsheet-row-label">{d.label}</div>
+                <div className="avsheet-row-label" style={{ fontSize: 15 }}>{d.label}</div>
+                <div className="avsheet-row-weight">{d.weight}%</div>
                 <div>
-                  <div className="avsheet-track">
+                  <div className="avsheet-track" style={{ height: 6 }}>
                     <div style={{
                       position: 'absolute', inset: 0, width: `${d.score}%`,
                       background: weak ? undefined : col,
@@ -157,7 +175,7 @@ function AreaPanel() {
                     }} />
                   </div>
                 </div>
-                <div className="avsheet-row-score" style={{ color: col }}>{d.score}</div>
+                <div className="avsheet-row-score" style={{ color: col, fontSize: 20 }}>{d.score}</div>
               </div>
             );
           })}
