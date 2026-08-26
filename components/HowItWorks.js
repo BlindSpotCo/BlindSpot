@@ -316,12 +316,14 @@ function VerdictPanel() {
             80<span style={{ fontSize: 18, color: 'var(--text-mute)' }}>/100</span>
           </div>
         </div>
-        {/* Solid --brand fill, not the old sun→slate gradient -- matches the
-            .hsc-badge cleanup in globals.css. This one was hardcoded as an
-            inline style here rather than sharing that class, which is why
-            it got missed the first time. */}
+        {/* Real product badge text is one of four verdict labels, each with
+            its own quadrant colour (see UnitVerdict.js's VERDICT_COLOR) --
+            "Recommended" was a made-up label that doesn't exist anywhere in
+            the real product. Two strong scores (78/82) is what the real
+            system calls "Prime Pick", coloured var(--brand) -- which this
+            already happened to use, so only the label text was wrong. */}
         <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 18, color: '#fff', background: 'var(--brand)', padding: '8px 16px', borderRadius: 3 }}>
-          Recommended
+          Prime Pick
         </div>
       </div>
 
@@ -329,15 +331,32 @@ function VerdictPanel() {
         Solid area score with a genuinely bright unit — good light most of the year, no major shadow issues at this floor.
       </p>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
         <div className="hw-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--slate)', borderRadius: 3, padding: '14px 16px' }}>
           <div className="mono" style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-mute)', marginBottom: 6 }}>AREA — KORAMANGALA — 50%</div>
           <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 22, color: 'var(--slate)' }}>78</div>
         </div>
         <div className="hw-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 3, padding: '14px 16px' }}>
-          <div className="mono" style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-mute)', marginBottom: 6 }}>UNIT — FL 7, SE — 50%</div>
+          <div className="mono" style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-mute)', marginBottom: 6 }}>UNIT (HOME COMFORT) — FL 7, SE — 50%</div>
           <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 22, color: 'var(--sun)' }}>82</div>
         </div>
+      </div>
+
+      {/* The real card shows exactly how the two numbers above become the
+          one at the top -- (area × weight) + (unit × weight) -- plus a
+          couple of lines on what each side of that number actually is and
+          isn't. Both were missing here entirely, which is also why this
+          card sat on far more blank space than the Area/Unit panels next
+          to it: those two are packed to this same 680px budget, this one
+          wasn't showing enough of the real card to fill it honestly. */}
+      <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', background: 'var(--bg)', border: '1px solid var(--line)', borderRadius: 3, padding: '12px 16px', marginBottom: 16 }}>
+        (78 × 50%) + (82 × 50%) = 80
+      </div>
+
+      <div style={{ fontSize: 12.5, color: 'var(--text-dim)', lineHeight: 1.8 }}>
+        <div>— Area score is the same for every unit in this pincode — only the unit score changes with floor/facing.</div>
+        <div>— View and Privacy are deterministic floor-based estimates, not live building lookups.</div>
+        <div>— Live wind data unavailable — Wind score fell back to a neutral baseline.</div>
       </div>
     </div>
   );
