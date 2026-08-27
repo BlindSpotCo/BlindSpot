@@ -104,6 +104,35 @@ Do NOT simply restate the ground-truth numbers one by one — that data is alrea
 Then make it personal and sell the area to different kinds of buyers, each grounded in the real numbers above (never invent a number that isn't in the ground truth). End the section with exactly 3 bullet lines, each starting with "- " and a buyer type, addressing a DIFFERENT type in each line from this set: families with school-age kids, young professionals/singles, and investors/renters. Each line should read like real advice, not a label — e.g. "- Families: the schools score of X and low crime tier make this a strong pick if school runs and safety matter most to you." / "- Young professionals: with Y for infrastructure/connectivity, this suits someone who prioritises commute and convenience over quiet." / "- Investors: price band is Z per sqft against a composite score of W, which reads as [undervalued for the fundamentals / priced in line with the area's strengths / a premium for the location] — say which, honestly, based on the actual numbers." Do not force a positive spin for a buyer type the area genuinely doesn't suit — say so plainly if that's the honest read.`
     : `1. SHADOW ANALYSIS BY SEASON & TIME`;
 
+  // Persona overlay. Appended AFTER the full section list so it wins on any
+  // conflict of emphasis, and resolves to '' when no persona is selected --
+  // the no-persona prompt is byte-for-byte what it was before personas
+  // existed, deliberately. The overlay never adds, removes or renumbers any
+  // of the sections above; it only re-slants them and appends ONE extra
+  // trailing section, which the generic `N. TITLE` parser in the PDF route
+  // picks up as bottom narrative without any change there.
+  const personaSectionNumber = hasNeighbourhood ? 6 : 5;
+  const ov = persona?.reportOverlay || null;
+  const personaOverlay = ov ? `
+
+READER OVERLAY — this applies on top of everything above and overrides it wherever the two pull in different directions.
+
+WHO THIS IS FOR: ${ov.readerLine}
+
+Re-slant the whole report for this reader. Keep every numbered section above exactly as specified — same titles, same numbers, same order, same formatting rules, same @N@ line format for the shadow section. What changes is emphasis, what leads each section, and which findings get a full paragraph versus one clause.
+
+GIVE MORE SPACE TO: ${ov.weightUp}
+GIVE LESS SPACE TO: ${ov.weightDown}
+
+Never announce the slant to the reader. Do not write "as a family buyer" or "for investors like you" or name this persona anywhere. The fit should be felt, not stated. Every re-slanted claim still has to trace to a figure in the ground truth — re-weighting emphasis is not permission to assert anything the data does not support.
+
+TONE FOR THIS READER: ${ov.toneNote}
+
+Then, after all the sections listed above, add exactly one more section:
+
+${personaSectionNumber}. ${ov.sectionTitle}
+${ov.sectionBody}` : '';
+
   const prompt = `You are a solar and neighbourhood intelligence analyst helping a home buyer in India, writing a single combined report for BlindSpot.
 
 Property: ${safeAddressInput} (${latN.toFixed(4)}°N, ${lonN.toFixed(4)}°E)
@@ -139,7 +168,7 @@ ${facingSectionNumber}. ${safeFacingInput.toUpperCase()}-FACING WINDOW ASSESSMEN
 Explain in full when the sun shines directly into a ${safeFacingInput}-facing window here across the year, why (walk through the azimuth/elevation reasoning in plain language), and whether this is a good or bad facing for this specific location and floor — with the reasoning spelled out, not just a verdict.${hasNeighbourhood ? '' : `
 
 4. HOME BUYER VERDICT
-A full, honest verdict, several sentences to a short paragraph: is the sunlight situation good, acceptable, or poor, and why specifically. What floor would you recommend as a minimum, and why. Any specific concerns visible in the shadow patterns across the screenshots. Do not just restate the overall feasibility label — explain what it means for someone actually living there.`}`;
+A full, honest verdict, several sentences to a short paragraph: is the sunlight situation good, acceptable, or poor, and why specifically. What floor would you recommend as a minimum, and why. Any specific concerns visible in the shadow patterns across the screenshots. Do not just restate the overall feasibility label — explain what it means for someone actually living there.`}${personaOverlay}`;
 
   if (!process.env.GEMINI_API_KEY) {
     return NextResponse.json(
