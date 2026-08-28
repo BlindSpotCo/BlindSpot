@@ -42,6 +42,11 @@ export default function AddressPicker({ onConfirmed }) {
   // hitting Search just overwrites this pin like normal, via lockInLocation.
   const [geoState, setGeoState] = useState('idle'); // idle | locating | granted | denied | unavailable
   const [autoLocated, setAutoLocated] = useState(false);
+  // Bumped only on search/suggestion/geolocate pins (via lockInLocation),
+  // never on drag/click (handleMove) -- tells AddressConfirmMap when to
+  // actually fly the viewport to a new spot vs. leave it where the user
+  // just placed it themselves.
+  const [recenterTick, setRecenterTick] = useState(0);
 
   // Nominatim's postcode tagging for India is genuinely unreliable at the
   // building level -- a named society can resolve to the right lat/lon but
@@ -184,6 +189,7 @@ export default function AddressPicker({ onConfirmed }) {
   const lockInLocation = (lat, lon) => {
     setPin({ lat, lon });
     setLocationConfirmed(false);
+    setRecenterTick(t => t + 1);
     resolveCoverage(lat, lon);
   };
 
@@ -330,7 +336,7 @@ export default function AddressPicker({ onConfirmed }) {
               : 'Drag the pin or click the map to fine-tune the exact building, then confirm.'}
           </div>
           <div style={{ height: 360, border: '1px solid var(--line)', borderRadius: 'var(--radius)', overflow: 'hidden', marginBottom: 16 }}>
-            <AddressConfirmMap lat={pin.lat} lon={pin.lon} onMove={handleMove} />
+            <AddressConfirmMap lat={pin.lat} lon={pin.lon} onMove={handleMove} recenterKey={recenterTick} />
           </div>
 
           {resolving && (

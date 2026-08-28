@@ -5,8 +5,8 @@
 // the SunScout 3D panel. Dynamically imported with ssr:false from
 // AddressPicker, since Leaflet needs `window`.
 
-import { useMemo, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { useMemo, useRef, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -30,7 +30,29 @@ function ClickToMove({ onMove }) {
   return null;
 }
 
-export default function AddressConfirmMap({ lat, lon, onMove }) {
+// MapContainer's `center`/`zoom` props are only read once, on mount --
+// react-leaflet does NOT pan the view just because those props change
+// later. So when a new search result comes in and this component gets a
+// new lat/lon, the Marker (which is controlled by `position`) jumps to
+// the right spot, but the map viewport itself never moves -- looking
+// exactly like "nothing happened" if the new pin is off-screen, or like a
+// silent no-op if it's nearby. This flies the view there explicitly.
+//
+// `recenterKey` is bumped by the parent only for search/suggestion/geolocate
+// results -- NOT for drag/click, which already put the view exactly where
+// the user wanted it and shouldn't be yanked away right after.
+function Recenter({ lat, lon, recenterKey }) {
+  const map = useMap();
+  const firstRun = useRef(true);
+  useEffect(() => {
+    if (firstRun.current) { firstRun.current = false; return; } // MapContainer's own `center` already handled this
+    map.flyTo([lat, lon], Math.max(map.getZoom(), 16), { duration: 0.6 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recenterKey]);
+  return null;
+}
+
+export default function AddressConfirmMap({ lat, lon, onMove, recenterKey }) {
   const markerRef = useRef(null);
   const center = useMemo(() => [lat, lon], [lat, lon]);
 
@@ -58,6 +80,7 @@ export default function AddressConfirmMap({ lat, lon, onMove }) {
         ref={markerRef}
       />
       <ClickToMove onMove={onMove} />
+      <Recenter lat={lat} lon={lon} recenterKey={recenterKey} />
     </MapContainer>
   );
 }
