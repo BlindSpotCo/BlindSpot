@@ -4,13 +4,23 @@
 // Separate from /api/sunscout/geocode (which stays single-result, used
 // elsewhere by SunScoutPanel) to avoid changing that response shape.
 //
-// Backed by Photon (photon.komoot.io), not Nominatim's /search. Nominatim's
-// search index is built for near-complete address strings -- it tokenizes
-// on whole words, so a half-typed word ("Indira" typed as "Indi") mostly
-// falls through to nothing until you finish it, which read as "only gives
-// me what I type fully." Photon is built on the same OSM data but indexes
-// with edge n-grams specifically for type-ahead, so partial words match
-// as you go. It's a free public API, no key required.
+// Backed by BOTH Photon (photon.komoot.io) and Nominatim, queried in
+// parallel and merged. Neither one alone is good enough on its own:
+//   - Nominatim's search index is built for near-complete address
+//     strings -- it tokenizes on whole words, so a half-typed word
+//     ("Indira" typed as "Indi") mostly falls through to nothing until
+//     you finish it. That's the "only gives me what I type fully" bug.
+//   - Photon indexes with edge n-grams specifically for type-ahead, so
+//     partial words DO match as you go -- but its free public demo
+//     server has noticeably thinner coverage of Indian addresses than
+//     Nominatim, especially named buildings/societies/apartment
+//     complexes rather than plain streets. Switching to it alone traded
+//     the "full word" bug for a coverage regression on "most places."
+// Running both catches what either one misses. Both are free, public,
+// no-key demo instances -- fine for a project at this stage, but not
+// meant for heavy production autocomplete traffic; if volume grows,
+// the standard fix is a paid provider (Google Places Autocomplete,
+// Mapbox, LocationIQ) that most apps use for exactly this reason.
 import { NextResponse } from 'next/server';
 import { PIN_META } from '@/lib/aslivastu/pinMeta';
 
@@ -86,6 +96,63 @@ function cacheSet(key, results) {
   cache.set(key, { at: Date.now(), results });
 }
 
+async function fetchPhoton(q, bias) {
+  try {
+    const r = await fetch(
+      `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=8&lang=en&lat=${bias.lat}&lon=${bias.lon}`,
+      { signal: AbortSignal.timeout(5000) }
+    );
+    if (!r.ok) {
+      console.error('[geocode-suggest] Photon non-OK status', r.status);
+      return [];
+    }
+    const data = await r.json();
+    const features = Array.isArray(data?.features) ? data.features : [];
+    return features
+      .filter(f => f?.geometry?.coordinates?.length === 2)
+      .map(f => {
+        const props = f.properties || {};
+        return {
+          lat: f.geometry.coordinates[1],
+          lon: f.geometry.coordinates[0],
+          displayName: buildLabel(props) || props.name || q,
+          postcode: props.postcode || null,
+          city: props.city || props.district || props.county || props.state || null,
+          countrycode: props.countrycode || null,
+        };
+      });
+  } catch (e) {
+    console.error('[geocode-suggest] Photon fetch threw', e?.message);
+    return [];
+  }
+}
+
+async function fetchNominatim(q) {
+  try {
+    const r = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&addressdetails=1&limit=6&countrycodes=in`,
+      { headers: { 'User-Agent': 'BlindSpot_NextJS/1.0 (+https://blindspotco.net)' }, signal: AbortSignal.timeout(5000) }
+    );
+    if (!r.ok) {
+      console.error('[geocode-suggest] Nominatim non-OK status', r.status);
+      return [];
+    }
+    const data = await r.json();
+    if (!Array.isArray(data)) return [];
+    return data.map(d => ({
+      lat: parseFloat(d.lat),
+      lon: parseFloat(d.lon),
+      displayName: d.display_name,
+      postcode: d.address?.postcode || null,
+      city: d.address?.city || d.address?.state_district || d.address?.state || null,
+      countrycode: 'IN', // already restricted via countrycodes=in
+    }));
+  } catch (e) {
+    console.error('[geocode-suggest] Nominatim fetch threw', e?.message);
+    return [];
+  }
+}
+
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const q = searchParams.get('q') || '';
@@ -108,41 +175,36 @@ export async function GET(req) {
   const cached = cacheGet(cacheKey);
   if (cached) return NextResponse.json({ results: cached });
 
+  // Run both providers in parallel -- this doubles the outbound requests
+  // per keystroke-pause, but the client-side debounce+cache already
+  // collapse most of that, and one slow/failed provider (allSettled)
+  // never blocks the other from returning.
+  const [photonOutcome, nominatimOutcome] = await Promise.allSettled([
+    fetchPhoton(q, bias),
+    fetchNominatim(q),
+  ]);
+  const photonResults = photonOutcome.status === 'fulfilled' ? photonOutcome.value : [];
+  const nominatimResults = nominatimOutcome.status === 'fulfilled' ? nominatimOutcome.value : [];
+
+  // Interleave rather than concatenate -- Photon first since it's the one
+  // that actually handles partial words, but a Nominatim-only match
+  // (a named society Photon's demo index doesn't have) still needs to
+  // show up near the top, not buried after 8 Photon results.
+  const merged = [];
+  const max = Math.max(photonResults.length, nominatimResults.length);
+  for (let i = 0; i < max; i++) {
+    if (photonResults[i]) merged.push(photonResults[i]);
+    if (nominatimResults[i]) merged.push(nominatimResults[i]);
+  }
+
   try {
-    const r = await fetch(
-      `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=8&lang=en&lat=${bias.lat}&lon=${bias.lon}`,
-      { signal: AbortSignal.timeout(5000) }
-    );
-    if (!r.ok) {
-      console.error('[geocode-suggest] Photon non-OK status', r.status, await r.text());
-      return NextResponse.json({ results: [] });
-    }
-    const data = await r.json();
-    const features = Array.isArray(data?.features) ? data.features : [];
-    if (!Array.isArray(data?.features)) {
-      console.error('[geocode-suggest] Photon OK but no features array', JSON.stringify(data).slice(0, 200));
-    }
-
-    const mapped = features
-      .filter(f => f?.geometry?.coordinates?.length === 2)
-      .map(f => {
-        const props = f.properties || {};
-        return {
-          lat: f.geometry.coordinates[1],
-          lon: f.geometry.coordinates[0],
-          displayName: buildLabel(props) || props.name || q,
-          postcode: props.postcode || null,
-          city: props.city || props.district || props.county || props.state || null,
-          countrycode: props.countrycode || null,
-        };
-      });
-
-    // De-dupe -- Photon sometimes returns the same real-world place twice
-    // (once as a node, once as the way/building it sits on), a few metres
-    // apart. Round to ~11m and keep the first (best-ranked) occurrence.
+    // De-dupe -- the same real-world place can come back from both
+    // providers, or twice from one of them (a node + the building outline
+    // it sits on), a few metres apart. Round to ~11m and keep the first
+    // (best-ranked) occurrence.
     const seen = new Set();
     const deduped = [];
-    for (const m of mapped) {
+    for (const m of merged) {
       const key = `${m.lat.toFixed(4)},${m.lon.toFixed(4)}`;
       if (seen.has(key)) continue;
       seen.add(key);
@@ -154,15 +216,16 @@ export async function GET(req) {
     // to the unfiltered set rather than filter it to nothing.
     const indiaOnly = deduped.filter(m => !m.countrycode || m.countrycode === 'IN');
     const results = (indiaOnly.length > 0 ? indiaOnly : deduped)
+      .slice(0, 8)
       .map(({ countrycode, ...rest }) => rest);
 
     // Stable sort (guaranteed by the JS spec since ES2019). Covered
     // pincodes still win first place, same as before. Within each group,
     // when we actually know where the user is (hasRealBias), the nearer
-    // result wins ties instead of leaving Photon's country-wide relevance
-    // score to decide -- that's the part that untangles same-named
-    // streets in different cities. With no real bias point yet (nothing
-    // typed/located so far), this falls back to Photon's own order.
+    // result wins ties instead of leaving relevance scoring to decide --
+    // that's the part that untangles same-named streets in different
+    // cities. With no real bias point yet, this falls back to the merged
+    // (Photon-first) order above.
     results.sort((a, b) => {
       const aCovered = a.postcode && COVERED_PREFIXES.has(a.postcode.slice(0, 3)) ? 0 : 1;
       const bCovered = b.postcode && COVERED_PREFIXES.has(b.postcode.slice(0, 3)) ? 0 : 1;
@@ -176,7 +239,7 @@ export async function GET(req) {
     cacheSet(cacheKey, results);
     return NextResponse.json({ results });
   } catch (e) {
-    console.error('[geocode-suggest] fetch threw', e?.message);
+    console.error('[geocode-suggest] merge/sort threw', e?.message);
     return NextResponse.json({ results: [] });
   }
 }
