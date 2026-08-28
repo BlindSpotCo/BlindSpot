@@ -36,6 +36,13 @@ export default function AddressPicker({ onConfirmed }) {
   const [matchedArea, setMatchedArea] = useState(null); // AsliVastu record, or null if uncovered
   const [matchCity, setMatchCity] = useState(null);
 
+  // Auto-locate on mount: drop the pin at the browser's reported location
+  // right away instead of making the user type/search first. The search
+  // bar above stays fully usable the whole time -- picking a suggestion or
+  // hitting Search just overwrites this pin like normal, via lockInLocation.
+  const [geoState, setGeoState] = useState('idle'); // idle | locating | granted | denied | unavailable
+  const [autoLocated, setAutoLocated] = useState(false);
+
   // Nominatim's postcode tagging for India is genuinely unreliable at the
   // building level -- a named society can resolve to the right lat/lon but
   // a stale/wrong district-level postcode (confirmed case: "ATS Advantage"
@@ -124,6 +131,26 @@ export default function AddressPicker({ onConfirmed }) {
     };
   }, [query]);
 
+  // Try the browser's geolocation the moment this step mounts, and drop
+  // the pin there automatically if the user allows it -- no need to type
+  // or search first. lockInLocation is defined further below in this
+  // component, but that's fine: this effect only runs (and only calls it)
+  // after the whole render has finished and lockInLocation is assigned.
+  useEffect(() => {
+    if (!('geolocation' in navigator)) { setGeoState('unavailable'); return; }
+    setGeoState('locating');
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setGeoState('granted');
+        setAutoLocated(true);
+        lockInLocation(pos.coords.latitude, pos.coords.longitude);
+      },
+      () => { setGeoState('denied'); },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Close the dropdown on outside click.
   useEffect(() => {
     const onClick = (e) => { if (wrapRef.current && !wrapRef.current.contains(e.target)) setSuggestOpen(false); };
@@ -165,6 +192,7 @@ export default function AddressPicker({ onConfirmed }) {
     setQuery(s.displayName);
     setSuggestOpen(false);
     setSuggestions([]);
+    setAutoLocated(false);
     lockInLocation(s.lat, s.lon);
   };
 
@@ -177,6 +205,7 @@ export default function AddressPicker({ onConfirmed }) {
       const res = await fetch(`/api/sunscout/geocode?q=${encodeURIComponent(query)}`);
       const data = await res.json();
       if (data?.result) {
+        setAutoLocated(false);
         lockInLocation(data.result[0], data.result[1]);
       } else {
         setSearchError("Couldn't find that address — try adding city/area, or a more specific landmark.");
@@ -205,10 +234,23 @@ export default function AddressPicker({ onConfirmed }) {
   };
 
   const handleMove = useCallback((lat, lon) => {
+    setAutoLocated(false);
     setPin({ lat, lon });
     setLocationConfirmed(false);
     resolveCoverage(lat, lon);
   }, [resolveCoverage]);
+
+  // Once the auto-located pin resolves to an address, echo it into the
+  // search box -- purely cosmetic (so the box isn't left blank next to a
+  // filled-in map), doesn't refire the suggestion fetch since it's a
+  // straight setQuery, not a keystroke.
+  useEffect(() => {
+    if (autoLocated && resolved?.displayName && !query) {
+      suppressNextFetch.current = true;
+      setQuery(resolved.displayName);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoLocated, resolved]);
 
   const confirmLocation = () => setLocationConfirmed(true);
 
@@ -271,7 +313,9 @@ export default function AddressPicker({ onConfirmed }) {
         </button>
       </div>
       <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 10 }}>
-        Pick a suggestion as you type, or press Search / Enter for the best match.
+        {geoState === 'locating' && !pin
+          ? 'Locating you… the map will open at your current spot — search above any time to change it.'
+          : 'Pick a suggestion as you type, or press Search / Enter for the best match.'}
       </div>
       {searchError && <div style={{ color: '#f87171', fontSize: 13, marginBottom: 12 }}>{searchError}</div>}
 
@@ -281,7 +325,9 @@ export default function AddressPicker({ onConfirmed }) {
             CONFIRM THE EXACT PIN
           </div>
           <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 10 }}>
-            Drag the pin or click the map to fine-tune the exact building, then confirm.
+            {autoLocated
+              ? "This is your current location — drag the pin, click the map, or search above if it's not right, then confirm."
+              : 'Drag the pin or click the map to fine-tune the exact building, then confirm.'}
           </div>
           <div style={{ height: 360, border: '1px solid var(--line)', borderRadius: 'var(--radius)', overflow: 'hidden', marginBottom: 16 }}>
             <AddressConfirmMap lat={pin.lat} lon={pin.lon} onMove={handleMove} />
