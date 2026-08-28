@@ -14,6 +14,27 @@ import AVAreaCard from './AVAreaCard';
 
 const AddressConfirmMap = dynamic(() => import('./AddressConfirmMap'), { ssr: false });
 
+// Bolds the part of a suggestion's label that matches what was actually
+// typed, so scanning a list of 8 similar-looking addresses is faster --
+// the eye goes straight to why each one matched instead of re-reading
+// the whole line. Matches case-insensitively on the whole typed string
+// (not word-by-word); if it doesn't appear as a contiguous substring
+// (Photon can match on reordered/abbreviated tokens) it just renders
+// plain, never a crash or a mangled label.
+function highlightMatch(text, query) {
+  const q = query.trim();
+  if (!q) return text;
+  const idx = text.toLowerCase().indexOf(q.toLowerCase());
+  if (idx === -1) return text;
+  return (
+    <>
+      {text.slice(0, idx)}
+      <strong style={{ color: 'var(--text)' }}>{text.slice(idx, idx + q.length)}</strong>
+      {text.slice(idx + q.length)}
+    </>
+  );
+}
+
 export default function AddressPicker({ onConfirmed }) {
   const [query, setQuery] = useState('');
   const [searching, setSearching] = useState(false);
@@ -28,8 +49,15 @@ export default function AddressPicker({ onConfirmed }) {
   const abortRef = useRef(null); // cancels the previous keystroke's in-flight fetch
   const suppressNextFetch = useRef(false); // don't re-suggest right after picking one
   const wrapRef = useRef(null);
+  // Caches suggestion responses per (query + rough bias location) so
+  // retyping something you already typed a moment ago (a very normal
+  // part of typing -- backspace, correct a letter, retype) shows results
+  // instantly instead of refetching. Cleared implicitly on unmount since
+  // it's just a ref.
+  const suggestCacheRef = useRef(new Map());
 
   const [pin, setPin] = useState(null); // { lat, lon }
+  const pinRef = useRef(null); // mirrors `pin`, read inside the suggestion-fetch effect so bias location is always current without retriggering that effect on every pin change
   const [locationConfirmed, setLocationConfirmed] = useState(false);
   const [resolving, setResolving] = useState(false);
   const [resolved, setResolved] = useState(null); // { postcode, displayName, locality, city }
@@ -87,6 +115,8 @@ export default function AddressPicker({ onConfirmed }) {
       .catch(() => {}); // coverage check is best-effort; search still works without it
   }, []);
 
+  useEffect(() => { pinRef.current = pin; }, [pin]);
+
   // Debounced live suggestions as the user types.
   //
   // The debounce alone only stops a NEW timer from firing while you keep
@@ -111,13 +141,34 @@ export default function AddressPicker({ onConfirmed }) {
       return;
     }
     setSuggestLoading(true);
+    // Bias suggestions toward wherever the map is already sitting (current
+    // pin) instead of a fixed point -- this is what actually disambiguates
+    // a street name that exists in multiple covered cities.
+    const biasLat = pinRef.current?.lat;
+    const biasLon = pinRef.current?.lon;
+    const cacheKey = `${query.trim().toLowerCase()}|${biasLat ? `${biasLat.toFixed(2)},${biasLon.toFixed(2)}` : ''}`;
+    const cached = suggestCacheRef.current.get(cacheKey);
+    if (cached) {
+      setSuggestions(cached);
+      setSuggestOpen(true);
+      setHighlightIndex(-1);
+      setSuggestLoading(false);
+      return;
+    }
     debounceRef.current = setTimeout(async () => {
       const controller = new AbortController();
       abortRef.current = controller;
       try {
-        const res = await fetch(`/api/sunscout/geocode-suggest?q=${encodeURIComponent(query)}`, { signal: controller.signal });
+        const biasQS = biasLat && biasLon ? `&lat=${biasLat}&lon=${biasLon}` : '';
+        const res = await fetch(`/api/sunscout/geocode-suggest?q=${encodeURIComponent(query)}${biasQS}`, { signal: controller.signal });
         const data = await res.json();
-        setSuggestions(data?.results || []);
+        const results = data?.results || [];
+        // Small LRU-ish cap so this can't grow unbounded in a long session.
+        if (suggestCacheRef.current.size >= 100) {
+          suggestCacheRef.current.delete(suggestCacheRef.current.keys().next().value);
+        }
+        suggestCacheRef.current.set(cacheKey, results);
+        setSuggestions(results);
         setSuggestOpen(true);
         setHighlightIndex(-1);
         setSuggestLoading(false);
@@ -302,7 +353,7 @@ export default function AddressPicker({ onConfirmed }) {
                     border: 'none', borderBottom: i < suggestions.length - 1 ? '1px solid var(--line-soft)' : 'none',
                     padding: '10px 14px', cursor: 'pointer', fontSize: 13.5, color: 'var(--text)', lineHeight: 1.4,
                   }}>
-                  {s.displayName}
+                  {highlightMatch(s.displayName, query)}
                   {s.postcode && <span className="mono" style={{ color: 'var(--text-dim)', fontSize: 11.5 }}> · {s.postcode}</span>}
                 </button>
               ))}
