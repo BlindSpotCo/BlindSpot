@@ -106,7 +106,7 @@ export default function AddressPicker({ onConfirmed }) {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (abortRef.current) abortRef.current.abort();
 
-    if (query.trim().length < 3) {
+    if (query.trim().length < 2) {
       setSuggestions([]); setSuggestOpen(false); setSuggestLoading(false);
       return;
     }
@@ -129,7 +129,7 @@ export default function AddressPicker({ onConfirmed }) {
         setSuggestions([]);
         setSuggestLoading(false);
       }
-    }, 300);
+    }, 180);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
       if (abortRef.current) abortRef.current.abort();
