@@ -47,6 +47,10 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   useEffect(() => () => clearTimeout(weightDebounceRef.current), []);
 
   const [gpsError, setGpsError] = useState('');
+  // Whether the report modal (owned by SunScoutPanel, opened via
+  // sunScoutRef.openReport) is currently up -- see showUnit below for
+  // why this needs to be tracked here at all.
+  const [reportOpen, setReportOpen] = useState(false);
   // Lat/lon are already populated by the time this panel renders -- from
   // the locality's area record, or the pin the user just confirmed on the
   // map in AddressPicker. Showing them up front as two blank-looking
@@ -181,7 +185,15 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   // further down is a plain conditional -- nothing in it holds state of
   // its own, `combined` already lives in this component regardless of
   // which branch renders it.
-  const showUnit = viewStage !== 'verdict';
+  // "Generate Full AI Report" (further down, the Verdict tab's own
+  // button) opens this modal via the ref while sitting ON the Verdict
+  // tab -- which means normally this whole panel, modal included, would
+  // be sitting inside a display:none ancestor the instant it opens (a
+  // hidden ancestor hides its entire subtree). reportOpen keeps this
+  // panel visible for exactly as long as that modal is, so "Generating
+  // your report…" is actually seen rather than running invisibly until
+  // you happen to click back to Unit.
+  const showUnit = viewStage !== 'verdict' || reportOpen;
 
   return (
     <>
@@ -237,6 +249,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                 areaWeight={areaRecord ? areaWeight / 100 : undefined}
                 unitWeight={areaRecord ? (100 - areaWeight) / 100 : undefined}
                 personaId={personaId}
+                onReportOpenChange={setReportOpen}
               />
             </div>
 

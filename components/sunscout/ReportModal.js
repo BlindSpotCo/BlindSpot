@@ -93,7 +93,16 @@ export default function ReportModal({
     setError('');
     setProgress(5);
 
-    if (onFloorFacingSubmit) onFloorFacingSubmit(parseInt(floor, 10), facing);
+    // Only bubble floor/facing up when they were just picked in THIS
+    // modal's own form. When autoGenerate is true, floor/facing arrived
+    // as prefill from the caller's already-current combined score --
+    // resubmitting them back up used to call the parent's "a new
+    // floor/facing was picked" handler regardless, which treats this as
+    // a fresh unit change and clears out that very score. That's what
+    // made the Verdict screen flash to "No score yet" the instant you
+    // hit Generate: the number it had was live and correct, this just
+    // wiped it out from underneath itself.
+    if (onFloorFacingSubmit && !autoGenerate) onFloorFacingSubmit(parseInt(floor, 10), facing);
 
     try {
       const addr = address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`;

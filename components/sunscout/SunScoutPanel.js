@@ -54,6 +54,12 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
   // is triggered from the Property Score flow via openReport(), rather than
   // from this panel's own toolbar (that button now lives in UnitVerdict).
   areaRecord, combinedScore, unitScore, areaWeight, unitWeight, unitSubScores, verdictLabel, personaId,
+  // Fires with true/false as the report modal opens/closes. UnitVerdict
+  // uses this to keep this whole panel visible while the report is open
+  // even on the Verdict tab (see the comment on openReport() below for
+  // why that matters) -- this component has no other way to tell its
+  // parent that a modal it fully owns just opened.
+  onReportOpenChange,
 }, ref) {
   const [targetDate, setTargetDate] = useState(getLocalDateStr);
   const [simTime, setSimTime] = useState(() => {
@@ -77,11 +83,20 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
   const [reportPrefill, setReportPrefill] = useState(null); // { floor, facing } | null
 
   useImperativeHandle(ref, () => ({
+    // Called from UnitVerdict's Verdict tab -- at that moment this whole
+    // panel is sitting inside a display:none ancestor (see UnitVerdict's
+    // showUnit), since the Verdict tab has no use for the map itself.
+    // The modal we're about to show would be invisible under that same
+    // display:none (a hidden ancestor hides its entire subtree, position
+    // or z-index inside it notwithstanding) -- onReportOpenChange(true)
+    // tells UnitVerdict to lift that hiding for as long as this stays
+    // open, regardless of which tab is actually selected.
     openReport(prefill) {
       setReportPrefill(prefill || null);
       setShowReport(true);
+      onReportOpenChange?.(true);
     },
-  }), []);
+  }), [onReportOpenChange]);
 
   const captureRef = useRef(null);
   const screenshotResolverRef = useRef(null);
@@ -242,7 +257,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
       {showReport && (
         <ReportModal
           lat={lat} lon={lon} tzOffset={tzOffset} address={address || searchQuery || undefined}
-          onClose={() => { setShowReport(false); setReportPrefill(null); }}
+          onClose={() => { setShowReport(false); setReportPrefill(null); onReportOpenChange?.(false); }}
           captureScreenshots={captureScreenshots}
           onFloorFacingSubmit={onUnitSelected}
           areaRecord={areaRecord} combinedScore={combinedScore} unitScore={unitScore}
