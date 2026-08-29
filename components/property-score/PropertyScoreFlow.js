@@ -186,14 +186,17 @@ export default function PropertyScoreFlow({ initial }) {
   const unitReady = Boolean(lat && lon);
 
   // Coarse but reliable -- derived straight from state this component
-  // already owns. "Unit" and "Verdict" tick (done) independently of which
-  // tab is currently in view -- see PropertyScoreProgress's `done` prop.
+  // already owns. "Priorities" and "Location" tick independently even
+  // though they're one screen (see PropertyScoreProgress) -- picking a
+  // persona checks off Priorities without needing a location yet, and
+  // vice versa.
   const progressDone = [
-    ...(personaId && unitReady ? ['location'] : []),
+    ...(personaId ? ['priorities'] : []),
+    ...(unitReady ? ['location'] : []),
     ...(unitSeen ? ['unit'] : []),
     ...(verdictStarted ? ['verdict'] : []),
   ];
-  // All three stepper tabs are always clickable -- these are tabs, not a
+  // All four stepper tabs are always clickable -- these are tabs, not a
   // wizard with locked steps. Tapping ahead to Unit or Verdict before
   // there's a location/score yet doesn't dead-end: both render their own
   // "nothing here yet, here's where to go" prompt (see the !unitReady
@@ -201,11 +204,16 @@ export default function PropertyScoreFlow({ initial }) {
   // relying on the stepper to prevent getting there. An earlier version
   // gated these behind progress and disabled the button entirely, which
   // on mobile just read as "these buttons don't work."
-  const reachableStages = ['location', 'unit', 'verdict'];
+  const reachableStages = ['priorities', 'location', 'unit', 'verdict'];
+
+  // 'priorities' and 'location' are two stepper labels over the same
+  // screen (see PropertyScoreProgress) -- clicking either one just opens
+  // that one screen.
+  const handleStageSelect = (key) => setViewStage(key === 'priorities' ? 'location' : key);
 
   return (
     <section className="section" id="property-score-flow" style={{ paddingTop: 0 }}>
-      <PropertyScoreProgress current={viewStage} done={progressDone} reachable={reachableStages} onSelect={setViewStage} />
+      <PropertyScoreProgress current={viewStage} done={progressDone} reachable={reachableStages} onSelect={handleStageSelect} />
       <SideDataStrip />
 
       {/* .section-inner's 88px top padding + top border were sized for
@@ -219,81 +227,63 @@ export default function PropertyScoreFlow({ initial }) {
       <div ref={panelRef} className="wrap ps-tab-panel" style={{ scrollMarginTop: 130 }}>
 
         <div className="ps-flow-wrap" style={{ width: '100%', display: viewStage === 'location' ? 'block' : 'none' }}>
-          <div className="ps-setup-grid" style={{ display: 'flex', gap: 48, alignItems: 'flex-start', flexWrap: 'wrap' }}>
-            <div className="ps-setup-col-persona" style={{ flex: '1 1 320px', maxWidth: 380 }}>
-              <PersonaPicker personaId={personaId} onSelect={setPersonaId} />
-            </div>
+          <div style={{ maxWidth: 640, margin: '0 auto' }}>
+            {/* One heading for this whole screen -- PersonaPicker's own
+                "Pick your priorities." intro. Location used to have a
+                second "How do you want to start?" heading of its own
+                sitting beside it in a two-column layout; that's gone,
+                Option A/B now just follow straight on below, stacked
+                vertically like the persona list right above them instead
+                of two side-by-side cards -- one continuous flow, not two
+                separately-headed halves. */}
+            <PersonaPicker personaId={personaId} onSelect={setPersonaId} />
 
-            <div className="ps-setup-col-location" style={{ flex: '2 1 480px', minWidth: 320 }}>
-              <div className="mono" style={{ fontSize: 12, color: 'var(--sun)', letterSpacing: '.14em', marginBottom: 10 }}>WHERE&apos;S THE PLACE?</div>
-              <h2 style={{ fontSize: 'clamp(22px, 2.4vw, 28px)', marginBottom: 20 }}>How do you want to start?</h2>
-              <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 28 }}>
               <button onClick={() => chooseMode('locality')} className="ps-mode-btn ps-btn"
                 style={{
-                  flex: '1 1 260px', maxWidth: 380, minHeight: 260, textAlign: 'left',
+                  textAlign: 'left',
                   background: mode === 'locality' ? 'color-mix(in srgb, var(--slate) 14%, var(--bg-2))' : 'color-mix(in srgb, var(--slate) 5%, var(--bg-2))',
                   border: `1px solid ${mode === 'locality' ? 'var(--slate)' : 'var(--line)'}`,
                   borderLeft: `4px solid var(--slate)`,
-                  borderRadius: 'var(--radius)', padding: '26px 24px 24px 22px', cursor: 'pointer',
-                  display: 'flex', flexDirection: 'column',
+                  borderRadius: 'var(--radius)', padding: '18px 20px', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 16,
                 }}>
-                <div className="mono" style={{ fontSize: 11.5, color: 'var(--slate)', letterSpacing: '.1em', marginBottom: 12 }}>OPTION A</div>
-                <div className="ps-mode-btn-title" style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>City → Locality → Unit</div>
-                <div className="ps-mode-btn-sub" style={{ fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.55, marginBottom: 18 }}>Browse scored neighbourhoods, then pick a floor/facing.</div>
-
-                <ul style={{ margin: 0, padding: 0, fontSize: 12.5, color: 'var(--text-dim)', lineHeight: 1.8, listStyle: 'none', marginTop: 'auto' }}>
-                  {[
-                    'Compare against a full scored shortlist first',
-                    'See all 8 Neighbourhood Score metrics first',
-                    'Best if you’re still deciding between areas',
-                  ].map(line => (
-                    <li key={line} style={{ position: 'relative', paddingLeft: 16 }}>
-                      <span style={{ position: 'absolute', left: 0, color: 'var(--slate)' }}>—</span>{line}
-                    </li>
-                  ))}
-                </ul>
+                <div className="mono" style={{ fontSize: 11, color: 'var(--slate)', letterSpacing: '.1em', flexShrink: 0, width: 60 }}>OPTION A</div>
+                <div>
+                  <div className="ps-mode-btn-title" style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>City → Locality → Unit</div>
+                  <div className="ps-mode-btn-sub" style={{ fontSize: 13, color: 'var(--text-mute)', lineHeight: 1.5 }}>Browse scored neighbourhoods, then pick a floor/facing. Best if you're still deciding between areas.</div>
+                </div>
               </button>
               <button onClick={() => chooseMode('address')} className="ps-mode-btn ps-btn"
                 style={{
-                  flex: '1 1 260px', maxWidth: 380, minHeight: 260, textAlign: 'left',
+                  textAlign: 'left',
                   background: mode === 'address' ? 'color-mix(in srgb, var(--sun) 14%, var(--bg-2))' : 'color-mix(in srgb, var(--sun) 5%, var(--bg-2))',
                   border: `1px solid ${mode === 'address' ? 'var(--sun)' : 'var(--line)'}`,
                   borderLeft: `4px solid var(--sun)`,
-                  borderRadius: 'var(--radius)', padding: '26px 24px 24px 22px', cursor: 'pointer',
-                  display: 'flex', flexDirection: 'column',
+                  borderRadius: 'var(--radius)', padding: '18px 20px', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 16,
                 }}>
-                <div className="mono" style={{ fontSize: 11.5, color: 'var(--sun)', letterSpacing: '.1em', marginBottom: 12 }}>OPTION B</div>
-                <div className="ps-mode-btn-title" style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>I have the exact address</div>
-                <div className="ps-mode-btn-sub" style={{ fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.55, marginBottom: 18 }}>Search it directly — we&apos;ll place the pin and detect the area for you.</div>
-
-                <ul style={{ margin: 0, padding: 0, fontSize: 12.5, color: 'var(--text-dim)', lineHeight: 1.8, listStyle: 'none', marginTop: 'auto' }}>
-                  {[
-                    'Fastest if you already have one building in mind',
-                    'We match it to the nearest scored locality automatically',
-                    'No need to browse a list first',
-                  ].map(line => (
-                    <li key={line} style={{ position: 'relative', paddingLeft: 16 }}>
-                      <span style={{ position: 'absolute', left: 0, color: 'var(--sun)' }}>—</span>{line}
-                    </li>
-                  ))}
-                </ul>
+                <div className="mono" style={{ fontSize: 11, color: 'var(--sun)', letterSpacing: '.1em', flexShrink: 0, width: 60 }}>OPTION B</div>
+                <div>
+                  <div className="ps-mode-btn-title" style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>I have the exact address</div>
+                  <div className="ps-mode-btn-sub" style={{ fontSize: 13, color: 'var(--text-mute)', lineHeight: 1.5 }}>Search it directly — we&apos;ll place the pin and match it to the nearest scored locality automatically.</div>
+                </div>
               </button>
-              </div>
-              {!mode && (
-                <p style={{ fontSize: 13.5, color: 'var(--text-dim)', marginTop: 20 }}>Pick one to continue.</p>
-              )}
-
-              {mode === 'locality' && (
-                <div style={{ marginTop: 28 }}>
-                  <LocalityPicker onAreaSelected={handleAreaSelected} selectedPinCode={pinCode} />
-                </div>
-              )}
-              {mode === 'address' && (
-                <div style={{ marginTop: 28 }}>
-                  <AddressPicker onConfirmed={handleAddressConfirmed} />
-                </div>
-              )}
             </div>
+            {!mode && (
+              <p style={{ fontSize: 13.5, color: 'var(--text-dim)', marginTop: 16 }}>Pick one to continue.</p>
+            )}
+
+            {mode === 'locality' && (
+              <div style={{ marginTop: 28 }}>
+                <LocalityPicker onAreaSelected={handleAreaSelected} selectedPinCode={pinCode} />
+              </div>
+            )}
+            {mode === 'address' && (
+              <div style={{ marginTop: 28 }}>
+                <AddressPicker onConfirmed={handleAddressConfirmed} />
+              </div>
+            )}
           </div>
 
           <div style={{ textAlign: 'center', marginTop: 36 }}>
