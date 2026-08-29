@@ -202,8 +202,7 @@ export default function PropertyScoreFlow({ initialUnit }) {
           </div>
         )}
 
-        {viewStage === 'location' && (
-          <div className="ps-flow-wrap" style={{ width: '100%' }}>
+        <div className="ps-flow-wrap" style={{ width: '100%', display: viewStage === 'location' ? 'block' : 'none' }}>
             <div className="mono" style={{ fontSize: 13, color: 'var(--text-mute)', letterSpacing: '.12em', marginBottom: 28, textAlign: 'center' }}>HOW DO YOU WANT TO START?</div>
             <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', justifyContent: 'center', maxWidth: 1080, margin: '0 auto' }}>
               <button onClick={() => chooseMode('locality')} className="ps-mode-btn ps-btn"
@@ -297,8 +296,7 @@ export default function PropertyScoreFlow({ initialUnit }) {
                 </button>
               </div>
             )}
-          </div>
-        )}
+        </div>
 
         {/* Unit + Verdict share one mounted UnitVerdict instance (see the
             file-level comment above) so SunScoutPanel's map and the
