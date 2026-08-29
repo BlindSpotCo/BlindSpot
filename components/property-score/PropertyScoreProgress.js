@@ -16,8 +16,7 @@
 // the furthest stage you've reached, never further ahead than that.
 
 const STAGES = [
-  { key: 'angle', label: 'Priorities' },
-  { key: 'location', label: 'Location' },
+  { key: 'location', label: 'Priorities & Location' },
   { key: 'unit', label: 'Unit' },
   { key: 'verdict', label: 'Verdict' },
 ];

@@ -1687,40 +1687,8 @@
      ease only, no motion. */
   .uv-facing-btn{ transition:background .15s ease, border-color .15s ease, color .15s ease }
   .uv-facing-btn:hover{ border-color:var(--sun) }
-  /* Persona dial nodes (PersonaPicker.js) — subtle scale-up on hover so the
-     first interactive thing on the page also feels responsive, not just
-     the buttons further down. */
-  .ps-persona-node{ transition:transform .15s ease; transform-origin:center; transform-box:fill-box }
-  .ps-persona-node:hover{ transform:scale(1.06) }
   @media (prefers-reduced-motion: reduce){
-    .ps-btn, .ps-btn:hover, .ps-row-btn, .uv-facing-btn, .ps-persona-node{ transition:none !important; transform:none !important }
-  }
-
-  /* Persona picker: dial on desktop, plain button list on phones (no hover
-     state on touch, and a circular dial is a lot to parse as someone's
-     first interaction with the product). Both markups render always;
-     this just swaps which one is visible at the breakpoint. */
-  @media (max-width:640px){
-    .pw-wheel-wrap{ display:none !important }
-    .pw-mobile-list{ display:flex !important }
-  }
-
-  /* Live weights panel next to the dial (desktop `big` only) -- the dial
-     alone in a wide empty screen was decoration; this makes the same
-     real estate show what picking a persona actually DOES (re-weighting
-     lib/personas.js's real avWeights), which is both more honest and
-     fills the space with content instead of padding. Row layout needs
-     genuine width for dial + panel side by side, so it collapses to
-     dial-only (panel hidden) below 900px rather than squeezing both. */
-  .pw-desktop-row{ display:flex; align-items:center; justify-content:center; gap:56px; width:100%; flex-wrap:wrap }
-  .pw-weights-panel{
-    width:290px; flex-shrink:0; text-align:left; background:var(--bg-2);
-    border:1px solid var(--line); border-radius:var(--radius); padding:26px 24px;
-  }
-  .pw-weight-row{ margin-bottom:13px }
-  .pw-weight-row:last-child{ margin-bottom:0 }
-  @media (max-width:900px){
-    .pw-weights-panel{ display:none }
+    .ps-btn, .ps-btn:hover, .ps-row-btn, .uv-facing-btn{ transition:none !important; transform:none !important }
   }
 
   /* Corner live-data readouts -- reuses the homepage hero's rotating

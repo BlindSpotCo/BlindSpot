@@ -32,37 +32,48 @@ import PersonaPicker from './PersonaPicker';
 import PropertyScoreProgress from './PropertyScoreProgress';
 import SideDataStrip from './SideDataStrip';
 
-// `initialUnit` -- { record, city } | null -- is the server-resolved pin
-// from a "Continue to Sun Score" hand-off (see app/property-score/page.js
-// and NeighbourhoodReport.js). When present, Locality mode and the
-// matching area are already picked on the very first render, so the flow
-// opens straight on the Unit tab instead of Your Angle.
-export default function PropertyScoreFlow({ initialUnit }) {
-  const [mode, setMode] = useState(initialUnit ? 'locality' : null); // 'locality' | 'address'
-  const [personaId, setPersonaId] = useState(null);
+// `initial` -- { stage, personaId, mode, areaRecord, city, lat, lon,
+// addressLabel, floor, facing } | null -- is resolved from the URL by
+// app/property-score/page.js (a locality `pin` is looked up server-side
+// into its full record there; everything else is read straight off the
+// query string). Every tab writes its own selections back into the URL
+// as they're made (see the sync effect below), so this is also what
+// restores a reloaded or reopened tab to where it was, not just the
+// original "Continue to Sun Score" hand-off this used to be for.
+export default function PropertyScoreFlow({ initial }) {
+  const [mode, setMode] = useState(initial?.mode ?? null); // 'locality' | 'address'
+  const [personaId, setPersonaId] = useState(initial?.personaId ?? null);
 
-  const [areaRecord, setAreaRecord] = useState(initialUnit?.record ?? null);
-  const [pinCode, setPinCode] = useState(initialUnit?.record?.pin_code ?? null);
-  const [city, setCity] = useState(initialUnit?.city ?? null);
-  const [addressLabel, setAddressLabel] = useState(initialUnit?.record?.name ?? '');
-  const [lat, setLat] = useState(initialUnit?.record?.lat ? String(initialUnit.record.lat) : '');
-  const [lon, setLon] = useState(initialUnit?.record?.lon ? String(initialUnit.record.lon) : '');
+  const [areaRecord, setAreaRecord] = useState(initial?.areaRecord ?? null);
+  const [pinCode, setPinCode] = useState(initial?.areaRecord?.pin_code ?? null);
+  const [city, setCity] = useState(initial?.city ?? null);
+  const [addressLabel, setAddressLabel] = useState(initial?.addressLabel ?? '');
+  const [lat, setLat] = useState(initial?.lat ?? '');
+  const [lon, setLon] = useState(initial?.lon ?? '');
   // "Unit" ticks when Get Combined/Home Comfort Score is clicked;
   // "Verdict" ticks when the full AI report is generated.
   const [unitSeen, setUnitSeen] = useState(false);
   const [verdictStarted, setVerdictStarted] = useState(false);
 
+  // Mirrors UnitVerdict's own floor/facing state purely so the URL sync
+  // effect below has something to write -- UnitVerdict remains the real
+  // owner (see onUnitPicked), this is not re-fed down except as the
+  // *initial* value on first mount.
+  const [floor, setFloor] = useState(initial?.floor ?? null);
+  const [facing, setFacing] = useState(initial?.facing ?? null);
+
   // Which tab is actually on screen. Can sit behind what's actually
   // reachable (reachableStages below) when you've clicked back to review
   // or change an earlier one -- that's the whole point of the tabs being
   // independently clickable.
-  const [viewStage, setViewStage] = useState(initialUnit ? 'unit' : 'angle');
+  const [viewStage, setViewStage] = useState(initial?.stage || (initial?.areaRecord || initial?.lat ? 'unit' : 'location'));
 
   const panelRef = useRef(null);
 
   const resetLocation = () => {
     setAreaRecord(null); setPinCode(null); setCity(null); setAddressLabel('');
     setLat(''); setLon(''); setUnitSeen(false); setVerdictStarted(false);
+    setFloor(null); setFacing(null);
   };
 
   const chooseMode = (m) => {
@@ -91,14 +102,21 @@ export default function PropertyScoreFlow({ initialUnit }) {
     setAddressLabel(label || '');
   }, []);
 
+  // UnitVerdict calls this whenever the floor/facing it owns changes --
+  // purely so this component has a current value to serialise into the
+  // URL; see the sync effect below.
+  const handleUnitPicked = useCallback((f, d) => {
+    setFloor(f); setFacing(d ?? null);
+  }, []);
+
   // Hand-off target for "Continue to Sun Score →" on the standalone
   // neighbourhood report, for the one path that can't be resolved
   // server-side: the report tab is still open (window.opener set) and
   // posts a message straight to this live tab instead of navigating.
-  // (The no-opener fallback navigates to /property-score?continue=unit&...
+  // (The no-opener fallback navigates to /property-score?stage=unit&...
   // and is resolved server-side in app/property-score/page.js, landing
-  // straight on the Unit tab via initialUnit above -- no client fetch,
-  // no listener needed for that path.)
+  // straight on the Unit tab via `initial` above -- no client fetch, no
+  // listener needed for that path.)
   const jumpToUnit = useCallback(async (pin, cityName, sector) => {
     try {
       const res = await fetch('/api/av-localities');
@@ -123,21 +141,39 @@ export default function PropertyScoreFlow({ initialUnit }) {
       jumpToUnit(data.pin, data.city, data.sector ?? null);
     }
     window.addEventListener('message', onMessage);
-
-    // Strip a leftover ?continue=... query string post-hydration (already
-    // consumed server-side into initialUnit) so the URL doesn't keep
-    // advertising a one-time hand-off after it's been applied.
-    const params = new URLSearchParams(window.location.search);
-    if (params.has('continue')) {
-      params.delete('continue'); params.delete('pin'); params.delete('city'); params.delete('sector');
-      const rest = params.toString();
-      window.history.replaceState(null, '', window.location.pathname + (rest ? `?${rest}` : ''));
-    }
-
     return () => window.removeEventListener('message', onMessage);
     // Mount-only -- jumpToUnit is stable enough for a one-time hand-off.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Keep the URL in sync with every selection as it's made -- persona,
+  // mode, location (either a locality's pin/city or a raw address'
+  // lat/lon), floor/facing once picked, and whichever tab is on screen.
+  // This is what makes a reload (or a bookmarked/shared link) land back
+  // on the same tab with everything already filled in, instead of
+  // starting over from Your Angle. Plain history.replaceState rather
+  // than a Next.js router push -- this should never itself trigger a
+  // navigation or a server round-trip, only rewrite the address bar.
+  // Skipped entirely on the very first render (the effect's own
+  // dependencies already equal what page.js put in the URL then).
+  const firstSync = useRef(true);
+  useEffect(() => {
+    if (firstSync.current) { firstSync.current = false; return; }
+    const params = new URLSearchParams();
+    if (viewStage) params.set('stage', viewStage);
+    if (personaId) params.set('persona', personaId);
+    if (mode) params.set('mode', mode);
+    if (pinCode) params.set('pin', pinCode);
+    if (city) params.set('city', city);
+    if (areaRecord?.sectorNum != null) params.set('sector', String(areaRecord.sectorNum));
+    if (lat) params.set('lat', lat);
+    if (lon) params.set('lon', lon);
+    if (addressLabel) params.set('addr', addressLabel);
+    if (floor != null) params.set('floor', String(floor));
+    if (facing) params.set('facing', facing);
+    const qs = params.toString();
+    window.history.replaceState(null, '', window.location.pathname + (qs ? `?${qs}` : ''));
+  }, [viewStage, personaId, mode, pinCode, city, areaRecord, lat, lon, addressLabel, floor, facing]);
 
   // Land on the top of whichever tab just became active -- otherwise a
   // switch from a long tab (Unit, with the sun/shadow panel) to a short
@@ -153,12 +189,11 @@ export default function PropertyScoreFlow({ initialUnit }) {
   // already owns. "Unit" and "Verdict" tick (done) independently of which
   // tab is currently in view -- see PropertyScoreProgress's `done` prop.
   const progressDone = [
-    ...(personaId ? ['angle'] : []),
-    ...(unitReady ? ['location'] : []),
+    ...(personaId && unitReady ? ['location'] : []),
     ...(unitSeen ? ['unit'] : []),
     ...(verdictStarted ? ['verdict'] : []),
   ];
-  // All four stepper tabs are always clickable -- these are tabs, not a
+  // All three stepper tabs are always clickable -- these are tabs, not a
   // wizard with locked steps. Tapping ahead to Unit or Verdict before
   // there's a location/score yet doesn't dead-end: both render their own
   // "nothing here yet, here's where to go" prompt (see the !unitReady
@@ -166,7 +201,7 @@ export default function PropertyScoreFlow({ initialUnit }) {
   // relying on the stepper to prevent getting there. An earlier version
   // gated these behind progress and disabled the button entirely, which
   // on mobile just read as "these buttons don't work."
-  const reachableStages = ['angle', 'location', 'unit', 'verdict'];
+  const reachableStages = ['location', 'unit', 'verdict'];
 
   return (
     <section className="section" id="property-score-flow" style={{ paddingTop: 0 }}>
@@ -183,49 +218,33 @@ export default function PropertyScoreFlow({ initialUnit }) {
           under the stepper on every tab. */}
       <div ref={panelRef} className="wrap ps-tab-panel" style={{ scrollMarginTop: 130 }}>
 
-        {viewStage === 'angle' && (
-          <div className="ps-flow-wrap" style={{ maxWidth: 900, margin: '0 auto' }}>
-            <div style={{ textAlign: 'center', marginBottom: 8 }}>
-              <span className="mono" style={{ fontSize: 12, color: 'var(--text-dim)', letterSpacing: '.12em' }}>STEP 1 OF 4</span>
-            </div>
-            {/* No separate Continue button here anymore -- picking a
-                persona IS the commitment. onSelect only fires on an
-                actual click (hover just previews, see PersonaPicker's own
-                hoverId state), so advancing straight from it doesn't
-                cost a "wait, was that a click or a hover" moment. */}
-            <PersonaPicker personaId={personaId} onSelect={(id) => { setPersonaId(id); setViewStage('location'); }} big />
-          </div>
-        )}
-
         <div className="ps-flow-wrap" style={{ width: '100%', display: viewStage === 'location' ? 'block' : 'none' }}>
-            <div className="mono" style={{ fontSize: 13, color: 'var(--text-mute)', letterSpacing: '.12em', marginBottom: 28, textAlign: 'center' }}>HOW DO YOU WANT TO START?</div>
-            <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', justifyContent: 'center', maxWidth: 1080, margin: '0 auto' }}>
+          <div className="ps-setup-grid" style={{ display: 'flex', gap: 48, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+            <div className="ps-setup-col-persona" style={{ flex: '1 1 320px', maxWidth: 380 }}>
+              <PersonaPicker personaId={personaId} onSelect={setPersonaId} />
+            </div>
+
+            <div className="ps-setup-col-location" style={{ flex: '2 1 480px', minWidth: 320 }}>
+              <div className="mono" style={{ fontSize: 12, color: 'var(--sun)', letterSpacing: '.14em', marginBottom: 10 }}>WHERE&apos;S THE PLACE?</div>
+              <h2 style={{ fontSize: 'clamp(22px, 2.4vw, 28px)', marginBottom: 20 }}>How do you want to start?</h2>
+              <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
               <button onClick={() => chooseMode('locality')} className="ps-mode-btn ps-btn"
                 style={{
-                  flex: '1 1 380px', maxWidth: 460, minHeight: 320, textAlign: 'left',
+                  flex: '1 1 260px', maxWidth: 380, minHeight: 260, textAlign: 'left',
                   background: mode === 'locality' ? 'color-mix(in srgb, var(--slate) 14%, var(--bg-2))' : 'color-mix(in srgb, var(--slate) 5%, var(--bg-2))',
                   border: `1px solid ${mode === 'locality' ? 'var(--slate)' : 'var(--line)'}`,
                   borderLeft: `4px solid var(--slate)`,
-                  borderRadius: 'var(--radius)', padding: '40px 34px 40px 30px', cursor: 'pointer',
+                  borderRadius: 'var(--radius)', padding: '26px 24px 24px 22px', cursor: 'pointer',
                   display: 'flex', flexDirection: 'column',
                 }}>
-                <div className="mono" style={{ fontSize: 11.5, color: 'var(--slate)', letterSpacing: '.1em', marginBottom: 14 }}>OPTION A</div>
-                <div className="ps-mode-btn-title" style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>City → Locality → Unit</div>
-                <div className="ps-mode-btn-sub" style={{ fontSize: 14.5, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 26 }}>Browse scored neighbourhoods, then pick a floor/facing.</div>
+                <div className="mono" style={{ fontSize: 11.5, color: 'var(--slate)', letterSpacing: '.1em', marginBottom: 12 }}>OPTION A</div>
+                <div className="ps-mode-btn-title" style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>City → Locality → Unit</div>
+                <div className="ps-mode-btn-sub" style={{ fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.55, marginBottom: 18 }}>Browse scored neighbourhoods, then pick a floor/facing.</div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 26 }}>
-                  {['City', 'Locality', 'Unit'].map((step, i) => (
-                    <span key={step} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span className="mono" style={{ fontSize: 11.5, padding: '7px 13px', borderRadius: 'var(--radius)', background: 'color-mix(in srgb, var(--slate) 8%, var(--paper))', border: '1px solid color-mix(in srgb, var(--slate) 30%, var(--line))', color: 'var(--text)' }}>{step}</span>
-                      {i < 2 && <span style={{ color: 'var(--text-dim)', fontSize: 13 }}>→</span>}
-                    </span>
-                  ))}
-                </div>
-
-                <ul style={{ margin: '0 0 0 0', padding: 0, fontSize: 13.5, color: 'var(--text-dim)', lineHeight: 1.9, listStyle: 'none', marginTop: 'auto' }}>
+                <ul style={{ margin: 0, padding: 0, fontSize: 12.5, color: 'var(--text-dim)', lineHeight: 1.8, listStyle: 'none', marginTop: 'auto' }}>
                   {[
                     'Compare against a full scored shortlist first',
-                    'See all 8 Neighbourhood Score metrics before committing to one address',
+                    'See all 8 Neighbourhood Score metrics first',
                     'Best if you’re still deciding between areas',
                   ].map(line => (
                     <li key={line} style={{ position: 'relative', paddingLeft: 16 }}>
@@ -236,27 +255,18 @@ export default function PropertyScoreFlow({ initialUnit }) {
               </button>
               <button onClick={() => chooseMode('address')} className="ps-mode-btn ps-btn"
                 style={{
-                  flex: '1 1 380px', maxWidth: 460, minHeight: 320, textAlign: 'left',
+                  flex: '1 1 260px', maxWidth: 380, minHeight: 260, textAlign: 'left',
                   background: mode === 'address' ? 'color-mix(in srgb, var(--sun) 14%, var(--bg-2))' : 'color-mix(in srgb, var(--sun) 5%, var(--bg-2))',
                   border: `1px solid ${mode === 'address' ? 'var(--sun)' : 'var(--line)'}`,
                   borderLeft: `4px solid var(--sun)`,
-                  borderRadius: 'var(--radius)', padding: '40px 34px 40px 30px', cursor: 'pointer',
+                  borderRadius: 'var(--radius)', padding: '26px 24px 24px 22px', cursor: 'pointer',
                   display: 'flex', flexDirection: 'column',
                 }}>
-                <div className="mono" style={{ fontSize: 11.5, color: 'var(--sun)', letterSpacing: '.1em', marginBottom: 14 }}>OPTION B</div>
-                <div className="ps-mode-btn-title" style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>I have the exact address</div>
-                <div className="ps-mode-btn-sub" style={{ fontSize: 14.5, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 26 }}>Search it directly — we&apos;ll place the pin and detect the area for you.</div>
+                <div className="mono" style={{ fontSize: 11.5, color: 'var(--sun)', letterSpacing: '.1em', marginBottom: 12 }}>OPTION B</div>
+                <div className="ps-mode-btn-title" style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>I have the exact address</div>
+                <div className="ps-mode-btn-sub" style={{ fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.55, marginBottom: 18 }}>Search it directly — we&apos;ll place the pin and detect the area for you.</div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 26 }}>
-                  {['Address', 'Auto-detect area', 'Unit'].map((step, i) => (
-                    <span key={step} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span className="mono" style={{ fontSize: 11.5, padding: '7px 13px', borderRadius: 'var(--radius)', background: 'color-mix(in srgb, var(--sun) 8%, var(--paper))', border: '1px solid color-mix(in srgb, var(--sun) 30%, var(--line))', color: 'var(--text)' }}>{step}</span>
-                      {i < 2 && <span style={{ color: 'var(--text-dim)', fontSize: 13 }}>→</span>}
-                    </span>
-                  ))}
-                </div>
-
-                <ul style={{ margin: '0 0 0 0', padding: 0, fontSize: 13.5, color: 'var(--text-dim)', lineHeight: 1.9, listStyle: 'none', marginTop: 'auto' }}>
+                <ul style={{ margin: 0, padding: 0, fontSize: 12.5, color: 'var(--text-dim)', lineHeight: 1.8, listStyle: 'none', marginTop: 'auto' }}>
                   {[
                     'Fastest if you already have one building in mind',
                     'We match it to the nearest scored locality automatically',
@@ -268,29 +278,39 @@ export default function PropertyScoreFlow({ initialUnit }) {
                   ))}
                 </ul>
               </button>
+              </div>
+              {!mode && (
+                <p style={{ fontSize: 13.5, color: 'var(--text-dim)', marginTop: 20 }}>Pick one to continue.</p>
+              )}
+
+              {mode === 'locality' && (
+                <div style={{ marginTop: 28 }}>
+                  <LocalityPicker onAreaSelected={handleAreaSelected} selectedPinCode={pinCode} />
+                </div>
+              )}
+              {mode === 'address' && (
+                <div style={{ marginTop: 28 }}>
+                  <AddressPicker onConfirmed={handleAddressConfirmed} />
+                </div>
+              )}
             </div>
-            {!mode && (
-              <p style={{ textAlign: 'center', fontSize: 13.5, color: 'var(--text-dim)', marginTop: 32 }}>Pick one to continue.</p>
-            )}
+          </div>
 
-            {mode === 'locality' && (
-              <div style={{ marginTop: 40 }}>
-                <LocalityPicker onAreaSelected={handleAreaSelected} selectedPinCode={pinCode} />
-              </div>
+          <div style={{ textAlign: 'center', marginTop: 36 }}>
+            <button
+              onClick={() => personaId && unitReady && setViewStage('unit')}
+              disabled={!personaId || !unitReady}
+              className="btn btn-lg btn-cta ps-btn ps-cta-btn"
+              style={{ opacity: (personaId && unitReady) ? 1 : .45, cursor: (personaId && unitReady) ? 'pointer' : 'default' }}
+            >
+              Continue — Configure Your Unit <span className="btn-cta-arrow">→</span>
+            </button>
+            {!(personaId && unitReady) && (
+              <p style={{ fontSize: 12.5, color: 'var(--text-dim)', marginTop: 10 }}>
+                {!personaId && !unitReady ? 'Pick a priority and a location to continue.' : !personaId ? 'Pick a priority above to continue.' : 'Pick a location to continue.'}
+              </p>
             )}
-            {mode === 'address' && (
-              <div style={{ marginTop: 40 }}>
-                <AddressPicker onConfirmed={handleAddressConfirmed} />
-              </div>
-            )}
-
-            {unitReady && (
-              <div style={{ textAlign: 'center', marginTop: 36 }}>
-                <button onClick={() => setViewStage('unit')} className="btn btn-lg btn-cta ps-btn ps-cta-btn">
-                  Continue — Configure Your Unit <span className="btn-cta-arrow">→</span>
-                </button>
-              </div>
-            )}
+          </div>
         </div>
 
         {/* Unit + Verdict share one mounted UnitVerdict instance (see the
@@ -315,6 +335,9 @@ export default function PropertyScoreFlow({ initialUnit }) {
               viewStage={viewStage}
               onScoreComputed={() => setViewStage('verdict')}
               onBackToUnit={() => setViewStage('unit')}
+              initialFloor={floor}
+              initialFacing={facing}
+              onUnitPicked={handleUnitPicked}
             />
           </div>
         )}

@@ -28,18 +28,23 @@ const VERDICT_COLOR = {
   'Reconsider': 'var(--olive-gold)',
 };
 
-export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId, onUnitSeen, onVerdictStart, viewStage, onScoreComputed, onBackToUnit }) {
+export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId, onUnitSeen, onVerdictStart, viewStage, onScoreComputed, onBackToUnit, initialFloor, initialFacing, onUnitPicked }) {
   const persona = getPersona(personaId) || getPersona(PERSONA_ORDER[0]);
   const sunScoutRef = useRef(null);
-  const [floor, setFloor] = useState(null);
-  const [facing, setFacing] = useState(null);
-  const [capturedFromSS, setCapturedFromSS] = useState(false);
+  const [floor, setFloor] = useState(initialFloor ?? null);
+  const [facing, setFacing] = useState(initialFacing ?? null);
+  const [capturedFromSS, setCapturedFromSS] = useState(Boolean(initialFloor != null && initialFacing));
   const [ssPreview, setSsPreview] = useState(null);
 
   const [combined, setCombined] = useState(null);
   const [loadingCombined, setLoadingCombined] = useState(false);
   const [combinedError, setCombinedError] = useState('');
   const [areaWeight, setAreaWeight] = useState(persona.defaultAreaWeight);
+  // Debounce timer for the area/unit weight slider's recompute -- see
+  // where it's used below. Cleared on unmount so a stray recompute can't
+  // fire (and setState) after the component's gone.
+  const weightDebounceRef = useRef(null);
+  useEffect(() => () => clearTimeout(weightDebounceRef.current), []);
 
   const [gpsError, setGpsError] = useState('');
   // Lat/lon are already populated by the time this panel renders -- from
@@ -61,13 +66,25 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   // A new location (new locality pick, or a fresh address confirm) should
   // clear out any stale verdict from the previous one, and reset both
   // ticks -- "Unit" ticks on the Get Score click below, "Verdict" ticks
-  // when the full AI report is generated.
+  // when the full AI report is generated. Skipped on the very first run:
+  // that "change" is just this component mounting with a location that
+  // was restored from the URL, and clearing floor/facing/combined right
+  // back out again would defeat the whole point of restoring them.
+  const isFirstLocationEffect = useRef(true);
   useEffect(() => {
+    if (isFirstLocationEffect.current) { isFirstLocationEffect.current = false; return; }
     setCombined(null); setFloor(null); setFacing(null);
     setCapturedFromSS(false); setSsPreview(null); setAreaWeight(50);
     onUnitSeen?.(false);
     onVerdictStart?.(false);
   }, [pinCode, lat, lon]);
+
+  // Mirror floor/facing up to PropertyScoreFlow purely so it has a
+  // current value to write into the URL -- this component stays the
+  // real owner of the state itself.
+  useEffect(() => {
+    onUnitPicked?.(floor, facing);
+  }, [floor, facing, onUnitPicked]);
 
   const handleUnitSelected = useCallback((f, d) => {
     setFloor(f); setFacing(d); setCapturedFromSS(true); setCombined(null);
@@ -131,6 +148,26 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
       setLoadingCombined(false);
     }
   }, [pinCode, lat, lon, floor, facing, areaWeight, personaId, onScoreComputed]);
+
+  // If we mounted already holding a full restored selection (URL had a
+  // location *and* a floor/facing), recompute the actual score once too
+  // -- otherwise a reload lands back on the Verdict tab with the right
+  // floor/facing but no number, which is its own kind of "lost your
+  // place." Fires once on mount only.
+  const didAutoRestore = useRef(false);
+  useEffect(() => {
+    if (didAutoRestore.current) return;
+    // viewStage here is this render's (mount's) value, captured by the
+    // empty dep array below -- exactly what we want: only auto-compute
+    // if the *restored* tab was already Verdict, not e.g. Unit with a
+    // floor/facing mid-pick that just hasn't been submitted yet.
+    if (viewStage === 'verdict' && initialFloor != null && initialFacing && lat && lon) {
+      didAutoRestore.current = true;
+      computeCombined(undefined, initialFloor, initialFacing);
+    }
+    // Mount-only, deliberately -- see didAutoRestore.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Unit and Verdict are two views over this one mounted instance (see
   // PropertyScoreFlow.js's comment) rather than two components, so
@@ -278,7 +315,12 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                   <span className="mono" style={{ color: 'var(--sun)' }}>UNIT {100 - areaWeight}%</span>
                 </div>
                 <input type="range" min="0" max="100" value={areaWeight}
-                  onChange={e => { const v = Number(e.target.value); setAreaWeight(v); computeCombined(v); }}
+                  onChange={e => {
+                    const v = Number(e.target.value);
+                    setAreaWeight(v);
+                    clearTimeout(weightDebounceRef.current);
+                    weightDebounceRef.current = setTimeout(() => computeCombined(v), 250);
+                  }}
                   style={{ width: '100%', accentColor: 'var(--slate)' }} />
                 <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginTop: 6 }}>Starts 50/50 — drag anytime to change how much the neighbourhood matters vs. the specific flat.</div>
               </div>
