@@ -128,6 +128,33 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
     setTimeout(() => setCloseHint(true), 300);
   }
 
+  // This report always opens in a *new* tab from a live Property Score
+  // flow (AVAreaCard's "See Detailed Neighbourhood Report" link) -- so the
+  // real dead end wasn't the Close button itself, it was what came after:
+  // close this tab, land back on the original one exactly where you left
+  // it, and have to scroll/click your own way down to the Unit step to
+  // actually see the Sun Score. Same-origin script tabs can talk to their
+  // opener, so instead of just closing, tell that original tab which pin
+  // to jump to and focus it -- one click instead of a close-then-hunt.
+  function handleContinueToSunScore() {
+    const payload = { type: 'blindspot:continue-to-unit', pin: record.pin_code, city: record.city, sector: record.sectorNum ?? null };
+    if (window.opener && !window.opener.closed) {
+      try {
+        window.opener.postMessage(payload, window.location.origin);
+        window.opener.focus();
+        window.close();
+        setTimeout(() => setCloseHint(true), 300);
+        return;
+      } catch { /* opener gone or cross-origin -- fall through to direct nav */ }
+    }
+    // No opener (direct link, bookmark, a saved report reopened later) --
+    // this is the only tab there is, so navigate it straight to the same
+    // spot instead of asking the person to start the flow over.
+    const q = new URLSearchParams({ continue: 'unit', pin: String(record.pin_code), city: record.city || '' });
+    if (record.sectorNum != null) q.set('sector', String(record.sectorNum));
+    window.location.href = `/property-score?${q.toString()}`;
+  }
+
   return (
     <div className="nr" style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)' }}>
       <style>{CSS}</style>
@@ -145,6 +172,11 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
               defaultTitle={`${record.name} · PIN ${record.pin_code}`}
             />
             <button onClick={handleClose} style={{ fontSize: 12.5, fontWeight: 600, border: '1px solid color-mix(in srgb, var(--slate) 45%, transparent)', borderRadius: 3, padding: '9px 16px', color: 'var(--text-mute)', background: 'transparent' }}>← Close</button>
+            {/* The primary way out of this report -- straight to the Sun
+                Score step for this same pin, not a second stop back at
+                the location picker. Kept the plain "Close" above it too,
+                for the person who genuinely is just done looking. */}
+            <button onClick={handleContinueToSunScore} style={{ fontSize: 12.5, fontWeight: 700, border: 'none', borderRadius: 3, padding: '9px 18px', color: '#fff', background: 'var(--slate)' }}>Continue to Sun Score →</button>
           </div>
         </div>
 

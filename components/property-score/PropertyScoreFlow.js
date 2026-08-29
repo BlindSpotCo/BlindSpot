@@ -11,7 +11,7 @@
 // verdict) is genuinely variable-height content, so it flows normally
 // below the snap sequence instead of being forced into fixed screens.
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import LocalityPicker from './LocalityPicker';
 import AddressPicker from './AddressPicker';
 import UnitVerdict from './UnitVerdict';
@@ -43,6 +43,11 @@ export default function PropertyScoreFlow() {
     setLat(''); setLon(''); setUnitSeen(false); setVerdictStarted(false);
   };
 
+  // Set true while a "Continue to Sun Score" hand-off (from the standalone
+  // neighbourhood report, see NeighbourhoodReport.js) is resolving, so the
+  // one-time scroll-to-Unit effect below knows to fire once lat/lon land.
+  const pendingUnitScrollRef = useRef(false);
+
   const chooseMode = (m) => {
     if (m === mode) return;
     setMode(m);
@@ -72,6 +77,69 @@ export default function PropertyScoreFlow() {
   function scrollToNext(id) {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   }
+
+  // Hand-off target for "Continue to Sun Score →" on the standalone
+  // neighbourhood report: land in Locality mode already pointed at the
+  // same pin, then jump straight to the Unit step, instead of dropping
+  // back at an empty entry-mode screen the person already got past once.
+  const jumpToUnit = useCallback(async (pin, cityName, sector) => {
+    try {
+      const res = await fetch('/api/av-localities');
+      if (!res.ok) return;
+      const { cities } = await res.json();
+      const list = cityName ? cities?.[cityName] : Object.values(cities || {}).flat();
+      if (!list) return;
+      const record = (sector != null && list.find(r => r.pin_code === pin && r.sectorNum === sector))
+        || list.find(r => r.pin_code === pin);
+      if (!record) return;
+      pendingUnitScrollRef.current = true;
+      setMode('locality');
+      handleAreaSelected(record, cityName || record.city);
+    } catch { /* best-effort -- the flow still works, just not pre-filled */ }
+  }, [handleAreaSelected]);
+
+  // Two ways this hand-off arrives: (1) the report tab is still open as a
+  // popup (has window.opener) and posts a message straight to this tab --
+  // the common case, since the report only ever opens via window.open from
+  // a live flow like this one; (2) no opener (a bookmarked/reopened report,
+  // or the report tab's own fallback when postMessage isn't possible), in
+  // which case it navigates this URL directly with the same info as a
+  // query string instead.
+  useEffect(() => {
+    function onMessage(event) {
+      if (event.origin !== window.location.origin) return;
+      const data = event.data;
+      if (!data || data.type !== 'blindspot:continue-to-unit') return;
+      jumpToUnit(data.pin, data.city, data.sector ?? null);
+    }
+    window.addEventListener('message', onMessage);
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('continue') === 'unit' && params.get('pin')) {
+      const sector = params.get('sector');
+      jumpToUnit(params.get('pin'), params.get('city') || null, sector != null ? Number(sector) : null);
+      // Consumed -- strip it so a refresh/back-navigation doesn't replay it.
+      params.delete('continue'); params.delete('pin'); params.delete('city'); params.delete('sector');
+      const rest = params.toString();
+      window.history.replaceState(null, '', window.location.pathname + (rest ? `?${rest}` : ''));
+    }
+
+    return () => window.removeEventListener('message', onMessage);
+    // Mount-only -- jumpToUnit is stable enough for a one-time hand-off.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Fires once lat/lon actually land from the hand-off above (LocalityPicker
+  // itself hasn't necessarily mounted/rendered yet at that point), then
+  // resets so normal picks later in the session don't also auto-scroll.
+  useEffect(() => {
+    if (pendingUnitScrollRef.current && lat && lon) {
+      pendingUnitScrollRef.current = false;
+      requestAnimationFrame(() => {
+        document.getElementById('ps-screen-unit')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+  }, [lat, lon]);
 
   // Coarse but reliable -- derived straight from state this component
   // already owns, no scroll-spying needed. Persona picking itself isn't a
@@ -304,19 +372,21 @@ export default function PropertyScoreFlow() {
         )}
 
         {lat && lon && (
-          <UnitVerdict
-            areaRecord={areaRecord}
-            pinCode={pinCode}
-            city={city}
-            lat={lat}
-            lon={lon}
-            setLat={setLat}
-            setLon={setLon}
-            addressLabel={addressLabel}
-            personaId={personaId}
-            onUnitSeen={setUnitSeen}
-            onVerdictStart={setVerdictStarted}
-          />
+          <div id="ps-screen-unit">
+            <UnitVerdict
+              areaRecord={areaRecord}
+              pinCode={pinCode}
+              city={city}
+              lat={lat}
+              lon={lon}
+              setLat={setLat}
+              setLon={setLon}
+              addressLabel={addressLabel}
+              personaId={personaId}
+              onUnitSeen={setUnitSeen}
+              onVerdictStart={setVerdictStarted}
+            />
+          </div>
         )}
       </div>
     </section>

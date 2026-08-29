@@ -49,6 +49,17 @@ export default function ReportModal({
   // later exactly as generated) for the Save button below.
   const [savableData, setSavableData] = useState(null);
 
+  // Floor + facing were already picked one step earlier, in UnitVerdict's
+  // own combined-score card (the button that opens this modal always
+  // passes both -- see SunScoutPanel's single openReport() call site).
+  // Re-asking for them here, behind a "Generate AI Report" button of its
+  // own, was a second menu at the step that matters most: one more click
+  // to confirm values the person had already committed to a moment ago.
+  // When both arrive prefilled, skip straight to generating -- the form
+  // below only still renders for a caller that opens this modal without
+  // them.
+  const autoGenerate = prefillFloor != null && !!prefillFacing;
+
   useEffect(() => {
     let cancelled = false;
     setFacingLoading(true);
@@ -145,6 +156,13 @@ export default function ReportModal({
     }
   };
 
+  useEffect(() => {
+    if (autoGenerate) generate();
+    // Mount-only -- floor/facing/prefill are fixed for this modal's
+    // lifetime, and generate() itself isn't a stable dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="modal-overlay" style={{ position:'fixed', inset:0, zIndex:1000, background:'rgba(10,5,0,0.6)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
       <div style={{ background:'#FFFBF5', border:`1px solid ${LINE}`, padding:0, width:'100%', maxWidth:480, maxHeight:'90vh', overflowY:'auto', boxShadow:'0 30px 90px rgba(0,0,0,0.35)', fontFamily:SANS }}>
@@ -173,7 +191,7 @@ export default function ReportModal({
               </button>
             </div>
           </div>
-        ) : !loading ? (
+        ) : !loading && !autoGenerate ? (
           <>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
               <div>
@@ -262,6 +280,21 @@ export default function ReportModal({
             </div>
             <div style={{ fontFamily:MONO, fontSize:10.5, color:SUB, textAlign:'center', marginTop:12, letterSpacing:'.03em' }}>TAKES ~30 SECONDS · FREE · AI-POWERED</div>
           </>
+        ) : error ? (
+          // Only reachable via the autoGenerate path -- the manual form
+          // above shows its own inline error and lets the person just hit
+          // Generate again. Skipping that form on the auto-start path
+          // means a failure here needs its own way out, or a stalled
+          // progress bar would be a dead end with no visible cause.
+          <div style={{ textAlign:'center', padding:'30px 0' }}>
+            <div style={{ border:'1px solid #dc2626', padding:'10px 14px', fontSize:12, color:'#dc2626', marginBottom:20, fontFamily:MONO, textAlign:'left' }}>ERROR: {error}</div>
+            <div style={{ display:'flex', gap:0 }}>
+              <button onClick={generate} style={{ flex:1, background:ORG, color:'#fff', border:'none', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
+                Try Again
+              </button>
+              <button onClick={onClose} style={{ background:'transparent', color:SUB, border:`1px solid ${LINE}`, borderLeft:'none', padding:'14px 20px', fontSize:13, cursor:'pointer' }}>Cancel</button>
+            </div>
+          </div>
         ) : (
           <div style={{ textAlign:'center', padding:'30px 0' }}>
             <div style={{ marginBottom:20, animation:'rm-spin 1.6s linear infinite', display:'inline-block', color:ORG }}>
