@@ -23,16 +23,22 @@ import { coverageLabel } from '@/lib/aslivastu/cityMeta';
 
 const SCREEN_H = 'calc(100vh - 66px)'; // 66px = the sticky header's own height
 
-export default function PropertyScoreFlow() {
-  const [mode, setMode] = useState(null); // 'locality' | 'address'
+// `initialUnit` -- { record, city } | null -- is the server-resolved pin
+// from a "Continue to Sun Score" hand-off (see app/property-score/page.js).
+// When present, the flow's very first render already has Locality mode
+// and the matching area picked, Unit section included, so the only client
+// work left is jumping the scroll position there -- no fetch, no visible
+// top-of-page moment first.
+export default function PropertyScoreFlow({ initialUnit }) {
+  const [mode, setMode] = useState(initialUnit ? 'locality' : null); // 'locality' | 'address'
   const [personaId, setPersonaId] = useState(null);
 
-  const [areaRecord, setAreaRecord] = useState(null);
-  const [pinCode, setPinCode] = useState(null);
-  const [city, setCity] = useState(null);
-  const [addressLabel, setAddressLabel] = useState('');
-  const [lat, setLat] = useState('');
-  const [lon, setLon] = useState('');
+  const [areaRecord, setAreaRecord] = useState(initialUnit?.record ?? null);
+  const [pinCode, setPinCode] = useState(initialUnit?.record?.pin_code ?? null);
+  const [city, setCity] = useState(initialUnit?.city ?? null);
+  const [addressLabel, setAddressLabel] = useState(initialUnit?.record?.name ?? '');
+  const [lat, setLat] = useState(initialUnit?.record?.lat ? String(initialUnit.record.lat) : '');
+  const [lon, setLon] = useState(initialUnit?.record?.lon ? String(initialUnit.record.lon) : '');
   // "Unit" ticks when Get Combined/Home Comfort Score is clicked;
   // "Verdict" ticks when the full AI report is generated.
   const [unitSeen, setUnitSeen] = useState(false);
@@ -44,9 +50,10 @@ export default function PropertyScoreFlow() {
   };
 
   // Set true while a "Continue to Sun Score" hand-off (from the standalone
-  // neighbourhood report, see NeighbourhoodReport.js) is resolving, so the
-  // one-time scroll-to-Unit effect below knows to fire once lat/lon land.
-  const pendingUnitScrollRef = useRef(false);
+  // neighbourhood report, see NeighbourhoodReport.js) is resolving or has
+  // just resolved server-side, so the one-time scroll-to-Unit effect below
+  // knows to fire once lat/lon are in place.
+  const pendingUnitScrollRef = useRef(Boolean(initialUnit?.record?.lat && initialUnit?.record?.lon));
 
   const chooseMode = (m) => {
     if (m === mode) return;
@@ -98,13 +105,17 @@ export default function PropertyScoreFlow() {
     } catch { /* best-effort -- the flow still works, just not pre-filled */ }
   }, [handleAreaSelected]);
 
-  // Two ways this hand-off arrives: (1) the report tab is still open as a
-  // popup (has window.opener) and posts a message straight to this tab --
-  // the common case, since the report only ever opens via window.open from
-  // a live flow like this one; (2) no opener (a bookmarked/reopened report,
-  // or the report tab's own fallback when postMessage isn't possible), in
-  // which case it navigates this URL directly with the same info as a
-  // query string instead.
+  // The report tab reaches this one two ways: (1) it's still open as a
+  // popup (window.opener set) and posts a message straight here -- the
+  // common case, since it only ever opens via window.open from a live
+  // flow like this one; this listener handles that live, same-tab case.
+  // (2) no opener (a bookmarked/reopened report, or the fallback when
+  // postMessage isn't possible), where it navigates this URL directly --
+  // that case is resolved server-side now, in app/property-score/page.js,
+  // via the initialUnit prop, so there's no matching query-string branch
+  // to read here anymore; this effect only ever strips a leftover
+  // ?continue=... query string post-hydration so the URL doesn't keep
+  // advertising a one-time hand-off after it's already been applied.
   useEffect(() => {
     function onMessage(event) {
       if (event.origin !== window.location.origin) return;
@@ -115,10 +126,7 @@ export default function PropertyScoreFlow() {
     window.addEventListener('message', onMessage);
 
     const params = new URLSearchParams(window.location.search);
-    if (params.get('continue') === 'unit' && params.get('pin')) {
-      const sector = params.get('sector');
-      jumpToUnit(params.get('pin'), params.get('city') || null, sector != null ? Number(sector) : null);
-      // Consumed -- strip it so a refresh/back-navigation doesn't replay it.
+    if (params.has('continue')) {
       params.delete('continue'); params.delete('pin'); params.delete('city'); params.delete('sector');
       const rest = params.toString();
       window.history.replaceState(null, '', window.location.pathname + (rest ? `?${rest}` : ''));
@@ -129,14 +137,18 @@ export default function PropertyScoreFlow() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Fires once lat/lon actually land from the hand-off above (LocalityPicker
-  // itself hasn't necessarily mounted/rendered yet at that point), then
-  // resets so normal picks later in the session don't also auto-scroll.
+  // Fires once lat/lon are in place from either hand-off path above --
+  // already true on the very first render for the server-resolved
+  // (initialUnit) case, or once jumpToUnit's fetch lands for the
+  // same-tab postMessage case -- then resets so normal picks later in the
+  // session don't also auto-scroll. Instant, not smooth: the point is to
+  // land directly on the Unit section, not visibly travel there from the
+  // top of the page.
   useEffect(() => {
     if (pendingUnitScrollRef.current && lat && lon) {
       pendingUnitScrollRef.current = false;
       requestAnimationFrame(() => {
-        document.getElementById('ps-screen-unit')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.getElementById('ps-screen-unit')?.scrollIntoView({ behavior: 'auto', block: 'start' });
       });
     }
   }, [lat, lon]);
