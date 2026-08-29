@@ -9,23 +9,16 @@ export const metadata = {
   openGraph: { title: 'Property Score | BlindSpot', description: 'One score for the neighbourhood, one score for the flat — combined into a single verdict, weighted your way.' },
 };
 
-// The old "Combined Verdict" intro block now lives inside
-// PropertyScoreFlow.js, paired side-by-side with the persona dial in a
-// two-column layout (same .hero-grid pattern as the homepage) instead of
-// two separate full-width sections stacked on top of each other.
+// PropertyScoreFlow.js is the whole Your Angle / Location / Unit /
+// Verdict flow, as 4 single-screen tabs rather than one long scroll.
 //
 // "Continue to Sun Score" (NeighbourhoodReport.js's hand-off, for the case
 // where that report has no window.opener to postMessage back into and
 // navigates here instead, e.g. a bookmarked/reopened report) resolves the
-// pin server-side, here, before PropertyScoreFlow ever mounts client-side.
-// The alternative -- resolving it client-side after mount -- is what used
-// to make this land on the plain top-of-page threshold screen for a beat
-// (a network round trip to /api/av-localities) before smooth-scrolling
-// itself down to the Unit step once the fetch resolved. Handing the
-// already-resolved record down as a prop means the very first paint
-// already has the Unit section in place, so the client only needs to jump
-// the scroll position there -- no fetch, no visible "opens at the top"
-// moment first.
+// pin server-side, here, before PropertyScoreFlow ever mounts client-side,
+// and hands it down as initialUnit so the flow's very first render already
+// opens on the Unit tab with that pin picked -- no client-side fetch, no
+// flash of Your Angle first.
 export default async function PropertyScorePage({ searchParams }) {
   const sp = await searchParams;
   let initialUnit = null;

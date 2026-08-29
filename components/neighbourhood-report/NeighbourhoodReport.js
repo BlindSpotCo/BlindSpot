@@ -150,14 +150,13 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
     // No opener (direct link, bookmark, a saved report reopened later) --
     // this is the only tab there is, so navigate it straight to the same
     // spot instead of asking the person to start the flow over. The pin
-    // itself gets resolved server-side (app/property-score/page.js), so
-    // the Unit section is already in the very first HTML that comes back
-    // -- the #ps-screen-unit hash lets the browser jump straight there on
-    // its own, before any client JS runs, instead of loading at the top
-    // of the page and only then scrolling down.
+    // itself gets resolved server-side (app/property-score/page.js) into
+    // the Unit tab directly -- the flow is 4 single-screen tabs, not one
+    // long scroll, so there's no in-page position left to jump to; simply
+    // opening on the right tab already is the fix.
     const q = new URLSearchParams({ continue: 'unit', pin: String(record.pin_code), city: record.city || '' });
     if (record.sectorNum != null) q.set('sector', String(record.sectorNum));
-    window.location.href = `/property-score?${q.toString()}#ps-screen-unit`;
+    window.location.href = `/property-score?${q.toString()}`;
   }
 
   return (

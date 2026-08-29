@@ -28,7 +28,7 @@ const VERDICT_COLOR = {
   'Reconsider': 'var(--olive-gold)',
 };
 
-export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId, onUnitSeen, onVerdictStart }) {
+export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId, onUnitSeen, onVerdictStart, viewStage, onScoreComputed, onBackToUnit }) {
   const persona = getPersona(personaId) || getPersona(PERSONA_ORDER[0]);
   const sunScoutRef = useRef(null);
   const [floor, setFloor] = useState(null);
@@ -124,17 +124,32 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
           dataNotes: ss.dataNotes || [],
         });
       }
+      onScoreComputed?.();
     } catch {
       setCombinedError('Could not compute the score right now — please try again in a minute.');
     } finally {
       setLoadingCombined(false);
     }
-  }, [pinCode, lat, lon, floor, facing, areaWeight, personaId]);
+  }, [pinCode, lat, lon, floor, facing, areaWeight, personaId, onScoreComputed]);
+
+  // Unit and Verdict are two views over this one mounted instance (see
+  // PropertyScoreFlow.js's comment) rather than two components, so
+  // SunScoutPanel's own 3D scene survives switching tabs. The sunscout
+  // panel + floor/facing/Get Score block below both belong to the Unit
+  // tab and hide via display:none rather than unmounting when Verdict is
+  // active -- SunScoutPanel specifically needs that (its map/drag state
+  // would otherwise reset); the floor/facing block has no state at risk
+  // itself but shares the same toggle for one obvious on/off switch
+  // instead of two separate conditions to keep in sync. The verdict card
+  // further down is a plain conditional -- nothing in it holds state of
+  // its own, `combined` already lives in this component regardless of
+  // which branch renders it.
+  const showUnit = viewStage !== 'verdict';
 
   return (
     <>
       {/* SUNSCOUT PANEL */}
-      <div style={{ marginBottom: 36 }}>
+      <div style={{ marginBottom: 36, display: showUnit ? 'block' : 'none' }}>
         <div className="mono" style={{ fontSize: 12, color: 'var(--sun)', letterSpacing: '.12em', marginBottom: 12 }}>SUN &amp; SHADOW FOR THIS FLAT</div>
 
         {lat && lon && addressLabel && !showCoords ? (
@@ -211,10 +226,11 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
         )}
       </div>
 
-      {/* VERDICT */}
+      {/* Floor/facing + Get Score -- Unit-tab content, same display:none
+          toggle as the sunscout panel above (see showUnit's comment). */}
       {lat && lon && (
-        <div style={{ marginBottom: 20 }}>
-          <div className="mono" style={{ fontSize: 12, color: 'var(--text)', letterSpacing: '.12em', marginBottom: 12 }}>THE COMBINED VERDICT</div>
+        <div style={{ marginBottom: 20, display: showUnit ? 'block' : 'none' }}>
+          <div className="mono" style={{ fontSize: 12, color: 'var(--text)', letterSpacing: '.12em', marginBottom: 12 }}>PICK YOUR FLOOR &amp; FACING</div>
 
           {!capturedFromSS && (
             <div style={{ marginBottom: 20 }}>
@@ -242,84 +258,100 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               cursor: (floor == null || !facing) ? 'default' : 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
               opacity: loadingCombined ? .6 : 1, marginBottom: 20,
             }}>
-            {loadingCombined ? 'Computing…' : (areaRecord ? 'Get Combined Score' : 'Get Home Comfort Score')}
+            {loadingCombined ? 'Computing…' : (areaRecord ? 'Get Combined Score →' : 'Get Home Comfort Score →')}
           </button>
           {combinedError && <div style={{ color: '#f87171', fontSize: 13, marginBottom: 16 }}>{combinedError}</div>}
+        </div>
+      )}
 
-          {combined && (
-            <div className="uv-combined-card" style={{ border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '28px 26px', background: 'var(--bg-2)' }}>
-              {combined.area && (
-                <div style={{ marginBottom: 24 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, marginBottom: 8 }}>
-                    <span className="mono" style={{ color: 'var(--slate)' }}>AREA {areaWeight}%</span>
-                    <span className="mono" style={{ color: 'var(--sun)' }}>UNIT {100 - areaWeight}%</span>
-                  </div>
-                  <input type="range" min="0" max="100" value={areaWeight}
-                    onChange={e => { const v = Number(e.target.value); setAreaWeight(v); computeCombined(v); }}
-                    style={{ width: '100%', accentColor: 'var(--slate)' }} />
-                  <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginTop: 6 }}>Starts 50/50 — drag anytime to change how much the neighbourhood matters vs. the specific flat.</div>
+      {/* VERDICT -- its own tab. Plain conditional: nothing here holds
+          state of its own (`combined` lives above, in this same
+          component, regardless of whether this branch is rendering),
+          so unmounting/remounting it on tab switches is safe. */}
+      {viewStage === 'verdict' && lat && lon && (
+        combined ? (
+          <div className="uv-combined-card" style={{ border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '28px 26px', background: 'var(--bg-2)' }}>
+            {combined.area && (
+              <div style={{ marginBottom: 24 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, marginBottom: 8 }}>
+                  <span className="mono" style={{ color: 'var(--slate)' }}>AREA {areaWeight}%</span>
+                  <span className="mono" style={{ color: 'var(--sun)' }}>UNIT {100 - areaWeight}%</span>
                 </div>
-              )}
+                <input type="range" min="0" max="100" value={areaWeight}
+                  onChange={e => { const v = Number(e.target.value); setAreaWeight(v); computeCombined(v); }}
+                  style={{ width: '100%', accentColor: 'var(--slate)' }} />
+                <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginTop: 6 }}>Starts 50/50 — drag anytime to change how much the neighbourhood matters vs. the specific flat.</div>
+              </div>
+            )}
 
-              <div className="uv-score-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 14 }}>
-                <div>
-                  <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', letterSpacing: '.12em', marginBottom: 6 }}>
-                    {combined.area ? 'BLINDSPOT COMBINED SCORE' : 'HOME COMFORT SCORE'}
-                  </div>
-                  <div className="uv-score-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 56, lineHeight: 1, color: 'var(--text)' }}>
-                    {combined.combinedScore}<span style={{ fontSize: 20, color: 'var(--text-dim)' }}>/100</span>
-                  </div>
+            <div className="uv-score-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 14 }}>
+              <div>
+                <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', letterSpacing: '.12em', marginBottom: 6 }}>
+                  {combined.area ? 'BLINDSPOT COMBINED SCORE' : 'HOME COMFORT SCORE'}
                 </div>
-                <div className="uv-verdict-badge" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 20, color: '#fff', background: VERDICT_COLOR[combined.verdict.label] || 'var(--brand)', padding: '8px 18px', borderRadius: 'var(--radius)' }}>
-                  {combined.verdict.label}
+                <div className="uv-score-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 56, lineHeight: 1, color: 'var(--text)' }}>
+                  {combined.combinedScore}<span style={{ fontSize: 20, color: 'var(--text-dim)' }}>/100</span>
                 </div>
               </div>
+              <div className="uv-verdict-badge" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 20, color: '#fff', background: VERDICT_COLOR[combined.verdict.label] || 'var(--brand)', padding: '8px 18px', borderRadius: 'var(--radius)' }}>
+                {combined.verdict.label}
+              </div>
+            </div>
 
-              <p style={{ fontSize: 14, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 24 }}>{combined.verdict.detail}</p>
+            <p style={{ fontSize: 14, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 24 }}>{combined.verdict.detail}</p>
 
-              {combined.area ? (
-                <div className="uv-score-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
-                  <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--slate)', borderRadius: 'var(--radius)', padding: '14px 16px' }}>
-                    <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>AREA — {combined.area.name} — {combined.area.weight}%</div>
-                    <div className="uv-score-box-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 24, color: 'var(--slate)' }}>{combined.area.score}</div>
-                  </div>
-                  <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 'var(--radius)', padding: '14px 16px' }}>
-                    <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT (HOME COMFORT) — FL {combined.unit.floor}, {combined.unit.facing} — {combined.unit.weight}%</div>
-                    <div className="uv-score-box-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 24, color: 'var(--sun)' }}>{combined.unit.score}</div>
-                  </div>
+            {combined.area ? (
+              <div className="uv-score-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
+                <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--slate)', borderRadius: 'var(--radius)', padding: '14px 16px' }}>
+                  <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>AREA — {combined.area.name} — {combined.area.weight}%</div>
+                  <div className="uv-score-box-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 24, color: 'var(--slate)' }}>{combined.area.score}</div>
                 </div>
-              ) : (
-                <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 'var(--radius)', padding: '14px 16px', marginBottom: 20 }}>
-                  <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT (HOME COMFORT) — FL {combined.unit.floor}, {combined.unit.facing}</div>
+                <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 'var(--radius)', padding: '14px 16px' }}>
+                  <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT (HOME COMFORT) — FL {combined.unit.floor}, {combined.unit.facing} — {combined.unit.weight}%</div>
                   <div className="uv-score-box-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 24, color: 'var(--sun)' }}>{combined.unit.score}</div>
                 </div>
-              )}
+              </div>
+            ) : (
+              <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 'var(--radius)', padding: '14px 16px', marginBottom: 20 }}>
+                <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT (HOME COMFORT) — FL {combined.unit.floor}, {combined.unit.facing}</div>
+                <div className="uv-score-box-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 24, color: 'var(--sun)' }}>{combined.unit.score}</div>
+              </div>
+            )}
 
-              {combined.formula && (
-                <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', background: 'var(--bg)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '12px 16px', marginBottom: 16 }}>
-                  {combined.formula}
-                </div>
-              )}
+            {combined.formula && (
+              <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', background: 'var(--bg)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '12px 16px', marginBottom: 16 }}>
+                {combined.formula}
+              </div>
+            )}
 
-              {combined.dataNotes?.length > 0 && (
-                <div style={{ fontSize: 12, color: 'var(--text-dim)', lineHeight: 1.7, marginBottom: 20 }}>
-                  {combined.dataNotes.map((n, i) => <div key={i}>— {n}</div>)}
-                </div>
-              )}
+            {combined.dataNotes?.length > 0 && (
+              <div style={{ fontSize: 12, color: 'var(--text-dim)', lineHeight: 1.7, marginBottom: 20 }}>
+                {combined.dataNotes.map((n, i) => <div key={i}>— {n}</div>)}
+              </div>
+            )}
 
-              <button
-                onClick={() => { onVerdictStart?.(true); sunScoutRef.current?.openReport({ floor: combined.unit.floor, facing: combined.unit.facing }); }}
-                className="ps-btn ps-cta-btn"
-                style={{
-                  background: 'var(--brand)', color: '#fff', border: 'none',
-                  borderRadius: 'var(--radius)', padding: '13px 22px', fontSize: 13.5, fontWeight: 700, cursor: 'pointer',
-                  letterSpacing: '.03em', textTransform: 'uppercase', width: '100%',
-                }}>
-                {combined.area ? 'Generate Full AI Report — Neighbourhood + Unit' : 'Generate AI Report — Unit'}
-              </button>
-            </div>
-          )}
-        </div>
+            <button
+              onClick={() => { onVerdictStart?.(true); sunScoutRef.current?.openReport({ floor: combined.unit.floor, facing: combined.unit.facing }); }}
+              className="ps-btn ps-cta-btn"
+              style={{
+                background: 'var(--brand)', color: '#fff', border: 'none',
+                borderRadius: 'var(--radius)', padding: '13px 22px', fontSize: 13.5, fontWeight: 700, cursor: 'pointer',
+                letterSpacing: '.03em', textTransform: 'uppercase', width: '100%',
+              }}>
+              {combined.area ? 'Generate Full AI Report — Neighbourhood + Unit' : 'Generate AI Report — Unit'}
+            </button>
+          </div>
+        ) : (
+          // Reachable by clicking the stepper's Verdict tab directly (once
+          // it's been visited before and is therefore clickable again) at
+          // a moment `combined` has since been cleared -- a location or
+          // persona change resets it. Nothing to show yet, so send them
+          // back to compute one instead of a blank tab.
+          <div style={{ textAlign: 'center', padding: '40px 0' }}>
+            <p style={{ fontSize: 14.5, color: 'var(--text-mute)', marginBottom: 20 }}>No score yet for this unit — pick a floor and facing first.</p>
+            <button onClick={onBackToUnit} className="btn btn-lg btn-cta ps-btn ps-cta-btn">← Back to Unit</button>
+          </div>
+        )
       )}
     </>
   );

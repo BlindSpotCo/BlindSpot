@@ -9,8 +9,8 @@
 // and frames the AI report (see lib/personas.js for what actually
 // changes underneath).
 //
-// `big` scales everything up for when this owns a full screen (the
-// 3-screen scroll sequence in PropertyScoreFlow.js) instead of sharing a
+// `big` scales everything up for when this owns a full screen (its own
+// "Your Angle" tab in PropertyScoreFlow.js) instead of sharing a
 // half-width column with other content.
 
 import { useState } from 'react';
