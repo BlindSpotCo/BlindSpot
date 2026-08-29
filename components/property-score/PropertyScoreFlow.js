@@ -178,7 +178,15 @@ export default function PropertyScoreFlow({ initialUnit }) {
       <PropertyScoreProgress current={viewStage} done={progressDone} reachable={reachableStages} onSelect={setViewStage} />
       <SideDataStrip />
 
-      <div ref={panelRef} className="wrap section-inner" style={{ scrollMarginTop: 130 }}>
+      {/* .section-inner's 88px top padding + top border were sized for
+          sitting below the old 3-screen intro sequence, as a breathing
+          gap before the "real" content started -- now every tab sits
+          directly under the sticky stepper instead, which already has
+          its own bottom border as the divider, so that combination read
+          as a large empty gap under it. .ps-tab-panel (globals.css) is
+          smaller, has no border, and is tuned for being the first thing
+          under the stepper on every tab. */}
+      <div ref={panelRef} className="wrap ps-tab-panel" style={{ scrollMarginTop: 130 }}>
 
         {viewStage === 'angle' && (
           <div className="ps-flow-wrap" style={{ maxWidth: 900, margin: '0 auto' }}>

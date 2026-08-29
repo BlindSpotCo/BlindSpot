@@ -713,6 +713,16 @@
      scroll through a 3-screen sequence starting with this one. Nothing
      else references .ps-arrive or .ps-threshold*. */
 
+  /* Each PropertyScoreFlow.js tab's own content wrapper -- sits directly
+     under the sticky stepper (PropertyScoreProgress.js), which already
+     carries its own bottom border as the divider, so this is deliberately
+     smaller than .section-inner's 88px/border-top (sized for sitting
+     below the old multi-screen intro sequence, not for being the very
+     first thing under a sticky bar) and has no border of its own. */
+  .ps-tab-panel{ padding:40px 0 88px }
+  @media (max-width:900px){ .ps-tab-panel{ padding:32px 0 56px } }
+  @media (max-width:640px){ .ps-tab-panel{ padding:24px 0 40px } }
+
   @media (prefers-reduced-motion: reduce){
     .coord-readout .blink, .pcard-tag .dot{animation:none !important}
     .pcard, .why-row, .team-card, .eyebrow::after, .nav-links a::after, .brand-mark-img{transition:none !important}
