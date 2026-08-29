@@ -66,7 +66,7 @@ export default function PropertyScoreFlow({ initial }) {
   // reachable (reachableStages below) when you've clicked back to review
   // or change an earlier one -- that's the whole point of the tabs being
   // independently clickable.
-  const [viewStage, setViewStage] = useState(initial?.stage || (initial?.areaRecord || initial?.lat ? 'unit' : 'location'));
+  const [viewStage, setViewStage] = useState(initial?.stage || (initial?.areaRecord || initial?.lat ? 'unit' : 'priorities'));
 
   const panelRef = useRef(null);
 
@@ -77,9 +77,8 @@ export default function PropertyScoreFlow({ initial }) {
   };
 
   const chooseMode = (m) => {
-    if (m === mode) return;
-    setMode(m);
-    resetLocation();
+    if (m !== mode) { setMode(m); resetLocation(); }
+    setViewStage('location');
   };
 
   const handleAreaSelected = useCallback((record, cityName) => {
@@ -186,10 +185,8 @@ export default function PropertyScoreFlow({ initial }) {
   const unitReady = Boolean(lat && lon);
 
   // Coarse but reliable -- derived straight from state this component
-  // already owns. "Priorities" and "Location" tick independently even
-  // though they're one screen (see PropertyScoreProgress) -- picking a
-  // persona checks off Priorities without needing a location yet, and
-  // vice versa.
+  // already owns. "Unit" and "Verdict" tick (done) independently of which
+  // tab is currently in view -- see PropertyScoreProgress's `done` prop.
   const progressDone = [
     ...(personaId ? ['priorities'] : []),
     ...(unitReady ? ['location'] : []),
@@ -206,14 +203,9 @@ export default function PropertyScoreFlow({ initial }) {
   // on mobile just read as "these buttons don't work."
   const reachableStages = ['priorities', 'location', 'unit', 'verdict'];
 
-  // 'priorities' and 'location' are two stepper labels over the same
-  // screen (see PropertyScoreProgress) -- clicking either one just opens
-  // that one screen.
-  const handleStageSelect = (key) => setViewStage(key === 'priorities' ? 'location' : key);
-
   return (
     <section className="section" id="property-score-flow" style={{ paddingTop: 0 }}>
-      <PropertyScoreProgress current={viewStage} done={progressDone} reachable={reachableStages} onSelect={handleStageSelect} />
+      <PropertyScoreProgress current={viewStage} done={progressDone} reachable={reachableStages} onSelect={setViewStage} />
       <SideDataStrip />
 
       {/* .section-inner's 88px top padding + top border were sized for
@@ -226,19 +218,18 @@ export default function PropertyScoreFlow({ initial }) {
           under the stepper on every tab. */}
       <div ref={panelRef} className="wrap ps-tab-panel" style={{ scrollMarginTop: 130 }}>
 
-        <div className="ps-flow-wrap" style={{ width: '100%', display: viewStage === 'location' ? 'block' : 'none' }}>
-          <div style={{ maxWidth: 640, margin: '0 auto' }}>
-            {/* One heading for this whole screen -- PersonaPicker's own
-                "Pick your priorities." intro. Location used to have a
-                second "How do you want to start?" heading of its own
-                sitting beside it in a two-column layout; that's gone,
-                Option A/B now just follow straight on below, stacked
-                vertically like the persona list right above them instead
-                of two side-by-side cards -- one continuous flow, not two
-                separately-headed halves. */}
-            <PersonaPicker personaId={personaId} onSelect={setPersonaId} />
+        {/* ── Priorities: persona list + entry-mode choice, side by
+            side. Just the choice here -- picking Option A/B doesn't show
+            the actual picker on this screen, it advances straight to the
+            Location tab (see chooseMode above), which is where the real
+            browsing/searching happens. */}
+        <div className="ps-flow-wrap" style={{ width: '100%', display: viewStage === 'priorities' ? 'block' : 'none' }}>
+          <div style={{ display: 'flex', gap: 48, alignItems: 'flex-start', flexWrap: 'wrap', maxWidth: 1000, margin: '0 auto' }}>
+            <div style={{ flex: '1 1 320px', maxWidth: 400 }}>
+              <PersonaPicker personaId={personaId} onSelect={setPersonaId} />
+            </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 28 }}>
+            <div style={{ flex: '1 1 320px', maxWidth: 460, display: 'flex', flexDirection: 'column', gap: 12, paddingTop: 4 }}>
               <button onClick={() => chooseMode('locality')} className="ps-mode-btn ps-btn"
                 style={{
                   textAlign: 'left',
@@ -270,37 +261,49 @@ export default function PropertyScoreFlow({ initial }) {
                 </div>
               </button>
             </div>
-            {!mode && (
-              <p style={{ fontSize: 13.5, color: 'var(--text-dim)', marginTop: 16 }}>Pick one to continue.</p>
-            )}
+          </div>
+        </div>
 
-            {mode === 'locality' && (
-              <div style={{ marginTop: 28 }}>
-                <LocalityPicker onAreaSelected={handleAreaSelected} selectedPinCode={pinCode} />
+        {/* ── Location: the real picker for whichever mode was chosen on
+            Priorities. If you land here directly (stepper click) with no
+            mode chosen yet, send you back rather than guessing which
+            picker to show. */}
+        <div className="ps-flow-wrap" style={{ width: '100%', display: viewStage === 'location' ? 'block' : 'none' }}>
+          <div style={{ maxWidth: 640, margin: '0 auto' }}>
+            {!mode ? (
+              <div style={{ textAlign: 'center', padding: '60px 0' }}>
+                <p style={{ fontSize: 14.5, color: 'var(--text-mute)', marginBottom: 20 }}>Pick how you want to start first.</p>
+                <button onClick={() => setViewStage('priorities')} className="btn btn-lg btn-cta ps-btn ps-cta-btn">
+                  ← Back to Priorities
+                </button>
               </div>
-            )}
-            {mode === 'address' && (
-              <div style={{ marginTop: 28 }}>
-                <AddressPicker onConfirmed={handleAddressConfirmed} />
-              </div>
+            ) : (
+              <>
+                {mode === 'locality' && <LocalityPicker onAreaSelected={handleAreaSelected} selectedPinCode={pinCode} />}
+                {mode === 'address' && <AddressPicker onConfirmed={handleAddressConfirmed} />}
+              </>
             )}
           </div>
 
-          <div style={{ textAlign: 'center', marginTop: 36 }}>
-            <button
-              onClick={() => personaId && unitReady && setViewStage('unit')}
-              disabled={!personaId || !unitReady}
-              className="btn btn-lg btn-cta ps-btn ps-cta-btn"
-              style={{ opacity: (personaId && unitReady) ? 1 : .45, cursor: (personaId && unitReady) ? 'pointer' : 'default' }}
-            >
-              Continue — Configure Your Unit <span className="btn-cta-arrow">→</span>
-            </button>
-            {!(personaId && unitReady) && (
-              <p style={{ fontSize: 12.5, color: 'var(--text-dim)', marginTop: 10 }}>
-                {!personaId && !unitReady ? 'Pick a priority and a location to continue.' : !personaId ? 'Pick a priority above to continue.' : 'Pick a location to continue.'}
-              </p>
-            )}
-          </div>
+          {mode && (
+            <div style={{ textAlign: 'center', marginTop: 36 }}>
+              <button
+                onClick={() => personaId && unitReady && setViewStage('unit')}
+                disabled={!personaId || !unitReady}
+                className="btn btn-lg btn-cta ps-btn ps-cta-btn"
+                style={{ opacity: (personaId && unitReady) ? 1 : .45, cursor: (personaId && unitReady) ? 'pointer' : 'default' }}
+              >
+                Continue — Configure Your Unit <span className="btn-cta-arrow">→</span>
+              </button>
+              {!(personaId && unitReady) && (
+                <p style={{ fontSize: 12.5, color: 'var(--text-dim)', marginTop: 10 }}>
+                  {!personaId ? (
+                    <>Pick a priority on the <button onClick={() => setViewStage('priorities')} style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', color: 'var(--slate)', textDecoration: 'underline', cursor: 'pointer' }}>Priorities</button> tab first.</>
+                  ) : 'Pick a location to continue.'}
+                </p>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Unit + Verdict share one mounted UnitVerdict instance (see the

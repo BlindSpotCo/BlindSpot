@@ -8,25 +8,19 @@
 // stage's own "Continue" gets you there) and back (click any stage
 // you've already reached, any time).
 //
-// `current` is whichever SCREEN is actually on show right now -- still
-// just 'location' | 'unit' | 'verdict' (3 screens -- see
-// PropertyScoreFlow.js, Priorities and Location render together on one
-// screen). The stepper below still shows 4 labelled steps, not 3: two
-// STAGES entries ('priorities' and 'location') point at that same
-// 'location' screen, so picking either one highlights both and lands you
-// on the one combined screen. `done` marks real completion (ticks the
-// checkmark), independent of what's currently in view. `reachable` is the
-// set of stage keys allowed to be clicked into.
-const SCREENS = ['location', 'unit', 'verdict'];
+// `current` is whichever of the 4 screens is actually on show right now.
+// `done` marks real completion (ticks the checkmark), independent of
+// what's currently in view. `reachable` is the set of stage keys allowed
+// to be clicked into.
 const STAGES = [
-  { key: 'priorities', label: 'Priorities', screen: 'location' },
-  { key: 'location', label: 'Location', screen: 'location' },
-  { key: 'unit', label: 'Unit', screen: 'unit' },
-  { key: 'verdict', label: 'Verdict', screen: 'verdict' },
+  { key: 'priorities', label: 'Priorities' },
+  { key: 'location', label: 'Location' },
+  { key: 'unit', label: 'Unit' },
+  { key: 'verdict', label: 'Verdict' },
 ];
 
 export default function PropertyScoreProgress({ current, done = [], reachable = [], onSelect }) {
-  const currentScreenPos = Math.max(0, SCREENS.indexOf(current));
+  const idx = Math.max(0, STAGES.findIndex(s => s.key === current));
 
   return (
     <div style={{
@@ -35,9 +29,8 @@ export default function PropertyScoreProgress({ current, done = [], reachable = 
     }}>
       <div className="wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0, flexWrap: 'wrap' }}>
         {STAGES.map((s, i) => {
-          const screenPos = SCREENS.indexOf(s.screen);
-          const active = s.screen === current;
-          const isDone = done.includes(s.key) || screenPos < currentScreenPos;
+          const isDone = done.includes(s.key) || i < idx;
+          const active = i === idx;
           const canGo = reachable.includes(s.key) && !active;
           return (
             <div key={s.key} style={{ display: 'flex', alignItems: 'center' }}>
