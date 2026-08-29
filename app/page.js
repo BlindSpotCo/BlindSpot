@@ -84,7 +84,7 @@ export default function Home() {
             <p className="hero-tagline"><span className="seg sun">One pin</span><span className="sep"></span><span className="seg slate">Two answers</span></p>
             <p className="hero-sub">Drop a pin. See exactly what the neighbourhood around it is really like, and exactly how sunlight moves through the unit. Real government records. Real solar geometry. No broker spin.</p>
             <span className="coverage-pill" style={{ marginTop: 18, marginBottom: 4 }}>
-              <span className="dot" />Live in {coverageLabel()} — more cities coming
+              <span className="dot" />Active in {coverageLabel()} — more cities coming
             </span>
             <div className="hero-ctas" style={{ marginTop: 18 }}>
               <PinDropTransition href="/property-score" className="btn btn-lg btn-cta">

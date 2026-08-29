@@ -1178,6 +1178,9 @@
   }
   .avsheet-explain{ font-size:12px; color:var(--text-mute); line-height:1.45; margin:6px 0 0 }
   .avsheet-row-score{ font-family:'Bricolage Grotesque',sans-serif; font-size:26px; font-weight:700; text-align:right }
+  /* Toggle chevron for the mobile row accordion -- hidden by default
+     (desktop always shows detail inline, nothing to toggle there). */
+  .avsheet-row-toggle{ display:none; }
 
   @media (max-width:900px){
     .avsheet-hero{ grid-template-columns:1fr }
@@ -1186,8 +1189,22 @@
   @media (max-width:640px){
     .avsheet-score{ font-size:60px }
     .avsheet-name{ font-size:38px }
-    .avsheet-row{ grid-template-columns:1fr; gap:6px }
-    .avsheet-row-score{ text-align:left }
+    .avsheet-row{ grid-template-columns:1fr auto; gap:4px 10px; align-items:center; }
+    .avsheet-row-score{ text-align:right; font-size:20px }
+    /* Collapsed by default: only label + score show, so all 8 rows are
+       visible together without scrolling. Source line, weight and the
+       track/explain block are tucked behind the row's toggle. */
+    .avsheet-row-weight{ display:none; }
+    .avsheet-row > div:nth-child(3){ display:none; }
+    .avsheet-row-detail{ display:none; }
+    .avsheet-row--open .avsheet-row-weight{ display:block; grid-column:1 / -1; }
+    .avsheet-row--open > div:nth-child(3){ display:block; grid-column:1 / -1; }
+    .avsheet-row--open .avsheet-row-detail{ display:block; }
+    .avsheet-row-toggle{
+      display:inline-flex; align-items:center; justify-content:center;
+      width:22px; height:22px; border:1px solid color-mix(in srgb, var(--slate) 45%, transparent);
+      background:transparent; color:var(--slate); font-size:10px; border-radius:4px; padding:0; cursor:pointer;
+    }
   }
 
   /* ---------- SUNSCOUT-STYLE PANEL (step 2) ----------

@@ -96,12 +96,16 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
   // for a given pin. Falls back to the stored snapshot when no live
   // reading is available.
   const record = useLiveAqi(rawRecord);
-  const [persona, setPersona] = useState('Default');
-  const [customWeights, setCustomWeights] = useState({ ...WEIGHT_PRESETS.Default });
   const [closeHint, setCloseHint] = useState(false);
+  // Mobile-only accordion state for the dimension readout -- collapsed by
+  // default below 640px so all 8 rows' labels/scores fit on screen at
+  // once without scrolling through every row's explain paragraph; tap a
+  // row to reveal its source + explanation. No-op visually above 640px
+  // (CSS keeps detail always visible on desktop).
+  const [expandedRows, setExpandedRows] = useState(new Set());
 
   const { nqi, grade, rows } = useMemo(() => {
-    const w = persona === 'Custom' ? customWeights : WEIGHT_PRESETS[persona];
+    const w = WEIGHT_PRESETS.Default;
     const scores = record.scores || {};
     const keys = Object.keys(scores);
     const totalW = keys.reduce((sum, k) => sum + (w[k] || 0), 0) || 1;
@@ -110,7 +114,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
       .map(k => ({ k, score: scores[k], weight: Math.round((w[k] || 0) / totalW * 100) }))
       .sort((a, b) => b.weight - a.weight || b.score - a.score);
     return { nqi: composite, grade: gradeFor(composite), rows: rws };
-  }, [record, persona, customWeights]);
+  }, [record]);
 
   const verdict = verdictFor(nqi);
   const { good, bad } = highlights(record);
@@ -202,12 +206,12 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
           </BPF>
 
           <BPF dark className="avsheet-box">
-            <p className="avsheet-label" style={{ color: 'rgba(255,253,248,0.65)' }}>Composite index · {persona} weighting</p>
+            <p className="avsheet-label" style={{ color: 'rgba(255,253,248,0.65)' }}>Composite index</p>
             <div className="avsheet-scorerow">
               <span className="avsheet-score">{nqi}</span>
               <span className="avsheet-grade">{grade}</span>
             </div>
-            <p className="avsheet-cap">NQI · weighted mean of {rows.length} dimensions — switch profile to re-weight.</p>
+            <p className="avsheet-cap">NQI · weighted mean of {rows.length} dimensions.</p>
             {/* Present on AsliVastu's own live report card, missing here --
                 a real, load-bearing caveat (this is a PIN-level assessment,
                 not building-specific), not just decoration. */}
@@ -228,40 +232,49 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
           </div>
         </div>
 
-        {/* ── Persona toggle + legend ── */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap', marginBottom: 16 }}>
-          <div style={{ display: 'inline-flex', border: '1px solid color-mix(in srgb, var(--slate) 45%, transparent)' }}>
-            {[...Object.keys(WEIGHT_PRESETS), 'Custom'].map((p, i) => (
-              <button key={p} onClick={() => setPersona(p)} style={{
-                fontSize: 12, fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', padding: '7px 14px', border: 'none', cursor: 'pointer',
-                borderLeft: i ? '1px solid color-mix(in srgb, var(--slate) 45%, transparent)' : 'none',
-                background: persona === p ? 'var(--slate)' : 'transparent', color: persona === p ? '#fff' : 'var(--text-mute)',
-              }}>{p}</button>
-            ))}
-          </div>
+        {/* ── Guidance Value (Price Context) -- moved to the top: this is
+            the number people trust most since it's backed by the
+            government record, not a scraped market estimate. Was
+            previously buried below the dimension readout. */}
+        <BPF style={{ padding: '20px 22px', marginBottom: 20, borderColor: 'var(--slate)' }}>
+          {/* Heading used to hardcode "Guidance Value" -- Karnataka's
+              term -- on every city including Delhi, whose own records
+              say circle rate. Now follows the record's city. */}
+          <p className="kick">{cityMeta(record.city).rateTermTitle} <span style={{ color: 'var(--text-dim)', fontWeight: 500, textTransform: 'none', letterSpacing: 0 }}>· official government valuation</span></p>
+          {pc?.rate_sqft ? (() => {
+            const [lo, hi] = pc.rate_sqft;
+            const bands = ['Premium', 'Upper', 'Mid', 'Modest', 'Value'];
+            const ops = [1, .55, .3, .15, .07];
+            const cm = cityMeta(record.city);
+            const [mktLo, mktHi] = cm.marketMultiplier;
+            const mLo = Math.round(lo * mktLo / 100) * 100, mHi = Math.round(hi * mktHi / 100) * 100;
+            return (
+              <>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, margin: '8px 0 2px', flexWrap: 'wrap' }}>
+                  <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 30, fontWeight: 700 }}>{inr(lo)}–{inr(hi)}</span>
+                  <span style={{ fontSize: 12, color: 'var(--text-dim)' }}>per sq ft · {pc.label?.toLowerCase()} band for {cm.shortName}</span>
+                </div>
+                <div style={{ display: 'flex', gap: 5, margin: '14px 0 6px' }}>
+                  {bands.map((b, i) => (
+                    <div key={b} style={{ flex: 1 }}>
+                      <div style={{ height: 7, background: 'var(--slate)', opacity: (i + 1) === pc.tier ? 1 : ops[i] }} />
+                      <div style={{ fontSize: 9.5, textTransform: 'uppercase', letterSpacing: '.04em', color: (i + 1) === pc.tier ? 'var(--slate)' : 'var(--text-dim)', marginTop: 5, fontWeight: (i + 1) === pc.tier ? 600 : 400 }}>{b}{(i + 1) === pc.tier ? ' ▲' : ''}</div>
+                    </div>
+                  ))}
+                </div>
+                <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '12px 0 0', lineHeight: 1.5 }}>
+                  Market prices run <strong style={{ color: 'var(--text)' }}>{cm.marketGapLabel}</strong> the {cm.rateTerm} — expect roughly <strong style={{ color: 'var(--text)' }}>{inr(mLo)}–{inr(mHi)}/sq ft</strong> in practice. Indicative government valuation, not a market quote; does not affect the score.
+                </p>
+              </>
+            );
+          })() : <p style={{ fontSize: 13, color: 'var(--text-dim)', marginTop: 10 }}>No price data for this pin.</p>}
+        </BPF>
+
+        <div style={{ marginBottom: 16 }}>
           <span style={{ fontSize: 12, color: 'var(--text-dim)', lineHeight: 1.5 }}>
-            <strong style={{ color: 'var(--text)' }}>AIR = LIVE FEED</strong> (daily) · all other channels estimated, gov. reports verified 2023–24 · rows re-rank with the selected profile
+            <strong style={{ color: 'var(--text)' }}>AIR = LIVE FEED</strong> (daily) · all other channels estimated, gov. reports verified 2023–24
           </span>
         </div>
-
-        {persona === 'Custom' && (
-          <BPF style={{ marginBottom: 20, padding: '16px 20px' }}>
-            <p className="kick">Custom weighting · drag to set your priorities</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 14 }}>
-              {['crime', 'infrastructure', 'air', 'power', 'schools', 'water', 'roads', 'sewerage'].map(k => (
-                <div key={k}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text-dim)', marginBottom: 4 }}>
-                    <span style={{ textTransform: 'uppercase', letterSpacing: '.04em' }}>{FACTOR_LABELS[k]}</span>
-                    <span style={{ color: 'var(--slate)', fontWeight: 600 }}>{customWeights[k]}</span>
-                  </div>
-                  <input type="range" min="0" max="50" value={customWeights[k]}
-                    onChange={e => setCustomWeights({ ...customWeights, [k]: +e.target.value })}
-                    style={{ width: '100%', accentColor: 'var(--slate)' }} />
-                </div>
-              ))}
-            </div>
-          </BPF>
-        )}
 
         {/* ── Dimension readout ── */}
         {/* Deliberately NOT dark -- mixed theme, same as AVAreaCard.js:
@@ -274,11 +287,12 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
           {rows.map(row => {
             const weak = row.score < 50;
             const col = scoreColor(row.score);
+            const isOpen = expandedRows.has(row.k);
             return (
-              <div key={row.k} className="avsheet-row">
+              <div key={row.k} className={`avsheet-row${isOpen ? ' avsheet-row--open' : ''}`}>
                 <div>
                   <div className="avsheet-row-label">{FACTOR_LABELS[row.k]}</div>
-                  <div className="avsheet-row-src">{source(row.k, record.city)}</div>
+                  <div className="avsheet-row-src avsheet-row-detail">{source(row.k, record.city)}</div>
                 </div>
                 <div className="avsheet-row-weight">{row.weight}%</div>
                 <div style={{ paddingTop: 2 }}>
@@ -287,59 +301,36 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
                       background: weak ? undefined : col,
                       backgroundImage: weak ? `repeating-linear-gradient(45deg, ${col} 0 3px, transparent 3px 6px)` : undefined }} />
                   </div>
-                  <p className="avsheet-explain">{explain(row.k, record)}</p>
+                  <p className="avsheet-explain avsheet-row-detail">{explain(row.k, record)}</p>
                 </div>
-                <div className="avsheet-row-score" style={{ color: col }}>{row.score}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'flex-end' }}>
+                  <div className="avsheet-row-score" style={{ color: col }}>{row.score}</div>
+                  <button
+                    type="button"
+                    className="avsheet-row-toggle"
+                    aria-expanded={isOpen}
+                    aria-label={isOpen ? 'Hide detail' : 'Show detail'}
+                    onClick={() => setExpandedRows(prev => {
+                      const next = new Set(prev);
+                      next.has(row.k) ? next.delete(row.k) : next.add(row.k);
+                      return next;
+                    })}
+                  >{isOpen ? '▲' : '▼'}</button>
+                </div>
               </div>
             );
           })}
         </BPF>
 
-        {/* ── Inspection notes + Price context ── */}
-        <div className="nr-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 24 }}>
-          <BPF style={{ padding: 20 }}>
-            <p className="kick">Inspection Notes</p>
-            <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 9 }}>
-              {good.map((g, i) => <div key={'g' + i} style={{ display: 'flex', gap: 9, fontSize: 13, lineHeight: 1.45 }}><span style={{ color: '#3D6B2E', fontWeight: 700 }}>✓</span><span style={{ color: 'var(--text-mute)' }}>{g}</span></div>)}
-              {bad.map((b, i) => <div key={'b' + i} style={{ display: 'flex', gap: 9, fontSize: 13, lineHeight: 1.45 }}><span style={{ color: 'var(--slate)', fontWeight: 700 }}>✕</span><span style={{ color: 'var(--text-mute)' }}>{b}</span></div>)}
-              {good.length + bad.length === 0 && <span style={{ fontSize: 13, color: 'var(--text-dim)' }}>No standout flags either way.</span>}
-            </div>
-          </BPF>
-
-          <BPF style={{ padding: '20px 22px' }}>
-            {/* Heading used to hardcode "Guidance Value" -- Karnataka's
-                term -- on every city including Delhi, whose own records
-                say circle rate. Now follows the record's city. */}
-            <p className="kick">Price Context · {cityMeta(record.city).rateTermTitle}</p>
-            {pc?.rate_sqft ? (() => {
-              const [lo, hi] = pc.rate_sqft;
-              const bands = ['Premium', 'Upper', 'Mid', 'Modest', 'Value'];
-              const ops = [1, .55, .3, .15, .07];
-              const cm = cityMeta(record.city);
-              const [mktLo, mktHi] = cm.marketMultiplier;
-              const mLo = Math.round(lo * mktLo / 100) * 100, mHi = Math.round(hi * mktHi / 100) * 100;
-              return (
-                <>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, margin: '8px 0 2px', flexWrap: 'wrap' }}>
-                    <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 30, fontWeight: 700 }}>{inr(lo)}–{inr(hi)}</span>
-                    <span style={{ fontSize: 12, color: 'var(--text-dim)' }}>per sq ft · {pc.label?.toLowerCase()} band for {cm.shortName}</span>
-                  </div>
-                  <div style={{ display: 'flex', gap: 5, margin: '14px 0 6px' }}>
-                    {bands.map((b, i) => (
-                      <div key={b} style={{ flex: 1 }}>
-                        <div style={{ height: 7, background: 'var(--slate)', opacity: (i + 1) === pc.tier ? 1 : ops[i] }} />
-                        <div style={{ fontSize: 9.5, textTransform: 'uppercase', letterSpacing: '.04em', color: (i + 1) === pc.tier ? 'var(--slate)' : 'var(--text-dim)', marginTop: 5, fontWeight: (i + 1) === pc.tier ? 600 : 400 }}>{b}{(i + 1) === pc.tier ? ' ▲' : ''}</div>
-                      </div>
-                    ))}
-                  </div>
-                  <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '12px 0 0', lineHeight: 1.5 }}>
-                    Market prices run <strong style={{ color: 'var(--text)' }}>{cm.marketGapLabel}</strong> the {cm.rateTerm} — expect roughly <strong style={{ color: 'var(--text)' }}>{inr(mLo)}–{inr(mHi)}/sq ft</strong> in practice. Indicative government valuation, not a market quote; does not affect the score.
-                  </p>
-                </>
-              );
-            })() : <p style={{ fontSize: 13, color: 'var(--text-dim)', marginTop: 10 }}>No price data for this pin.</p>}
-          </BPF>
-        </div>
+        {/* ── Inspection notes ── */}
+        <BPF style={{ padding: 20, marginBottom: 24 }}>
+          <p className="kick">Inspection Notes</p>
+          <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 9 }}>
+            {good.map((g, i) => <div key={'g' + i} style={{ display: 'flex', gap: 9, fontSize: 13, lineHeight: 1.45 }}><span style={{ color: '#3D6B2E', fontWeight: 700 }}>✓</span><span style={{ color: 'var(--text-mute)' }}>{g}</span></div>)}
+            {bad.map((b, i) => <div key={'b' + i} style={{ display: 'flex', gap: 9, fontSize: 13, lineHeight: 1.45 }}><span style={{ color: 'var(--slate)', fontWeight: 700 }}>✕</span><span style={{ color: 'var(--text-mute)' }}>{b}</span></div>)}
+            {good.length + bad.length === 0 && <span style={{ fontSize: 13, color: 'var(--text-dim)' }}>No standout flags either way.</span>}
+          </div>
+        </BPF>
 
         {/* ── Nearby comparison ── */}
         {nearby?.length > 0 && (

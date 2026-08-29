@@ -89,7 +89,7 @@ export default function PersonaPicker({ personaId, onSelect, big = false }) {
       display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center',
     }}>
       <div className="mono" style={{ fontSize: big ? 12 : 11, color: 'var(--sun)', letterSpacing: '.14em', marginBottom: big ? 10 : 10 }}>WHO&apos;S HOUSE-HUNTING?</div>
-      <h1 style={{ fontSize: big ? 'clamp(30px, 3.6vw, 40px)' : 'clamp(28px, 4vw, 40px)', marginBottom: big ? 10 : 8 }}>Pick your angle.</h1>
+      <h1 style={{ fontSize: big ? 'clamp(30px, 3.6vw, 40px)' : 'clamp(28px, 4vw, 40px)', marginBottom: big ? 10 : 8 }}>Pick your priorities.</h1>
       <p style={{ fontSize: big ? 14.5 : 13, color: 'var(--text-mute)', maxWidth: big ? 500 : 400, marginBottom: big ? 20 : 20, lineHeight: 1.55 }}>
         Same address, different blind spots — this sets how the combined score and the sun/shadow weighting are tuned for you. You can still drag any slider by hand later.
       </p>
@@ -135,7 +135,7 @@ export default function PersonaPicker({ personaId, onSelect, big = false }) {
             ) : (
               <>
                 <tspan x={CX} dy="-3">CHOOSE</tspan>
-                <tspan x={CX} dy={big ? '15' : '14'}>YOUR ANGLE</tspan>
+                <tspan x={CX} dy={big ? '15' : '14'}>YOUR PRIORITIES</tspan>
               </>
             )}
           </text>
@@ -209,7 +209,7 @@ export default function PersonaPicker({ personaId, onSelect, big = false }) {
             {preview ? `${preview.short.toUpperCase()}'S WEIGHTING` : 'DEFAULT WEIGHTING'}
           </div>
           <div style={{ fontSize: 12.5, color: 'var(--text-dim)', marginBottom: 18, lineHeight: 1.5 }}>
-            {preview ? 'How this angle re-weights the Neighbourhood Score’s 8 factors.' : 'Hover a point on the dial to preview its weighting.'}
+            {preview ? 'How this persona re-weights the Neighbourhood Score’s 8 factors.' : 'Hover a point on the dial to preview its weighting.'}
           </div>
           {Object.entries(FACTOR_LABELS).map(([key, label]) => (
             <WeightBar

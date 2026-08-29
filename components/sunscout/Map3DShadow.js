@@ -78,7 +78,7 @@ html,body{background:var(--bg-2);overflow:hidden;}
     <button class="tile-btn on" id="bs" onclick="setT('s')">Street</button>
     <button class="tile-btn" id="bsat" onclick="setT('sat')">Satellite</button>
   </div>
-  <div class="hint">Click map to move pin · Drag · Scroll zoom · Use buttons to tilt/rotate</div>
+  <div class="hint">Tap to move pin · drag to look around</div>
   <div class="view-controls" style="position:absolute;top:14px;right:14px;z-index:25;display:flex;flex-direction:column;gap:5px;align-items:center;background:rgba(255,253,248,0.97);border:1px solid var(--line);border-radius:var(--radius-md);padding:10px 9px;box-shadow:0 2px 12px rgba(28,24,18,0.08);">
     <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;white-space:nowrap;line-height:1.4;text-align:center;">Set view angle<br/><span style="font-size:10.5px;font-weight:500;color:var(--text-mute);text-transform:none;letter-spacing:0;opacity:0.85;">e.g. balcony view</span></div>
     <button class="cb" id="btn-up">▲</button>
@@ -111,7 +111,6 @@ html,body{background:var(--bg-2);overflow:hidden;}
         <line x1="-11.3" y1="11.3" x2="-15.6" y2="15.6"/><line x1="11.3" y1="-11.3" x2="15.6" y2="-15.6"/>
       </g>
     </svg>
-    <div id="sun-time" style="position:absolute;left:0;top:26px;transform:translate(-50%,0);font-size:12.5px;font-weight:600;font-family:'IBM Plex Mono',monospace;background:rgba(255,253,248,.96);color:#1C1812;border:1px solid rgba(28,24,18,0.14);border-radius:7px;padding:3px 10px;white-space:nowrap;">--:--</div>
   </div>
   <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:22;">
     <div style="width:14px;height:14px;border-radius:50%;background:#AF5F30;border:3px solid #FFFDF8;box-shadow:0 0 0 3px rgba(175,95,48,0.35);"></div>
@@ -255,7 +254,6 @@ function updateView(p){
   curEl=p.el;curAz=p.az;
   moveSun(p.az,p.el);
   var stm=document.getElementById('stm');if(stm)stm.textContent=p.time;
-  var st2=document.getElementById('sun-time');if(st2)st2.textContent=p.time;
 }
 
 updateView({el:${mel},az:${maz},time:'${simTime}',iso:'${simIso}'});
@@ -369,7 +367,6 @@ function animTick(ts){
   }
   try{map.setDate(interpDate(p0.iso,p1.iso,t));}catch(e){}
   var stm=document.getElementById('stm');if(stm)stm.textContent=p0.time;
-  var st2=document.getElementById('sun-time');if(st2)st2.textContent=p0.time;
   drawArc();
   if(t>=1){ai=(ai+1)%allPts.length;animStartT=ts;}
   animFrame=requestAnimationFrame(animTick);
