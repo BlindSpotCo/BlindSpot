@@ -158,20 +158,15 @@ export default function PropertyScoreFlow({ initialUnit }) {
     ...(unitSeen ? ['unit'] : []),
     ...(verdictStarted ? ['verdict'] : []),
   ];
-  // Which stepper tabs are clickable right now. Not a strict walk through
-  // the four stages in order -- persona was never a hard gate on Location
-  // (you could always get there without picking one first, even in the
-  // old scroll-based version of this flow), so both of the first two are
-  // always open. Unit opens up once a location is actually picked (which
-  // can happen before a persona does -- e.g. the "Continue to Sun Score"
-  // hand-off lands straight here with initialUnit, no persona chosen
-  // yet), Verdict once a score's actually been computed at least once.
-  const reachableStages = [
-    'angle',
-    'location',
-    ...(unitReady ? ['unit'] : []),
-    ...(unitSeen ? ['verdict'] : []),
-  ];
+  // All four stepper tabs are always clickable -- these are tabs, not a
+  // wizard with locked steps. Tapping ahead to Unit or Verdict before
+  // there's a location/score yet doesn't dead-end: both render their own
+  // "nothing here yet, here's where to go" prompt (see the !unitReady
+  // block below, and UnitVerdict's own combined-less branch) rather than
+  // relying on the stepper to prevent getting there. An earlier version
+  // gated these behind progress and disabled the button entirely, which
+  // on mobile just read as "these buttons don't work."
+  const reachableStages = ['angle', 'location', 'unit', 'verdict'];
 
   return (
     <section className="section" id="property-score-flow" style={{ paddingTop: 0 }}>
