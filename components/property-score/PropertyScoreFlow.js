@@ -188,17 +188,12 @@ export default function PropertyScoreFlow({ initialUnit }) {
             <div style={{ textAlign: 'center', marginBottom: 8 }}>
               <span className="mono" style={{ fontSize: 12, color: 'var(--text-dim)', letterSpacing: '.12em' }}>STEP 1 OF 4</span>
             </div>
-            <PersonaPicker personaId={personaId} onSelect={setPersonaId} big />
-            <div style={{ textAlign: 'center', marginTop: 28 }}>
-              <button
-                onClick={() => personaId && setViewStage('location')}
-                disabled={!personaId}
-                className="btn btn-lg btn-cta ps-btn ps-cta-btn"
-                style={{ opacity: personaId ? 1 : .45, cursor: personaId ? 'pointer' : 'default' }}
-              >
-                Continue — Pick a Location <span className="btn-cta-arrow">→</span>
-              </button>
-            </div>
+            {/* No separate Continue button here anymore -- picking a
+                persona IS the commitment. onSelect only fires on an
+                actual click (hover just previews, see PersonaPicker's own
+                hoverId state), so advancing straight from it doesn't
+                cost a "wait, was that a click or a hover" moment. */}
+            <PersonaPicker personaId={personaId} onSelect={(id) => { setPersonaId(id); setViewStage('location'); }} big />
           </div>
         )}
 
