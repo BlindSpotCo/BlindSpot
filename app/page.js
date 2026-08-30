@@ -167,44 +167,12 @@ export default function Home() {
 
       <HowItWorks />
 
-      <section className="section" id="products">
-        <div className="wrap section-inner">
-          <div className="section-head reveal">
-            <div>
-              <span className="eyebrow">01 — The Platform</span>
-              <h2>One location. Two lenses.</h2>
-            </div>
-            <p>Every property decision comes down to two questions. BlindSpot answers both from the same pin.</p>
-          </div>
-          <div className="products">
-            <div className="pcard slate reveal">
-              <div className="pcard-tag"><span className="dot"></span>Neighbourhood Intelligence</div>
-              <h3>Neighbourhood Score</h3>
-              <p>Government data, not broker spin. Every area scored 0–100 across safety, air quality, power reliability, water, schools and infrastructure — pulled from public records, not a commission-driven source.</p>
-              <div className="pcard-stats">
-                <div><div className="pstat-num">260+</div><div className="pstat-lbl">Areas covered</div></div>
-                <div><div className="pstat-num">8</div><div className="pstat-lbl">Dimensions</div></div>
-                <div><div className="pstat-num">Govt.</div><div className="pstat-lbl">Data source</div></div>
-              </div>
-            </div>
-
-            <div className="pcard sun reveal">
-              <div className="pcard-tag"><span className="dot"></span>Solar &amp; Shadow Analysis</div>
-              <h3>Home Comfort Score</h3>
-              <p>Drop a pin on any property and watch the sun&apos;s real path arc across it — hour by hour, season by season, rendered against actual 3D building shadows. See exactly when direct light reaches a specific floor.</p>
-              <div className="pcard-stats">
-                <div><div className="pstat-num">365</div><div className="pstat-lbl">Days modeled</div></div>
-                <div><div className="pstat-num">3D</div><div className="pstat-lbl">Building shadows</div></div>
-                <div><div className="pstat-num">NOAA</div><div className="pstat-lbl">Solar data</div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ===== TWO ENGINES, ONE VERDICT =====
-          Fills the gap the section numbering already left: 01 -- The
-          Platform, 03 -- Why BlindSpot, 04 -- The Team, nothing at 02.
+          Numbered 02 rather than 01 -- the "01 -- The Platform" section
+          (the Neighbourhood Score / Home Comfort Score two-card intro)
+          that used to sit above this one was removed on request; this
+          section's own eyebrow was left at "02" rather than renumbered,
+          so it now opens the run at 02 (Verdict) / 03 (Team).
           Jeton's "Unify your finances" idea, applied to BlindSpot's own
           pitch -- instead of a paragraph claiming the two engines above
           combine into one score, this shows it: the same 78/82/80 numbers
