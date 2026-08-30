@@ -44,6 +44,7 @@
        worth a live look, not just trusting this comment. */
     --brand:#3D4116;   /* BlindSpot (parent) — the judgment. Darkened from #4B4F1A on request; still AAA on paper, even higher contrast than before. */
     --brand-fill:#ADA846; /* brighter/lighter parent fill -- decorative/large only, fails text contrast (this was AsliVastu's old --av-fill value) */
+    --brand-yellow:#F5C343; /* the brand's yellow accent (matched from the logo/wordmark reference image, previously used for the header CTA pill on an unmerged branch) -- not used in any merged nav/header styling yet, so this is its first call site on main. Dark text/ink reads fine on it as a fill; as a flat text colour on the light --bg paper it's noticeably lower-contrast than --brand, expected for a bold display headline rather than body copy. */
     --av:#6B2232;       /* AsliVastu — the area. Even higher contrast on paper than the old olive value (~11:1) */
     --av-fill:#7C2839;  /* AsliVastu large-fill variant (this was the parent's old --brand-fill value -- the twice-tightened "brighter wine" from CTA tuning) */
     --ss:#AF5F30;       /* SunScout — the light. AA-safe for text/icons (4.59:1 on paper) */
@@ -670,6 +671,12 @@
   .hero-statement h1{
     font-size:clamp(48px, 6.4vw, 104px); line-height:1.02; max-width:960px;
   }
+  /* "place" and "commit" picked out in the two brand accent colours on
+     request -- var(--brand), the parent olive-green, and var(--brand-yellow),
+     the header/logo accent -- rather than the default ink the rest of the
+     line uses. */
+  .hero-word-green{ color:var(--brand) }
+  .hero-word-yellow{ color:var(--brand-yellow) }
   .hero-statement .coord-readout{ margin-top:34px }
   .hero-scroll-cue{
     position:absolute; left:50%; bottom:36px; transform:translateX(-50%);

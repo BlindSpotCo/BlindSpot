@@ -85,7 +85,7 @@ export default function Home() {
         <HeroMap />
         <div className="wrap hero-statement-inner">
           <span className="hero-eyebrow">Property Intelligence</span>
-          <h1>Know the place, before you commit.</h1>
+          <h1>Know the <span className="hero-word-green">place</span>, before you <span className="hero-word-yellow">commit</span>.</h1>
           <div className="coord-readout"><span className="blink"></span><span ref={coordRef} className="mono">12.9716° N, 77.5946° E — checking Bengaluru</span></div>
         </div>
         <span className="hero-scroll-cue mono">Scroll<span className="hero-scroll-cue-arrow">↓</span></span>
