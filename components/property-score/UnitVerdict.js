@@ -11,6 +11,14 @@ import { getPersona, PERSONA_ORDER } from '@/lib/personas';
 
 const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'North-West', 'South-West'];
 
+// Used only if someone lands straight on Unit/Verdict with no location
+// picked yet AND browser geolocation is denied or unavailable -- the map
+// still needs *some* starting point to open on. Delhi NCR's centroid,
+// picked as a neutral, roughly-covered starting point rather than 0,0;
+// the map's own search bar (SunScoutPanel's toolbar) is how they replace
+// it with anywhere real.
+const FALLBACK_LOCATION = { lat: 28.6139, lon: 77.2090 };
+
 // The pitch deck's "05 — THE VERDICT SYSTEM" slide defines these four
 // verdicts as a flat 2x2 colour quadrant, not four labels sharing one
 // colour: olive (Prime Pick, strong+strong), wine (Location Play, strong
@@ -47,6 +55,10 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   useEffect(() => () => clearTimeout(weightDebounceRef.current), []);
 
   const [gpsError, setGpsError] = useState('');
+  // Auto-locate state for the "landed here directly, no location yet"
+  // case -- see the effect below. Purely for the status text; lat/lon
+  // themselves are what actually drive the map appearing.
+  const [geoState, setGeoState] = useState('idle'); // idle | locating | granted | denied | unavailable
   // Whether the report modal (owned by SunScoutPanel, opened via
   // sunScoutRef.openReport) is currently up -- see showUnit below for
   // why this needs to be tracked here at all.
@@ -100,10 +112,12 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
 
   const useMyLocation = () => {
     setGpsError('');
-    if (!navigator.geolocation) { setGpsError('This browser does not support location access.'); return; }
+    setGeoState('locating');
+    if (!navigator.geolocation) { setGpsError('This browser does not support location access.'); setGeoState('unavailable'); return; }
     navigator.geolocation.getCurrentPosition(
-      pos => { setLat(pos.coords.latitude.toFixed(6)); setLon(pos.coords.longitude.toFixed(6)); },
+      pos => { setGeoState('granted'); setLat(pos.coords.latitude.toFixed(6)); setLon(pos.coords.longitude.toFixed(6)); },
       err => {
+        setGeoState('denied');
         setGpsError(
           err.code === err.PERMISSION_DENIED
             ? 'Location permission denied — check your browser/site settings and try again.'
@@ -112,6 +126,41 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
       }
     );
   };
+
+  // Reaching Unit directly -- no priority picked, no locality/address
+  // chosen -- means this component mounts with lat/lon both still empty.
+  // Rather than showing a "nothing here" wall (there used to be one, in
+  // PropertyScoreFlow, before Unit/Verdict rendered this at all), open
+  // the map at the user's own GPS position automatically, exactly like
+  // AddressPicker already does for its own map. Falls back to a fixed
+  // starting point if permission is denied or geolocation isn't
+  // available at all, rather than leaving the map with nowhere to show
+  // -- either way, the map's own search bar (in SunScoutPanel) is then
+  // the one obvious way to change it. Only runs once, and only when
+  // there's truly nothing to show yet: a location restored from the URL,
+  // or one carried over from Priorities/Location, always wins.
+  const didAutoLocate = useRef(false);
+  useEffect(() => {
+    if (didAutoLocate.current) return;
+    if (lat && lon) return;
+    didAutoLocate.current = true;
+    if (!('geolocation' in navigator)) {
+      setGeoState('unavailable');
+      setLat(String(FALLBACK_LOCATION.lat)); setLon(String(FALLBACK_LOCATION.lon));
+      return;
+    }
+    setGeoState('locating');
+    navigator.geolocation.getCurrentPosition(
+      pos => { setGeoState('granted'); setLat(pos.coords.latitude.toFixed(6)); setLon(pos.coords.longitude.toFixed(6)); },
+      () => {
+        setGeoState('denied');
+        setLat(String(FALLBACK_LOCATION.lat)); setLon(String(FALLBACK_LOCATION.lon));
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+    );
+    // Mount-only -- see didAutoLocate above.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const computeCombined = useCallback(async (customAreaWeight, floorOverride, facingOverride) => {
     const useFloor = floorOverride ?? floor;
@@ -201,10 +250,29 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
       <div style={{ marginBottom: 36, display: showUnit ? 'block' : 'none' }}>
         <div className="mono" style={{ fontSize: 12, color: 'var(--sun)', letterSpacing: '.12em', marginBottom: 12 }}>SUN &amp; SHADOW FOR THIS FLAT</div>
 
-        {lat && lon && addressLabel && !showCoords ? (
+        {/* Three states, not two: still waiting on GPS (no lat/lon yet at
+            all -- only possible right after landing on this tab directly),
+            a plain pill once there's a location (named, if we have a
+            label, or a plain "current location" / "default starting
+            point" line if not -- either way "Edit exact location" is
+            there for the rare case someone wants to type raw
+            coordinates), or that raw-coordinate editor itself, now opt-in
+            only instead of being the permanent default whenever there was
+            no addressLabel (that was the extra, always-visible pair of
+            lat/lon boxes + button this replaces). */}
+        {!lat || !lon ? (
+          <div className="mono" style={{ fontSize: 12.5, color: 'var(--text-dim)', marginBottom: 14 }}>
+            Locating you… the map will open at your current spot — use its search bar any time to change it.
+          </div>
+        ) : !showCoords ? (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 14, background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '10px 14px' }}>
             <div style={{ fontSize: 13.5, color: 'var(--text)' }}>
-              <span style={{ color: 'var(--text-dim)' }}>📍 </span>{addressLabel}
+              <span style={{ color: 'var(--text-dim)' }}>📍 </span>
+              {addressLabel || (
+                geoState === 'granted' ? 'Your current location'
+                : (geoState === 'denied' || geoState === 'unavailable') ? 'A default starting point — search above on the map to set yours'
+                : `${lat}, ${lon}`
+              )}
             </div>
             <button onClick={() => setShowCoords(true)} className="ps-link-btn" style={{ background: 'none', border: 'none', color: 'var(--text-mute)', fontSize: 12.5, textDecoration: 'underline', cursor: 'pointer', flexShrink: 0 }}>
               Edit exact location
@@ -219,11 +287,9 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
             <button onClick={useMyLocation} className="uv-mylocation-btn ps-btn" style={{ background: 'transparent', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '9px 16px', color: 'var(--text)', fontSize: 13, cursor: 'pointer' }}>
               Use my location
             </button>
-            {addressLabel && (
-              <button onClick={() => setShowCoords(false)} className="ps-link-btn" style={{ flex: '0 0 100%', background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: 12, textAlign: 'left', textDecoration: 'underline', cursor: 'pointer', padding: 0 }}>
-                Done editing — show location name
-              </button>
-            )}
+            <button onClick={() => setShowCoords(false)} className="ps-link-btn" style={{ flex: '0 0 100%', background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: 12, textAlign: 'left', textDecoration: 'underline', cursor: 'pointer', padding: 0 }}>
+              Done editing — show location
+            </button>
           </div>
         )}
         {gpsError && <div style={{ color: '#f87171', fontSize: 12.5, marginBottom: 10 }}>{gpsError}</div>}
@@ -253,7 +319,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               />
             </div>
 
-            <a
+            
               href="/floor-plan-analysis"
               target="_blank"
               rel="noreferrer"
@@ -318,6 +384,12 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
           state of its own (`combined` lives above, in this same
           component, regardless of whether this branch is rendering),
           so unmounting/remounting it on tab switches is safe. */}
+      {viewStage === 'verdict' && (!lat || !lon) && (
+        <div style={{ textAlign: 'center', padding: '40px 0' }}>
+          <p style={{ fontSize: 14.5, color: 'var(--text-mute)', marginBottom: 20 }}>Locating you…</p>
+        </div>
+      )}
+
       {viewStage === 'verdict' && lat && lon && (
         combined ? (
           <div className="uv-combined-card" style={{ border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '28px 26px', background: 'var(--bg-2)' }}>
