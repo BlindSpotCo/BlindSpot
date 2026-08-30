@@ -307,15 +307,31 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
             </div>
           )}
 
-          <button onClick={() => computeCombined()} disabled={loadingCombined || floor == null || !facing} className="uv-getscore-btn ps-btn ps-cta-btn"
+          <button
+            onClick={() => computeCombined()}
+            disabled={loadingCombined || floor == null || !facing || !capturedFromSS}
+            className="uv-getscore-btn ps-btn ps-cta-btn"
             style={{
-              background: (floor == null || !facing) ? 'var(--line)' : 'var(--brand)',
+              background: (floor == null || !facing || !capturedFromSS) ? 'var(--line)' : 'var(--brand)',
               color: '#fff', border: 'none', borderRadius: 'var(--radius)', padding: '14px 24px', fontSize: 13.5, fontWeight: 700,
-              cursor: (floor == null || !facing) ? 'default' : 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
-              opacity: loadingCombined ? .6 : 1, marginBottom: 20,
+              cursor: (floor == null || !facing || !capturedFromSS) ? 'default' : 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
+              opacity: loadingCombined ? .6 : 1, marginBottom: 8,
             }}>
             {loadingCombined ? 'Computing…' : (areaRecord ? 'Get Combined Score →' : 'Get Home Comfort Score →')}
           </button>
+          {/* Previously this button only checked floor/facing, so picking
+              both here and clicking straight through was possible without
+              ever running the Home Comfort Score preview above -- most
+              people did exactly that, since this table sits right below
+              the fold and the preview button was easy to miss. Gated it
+              on capturedFromSS (set only once the preview modal has
+              actually returned a score) and surfaced why it's disabled,
+              instead of silently refusing the click. */}
+          {!capturedFromSS && floor != null && facing && (
+            <div className="mono" style={{ fontSize: 12, color: '#8A7A68', marginBottom: 16 }}>
+              Preview your Home Comfort Score above first — this unlocks once it comes back.
+            </div>
+          )}
           {combinedError && <div style={{ color: '#f87171', fontSize: 13, marginBottom: 16 }}>{combinedError}</div>}
         </div>
       )}

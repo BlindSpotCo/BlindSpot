@@ -290,14 +290,28 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
           as AVAreaCard's "See Detailed Neighbourhood Report" so it reads
           as a clear next step (quick score preview for wherever the pin
           currently is) instead of one more small control lost among the
-          season/time/play controls above. */}
+          season/time/play controls above.
+
+          Previously this sat flush against the dark map with no gap and
+          the same near-black fill as the map itself, so it read as part
+          of the map's own footer rather than a button -- easy to miss
+          entirely while scrolling, which is exactly how people were
+          skipping straight to floor/facing + Get Combined Score without
+          ever previewing Home Comfort Score first. Pulled it off the map
+          with real spacing, gave it the brand accent colour instead of
+          black-on-black, and added an icon so it doesn't read as a
+          footer bar. */}
       <button onClick={() => setShowLiveScore(true)} style={{
-        display: 'block', width: '100%', textAlign: 'center', background: INK, color: '#fff', border: 'none',
-        padding: '13px 20px', fontWeight: 700, fontSize: 13, letterSpacing: '.04em', textTransform: 'uppercase',
-        cursor: 'pointer', flexShrink: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%', textAlign: 'center',
+        background: ORG, color: '#fff', border: 'none', borderRadius: 'var(--radius)',
+        padding: '15px 20px', fontWeight: 700, fontSize: 13.5, letterSpacing: '.04em', textTransform: 'uppercase',
+        cursor: 'pointer', flexShrink: 0, marginTop: 16, boxShadow: '0 10px 26px -12px rgba(175,95,48,0.55)',
       }}>
-        Preview Home Comfort Score →
+        ☀ Preview Home Comfort Score →
       </button>
+      <div className="mono" style={{ fontSize: 11, color: '#8A7A68', marginTop: 8, marginBottom: 4 }}>
+        Do this first — the combined verdict below needs a Home Comfort Score to combine.
+      </div>
 
       {showReport && (
         <ReportModal
