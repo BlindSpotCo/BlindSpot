@@ -14,7 +14,7 @@
 // to be clicked into.
 const STAGES = [
   { key: 'priorities', label: 'Priorities' },
-  { key: 'location', label: 'Location' },
+  { key: 'location', label: 'Area' },
   { key: 'unit', label: 'Unit' },
   { key: 'verdict', label: 'Verdict' },
 ];

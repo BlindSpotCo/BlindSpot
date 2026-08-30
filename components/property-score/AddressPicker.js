@@ -2,11 +2,11 @@
 // components/property-score/AddressPicker.js
 // Mode B of the Property Score tab: type an address (with live autocomplete
 // suggestions as you type), geocode it, drop it on a Leaflet map to
-// fine-tune the exact pin, confirm the location, then see the FULL
-// AsliVastu detail card for whatever pincode that pin falls in (same card
-// as the city/locality flow) -- and only after that, continue on to the
-// SunScout 3D panel. Calls onConfirmed(lat, lon, areaRecord|null,
-// city|null, label) once the user clicks through to the SunScout step.
+// fine-tune the exact pin -- with the AsliVastu neighbourhood card for
+// whatever pincode that pin falls in updating live underneath as you drag
+// it, no separate "confirm" click -- then continue on to the SunScout 3D
+// panel. Calls onConfirmed(lat, lon, areaRecord|null, city|null, label)
+// once the user clicks through to the SunScout step.
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
@@ -58,7 +58,6 @@ export default function AddressPicker({ onConfirmed }) {
 
   const [pin, setPin] = useState(null); // { lat, lon }
   const pinRef = useRef(null); // mirrors `pin`, read inside the suggestion-fetch effect so bias location is always current without retriggering that effect on every pin change
-  const [locationConfirmed, setLocationConfirmed] = useState(false);
   const [resolving, setResolving] = useState(false);
   const [resolved, setResolved] = useState(null); // { postcode, displayName, locality, city }
   const [matchedArea, setMatchedArea] = useState(null); // AsliVastu record, or null if uncovered
@@ -239,7 +238,6 @@ export default function AddressPicker({ onConfirmed }) {
 
   const lockInLocation = (lat, lon) => {
     setPin({ lat, lon });
-    setLocationConfirmed(false);
     setRecenterTick(t => t + 1);
     resolveCoverage(lat, lon);
   };
@@ -293,7 +291,6 @@ export default function AddressPicker({ onConfirmed }) {
   const handleMove = useCallback((lat, lon) => {
     setAutoLocated(false);
     setPin({ lat, lon });
-    setLocationConfirmed(false);
     resolveCoverage(lat, lon);
   }, [resolveCoverage]);
 
@@ -308,8 +305,6 @@ export default function AddressPicker({ onConfirmed }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoLocated, resolved]);
-
-  const confirmLocation = () => setLocationConfirmed(true);
 
   const continueToSunScout = () => {
     if (!pin) return;
@@ -328,7 +323,7 @@ export default function AddressPicker({ onConfirmed }) {
             value={query}
             onChange={e => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            onFocus={() => { if (suggestions.length > 0) setSuggestOpen(true); }}
+            onFocus={e => { if (suggestions.length > 0) setSuggestOpen(true); e.target.select(); }}
             autoComplete="off"
             style={{ width: '100%', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '12px 14px', color: 'var(--text)', fontSize: 14, boxSizing: 'border-box' }}
           />
@@ -378,13 +373,20 @@ export default function AddressPicker({ onConfirmed }) {
 
       {pin && (
         <>
+          {/* No separate "confirm" click anymore -- the map's only job is
+              letting you fine-tune the exact building (geocoding can land
+              a street or two off), not gating progress behind an extra
+              button. The neighbourhood score below updates live as you
+              drag/click the pin (handleMove re-resolves on every move),
+              so what you see is already final; Continue is right there
+              the moment it settles. */}
           <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 10, marginTop: 22 }}>
-            CONFIRM THE EXACT PIN
+            EXACT PIN
           </div>
           <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 10 }}>
             {autoLocated
-              ? "This is your current location — drag the pin, click the map, or search above if it's not right, then confirm."
-              : 'Drag the pin or click the map to fine-tune the exact building, then confirm.'}
+              ? "This is your current location — drag the pin, click the map, or search above if it's not right."
+              : 'Drag the pin or click the map if it\u2019s not exactly on the building.'}
           </div>
           <div style={{ height: 360, border: '1px solid var(--line)', borderRadius: 'var(--radius)', overflow: 'hidden', marginBottom: 16 }}>
             <AddressConfirmMap lat={pin.lat} lon={pin.lon} onMove={handleMove} recenterKey={recenterTick} />
@@ -394,14 +396,6 @@ export default function AddressPicker({ onConfirmed }) {
             <div className="mono" style={{ fontSize: 12.5, color: 'var(--text-dim)', marginBottom: 16 }}>Looking up this location…</div>
           )}
 
-          {/* Moved above the Confirm button -- it used to render AFTER it,
-              so the pincode-correction control sat below the button that
-              visually reads as "the next step," easy to skip right past
-              even though wrong-pincode is exactly the case you'd want to
-              catch BEFORE confirming. Same reason the "correct it" trigger
-              is now a bordered button instead of small underlined text --
-              it used to be easy to miss entirely next to the bold detected
-              value. */}
           {resolved && (
             <div className="mono" style={{ fontSize: 12.5, color: 'var(--text-mute)', marginBottom: 16, lineHeight: 1.6 }}>
               <div style={{ marginBottom: 8 }}>{resolved.displayName || `${pin.lat.toFixed(5)}, ${pin.lon.toFixed(5)}`}</div>
@@ -443,18 +437,7 @@ export default function AddressPicker({ onConfirmed }) {
             </div>
           )}
 
-          {!resolving && !locationConfirmed && (
-            <button onClick={confirmLocation} className="ps-btn ps-cta-btn"
-              style={{
-                background: 'var(--slate)', color: '#fff', border: 'none', borderRadius: 'var(--radius)',
-                padding: '13px 22px', fontSize: 13.5, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
-                marginBottom: 20,
-              }}>
-              Confirm This Pin →
-            </button>
-          )}
-
-          {locationConfirmed && (
+          {!resolving && (
             <>
               <div className="mono" style={{ fontSize: 12, color: 'var(--sun)', letterSpacing: '.12em', marginBottom: 12, marginTop: 8 }}>
                 NEIGHBOURHOOD SCORE FOR THIS PIN

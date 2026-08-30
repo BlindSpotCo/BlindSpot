@@ -160,6 +160,7 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
                 : 'Search by area name or PIN — Koramangala, Whitefield, Vasant Kunj…'
             }
             value={search} onChange={e => setSearch(e.target.value)}
+            onFocus={e => e.target.select()}
             style={{ width: '100%', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '12px 14px', color: 'var(--text)', fontSize: 14, marginBottom: 14, boxSizing: 'border-box' }}
           />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 320, overflowY: 'auto', border: '1px solid var(--line)', borderRadius: 'var(--radius)' }}>
