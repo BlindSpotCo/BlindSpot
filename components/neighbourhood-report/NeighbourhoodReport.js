@@ -137,9 +137,10 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
   // real dead end wasn't the Close button itself, it was what came after:
   // close this tab, land back on the original one exactly where you left
   // it, and have to scroll/click your own way down to the Unit step to
-  // actually see the Sun Score. Same-origin script tabs can talk to their
-  // opener, so instead of just closing, tell that original tab which pin
-  // to jump to and focus it -- one click instead of a close-then-hunt.
+  // actually see the Home Comfort Score. Same-origin script tabs can talk
+  // to their opener, so instead of just closing, tell that original tab
+  // which pin to jump to and focus it -- one click instead of a
+  // close-then-hunt.
   function handleContinueToSunScore() {
     const payload = { type: 'blindspot:continue-to-unit', pin: record.pin_code, city: record.city, sector: record.sectorNum ?? null };
     if (window.opener && !window.opener.closed) {
@@ -180,11 +181,14 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
               defaultTitle={`${record.name} · PIN ${record.pin_code}`}
             />
             <button onClick={handleClose} style={{ fontSize: 12.5, fontWeight: 600, border: '1px solid color-mix(in srgb, var(--slate) 45%, transparent)', borderRadius: 3, padding: '9px 16px', color: 'var(--text-mute)', background: 'transparent' }}>← Close</button>
-            {/* The primary way out of this report -- straight to the Sun
-                Score step for this same pin, not a second stop back at
-                the location picker. Kept the plain "Close" above it too,
-                for the person who genuinely is just done looking. */}
-            <button onClick={handleContinueToSunScore} style={{ fontSize: 12.5, fontWeight: 700, border: 'none', borderRadius: 3, padding: '9px 18px', color: '#fff', background: 'var(--slate)' }}>Continue to Sun Score →</button>
+            {/* The primary way out of this report -- straight to the Unit
+                step for this same pin, not a second stop back at the
+                location picker. Text matches the same "Continue --
+                Configure Your Unit" CTA used on the Location tab itself
+                (PropertyScoreFlow.js / AddressPicker.js) -- same action,
+                same wording. Kept the plain "Close" above it too, for the
+                person who genuinely is just done looking. */}
+            <button onClick={handleContinueToSunScore} style={{ fontSize: 12.5, fontWeight: 700, border: 'none', borderRadius: 3, padding: '9px 18px', color: '#fff', background: 'var(--slate)' }}>Continue — Configure Your Unit →</button>
           </div>
         </div>
 
@@ -211,7 +215,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
               <span className="avsheet-score">{nqi}</span>
               <span className="avsheet-grade">{grade}</span>
             </div>
-            <p className="avsheet-cap">NQI · weighted mean of {rows.length} dimensions.</p>
+            <p className="avsheet-cap">Weighted mean of {rows.length} dimensions.</p>
             {/* Present on AsliVastu's own live report card, missing here --
                 a real, load-bearing caveat (this is a PIN-level assessment,
                 not building-specific), not just decoration. */}
@@ -341,7 +345,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                   <thead>
                     <tr style={{ fontSize: 10.5, textTransform: 'uppercase', color: 'var(--text-dim)', letterSpacing: '.05em' }}>
-                      {['Area', 'NQI', 'Crime', 'Air', 'Water', 'Sewerage'].map((h, i) => (
+                      {['Area', 'Composite', 'Crime', 'Air', 'Water', 'Sewerage'].map((h, i) => (
                         <th key={h} style={{ textAlign: i ? 'right' : 'left', padding: '0 8px 10px 0', borderBottom: '1px solid color-mix(in srgb, var(--slate) 45%, transparent)' }}>{h}</th>
                       ))}
                     </tr>

@@ -115,14 +115,14 @@ export default function PropertyScoreFlow({ initial }) {
     setPinCode(matchedArea?.pin_code ?? null);
     setCity(matchCity);
     setAddressLabel(label || '');
-    // AddressPicker's own "Continue to Sun & Shadow" button (shown once
-    // the pin's confirmed) is already the deliberate "I'm committing to
-    // this one" gesture -- jump straight to Unit here instead of also
-    // requiring the separate flow-level "Continue — Configure Your Unit"
-    // button below, which just duplicated it for this mode (see the
-    // location-tab render below, which only shows that button for
-    // locality mode now). Also where the direct-Unit-tab GPS fallback
-    // lands, where it's a same-tab no-op.
+    // AddressPicker's own "Continue — Configure Your Unit" button (shown
+    // once the pin's confirmed) is already the deliberate "I'm committing
+    // to this one" gesture -- jump straight to Unit here instead of also
+    // requiring the separate flow-level button below with the same text,
+    // which just duplicated it for this mode (see the location-tab render
+    // below, which only shows that button for locality mode now). Also
+    // where the direct-Unit-tab GPS fallback lands, where it's a
+    // same-tab no-op.
     setViewStage('unit');
   }, []);
 
@@ -133,10 +133,11 @@ export default function PropertyScoreFlow({ initial }) {
     setFloor(f); setFacing(d ?? null);
   }, []);
 
-  // Hand-off target for "Continue to Sun Score →" on the standalone
-  // neighbourhood report, for the one path that can't be resolved
-  // server-side: the report tab is still open (window.opener set) and
-  // posts a message straight to this live tab instead of navigating.
+  // Hand-off target for "Continue — Configure Your Unit →" on the
+  // standalone neighbourhood report, for the one path that can't be
+  // resolved server-side: the report tab is still open (window.opener
+  // set) and posts a message straight to this live tab instead of
+  // navigating.
   // (The no-opener fallback navigates to /property-score?stage=unit&...
   // and is resolved server-side in app/property-score/page.js, landing
   // straight on the Unit tab via `initial` above -- no client fetch, no
