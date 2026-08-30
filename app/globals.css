@@ -705,7 +705,15 @@
      -- one flat field, white/paper surfaces, one accent colour. */
   .hero-verdict{
     position:relative; overflow:hidden; background:var(--brand); color:#fff;
-    padding:var(--space-9) 0;
+    /* Tight top/bottom padding on purpose -- this whole beat (scene, card,
+       copy, CTA) is meant to read in one screen with no internal scroll,
+       same "one focal moment" idea as beat 1's min-height:100vh. Every
+       other number in this section (the visual's margin-top, the inner
+       gap, the card's own size, the copy block's margins) was tightened
+       to fit alongside this -- confirmed live against real viewport
+       heights (833px available at 1440x900 after the sticky header),
+       not just eyeballed. */
+    padding:20px 0;
   }
   .hero-verdict::before{
     content:''; position:absolute; inset:0; pointer-events:none;
@@ -715,7 +723,7 @@
   }
   .hero-verdict-inner{
     position:relative; z-index:1;
-    display:flex; flex-direction:column; align-items:center; text-align:center; gap:var(--space-8);
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:16px;
   }
   .hero-verdict-visual{ position:relative; display:flex; justify-content:center }
   .hvl-ring{
@@ -738,8 +746,13 @@
      about). Margin, not padding on .hero-verdict-visual, so it stays
      inside .hero-verdict-inner's own flex gap instead of adding to it
      twice. */
-  .hero-verdict-visual{ margin-top:172px }
-  @media (max-width:640px){ .hero-verdict-visual{ margin-top:128px } }
+  /* Much less headroom than the illustration originally shipped with --
+     see the .hero-verdict padding comment above: this whole beat has to
+     fit one screen now, so both the illustration (shrunk, below) and
+     this clearance were cut together, re-checked live for clipping
+     against .hero-verdict's own overflow:hidden box each time. */
+  .hero-verdict-visual{ margin-top:98px }
+  @media (max-width:640px){ .hero-verdict-visual{ margin-top:80px } }
   .hero-verdict .hero-card-wrap{ position:relative; z-index:1 }
   /* Centred above the card instead of anchored to its old top-right
      corner (see the base `.hero-illustration-wrap` rule further up,
@@ -760,8 +773,11 @@
        This nudges the whole scene right just enough that the pin clears
        the tag with real breathing room, confirmed against the card's
        actual live layout rather than guessed. */
-    transform:translateX(calc(-50% + 14px));
-    width:300px; margin-bottom:-52px;
+    /* Smaller + less overlap than the scene originally shipped with --
+       shrunk together with the card and section padding above so the
+       whole beat fits one screen. */
+    transform:translateX(calc(-50% + 8px));
+    width:170px; margin-bottom:-26px;
   }
   /* Beats the old `@media(max-width:900px){.hero-illustration-wrap{
      display:none}}` rule above (same specificity as that media query's
@@ -777,21 +793,33 @@
      Confirmed live at 375px: this keeps them clear. */
   @media (max-width:900px){
     .hero-verdict .hero-illustration-wrap{
-      display:block; width:260px; margin-bottom:-34px;
-      transform:translateX(calc(-50% + 26px));
+      display:block; width:160px; margin-bottom:-20px;
+      transform:translateX(calc(-50% + 18px));
     }
   }
   @media (max-width:480px){
     .hero-verdict .hero-illustration-wrap{
-      width:230px; margin-bottom:-28px;
-      transform:translateX(calc(-50% + 30px));
+      width:145px; margin-bottom:-18px;
+      transform:translateX(calc(-50% + 18px));
     }
   }
-  .hero-score-card.lg{ max-width:460px; padding:38px 34px }
-  .hero-score-card.lg .hsc-number{ font-size:80px }
+  /* Card shrunk along with everything else above so this whole beat
+     fits one screen -- .hsc-row/.hsc-item spacing (shared with nothing
+     else, see the usage check before this change) tightened too, not
+     just the number, since those two reason rows were the biggest single
+     chunk of the card's old height. */
+  .hero-score-card.lg{ max-width:340px; padding:18px 18px }
+  .hero-score-card.lg .hsc-head{ margin-bottom:8px }
+  .hero-score-card.lg .hsc-number{ font-size:38px; margin-bottom:4px }
+  .hero-score-card.lg .hsc-verdict{ margin-bottom:9px; font-size:13.5px }
+  .hero-score-card.lg .hsc-row{ gap:5px; margin-bottom:8px }
+  .hero-score-card.lg .hsc-item{ padding:6px 10px }
+  .hero-score-card.lg .hsc-item-label{ font-size:13px }
+  .hero-score-card.lg .hsc-item-sub{ font-size:11px }
+  .hero-score-card.lg .hsc-foot{ padding-top:8px; font-size:12px }
   @media (max-width:480px){
-    .hero-score-card.lg{ padding:28px 24px }
-    .hero-score-card.lg .hsc-number{ font-size:64px }
+    .hero-score-card.lg{ padding:18px 16px }
+    .hero-score-card.lg .hsc-number{ font-size:36px }
   }
 
   .hero-verdict-copy{ max-width:520px }
@@ -800,6 +828,11 @@
      doesn't reach here. */
   .hero-verdict .hero-sub{ color:rgba(255,255,255,.82) }
   .hero-verdict .hero-tagline .seg.slate{ color:#fff }
+  /* Tighter than the base .hero-tagline/.hero-sub margins -- shrunk
+     together with the rest of this beat so it all fits one screen
+     (see the .hero-verdict padding comment above). */
+  .hero-verdict .hero-tagline{ margin-top:6px }
+  .hero-verdict .hero-sub{ margin-top:6px; font-size:15px }
   .hero-verdict .coverage-pill{
     background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.28); color:rgba(255,255,255,.85);
   }
