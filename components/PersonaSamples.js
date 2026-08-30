@@ -78,6 +78,7 @@ export default function PersonaSamples() {
           <p>Same property, four different reasons to check it — see what each report actually surfaces.</p>
         </div>
 
+        <div className="ps-carousel">
         <div className="ps-viewport">
           <div className="ps-track" style={{ transform: `translateX(-${index * 100}%)` }}>
             {PERSONA_ORDER.map((id) => {
@@ -146,6 +147,7 @@ export default function PersonaSamples() {
           <button type="button" className="ps-next" onClick={next}>
             Next <span className="btn-cta-arrow">→</span>
           </button>
+        </div>
         </div>
       </div>
     </section>

@@ -1017,7 +1017,14 @@
   .persona-samples .section-head h2{ color:#fff }
   .persona-samples .section-head p{ color:rgba(255,255,255,.78) }
 
-  .ps-viewport{ overflow:hidden; border-radius:var(--radius-lg) }
+  /* Controls moved from below the carousel to a vertical rail on its
+     right, per request -- .ps-carousel is the flex row that makes room
+     for that rail (.ps-viewport flexes to fill the rest), collapsing
+     back to controls-below-viewport at the same 820px breakpoint
+     .ps-card-inner itself already stacks at, since there's no width left
+     for a side rail once the card's own two columns have stacked. */
+  .ps-carousel{ display:flex; align-items:center; gap:28px }
+  .ps-viewport{ flex:1; min-width:0; overflow:hidden; border-radius:var(--radius-lg) }
   .ps-track{ display:flex; transition:transform .6s cubic-bezier(.65,0,.35,1) }
   .ps-card{ flex:0 0 100%; min-width:0; padding:4px }
   .ps-card-inner{
@@ -1046,11 +1053,13 @@
   }
   @media (max-width:820px){
     .ps-take{ border-left:none; border-top:2px solid var(--ps-accent); padding-left:0; padding-top:12px; margin:0 auto }
+    .ps-carousel{ flex-direction:column }
+    .ps-controls{ flex-direction:row; gap:24px; margin-top:8px }
   }
 
   .ps-score-card{ transform:none; width:340px; max-width:100%; flex-shrink:0 }
 
-  .ps-controls{ display:flex; align-items:center; justify-content:center; gap:24px; margin-top:var(--space-7) }
+  .ps-controls{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; flex-shrink:0 }
   .ps-dots{ display:flex; align-items:center; gap:10px }
   .ps-dot{
     width:9px; height:9px; border-radius:50%; border:none; padding:0; cursor:pointer;
