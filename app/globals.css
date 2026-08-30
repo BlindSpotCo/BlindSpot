@@ -612,11 +612,8 @@
   .hsc-item-sub{ display:block; font-family:'IBM Plex Mono',monospace; font-weight:500; font-size:12.5px; letter-spacing:.05em; color:var(--text-dim); margin-top:3px }
   .hsc-foot{ font-size:13.5px; color:var(--text-mute); line-height:1.6; border-top:1px solid var(--line-soft); padding-top:14px }
 
-  /* Sits top-LEFT, not top-right: the hero illustration's building now
-     occupies the card's top-right corner, and this tag used to collide
-     with it there. (Mobile already anchored it left, below -- desktop now
-     matches instead of contradicting it.) */
-  /* Also a genuine status label ("LIVE PREVIEW"), same reasoning as
+  /* Sits top-left, matching the mobile placement below rather than
+     contradicting it. A genuine status label ("LIVE PREVIEW"), same reasoning as
      .hsc-badge above -- real pill token instead of a hardcoded 20px. */
   .hero-visual-tag{
     position:absolute; top:-16px; left:22px; z-index:2; background:var(--ink); color:var(--paper);
@@ -749,11 +746,17 @@
   @media (max-width:900px){ .hero-verdict-heading{ font-size:32px } }
   @media (max-width:480px){ .hero-verdict-heading{ font-size:27px } }
 
-  /* The scene + card as one placed unit within the visual column, offset
-     from centre (not sitting inside a 100%-width flex row) so there is
-     real asymmetric space around it -- part of "spread out", not just a
-     bigger box. */
-  .hero-verdict-visual{ position:relative; display:flex; justify-content:center; padding-top:4px }
+  /* Card is the only object in this column now -- the isometric
+     building/sun/pin illustration that used to float above-left of it is
+     gone (see removal note on .hero-card-wrap below). Centred both axes
+     within the column instead of the old top-anchored, pushed-down-220px
+     placement that existed solely to leave clearance above the card for
+     that illustration. One placed object, straightforwardly centred,
+     reads as deliberate; the old asymmetric offset only looked
+     intentional when the illustration justified the empty space above
+     it -- with the illustration gone it just looked like the card had
+     drifted off-centre. */
+  .hero-verdict-visual{ position:relative; display:flex; align-items:center; justify-content:center; min-height:100%; padding-top:4px }
   @media (max-width:900px){ .hero-verdict-visual{ padding-top:0; flex-direction:column; align-items:center } }
   .hvl-ring{
     position:absolute; top:50%; left:50%; border:1.5px solid var(--ss); border-radius:50%;
@@ -767,36 +770,22 @@
   @media (max-width:480px){ .hvl-ring-outer{ width:260px; height:260px } .hvl-ring-inner{ width:200px; height:200px } }
   @media (prefers-reduced-motion: reduce){ .hvl-ring{ transition:opacity .3s ease; transform:translate(-50%,-50%) scale(1) } }
 
+  /* REMOVED: the isometric building/sun/pin illustration
+     (components/HeroIllustration.js) that used to sit absolutely
+     positioned above-left of this card. It was the one hand-drawn,
+     skeuomorphic asset on a site that's otherwise flat colour blocks,
+     sharp corners and blueprint-grid mono labels everywhere else (see
+     .hero-verdict::before's grid, and BPF's "+" corner-marked frames
+     elsewhere) -- it read as a stray clip-art sticker rather than part
+     of the brand, and the card's old margin-top:220px existed only to
+     leave clearance above it, which is also why the card looked
+     "offset"/adrift once you noticed the illustration didn't belong.
+     The component file itself is left in place, unused, in case a
+     future illustration style actually matching the brand replaces it
+     -- it is not imported anywhere. */
   .hero-verdict .hero-card-wrap{
     position:relative; z-index:1;
-    margin:220px 0 0 auto;
     width:420px; max-width:100%;
-  }
-  @media (max-width:900px){ .hero-verdict .hero-card-wrap{ margin:118px auto 0 } }
-
-  /* Offset up-and-left of the card, with real clear air beneath it
-     rather than touching or overlapping the card -- the card's own
-     margin-top above is sized so the illustration's bottom edge clears
-     the card's top edge (and the "Live preview" tag pinned just above
-     that top-left corner) by ~30px, confirmed via live bounding-rect
-     checks, not guessed. Nothing above y=15 in the illustration's own
-     viewBox either way (see LAYOUT CONTRACT in HeroIllustration.js). */
-  .hero-verdict .hero-illustration-wrap{
-    position:absolute; z-index:2; pointer-events:none;
-    left:0; top:0;
-    width:220px;
-  }
-  @media (max-width:900px){
-    /* The base .hero-illustration-wrap rule above (tuned for beat 1's
-       hero grid) hides it entirely below 900px -- override display
-       explicitly here, not just position, or that display:none wins
-       since this rule never touched that property before. */
-    .hero-verdict .hero-illustration-wrap{
-      display:block; position:static; width:200px; margin:0 auto 18px;
-    }
-  }
-  @media (max-width:480px){
-    .hero-verdict .hero-illustration-wrap{ width:170px }
   }
 
   .hero-score-card.lg{ max-width:420px; padding:28px 30px }

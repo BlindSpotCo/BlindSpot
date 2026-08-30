@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import SiteHeader from '@/components/SiteHeader';
 import HowItWorks from '@/components/HowItWorks';
 import HeroMap from '@/components/HeroMap';
-import HeroIllustration from '@/components/HeroIllustration';
 import PinDropTransition from '@/components/PinDropTransition';
 import { coverageLabel } from '@/lib/aslivastu/cityMeta';
 
@@ -139,9 +138,6 @@ export default function Home() {
           </div>
 
           <div className="hero-verdict-visual">
-            <div className="hero-illustration-wrap">
-              <HeroIllustration />
-            </div>
             <div className="hero-card-wrap">
               <span className="hvl-ring hvl-ring-outer" aria-hidden="true" />
               <span className="hvl-ring hvl-ring-inner" aria-hidden="true" />
