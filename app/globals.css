@@ -648,7 +648,13 @@
      what makes the override actually win, same tie-break pattern already
      used elsewhere in this file (see .closing-inner.bento h2 etc.). */
   .hero.hero-statement{
-    min-height:100vh; padding:120px 0;
+    /* min-height was a flat 100vh, but the sticky header above this
+       section (66px at rest, see nav.wrap) still occupies real space in
+       normal flow -- a 100vh box starting 66px down the page puts its
+       flex-centered content 66px below the actual screen's vertical
+       centre, not on it. Subtracting the header's height here makes this
+       section's own centre line up with the true viewport centre. */
+    min-height:calc(100vh - 66px); padding:120px 0;
     display:flex; align-items:center; justify-content:center; text-align:center;
     /* Overrides the shared `.hero{overflow:clip; overflow-clip-margin:260px}`
        desktop rule (see the HERO comment above): that 260px allowance
@@ -688,7 +694,7 @@
   .hero-scroll-cue-arrow{ font-size:13px }
   @keyframes heroScrollBounce{ 0%,100%{ transform:translate(-50%,0) } 50%{ transform:translate(-50%,6px) } }
   @media (max-width:900px){
-    .hero.hero-statement{ min-height:88vh; padding:90px 0 }
+    .hero.hero-statement{ min-height:calc(88vh - 66px); padding:90px 0 }
     .hero-statement h1{ font-size:clamp(36px, 9vw, 56px) }
   }
   @media (prefers-reduced-motion: reduce){ .hero-scroll-cue{ animation:none } }
