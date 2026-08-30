@@ -652,6 +652,19 @@
   .hero.hero-statement{
     min-height:100vh; padding:120px 0;
     display:flex; align-items:center; justify-content:center; text-align:center;
+    /* Overrides the shared `.hero{overflow:clip; overflow-clip-margin:260px}`
+       desktop rule (see the HERO comment above): that 260px allowance
+       exists for the old hero illustration, which this beat doesn't use.
+       Left in place, `clip` + a large clip-margin lets HeroMap's
+       intentional ~160-260px horizontal bleed register as real page
+       overflow (confirmed live: `body.scrollWidth` grows past the
+       viewport), which is what was causing the horizontal scrollbar.
+       Plain `hidden` clips it correctly with no allowance needed --
+       HeroMap's own mask already fades it to transparent well inside its
+       box, so there's nothing here that needs the extra paint margin.
+       `.hero.hero-statement` (two classes) beats `.hero` (one class) on
+       specificity alone, so this wins regardless of the media query. */
+    overflow:hidden;
   }
   .hero-statement-inner{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:center }
   /* Bigger than the old .hero h1 (62px) -- this line now owns the whole
@@ -716,7 +729,64 @@
   @media (max-width:640px){ .hvl-ring-outer{ width:300px; height:300px } .hvl-ring-inner{ width:230px; height:230px } }
   @media (prefers-reduced-motion: reduce){ .hvl-ring{ transition:opacity .3s ease; transform:translate(-50%,-50%) scale(1) } }
 
+  /* Room above the card for the illustration to sit in -- the card's
+     own box (max-width/padding below) is untouched; this just gives the
+     .hero-verdict-visual flex column enough headroom so the building/sun
+     doesn't crowd the section's top edge (.hero-verdict clips overflow,
+     so anything without this margin would get cut off, same "sun going
+     missing" failure mode HeroIllustration.js's own header comment warns
+     about). Margin, not padding on .hero-verdict-visual, so it stays
+     inside .hero-verdict-inner's own flex gap instead of adding to it
+     twice. */
+  .hero-verdict-visual{ margin-top:172px }
+  @media (max-width:640px){ .hero-verdict-visual{ margin-top:128px } }
   .hero-verdict .hero-card-wrap{ position:relative; z-index:1 }
+  /* Centred above the card instead of anchored to its old top-right
+     corner (see the base `.hero-illustration-wrap` rule further up,
+     tuned for the old two-column grid) -- this beat is a single centred
+     column, so the scene centres on the card the same way the rings do.
+     `bottom:100%` + a negative margin-bottom is what lets the pin (the
+     bottom ~15% of the scene, per HeroIllustration.js's own layout
+     contract) drop onto the card's top edge without the building above
+     it overlapping the card too. Card's own box is untouched -- only
+     this wrapper's position moves. */
+  .hero-verdict .hero-illustration-wrap{
+    position:absolute; left:50%; right:auto; top:auto; bottom:100%;
+    /* +14px, not a flat -50% -- the scene's own content (building/pin)
+       sits left-of-centre within its own viewBox (see the LAYOUT
+       CONTRACT comment in HeroIllustration.js), so a perfectly centred
+       wrapper puts the pin closer to .hero-visual-tag ("Live preview",
+       pinned to the card's left edge) than either was ever meant to sit.
+       This nudges the whole scene right just enough that the pin clears
+       the tag with real breathing room, confirmed against the card's
+       actual live layout rather than guessed. */
+    transform:translateX(calc(-50% + 14px));
+    width:300px; margin-bottom:-52px;
+  }
+  /* Beats the old `@media(max-width:900px){.hero-illustration-wrap{
+     display:none}}` rule above (same specificity as that media query's
+     selector, later in source -- same override pattern used throughout
+     this file): the old grid hid the scene below 900px because the
+     two-column layout it was tuned for had already stacked by then. This
+     beat is a single centred column at every width, so the scene keeps
+     making sense all the way down -- it just needs to keep shrinking. */
+  /* Bigger horizontal nudge + less vertical overlap than desktop -- the
+     card (and .hero-visual-tag's fixed left:22px) both shrink faster
+     than the illustration wrap does, so the same 14px/-52px desktop
+     numbers pull the pin right into the tag's text at these widths.
+     Confirmed live at 375px: this keeps them clear. */
+  @media (max-width:900px){
+    .hero-verdict .hero-illustration-wrap{
+      display:block; width:260px; margin-bottom:-34px;
+      transform:translateX(calc(-50% + 26px));
+    }
+  }
+  @media (max-width:480px){
+    .hero-verdict .hero-illustration-wrap{
+      width:230px; margin-bottom:-28px;
+      transform:translateX(calc(-50% + 30px));
+    }
+  }
   .hero-score-card.lg{ max-width:460px; padding:38px 34px }
   .hero-score-card.lg .hsc-number{ font-size:80px }
   @media (max-width:480px){

@@ -4,8 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import SiteHeader from '@/components/SiteHeader';
 import HowItWorks from '@/components/HowItWorks';
 import HeroMap from '@/components/HeroMap';
-// HeroIllustration is deliberately not imported here anymore -- see the
-// hero-verdict comment below for why it's sitting this redesign out.
+import HeroIllustration from '@/components/HeroIllustration';
 import PinDropTransition from '@/components/PinDropTransition';
 import { coverageLabel } from '@/lib/aslivastu/cityMeta';
 
@@ -122,19 +121,24 @@ export default function Home() {
           already establishes, not a second unrelated animation language.
           Reveals via the same .reveal/IntersectionObserver mechanism
           every other section on this page already uses -- no new JS.
-          HeroIllustration (the building/sun/pin scene) stays out of this
-          beat for now -- its positioning was hand-tuned specifically for
-          the old two-column grid (see the "sun going missing twice"
-          comments on .hero-illustration-wrap above), and re-tuning those
-          offsets for a new centred layout without a live visual pass
-          risks reintroducing exactly that bug. Worth a follow-up once
-          this can be checked live rather than guessed blind. */}
+          HeroIllustration (the building/sun/pin scene) is back, re-tuned
+          for this centred single-column layout: it now sits centred
+          above the card instead of anchored to its old top-right corner,
+          with the pin still dropping onto the card's top edge -- see the
+          `.hero-verdict .hero-illustration-wrap` override in globals.css
+          for the repositioned coordinates (confirmed live, not guessed
+          blind -- the "sun going missing twice" bug on the old grid
+          layout was exactly what re-tuning this without a live check
+          used to risk). */}
       <section className="hero-verdict reveal">
         <div className="wrap hero-verdict-inner">
           <div className="hero-verdict-visual">
             <span className="hvl-ring hvl-ring-outer" aria-hidden="true" />
             <span className="hvl-ring hvl-ring-inner" aria-hidden="true" />
             <div className="hero-card-wrap">
+              <div className="hero-illustration-wrap">
+                <HeroIllustration />
+              </div>
               <span className="hero-visual-tag">Live preview</span>
               <div className="hero-score-card lg">
                 <div className="hsc-head">
