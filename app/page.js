@@ -228,7 +228,7 @@ export default function Home() {
               </div>
               <span className="merge-op" aria-hidden="true">+</span>
               <div className="merge-chip ss">
-                <span className="merge-chip-label">Sunlight</span>
+                <span className="merge-chip-label">Home Comfort</span>
                 <span className="merge-chip-num">82</span>
               </div>
               <span className="merge-op" aria-hidden="true">=</span>
