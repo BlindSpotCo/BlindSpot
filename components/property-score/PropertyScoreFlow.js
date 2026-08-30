@@ -76,11 +76,20 @@ export default function PropertyScoreFlow({ initial }) {
   const [viewStage, setViewStage] = useState(initial?.stage || (initial?.areaRecord || initial?.lat ? 'unit' : 'priorities'));
 
   const panelRef = useRef(null);
+  // Direct Unit/Verdict entry with no location yet auto-geolocates once
+  // (see the effect below) rather than showing anything to fill in --
+  // this flag is what stops that from retriggering every render, and
+  // gets cleared by resetLocation so leaving and coming back through a
+  // fresh "no location" state (e.g. after switching entry mode) can
+  // auto-locate again instead of staying stuck on a stale attempt.
+  const autoGeoTried = useRef(false);
+  const [autoGeoError, setAutoGeoError] = useState('');
 
   const resetLocation = () => {
     setAreaRecord(null); setPinCode(null); setCity(null); setAddressLabel('');
     setLat(''); setLon(''); setUnitSeen(false); setVerdictStarted(false);
     setFloor(null); setFacing(null);
+    autoGeoTried.current = false; setAutoGeoError('');
   };
 
   const chooseMode = (m) => {
@@ -203,6 +212,38 @@ export default function PropertyScoreFlow({ initial }) {
   }, [viewStage, mode]);
 
   const unitReady = Boolean(lat && lon);
+
+  // Landed on Unit or Verdict directly with no location yet -- skip the
+  // neighbourhood-matching address flow entirely (that's Location's mode
+  // B, a deliberate step-by-step confirm-then-see-the-area-card flow) and
+  // just get straight into the 3D shadow view: try the browser's GPS
+  // once, silently, and feed whatever it returns straight in as lat/lon
+  // with no area record attached (areaRecord stays null -- Verdict later
+  // shows a Home Comfort Score only, not a combined one, which is correct
+  // for "I never told it a neighbourhood"). SunScoutPanel's own toolbar
+  // already has a search box that changes the location from there, so
+  // there's nothing else this needs to offer. If GPS is denied or
+  // unavailable, fall back to a fixed default location (central Delhi)
+  // purely so the map has *something* to render -- autoGeoError surfaces
+  // that so it doesn't look like a silent wrong-place bug.
+  useEffect(() => {
+    if ((viewStage !== 'unit' && viewStage !== 'verdict') || unitReady || autoGeoTried.current) return;
+    autoGeoTried.current = true;
+    if (!('geolocation' in navigator)) {
+      setAutoGeoError('Location access isn\u2019t available here — showing a default spot, search above to find yours.');
+      handleAddressConfirmed(28.6139, 77.2090, null, null, '');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => handleAddressConfirmed(pos.coords.latitude, pos.coords.longitude, null, null, ''),
+      () => {
+        setAutoGeoError('Couldn\u2019t get your location — showing a default spot, search above to find yours.');
+        handleAddressConfirmed(28.6139, 77.2090, null, null, '');
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+    );
+  }, [viewStage, unitReady, handleAddressConfirmed]);
+
 
   // Coarse but reliable -- derived straight from state this component
   // already owns. "Unit" and "Verdict" tick (done) independently of which
@@ -390,24 +431,18 @@ export default function PropertyScoreFlow({ initial }) {
           </div>
         )}
 
-        {/* Landed on Unit or Verdict directly -- via Priorities/Location
-            and Priorities being fully skippable now -- with no location
-            picked yet. Rather than dead-ending back to Location, drop
-            straight into the same GPS-auto-locate + search picker
-            Location's address mode uses: the map opens at the current
-            position right away, and the search bar above it changes it.
-            Confirming here feeds the same handler address mode on
-            Location uses, so it's indistinguishable from having picked
-            it there -- and this whole block disappears (unitReady flips
-            true, the block above takes over) the moment that happens. */}
+        {/* Landed on Unit or Verdict directly with no location picked yet
+            -- the effect above is already asking the browser for GPS (or
+            has just fallen back to a default spot); this is only visible
+            for the brief moment before that resolves and unitReady flips
+            true, at which point the block above takes over and mounts
+            straight into the 3D shadow view -- no neighbourhood step in
+            between. */}
         {(viewStage === 'unit' || viewStage === 'verdict') && !unitReady && (
-          <div className="ps-flow-wrap" style={{ width: '100%' }}>
-            <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-              <p style={{ fontSize: 14.5, color: 'var(--text-mute)', marginBottom: 20, textAlign: 'center' }}>
-                Nothing picked yet — we&apos;ll open the map at your current location. Search above to change it.
-              </p>
-              <AddressPicker onConfirmed={handleAddressConfirmed} />
-            </div>
+          <div className="ps-flow-wrap" style={{ textAlign: 'center', padding: '60px 0' }}>
+            <p style={{ fontSize: 14.5, color: 'var(--text-mute)' }}>
+              {autoGeoError || 'Locating you\u2026 the 3D shadow view will open right at your spot.'}
+            </p>
           </div>
         )}
       </div>
