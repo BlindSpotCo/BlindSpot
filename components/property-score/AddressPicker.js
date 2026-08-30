@@ -365,10 +365,25 @@ export default function AddressPicker({ onConfirmed }) {
         </button>
       </div>
       <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 10 }}>
-        {geoState === 'locating' && !pin
-          ? 'Locating you… the map will open at your current spot — search above any time to change it.'
-          : 'Pick a suggestion as you type, or press Search / Enter for the best match.'}
+        {geoState === 'locating' && !pin && 'Locating you… the map will open at your current spot — search above any time to change it.'}
+        {geoState === 'denied' && !pin && "Location access was blocked, so we couldn't auto-place the pin — type your address above, or allow location access in your browser and reload this page."}
+        {geoState === 'unavailable' && !pin && "This browser doesn't support automatic location — type your address above to get started."}
+        {(geoState === 'granted' || pin || (geoState !== 'locating' && geoState !== 'denied' && geoState !== 'unavailable')) &&
+          'Pick a suggestion as you type, or press Search / Enter for the best match.'}
       </div>
+      {/* Geolocation denied/unavailable and nothing searched yet -- the map
+          never had a reason to appear (lockInLocation only ever runs off a
+          resolved pin), so without this the page was just the search bar
+          sitting in a lot of empty space with no explanation why. */}
+      {(geoState === 'denied' || geoState === 'unavailable') && !pin && (
+        <div style={{ border: '1px solid var(--line)', borderLeft: '4px solid var(--sun)', borderRadius: 'var(--radius)', padding: '14px 18px', marginBottom: 20 }}>
+          <div className="mono" style={{ fontSize: 12.5, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+            {geoState === 'denied'
+              ? "We couldn't get your current location (permission denied). No problem — search for your address above and the map will open right there."
+              : "Automatic location isn't available here — search for your address above and the map will open right there."}
+          </div>
+        </div>
+      )}
       {searchError && <div style={{ color: '#f87171', fontSize: 13, marginBottom: 12 }}>{searchError}</div>}
 
       {pin && (

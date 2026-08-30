@@ -238,6 +238,12 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                 ref={sunScoutRef}
                 lat={parseFloat(lat)} lon={parseFloat(lon)}
                 address={addressLabel || areaRecord?.name || ''}
+                // So "Preview Home Comfort Score" opens already showing
+                // whatever floor/facing was just picked in the table below,
+                // instead of always resetting to its own hardcoded 5/South --
+                // two pickers for the same unit silently disagreeing was
+                // confusing (pick South-East here, modal opens on South).
+                currentFloor={floor} currentFacing={facing}
                 onUnitSelected={handleUnitSelected}
                 onLiveScoreResult={handleLiveScoreResult}
                 onLocationSelect={handleLocationSelect}
@@ -348,8 +354,30 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                   {combined.combinedScore}<span style={{ fontSize: 20, color: 'var(--text-dim)' }}>/100</span>
                 </div>
               </div>
-              <div className="uv-verdict-badge" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 20, color: '#fff', background: VERDICT_COLOR[combined.verdict.label] || 'var(--brand)', padding: '8px 18px', borderRadius: 'var(--radius)' }}>
-                {combined.verdict.label}
+              {/* A verdict tag, not a control -- the original was a solid
+                  filled pill with the same shape/weight as the page's real
+                  buttons, which read as clickable even though nothing
+                  happens on click. First fix (outlined mono chip) solved
+                  that but came out flat/lifeless -- lost the colour-coded
+                  punch the pitch deck's 2x2 quadrant design was built
+                  around. This keeps the tag framing (VERDICT caption above
+                  it, no cursor, no hover/shadow -- nothing that implies
+                  "click me") but brings the colour back as a tinted fill +
+                  bold display type, so it still reads as a label, just a
+                  punchier one. */}
+              <div style={{ textAlign: 'right' }}>
+                <div className="mono" style={{ fontSize: 10.5, color: 'var(--text-dim)', letterSpacing: '.12em', marginBottom: 6 }}>VERDICT</div>
+                <div
+                  className="uv-verdict-badge"
+                  style={{
+                    display: 'inline-block', fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 17,
+                    color: VERDICT_COLOR[combined.verdict.label] || 'var(--brand)',
+                    background: `color-mix(in srgb, ${VERDICT_COLOR[combined.verdict.label] || 'var(--brand)'} 16%, var(--bg-2))`,
+                    padding: '7px 16px', borderRadius: 'var(--radius)', cursor: 'default',
+                  }}
+                >
+                  {combined.verdict.label}
+                </div>
               </div>
             </div>
 

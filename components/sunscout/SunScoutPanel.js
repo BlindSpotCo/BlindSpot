@@ -54,6 +54,11 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
   // is triggered from the Property Score flow via openReport(), rather than
   // from this panel's own toolbar (that button now lives in UnitVerdict).
   areaRecord, combinedScore, unitScore, areaWeight, unitWeight, unitSubScores, verdictLabel, personaId,
+  // Whatever floor/facing is currently picked in UnitVerdict's own
+  // floor/facing table, one level up -- passed through as LiveScoreModal's
+  // starting point so its picker doesn't silently disagree with the one
+  // already on the page. Null until the user has picked both up there.
+  currentFloor, currentFacing,
   // Fires with true/false as the report modal opens/closes. UnitVerdict
   // uses this to keep this whole panel visible while the report is open
   // even on the Verdict tab (see the comment on openReport() below for
@@ -100,8 +105,10 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
 
   const captureRef = useRef(null);
   const screenshotResolverRef = useRef(null);
+  const screenshotRejecterRef = useRef(null);
   const screenshotBufferRef = useRef([]);
   const screenshotIdxRef = useRef(0);
+  const screenshotWatchdogRef = useRef(null);
 
   useEffect(() => {
     const y = new Date().getFullYear();
@@ -143,6 +150,10 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
     console.log('[SunScoutPanel] Map3DShadow onReady fired — captureRef is now set');
   }, []);
 
+  const clearScreenshotWatchdog = () => {
+    if (screenshotWatchdogRef.current) { clearTimeout(screenshotWatchdogRef.current); screenshotWatchdogRef.current = null; }
+  };
+
   const handleScreenshot = useCallback((label, data) => {
     console.log(`[SunScoutPanel] screenshot received: "${label}" — ${data ? `${Math.round(data.length / 1024)}KB` : 'NULL (failed)'}`);
     if (data) screenshotBufferRef.current.push({ label, base64: data });
@@ -151,20 +162,44 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
       const next = SHOTS[screenshotIdxRef.current];
       setTimeout(() => { captureRef.current?.(next.label, next.time, next.date); }, 350);
     } else if (screenshotResolverRef.current) {
+      clearScreenshotWatchdog();
       const buf = [...screenshotBufferRef.current];
       const totalKB = Math.round(buf.reduce((s, b) => s + b.base64.length, 0) / 1024);
       console.log(`[SunScoutPanel] all ${SHOTS.length} shots done — ${buf.length} captured successfully, ~${totalKB}KB total payload`);
       screenshotResolverRef.current(buf);
       screenshotResolverRef.current = null;
+      screenshotRejecterRef.current = null;
     }
   }, []);
 
   const captureScreenshots = useCallback(() => {
     console.log('[SunScoutPanel] captureRef.current is', captureRef.current ? 'SET' : 'NULL — Map3DShadow onReady may not have fired yet');
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       screenshotBufferRef.current = [];
       screenshotIdxRef.current = 0;
       screenshotResolverRef.current = resolve;
+      screenshotRejecterRef.current = reject;
+
+      // Watchdog: if the 3D map library never loads (Map3DShadow's onReady
+      // never fires -- confirmed real case: a slow/blocked map-CDN
+      // connection), captureRef.current stays null forever and every
+      // captureRef.current?.(...) below is a silent no-op. Nothing was
+      // ever calling reject/resolve in that case, so this promise hung
+      // forever and "Generating your report" just sat frozen with no way
+      // out. 12s is generously past normal load time for the map library;
+      // if it's still not ready by then, fail loudly instead of hanging --
+      // ReportModal's existing error UI (with Try Again) takes it from
+      // there.
+      clearScreenshotWatchdog();
+      screenshotWatchdogRef.current = setTimeout(() => {
+        if (!captureRef.current && screenshotRejecterRef.current) {
+          console.warn('[SunScoutPanel] screenshot watchdog fired — 3D map never became ready, aborting report generation');
+          screenshotRejecterRef.current(new Error('map-not-ready'));
+          screenshotResolverRef.current = null;
+          screenshotRejecterRef.current = null;
+        }
+      }, 12000);
+
       const first = SHOTS[0];
       setTimeout(() => { captureRef.current?.(first.label, first.time, first.date); }, 500);
     });
@@ -283,6 +318,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
           onClose={() => setShowLiveScore(false)}
           onFloorFacingSubmit={onUnitSelected}
           onResult={onLiveScoreResult}
+          prefillFloor={currentFloor} prefillFacing={currentFacing}
         />
       )}
 
