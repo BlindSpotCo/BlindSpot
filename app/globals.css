@@ -1086,15 +1086,9 @@
   }
 
   /* min-width:0 overrides the grid item's default auto min-width (which
-     otherwise equals its content's max-content size) -- without it, the
-     area panel's fixed-1056px-wide .avsheet-scale-inner (see ScaledAvSheet
-     in HowItWorks.js) forces THIS grid track to grow to fit 1056px rather
-     than staying at its intended ~1.05fr share, which both overflows the
-     page and feeds ScaledAvSheet's own width measurement a falsely-large
-     number (it measures its own now-oversized container), so the sheet
-     never actually scales down. min-width:0 lets this track size to its
-     fr share like normal, and .avsheet-scale-outer's overflow:hidden below
-     clips the still-1056px-wide inner div down to whatever that share is. */
+     otherwise equals its content's max-content size) -- defensive against
+     any panel content that could otherwise force this track wider than
+     its fr share (a long unbroken token, a fixed-width child, etc). */
   .howworks-panel-sticky{position:sticky; top:98px; align-self:start; min-width:0}
 
   /* min-height is the actual fix for "the two cards don't match size" --
@@ -1278,32 +1272,30 @@
   }
   .av-panel::before{ background:var(--av); }
 
-  /* This panel used to carry its own, hand-tuned narrow-width copy of the
-     area card (a 3-box .av-hero3 row with its own .av-box/.av-tiny/
-     .av-score-num/etc styles, sized down for this panel's ~470px content
-     width, plus a compact .av-dims-box/.av-dim-row dimension list and a
-     homepage-only .av-more nearby-chips/CTA footer). All of that is gone
-     now: AreaPanel in HowItWorks.js renders the exact same markup as the
-     real card (AVAreaCard.js) against the shared .avsheet-* block below,
-     scaled to fit via .avsheet-scale-outer/-inner instead of being laid
-     out narrower and restyled. See ScaledAvSheet's comment in
-     HowItWorks.js for why scaling beats reflowing here.
+  /* Renders natively at whatever width this panel column actually has --
+     not a fixed-1056px sheet + transform:scale() (that approach shrank
+     the type down to unreadable, see AreaPanel's own comment in
+     HowItWorks.js) -- via the .hw-area-* structural classes below.
+     Reuses AVAreaCard.js's own .avsheet-label/-name/-score/-grade/
+     -verdict-word/-verdict-why/-row-label/-track/-row-score/-row-weight
+     classes directly (see AreaPanel's comment in HowItWorks.js) so the
+     fonts/colours match the real card exactly; hero-box/type sizing is
+     scaled down via inline style in HowItWorks.js instead, since this
+     column is nowhere near the real sheet's 1056px. */
+  .hw-area-hero3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:18px }
+  .hw-area-hero3 > *{ min-height:132px }
 
-     Fits inside a fixed-height box with no min-height/height/overflow
-     tricks -- the sheet's own ~24px-per-row inner spacing at 1056px,
-     scaled down to this panel's ~440-470px available width, comes out
-     well under .howworks-panel's 680px budget on its own. */
-
-  /* Scale-to-fit wrapper for the shared .avsheet spec sheet: the inner
-     element always renders at .avsheet's real, natural 1056px width (see
-     the shared block below) so nothing inside it reflows or wraps
-     differently than it does on the actual property-score/full-report
-     pages -- only the visual footprint shrinks, via a CSS transform
-     computed in HowItWorks.js from the outer wrapper's actual width.
-     transform-origin:top left keeps the scaled content anchored to this
-     panel's own top-left padding edge instead of shrinking toward centre. */
-  .avsheet-scale-outer{ position:relative; overflow:hidden; width:100% }
-  .avsheet-scale-inner{ width:1056px; transform-origin:top left }
+  /* Same row shape as the real card's .avsheet-row (label / weight / bar /
+     score, dashed top border) -- just a narrower label column and tighter
+     padding, since this panel's width and height budget are both well
+     under the real sheet's. Reuses .avsheet-row-label/.avsheet-row-weight/
+     .avsheet-track/.avsheet-row-score directly for the same type/colour
+     as the real rows (sized down via inline style in HowItWorks.js). */
+  .hw-area-row{
+    display:grid; grid-template-columns:150px 34px 1fr 46px; gap:10px;
+    align-items:center; padding:7px 0;
+    border-top:1px dashed color-mix(in srgb, var(--slate) 35%, transparent);
+  }
 
   /* ---------- SHARED AREA SPEC SHEET ----------
      ONE source of truth for the area spec sheet, used by BOTH surfaces
