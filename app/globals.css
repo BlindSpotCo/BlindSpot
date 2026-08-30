@@ -670,6 +670,7 @@
      actually claim the scale that gives it. */
   .hero-statement h1{
     font-size:clamp(48px, 6.4vw, 104px); line-height:1.02; max-width:960px;
+    text-align:center;
   }
   /* "place" and "commit" picked out in the two brand accent colours on
      request -- var(--brand), the parent olive-green, and var(--brand-yellow),
