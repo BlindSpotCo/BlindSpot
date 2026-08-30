@@ -25,7 +25,18 @@
 // No fabricated customer names/quotes here on purpose: role label
 // (Young Professional / Family Buyer / Investor / Broker), not a
 // person, so this reads as an illustrative sample report rather than a
-// real testimonial that could be mistaken for a genuine review.
+// real testimonial that could be mistaken for a genuine review. This
+// got revisited twice (once asking for names + an AI photo, once for
+// just a name) and stayed a role label both times -- a name alone,
+// paired with "For a young professional in Bangalore: got this
+// result," still reads as one specific real customer on a live
+// production site, photo or not.
+//
+// Each SAMPLE has a `reportUrl` placeholder (null for now) for the
+// actual generated sample reports, coming later -- set it per persona
+// once those exist and the card's "View sample report" link goes
+// live automatically; until then it renders as a disabled placeholder
+// rather than a link that looks real but goes nowhere.
 //
 // One-at-a-time horizontal carousel: all 4 cards render in a flex row
 // inside .ps-viewport (overflow:hidden), and .ps-track slides via
@@ -54,6 +65,7 @@ const SAMPLES = {
     neighbourhood: 81,
     homeComfort: 82,
     combined: 82,
+    reportUrl: null, // TODO: set once a real generated sample report exists for this persona
   },
   family_buyer: {
     checking: [
@@ -69,6 +81,7 @@ const SAMPLES = {
     neighbourhood: 81,
     homeComfort: 82,
     combined: 81,
+    reportUrl: null, // TODO: set once a real generated sample report exists for this persona
   },
   investor: {
     checking: [
@@ -84,6 +97,7 @@ const SAMPLES = {
     neighbourhood: 70,
     homeComfort: 82,
     combined: 75,
+    reportUrl: null, // TODO: set once a real generated sample report exists for this persona
   },
   broker: {
     checking: [
@@ -98,6 +112,7 @@ const SAMPLES = {
     neighbourhood: 87,
     homeComfort: 82,
     combined: 84,
+    reportUrl: null, // TODO: set once a real generated sample report exists for this persona
   },
 };
 
@@ -146,6 +161,18 @@ export default function PersonaSamples() {
                         ))}
                       </ul>
                       <p className="ps-take">{sample.take}</p>
+
+                      {sample.reportUrl ? (
+                        <a className="ps-report-link" href={sample.reportUrl} target="_blank" rel="noreferrer">
+                          View sample report
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+                        </a>
+                      ) : (
+                        <button type="button" className="ps-report-link ps-report-link-pending" disabled title="Sample report coming soon">
+                          View sample report — coming soon
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+                        </button>
+                      )}
                     </div>
 
                     <div className="hero-score-card ps-score-card">

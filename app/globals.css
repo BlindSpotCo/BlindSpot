@@ -1096,7 +1096,32 @@
     font-size:14.5px; line-height:1.6; color:rgba(255,255,255,.85);
     border-left:2px solid var(--brand-yellow); padding-left:14px; max-width:460px;
   }
+  /* Per-persona "View sample report" link -- a real link once
+     sample.reportUrl is set (the actual generated reports are coming
+     later), a disabled placeholder until then. Deliberately styled as
+     an inert grey/dim button rather than a normal-looking link that
+     goes nowhere -- this is a live site, so a dead-looking link that's
+     secretly a real click target (or vice versa) is worse than one
+     that visibly reads as "not live yet." White/yellow on hover for
+     the real-link state matches the section's established same-colour-
+     field contrast fix (.ps-next, .ps-dot.active, etc.); the disabled
+     state deliberately does NOT use that treatment, so it reads as
+     inactive rather than as another live call-to-action. */
+  .ps-report-link{
+    display:inline-flex; align-items:center; gap:7px; margin-top:20px;
+    font-family:'Bricolage Grotesque',sans-serif; font-weight:600; font-size:13.5px;
+    color:#fff; text-decoration:none; background:none; border:none; cursor:pointer;
+    border-bottom:1px solid rgba(255,255,255,.45); padding:0 0 3px;
+    transition:border-color .15s, color .15s;
+  }
+  .ps-report-link svg{ transition:transform .15s }
+  .ps-report-link:not(:disabled):hover{ color:var(--brand-yellow); border-color:var(--brand-yellow) }
+  .ps-report-link:not(:disabled):hover svg{ transform:translateX(3px) }
+  .ps-report-link-pending{
+    color:rgba(255,255,255,.5); border-bottom-color:rgba(255,255,255,.22); cursor:not-allowed;
+  }
   @media (max-width:820px){
+    .ps-report-link{ margin-left:auto; margin-right:auto }
     .ps-take{ border-left:none; border-top:2px solid var(--brand-yellow); padding-left:0; padding-top:12px; margin:0 auto }
     /* align-items:stretch overrides the row layout's own align-items:center --
        in column mode the base "center" value centers .ps-viewport at its
