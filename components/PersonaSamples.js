@@ -120,8 +120,15 @@ export default function PersonaSamples() {
           </div>
           <p>Four real localities, four different reasons to check them — see what each report actually surfaces.</p>
         </div>
+      </div>
 
-        <div className="ps-carousel">
+      {/* Full-bleed, edge-to-edge -- deliberately NOT inside .wrap like the
+          intro above. The slide area itself should fill the whole screen
+          width rather than sit in the same ~1180px column as everything
+          else, so this is a sibling of .wrap, not a child -- .ps-carousel
+          supplies its own (wider, clamp-based) side padding instead of
+          inheriting .wrap's. */}
+      <div className="ps-carousel">
         <div className="ps-viewport">
           <div className="ps-track" style={{ transform: `translateX(-${index * 100}%)` }}>
             {PERSONA_ORDER.map((id) => {
@@ -190,7 +197,6 @@ export default function PersonaSamples() {
           <button type="button" className="ps-next" onClick={next}>
             Next <span className="btn-cta-arrow">→</span>
           </button>
-        </div>
         </div>
       </div>
     </section>

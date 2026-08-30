@@ -1007,11 +1007,14 @@
      while a card is mid-slide showing two colours at once), just no
      longer relied on for anything that has to stay legible once that
      colour IS the field. No inset card box either, per request -- the
-     copy and the real .hero-score-card sit directly on the field,
-     .wrap's own padding is the only inset either has. */
+     copy and the real .hero-score-card sit directly on the field. The
+     carousel itself (.ps-carousel below) is no longer inside .wrap --
+     per a later request it's full-bleed, edge to edge, with its own
+     wider clamp()-based side padding instead of .wrap's fixed 32px/
+     1180px column; only the intro heading above it stays in .wrap. */
   .persona-samples{
     position:relative; overflow:hidden; color:#fff;
-    padding:var(--space-9) 0; min-height:clamp(640px, 86vh, 840px); display:flex; align-items:center;
+    padding:var(--space-9) 0; min-height:calc(100vh - 66px); display:flex; flex-direction:column;
     transition:background-color .6s ease;
   }
   .persona-samples::before{
@@ -1031,8 +1034,18 @@
      room for that rail (.ps-viewport flexes to fill the rest),
      collapsing back to controls-below-viewport at the same 820px
      breakpoint .ps-card-inner's own two columns stack at, since a
-     phone-width screen has no room for a side rail. */
-  .ps-carousel{ display:flex; align-items:center; gap:28px; width:100% }
+     phone-width screen has no room for a side rail.
+     Per a later request this row is also now full-bleed: flex:1 inside
+     .persona-samples' column layout so it fills whatever vertical space
+     the intro text above it doesn't use, and its own clamp()-based side
+     padding replaces .wrap's fixed column so the slide area spans the
+     full screen width instead of a ~1180px strip. min-height:0 is the
+     standard fix for a flex:1 item inside a column flex parent that
+     would otherwise refuse to shrink below its content's height. */
+  .ps-carousel{
+    display:flex; align-items:center; gap:28px; width:100%;
+    flex:1; min-height:0; padding:0 clamp(24px, 6vw, 96px);
+  }
   .ps-viewport{ flex:1; min-width:0; overflow:hidden }
   .ps-track{ display:flex; transition:transform .6s cubic-bezier(.65,0,.35,1) }
   .ps-card{ flex:0 0 100%; min-width:0 }
@@ -1072,7 +1085,13 @@
   }
   @media (max-width:820px){
     .ps-take{ border-left:none; border-top:2px solid var(--brand-yellow); padding-left:0; padding-top:12px; margin:0 auto }
-    .ps-carousel{ flex-direction:column }
+    /* align-items:stretch overrides the row layout's own align-items:center --
+       in column mode the base "center" value centers .ps-viewport at its
+       max-content width instead of stretching it to the container's width,
+       which let the (now full-bleed, edge-to-edge) track balloon past the
+       screen edge and get clipped off-canvas on narrow viewports. Content
+       inside still centers itself via .ps-card-inner's own justify-items. */
+    .ps-carousel{ flex-direction:column; align-items:stretch }
     .ps-controls{ flex-direction:row; gap:24px; margin-top:8px }
   }
 
@@ -1104,6 +1123,9 @@
   .ps-next:hover{ transform:translateY(-1px); box-shadow:0 10px 22px -8px rgba(0,0,0,.4); background:#E8B93A }
   .ps-next:hover .btn-cta-arrow{ transform:translateX(3px) }
 
+  @media (max-width:900px){
+    .persona-samples{ min-height:calc(88vh - 66px) }
+  }
   @media (max-width:640px){
     .persona-samples{ padding:var(--space-7) 0; min-height:0 }
     .ps-checking li{ font-size:14px }
