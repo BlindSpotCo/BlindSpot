@@ -290,7 +290,17 @@ export default function PropertyScoreFlow({ initial }) {
             mode chosen yet, send you back rather than guessing which
             picker to show. */}
         <div className="ps-flow-wrap" style={{ width: '100%', display: viewStage === 'location' ? 'block' : 'none' }}>
-          <div style={{ maxWidth: 640, margin: '0 auto' }}>
+          {/* 1100px, not 640 -- .avsheet (the area-card spec sheet rendered
+              below once a locality's picked) has its own natural width of
+              1056px baked into its shared CSS, so a narrower wrapper here
+              was clamping it down and leaving the picker looking squeezed
+              into a slim centred column with dead space on both sides on
+              desktop. 1100 gives that card room to breathe without maxing
+              out ps-flow-wrap's own 1400px ceiling. On phones this number
+              never actually binds -- the viewport itself is already
+              narrower than 640, let alone 1100 -- so mobile's vertical
+              layout is untouched. */}
+          <div style={{ maxWidth: 1100, margin: '0 auto' }}>
             {!mode ? (
               <div style={{ textAlign: 'center', padding: '60px 0' }}>
                 <p style={{ fontSize: 14.5, color: 'var(--text-mute)', marginBottom: 20 }}>Pick how you want to start first.</p>
