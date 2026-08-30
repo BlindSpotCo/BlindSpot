@@ -3,40 +3,37 @@
 // "Sample Reports" -- sits between HowItWorks and the Team section, in
 // the slot the old "02 -- The Verdict" bento left behind.
 //
-// Per request, each card now uses a REAL locality: one of BlindSpot's 4
-// covered cities per persona (Young Professional -> Bangalore, Family
-// Buyer -> Chandigarh, Investor -> Mumbai, Broker -> Delhi NCR -- an
-// arbitrary but sensible 1:1 assignment, easy to change), and within
-// that city, the actual highest-scoring PIN when data/aslivastu/
-// nqi_scores.json's 8 raw dimension scores are recomputed with THAT
-// persona's own avWeights from lib/personas.js -- the same weighted-mean
-// math recomputeAreaScore() does, just precomputed once here rather than
-// live (this is static marketing copy, not a live report). Locality
-// names come from lib/aslivastu/pinMeta.js, the same PIN->name map the
-// real product uses. Home Comfort Score stays the same illustrative 82
-// (Floor 7, SE) across all four -- that figure is unit-specific
-// (floor/facing a buyer picks), not something that varies by locality
-// the way the neighbourhood score does, so there's no real "best" one
-// to look up. The combined BlindSpot Score blends each persona's own
-// real neighbourhood number with that fixed 82, using their own
-// defaultAreaWeight -- so the four cards can (and do) land on visibly
-// different final scores, not the same repeated 80.
+// Every card below is a REAL BlindSpot Combined Report, run by a real
+// person, with their real name and their real result -- not the
+// illustrative "best locality per city" numbers this file used to
+// carry. The four PDFs are the source of truth for every number here:
+//   Vainavee Subhash (Young Professional) -- Mahadevapura, Bangalore
+//   Jai Mittal (Investor)                 -- Sector 6, Chandigarh
+//   Mayookha Satheesh (Family Buyer)      -- R.K. Puram, Delhi NCR
+//   Ishaan Yadav (Broker)                 -- Fort / CSMT / Churchgate East, Mumbai
+// and are also copied verbatim into public/sample-reports/ so
+// `reportUrl` below links to the actual report, not a placeholder --
+// see the "View sample report" button, which now points at a real PDF
+// for all four cards instead of rendering the disabled "coming soon"
+// state it used to.
 //
-// No fabricated customer names/quotes here on purpose: role label
-// (Young Professional / Family Buyer / Investor / Broker), not a
-// person, so this reads as an illustrative sample report rather than a
-// real testimonial that could be mistaken for a genuine review. This
-// got revisited twice (once asking for names + an AI photo, once for
-// just a name) and stayed a role label both times -- a name alone,
-// paired with "For a young professional in Bangalore: got this
-// result," still reads as one specific real customer on a live
-// production site, photo or not.
+// This is also why a real name was fine to add here and wasn't before:
+// earlier asks were for invented names (once with an AI photo, once
+// name-only) attached to numbers that were never anyone's actual
+// result. These are that same real person's own real result, sourced
+// from the report they actually ran -- the thing that was missing
+// both previous times, not the name by itself.
 //
-// Each SAMPLE has a `reportUrl` placeholder (null for now) for the
-// actual generated sample reports, coming later -- set it per persona
-// once those exist and the card's "View sample report" link goes
-// live automatically; until then it renders as a disabled placeholder
-// rather than a link that looks real but goes nowhere.
+// `caution` flips the score-card badge between the report's own two
+// verdicts ("Recommended" / "Recommended with Caution", see .hsc-badge
+// vs .hsc-badge-caution in globals.css) -- not every one of these four
+// results is a clean "Recommended," and the badge should say so rather
+// than defaulting every card to the same green pill regardless of
+// score. `summary` is a one-line condensation of each PDF's own "Home
+// Buyer Verdict" paragraph; `take` is the longer version under the
+// checking-for list, in the same role-voiced style this section always
+// used, now grounded in that person's real numbers instead of a
+// computed illustrative ones.
 //
 // One-at-a-time horizontal carousel: all 4 cards render in a flex row
 // inside .ps-viewport (overflow:hidden), and .ps-track slides via
@@ -50,85 +47,93 @@
 import { useState, useCallback } from 'react';
 import { PERSONAS, PERSONA_ORDER } from '@/lib/personas';
 
-// `name` is null on every entry below on purpose. Setting it is safe
-// ONLY when it's paired with that same person's own real, verified
-// result -- their actual place/neighbourhood/homeComfort/combined
-// numbers, not the illustrative ones already sitting in this file.
-// The numbers below were computed by re-running the real scoring
-// formula for illustration (see the file header) -- they were never
-// produced by an actual person running an actual report. Attaching a
-// real name to THESE numbers would misattribute a made-up result to a
-// specific real, identifiable person, which is the thing that was
-// actually the problem, not the name by itself. Replace an entire
-// entry's checking/take/place/neighbourhood/homeComfort/combined/name
-// together, from that person's real result, or don't set `name` yet.
 const SAMPLES = {
   young_professional: {
+    name: 'Vainavee Subhash',
     checking: [
       'Commute time to work',
       'Afternoon sun in the bedroom',
       'How noisy the street gets',
       'Privacy from the building opposite',
     ],
-    take: 'For a young professional in Bangalore: HKP Road scores well on connectivity and safety — decent light for late-afternoon work calls, worth an in-person check on street noise before signing.',
+    take: 'Mahadevapura came out to 79/100 — excellent air quality (88/100) and strong light most of the year, though the unit goes fully shaded from May to August and water/roads are the honest trade-off.',
+    summary: 'Bright, well-ventilated, excellent air quality — patchy summer light.',
     city: 'Bangalore',
-    place: 'HKP Road',
-    area: 'Central Bengaluru',
-    neighbourhood: 81,
-    homeComfort: 82,
-    combined: 82,
-    reportUrl: null, // TODO: set once a real generated sample report exists for this persona
-    name: null, // TODO: real customer name -- see the note above SAMPLES before setting this
+    place: 'Mahadevapura',
+    floor: 15,
+    facingLabel: 'South',
+    facingAbbr: 'S',
+    neighbourhood: 72,
+    homeComfort: 87,
+    combined: 79,
+    caution: false,
+    verdictLabel: 'Recommended',
+    reportUrl: '/sample-reports/young-professional-sample-report.pdf',
   },
   family_buyer: {
+    name: 'Mayookha Satheesh',
     checking: [
       'School access nearby',
       'How safe the area really is',
-      "Morning light in the kids' room",
+      "Natural light in the kids' room",
       'Elderly-friendly floor and lift access',
     ],
-    take: 'For a family in Chandigarh: Sector 12 already leads the city on safety and schools — the extra weight this scoring puts on the neighbourhood shows.',
-    city: 'Chandigarh',
-    place: 'Sector 12 · PEC',
-    area: 'North Chandigarh',
-    neighbourhood: 81,
-    homeComfort: 82,
-    combined: 81,
-    reportUrl: null, // TODO: set once a real generated sample report exists for this persona
-    name: null, // TODO: real customer name -- see the note above SAMPLES before setting this
+    take: "R.K. Puram scored 66/100 — a 100/100 schools score and 91/100 crime rating are hard to beat for a family, but the neighbourhood's 45/100 infrastructure and this west-facing unit's afternoon heat gain are real trade-offs to plan around.",
+    summary: 'Exceptional schools and safety — infrastructure and afternoon heat need a plan.',
+    city: 'Delhi NCR',
+    place: 'R.K. Puram',
+    floor: 10,
+    facingLabel: 'West',
+    facingAbbr: 'W',
+    neighbourhood: 77,
+    homeComfort: 50,
+    combined: 66,
+    caution: true,
+    verdictLabel: 'Recommended with Caution',
+    reportUrl: '/sample-reports/family-buyer-sample-report.pdf',
   },
   investor: {
+    name: 'Jai Mittal',
     checking: [
       'Is the asking price fair for the area',
       'Upcoming infrastructure plans',
       'Resale-friendly floor and facing',
       'Obstruction risk to future light',
     ],
-    take: 'For an investor in Mumbai: Fort tops the city on this weighting, though the neighbourhood score itself is more middling than the other three cities — worth checking rentability and price before committing, not just the headline number.',
-    city: 'Mumbai',
-    place: 'Fort / CSMT / Churchgate East',
-    area: 'A Ward',
-    neighbourhood: 70,
-    homeComfort: 82,
-    combined: 75,
-    reportUrl: null, // TODO: set once a real generated sample report exists for this persona
-    name: null, // TODO: real customer name -- see the note above SAMPLES before setting this
+    take: "Sector 6 scored 59/100 — a strong 76/100 neighbourhood (top schools, low crime, excellent utilities) undercut by this specific unit's 44/100 Home Comfort: a low floor and an east-facing obstruction that delays winter light. The area justifies the price; this particular unit is the risk.",
+    summary: "Strong neighbourhood fundamentals — this unit's limited light is the catch.",
+    city: 'Chandigarh',
+    place: 'Sector 6',
+    floor: 2,
+    facingLabel: 'East',
+    facingAbbr: 'E',
+    neighbourhood: 76,
+    homeComfort: 44,
+    combined: 59,
+    caution: true,
+    verdictLabel: 'Recommended with Caution',
+    reportUrl: '/sample-reports/investor-sample-report.pdf',
   },
   broker: {
+    name: 'Ishaan Yadav',
     checking: [
       'One number to lead the pitch with',
       "The area's honest weak points",
       'What not to promise a client',
     ],
-    take: 'For a broker in Delhi NCR: Cantonment leads the city on this weighting — lead with that number, and be ready to caveat the unit’s sun exposure if it comes up.',
-    city: 'Delhi NCR',
-    place: 'Cantonment',
-    area: 'South Delhi',
-    neighbourhood: 87,
-    homeComfort: 82,
-    combined: 84,
-    reportUrl: null, // TODO: set once a real generated sample report exists for this persona
-    name: null, // TODO: real customer name -- see the note above SAMPLES before setting this
+    take: "Fort / CSMT / Churchgate East scored 72/100 — safer than 97% of comparable areas, with strong air quality and reliable morning light on this North-East unit. The honest caveat for a pitch: don't promise all-day sun, and be ready on the 58/100 water score.",
+    summary: 'Safe, well-connected, bright mornings — an easy pitch with honest caveats.',
+    city: 'Mumbai',
+    place: 'Fort / CSMT / Churchgate East',
+    floor: 23,
+    facingLabel: 'North-East',
+    facingAbbr: 'NE',
+    neighbourhood: 72,
+    homeComfort: 72,
+    combined: 72,
+    caution: false,
+    verdictLabel: 'Recommended',
+    reportUrl: '/sample-reports/broker-sample-report.pdf',
   },
 };
 
@@ -197,10 +202,10 @@ export default function PersonaSamples() {
                     <div className="hero-score-card ps-score-card">
                       <div className="hsc-head">
                         <span className="hsc-label">BlindSpot Score</span>
-                        <span className="hsc-badge">Recommended</span>
+                        <span className={`hsc-badge${sample.caution ? ' hsc-badge-caution' : ''}`}>{sample.verdictLabel}</span>
                       </div>
                       <div className="hsc-number">{sample.combined}<span>/100</span></div>
-                      <p className="hsc-verdict">Good light, safe neighbourhood, fair value for the area.</p>
+                      <p className="hsc-verdict">{sample.summary}</p>
                       <div className="hsc-row">
                         <div className="hsc-item slate">
                           <svg className="hsc-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-5.4-7-11a7 7 0 1 1 14 0c0 5.6-7 11-7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>
@@ -213,7 +218,7 @@ export default function PersonaSamples() {
                           <svg className="hsc-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M4 20 L10 14 M20 20 L14 14"/></svg>
                           <div>
                             <span className="hsc-item-label">Bright, well-ventilated unit</span>
-                            <span className="hsc-item-sub">Floor 7, SE — {sample.homeComfort}/100</span>
+                            <span className="hsc-item-sub">Floor {sample.floor}, {sample.facingAbbr} — {sample.homeComfort}/100</span>
                           </div>
                         </div>
                       </div>

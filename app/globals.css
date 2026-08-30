@@ -587,6 +587,13 @@
     font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:13.5px; color:#fff;
     background:var(--brand); padding:6px 14px; border-radius:var(--radius-pill);
   }
+  /* Second verdict state for real report results: the four sample
+     reports don't all land on a clean "Recommended" (two of the real
+     PDFs actually say "Recommended with Caution"), so the badge needs
+     to be able to say that instead of defaulting every card to the
+     same green pill regardless of score. brand-yellow/ink rather than
+     a red/amber warning colour -- "caution," not "avoid." */
+  .hsc-badge-caution{ background:var(--brand-yellow); color:var(--ink) }
   .hsc-number{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:56px; line-height:1; color:var(--ink); margin-bottom:10px }
   .hsc-number span{ font-size:18px; color:var(--text-dim); font-family:'Inter',sans-serif; font-weight:500 }
   /* The one-line human verdict — the actual "should I buy this" answer,
