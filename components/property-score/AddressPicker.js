@@ -328,7 +328,7 @@ export default function AddressPicker({ onConfirmed }) {
             value={query}
             onChange={e => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            onFocus={() => { if (suggestions.length > 0) setSuggestOpen(true); }}
+            onFocus={e => { if (suggestions.length > 0) setSuggestOpen(true); e.target.select(); }}
             autoComplete="off"
             style={{ width: '100%', background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '12px 14px', color: 'var(--text)', fontSize: 14, boxSizing: 'border-box' }}
           />

@@ -199,6 +199,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
       <div className="ss-toolbar" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', background: WHITE, borderBottom: '1px solid rgba(224,123,0,0.15)', flexWrap: 'wrap' }}>
         <form onSubmit={handleSearch} style={{ display: 'flex', gap: 6, flex: '1 1 160px', minWidth: 130 }}>
           <input placeholder="Search for landmarks" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+            onFocus={e => e.target.select()}
             style={{ flex: 1, minWidth: 0, padding: '6px 9px', fontSize: 12.5, borderRadius: 0, border: '1px solid rgba(224,123,0,0.25)', fontFamily: 'inherit' }} />
           <button type="submit" disabled={searching} style={{ background: ORG, color: '#fff', border: 'none', borderRadius: 0, padding: '6px 10px', fontSize: 12, cursor: 'pointer', flexShrink: 0 }}>
             {searching ? '…' : '🔍'}
