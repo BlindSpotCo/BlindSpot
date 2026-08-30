@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import SiteHeader from '@/components/SiteHeader';
 import HowItWorks from '@/components/HowItWorks';
+import PersonaSamples from '@/components/PersonaSamples';
 import HeroMap from '@/components/HeroMap';
 import PinDropTransition from '@/components/PinDropTransition';
 import { coverageLabel } from '@/lib/aslivastu/cityMeta';
@@ -166,6 +167,8 @@ export default function Home() {
       </section>
 
       <HowItWorks />
+
+      <PersonaSamples />
 
       <section className="section team-section" id="team">
         <div className="wrap section-inner">
