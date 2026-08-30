@@ -17,6 +17,7 @@ const STEPS = [
     id: 'area',
     tabLabel: '1. Pick your area',
     eyebrow: 'STEP 1 — AREA',
+    scoreLabel: 'Neighbourhood Score',
     accent: 'slate',
     heading: 'Search a locality, see the score before you see the flat.',
     copy: "Neighbourhood Score rates every locality 0–100 across crime, air quality, power, water, schools and infrastructure — pulled from government records, not what a broker tells you. Type an area name, get the number in seconds.",
@@ -31,6 +32,7 @@ const STEPS = [
     id: 'unit',
     tabLabel: '2. Check the unit',
     eyebrow: 'STEP 2 — UNIT',
+    scoreLabel: 'Home Comfort Score',
     accent: 'sun',
     heading: 'Then check the specific flat — floor, facing, and how much sun it actually gets.',
     copy: "The area score is the same for every flat on the block. This step is what makes it personal: pick a floor and facing, and real solar geometry returns a Home Comfort Score for that exact unit.",
@@ -495,7 +497,12 @@ export default function HowItWorks() {
                     ref={(el) => { stepRefs.current[s.id] = el; }}
                     className={`howworks-step-block${active === s.id ? ' active' : ''}${i === 0 ? ' first' : ''}${i === STEPS.length - 1 ? ' last' : ''}`}
                   >
-                    <div className={`mono howworks-step-eyebrow accent-${s.accent}`}>{s.eyebrow}</div>
+                    <div className="howworks-step-eyebrow-row">
+                      <div className={`mono howworks-step-eyebrow accent-${s.accent}`}>{s.eyebrow}</div>
+                      {s.scoreLabel && (
+                        <span className={`howworks-step-score-tag accent-${s.accent}`}>{s.scoreLabel}</span>
+                      )}
+                    </div>
                     <h3>{s.heading}</h3>
                     <p>{s.copy}</p>
                     <ul className="howworks-bullets">
