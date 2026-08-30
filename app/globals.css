@@ -716,9 +716,10 @@
      the pin/building illustration, the card and the copy read as three
      placed things sharing the field rather than one huddled column.
      Solid --brand field plus a faint blueprint grid -- same idiom as
-     HeroMap and PinDropTransition's own .pdt-grid. Two rings in --ss,
-     now centred on the card itself (not the whole visual column) so
-     they track the card's new offset position. Reveals via the same
+     HeroMap and PinDropTransition's own .pdt-grid. Two rings in
+     --brand-yellow (was --ss, changed on request), now centred on the
+     card itself (not the whole visual column) so they track the card's
+     new offset position. Reveals via the same
      .reveal/.in-view mechanism every other section already uses. No
      gradients, no glow, no glassmorphism, per the brand doc. */
   .hero-verdict{
@@ -773,7 +774,7 @@
   .hero-verdict-visual{ position:relative; display:flex; align-items:center; justify-content:center; min-height:100%; padding-top:4px }
   @media (max-width:900px){ .hero-verdict-visual{ padding-top:0; flex-direction:column; align-items:center } }
   .hvl-ring{
-    position:absolute; top:50%; left:50%; border:1.5px solid var(--ss); border-radius:50%;
+    position:absolute; top:50%; left:50%; border:1.5px solid var(--brand-yellow); border-radius:50%;
     opacity:0; transform:translate(-50%,-50%) scale(2.2);
     transition:transform .8s cubic-bezier(.16,.9,.3,1), opacity .5s ease;
   }
