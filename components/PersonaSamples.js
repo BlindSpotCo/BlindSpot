@@ -50,6 +50,18 @@
 import { useState, useCallback } from 'react';
 import { PERSONAS, PERSONA_ORDER } from '@/lib/personas';
 
+// `name` is null on every entry below on purpose. Setting it is safe
+// ONLY when it's paired with that same person's own real, verified
+// result -- their actual place/neighbourhood/homeComfort/combined
+// numbers, not the illustrative ones already sitting in this file.
+// The numbers below were computed by re-running the real scoring
+// formula for illustration (see the file header) -- they were never
+// produced by an actual person running an actual report. Attaching a
+// real name to THESE numbers would misattribute a made-up result to a
+// specific real, identifiable person, which is the thing that was
+// actually the problem, not the name by itself. Replace an entire
+// entry's checking/take/place/neighbourhood/homeComfort/combined/name
+// together, from that person's real result, or don't set `name` yet.
 const SAMPLES = {
   young_professional: {
     checking: [
@@ -66,6 +78,7 @@ const SAMPLES = {
     homeComfort: 82,
     combined: 82,
     reportUrl: null, // TODO: set once a real generated sample report exists for this persona
+    name: null, // TODO: real customer name -- see the note above SAMPLES before setting this
   },
   family_buyer: {
     checking: [
@@ -82,6 +95,7 @@ const SAMPLES = {
     homeComfort: 82,
     combined: 81,
     reportUrl: null, // TODO: set once a real generated sample report exists for this persona
+    name: null, // TODO: real customer name -- see the note above SAMPLES before setting this
   },
   investor: {
     checking: [
@@ -98,6 +112,7 @@ const SAMPLES = {
     homeComfort: 82,
     combined: 75,
     reportUrl: null, // TODO: set once a real generated sample report exists for this persona
+    name: null, // TODO: real customer name -- see the note above SAMPLES before setting this
   },
   broker: {
     checking: [
@@ -113,6 +128,7 @@ const SAMPLES = {
     homeComfort: 82,
     combined: 84,
     reportUrl: null, // TODO: set once a real generated sample report exists for this persona
+    name: null, // TODO: real customer name -- see the note above SAMPLES before setting this
   },
 };
 
@@ -161,6 +177,10 @@ export default function PersonaSamples() {
                         ))}
                       </ul>
                       <p className="ps-take">{sample.take}</p>
+
+                      {sample.name && (
+                        <p className="ps-attribution">— {sample.name}, {persona.label}</p>
+                      )}
 
                       {sample.reportUrl ? (
                         <a className="ps-report-link" href={sample.reportUrl} target="_blank" rel="noreferrer">
