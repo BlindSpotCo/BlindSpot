@@ -354,24 +354,26 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                   {combined.combinedScore}<span style={{ fontSize: 20, color: 'var(--text-dim)' }}>/100</span>
                 </div>
               </div>
-              {/* A verdict tag, not a control -- previously a solid filled
-                  pill with the same shape/weight as the page's real
-                  buttons (rounded corners, bold white-on-colour text,
-                  generous padding), which read as clickable even though
-                  nothing happens on click. Restyled as a labelled tag:
-                  a small caption above it (matching BLINDSPOT COMBINED
-                  SCORE's own caption pattern) plus a lighter, outlined
-                  chip instead of a solid fill, and no cursor affordance. */}
+              {/* A verdict tag, not a control -- the original was a solid
+                  filled pill with the same shape/weight as the page's real
+                  buttons, which read as clickable even though nothing
+                  happens on click. First fix (outlined mono chip) solved
+                  that but came out flat/lifeless -- lost the colour-coded
+                  punch the pitch deck's 2x2 quadrant design was built
+                  around. This keeps the tag framing (VERDICT caption above
+                  it, no cursor, no hover/shadow -- nothing that implies
+                  "click me") but brings the colour back as a tinted fill +
+                  bold display type, so it still reads as a label, just a
+                  punchier one. */}
               <div style={{ textAlign: 'right' }}>
                 <div className="mono" style={{ fontSize: 10.5, color: 'var(--text-dim)', letterSpacing: '.12em', marginBottom: 6 }}>VERDICT</div>
                 <div
-                  className="uv-verdict-badge mono"
+                  className="uv-verdict-badge"
                   style={{
-                    display: 'inline-block', fontWeight: 700, fontSize: 13, letterSpacing: '.04em', textTransform: 'uppercase',
+                    display: 'inline-block', fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 17,
                     color: VERDICT_COLOR[combined.verdict.label] || 'var(--brand)',
-                    background: 'transparent',
-                    border: `1.5px solid ${VERDICT_COLOR[combined.verdict.label] || 'var(--brand)'}`,
-                    padding: '5px 12px', borderRadius: 999, cursor: 'default',
+                    background: `color-mix(in srgb, ${VERDICT_COLOR[combined.verdict.label] || 'var(--brand)'} 16%, var(--bg-2))`,
+                    padding: '7px 16px', borderRadius: 'var(--radius)', cursor: 'default',
                   }}
                 >
                   {combined.verdict.label}
