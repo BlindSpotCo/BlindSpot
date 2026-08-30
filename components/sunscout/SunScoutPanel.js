@@ -48,7 +48,7 @@ function getLocalDateStr() {
 }
 
 const SunScoutPanel = forwardRef(function SunScoutPanel({
-  lat, lon, address, onUnitSelected, onLiveScoreResult, onLocationSelect,
+  lat, lon, address, onUnitSelected, onLiveScoreResult, onLocationSelect, onComfortDone,
   // Combined-report context (AsliVastu record + combined/unit scores +
   // weights) forwarded straight through to ReportModal when the AI Report
   // is triggered from the Property Score flow via openReport(), rather than
@@ -333,6 +333,11 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
           onFloorFacingSubmit={onUnitSelected}
           onResult={onLiveScoreResult}
           prefillFloor={currentFloor} prefillFacing={currentFacing}
+          // Done (result view only) now also closes the modal AND kicks
+          // off the combined-verdict computation one level up, which is
+          // what actually carries the user to the Verdict tab -- see
+          // UnitVerdict's handleComfortDone.
+          onDone={onComfortDone}
         />
       )}
 

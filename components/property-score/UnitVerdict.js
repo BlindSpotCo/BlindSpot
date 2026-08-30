@@ -9,7 +9,8 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import SunScoutPanel from '@/components/sunscout/SunScoutPanel';
 import { getPersona, PERSONA_ORDER } from '@/lib/personas';
 
-const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'North-West', 'South-West'];
+// Facing options now live only inside LiveScoreModal's own picker; the
+// page-level table that used to duplicate this list was removed above.
 
 // The pitch deck's "05 — THE VERDICT SYSTEM" slide defines these four
 // verdicts as a flat 2x2 colour quadrant, not four labels sharing one
@@ -94,6 +95,14 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
     setFloor(f); setFacing(d); setCapturedFromSS(true); setCombined(null);
   }, []);
   const handleLiveScoreResult = useCallback((result) => { setSsPreview(result); }, []);
+  // Fires when the Home Comfort Score modal's own "Done" button is
+  // clicked (result view only -- X/Escape/backdrop/Cancel still just
+  // close without this). By that point handleUnitSelected has already
+  // set floor/facing/capturedFromSS, so computeCombined() has everything
+  // it needs; onScoreComputed (passed to computeCombined via the
+  // onScoreComputed prop from PropertyScoreFlow) is what actually flips
+  // viewStage to 'verdict', carrying the user straight to tab 4.
+  const handleComfortDone = useCallback(() => { computeCombined(); }, [computeCombined]);
   const handleLocationSelect = useCallback((newLat, newLon) => {
     setLat(String(newLat)); setLon(String(newLon));
   }, [setLat, setLon]);
@@ -246,6 +255,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                 currentFloor={floor} currentFacing={facing}
                 onUnitSelected={handleUnitSelected}
                 onLiveScoreResult={handleLiveScoreResult}
+                onComfortDone={handleComfortDone}
                 onLocationSelect={handleLocationSelect}
                 areaRecord={areaRecord}
                 combinedScore={combined?.combinedScore}
@@ -282,58 +292,19 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
         )}
       </div>
 
-      {/* Floor/facing + Get Score -- Unit-tab content, same display:none
-          toggle as the sunscout panel above (see showUnit's comment). */}
-      {lat && lon && (
-        <div style={{ marginBottom: 20, display: showUnit ? 'block' : 'none' }}>
-          <div className="mono" style={{ fontSize: 12, color: 'var(--text)', letterSpacing: '.12em', marginBottom: 12 }}>PICK YOUR FLOOR &amp; FACING</div>
-
-          {!capturedFromSS && (
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
-                <span className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', flexShrink: 0 }}>Floor</span>
-                <input type="range" min="0" max="30" value={floor ?? 5} onChange={e => setFloor(Number(e.target.value))} style={{ flex: 1, accentColor: 'var(--sun)' }} />
-                <div style={{ background: 'var(--sun)', color: '#fff', borderRadius: 'var(--radius)', padding: '4px 12px', fontSize: 13.5, fontWeight: 700, minWidth: 36, textAlign: 'center' }}>{floor ?? 5}</div>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0 }}>
-                {FACING_OPTS.map(dir => (
-                  <button key={dir} onClick={() => setFacing(dir)} className="uv-facing-btn" style={{
-                    background: facing === dir ? 'var(--sun)' : 'transparent', color: facing === dir ? '#fff' : 'var(--text)',
-                    border: `1px solid ${facing === dir ? 'var(--sun)' : 'var(--line)'}`,
-                    padding: '8px 4px', fontSize: 12, fontWeight: 700, cursor: 'pointer', marginLeft: -1, marginTop: -1,
-                  }}>{dir}</button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <button
-            onClick={() => computeCombined()}
-            disabled={loadingCombined || floor == null || !facing || !capturedFromSS}
-            className="uv-getscore-btn ps-btn ps-cta-btn"
-            style={{
-              background: (floor == null || !facing || !capturedFromSS) ? 'var(--line)' : 'var(--brand)',
-              color: '#fff', border: 'none', borderRadius: 'var(--radius)', padding: '14px 24px', fontSize: 13.5, fontWeight: 700,
-              cursor: (floor == null || !facing || !capturedFromSS) ? 'default' : 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
-              opacity: loadingCombined ? .6 : 1, marginBottom: 8,
-            }}>
-            {loadingCombined ? 'Computing…' : (areaRecord ? 'Get Combined Score →' : 'Get Home Comfort Score →')}
-          </button>
-          {/* Previously this button only checked floor/facing, so picking
-              both here and clicking straight through was possible without
-              ever running the Home Comfort Score preview above -- most
-              people did exactly that, since this table sits right below
-              the fold and the preview button was easy to miss. Gated it
-              on capturedFromSS (set only once the preview modal has
-              actually returned a score) and surfaced why it's disabled,
-              instead of silently refusing the click. */}
-          {!capturedFromSS && floor != null && facing && (
-            <div className="mono" style={{ fontSize: 12, color: '#8A7A68', marginBottom: 16 }}>
-              Preview your Home Comfort Score above first — this unlocks once it comes back.
-            </div>
-          )}
-          {combinedError && <div style={{ color: '#f87171', fontSize: 13, marginBottom: 16 }}>{combinedError}</div>}
-        </div>
+      {/* Floor/facing is now picked entirely inside the Home Comfort
+          Score modal (Preview Home Comfort Score button, above) -- this
+          used to duplicate that same picker down here as its own table
+          plus a second "Get Score" button, which read as two competing
+          ways to do the same thing and was genuinely confusing (worse,
+          for a while the second button worked without ever requiring
+          the preview). Removed entirely: computeCombined() now fires
+          automatically off the modal's own Done button (see
+          handleComfortDone below), which is also what carries the user
+          straight to the Verdict tab. Only the error state (a fetch
+          failure on that auto-compute) still needs somewhere to show. */}
+      {combinedError && (
+        <div style={{ color: '#f87171', fontSize: 13, marginBottom: 16, display: showUnit ? 'block' : 'none' }}>{combinedError}</div>
       )}
 
       {/* VERDICT -- its own tab. Plain conditional: nothing here holds
