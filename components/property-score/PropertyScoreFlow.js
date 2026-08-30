@@ -224,42 +224,63 @@ export default function PropertyScoreFlow({ initial }) {
             Location tab (see chooseMode above), which is where the real
             browsing/searching happens. */}
         <div className="ps-flow-wrap" style={{ width: '100%', display: viewStage === 'priorities' ? 'block' : 'none' }}>
-          <div style={{ display: 'flex', gap: 48, alignItems: 'flex-start', flexWrap: 'wrap', maxWidth: 1000, margin: '0 auto' }}>
-            <div style={{ flex: '1 1 320px', maxWidth: 400 }}>
-              <PersonaPicker personaId={personaId} onSelect={setPersonaId} />
-            </div>
+          <div style={{ maxWidth: 900, margin: '0 auto' }}>
+            {/* One heading for the whole screen -- both columns below get
+                only a small eyebrow of their own (same size/margin as
+                each other), not a second full headline, so their card
+                lists start at the same height without any manual
+                spacing hacks. */}
+            <h2 style={{ fontSize: 'clamp(22px, 2.4vw, 28px)', marginBottom: 8 }}>Pick your priorities.</h2>
+            <p style={{ fontSize: 13, color: 'var(--text-mute)', marginBottom: 28, lineHeight: 1.55, maxWidth: 520 }}>
+              This tunes the score to what matters most to you.
+            </p>
 
-            <div style={{ flex: '1 1 320px', maxWidth: 460, display: 'flex', flexDirection: 'column', gap: 12, paddingTop: 4 }}>
-              <button onClick={() => chooseMode('locality')} className="ps-mode-btn ps-btn"
-                style={{
-                  textAlign: 'left',
-                  background: mode === 'locality' ? 'color-mix(in srgb, var(--slate) 14%, var(--bg-2))' : 'color-mix(in srgb, var(--slate) 5%, var(--bg-2))',
-                  border: `1px solid ${mode === 'locality' ? 'var(--slate)' : 'var(--line)'}`,
-                  borderLeft: `4px solid var(--slate)`,
-                  borderRadius: 'var(--radius)', padding: '18px 20px', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', gap: 16,
-                }}>
-                <div className="mono" style={{ fontSize: 11, color: 'var(--slate)', letterSpacing: '.1em', flexShrink: 0, width: 60 }}>OPTION A</div>
-                <div>
-                  <div className="ps-mode-btn-title" style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>City → Locality → Unit</div>
-                  <div className="ps-mode-btn-sub" style={{ fontSize: 13, color: 'var(--text-mute)', lineHeight: 1.5 }}>Browse scored neighbourhoods, then pick a floor/facing. Best if you're still deciding between areas.</div>
+            <div style={{ display: 'flex', gap: 48, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+              <div style={{ flex: '1 1 340px', maxWidth: 420 }}>
+                <PersonaPicker personaId={personaId} onSelect={setPersonaId} showHeading={false} />
+              </div>
+
+              {/* Same card language as the persona list -- round icon
+                  badge + title + one-line blurb, same padding and gap --
+                  so the two columns read as one matched set instead of
+                  two differently-styled pickers glued together. */}
+              <div style={{ flex: '1 1 340px', maxWidth: 420 }}>
+                <div className="mono" style={{ fontSize: 11, color: 'var(--sun)', letterSpacing: '.14em', marginBottom: 10 }}>HOW DO YOU WANT TO START?</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <button onClick={() => chooseMode('locality')} className="ps-mode-btn ps-btn"
+                  style={{
+                    textAlign: 'left', display: 'flex', alignItems: 'center', gap: 14,
+                    padding: '14px 16px', borderRadius: 'var(--radius)', cursor: 'pointer',
+                    background: mode === 'locality' ? 'color-mix(in srgb, var(--slate) 14%, var(--bg-2))' : 'var(--bg-2)',
+                    border: `1px solid ${mode === 'locality' ? 'var(--slate)' : 'var(--line)'}`,
+                  }}>
+                  <span style={{
+                    width: 34, height: 34, borderRadius: '50%', flexShrink: 0, background: 'var(--slate)', color: '#fff',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14,
+                  }}>A</span>
+                  <span>
+                    <span style={{ display: 'block', fontSize: 14.5, fontWeight: 700, color: mode === 'locality' ? 'var(--slate)' : 'var(--ink)' }}>Browse areas</span>
+                    <span style={{ display: 'block', fontSize: 13, color: 'var(--text-mute)', lineHeight: 1.4, marginTop: 2 }}>See scored neighbourhoods, then pick a unit.</span>
+                  </span>
+                </button>
+                <button onClick={() => chooseMode('address')} className="ps-mode-btn ps-btn"
+                  style={{
+                    textAlign: 'left', display: 'flex', alignItems: 'center', gap: 14,
+                    padding: '14px 16px', borderRadius: 'var(--radius)', cursor: 'pointer',
+                    background: mode === 'address' ? 'color-mix(in srgb, var(--sun) 14%, var(--bg-2))' : 'var(--bg-2)',
+                    border: `1px solid ${mode === 'address' ? 'var(--sun)' : 'var(--line)'}`,
+                  }}>
+                  <span style={{
+                    width: 34, height: 34, borderRadius: '50%', flexShrink: 0, background: 'var(--sun)', color: '#fff',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14,
+                  }}>B</span>
+                  <span>
+                    <span style={{ display: 'block', fontSize: 14.5, fontWeight: 700, color: mode === 'address' ? 'var(--sun)' : 'var(--ink)' }}>I have an address</span>
+                    <span style={{ display: 'block', fontSize: 13, color: 'var(--text-mute)', lineHeight: 1.4, marginTop: 2 }}>We&apos;ll place the pin and find the area for you.</span>
+                  </span>
+                </button>
                 </div>
-              </button>
-              <button onClick={() => chooseMode('address')} className="ps-mode-btn ps-btn"
-                style={{
-                  textAlign: 'left',
-                  background: mode === 'address' ? 'color-mix(in srgb, var(--sun) 14%, var(--bg-2))' : 'color-mix(in srgb, var(--sun) 5%, var(--bg-2))',
-                  border: `1px solid ${mode === 'address' ? 'var(--sun)' : 'var(--line)'}`,
-                  borderLeft: `4px solid var(--sun)`,
-                  borderRadius: 'var(--radius)', padding: '18px 20px', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', gap: 16,
-                }}>
-                <div className="mono" style={{ fontSize: 11, color: 'var(--sun)', letterSpacing: '.1em', flexShrink: 0, width: 60 }}>OPTION B</div>
-                <div>
-                  <div className="ps-mode-btn-title" style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>I have the exact address</div>
-                  <div className="ps-mode-btn-sub" style={{ fontSize: 13, color: 'var(--text-mute)', lineHeight: 1.5 }}>Search it directly — we&apos;ll place the pin and match it to the nearest scored locality automatically.</div>
-                </div>
-              </button>
+              </div>
             </div>
           </div>
         </div>
