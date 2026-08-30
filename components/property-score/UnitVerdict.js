@@ -228,7 +228,12 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
         )}
         {gpsError && <div style={{ color: '#f87171', fontSize: 12.5, marginBottom: 10 }}>{gpsError}</div>}
         <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 14 }}>
-          Use the <strong style={{ color: 'var(--sun)' }}>HOME COMFORT SCORE</strong> button below for the breakdown — once you have a verdict below, you can generate the <strong style={{ color: 'var(--sun)' }}>full AI report</strong> covering both the neighbourhood and this unit.
+          {/* Not naming the button below by a fixed label -- its own text
+              is conditional (areaRecord present: "Get Combined Score",
+              absent: "Get Home Comfort Score", see the button further
+              down), and a hardcoded name here had drifted out of sync
+              with it before. */}
+          Use the button below for the breakdown — once you have a verdict below, you can generate the <strong style={{ color: 'var(--sun)' }}>full AI report</strong> covering both the neighbourhood and this unit.
         </div>
 
         {lat && lon && (
@@ -348,7 +353,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
             <div className="uv-score-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 14 }}>
               <div>
                 <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', letterSpacing: '.12em', marginBottom: 6 }}>
-                  {combined.area ? 'BLINDSPOT COMBINED SCORE' : 'HOME COMFORT SCORE'}
+                  {combined.area ? 'BLINDSPOT SCORE' : 'HOME COMFORT SCORE'}
                 </div>
                 <div className="uv-score-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 56, lineHeight: 1, color: 'var(--text)' }}>
                   {combined.combinedScore}<span style={{ fontSize: 20, color: 'var(--text-dim)' }}>/100</span>
