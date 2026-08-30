@@ -10,7 +10,7 @@
 // flips true, so there's nothing sitting invisibly in the layout at rest.
 //
 // Below 860px the revealed nav collapses into a hamburger + dropdown panel
-// so every link -- How It Works, Tools, Why BlindSpot, The Team -- and the
+// so every link -- How It Works, Tools, The Team -- and the
 // "Uncover Your BlindSpot" CTA stay reachable on phones instead of silently
 // disappearing (the old .nav-links row has always been display:none under
 // 860px, which used to hide them with no way to reach them).
@@ -118,7 +118,6 @@ export default function SiteHeader({ homeHref = '/' }) {
             <div className="nav-links">
               <Link href="/#how-it-works">How It Works</Link>
               <Link href="/#products">Tools</Link>
-              <Link href="/#why">Why BlindSpot</Link>
               <Link href="/#team">The Team</Link>
             </div>
             <div className="nav-cta">
@@ -166,7 +165,6 @@ export default function SiteHeader({ homeHref = '/' }) {
           <div className="wrap" style={{ display: 'flex', flexDirection: 'column' }}>
             <Link href="/#how-it-works" onClick={closeMobile}>How It Works</Link>
             <Link href="/#products" onClick={closeMobile}>Tools</Link>
-            <Link href="/#why" onClick={closeMobile}>Why BlindSpot</Link>
             <Link href="/#team" onClick={closeMobile}>The Team</Link>
             {!onFlow && <Link href="/property-score" onClick={closeMobile}>Uncover Your BlindSpot</Link>}
             {checkedAuth && (

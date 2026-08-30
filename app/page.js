@@ -255,61 +255,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section" id="why">
-        <div className="wrap section-inner">
-          <div className="section-head reveal">
-            <div>
-              <span className="eyebrow">03 — Why BlindSpot</span>
-              <h2>Built for the decision, not the browse.</h2>
-            </div>
-          </div>
-          <div className="why-list">
-            {/* <details>/<summary> per row, not a hover-reveal -- hover
-                doesn't exist on a phone, so the row itself has to be the
-                thing that opens on tap/click on every input, same
-                principle as the disabled-button fix elsewhere in this
-                codebase. */}
-            <details className="why-row ss reveal">
-              <summary className="why-row-summary">
-                <svg className="why-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M4 20 L10 14 M20 20 L14 14"/></svg>
-                <span className="why-title">Sunlight is data, not vibes</span>
-                <span className="why-toggle" aria-hidden="true"></span>
-              </summary>
-              <p className="why-desc">Listing photos are taken on sunny days, at the best angle, in summer. Home Comfort Score shows what light actually looks like at 9am in December — before you sign anything.</p>
-            </details>
-            <details className="why-row av reveal">
-              <summary className="why-row-summary">
-                <svg className="why-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="14" rx="1"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
-                <span className="why-title">Brokers don&apos;t tell you everything</span>
-                <span className="why-toggle" aria-hidden="true"></span>
-              </summary>
-              <p className="why-desc">Crime rates, AQI readings, power-cut frequency — Neighbourhood Score pulls these straight from government records, not from someone with a commission riding on your decision.</p>
-            </details>
-            <details className="why-row reveal">
-              <summary className="why-row-summary">
-                <svg className="why-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-5.4-7-11a7 7 0 1 1 14 0c0 5.6-7 11-7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>
-                <span className="why-title">One pin. Two answers.</span>
-                <span className="why-toggle" aria-hidden="true"></span>
-              </summary>
-              <p className="why-desc">Drop a pin, get a solar-viability read and a neighbourhood-quality score. The two questions every property decision actually comes down to.</p>
-            </details>
-            <details className="why-row reveal">
-              <summary className="why-row-summary">
-                <svg className="why-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V7a4 4 0 0 1 8 0"/></svg>
-                <span className="why-title">Zero cost. No catch.</span>
-                <span className="why-toggle" aria-hidden="true"></span>
-              </summary>
-              <p className="why-desc">Both tools are free with no sign-up. No paywalled scores, no lead-gen forms — just the data, instantly, in your browser.</p>
-            </details>
-          </div>
-        </div>
-      </section>
-
       <section className="section team-section" id="team">
         <div className="wrap section-inner">
           <div className="section-head reveal">
             <div>
-              <span className="eyebrow">04 — The Team</span>
+              <span className="eyebrow">03 — The Team</span>
               <h2>Two people who got tired of guessing.</h2>
             </div>
             <p>The two founders behind BlindSpot&apos;s product line — each leading one half of the platform.</p>
@@ -357,7 +307,6 @@ export default function Home() {
                 <img className="brand-word-img" src="/wordmark.png" alt="BlindSpot" style={{ height: 10 }} />
               </div>
               <div className="footer-links">
-                <a href="#why">Why BlindSpot</a>
                 <a href="#team">The Team</a>
               </div>
             </div>

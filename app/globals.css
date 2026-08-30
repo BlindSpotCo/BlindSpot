@@ -901,7 +901,7 @@
 
   @media (prefers-reduced-motion: reduce){
     .coord-readout .blink, .pcard-tag .dot{animation:none !important}
-    .pcard, .why-row, .team-card, .eyebrow::after, .nav-links a::after, .brand-mark-img{transition:none !important}
+    .pcard, .team-card, .eyebrow::after, .nav-links a::after, .brand-mark-img{transition:none !important}
   }
 
   /* ---------- SECTION HEADERS ---------- */
@@ -1487,55 +1487,6 @@
   .hw-live-row-track{ background:#EFEBE3; height:4px }
 
   /* ---------- WHY LIST ---------- */
-  /* Was icon + title + full paragraph side by side, all four rows always
-     fully expanded -- the single most template-feeling block on the page
-     (see the "too much text" note this redesign is answering). Now a
-     <details>/<summary> pair per row: the icon + a big bold one-liner is
-     all that shows by default (Jeton's icon-then-word beat), and the
-     explanation is a tap/click away, not something you have to read past
-     to get down the page. <details> rather than a hover-reveal
-     specifically because hover doesn't exist on a phone -- same "must
-     work on every input, not just a mouse" principle already applied
-     elsewhere in this codebase (see the disabled-button notes on
-     PropertyScoreFlow.js). */
-  .why-list{border-top:1px solid var(--line-soft)}
-  .why-row{
-    display:block; margin:0 -24px; border-bottom:1px solid var(--line-soft);
-  }
-  .why-row-summary{
-    display:flex; align-items:center; gap:22px; padding:32px 24px; cursor:pointer;
-    list-style:none; transition:background .2s ease;
-  }
-  .why-row-summary::-webkit-details-marker{ display:none }
-  .why-row-summary::marker{ content:'' }
-  .why-row-summary:hover{background:rgba(28,24,18,0.03)}
-  @media (max-width:700px){ .why-row{margin:0 -16px} .why-row-summary{padding:24px 16px; gap:16px} }
-  .why-icon{width:22px; height:22px; color:var(--text-dim); flex-shrink:0; transition:transform .2s ease}
-  .why-row-summary:hover .why-icon{transform:scale(1.15)}
-  /* Was nth-child(1)/(3) = sun, nth-child(2)/(4) = slate -- purely
-     alternating by position, not by what each row is actually about. Only
-     rows 1 ("Sunlight is data, not vibes") and 2 ("Brokers don't tell you
-     everything") are genuinely single-engine content, so only those get an
-     engine hue now (via explicit .ss/.av classes in page.js, not position).
-     Rows 3 ("One pin. Two answers.") and 4 ("Zero cost. No catch.") are
-     about both engines or neither, so they fall back to the same neutral
-     --text-dim as every other icon instead of being forced into one
-     engine's colour just because of where they sit in the list. */
-  .why-row.ss .why-icon{color:var(--ss)}
-  .why-row.av .why-icon{color:var(--av)}
-  /* Nearly double the old 16px -- this line now IS the row's content by
-     default, not a label next to a paragraph, so it needs the scale to
-     read as a statement on its own rather than a heading. */
-  .why-title{
-    font-family:'Bricolage Grotesque',sans-serif; font-weight:700; color:var(--ink); flex:1;
-    font-size:clamp(19px, 2.4vw, 26px); line-height:1.25;
-  }
-  .why-toggle{ font-size:22px; font-weight:400; color:var(--text-dim); flex-shrink:0; transition:transform .25s ease }
-  .why-toggle::before{ content:'+' }
-  .why-row[open] .why-toggle{ transform:rotate(45deg) }
-  .why-desc{font-size:15px; line-height:1.7; color:var(--text-mute); margin:0; padding:0 24px 32px 66px}
-  @media (max-width:700px){ .why-desc{ padding:0 16px 24px 54px } }
-
   /* ---------- TEAM ---------- */
   /* One more colour beat in the scroll rhythm -- every section down to
      here alternates --bg / a full --brand field / --bg again, but Team
@@ -1802,9 +1753,6 @@
      render inline per-step, which is gone now (tabs + copy only below
      901px, see .howworks-panel-sticky above). */
 
-  .why-row-summary{ padding:22px 16px }
-  .why-desc{ font-size:14px }
-
   .team-card{ padding:26px }
   .team-desc{ font-size:14px }
 
@@ -1869,9 +1817,6 @@
   .howworks-step-block h3{ font-size:17px }
   .howworks-step-block p{ font-size:13.5px; margin-bottom:12px }
   .howworks-bullets li{ font-size:13.5px }
-
-  .why-row-summary{ padding:16px 14px }
-  .why-desc{ font-size:13.5px }
 
   .team-card{ padding:18px }
   .team-desc{ font-size:13.5px }
@@ -2064,7 +2009,6 @@
   .pcard h3{ font-size:17px }
   .pcard p{ font-size:13px !important }
 
-  .why-row-summary{ padding:14px 12px !important }
   .team-card{ padding:14px !important }
 
   .btn-cta, .btn-lg{ font-size:13.5px !important; padding:12px 18px !important }
