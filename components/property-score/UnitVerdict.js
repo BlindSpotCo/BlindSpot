@@ -7,6 +7,7 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import SunScoutPanel from '@/components/sunscout/SunScoutPanel';
+import AddressSearchBar from './AddressSearchBar';
 import { getPersona, PERSONA_ORDER } from '@/lib/personas';
 
 const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'North-West', 'South-West'];
@@ -36,7 +37,7 @@ const VERDICT_COLOR = {
   'Reconsider': 'var(--olive-gold)',
 };
 
-export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId, onUnitSeen, onVerdictStart, viewStage, onScoreComputed, onBackToUnit, initialFloor, initialFacing, onUnitPicked }) {
+export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, onLocationChanged, addressLabel, personaId, onUnitSeen, onVerdictStart, viewStage, onScoreComputed, onBackToUnit, initialFloor, initialFacing, onUnitPicked }) {
   const persona = getPersona(personaId) || getPersona(PERSONA_ORDER[0]);
   const sunScoutRef = useRef(null);
   const [floor, setFloor] = useState(initialFloor ?? null);
@@ -54,23 +55,24 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   const weightDebounceRef = useRef(null);
   useEffect(() => () => clearTimeout(weightDebounceRef.current), []);
 
+<<<<<<< ours
   const [gpsError, setGpsError] = useState('');
   // Auto-locate state for the "landed here directly, no location yet"
   // case -- see the effect below. Purely for the status text; lat/lon
   // themselves are what actually drive the map appearing.
   const [geoState, setGeoState] = useState('idle'); // idle | locating | granted | denied | unavailable
+=======
+>>>>>>> theirs
   // Whether the report modal (owned by SunScoutPanel, opened via
   // sunScoutRef.openReport) is currently up -- see showUnit below for
   // why this needs to be tracked here at all.
   const [reportOpen, setReportOpen] = useState(false);
-  // Lat/lon are already populated by the time this panel renders -- from
-  // the locality's area record, or the pin the user just confirmed on the
-  // map in AddressPicker. Showing them up front as two blank-looking
-  // required text inputs reads as "something I still have to fill in" to
-  // a first-time visitor. Default to a plain, human-readable location
-  // line instead; the raw coordinate fields (and "use my location") stay
-  // one click away for the rare case someone needs to correct them.
-  const [showCoords, setShowCoords] = useState(false);
+  // The location this tab is scoring is always changeable from right
+  // here -- a search bar sits above the map, not a hidden "edit exact
+  // location" link revealing two raw lat/lon boxes and a separate "use
+  // my location" button. That mattered most for people who land on this
+  // tab directly, where those coordinate boxes were the only way to say
+  // where they meant, and read as homework rather than a search.
 
   // A persona switch resets the area/unit split back to that persona's
   // default — same idea as picking a new location, since the previous
@@ -106,8 +108,15 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
     setFloor(f); setFacing(d); setCapturedFromSS(true); setCombined(null);
   }, []);
   const handleLiveScoreResult = useCallback((result) => { setSsPreview(result); }, []);
-  const handleLocationSelect = useCallback((newLat, newLon) => {
+  // Map clicks/drags in SunScoutPanel and picks from the search bar both
+  // land here. Routed through the parent's resolver (when it has one) so
+  // the neighbourhood match and address label follow the pin instead of
+  // going stale -- moving a pin across a pincode boundary otherwise kept
+  // scoring the old area.
+  const handleLocationSelect = useCallback((newLat, newLon, label) => {
+    if (onLocationChanged) { onLocationChanged(newLat, newLon, label ?? ''); return; }
     setLat(String(newLat)); setLon(String(newLon));
+<<<<<<< ours
   }, [setLat, setLon]);
 
   const useMyLocation = () => {
@@ -126,6 +135,9 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
       }
     );
   };
+=======
+  }, [onLocationChanged, setLat, setLon]);
+>>>>>>> theirs
 
   // Reaching Unit directly -- no priority picked, no locality/address
   // chosen -- means this component mounts with lat/lon both still empty.
@@ -250,6 +262,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
       <div style={{ marginBottom: 36, display: showUnit ? 'block' : 'none' }}>
         <div className="mono" style={{ fontSize: 12, color: 'var(--sun)', letterSpacing: '.12em', marginBottom: 12 }}>SUN &amp; SHADOW FOR THIS FLAT</div>
 
+<<<<<<< ours
         {/* Three states, not two: still waiting on GPS (no lat/lon yet at
             all -- only possible right after landing on this tab directly),
             a plain pill once there's a location (named, if we have a
@@ -293,8 +306,30 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
           </div>
         )}
         {gpsError && <div style={{ color: '#f87171', fontSize: 12.5, marginBottom: 10 }}>{gpsError}</div>}
+=======
+        {/* Location line + search bar, always visible. This is the only
+            place the location is set on this tab, and it works whether
+            you arrived here with a location already chosen or landed on
+            the tab cold. */}
+        <div style={{ marginBottom: 14 }}>
+          {addressLabel && (
+            <div style={{ fontSize: 13.5, color: 'var(--text)', marginBottom: 8 }}>
+              <span style={{ color: 'var(--text-dim)' }}>&#128205; </span>{addressLabel}
+            </div>
+          )}
+          <AddressSearchBar
+            onPicked={(la, lo, label) => handleLocationSelect(la, lo, label)}
+            value={addressLabel}
+            biasLat={lat ? parseFloat(lat) : null}
+            biasLon={lon ? parseFloat(lon) : null}
+            showMyLocation
+            compact
+            placeholder="Search a different address or landmark…"
+          />
+        </div>
+>>>>>>> theirs
         <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 14 }}>
-          Use the <strong style={{ color: 'var(--sun)' }}>HOME COMFORT SCORE</strong> button below for the breakdown — once you have a verdict below, you can generate the <strong style={{ color: 'var(--sun)' }}>full AI report</strong> covering both the neighbourhood and this unit.
+          Click a flat on the 3D building to pick its floor and facing, or set them by hand below the map.
         </div>
 
         {lat && lon && (
@@ -319,6 +354,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               />
             </div>
 
+<<<<<<< ours
             
               href="/floor-plan-analysis"
               target="_blank"
@@ -332,6 +368,8 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               Furnish This Unit — Upload Floor Plan ↗
             </a>
 
+=======
+>>>>>>> theirs
             {capturedFromSS && (
               <div className="mono" style={{ fontSize: 12, color: '#4ADE80', marginTop: 14 }}>
                 ✓ Using floor {floor}, {facing}-facing — picked above.
@@ -467,6 +505,24 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               }}>
               {combined.area ? 'Generate Full AI Report — Neighbourhood + Unit' : 'Generate AI Report — Unit'}
             </button>
+
+            {/* Moved down here from the Unit tab, where it sat directly
+                under the 3D map competing with the actual next step.
+                Furnishing advice only makes sense once there's a verdict
+                to furnish against, so it belongs with the other outputs. */}
+            <a
+              href="/floor-plan-analysis"
+              target="_blank"
+              rel="noreferrer"
+              className="ps-btn"
+              style={{
+                display: 'block', textAlign: 'center', background: 'transparent', color: 'var(--sun)',
+                border: '1px solid var(--sun)', borderRadius: 'var(--radius)', padding: '12px 22px',
+                fontSize: 13, fontWeight: 700, letterSpacing: '.03em', textTransform: 'uppercase',
+                textDecoration: 'none', marginTop: 10,
+              }}>
+              Furnish This Unit — Upload Floor Plan &#8599;
+            </a>
           </div>
         ) : (
           // Reachable by clicking the stepper's Verdict tab directly (once

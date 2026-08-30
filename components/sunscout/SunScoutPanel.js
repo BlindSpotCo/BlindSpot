@@ -75,8 +75,6 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
   const [season, setSeason] = useState('Select Season');
   const [SEASONS, setSEASONS] = useState({});
   const [showCustom, setShowCustom] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searching, setSearching] = useState(false);
 
   const [showReport, setShowReport] = useState(false);
   const [showLiveScore, setShowLiveScore] = useState(false);
@@ -170,17 +168,6 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
     });
   }, []);
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) return;
-    setSearching(true);
-    try {
-      const r = await fetch(`/api/sunscout/geocode?q=${encodeURIComponent(searchQuery)}`);
-      const d = await r.json();
-      if (d.result && onLocationSelect) onLocationSelect(d.result[0], d.result[1]);
-    } catch {} finally { setSearching(false); }
-  };
-
   const handleSeason = (s) => {
     setSeason(s);
     if (s === 'Custom date') { setShowCustom(true); return; }
@@ -197,14 +184,12 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
       {/* Toolbar -- wraps naturally on narrow screens */}
       <div className="ss-toolbar" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', background: WHITE, borderBottom: '1px solid rgba(224,123,0,0.15)', flexWrap: 'wrap' }}>
-        <form onSubmit={handleSearch} style={{ display: 'flex', gap: 6, flex: '1 1 160px', minWidth: 130 }}>
-          <input placeholder="Search for landmarks" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-            style={{ flex: 1, minWidth: 0, padding: '6px 9px', fontSize: 12.5, borderRadius: 0, border: '1px solid rgba(224,123,0,0.25)', fontFamily: 'inherit' }} />
-          <button type="submit" disabled={searching} style={{ background: ORG, color: '#fff', border: 'none', borderRadius: 0, padding: '6px 10px', fontSize: 12, cursor: 'pointer', flexShrink: 0 }}>
-            {searching ? '…' : '🔍'}
-          </button>
-        </form>
-
+        {/* The location search that used to live here is gone: the
+            Property Score flow now puts a full autocomplete search bar
+            directly above this panel (UnitVerdict), so this was a second,
+            weaker copy of the same control sitting a few pixels below it
+            -- and it competed for width with the time/season controls
+            this toolbar actually exists for. */}
         <select value={season} onChange={e => handleSeason(e.target.value)}
           style={{ border: '1px solid rgba(224,123,0,0.25)', borderRadius: 0, padding: '6px 8px', fontSize: 12, fontFamily: 'inherit', flexShrink: 0 }}>
           {Object.keys(SEASONS_TEMPLATE).map(s => <option key={s} value={s}>{s}</option>)}
@@ -256,7 +241,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
 
       {showReport && (
         <ReportModal
-          lat={lat} lon={lon} tzOffset={tzOffset} address={address || searchQuery || undefined}
+          lat={lat} lon={lon} tzOffset={tzOffset} address={address || undefined}
           onClose={() => { setShowReport(false); setReportPrefill(null); onReportOpenChange?.(false); }}
           captureScreenshots={captureScreenshots}
           onFloorFacingSubmit={onUnitSelected}
