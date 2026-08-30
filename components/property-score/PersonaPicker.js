@@ -15,28 +15,17 @@
 
 import { PERSONAS, PERSONA_ORDER } from '@/lib/personas';
 
-<<<<<<< ours
-export default function PersonaPicker({ personaId, onSelect }) {
-  return (
-    <div>
-      <div className="mono" style={{ fontSize: 11, color: 'var(--sun)', letterSpacing: '.14em', marginBottom: 10 }}>WHO&apos;S HOUSE-HUNTING?</div>
-      <h2 style={{ fontSize: 'clamp(22px, 2.4vw, 28px)', marginBottom: 8 }}>Pick your priorities.</h2>
-      <p style={{ fontSize: 13, color: 'var(--text-mute)', marginBottom: 20, lineHeight: 1.55 }}>
-        Same address, different blind spots — this sets how the combined score and the sun/shadow weighting are tuned for you. You can still drag any slider by hand later.
-      </p>
-=======
-// `showHeading` is false when PropertyScoreFlow's Priorities tab renders
-// its own heading above this -- the tab used to have a second column
-// (the entry-mode A/B choice) that needed a matching eyebrow here for
-// the two card lists to line up; that column has since moved onto the
-// Location tab itself as a toggle, so with showHeading off this now
-// renders the bare list and nothing else.
+// `showHeading` is false when PropertyScoreFlow renders its own single
+// shared heading above this and the entry-mode list side by side (see
+// PropertyScoreFlow.js's Priorities screen) -- there, only the small
+// "WHO'S HOUSE-HUNTING?" eyebrow repeats per-column (to match the other
+// column's own eyebrow so both card lists start at the same height), the
+// big headline/paragraph appear once for the whole screen instead of once
+// per column.
 export default function PersonaPicker({ personaId, onSelect, showHeading = true }) {
   return (
     <div>
-      {showHeading && (
-        <div className="mono" style={{ fontSize: 11, color: 'var(--sun)', letterSpacing: '.14em', marginBottom: 10 }}>WHO&apos;S HOUSE-HUNTING?</div>
-      )}
+      <div className="mono" style={{ fontSize: 11, color: 'var(--sun)', letterSpacing: '.14em', marginBottom: 10 }}>WHO&apos;S HOUSE-HUNTING?</div>
       {showHeading && (
         <>
           <h2 style={{ fontSize: 'clamp(22px, 2.4vw, 28px)', marginBottom: 8 }}>Pick your priorities.</h2>
@@ -45,9 +34,8 @@ export default function PersonaPicker({ personaId, onSelect, showHeading = true 
           </p>
         </>
       )}
->>>>>>> theirs
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: showHeading ? 0 : 20 }}>
         {PERSONA_ORDER.map(id => {
           const p = PERSONAS[id];
           const active = id === personaId;
