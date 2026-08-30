@@ -31,6 +31,7 @@ import UnitVerdict from './UnitVerdict';
 import PersonaPicker from './PersonaPicker';
 import PropertyScoreProgress from './PropertyScoreProgress';
 import SideDataStrip from './SideDataStrip';
+import { PERSONA_ORDER } from '@/lib/personas';
 
 // `initial` -- { stage, personaId, mode, areaRecord, city, lat, lon,
 // addressLabel, floor, facing } | null -- is resolved from the URL by
@@ -42,7 +43,13 @@ import SideDataStrip from './SideDataStrip';
 // original "Continue to Sun Score" hand-off this used to be for.
 export default function PropertyScoreFlow({ initial }) {
   const [mode, setMode] = useState(initial?.mode ?? null); // 'locality' | 'address'
-  const [personaId, setPersonaId] = useState(initial?.personaId ?? null);
+  // Defaults to the first persona rather than null -- every tab is
+  // independently reachable now (see reachableStages below), so a first
+  // visitor who jumps straight to Location or Unit without ever touching
+  // Priorities shouldn't get stuck behind an unmade choice. Priorities
+  // stays fully editable any time; this is just a sane starting point,
+  // not a requirement to visit that tab first.
+  const [personaId, setPersonaId] = useState(initial?.personaId ?? PERSONA_ORDER[0]);
 
   const [areaRecord, setAreaRecord] = useState(initial?.areaRecord ?? null);
   const [pinCode, setPinCode] = useState(initial?.areaRecord?.pin_code ?? null);
@@ -182,6 +189,19 @@ export default function PropertyScoreFlow({ initial }) {
     panelRef.current?.scrollIntoView({ behavior: 'auto', block: 'start' });
   }, [viewStage]);
 
+  // Landing directly on the Location tab (stepper click, direct link,
+  // reload) with no entry mode picked yet used to dead-end into "go back
+  // to Priorities and choose A or B first." Priorities is skippable now
+  // (see personaId's default above), so Location needs to stand on its
+  // own too: default straight to the search-bar mode (AddressPicker
+  // already auto-locates via GPS on mount and lets you type/search to
+  // change it) rather than blocking on an unmade choice. Browsing scored
+  // areas instead is still one click away via the toggle rendered below,
+  // not gated behind Priorities.
+  useEffect(() => {
+    if (viewStage === 'location' && !mode) setMode('address');
+  }, [viewStage, mode]);
+
   const unitReady = Boolean(lat && lon);
 
   // Coarse but reliable -- derived straight from state this component
@@ -286,9 +306,11 @@ export default function PropertyScoreFlow({ initial }) {
         </div>
 
         {/* ── Location: the real picker for whichever mode was chosen on
-            Priorities. If you land here directly (stepper click) with no
-            mode chosen yet, send you back rather than guessing which
-            picker to show. */}
+            Priorities. Landing here directly (stepper click, direct link)
+            with no mode chosen yet defaults to the address/search picker
+            (see the effect above) rather than blocking -- the toggle link
+            just below switches to browsing areas instead, no need to go
+            back to Priorities for that. */}
         <div className="ps-flow-wrap" style={{ width: '100%', display: viewStage === 'location' ? 'block' : 'none' }}>
           {/* 1100px, not 640 -- .avsheet (the area-card spec sheet rendered
               below once a locality's picked) has its own natural width of
@@ -301,37 +323,37 @@ export default function PropertyScoreFlow({ initial }) {
               narrower than 640, let alone 1100 -- so mobile's vertical
               layout is untouched. */}
           <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-            {!mode ? (
-              <div style={{ textAlign: 'center', padding: '60px 0' }}>
-                <p style={{ fontSize: 14.5, color: 'var(--text-mute)', marginBottom: 20 }}>Pick how you want to start first.</p>
-                <button onClick={() => setViewStage('priorities')} className="btn btn-lg btn-cta ps-btn ps-cta-btn">
-                  ← Back to Priorities
+            {/* Switch between the two entry modes right here -- no need to
+                go back to Priorities for this. */}
+            <div style={{ textAlign: 'right', marginBottom: 14 }}>
+              {mode === 'address' ? (
+                <button onClick={() => chooseMode('locality')} className="ps-link-btn"
+                  style={{ background: 'none', border: 'none', color: 'var(--text-mute)', fontSize: 12.5, textDecoration: 'underline', cursor: 'pointer' }}>
+                  Prefer to browse scored areas instead?
                 </button>
-              </div>
-            ) : (
-              <>
-                {mode === 'locality' && <LocalityPicker onAreaSelected={handleAreaSelected} selectedPinCode={pinCode} />}
-                {mode === 'address' && <AddressPicker onConfirmed={handleAddressConfirmed} />}
-              </>
-            )}
+              ) : (
+                <button onClick={() => chooseMode('address')} className="ps-link-btn"
+                  style={{ background: 'none', border: 'none', color: 'var(--text-mute)', fontSize: 12.5, textDecoration: 'underline', cursor: 'pointer' }}>
+                  Have an exact address? Search for it instead
+                </button>
+              )}
+            </div>
+            {mode === 'locality' && <LocalityPicker onAreaSelected={handleAreaSelected} selectedPinCode={pinCode} />}
+            {mode === 'address' && <AddressPicker onConfirmed={handleAddressConfirmed} />}
           </div>
 
           {mode && (
             <div style={{ textAlign: 'center', marginTop: 36 }}>
               <button
-                onClick={() => personaId && unitReady && setViewStage('unit')}
-                disabled={!personaId || !unitReady}
+                onClick={() => unitReady && setViewStage('unit')}
+                disabled={!unitReady}
                 className="btn btn-lg btn-cta ps-btn ps-cta-btn"
-                style={{ opacity: (personaId && unitReady) ? 1 : .45, cursor: (personaId && unitReady) ? 'pointer' : 'default' }}
+                style={{ opacity: unitReady ? 1 : .45, cursor: unitReady ? 'pointer' : 'default' }}
               >
                 Continue — Configure Your Unit <span className="btn-cta-arrow">→</span>
               </button>
-              {!(personaId && unitReady) && (
-                <p style={{ fontSize: 12.5, color: 'var(--text-dim)', marginTop: 10 }}>
-                  {!personaId ? (
-                    <>Pick a priority on the <button onClick={() => setViewStage('priorities')} style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', color: 'var(--slate)', textDecoration: 'underline', cursor: 'pointer' }}>Priorities</button> tab first.</>
-                  ) : 'Pick a location to continue.'}
-                </p>
+              {!unitReady && (
+                <p style={{ fontSize: 12.5, color: 'var(--text-dim)', marginTop: 10 }}>Pick a location to continue.</p>
               )}
             </div>
           )}
@@ -340,8 +362,10 @@ export default function PropertyScoreFlow({ initial }) {
         {/* Unit + Verdict share one mounted UnitVerdict instance (see the
             file-level comment above) so SunScoutPanel's map and the
             floor/facing/combined-score state it holds survive switching
-            tabs, instead of resetting every time. Hidden via display:none
-            rather than unmounted when neither tab is active. */}
+            tabs -- including a trip back to Location to change area and
+            back again -- instead of resetting every time. Hidden via
+            display:none rather than unmounted whenever a location IS
+            picked but neither tab is currently active. */}
         {unitReady && (
           <div className="ps-flow-wrap" style={{ width: '100%', display: (viewStage === 'unit' || viewStage === 'verdict') ? 'block' : 'none' }}>
             <UnitVerdict
@@ -366,12 +390,24 @@ export default function PropertyScoreFlow({ initial }) {
           </div>
         )}
 
+        {/* Landed on Unit or Verdict directly -- via Priorities/Location
+            and Priorities being fully skippable now -- with no location
+            picked yet. Rather than dead-ending back to Location, drop
+            straight into the same GPS-auto-locate + search picker
+            Location's address mode uses: the map opens at the current
+            position right away, and the search bar above it changes it.
+            Confirming here feeds the same handler address mode on
+            Location uses, so it's indistinguishable from having picked
+            it there -- and this whole block disappears (unitReady flips
+            true, the block above takes over) the moment that happens. */}
         {(viewStage === 'unit' || viewStage === 'verdict') && !unitReady && (
-          <div className="ps-flow-wrap" style={{ textAlign: 'center', padding: '60px 0' }}>
-            <p style={{ fontSize: 14.5, color: 'var(--text-mute)', marginBottom: 20 }}>Pick a location first — there&apos;s nothing to configure yet.</p>
-            <button onClick={() => setViewStage('location')} className="btn btn-lg btn-cta ps-btn ps-cta-btn">
-              ← Back to Location
-            </button>
+          <div className="ps-flow-wrap" style={{ width: '100%' }}>
+            <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+              <p style={{ fontSize: 14.5, color: 'var(--text-mute)', marginBottom: 20, textAlign: 'center' }}>
+                Nothing picked yet — we&apos;ll open the map at your current location. Search above to change it.
+              </p>
+              <AddressPicker onConfirmed={handleAddressConfirmed} />
+            </div>
           </div>
         )}
       </div>
