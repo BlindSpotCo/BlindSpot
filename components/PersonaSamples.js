@@ -169,6 +169,9 @@ export default function PersonaSamples() {
                 <div className="ps-card" key={id} style={{ '--ps-accent': persona.color }}>
                   <div className="ps-card-inner">
                     <div className="ps-copy">
+                      {sample.name && (
+                        <p className="ps-person-name">{sample.name}</p>
+                      )}
                       <span className="ps-role">{persona.label}</span>
                       <div className="ps-checking-label mono">CHECKING FOR</div>
                       <ul className="ps-checking">
@@ -177,10 +180,6 @@ export default function PersonaSamples() {
                         ))}
                       </ul>
                       <p className="ps-take">{sample.take}</p>
-
-                      {sample.name && (
-                        <p className="ps-attribution">— {sample.name}, {persona.label}</p>
-                      )}
 
                       {sample.reportUrl ? (
                         <a className="ps-report-link" href={sample.reportUrl} target="_blank" rel="noreferrer">

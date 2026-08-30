@@ -1096,12 +1096,14 @@
     font-size:14.5px; line-height:1.6; color:rgba(255,255,255,.85);
     border-left:2px solid var(--brand-yellow); padding-left:14px; max-width:460px;
   }
-  /* Attribution line for a real name (sample.name), once one is set --
-     kept visually secondary (small, muted) rather than styled like a
-     headline, since the point is a quiet, honest byline under the
-     quote, not another loud identity element competing with .ps-role. */
-  .ps-attribution{
-    font-size:13px; color:rgba(255,255,255,.6); margin-top:10px; font-style:italic;
+  /* Name headline for a real customer (sample.name), once one is set --
+     sits above .ps-role as "Jai Mittal" / "Young Professional" (name
+     first, role as the smaller pill underneath), rather than a quiet
+     byline elsewhere on the card, per request. Nothing renders here
+     while sample.name stays null. */
+  .ps-person-name{
+    font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:20px; color:#fff;
+    margin-bottom:6px;
   }
   /* Per-persona "View sample report" link -- a real link once
      sample.reportUrl is set (the actual generated reports are coming
