@@ -52,22 +52,16 @@ export default function SiteHeader({ homeHref = '/' }) {
   }, []);
 
   // Floating "Uncover Your BlindSpot" pill -- used to live only in
-  // app/page.js, tied to a homepage-specific scroll threshold (past beat
-  // 2's own full-size CTA). Moved here so every page keeps the next action
-  // one tap away during a long scroll, not just the homepage. A flat pixel
-  // threshold rather than a viewport-height multiple, since it needs to
-  // make sense on both the tall two-beat homepage hero and much shorter
-  // pages elsewhere on the site. Suppressed on the property-score flow
-  // itself, same as the nav CTA above -- pointing at the page you're
-  // already on is dead weight.
-  const [showFloatingCta, setShowFloatingCta] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setShowFloatingCta(window.scrollY > 480);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-  const floatingCtaVisible = showFloatingCta && !onFlow;
+  // app/page.js, originally gated behind a scroll threshold so it only
+  // appeared once beat 2's own full-size CTA had had its moment -- per
+  // direct request it's now on from the very first screen too (the
+  // homepage hero has no CTA of its own, by design, see beat 1's own
+  // comment in app/page.js), so there's no longer a scroll-position case
+  // where the next action isn't one tap away. Moved here so every page
+  // keeps it, not just the homepage. Suppressed on the property-score
+  // flow itself, same as the nav CTA above -- pointing at the page
+  // you're already on is dead weight.
+  const floatingCtaVisible = !onFlow;
 
   useEffect(() => {
     const supabase = createClient();

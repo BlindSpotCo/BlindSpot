@@ -1615,15 +1615,20 @@
   /* ---------- FLOATING CTA (app/page.js) -----------
      Jeton keeps its own nav/support pill on screen through the entire
      scroll, so the next action is never more than a tap away -- this is
-     the same idea, appearing once beat 2's own full-size CTA has had its
-     moment. `visibility` (not just opacity) is what actually removes it
+     the same idea, on from the very first screen (see SiteHeader.js's own
+     comment). `visibility` (not just opacity) is what actually removes it
      from keyboard tab order while hidden -- PinDropTransition doesn't
      forward a tabIndex prop, so this had to happen in CSS instead. The
      delay is asymmetric on purpose: showing is instant (0s delay) so it's
      focusable the moment it's visible, hiding waits for the opacity fade
-     to finish first so a keyboard user isn't dropped mid-transition. */
+     to finish first so a keyboard user isn't dropped mid-transition.
+     bottom:84px, not a smaller value hugging the edge -- the homepage's
+     hero beat 1 has its own "Scroll ↓" cue fixed at the literal bottom of
+     that first screen (.hero-scroll-cue, bottom:36px), and this pill is
+     now visible there too, so it needs real clearance above that cue
+     rather than sitting on top of it. */
   .floating-cta{
-    position:fixed; left:50%; bottom:28px; z-index:50;
+    position:fixed; left:50%; bottom:84px; z-index:50;
     transform:translate(-50%,20px); opacity:0; visibility:hidden; pointer-events:none;
     transition:opacity .3s ease, transform .3s ease, visibility 0s linear .3s;
   }
