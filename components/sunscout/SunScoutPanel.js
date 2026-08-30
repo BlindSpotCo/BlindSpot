@@ -225,9 +225,6 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
             style={{ flex: '1 1 80px', minWidth: 60, accentColor: ORG }} />
         )}
         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: INK, fontWeight: 700, flexShrink: 0 }}>{simTime}</span>
-
-        <div style={{ flex: '1 1 0', minWidth: 4 }} />
-        <button onClick={() => setShowLiveScore(true)} style={{ background: INK, color: '#fff', border: 'none', borderRadius: 0, padding: '7px 12px', fontWeight: 700, fontSize: 12, cursor: 'pointer', letterSpacing: '.03em', flexShrink: 0 }}>HOME COMFORT SCORE</button>
       </div>
 
       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, color: TEXT_SUB, padding: '5px 10px', background: '#FFFBF5', borderBottom: '1px solid rgba(224,123,0,0.08)' }}>
@@ -253,6 +250,19 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
           </div>
         )}
       </div>
+
+      {/* Own full-width row, not a toolbar icon anymore -- same treatment
+          as AVAreaCard's "See Detailed Neighbourhood Report" so it reads
+          as a clear next step (quick score preview for wherever the pin
+          currently is) instead of one more small control lost among the
+          season/time/play controls above. */}
+      <button onClick={() => setShowLiveScore(true)} style={{
+        display: 'block', width: '100%', textAlign: 'center', background: INK, color: '#fff', border: 'none',
+        padding: '13px 20px', fontWeight: 700, fontSize: 13, letterSpacing: '.04em', textTransform: 'uppercase',
+        cursor: 'pointer', flexShrink: 0,
+      }}>
+        Preview Home Comfort Score →
+      </button>
 
       {showReport && (
         <ReportModal

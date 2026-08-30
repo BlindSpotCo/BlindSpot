@@ -115,6 +115,15 @@ export default function PropertyScoreFlow({ initial }) {
     setPinCode(matchedArea?.pin_code ?? null);
     setCity(matchCity);
     setAddressLabel(label || '');
+    // AddressPicker's own "Continue to Sun & Shadow" button (shown once
+    // the pin's confirmed) is already the deliberate "I'm committing to
+    // this one" gesture -- jump straight to Unit here instead of also
+    // requiring the separate flow-level "Continue — Configure Your Unit"
+    // button below, which just duplicated it for this mode (see the
+    // location-tab render below, which only shows that button for
+    // locality mode now). Also where the direct-Unit-tab GPS fallback
+    // lands, where it's a same-tab no-op.
+    setViewStage('unit');
   }, []);
 
   // UnitVerdict calls this whenever the floor/facing it owns changes --
@@ -383,7 +392,7 @@ export default function PropertyScoreFlow({ initial }) {
             {mode === 'address' && <AddressPicker onConfirmed={handleAddressConfirmed} />}
           </div>
 
-          {mode && (
+          {mode === 'locality' && (
             <div style={{ textAlign: 'center', marginTop: 36 }}>
               <button
                 onClick={() => unitReady && setViewStage('unit')}
