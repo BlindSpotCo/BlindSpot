@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SiteHeader from '@/components/SiteHeader';
 import HowItWorks from '@/components/HowItWorks';
 import HeroMap from '@/components/HeroMap';
-import HeroIllustration from '@/components/HeroIllustration';
+// HeroIllustration is deliberately not imported here anymore -- see the
+// hero-verdict comment below for why it's sitting this redesign out.
 import PinDropTransition from '@/components/PinDropTransition';
 import { coverageLabel } from '@/lib/aslivastu/cityMeta';
 
@@ -13,6 +14,20 @@ export default function Home() {
   // SiteHeader (shared across every page) — this file only needs the
   // hero's own coordinate-readout ref.
   const coordRef = useRef(null);
+
+  // Floating CTA pill: hidden through beat 1 (the statement screen has no
+  // CTA of its own on purpose -- see the hero-statement comment above),
+  // then visible for the rest of the scroll once beat 2's own full-size
+  // CTA has had its moment. A plain scroll threshold rather than an
+  // IntersectionObserver here since there's only the one number to track,
+  // not per-element stagger like the .reveal mechanism below needs.
+  const [showFloatingCta, setShowFloatingCta] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShowFloatingCta(window.scrollY > window.innerHeight * 1.6);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   // Rotating coordinate readout in the hero — ported directly from the
   // original inline script.
@@ -74,33 +89,54 @@ export default function Home() {
     <>
       <SiteHeader />
 
-      <section className="hero">
+      {/* ===== HERO, BEAT 1 -- the statement, alone =====
+          Old hero opened with headline + tagline + sub-paragraph +
+          coverage pill + CTA + score card all sharing one first screen --
+          exactly the "nothing grabs attention because everything's
+          competing" problem. Jeton's own hero does the opposite: one
+          line, alone, full screen. Everything else the old hero also
+          said moves down into beat 2 below, where it gets its own room
+          instead of fighting this line for space. */}
+      <section className="hero hero-statement">
         <HeroMap />
+        <div className="wrap hero-statement-inner">
+          <span className="hero-eyebrow">Property Intelligence</span>
+          <h1>Know the place, before you commit.</h1>
+          <div className="coord-readout"><span className="blink"></span><span ref={coordRef} className="mono">12.9716° N, 77.5946° E — checking Bengaluru</span></div>
+        </div>
+        <span className="hero-scroll-cue mono">Scroll<span className="hero-scroll-cue-arrow">↓</span></span>
+      </section>
 
-        <div className="wrap hero-grid">
-          <div className="hero-content">
-            <span className="hero-eyebrow">Property Intelligence</span>
-            <h1>Know the place, before you commit.</h1>
-            <p className="hero-tagline"><span className="seg sun">One pin</span><span className="sep"></span><span className="seg slate">Two answers</span></p>
-            <p className="hero-sub">Drop a pin. See exactly what the neighbourhood around it is really like, and exactly how sunlight moves through the unit. Real government records. Real solar geometry. No broker spin.</p>
-            <span className="coverage-pill" style={{ marginTop: 18, marginBottom: 4 }}>
-              <span className="dot" />Active in {coverageLabel()} — more cities coming
-            </span>
-            <div className="hero-ctas" style={{ marginTop: 18 }}>
-              <PinDropTransition href="/property-score" className="btn btn-lg btn-cta">
-                Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
-              </PinDropTransition>
-            </div>
-            <div className="coord-readout"><span className="blink"></span><span ref={coordRef} className="mono">12.9716° N, 77.5946° E — checking Bengaluru</span></div>
-          </div>
-
-          <div className="hero-visual">
-            <div className="hero-illustration-wrap">
-              <HeroIllustration />
-            </div>
+      {/* ===== HERO, BEAT 2 -- the verdict, big, on its own field =====
+          The score card used to live small, in a half-width column,
+          competing with the illustration next to it. Blown up here on a
+          solid --brand field instead -- same "one unavoidable field
+          colour, one focal object" idea .bento uses further down this
+          page, built fresh rather than applying that class directly
+          since .bento's own padding/radius are tuned for an inline tile,
+          not a full-bleed section. The two rings behind the card use
+          --ss, the same accent PinDropTransition's own lock-on ring
+          already uses sitting on this exact --brand field -- a proven
+          pairing, not a new guess -- so this reads as the same "survey
+          instrument locking onto a pin" moment the CTA's click-transition
+          already establishes, not a second unrelated animation language.
+          Reveals via the same .reveal/IntersectionObserver mechanism
+          every other section on this page already uses -- no new JS.
+          HeroIllustration (the building/sun/pin scene) stays out of this
+          beat for now -- its positioning was hand-tuned specifically for
+          the old two-column grid (see the "sun going missing twice"
+          comments on .hero-illustration-wrap above), and re-tuning those
+          offsets for a new centred layout without a live visual pass
+          risks reintroducing exactly that bug. Worth a follow-up once
+          this can be checked live rather than guessed blind. */}
+      <section className="hero-verdict reveal">
+        <div className="wrap hero-verdict-inner">
+          <div className="hero-verdict-visual">
+            <span className="hvl-ring hvl-ring-outer" aria-hidden="true" />
+            <span className="hvl-ring hvl-ring-inner" aria-hidden="true" />
             <div className="hero-card-wrap">
               <span className="hero-visual-tag">Live preview</span>
-              <div className="hero-score-card">
+              <div className="hero-score-card lg">
                 <div className="hsc-head">
                   <span className="hsc-label">BlindSpot Score</span>
                   <span className="hsc-badge">Recommended</span>
@@ -132,6 +168,19 @@ export default function Home() {
                 </div>
                 <div className="hsc-foot">Real solar geometry + government locality data, combined into one number you can trust.</div>
               </div>
+            </div>
+          </div>
+
+          <div className="hero-verdict-copy">
+            <p className="hero-tagline"><span className="seg sun">One pin</span><span className="sep"></span><span className="seg slate">Two answers</span></p>
+            <p className="hero-sub">Drop a pin. See exactly what the neighbourhood around it is really like, and exactly how sunlight moves through the unit. Real government records. Real solar geometry. No broker spin.</p>
+            <span className="coverage-pill" style={{ marginTop: 18, marginBottom: 4 }}>
+              <span className="dot" />Active in {coverageLabel()} — more cities coming
+            </span>
+            <div className="hero-ctas" style={{ marginTop: 18 }}>
+              <PinDropTransition href="/property-score" className="btn btn-lg btn-cta">
+                Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
+              </PinDropTransition>
             </div>
           </div>
         </div>
@@ -174,6 +223,45 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ===== TWO ENGINES, ONE VERDICT =====
+          Fills the gap the section numbering already left: 01 -- The
+          Platform, 03 -- Why BlindSpot, 04 -- The Team, nothing at 02.
+          Jeton's "Unify your finances" idea, applied to BlindSpot's own
+          pitch -- instead of a paragraph claiming the two engines above
+          combine into one score, this shows it: the same 78/82/80 numbers
+          already sitting in the hero's score card, converging into one
+          result. Real numbers repeated on purpose, not new stats invented
+          for this section -- the hero card and this one should always
+          agree. Uses .bento, the same "one unavoidable field colour, one
+          focal object" panel .btn-cta's own closing section already
+          uses, so this reads as a second instance of an established
+          pattern rather than a new one. */}
+      <section className="section">
+        <div className="wrap">
+          <div className="bento merge-bento reveal">
+            <span className="eyebrow">02 — The Verdict</span>
+            <h2>Two engines. One verdict.</h2>
+            <p>Neighbourhood Score and Home Comfort Score, combined into one number you can act on.</p>
+            <div className="merge-visual">
+              <div className="merge-chip av">
+                <span className="merge-chip-label">Neighbourhood</span>
+                <span className="merge-chip-num">78</span>
+              </div>
+              <span className="merge-op" aria-hidden="true">+</span>
+              <div className="merge-chip ss">
+                <span className="merge-chip-label">Sunlight</span>
+                <span className="merge-chip-num">82</span>
+              </div>
+              <span className="merge-op" aria-hidden="true">=</span>
+              <div className="merge-result">
+                <span className="merge-result-num">80</span>
+                <span className="merge-result-label">BlindSpot Score</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="section" id="why">
         <div className="wrap section-inner">
           <div className="section-head reveal">
@@ -183,31 +271,48 @@ export default function Home() {
             </div>
           </div>
           <div className="why-list">
-            <div className="why-row ss reveal">
-              <svg className="why-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M4 20 L10 14 M20 20 L14 14"/></svg>
-              <div className="why-title">Sunlight is data, not vibes</div>
-              <div className="why-desc">Listing photos are taken on sunny days, at the best angle, in summer. Home Comfort Score shows what light actually looks like at 9am in December — before you sign anything.</div>
-            </div>
-            <div className="why-row av reveal">
-              <svg className="why-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="14" rx="1"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
-              <div className="why-title">Brokers don&apos;t tell you everything</div>
-              <div className="why-desc">Crime rates, AQI readings, power-cut frequency — Neighbourhood Score pulls these straight from government records, not from someone with a commission riding on your decision.</div>
-            </div>
-            <div className="why-row reveal">
-              <svg className="why-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-5.4-7-11a7 7 0 1 1 14 0c0 5.6-7 11-7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>
-              <div className="why-title">One pin. Two answers.</div>
-              <div className="why-desc">Drop a pin, get a solar-viability read and a neighbourhood-quality score. The two questions every property decision actually comes down to.</div>
-            </div>
-            <div className="why-row reveal">
-              <svg className="why-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V7a4 4 0 0 1 8 0"/></svg>
-              <div className="why-title">Zero cost. No catch.</div>
-              <div className="why-desc">Both tools are free with no sign-up. No paywalled scores, no lead-gen forms — just the data, instantly, in your browser.</div>
-            </div>
+            {/* <details>/<summary> per row, not a hover-reveal -- hover
+                doesn't exist on a phone, so the row itself has to be the
+                thing that opens on tap/click on every input, same
+                principle as the disabled-button fix elsewhere in this
+                codebase. */}
+            <details className="why-row ss reveal">
+              <summary className="why-row-summary">
+                <svg className="why-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M4 20 L10 14 M20 20 L14 14"/></svg>
+                <span className="why-title">Sunlight is data, not vibes</span>
+                <span className="why-toggle" aria-hidden="true"></span>
+              </summary>
+              <p className="why-desc">Listing photos are taken on sunny days, at the best angle, in summer. Home Comfort Score shows what light actually looks like at 9am in December — before you sign anything.</p>
+            </details>
+            <details className="why-row av reveal">
+              <summary className="why-row-summary">
+                <svg className="why-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="14" rx="1"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+                <span className="why-title">Brokers don&apos;t tell you everything</span>
+                <span className="why-toggle" aria-hidden="true"></span>
+              </summary>
+              <p className="why-desc">Crime rates, AQI readings, power-cut frequency — Neighbourhood Score pulls these straight from government records, not from someone with a commission riding on your decision.</p>
+            </details>
+            <details className="why-row reveal">
+              <summary className="why-row-summary">
+                <svg className="why-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-5.4-7-11a7 7 0 1 1 14 0c0 5.6-7 11-7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>
+                <span className="why-title">One pin. Two answers.</span>
+                <span className="why-toggle" aria-hidden="true"></span>
+              </summary>
+              <p className="why-desc">Drop a pin, get a solar-viability read and a neighbourhood-quality score. The two questions every property decision actually comes down to.</p>
+            </details>
+            <details className="why-row reveal">
+              <summary className="why-row-summary">
+                <svg className="why-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V7a4 4 0 0 1 8 0"/></svg>
+                <span className="why-title">Zero cost. No catch.</span>
+                <span className="why-toggle" aria-hidden="true"></span>
+              </summary>
+              <p className="why-desc">Both tools are free with no sign-up. No paywalled scores, no lead-gen forms — just the data, instantly, in your browser.</p>
+            </details>
           </div>
         </div>
       </section>
 
-      <section className="section" id="team">
+      <section className="section team-section" id="team">
         <div className="wrap section-inner">
           <div className="section-head reveal">
             <div>
@@ -267,6 +372,12 @@ export default function Home() {
           </div>
         </footer>
       </section>
+
+      <div className={`floating-cta${showFloatingCta ? ' is-visible' : ''}`} aria-hidden={!showFloatingCta}>
+        <PinDropTransition href="/property-score" className="btn-cta-sm floating-cta-btn">
+          Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
+        </PinDropTransition>
+      </div>
     </>
   );
 }
