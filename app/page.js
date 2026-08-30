@@ -181,7 +181,7 @@ export default function Home() {
               <div className="team-avatar">AG</div>
               <div>
                 <div className="team-name">Arushri Gangji</div>
-                <div className="team-role sun">Co-founder · Builds Home Comfort Score</div>
+                <div className="team-role sun">Co-founder · Home Comfort Score</div>
                 <div className="team-desc">Leads Home Comfort Score, the solar and shadow-analysis engine behind BlindSpot — modelling real sun paths and floor-level shadow hours for a unit, so buyers know exactly how much light a space gets before they sign anything.</div>
                 <a href="https://www.linkedin.com/in/arushri-gangji-056108381/" target="_blank" rel="noopener" className="team-link">Connect on LinkedIn <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
               </div>
@@ -191,7 +191,7 @@ export default function Home() {
               <div className="team-avatar">GB</div>
               <div>
                 <div className="team-name">Gurshaan Singh Baweja</div>
-                <div className="team-role slate">Co-founder · Builds Neighbourhood Score</div>
+                <div className="team-role slate">Co-founder · Neighbourhood Score</div>
                 <div className="team-desc">Leads Neighbourhood Score, the neighbourhood-intelligence engine behind BlindSpot — pulling government data on safety, air quality, power and water into one score, so buyers stop relying on a broker&apos;s word for it.</div>
                 <a href="https://www.linkedin.com/in/gurshaan-singh-baweja" target="_blank" rel="noopener" className="team-link">Connect on LinkedIn <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
               </div>
