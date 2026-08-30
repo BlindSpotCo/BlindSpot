@@ -16,8 +16,20 @@
 //
 // Respects prefers-reduced-motion: those users get a plain short fade and
 // the same navigation, with no sweeping motion at all.
-
+//
+// The .pdt overlay is rendered via a portal into document.body rather than
+// in place. `.pdt` is `position:fixed; inset:0` so it should always cover
+// the full viewport -- but `position:fixed` is fixed to the nearest
+// ancestor that establishes a containing block, and any ancestor with a
+// `transform` (e.g. .floating-cta's translate(), used to slide the pill
+// CTA in/out) creates exactly that. Rendered in place inside a transformed
+// wrapper, the whole "lock onto the pin" animation shrank down to and
+// played inside that wrapper's own small box instead of filling the
+// screen. A portal to document.body sidesteps the whole containing-block
+// problem: `.pdt` is never a descendant of whatever transformed element
+// triggered it, wherever this component gets used.
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 
 // The last element (the pin, then the readout) finishes at ~1400ms -- see
@@ -57,7 +69,7 @@ export default function PinDropTransition({ href = '/property-score', className,
     <>
       <a href={href} onClick={start} className={className}>{children}</a>
 
-      {playing && (
+      {playing && typeof document !== 'undefined' && createPortal(
         <div className="pdt" role="presentation" aria-hidden="true">
           {/* Solid brand field, wiped up from the bottom via clip-path --
               a hard edge sweeping past, not a fade. */}
@@ -105,7 +117,8 @@ export default function PinDropTransition({ href = '/property-score', className,
             <span className="pdt-readout-line">ACQUIRING SITE</span>
             <span className="pdt-readout-sub">12.9716° N · 77.5946° E</span>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

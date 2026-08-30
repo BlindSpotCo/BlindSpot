@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import SiteHeader from '@/components/SiteHeader';
 import HowItWorks from '@/components/HowItWorks';
 import HeroMap from '@/components/HeroMap';
@@ -12,20 +12,6 @@ export default function Home() {
   // SiteHeader (shared across every page) — this file only needs the
   // hero's own coordinate-readout ref.
   const coordRef = useRef(null);
-
-  // Floating CTA pill: hidden through beat 1 (the statement screen has no
-  // CTA of its own on purpose -- see the hero-statement comment above),
-  // then visible for the rest of the scroll once beat 2's own full-size
-  // CTA has had its moment. A plain scroll threshold rather than an
-  // IntersectionObserver here since there's only the one number to track,
-  // not per-element stagger like the .reveal mechanism below needs.
-  const [showFloatingCta, setShowFloatingCta] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setShowFloatingCta(window.scrollY > window.innerHeight * 1.6);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   // Rotating coordinate readout in the hero — ported directly from the
   // original inline script.
@@ -314,12 +300,6 @@ export default function Home() {
           </div>
         </footer>
       </section>
-
-      <div className={`floating-cta${showFloatingCta ? ' is-visible' : ''}`} aria-hidden={!showFloatingCta}>
-        <PinDropTransition href="/property-score" className="btn-cta-sm floating-cta-btn">
-          Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
-        </PinDropTransition>
-      </div>
     </>
   );
 }
