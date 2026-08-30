@@ -4,7 +4,7 @@
 // replaced with a direct onFloorFacingSubmit(floor, facing) callback --
 // same-tree now, no cross-frame handoff needed.
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LiveScoreCard from './LiveScoreCard';
 
 const ORG = '#E07B00';
@@ -27,15 +27,28 @@ const SUBSCORE_WEIGHT_LABELS = [
 
 const DEFAULT_WEIGHTS = { sun: 30, shadeHeat: 25, view: 20, privacy: 15, wind: 10 };
 
-export default function LiveScoreModal({ lat, lon, tzOffset, onClose, onFloorFacingSubmit, onResult }) {
-  const [floor, setFloor] = useState('5');
-  const [facing, setFacing] = useState('South');
+export default function LiveScoreModal({ lat, lon, tzOffset, onClose, onFloorFacingSubmit, onResult, prefillFloor, prefillFacing }) {
+  // Start from whatever's already picked on the page behind this modal, if
+  // anything -- falls back to the old 5/South defaults only when the page
+  // hasn't had a floor/facing picked yet.
+  const [floor, setFloor] = useState(prefillFloor != null ? String(prefillFloor) : '5');
+  const [facing, setFacing] = useState(prefillFacing || 'South');
   const [weights, setWeights] = useState(DEFAULT_WEIGHTS);
   const [showWeights, setShowWeights] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
+
+  // Escape closes the modal from anywhere, same as the X and Done buttons --
+  // previously there was no keyboard escape hatch at all, and the X/Done
+  // buttons are the only other way out (Done sits below the fold on
+  // shorter screens, so this matters).
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose?.(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
 
   const generate = async () => {
     setLoading(true);
@@ -65,15 +78,19 @@ export default function LiveScoreModal({ lat, lon, tzOffset, onClose, onFloorFac
   };
 
   return (
-    <div className="modal-overlay" style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(10,5,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+    <div
+      className="modal-overlay"
+      onMouseDown={(e) => { if (e.target === e.currentTarget) onClose?.(); }}
+      style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(10,5,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+    >
       <div style={{ background: '#FFFBF5', border: `1px solid ${LINE}`, padding: 0, width: '100%', maxWidth: 480, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 30px 90px rgba(0,0,0,0.35)', fontFamily: SANS }}>
 
-        <div className="modal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '24px 24px 18px', borderBottom: `1px solid ${LINE}` }}>
+        <div className="modal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '24px 24px 18px', borderBottom: `1px solid ${LINE}`, position: 'sticky', top: 0, background: '#FFFBF5', zIndex: 1 }}>
           <div>
             <div style={{ fontFamily: MONO, fontSize: 10, fontWeight: 500, color: ORG, letterSpacing: '.14em', marginBottom: 6 }}>HOME COMFORT SCORE</div>
             <h2 className="modal-title" style={{ fontFamily: DISPLAY, fontSize: 21, fontWeight: 800, color: INK, margin: 0 }}>Will This Unit Work For You?</h2>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: SUB, lineHeight: 1, padding: 4 }}>✕</button>
+          <button type="button" onClick={onClose} aria-label="Close" style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: SUB, lineHeight: 1, padding: '4px 6px' }}>✕</button>
         </div>
 
         <div className="modal-body" style={{ padding: 24 }}>
@@ -95,7 +112,7 @@ export default function LiveScoreModal({ lat, lon, tzOffset, onClose, onFloorFac
                 <label style={{ fontFamily: MONO, fontSize: 10.5, fontWeight: 500, color: INK, letterSpacing: '.08em', display: 'block', marginBottom: 10, textTransform: 'uppercase' }}>Facing direction</label>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0 }}>
                   {FACING.map(dir => (
-                    <button key={dir} onClick={() => setFacing(dir)} style={{
+                    <button key={dir} type="button" onClick={() => setFacing(dir)} style={{
                       background: facing === dir ? ORG : '#fff',
                       color: facing === dir ? '#fff' : INK,
                       border: `1px solid ${facing === dir ? ORG : LINE}`,
@@ -107,7 +124,7 @@ export default function LiveScoreModal({ lat, lon, tzOffset, onClose, onFloorFac
               </div>
 
               <div style={{ marginBottom: 22 }}>
-                <button onClick={() => setShowWeights(!showWeights)} style={{
+                <button type="button" onClick={() => setShowWeights(!showWeights)} style={{
                   background: 'none', border: 'none', color: ORG, fontFamily: MONO, fontSize: 11, fontWeight: 500,
                   cursor: 'pointer', padding: 0, letterSpacing: '.04em', textTransform: 'uppercase',
                 }}>
@@ -140,10 +157,10 @@ export default function LiveScoreModal({ lat, lon, tzOffset, onClose, onFloorFac
               )}
 
               <div style={{ display: 'flex', gap: 0 }}>
-                <button onClick={generate} style={{ flex: 1, background: ORG, color: '#fff', border: 'none', padding: '14px', fontSize: 13, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase' }}>
+                <button type="button" onClick={generate} style={{ flex: 1, background: ORG, color: '#fff', border: 'none', padding: '14px', fontSize: 13, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase' }}>
                   Get My Home Comfort Score
                 </button>
-                <button onClick={onClose} style={{ background: 'transparent', color: SUB, border: `1px solid ${LINE}`, borderLeft: 'none', padding: '14px 20px', fontSize: 13, cursor: 'pointer' }}>Cancel</button>
+                <button type="button" onClick={onClose} style={{ background: 'transparent', color: SUB, border: `1px solid ${LINE}`, borderLeft: 'none', padding: '14px 20px', fontSize: 13, cursor: 'pointer' }}>Cancel</button>
               </div>
             </>
           )}
@@ -164,10 +181,10 @@ export default function LiveScoreModal({ lat, lon, tzOffset, onClose, onFloorFac
             <>
               <LiveScoreCard result={result} />
               <div style={{ display: 'flex', gap: 0, marginTop: 20 }}>
-                <button onClick={() => setResult(null)} style={{ flex: 1, background: 'transparent', color: INK, border: `1px solid ${LINE}`, padding: '12px', fontSize: 12, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase' }}>
+                <button type="button" onClick={() => setResult(null)} style={{ flex: 1, background: 'transparent', color: INK, border: `1px solid ${LINE}`, padding: '12px', fontSize: 12, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase' }}>
                   ← Adjust &amp; Recalculate
                 </button>
-                <button onClick={onClose} style={{ background: INK, color: '#fff', border: 'none', padding: '12px 22px', fontSize: 12, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase' }}>
+                <button type="button" onClick={onClose} style={{ background: INK, color: '#fff', border: 'none', padding: '12px 22px', fontSize: 12, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase' }}>
                   Done
                 </button>
               </div>

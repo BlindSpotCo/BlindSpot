@@ -8,13 +8,16 @@
 // stage's own "Continue" gets you there) and back (click any stage
 // you've already reached, any time).
 //
-// `current` is whichever of the 4 screens is actually on show right now.
-// `done` marks real completion (ticks the checkmark), independent of
-// what's currently in view. `reachable` is the set of stage keys allowed
-// to be clicked into.
+// `current` is whichever tab is actually on screen right now -- may be
+// behind the furthest stage actually completed, if you've clicked back to
+// review or change something. `done` marks real completion (ticks the
+// checkmark), independent of what's currently in view. `reachable` is the
+// set of stage keys allowed to be clicked into -- everything up through
+// the furthest stage you've reached, never further ahead than that.
+
 const STAGES = [
-  { key: 'priorities', label: 'Priorities' },
-  { key: 'location', label: 'Area' },
+  { key: 'angle', label: 'Priorities' },
+  { key: 'location', label: 'Location' },
   { key: 'unit', label: 'Unit' },
   { key: 'verdict', label: 'Verdict' },
 ];

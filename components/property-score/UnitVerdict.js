@@ -238,6 +238,12 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                 ref={sunScoutRef}
                 lat={parseFloat(lat)} lon={parseFloat(lon)}
                 address={addressLabel || areaRecord?.name || ''}
+                // So "Preview Home Comfort Score" opens already showing
+                // whatever floor/facing was just picked in the table below,
+                // instead of always resetting to its own hardcoded 5/South --
+                // two pickers for the same unit silently disagreeing was
+                // confusing (pick South-East here, modal opens on South).
+                currentFloor={floor} currentFacing={facing}
                 onUnitSelected={handleUnitSelected}
                 onLiveScoreResult={handleLiveScoreResult}
                 onLocationSelect={handleLocationSelect}
@@ -348,8 +354,28 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                   {combined.combinedScore}<span style={{ fontSize: 20, color: 'var(--text-dim)' }}>/100</span>
                 </div>
               </div>
-              <div className="uv-verdict-badge" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 20, color: '#fff', background: VERDICT_COLOR[combined.verdict.label] || 'var(--brand)', padding: '8px 18px', borderRadius: 'var(--radius)' }}>
-                {combined.verdict.label}
+              {/* A verdict tag, not a control -- previously a solid filled
+                  pill with the same shape/weight as the page's real
+                  buttons (rounded corners, bold white-on-colour text,
+                  generous padding), which read as clickable even though
+                  nothing happens on click. Restyled as a labelled tag:
+                  a small caption above it (matching BLINDSPOT COMBINED
+                  SCORE's own caption pattern) plus a lighter, outlined
+                  chip instead of a solid fill, and no cursor affordance. */}
+              <div style={{ textAlign: 'right' }}>
+                <div className="mono" style={{ fontSize: 10.5, color: 'var(--text-dim)', letterSpacing: '.12em', marginBottom: 6 }}>VERDICT</div>
+                <div
+                  className="uv-verdict-badge mono"
+                  style={{
+                    display: 'inline-block', fontWeight: 700, fontSize: 13, letterSpacing: '.04em', textTransform: 'uppercase',
+                    color: VERDICT_COLOR[combined.verdict.label] || 'var(--brand)',
+                    background: 'transparent',
+                    border: `1.5px solid ${VERDICT_COLOR[combined.verdict.label] || 'var(--brand)'}`,
+                    padding: '5px 12px', borderRadius: 999, cursor: 'default',
+                  }}
+                >
+                  {combined.verdict.label}
+                </div>
               </div>
             </div>
 

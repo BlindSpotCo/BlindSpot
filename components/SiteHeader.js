@@ -106,14 +106,24 @@ export default function SiteHeader({ homeHref = '/' }) {
 
   const closeMobile = () => setMobileOpen(false);
 
+  // Reveal the full nav (links, My Reports/sign-out, hamburger) any time
+  // we're inside the property-score flow, not just once you've scrolled
+  // 24px. The scroll-reveal makes sense on the marketing homepage (start
+  // on just the logo, earn the nav as you engage) but several flow steps
+  // -- the Verdict card in particular -- are short enough that a visitor
+  // never crosses that threshold, so the nav (and with it, the only way
+  // back to Tools/How It Works/home besides the browser's own back
+  // button) just never appears for the whole time they're in the flow.
+  const revealNav = scrolled || onFlow;
+
   return (
-    <header className={scrolled ? 'scrolled' : ''}>
-      <nav className={`wrap${scrolled ? '' : ' nav-centered'}`}>
+    <header className={revealNav ? 'scrolled' : ''}>
+      <nav className={`wrap${revealNav ? '' : ' nav-centered'}`}>
         <Link href={homeHref} className="brand">
           <img className="brand-mark-img" src="/mark.png" alt="BlindSpot" />
           <img className="brand-word-img" src="/wordmark.png" alt="BlindSpot" />
         </Link>
-        {scrolled && (
+        {revealNav && (
           <>
             <div className="nav-links">
               <Link href="/#how-it-works">How It Works</Link>
@@ -161,7 +171,7 @@ export default function SiteHeader({ homeHref = '/' }) {
         )}
       </nav>
 
-      {scrolled && (
+      {revealNav && (
         <div className={`nav-mobile-panel${mobileOpen ? ' is-open' : ''}`}>
           <div className="wrap" style={{ display: 'flex', flexDirection: 'column' }}>
             <Link href="/#how-it-works" onClick={closeMobile}>How It Works</Link>
