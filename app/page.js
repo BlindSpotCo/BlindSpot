@@ -107,38 +107,44 @@ export default function Home() {
       </section>
 
       {/* ===== HERO, BEAT 2 -- the verdict, big, on its own field =====
-          The score card used to live small, in a half-width column,
-          competing with the illustration next to it. Blown up here on a
-          solid --brand field instead -- same "one unavoidable field
-          colour, one focal object" idea .bento uses further down this
-          page, built fresh rather than applying that class directly
-          since .bento's own padding/radius are tuned for an inline tile,
-          not a full-bleed section. The two rings behind the card use
-          --ss, the same accent PinDropTransition's own lock-on ring
-          already uses sitting on this exact --brand field -- a proven
-          pairing, not a new guess -- so this reads as the same "survey
-          instrument locking onto a pin" moment the CTA's click-transition
-          already establishes, not a second unrelated animation language.
-          Reveals via the same .reveal/IntersectionObserver mechanism
-          every other section on this page already uses -- no new JS.
-          HeroIllustration (the building/sun/pin scene) is back, re-tuned
-          for this centred single-column layout: it now sits centred
-          above the card instead of anchored to its old top-right corner,
-          with the pin still dropping onto the card's top edge -- see the
-          `.hero-verdict .hero-illustration-wrap` override in globals.css
-          for the repositioned coordinates (confirmed live, not guessed
-          blind -- the "sun going missing twice" bug on the old grid
-          layout was exactly what re-tuning this without a live check
-          used to risk). */}
+          Two-column on desktop, top-aligned (not vertically centred as
+          a pair) -- copy on the left, scene+card on the right, offset
+          up-and-left of the card rather than stacked dead-centre on it.
+          Section height is bounded (clamp) rather than a raw
+          min-height:100vh, so the field reads as a real "verdict"
+          moment on ordinary screens without leaving a huge empty gap
+          above/below the content on unusually tall ones -- that gap,
+          and the two columns visually centring at different heights,
+          was the actual bug in the previous pass. Collapses to a single
+          centred column below 900px. Solid --brand field plus a faint
+          blueprint grid -- same idiom as HeroMap and PinDropTransition's
+          own .pdt-grid. Two rings in --ss now centred on the card
+          itself, tracking its offset position. Reveals via the same
+          .reveal/IntersectionObserver mechanism every other section on
+          this page already uses -- no new JS. */}
       <section className="hero-verdict reveal">
         <div className="wrap hero-verdict-inner">
+          <div className="hero-verdict-copy">
+            <span className="hero-verdict-eyebrow">The verdict</span>
+            <h2 className="hero-verdict-heading"><span className="seg sun">One pin.</span> <span className="seg slate">Two honest answers.</span></h2>
+            <p className="hero-sub">Drop a pin. See exactly what the neighbourhood around it is really like, and exactly how sunlight moves through the unit. Real government records. Real solar geometry. No broker spin.</p>
+            <span className="coverage-pill" style={{ marginTop: 26, marginBottom: 4 }}>
+              <span className="dot" />Active in {coverageLabel()} — more cities coming
+            </span>
+            <div className="hero-ctas" style={{ marginTop: 28 }}>
+              <PinDropTransition href="/property-score" className="btn btn-lg btn-cta">
+                Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
+              </PinDropTransition>
+            </div>
+          </div>
+
           <div className="hero-verdict-visual">
-            <span className="hvl-ring hvl-ring-outer" aria-hidden="true" />
-            <span className="hvl-ring hvl-ring-inner" aria-hidden="true" />
+            <div className="hero-illustration-wrap">
+              <HeroIllustration />
+            </div>
             <div className="hero-card-wrap">
-              <div className="hero-illustration-wrap">
-                <HeroIllustration />
-              </div>
+              <span className="hvl-ring hvl-ring-outer" aria-hidden="true" />
+              <span className="hvl-ring hvl-ring-inner" aria-hidden="true" />
               <span className="hero-visual-tag">Live preview</span>
               <div className="hero-score-card lg">
                 <div className="hsc-head">
@@ -172,19 +178,6 @@ export default function Home() {
                 </div>
                 <div className="hsc-foot">Real solar geometry + government locality data, combined into one number you can trust.</div>
               </div>
-            </div>
-          </div>
-
-          <div className="hero-verdict-copy">
-            <p className="hero-tagline"><span className="seg sun">One pin</span><span className="sep"></span><span className="seg slate">Two answers</span></p>
-            <p className="hero-sub">Drop a pin. See exactly what the neighbourhood around it is really like, and exactly how sunlight moves through the unit. Real government records. Real solar geometry. No broker spin.</p>
-            <span className="coverage-pill" style={{ marginTop: 6, marginBottom: 2 }}>
-              <span className="dot" />Active in {coverageLabel()} — more cities coming
-            </span>
-            <div className="hero-ctas" style={{ marginTop: 10 }}>
-              <PinDropTransition href="/property-score" className="btn btn-lg btn-cta">
-                Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
-              </PinDropTransition>
             </div>
           </div>
         </div>

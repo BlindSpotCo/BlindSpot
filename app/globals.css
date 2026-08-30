@@ -689,31 +689,31 @@
   @media (prefers-reduced-motion: reduce){ .hero-scroll-cue{ animation:none } }
 
   /* ===== HERO, BEAT 2 -- the verdict, big, on its own field =====
-     Solid --brand field (the same "one unavoidable field colour, one
-     focal object" idea as .bento further down this file, built fresh
-     here rather than applying that class directly since .bento's own
-     padding/radius are tuned for an inline tile, not a full-bleed
-     section) plus a faint blueprint grid -- same idiom as HeroMap and
-     PinDropTransition's own .pdt-grid, so the page's "survey instrument"
-     visual language stays consistent instead of a new one appearing
-     here. Two rings in --ss -- the same accent .pdt-pin already uses
-     sitting on this exact --brand field, a pairing already proven
-     elsewhere, not a new guess -- scale/fade in behind the card via
-     .reveal/.in-view, the same scroll-reveal mechanism every other
-     section on this page already uses. No gradients, no glow, no
-     glassmorphism, per the brand doc's rule already quoted above .btn-cta
-     -- one flat field, white/paper surfaces, one accent colour. */
+     Two columns on desktop -- copy on the left, scene+card on the right,
+     top-aligned to a shared baseline (align-items:start, not center).
+     Centering two columns of very different heights independently was
+     the actual bug in the previous pass: it put the copy block's
+     vertical MIDDLE next to the visual block's vertical middle, which
+     reads as two unrelated floating things rather than a pair, and got
+     worse the taller the real viewport was. Top-aligning them anchors
+     both to the same line, the way an editorial page pairs a headline
+     with a figure. Section height is bounded (clamp, not min-height:
+     100vh) so it stays a real "field" on ordinary screens without
+     ballooning into a mostly-empty void on unusually tall ones -- the
+     actual complaint. The scene is no longer stacked dead-centre on the
+     card: it sits offset up-and-left, with the card down-and-right, so
+     the pin/building illustration, the card and the copy read as three
+     placed things sharing the field rather than one huddled column.
+     Solid --brand field plus a faint blueprint grid -- same idiom as
+     HeroMap and PinDropTransition's own .pdt-grid. Two rings in --ss,
+     now centred on the card itself (not the whole visual column) so
+     they track the card's new offset position. Reveals via the same
+     .reveal/.in-view mechanism every other section already uses. No
+     gradients, no glow, no glassmorphism, per the brand doc. */
   .hero-verdict{
     position:relative; overflow:hidden; background:var(--brand); color:#fff;
-    /* Tight top/bottom padding on purpose -- this whole beat (scene, card,
-       copy, CTA) is meant to read in one screen with no internal scroll,
-       same "one focal moment" idea as beat 1's min-height:100vh. Every
-       other number in this section (the visual's margin-top, the inner
-       gap, the card's own size, the copy block's margins) was tightened
-       to fit alongside this -- confirmed live against real viewport
-       heights (833px available at 1440x900 after the sticky header),
-       not just eyeballed. */
-    padding:20px 0;
+    min-height:clamp(640px, 86vh, 840px); display:flex; align-items:center;
+    padding:88px 0;
   }
   .hero-verdict::before{
     content:''; position:absolute; inset:0; pointer-events:none;
@@ -722,117 +722,100 @@
       repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 96px);
   }
   .hero-verdict-inner{
-    position:relative; z-index:1;
-    display:flex; flex-direction:column; align-items:center; text-align:center; gap:16px;
+    position:relative; z-index:1; width:100%;
+    display:grid; grid-template-columns:1fr 1.05fr; align-items:start; gap:var(--space-9);
+    text-align:left;
   }
-  .hero-verdict-visual{ position:relative; display:flex; justify-content:center }
+  /* Grid items default to min-width:auto, which lets a child's own
+     max-width (.hero-verdict-copy's 480px, .hero-verdict-visual's
+     content) force its 1fr track wider than the actual column -- the
+     section clips overflow so this doesn't create a page-level
+     horizontal scrollbar, it just silently cuts text off at narrow
+     widths instead. min-width:0 lets both tracks actually shrink to
+     the column they're given. */
+  .hero-verdict-copy, .hero-verdict-visual{ min-width:0 }
+  @media (max-width:900px){
+    .hero-verdict-inner{ grid-template-columns:1fr; text-align:center; gap:var(--space-7); }
+  }
+
+  .hero-verdict-eyebrow{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px; letter-spacing:.14em; text-transform:uppercase;
+    color:rgba(255,255,255,.58); display:block; margin:0 0 16px;
+  }
+  .hero-verdict-heading{
+    font-size:40px; font-weight:700; line-height:1.16; margin:0; letter-spacing:-0.01em;
+  }
+  .hero-verdict-heading .seg.slate{ color:#fff }
+  @media (max-width:900px){ .hero-verdict-heading{ font-size:32px } }
+  @media (max-width:480px){ .hero-verdict-heading{ font-size:27px } }
+
+  /* The scene + card as one placed unit within the visual column, offset
+     from centre (not sitting inside a 100%-width flex row) so there is
+     real asymmetric space around it -- part of "spread out", not just a
+     bigger box. */
+  .hero-verdict-visual{ position:relative; display:flex; justify-content:center; padding-top:4px }
+  @media (max-width:900px){ .hero-verdict-visual{ padding-top:0; flex-direction:column; align-items:center } }
   .hvl-ring{
     position:absolute; top:50%; left:50%; border:1.5px solid var(--ss); border-radius:50%;
     opacity:0; transform:translate(-50%,-50%) scale(2.2);
     transition:transform .8s cubic-bezier(.16,.9,.3,1), opacity .5s ease;
   }
-  .hvl-ring-outer{ width:440px; height:440px }
-  .hvl-ring-inner{ width:340px; height:340px; border-width:2px; transition-delay:.14s }
+  .hvl-ring-outer{ width:540px; height:540px }
+  .hvl-ring-inner{ width:440px; height:440px; border-width:2px; transition-delay:.14s }
   .hero-verdict.reveal.in-view .hvl-ring{ opacity:.5; transform:translate(-50%,-50%) scale(1) }
-  @media (max-width:640px){ .hvl-ring-outer{ width:300px; height:300px } .hvl-ring-inner{ width:230px; height:230px } }
+  @media (max-width:900px){ .hvl-ring-outer{ width:340px; height:340px } .hvl-ring-inner{ width:260px; height:260px } }
+  @media (max-width:480px){ .hvl-ring-outer{ width:260px; height:260px } .hvl-ring-inner{ width:200px; height:200px } }
   @media (prefers-reduced-motion: reduce){ .hvl-ring{ transition:opacity .3s ease; transform:translate(-50%,-50%) scale(1) } }
 
-  /* Room above the card for the illustration to sit in -- the card's
-     own box (max-width/padding below) is untouched; this just gives the
-     .hero-verdict-visual flex column enough headroom so the building/sun
-     doesn't crowd the section's top edge (.hero-verdict clips overflow,
-     so anything without this margin would get cut off, same "sun going
-     missing" failure mode HeroIllustration.js's own header comment warns
-     about). Margin, not padding on .hero-verdict-visual, so it stays
-     inside .hero-verdict-inner's own flex gap instead of adding to it
-     twice. */
-  /* Much less headroom than the illustration originally shipped with --
-     see the .hero-verdict padding comment above: this whole beat has to
-     fit one screen now, so both the illustration (shrunk, below) and
-     this clearance were cut together, re-checked live for clipping
-     against .hero-verdict's own overflow:hidden box each time. */
-  .hero-verdict-visual{ margin-top:98px }
-  @media (max-width:640px){ .hero-verdict-visual{ margin-top:80px } }
-  .hero-verdict .hero-card-wrap{ position:relative; z-index:1 }
-  /* Centred above the card instead of anchored to its old top-right
-     corner (see the base `.hero-illustration-wrap` rule further up,
-     tuned for the old two-column grid) -- this beat is a single centred
-     column, so the scene centres on the card the same way the rings do.
-     `bottom:100%` + a negative margin-bottom is what lets the pin (the
-     bottom ~15% of the scene, per HeroIllustration.js's own layout
-     contract) drop onto the card's top edge without the building above
-     it overlapping the card too. Card's own box is untouched -- only
-     this wrapper's position moves. */
+  .hero-verdict .hero-card-wrap{
+    position:relative; z-index:1;
+    margin:220px 0 0 auto;
+    width:420px; max-width:100%;
+  }
+  @media (max-width:900px){ .hero-verdict .hero-card-wrap{ margin:118px auto 0 } }
+
+  /* Offset up-and-left of the card, with real clear air beneath it
+     rather than touching or overlapping the card -- the card's own
+     margin-top above is sized so the illustration's bottom edge clears
+     the card's top edge (and the "Live preview" tag pinned just above
+     that top-left corner) by ~30px, confirmed via live bounding-rect
+     checks, not guessed. Nothing above y=15 in the illustration's own
+     viewBox either way (see LAYOUT CONTRACT in HeroIllustration.js). */
   .hero-verdict .hero-illustration-wrap{
-    position:absolute; left:50%; right:auto; top:auto; bottom:100%;
-    /* +14px, not a flat -50% -- the scene's own content (building/pin)
-       sits left-of-centre within its own viewBox (see the LAYOUT
-       CONTRACT comment in HeroIllustration.js), so a perfectly centred
-       wrapper puts the pin closer to .hero-visual-tag ("Live preview",
-       pinned to the card's left edge) than either was ever meant to sit.
-       This nudges the whole scene right just enough that the pin clears
-       the tag with real breathing room, confirmed against the card's
-       actual live layout rather than guessed. */
-    /* Smaller + less overlap than the scene originally shipped with --
-       shrunk together with the card and section padding above so the
-       whole beat fits one screen. */
-    transform:translateX(calc(-50% + 8px));
-    width:170px; margin-bottom:-26px;
+    position:absolute; z-index:2; pointer-events:none;
+    left:0; top:0;
+    width:220px;
   }
-  /* Beats the old `@media(max-width:900px){.hero-illustration-wrap{
-     display:none}}` rule above (same specificity as that media query's
-     selector, later in source -- same override pattern used throughout
-     this file): the old grid hid the scene below 900px because the
-     two-column layout it was tuned for had already stacked by then. This
-     beat is a single centred column at every width, so the scene keeps
-     making sense all the way down -- it just needs to keep shrinking. */
-  /* Bigger horizontal nudge + less vertical overlap than desktop -- the
-     card (and .hero-visual-tag's fixed left:22px) both shrink faster
-     than the illustration wrap does, so the same 14px/-52px desktop
-     numbers pull the pin right into the tag's text at these widths.
-     Confirmed live at 375px: this keeps them clear. */
   @media (max-width:900px){
+    /* The base .hero-illustration-wrap rule above (tuned for beat 1's
+       hero grid) hides it entirely below 900px -- override display
+       explicitly here, not just position, or that display:none wins
+       since this rule never touched that property before. */
     .hero-verdict .hero-illustration-wrap{
-      display:block; width:160px; margin-bottom:-20px;
-      transform:translateX(calc(-50% + 18px));
+      display:block; position:static; width:200px; margin:0 auto 18px;
     }
   }
   @media (max-width:480px){
-    .hero-verdict .hero-illustration-wrap{
-      width:145px; margin-bottom:-18px;
-      transform:translateX(calc(-50% + 18px));
-    }
-  }
-  /* Card shrunk along with everything else above so this whole beat
-     fits one screen -- .hsc-row/.hsc-item spacing (shared with nothing
-     else, see the usage check before this change) tightened too, not
-     just the number, since those two reason rows were the biggest single
-     chunk of the card's old height. */
-  .hero-score-card.lg{ max-width:340px; padding:18px 18px }
-  .hero-score-card.lg .hsc-head{ margin-bottom:8px }
-  .hero-score-card.lg .hsc-number{ font-size:38px; margin-bottom:4px }
-  .hero-score-card.lg .hsc-verdict{ margin-bottom:9px; font-size:13.5px }
-  .hero-score-card.lg .hsc-row{ gap:5px; margin-bottom:8px }
-  .hero-score-card.lg .hsc-item{ padding:6px 10px }
-  .hero-score-card.lg .hsc-item-label{ font-size:13px }
-  .hero-score-card.lg .hsc-item-sub{ font-size:11px }
-  .hero-score-card.lg .hsc-foot{ padding-top:8px; font-size:12px }
-  @media (max-width:480px){
-    .hero-score-card.lg{ padding:18px 16px }
-    .hero-score-card.lg .hsc-number{ font-size:36px }
+    .hero-verdict .hero-illustration-wrap{ width:170px }
   }
 
-  .hero-verdict-copy{ max-width:520px }
+  .hero-score-card.lg{ max-width:420px; padding:28px 30px }
+  .hero-score-card.lg .hsc-head{ margin-bottom:14px }
+  .hero-score-card.lg .hsc-number{ font-size:64px; margin-bottom:8px }
+  .hero-score-card.lg .hsc-verdict{ margin-bottom:16px }
+  .hero-score-card.lg .hsc-row{ margin-bottom:14px }
+  @media (max-width:480px){
+    .hero-score-card.lg{ padding:24px 22px }
+    .hero-score-card.lg .hsc-number{ font-size:52px }
+  }
+
+  .hero-verdict-copy{ max-width:480px; padding-top:6px }
+  @media (max-width:900px){ .hero-verdict-copy{ margin:0 auto; padding-top:0 } }
   /* Explicit overrides, not a free ride off .bento's own `.bento p` rule
      -- .hero-verdict isn't wearing the .bento class, so that cascade
      doesn't reach here. */
-  .hero-verdict .hero-sub{ color:rgba(255,255,255,.82) }
-  .hero-verdict .hero-tagline .seg.slate{ color:#fff }
-  /* Tighter than the base .hero-tagline/.hero-sub margins -- shrunk
-     together with the rest of this beat so it all fits one screen
-     (see the .hero-verdict padding comment above). */
-  .hero-verdict .hero-tagline{ margin-top:6px }
-  .hero-verdict .hero-sub{ margin-top:6px; font-size:15px }
+  .hero-verdict .hero-sub{ color:rgba(255,255,255,.82); margin-top:18px; max-width:440px }
+  @media (max-width:900px){ .hero-verdict .hero-sub{ margin-left:auto; margin-right:auto } }
   .hero-verdict .coverage-pill{
     background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.28); color:rgba(255,255,255,.85);
   }
