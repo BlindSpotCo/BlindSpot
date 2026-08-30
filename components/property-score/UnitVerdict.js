@@ -95,14 +95,6 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
     setFloor(f); setFacing(d); setCapturedFromSS(true); setCombined(null);
   }, []);
   const handleLiveScoreResult = useCallback((result) => { setSsPreview(result); }, []);
-  // Fires when the Home Comfort Score modal's own "Done" button is
-  // clicked (result view only -- X/Escape/backdrop/Cancel still just
-  // close without this). By that point handleUnitSelected has already
-  // set floor/facing/capturedFromSS, so computeCombined() has everything
-  // it needs; onScoreComputed (passed to computeCombined via the
-  // onScoreComputed prop from PropertyScoreFlow) is what actually flips
-  // viewStage to 'verdict', carrying the user straight to tab 4.
-  const handleComfortDone = useCallback(() => { computeCombined(); }, [computeCombined]);
   const handleLocationSelect = useCallback((newLat, newLon) => {
     setLat(String(newLat)); setLon(String(newLon));
   }, [setLat, setLon]);
@@ -161,6 +153,22 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
       setLoadingCombined(false);
     }
   }, [pinCode, lat, lon, floor, facing, areaWeight, personaId, onScoreComputed]);
+
+  // Fires when the Home Comfort Score modal's own "Done" button is
+  // clicked (result view only -- X/Escape/backdrop/Cancel still just
+  // close without this). By that point handleUnitSelected has already
+  // set floor/facing/capturedFromSS, so computeCombined() has everything
+  // it needs; onScoreComputed (passed to computeCombined via the
+  // onScoreComputed prop from PropertyScoreFlow) is what actually flips
+  // viewStage to 'verdict', carrying the user straight to tab 4.
+  // Declared here, after computeCombined, on purpose -- it was originally
+  // placed above computeCombined's own declaration, and since both are
+  // `const`, referencing computeCombined in this hook's dependency array
+  // before that line had run threw "Cannot access 'computeCombined'
+  // before initialization" on every load of this component. Not a typo,
+  // an ordering bug: JS doesn't hoist `const` the way `function` gets
+  // hoisted.
+  const handleComfortDone = useCallback(() => { computeCombined(); }, [computeCombined]);
 
   // If we mounted already holding a full restored selection (URL had a
   // location *and* a floor/facing), recompute the actual score once too
