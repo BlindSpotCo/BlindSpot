@@ -473,7 +473,7 @@ export default function AddressPicker({ onConfirmed }) {
                   background: 'var(--brand)', color: '#fff', border: 'none', borderRadius: 'var(--radius)',
                   padding: '14px 24px', fontSize: 13.5, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
                 }}>
-                Continue — Configure Your Unit →
+                Continue to Sun &amp; Shadow →
               </button>
             </>
           )}

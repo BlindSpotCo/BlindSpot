@@ -38,15 +38,9 @@ export default async function MyReportsPage() {
     fetchFailed = true;
   }
 
-  // 'aslivastu' is the legacy source tag for reports saved before this
-  // surface was renamed -- 'neighbourhood' is the only key SaveReportButton
-  // writes now (see NeighbourhoodReport.js), and both are rendered by the
-  // exact same component below (or on the list, the exact same detailed
-  // report), so they share one label here too rather than making an old
-  // saved report look like a different, unrelated thing from a new one.
   const SOURCE_LABEL = {
     sunscout: 'Home Comfort Score',
-    aslivastu: 'Neighbourhood Report',
+    aslivastu: 'Neighbourhood Score',
     neighbourhood: 'Neighbourhood Report',
     'ai-report': 'AI Report',
     furnishing: 'Furnishing Report',

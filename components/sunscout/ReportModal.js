@@ -212,8 +212,8 @@ export default function ReportModal({
 
             <p style={{ fontSize:13, color:SUB, lineHeight:1.6, marginBottom:26 }}>
               {areaRecord
-                ? `We combine your Neighbourhood Score for ${areaRecord.name || areaRecord.pin_code} with a Home Comfort Score for this exact unit — 12 real screenshots (3 per season) — then use AI to write one combined Home Buyer Verdict covering both. The report itself stays short and readable; the 12 images and their analysis sit in a linked gallery.`
-                : 'We compute a Home Comfort Score for this exact location, capture 12 real screenshots (3 per season) at different times, then use AI to narrate the shadow patterns. The images and their analysis open in a linked gallery, keeping the main report short.'}
+                ? `We combine your Neighbourhood Score for ${areaRecord.name || areaRecord.pin_code} with precise sun/shadow data for this exact unit — 12 real screenshots (3 per season) — then use AI to write one combined Home Buyer Verdict covering both. The report itself stays short and readable; the 12 images and their analysis sit in a linked gallery.`
+                : 'We compute precise sun/shadow data for this exact location, capture 12 real screenshots (3 per season) at different times, then use AI to narrate the shadow patterns. The images and their analysis open in a linked gallery, keeping the main report short.'}
             </p>
 
             <div style={{ marginBottom:22 }}>
