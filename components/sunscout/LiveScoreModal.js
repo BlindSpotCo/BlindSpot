@@ -27,7 +27,7 @@ const SUBSCORE_WEIGHT_LABELS = [
 
 const DEFAULT_WEIGHTS = { sun: 30, shadeHeat: 25, view: 20, privacy: 15, wind: 10 };
 
-export default function LiveScoreModal({ lat, lon, tzOffset, onClose, onFloorFacingSubmit, onResult, prefillFloor, prefillFacing }) {
+export default function LiveScoreModal({ lat, lon, tzOffset, onClose, onFloorFacingSubmit, onResult, prefillFloor, prefillFacing, onDone }) {
   // Start from whatever's already picked on the page behind this modal, if
   // anything -- falls back to the old 5/South defaults only when the page
   // hasn't had a floor/facing picked yet.
@@ -184,8 +184,12 @@ export default function LiveScoreModal({ lat, lon, tzOffset, onClose, onFloorFac
                 <button type="button" onClick={() => setResult(null)} style={{ flex: 1, background: 'transparent', color: INK, border: `1px solid ${LINE}`, padding: '12px', fontSize: 12, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase' }}>
                   ← Adjust &amp; Recalculate
                 </button>
-                <button type="button" onClick={onClose} style={{ background: INK, color: '#fff', border: 'none', padding: '12px 22px', fontSize: 12, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase' }}>
-                  Done
+                {/* Distinct from X/Escape/backdrop/Cancel, which just
+                    close -- this Done means "I'm happy with this score,
+                    move on," so it also kicks off the combined-verdict
+                    computation and carries the user to the Verdict tab. */}
+                <button type="button" onClick={() => { onDone?.(); onClose?.(); }} style={{ background: INK, color: '#fff', border: 'none', padding: '12px 22px', fontSize: 12, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase' }}>
+                  Done →
                 </button>
               </div>
             </>

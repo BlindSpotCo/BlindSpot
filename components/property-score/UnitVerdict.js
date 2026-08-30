@@ -7,6 +7,7 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import SunScoutPanel from '@/components/sunscout/SunScoutPanel';
+import LiveScoreCard from '@/components/sunscout/LiveScoreCard';
 import { getPersona, PERSONA_ORDER } from '@/lib/personas';
 
 const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'North-West', 'South-West'];
@@ -90,13 +91,46 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
     onUnitPicked?.(floor, facing);
   }, [floor, facing, onUnitPicked]);
 
-  const handleUnitSelected = useCallback((f, d) => {
-    setFloor(f); setFacing(d); setCapturedFromSS(true); setCombined(null);
-  }, []);
-  const handleLiveScoreResult = useCallback((result) => { setSsPreview(result); }, []);
+  const [comfortLoading, setComfortLoading] = useState(false);
+  const [comfortError, setComfortError] = useState('');
+
+  // Replaces the old LiveScoreModal popup -- same /api/sunscout/score call
+  // it used to make, just fired from the inline picker on the page
+  // instead of from inside a modal. Sets ssPreview to the full result
+  // (LiveScoreCard needs subScores etc., not just {liveScore, grade}).
+  const fetchComfortScore = useCallback(async () => {
+    if (floor == null || !facing || !lat || !lon) return;
+    setComfortLoading(true);
+    setComfortError('');
+    setSsPreview(null);
+    try {
+      const params = new URLSearchParams({
+        lat: String(lat), lon: String(lon), tzOffset: '330',
+        floor: String(floor), facing,
+      });
+      const res = await fetch(`/api/sunscout/score?${params.toString()}`);
+      if (!res.ok) throw new Error('score-failed');
+      const data = await res.json();
+      setSsPreview(data);
+      setCapturedFromSS(true);
+    } catch {
+      setComfortError('Could not compute a score for this unit right now. Try again in a minute.');
+    } finally {
+      setComfortLoading(false);
+    }
+  }, [lat, lon, floor, facing]);
+
   const handleLocationSelect = useCallback((newLat, newLon) => {
     setLat(String(newLat)); setLon(String(newLon));
   }, [setLat, setLon]);
+
+  // Syncs the AI Report modal's own floor/facing picker back up here --
+  // that modal is separate from the inline Home Comfort Score picker
+  // above, and keeps its own picker for when someone opens the full
+  // report without having gone through the inline flow first.
+  const handleReportFloorFacing = useCallback((f, d) => {
+    setFloor(f); setFacing(d); setCapturedFromSS(true); setSsPreview(null); setCombined(null);
+  }, []);
 
   const useMyLocation = () => {
     setGpsError('');
@@ -238,15 +272,8 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                 ref={sunScoutRef}
                 lat={parseFloat(lat)} lon={parseFloat(lon)}
                 address={addressLabel || areaRecord?.name || ''}
-                // So "Preview Home Comfort Score" opens already showing
-                // whatever floor/facing was just picked in the table below,
-                // instead of always resetting to its own hardcoded 5/South --
-                // two pickers for the same unit silently disagreeing was
-                // confusing (pick South-East here, modal opens on South).
-                currentFloor={floor} currentFacing={facing}
-                onUnitSelected={handleUnitSelected}
-                onLiveScoreResult={handleLiveScoreResult}
                 onLocationSelect={handleLocationSelect}
+                onReportFloorFacing={handleReportFloorFacing}
                 areaRecord={areaRecord}
                 combinedScore={combined?.combinedScore}
                 unitScore={combined?.unit?.score}
@@ -271,52 +298,76 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               }}>
               Furnish This Unit — Upload Floor Plan ↗
             </a>
-
-            {capturedFromSS && (
-              <div className="mono" style={{ fontSize: 12, color: '#4ADE80', marginTop: 14 }}>
-                ✓ Using floor {floor}, {facing}-facing — picked above.
-                {ssPreview && <> Home Comfort Score came back {ssPreview.liveScore}/100 ({ssPreview.grade}).</>}
-              </div>
-            )}
           </>
         )}
       </div>
 
-      {/* Floor/facing + Get Score -- Unit-tab content, same display:none
-          toggle as the sunscout panel above (see showUnit's comment). */}
+      {/* HOME COMFORT SCORE -- picked and scored right here on the page,
+          same "sheet" treatment as the Neighbourhood Score card above
+          (plain bordered block, no overlay) instead of the modal popup
+          this used to open. Floor/facing live here directly; no separate
+          picker duplicated inside a popup to keep in sync with this one
+          anymore. Getting the score, seeing it, and moving to Verdict is
+          now three plain steps on one page: pick floor/facing -> Get
+          Home Comfort Score -> Continue to Verdict, instead of open
+          popup -> pick again inside it -> get score -> Done. */}
       {lat && lon && (
-        <div style={{ marginBottom: 20, display: showUnit ? 'block' : 'none' }}>
-          <div className="mono" style={{ fontSize: 12, color: 'var(--text)', letterSpacing: '.12em', marginBottom: 12 }}>PICK YOUR FLOOR &amp; FACING</div>
+        <div style={{ marginBottom: 20, display: showUnit ? 'block' : 'none', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: 20 }}>
+          <div className="mono" style={{ fontSize: 12, color: 'var(--text)', letterSpacing: '.12em', marginBottom: 4 }}>HOME COMFORT SCORE</div>
+          <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 16 }}>
+            {areaRecord ? 'Do this first — the combined verdict below needs this to combine.' : 'Sun, shade & heat, view, privacy, and wind — for this exact floor and facing.'}
+          </div>
 
-          {!capturedFromSS && (
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
-                <span className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', flexShrink: 0 }}>Floor</span>
-                <input type="range" min="0" max="30" value={floor ?? 5} onChange={e => setFloor(Number(e.target.value))} style={{ flex: 1, accentColor: 'var(--sun)' }} />
-                <div style={{ background: 'var(--sun)', color: '#fff', borderRadius: 'var(--radius)', padding: '4px 12px', fontSize: 13.5, fontWeight: 700, minWidth: 36, textAlign: 'center' }}>{floor ?? 5}</div>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0 }}>
-                {FACING_OPTS.map(dir => (
-                  <button key={dir} onClick={() => setFacing(dir)} className="uv-facing-btn" style={{
-                    background: facing === dir ? 'var(--sun)' : 'transparent', color: facing === dir ? '#fff' : 'var(--text)',
-                    border: `1px solid ${facing === dir ? 'var(--sun)' : 'var(--line)'}`,
-                    padding: '8px 4px', fontSize: 12, fontWeight: 700, cursor: 'pointer', marginLeft: -1, marginTop: -1,
-                  }}>{dir}</button>
-                ))}
-              </div>
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+              <span className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', flexShrink: 0 }}>Floor</span>
+              <input type="range" min="0" max="30" value={floor ?? 5} onChange={e => { setFloor(Number(e.target.value)); setSsPreview(null); setCapturedFromSS(false); }} style={{ flex: 1, accentColor: 'var(--sun)' }} />
+              <div style={{ background: 'var(--sun)', color: '#fff', borderRadius: 'var(--radius)', padding: '4px 12px', fontSize: 13.5, fontWeight: 700, minWidth: 36, textAlign: 'center' }}>{floor ?? 5}</div>
             </div>
-          )}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0 }}>
+              {FACING_OPTS.map(dir => (
+                <button key={dir} onClick={() => { setFacing(dir); setSsPreview(null); setCapturedFromSS(false); }} className="uv-facing-btn" style={{
+                  background: facing === dir ? 'var(--sun)' : 'transparent', color: facing === dir ? '#fff' : 'var(--text)',
+                  border: `1px solid ${facing === dir ? 'var(--sun)' : 'var(--line)'}`,
+                  padding: '8px 4px', fontSize: 12, fontWeight: 700, cursor: 'pointer', marginLeft: -1, marginTop: -1,
+                }}>{dir}</button>
+              ))}
+            </div>
+          </div>
 
-          <button onClick={() => computeCombined()} disabled={loadingCombined || floor == null || !facing} className="uv-getscore-btn ps-btn ps-cta-btn"
-            style={{
-              background: (floor == null || !facing) ? 'var(--line)' : 'var(--brand)',
-              color: '#fff', border: 'none', borderRadius: 'var(--radius)', padding: '14px 24px', fontSize: 13.5, fontWeight: 700,
-              cursor: (floor == null || !facing) ? 'default' : 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
-              opacity: loadingCombined ? .6 : 1, marginBottom: 20,
-            }}>
-            {loadingCombined ? 'Computing…' : (areaRecord ? 'Get Combined Score →' : 'Get Home Comfort Score →')}
-          </button>
-          {combinedError && <div style={{ color: '#f87171', fontSize: 13, marginBottom: 16 }}>{combinedError}</div>}
+          {!ssPreview && (
+            <button onClick={fetchComfortScore} disabled={comfortLoading || floor == null || !facing} className="ps-btn ps-cta-btn"
+              style={{
+                background: (floor == null || !facing) ? 'var(--line)' : 'var(--sun)',
+                color: '#fff', border: 'none', borderRadius: 'var(--radius)', padding: '14px 24px', fontSize: 13.5, fontWeight: 700,
+                cursor: (floor == null || !facing) ? 'default' : 'pointer', letterSpacing: '.03em', textTransform: 'uppercase',
+                opacity: comfortLoading ? .6 : 1,
+              }}>
+              {comfortLoading ? 'Scoring this unit…' : '☀ Get Home Comfort Score →'}
+            </button>
+          )}
+          {comfortError && <div style={{ color: '#f87171', fontSize: 13, marginTop: 12 }}>{comfortError}</div>}
+
+          {ssPreview && !comfortLoading && (
+            <>
+              <div style={{ marginTop: 16 }}>
+                <LiveScoreCard result={ssPreview} />
+              </div>
+              <div style={{ display: 'flex', gap: 0, marginTop: 16 }}>
+                <button onClick={() => { setSsPreview(null); setCapturedFromSS(false); }} style={{ flex: 1, background: 'transparent', color: 'var(--text)', border: '1px solid var(--line)', padding: 12, fontSize: 12, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase' }}>
+                  ← Adjust &amp; Recalculate
+                </button>
+                {/* The one deliberate step left between here and Verdict --
+                    computeCombined() below both fetches the real combined
+                    number and (via onScoreComputed) flips the wizard to
+                    the Verdict tab. */}
+                <button onClick={() => computeCombined()} disabled={loadingCombined} style={{ background: 'var(--brand)', color: '#fff', border: 'none', padding: '12px 22px', fontSize: 12, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase', opacity: loadingCombined ? .6 : 1 }}>
+                  {loadingCombined ? 'Computing…' : (areaRecord ? 'Continue to Verdict →' : 'Continue →')}
+                </button>
+              </div>
+              {combinedError && <div style={{ color: '#f87171', fontSize: 13, marginTop: 12 }}>{combinedError}</div>}
+            </>
+          )}
         </div>
       )}
 
