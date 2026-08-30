@@ -167,48 +167,6 @@ export default function Home() {
 
       <HowItWorks />
 
-      {/* ===== TWO ENGINES, ONE VERDICT =====
-          Numbered 02 rather than 01 -- the "01 -- The Platform" section
-          (the Neighbourhood Score / Home Comfort Score two-card intro)
-          that used to sit above this one was removed on request; this
-          section's own eyebrow was left at "02" rather than renumbered,
-          so it now opens the run at 02 (Verdict) / 03 (Team).
-          Jeton's "Unify your finances" idea, applied to BlindSpot's own
-          pitch -- instead of a paragraph claiming the two engines above
-          combine into one score, this shows it: the same 78/82/80 numbers
-          already sitting in the hero's score card, converging into one
-          result. Real numbers repeated on purpose, not new stats invented
-          for this section -- the hero card and this one should always
-          agree. Uses .bento, the same "one unavoidable field colour, one
-          focal object" panel .btn-cta's own closing section already
-          uses, so this reads as a second instance of an established
-          pattern rather than a new one. */}
-      <section className="section">
-        <div className="wrap">
-          <div className="bento merge-bento reveal">
-            <span className="eyebrow">02 — The Verdict</span>
-            <h2>Two engines. One verdict.</h2>
-            <p>Neighbourhood Score and Home Comfort Score, combined into one number you can act on.</p>
-            <div className="merge-visual">
-              <div className="merge-chip av">
-                <span className="merge-chip-label">Neighbourhood</span>
-                <span className="merge-chip-num">78</span>
-              </div>
-              <span className="merge-op" aria-hidden="true">+</span>
-              <div className="merge-chip ss">
-                <span className="merge-chip-label">Home Comfort</span>
-                <span className="merge-chip-num">82</span>
-              </div>
-              <span className="merge-op" aria-hidden="true">=</span>
-              <div className="merge-result">
-                <span className="merge-result-num">80</span>
-                <span className="merge-result-label">BlindSpot Score</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section className="section team-section" id="team">
         <div className="wrap section-inner">
           <div className="section-head reveal">
