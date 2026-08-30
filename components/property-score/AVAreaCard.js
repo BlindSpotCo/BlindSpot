@@ -67,7 +67,7 @@ export default function AVAreaCard({ record: rawRecord, city }) {
             <span className="avsheet-score">{record.nqi_composite}</span>
             <span className="avsheet-grade">{record.grade}</span>
           </div>
-          <p className="avsheet-cap">NQI · weighted mean of {rows.length} dimensions.</p>
+          <p className="avsheet-cap">Weighted mean of {rows.length} dimensions.</p>
           <p className="avsheet-note">First-pass area assessment · reflects this PIN, not a specific building or street.</p>
         </BPF>
 
