@@ -225,7 +225,6 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
             onChange={e => { const mins = Number(e.target.value); const h = Math.floor(mins / 60), m = mins % 60; setSimTime(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`); }}
             style={{ flex: '1 1 80px', minWidth: 60, accentColor: ORG }} />
         )}
-        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: INK, fontWeight: 700, flexShrink: 0 }}>{simTime}</span>
       </div>
 
       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, color: TEXT_SUB, padding: '5px 10px', background: '#FFFBF5', borderBottom: '1px solid rgba(224,123,0,0.08)' }}>
