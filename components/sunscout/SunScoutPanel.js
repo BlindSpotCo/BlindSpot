@@ -1,7 +1,7 @@
 'use client';
 // components/sunscout/SunScoutPanel.js
 // Native replacement for the old cross-origin iframe. Wires together the
-// ported Map3DShadow, ReportModal, and LiveScoreModal. Location changes
+// ported Map3DShadow and ReportModal. Location changes
 // (click-on-map, search, or the parent's own lat/lon/GPS inputs) all
 // bubble up to the parent via onLocationSelect, since BlindSpot's
 // CombinedScoreFlow owns the actual lat/lon state.
@@ -9,7 +9,6 @@
 import { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
 import dynamic from 'next/dynamic';
 import ReportModal from './ReportModal';
-import LiveScoreModal from './LiveScoreModal';
 
 const Map3DShadow = dynamic(() => import('./Map3DShadow'), { ssr: false });
 
@@ -48,17 +47,17 @@ function getLocalDateStr() {
 }
 
 const SunScoutPanel = forwardRef(function SunScoutPanel({
-  lat, lon, address, onUnitSelected, onLiveScoreResult, onLocationSelect, onComfortDone,
+  lat, lon, address, onLocationSelect,
+  // The full AI Report modal (below) has its own floor/facing picker,
+  // separate from the plain Home Comfort Score picker that now lives
+  // inline on the page in UnitVerdict -- this syncs *that* modal's
+  // picks back up to the parent, same as it always did.
+  onReportFloorFacing,
   // Combined-report context (AsliVastu record + combined/unit scores +
   // weights) forwarded straight through to ReportModal when the AI Report
   // is triggered from the Property Score flow via openReport(), rather than
   // from this panel's own toolbar (that button now lives in UnitVerdict).
   areaRecord, combinedScore, unitScore, areaWeight, unitWeight, unitSubScores, verdictLabel, personaId,
-  // Whatever floor/facing is currently picked in UnitVerdict's own
-  // floor/facing table, one level up -- passed through as LiveScoreModal's
-  // starting point so its picker doesn't silently disagree with the one
-  // already on the page. Null until the user has picked both up there.
-  currentFloor, currentFacing,
   // Fires with true/false as the report modal opens/closes. UnitVerdict
   // uses this to keep this whole panel visible while the report is open
   // even on the Verdict tab (see the comment on openReport() below for
@@ -84,7 +83,6 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
   const [searching, setSearching] = useState(false);
 
   const [showReport, setShowReport] = useState(false);
-  const [showLiveScore, setShowLiveScore] = useState(false);
   const [reportPrefill, setReportPrefill] = useState(null); // { floor, facing } | null
 
   useImperativeHandle(ref, () => ({
@@ -286,58 +284,17 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
         )}
       </div>
 
-      {/* Own full-width row, not a toolbar icon anymore -- same treatment
-          as AVAreaCard's "See Detailed Neighbourhood Report" so it reads
-          as a clear next step (quick score preview for wherever the pin
-          currently is) instead of one more small control lost among the
-          season/time/play controls above.
-
-          Previously this sat flush against the dark map with no gap and
-          the same near-black fill as the map itself, so it read as part
-          of the map's own footer rather than a button -- easy to miss
-          entirely while scrolling, which is exactly how people were
-          skipping straight to floor/facing + Get Combined Score without
-          ever previewing Home Comfort Score first. Pulled it off the map
-          with real spacing, gave it the brand accent colour instead of
-          black-on-black, and added an icon so it doesn't read as a
-          footer bar. */}
-      <button onClick={() => setShowLiveScore(true)} style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%', textAlign: 'center',
-        background: ORG, color: '#fff', border: 'none', borderRadius: 'var(--radius)',
-        padding: '15px 20px', fontWeight: 700, fontSize: 13.5, letterSpacing: '.04em', textTransform: 'uppercase',
-        cursor: 'pointer', flexShrink: 0, marginTop: 16, boxShadow: '0 10px 26px -12px rgba(175,95,48,0.55)',
-      }}>
-        ☀ Preview Home Comfort Score →
-      </button>
-      <div className="mono" style={{ fontSize: 11, color: '#8A7A68', marginTop: 8, marginBottom: 4 }}>
-        Do this first — the combined verdict below needs a Home Comfort Score to combine.
-      </div>
-
       {showReport && (
         <ReportModal
           lat={lat} lon={lon} tzOffset={tzOffset} address={address || searchQuery || undefined}
           onClose={() => { setShowReport(false); setReportPrefill(null); onReportOpenChange?.(false); }}
           captureScreenshots={captureScreenshots}
-          onFloorFacingSubmit={onUnitSelected}
+          onFloorFacingSubmit={onReportFloorFacing}
           areaRecord={areaRecord} combinedScore={combinedScore} unitScore={unitScore}
           areaWeight={areaWeight} unitWeight={unitWeight}
           unitSubScores={unitSubScores} verdictLabel={verdictLabel}
           personaId={personaId}
           prefillFloor={reportPrefill?.floor} prefillFacing={reportPrefill?.facing}
-        />
-      )}
-      {showLiveScore && (
-        <LiveScoreModal
-          lat={lat} lon={lon} tzOffset={tzOffset}
-          onClose={() => setShowLiveScore(false)}
-          onFloorFacingSubmit={onUnitSelected}
-          onResult={onLiveScoreResult}
-          prefillFloor={currentFloor} prefillFacing={currentFacing}
-          // Done (result view only) now also closes the modal AND kicks
-          // off the combined-verdict computation one level up, which is
-          // what actually carries the user to the Verdict tab -- see
-          // UnitVerdict's handleComfortDone.
-          onDone={onComfortDone}
         />
       )}
 
