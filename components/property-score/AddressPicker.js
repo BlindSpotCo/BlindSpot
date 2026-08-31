@@ -191,7 +191,13 @@ export default function AddressPicker({ onConfirmed }) {
   // or search first. lockInLocation is defined further below in this
   // component, but that's fine: this effect only runs (and only calls it)
   // after the whole render has finished and lockInLocation is assigned.
-  useEffect(() => {
+  //
+  // Pulled out into its own function (rather than inline in the effect)
+  // so the "Try again" button below can re-run the exact same attempt --
+  // this matters because a denial is usually the browser's *remembered*
+  // site permission, not a one-off fluke, so after the user fixes it in
+  // site settings the fix should take effect without a full page reload.
+  const attemptGeolocate = useCallback(() => {
     if (!('geolocation' in navigator)) { setGeoState('unavailable'); return; }
     setGeoState('locating');
     navigator.geolocation.getCurrentPosition(
@@ -200,9 +206,26 @@ export default function AddressPicker({ onConfirmed }) {
         setAutoLocated(true);
         lockInLocation(pos.coords.latitude, pos.coords.longitude);
       },
-      () => { setGeoState('denied'); },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+      (err) => {
+        // PositionError.code: 1 = PERMISSION_DENIED, 2 = POSITION_UNAVAILABLE,
+        // 3 = TIMEOUT. These are NOT the same failure and were previously
+        // all collapsed into 'denied', which showed "permission denied" even
+        // when permission was granted -- the actual failure on macOS Chrome
+        // is frequently code 2, CoreLocation itself reporting
+        // kCLErrorLocationUnknown (it couldn't get a fix: weak GPS/Wi-Fi
+        // signal, a VPN, or Location Services being flaky), which has
+        // nothing to do with site permissions and telling the user to go
+        // "allow" something that's already allowed just sends them down
+        // the wrong troubleshooting path.
+        setGeoState(err?.code === 1 ? 'denied' : 'unresolved');
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    attemptGeolocate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -367,21 +390,40 @@ export default function AddressPicker({ onConfirmed }) {
       <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 10 }}>
         {geoState === 'locating' && !pin && 'Locating you… the map will open at your current spot — search above any time to change it.'}
         {geoState === 'denied' && !pin && "Location access was blocked, so we couldn't auto-place the pin — type your address above, or allow location access in your browser and reload this page."}
+        {geoState === 'unresolved' && !pin && "Couldn't pin down your exact location — type your address above to get started."}
         {geoState === 'unavailable' && !pin && "This browser doesn't support automatic location — type your address above to get started."}
-        {(geoState === 'granted' || pin || (geoState !== 'locating' && geoState !== 'denied' && geoState !== 'unavailable')) &&
+        {(geoState === 'granted' || pin || (geoState !== 'locating' && geoState !== 'denied' && geoState !== 'unresolved' && geoState !== 'unavailable')) &&
           'Pick a suggestion as you type, or press Search / Enter for the best match.'}
       </div>
-      {/* Geolocation denied/unavailable and nothing searched yet -- the map
-          never had a reason to appear (lockInLocation only ever runs off a
-          resolved pin), so without this the page was just the search bar
-          sitting in a lot of empty space with no explanation why. */}
-      {(geoState === 'denied' || geoState === 'unavailable') && !pin && (
+      {/* Geolocation denied/unresolved/unavailable and nothing searched yet
+          -- the map never had a reason to appear (lockInLocation only ever
+          runs off a resolved pin), so without this the page was just the
+          search bar sitting in a lot of empty space with no explanation
+          why. */}
+      {(geoState === 'denied' || geoState === 'unresolved' || geoState === 'unavailable') && !pin && (
         <div style={{ border: '1px solid var(--line)', borderLeft: '4px solid var(--sun)', borderRadius: 'var(--radius)', padding: '14px 18px', marginBottom: 20 }}>
           <div className="mono" style={{ fontSize: 12.5, color: 'var(--text-mute)', lineHeight: 1.6 }}>
             {geoState === 'denied'
               ? "We couldn't get your current location (permission denied). No problem — search for your address above and the map will open right there."
+              : geoState === 'unresolved'
+              ? "Your browser allowed the request, but couldn't actually determine a location this time — this is usually a weak GPS/Wi-Fi signal, a VPN, or (on Mac) Location Services being briefly unreliable, not a permissions issue. No problem — search for your address above, or try again below."
               : "Automatic location isn't available here — search for your address above and the map will open right there."}
           </div>
+          {/* Both of these are worth a one-click retry rather than a full
+              reload: a 'denied' permission can be flipped in site settings
+              mid-session, and an 'unresolved' fix (CoreLocation finding its
+              footing, a VPN toggled off) often clears up on the very next
+              attempt with no user-side change needed at all. */}
+          {(geoState === 'denied' || geoState === 'unresolved') && (
+            <button type="button" onClick={attemptGeolocate} className="ps-btn"
+              style={{
+                marginTop: 10, background: 'var(--bg-2)', border: '1px solid var(--ss)', color: 'var(--ss)',
+                borderRadius: 'var(--radius)', padding: '7px 14px', fontSize: 12, fontWeight: 700,
+                cursor: 'pointer', letterSpacing: '.02em',
+              }}>
+              Try again
+            </button>
+          )}
         </div>
       )}
       {searchError && <div style={{ color: '#f87171', fontSize: 13, marginBottom: 12 }}>{searchError}</div>}
