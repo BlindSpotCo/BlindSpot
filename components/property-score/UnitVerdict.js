@@ -401,7 +401,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                 <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', letterSpacing: '.12em', marginBottom: 6 }}>
                   {combined.area ? 'BLINDSPOT COMBINED SCORE' : 'HOME COMFORT SCORE'}
                 </div>
-                <div className="uv-score-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 56, lineHeight: 1, color: 'var(--text)' }}>
+                <div className="uv-score-number" style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 56, lineHeight: 1, color: 'var(--text)' }}>
                   {combined.combinedScore}<span style={{ fontSize: 20, color: 'var(--text-dim)' }}>/100</span>
                 </div>
               </div>
@@ -421,7 +421,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                 <div
                   className="uv-verdict-badge"
                   style={{
-                    display: 'inline-block', fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 17,
+                    display: 'inline-block', fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 17,
                     color: VERDICT_COLOR[combined.verdict.label] || 'var(--brand)',
                     background: `color-mix(in srgb, ${VERDICT_COLOR[combined.verdict.label] || 'var(--brand)'} 16%, var(--bg-2))`,
                     padding: '7px 16px', borderRadius: 'var(--radius)', cursor: 'default',
@@ -438,17 +438,17 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               <div className="uv-score-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
                 <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--slate)', borderRadius: 'var(--radius)', padding: '14px 16px' }}>
                   <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>AREA — {combined.area.name} — {combined.area.weight}%</div>
-                  <div className="uv-score-box-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 24, color: 'var(--slate)' }}>{combined.area.score}</div>
+                  <div className="uv-score-box-number" style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 24, color: 'var(--slate)' }}>{combined.area.score}</div>
                 </div>
                 <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 'var(--radius)', padding: '14px 16px' }}>
                   <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT (HOME COMFORT) — FL {combined.unit.floor}, {combined.unit.facing} — {combined.unit.weight}%</div>
-                  <div className="uv-score-box-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 24, color: 'var(--sun)' }}>{combined.unit.score}</div>
+                  <div className="uv-score-box-number" style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 24, color: 'var(--sun)' }}>{combined.unit.score}</div>
                 </div>
               </div>
             ) : (
               <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 'var(--radius)', padding: '14px 16px', marginBottom: 20 }}>
                 <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT (HOME COMFORT) — FL {combined.unit.floor}, {combined.unit.facing}</div>
-                <div className="uv-score-box-number" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 24, color: 'var(--sun)' }}>{combined.unit.score}</div>
+                <div className="uv-score-box-number" style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 24, color: 'var(--sun)' }}>{combined.unit.score}</div>
               </div>
             )}
 

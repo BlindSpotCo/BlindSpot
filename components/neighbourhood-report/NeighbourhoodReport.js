@@ -28,14 +28,14 @@ import SaveReportButton from '@/components/reports/SaveReportButton';
 
 /* Used to import Barlow/Barlow Condensed and set them as this page's
    body/heading fonts -- a pair the rest of the site never loads
-   (layout.js loads Bricolage Grotesque, Inter, IBM Plex Mono). That's
+   (layout.js loads Anton, Inter, IBM Plex Mono). That's
    why this report page read as visibly off-brand from the rest of
    BlindSpot. Body font is now Inter (the site's actual body font,
    already loaded globally, no import needed); .kick now matches the
    site's own .mono eyebrow treatment (IBM Plex Mono); every former
    `.cond` heading/number is fixed individually inline further down --
    plain Inter bold for the locality name (matching .hero h1 / .section
-   h2, the real site has no separate display font), Bricolage Grotesque
+   h2, the real site has no separate display font), Anton
    for numeric readouts, same mapping the property-score card and the
    homepage mockup use. */
 const CSS = `
@@ -251,7 +251,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
             return (
               <>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, margin: '8px 0 2px', flexWrap: 'wrap' }}>
-                  <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 30, fontWeight: 700 }}>{inr(lo)}–{inr(hi)}</span>
+                  <span style={{ fontFamily: "'Anton', sans-serif", fontSize: 30, fontWeight: 400 }}>{inr(lo)}–{inr(hi)}</span>
                   <span style={{ fontSize: 12, color: 'var(--text-dim)' }}>per sq ft · {pc.label?.toLowerCase()} band for {cm.shortName}</span>
                 </div>
                 <div style={{ display: 'flex', gap: 5, margin: '14px 0 6px' }}>
