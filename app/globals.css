@@ -682,9 +682,16 @@
      screen instead of sharing it with a card and a paragraph, so it can
      actually claim the scale that gives it. */
   .hero-statement h1{
-    /* font-family/weight/letter-spacing now come from the shared
-       h1,h2,h3,.disp rule above (Anton, 400, -0.005em) -- no override
-       needed here, only this section's own size/width/alignment. */
+    /* font-weight is pinned here even though it matches the shared
+       h1,h2,h3,.disp rule's own 400 -- the legacy `.hero h1{font-weight:700}`
+       rule above (line ~453, from before this section was redesigned) has
+       the same specificity as .hero-statement h1 and both still match this
+       element (the section keeps both `hero` and `hero-statement` classes),
+       so without an explicit weight here that older rule wins the tiebreak
+       and forces a browser-synthesized fake bold onto Anton -- Anton only
+       ships one real weight, so the synthesized version looks visibly off
+       from the real thing. */
+    font-family:'Anton',sans-serif; font-weight:400;
     font-size:clamp(48px, 6.4vw, 104px); line-height:1.02; max-width:960px;
     text-align:center;
   }
