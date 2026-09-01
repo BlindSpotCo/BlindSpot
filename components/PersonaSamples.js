@@ -7,7 +7,7 @@
 // person, with their real name and their real result -- not the
 // illustrative "best locality per city" numbers this file used to
 // carry. The four PDFs are the source of truth for every number here:
-//   Vainavee Subhash (Young Professional) -- Mahadevapura, Bangalore
+//   Vainavee Subash (Young Professional) -- Mahadevapura, Bangalore
 //   Jai Mittal (Investor)                 -- Sector 6, Chandigarh
 //   Mayookha Satheesh (Family Buyer)      -- R.K. Puram, Delhi NCR
 //   Ishaan Yadav (Broker)                 -- Fort / CSMT / Churchgate East, Mumbai
@@ -49,7 +49,7 @@ import { PERSONAS, PERSONA_ORDER } from '@/lib/personas';
 
 const SAMPLES = {
   young_professional: {
-    name: 'Vainavee Subhash',
+    name: 'Vainavee Subash',
     checking: [
       'Commute time to work',
       'Afternoon sun in the bedroom',
