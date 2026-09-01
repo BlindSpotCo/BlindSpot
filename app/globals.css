@@ -682,6 +682,13 @@
      screen instead of sharing it with a card and a paragraph, so it can
      actually claim the scale that gives it. */
   .hero-statement h1{
+    /* Anton overrides the shared h1,h2,h3,.disp Bricolage Grotesque rule
+       above -- picked after a long round-trip through condensed-caps and
+       serif/grotesque alternatives; Anton only ships one real weight
+       (400), so font-weight is pinned here rather than inheriting the
+       h1 rule's 700, and letter-spacing is loosened slightly from that
+       rule's -0.01em since Anton is already tight by design. */
+    font-family:'Anton',sans-serif; font-weight:400; letter-spacing:-0.005em;
     font-size:clamp(48px, 6.4vw, 104px); line-height:1.02; max-width:960px;
     text-align:center;
   }
