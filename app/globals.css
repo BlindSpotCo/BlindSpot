@@ -168,7 +168,7 @@
      specific heading below (.hero h1, .section h2, .closing-inner h2,
      .howworks-step-block h3, etc.) is a more specific selector and keeps
      winning the cascade with its own hand-tuned value untouched. */
-  h1,h2,h3,.disp{font-family:'Anton',sans-serif;letter-spacing:-0.005em; font-weight:400; line-height:var(--leading-display)}
+  h1,h2,h3,.disp{font-family:'Anton',sans-serif;letter-spacing:0.01em; font-weight:400; line-height:var(--leading-display)}
   /* IBM Plex Mono defaults to 400 if unset, which looks thin at the small
      sizes used for eyebrows/labels site-wide — 500 as the baseline for
      every .mono element fixes that in one place. */
@@ -691,6 +691,10 @@
        ships one real weight, so the synthesized version looks visibly off
        from the real thing. */
     font-family:'Anton',sans-serif; font-weight:400;
+    /* Pinned explicitly (same reason as font-weight above): excluded from
+       the site-wide Anton letter-spacing bump so the hero keeps its
+       original, tighter tracking. */
+    letter-spacing:-0.005em;
     font-size:clamp(48px, 6.4vw, 104px); line-height:1.02; max-width:960px;
     text-align:center;
   }
@@ -771,7 +775,7 @@
     color:rgba(255,255,255,.58); display:block; margin:0 0 16px;
   }
   .hero-verdict-heading{
-    font-size:40px; font-weight:700; line-height:1.16; margin:0; letter-spacing:-0.01em;
+    font-size:40px; font-weight:700; line-height:1.16; margin:0; letter-spacing:0.01em;
   }
   .hero-verdict-heading .seg.slate{ color:#fff }
   @media (max-width:900px){ .hero-verdict-heading{ font-size:32px } }
@@ -1547,7 +1551,7 @@
     /* Explicit, because one surface renders this as an <h2> (which picks
        up the global h1,h2,h3 letter-spacing) and the other as a <div>
        (which doesn't) -- stated here so the tag no longer matters. */
-    letter-spacing:-0.01em; line-height:1.15;
+    letter-spacing:0.01em; line-height:1.15;
     text-transform:uppercase; margin:8px 0 10px; color:inherit;
     /* Same reason as the tag/letter-spacing note above: as an <h2> on one
        surface it picks up the global h1,h2,h3{word-break:break-word} and
