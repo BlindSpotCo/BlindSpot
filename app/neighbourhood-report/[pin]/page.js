@@ -6,9 +6,9 @@ export async function generateMetadata({ params, searchParams }) {
   const { pin } = await params;
   const { sector } = await searchParams;
   const data = getReportData(pin, 4, sector);
-  if (!data) return { title: 'Neighbourhood Report — BlindSpot' };
+  if (!data) return { title: 'Neighbourhood Report - BlindSpot' };
   const { record } = data;
-  const title = `${record.name} Neighbourhood Report — ${record.nqi_composite}/100 (${record.grade})`;
+  const title = `${record.name} Neighbourhood Report - ${record.nqi_composite}/100 (${record.grade})`;
   const description = `Full neighbourhood report for ${record.name} (${record.pin_code}): crime, air quality, infrastructure, power, water, schools and price context.`;
   return {
     title,

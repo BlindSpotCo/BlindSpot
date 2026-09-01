@@ -69,10 +69,10 @@ export default function PopupComplete() {
       }
 
       if (delivered) {
-        setMessage('Signed in — you can close this window.');
+        setMessage('Signed in, you can close this window.');
         setTimeout(() => window.close(), 600);
       } else {
-        setMessage('Signed in, but couldn\u2019t reach the original tab automatically — please close this window and refresh the other tab.');
+        setMessage('Signed in, but couldn\u2019t reach the original tab automatically, please close this window and refresh the other tab.');
       }
     })();
   }, []);

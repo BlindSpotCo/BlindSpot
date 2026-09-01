@@ -4,9 +4,9 @@ import { buildLocalitiesByCity, findLocality } from '@/lib/aslivastu/localities'
 
 export const metadata = {
   title: 'Property Score',
-  description: 'One score for the neighbourhood, one score for the flat — combined into a single verdict, weighted your way.',
+  description: 'One score for the neighbourhood, one score for the flat, combined into a single verdict, weighted your way.',
   alternates: { canonical: '/property-score' },
-  openGraph: { title: 'Property Score | BlindSpot', description: 'One score for the neighbourhood, one score for the flat — combined into a single verdict, weighted your way.' },
+  openGraph: { title: 'Property Score | BlindSpot', description: 'One score for the neighbourhood, one score for the flat, combined into a single verdict, weighted your way.' },
 };
 
 // PropertyScoreFlow.js is the whole Your Angle / Location / Unit /

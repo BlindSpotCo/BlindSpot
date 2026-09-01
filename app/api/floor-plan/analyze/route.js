@@ -98,7 +98,7 @@ function clampPin(pin) {
 export async function POST(req) {
   if (!process.env.GEMINI_API_KEY) {
     return NextResponse.json(
-      { error: 'Server is missing GEMINI_API_KEY — cannot run floor-plan analysis.' },
+      { error: 'Server is missing GEMINI_API_KEY, cannot run floor-plan analysis.' },
       { status: 500 }
     );
   }

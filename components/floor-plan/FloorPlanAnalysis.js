@@ -30,7 +30,7 @@ const CSS = `
 `;
 
 const STYLE_OPTIONS = ['No preference', 'Minimalist', 'Cozy & warm', 'Modern & sleek', 'Traditional', 'Eclectic / bohemian'];
-const SPACE_OPTIONS = ['No preference', 'Open & airy — fewer dividers', 'Defined, cozy zones'];
+const SPACE_OPTIONS = ['No preference', 'Open & airy, fewer dividers', 'Defined, cozy zones'];
 const MUST_HAVE_OPTIONS = [
   'Dining table', 'Home office nook', 'Reading corner', 'Swing / jhula',
   'Bar or entertainment unit', 'Statement lighting', 'Extra storage',
@@ -141,13 +141,13 @@ export default function FloorPlanAnalysis() {
 
         <h1 className="cond" style={{ fontSize: 40, fontWeight: 700, margin: '0 0 8px', textTransform: 'uppercase' }}>Furnish This Unit</h1>
         <p style={{ fontSize: 14, color: 'var(--text-mute)', maxWidth: 640, marginBottom: 28, lineHeight: 1.6 }}>
-          Upload a floor plan — a PDF, JPG, or PNG — and get room-by-room furniture and placement suggestions, marked directly on the plan.
+          Upload a floor plan - a PDF, JPG, or PNG - and get room-by-room furniture and placement suggestions, marked directly on the plan.
         </p>
 
         {status !== 'done' && (
           <>
             <div style={{ marginBottom: 24 }}>
-              <p className="kick" style={{ marginBottom: 14 }}>Tell Us What You Want — Everyone's Dream Home Is Different</p>
+              <p className="kick" style={{ marginBottom: 14 }}>Tell Us What You Want, Everyone's Dream Home Is Different</p>
               <BPF style={{ padding: '20px 22px' }}>
                 <div style={{ marginBottom: 18 }}>
                   <div style={{ fontSize: 12.5, fontWeight: 600, marginBottom: 8 }}>Style</div>
@@ -158,7 +158,7 @@ export default function FloorPlanAnalysis() {
                   <PillSelect options={SPACE_OPTIONS} value={spaceFeel} onChange={setSpaceFeel} />
                 </div>
                 <div style={{ marginBottom: 18 }}>
-                  <div style={{ fontSize: 12.5, fontWeight: 600, marginBottom: 8 }}>Must-haves — pick any that matter to you</div>
+                  <div style={{ fontSize: 12.5, fontWeight: 600, marginBottom: 8 }}>Must-haves, pick any that matter to you</div>
                   <MultiPillSelect options={MUST_HAVE_OPTIONS} values={mustHaves} onToggle={toggleMustHave} />
                 </div>
                 <div>
@@ -240,7 +240,7 @@ export default function FloorPlanAnalysis() {
 
             {result.shopping_priority?.length > 0 && (
               <div style={{ marginBottom: 24 }}>
-                <p className="kick" style={{ marginBottom: 12 }}>Shopping Priority — What To Get First</p>
+                <p className="kick" style={{ marginBottom: 12 }}>Shopping Priority, What To Get First</p>
                 <BPF style={{ padding: '16px 20px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {result.shopping_priority.map((n, i) => (
@@ -269,7 +269,7 @@ export default function FloorPlanAnalysis() {
                     ))}
                   </div>
                 </BPF>
-                <p style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 8 }}>Pin positions are AI-estimated from the image, not measured — treat them as approximate room locations.</p>
+                <p style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 8 }}>Pin positions are AI-estimated from the image, not measured, treat them as approximate room locations.</p>
               </div>
 
               {/* ── Room cards ── */}

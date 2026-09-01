@@ -286,10 +286,10 @@ export default function AddressPicker({ onConfirmed }) {
         setAutoLocated(false);
         lockInLocation(data.result[0], data.result[1]);
       } else {
-        setSearchError("Couldn't find that address — try adding city/area, or a more specific landmark.");
+        setSearchError("Couldn't find that address, try adding city/area, or a more specific landmark.");
       }
     } catch {
-      setSearchError('Search failed — please try again.');
+      setSearchError('Search failed, please try again.');
     } finally {
       setSearching(false);
     }
@@ -388,10 +388,10 @@ export default function AddressPicker({ onConfirmed }) {
         </button>
       </div>
       <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 10 }}>
-        {geoState === 'locating' && !pin && 'Locating you… the map will open at your current spot — search above any time to change it.'}
-        {geoState === 'denied' && !pin && "Location access was blocked, so we couldn't auto-place the pin — type your address above, or allow location access in your browser and reload this page."}
-        {geoState === 'unresolved' && !pin && "Couldn't pin down your exact location — type your address above to get started."}
-        {geoState === 'unavailable' && !pin && "This browser doesn't support automatic location — type your address above to get started."}
+        {geoState === 'locating' && !pin && 'Locating you… the map will open at your current spot, search above any time to change it.'}
+        {geoState === 'denied' && !pin && "Location access was blocked, so we couldn't auto-place the pin, type your address above, or allow location access in your browser and reload this page."}
+        {geoState === 'unresolved' && !pin && "Couldn't pin down your exact location, type your address above to get started."}
+        {geoState === 'unavailable' && !pin && "This browser doesn't support automatic location, type your address above to get started."}
         {(geoState === 'granted' || pin || (geoState !== 'locating' && geoState !== 'denied' && geoState !== 'unresolved' && geoState !== 'unavailable')) &&
           'Pick a suggestion as you type, or press Search / Enter for the best match.'}
       </div>
@@ -404,10 +404,10 @@ export default function AddressPicker({ onConfirmed }) {
         <div style={{ border: '1px solid var(--line)', borderLeft: '4px solid var(--sun)', borderRadius: 'var(--radius)', padding: '14px 18px', marginBottom: 20 }}>
           <div className="mono" style={{ fontSize: 12.5, color: 'var(--text-mute)', lineHeight: 1.6 }}>
             {geoState === 'denied'
-              ? "We couldn't get your current location (permission denied). No problem — search for your address above and the map will open right there."
+              ? "We couldn't get your current location (permission denied). No problem, search for your address above and the map will open right there."
               : geoState === 'unresolved'
-              ? "Your browser allowed the request, but couldn't actually determine a location this time — this is usually a weak GPS/Wi-Fi signal, a VPN, or (on Mac) Location Services being briefly unreliable, not a permissions issue. No problem — search for your address above, or try again below."
-              : "Automatic location isn't available here — search for your address above and the map will open right there."}
+              ? "Your browser allowed the request, but couldn't actually determine a location this time, this is usually a weak GPS/Wi-Fi signal, a VPN, or (on Mac) Location Services being briefly unreliable, not a permissions issue. No problem, search for your address above, or try again below."
+              : "Automatic location isn't available here, search for your address above and the map will open right there."}
           </div>
           {/* Both of these are worth a one-click retry rather than a full
               reload: a 'denied' permission can be flipped in site settings
@@ -442,7 +442,7 @@ export default function AddressPicker({ onConfirmed }) {
           </div>
           <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 10 }}>
             {autoLocated
-              ? "This is your current location — drag the pin, click the map, or search above if it's not right."
+              ? "This is your current location, drag the pin, click the map, or search above if it's not right."
               : 'Drag the pin or click the map if it\u2019s not exactly on the building.'}
           </div>
           <div style={{ height: 360, border: '1px solid var(--line)', borderRadius: 'var(--radius)', overflow: 'hidden', marginBottom: 16 }}>
@@ -506,7 +506,7 @@ export default function AddressPicker({ onConfirmed }) {
                 <div style={{ marginBottom: 24, border: '1px solid var(--line)', borderLeft: '4px solid var(--line)', borderRadius: 'var(--radius)', padding: '18px 20px' }}>
                   <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6 }}>
                     No Neighbourhood Score coverage for pincode {pincodeOverride || resolved?.postcode || 'this location'}{' '}
-                    yet — you&apos;ll still get a Home Comfort Score for the unit, just without an area score to combine it with. If that pincode looks wrong, scroll up and correct it above.
+                    yet, you&apos;ll still get a Home Comfort Score for the unit, just without an area score to combine it with. If that pincode looks wrong, scroll up and correct it above.
                   </div>
                 </div>
               )}

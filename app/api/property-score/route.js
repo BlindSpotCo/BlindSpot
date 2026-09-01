@@ -14,10 +14,10 @@ const DEFAULT_WEIGHT_UNIT = 0.5;
 function quadrant(areaScore, unitScore) {
   const areaGood = areaScore >= 60;
   const unitGood = unitScore >= 60;
-  if (areaGood && unitGood) return { label: 'Prime Pick', detail: 'Strong neighbourhood, strong unit — the combination buyers actually want.' };
+  if (areaGood && unitGood) return { label: 'Prime Pick', detail: 'Strong neighbourhood, strong unit, the combination buyers actually want.' };
   if (!areaGood && unitGood) return { label: 'Hidden Gem', detail: 'The unit itself is genuinely good, but the surrounding area has real weaknesses worth understanding before you commit.' };
-  if (areaGood && !unitGood) return { label: 'Location Play', detail: 'Strong area, but this specific unit has real drawbacks (sun, shade, view, privacy, or airflow) — worth comparing other floors/facings in the same building.' };
-  return { label: 'Reconsider', detail: 'Both the area and this specific unit score below average — worth a closer look before deciding.' };
+  if (areaGood && !unitGood) return { label: 'Location Play', detail: 'Strong area, but this specific unit has real drawbacks (sun, shade, view, privacy, or airflow), worth comparing other floors/facings in the same building.' };
+  return { label: 'Reconsider', detail: 'Both the area and this specific unit score below average, worth a closer look before deciding.' };
 }
 
 export async function GET(req) {
@@ -99,8 +99,8 @@ export async function GET(req) {
       },
       formula: `(${areaScore} × ${Math.round((weightArea/totalWeight)*100)}%) + (${unitScore} × ${Math.round((weightUnit/totalWeight)*100)}%) = ${combinedScore}`,
       dataNotes: [
-        'Area score is the same for every unit in this pincode — only the unit score changes with floor/facing.',
-        ...(persona ? [`Neighbourhood score re-weighted for ${persona.label} priorities — not the default weighting.`] : []),
+        'Area score is the same for every unit in this pincode, only the unit score changes with floor/facing.',
+        ...(persona ? [`Neighbourhood score re-weighted for ${persona.label} priorities, not the default weighting.`] : []),
         ...(ssResult.dataNotes || []),
       ],
       generatedAt: new Date().toISOString(),

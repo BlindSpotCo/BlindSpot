@@ -97,7 +97,7 @@ export default function LiveScoreModal({ lat, lon, tzOffset, onClose, onFloorFac
           {!result && !loading && (
             <>
               <p style={{ fontSize: 13, color: SUB, lineHeight: 1.6, marginBottom: 26 }}>
-                One score for this exact flat — sun, shade &amp; heat, view, privacy, and wind — with the full calculation shown, not just a number.
+                One score for this exact flat - sun, shade &amp; heat, view, privacy, and wind - with the full calculation shown, not just a number.
               </p>
 
               <div style={{ marginBottom: 22 }}>
@@ -144,7 +144,7 @@ export default function LiveScoreModal({ lat, lon, tzOffset, onClose, onFloorFac
                       </label>
                     ))}
                     <div style={{ fontFamily: MONO, fontSize: 10, color: SUB, borderTop: `1px dashed ${LINE}`, paddingTop: 10 }}>
-                      Weights are relative — normalized automatically, do not need to sum to 100.
+                      Weights are relative, normalized automatically, do not need to sum to 100.
                     </div>
                   </div>
                 )}

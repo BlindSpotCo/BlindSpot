@@ -156,8 +156,8 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
               // navigate by sector number or pincode -- so prompting them
               // with "Koramangala, Whitefield" would be actively unhelpful.
               city === 'Chandigarh'
-                ? 'Search by sector or PIN — "Sector 40", "40", "160036", "PEC"…'
-                : 'Search by area name or PIN — Koramangala, Whitefield, Vasant Kunj…'
+                ? 'Search by sector or PIN, "Sector 40", "40", "160036", "PEC"…'
+                : 'Search by area name or PIN, Koramangala, Whitefield, Vasant Kunj…'
             }
             value={search} onChange={e => setSearch(e.target.value)}
             onFocus={e => e.target.select()}

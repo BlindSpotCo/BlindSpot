@@ -56,8 +56,8 @@ const SAMPLES = {
       'How noisy the street gets',
       'Privacy from the building opposite',
     ],
-    take: 'Mahadevapura came out to 79/100 — excellent air quality (88/100) and strong light most of the year, though the unit goes fully shaded from May to August and water/roads are the honest trade-off.',
-    summary: 'Bright, well-ventilated, excellent air quality — patchy summer light.',
+    take: 'Mahadevapura came out to 79/100 - excellent air quality (88/100) and strong light most of the year, though the unit goes fully shaded from May to August and water/roads are the honest trade-off.',
+    summary: 'Bright, well-ventilated, excellent air quality, patchy summer light.',
     city: 'Bangalore',
     place: 'Mahadevapura',
     floor: 15,
@@ -78,8 +78,8 @@ const SAMPLES = {
       "Natural light in the kids' room",
       'Elderly-friendly floor and lift access',
     ],
-    take: "R.K. Puram scored 66/100 — a 100/100 schools score and 91/100 crime rating are hard to beat for a family, but the neighbourhood's 45/100 infrastructure and this west-facing unit's afternoon heat gain are real trade-offs to plan around.",
-    summary: 'Exceptional schools and safety — infrastructure and afternoon heat need a plan.',
+    take: "R.K. Puram scored 66/100 - a 100/100 schools score and 91/100 crime rating are hard to beat for a family, but the neighbourhood's 45/100 infrastructure and this west-facing unit's afternoon heat gain are real trade-offs to plan around.",
+    summary: 'Exceptional schools and safety, infrastructure and afternoon heat need a plan.',
     city: 'Delhi NCR',
     place: 'R.K. Puram',
     floor: 10,
@@ -100,8 +100,8 @@ const SAMPLES = {
       'Resale-friendly floor and facing',
       'Obstruction risk to future light',
     ],
-    take: "Sector 6 scored 59/100 — a strong 76/100 neighbourhood (top schools, low crime, excellent utilities) undercut by this specific unit's 44/100 Home Comfort: a low floor and an east-facing obstruction that delays winter light. The area justifies the price; this particular unit is the risk.",
-    summary: "Strong neighbourhood fundamentals — this unit's limited light is the catch.",
+    take: "Sector 6 scored 59/100 - a strong 76/100 neighbourhood (top schools, low crime, excellent utilities) undercut by this specific unit's 44/100 Home Comfort: a low floor and an east-facing obstruction that delays winter light. The area justifies the price; this particular unit is the risk.",
+    summary: "Strong neighbourhood fundamentals, this unit's limited light is the catch.",
     city: 'Chandigarh',
     place: 'Sector 6',
     floor: 2,
@@ -121,8 +121,8 @@ const SAMPLES = {
       "The area's honest weak points",
       'What not to promise a client',
     ],
-    take: "Fort / CSMT / Churchgate East scored 72/100 — safer than 97% of comparable areas, with strong air quality and reliable morning light on this North-East unit. The honest caveat for a pitch: don't promise all-day sun, and be ready on the 58/100 water score.",
-    summary: 'Safe, well-connected, bright mornings — an easy pitch with honest caveats.',
+    take: "Fort / CSMT / Churchgate East scored 72/100 - safer than 97% of comparable areas, with strong air quality and reliable morning light on this North-East unit. The honest caveat for a pitch: don't promise all-day sun, and be ready on the 58/100 water score.",
+    summary: 'Safe, well-connected, bright mornings, an easy pitch with honest caveats.',
     city: 'Mumbai',
     place: 'Fort / CSMT / Churchgate East',
     floor: 23,
@@ -154,7 +154,7 @@ export default function PersonaSamples() {
             <span className="eyebrow">Sample Reports</span>
             <h2>Built for how you actually buy.</h2>
           </div>
-          <p>Four real localities, four different reasons to check them — see what each report actually surfaces.</p>
+          <p>Four real localities, four different reasons to check them, see what each report actually surfaces.</p>
         </div>
       </div>
 
@@ -193,7 +193,7 @@ export default function PersonaSamples() {
                         </a>
                       ) : (
                         <button type="button" className="ps-report-link ps-report-link-pending" disabled title="Sample report coming soon">
-                          View sample report — coming soon
+                          View sample report - coming soon
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
                         </button>
                       )}
@@ -211,14 +211,14 @@ export default function PersonaSamples() {
                           <svg className="hsc-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-5.4-7-11a7 7 0 1 1 14 0c0 5.6-7 11-7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>
                           <div>
                             <span className="hsc-item-label">Safe, well-connected area</span>
-                            <span className="hsc-item-sub">{sample.place} — {sample.neighbourhood}/100</span>
+                            <span className="hsc-item-sub">{sample.place} - {sample.neighbourhood}/100</span>
                           </div>
                         </div>
                         <div className="hsc-item sun">
                           <svg className="hsc-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M4 20 L10 14 M20 20 L14 14"/></svg>
                           <div>
                             <span className="hsc-item-label">Bright, well-ventilated unit</span>
-                            <span className="hsc-item-sub">Floor {sample.floor}, {sample.facingAbbr} — {sample.homeComfort}/100</span>
+                            <span className="hsc-item-sub">Floor {sample.floor}, {sample.facingAbbr} - {sample.homeComfort}/100</span>
                           </div>
                         </div>
                       </div>

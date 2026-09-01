@@ -69,7 +69,7 @@ html,body{background:var(--bg-2);overflow:hidden;}
 @media(max-width:768px){.view-controls{display:none!important;}}</style></head><body>
 <div id="sdk-error" class="sdk-error">
   <div style="font-size:32px;">🌐</div>
-  <div style="font-size:14px;max-width:320px;line-height:1.6;">The 3D map library didn't load — this is usually a slow or blocked connection to the map CDN, not a bug in your data.</div>
+  <div style="font-size:14px;max-width:320px;line-height:1.6;">The 3D map library didn't load, this is usually a slow or blocked connection to the map CDN, not a bug in your data.</div>
   <button onclick="window.location.reload()">↻ Retry</button>
 </div>
 <div style="position:relative;width:100%;height:100vh;">
@@ -478,7 +478,7 @@ window.addEventListener('message',function(e){
           console.warn('[Map3DShadow iframe] svgImg.onerror fired for "'+lbl+'"');
           rctx.fillStyle='rgba(175,95,48,0.9)';
           rctx.font='bold 20px monospace';
-          rctx.fillText(lbl+' — map render unavailable',40,liveH/2);
+          rctx.fillText(lbl+', map render unavailable',40,liveH/2);
           finish();
         };
         svgImg.src=svgUrl;

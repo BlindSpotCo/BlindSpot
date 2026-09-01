@@ -7,11 +7,11 @@ const SITE_URL = 'https://blindspotco.net';
 export const metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "BlindSpot — See What Listings Don't Tell You",
+    default: "BlindSpot - See What Listings Don't Tell You",
     template: '%s | BlindSpot',
   },
   description:
-    'Know the neighbourhood. See the sunlight. Property intelligence from Neighbourhood Score and Home Comfort Score — free, data-backed, no broker spin. Crime, air quality, schools, sunlight and shadow analysis for any flat before you buy or rent.',
+    'Know the neighbourhood. See the sunlight. Property intelligence from Neighbourhood Score and Home Comfort Score, free, data-backed, no broker spin. Crime, air quality, schools, sunlight and shadow analysis for any flat before you buy or rent.',
   applicationName: 'BlindSpot',
   keywords: [
     'property intelligence',
@@ -30,15 +30,15 @@ export const metadata = {
     url: SITE_URL,
     siteName: 'BlindSpot',
     locale: 'en_IN',
-    title: "BlindSpot — See What Listings Don't Tell You",
+    title: "BlindSpot - See What Listings Don't Tell You",
     description:
-      'Neighbourhood Score and Home Comfort Score — data-backed property intelligence, before you sign anything.',
+      'Neighbourhood Score and Home Comfort Score, data-backed property intelligence, before you sign anything.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: "BlindSpot — See What Listings Don't Tell You",
+    title: "BlindSpot - See What Listings Don't Tell You",
     description:
-      'Neighbourhood Score and Home Comfort Score — data-backed property intelligence, before you sign anything.',
+      'Neighbourhood Score and Home Comfort Score, data-backed property intelligence, before you sign anything.',
   },
   robots: {
     index: true,
@@ -53,7 +53,7 @@ const jsonLd = {
   name: 'BlindSpot',
   url: SITE_URL,
   description:
-    "See what listings don't tell you — Neighbourhood Score and Home Comfort Score property intelligence.",
+    "See what listings don't tell you, Neighbourhood Score and Home Comfort Score property intelligence.",
   potentialAction: {
     '@type': 'SearchAction',
     target: `${SITE_URL}/property-score?q={search_term_string}`,

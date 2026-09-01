@@ -436,11 +436,10 @@
   @media (max-width:900px){ .hero-grid{ grid-template-columns:1fr; gap:48px } }
 
   .hero-eyebrow{
-    display:inline-flex; align-items:center; gap:10px;
+    display:inline-block;
     font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:14px; letter-spacing:0.14em; text-transform:uppercase;
     color:var(--slate); margin-bottom:22px;
   }
-  .hero-eyebrow::before{content:''; width:22px; height:1px; background:var(--slate)}
 
   /* Fixed size per breakpoint band, not a continuous vw-scaled clamp() --
      a fluid clamp() means the headline is a slightly different size at

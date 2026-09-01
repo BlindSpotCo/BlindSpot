@@ -36,7 +36,7 @@ export default function Home() {
       i = (i + 1) % spots.length;
       el.style.opacity = 0;
       setTimeout(() => {
-        el.textContent = spots[i].c + ' — ' + spots[i].l;
+        el.textContent = spots[i].c + ', ' + spots[i].l;
         el.style.opacity = 1;
       }, 260);
     }, 3400);
@@ -87,7 +87,7 @@ export default function Home() {
         <div className="wrap hero-statement-inner">
           <span className="hero-eyebrow">Property Intelligence</span>
           <h1>Know the <span className="hero-word-green">place,</span><br /> before you <span className="hero-word-yellow">commit.</span></h1>
-          <div className="coord-readout"><span className="blink"></span><span ref={coordRef} className="mono">12.9716° N, 77.5946° E — checking Bengaluru</span></div>
+          <div className="coord-readout"><span className="blink"></span><span ref={coordRef} className="mono">12.9716° N, 77.5946° E - checking Bengaluru</span></div>
         </div>
         <span className="hero-scroll-cue mono">Scroll<span className="hero-scroll-cue-arrow">↓</span></span>
       </section>
@@ -115,7 +115,7 @@ export default function Home() {
             <h2 className="hero-verdict-heading"><span className="seg sun">One pin.</span> <span className="seg slate">Two honest answers.</span></h2>
             <p className="hero-sub">Drop a pin. See exactly what the neighbourhood around it is really like, and exactly how sunlight moves through the unit. Real government records. Real solar geometry. No broker spin.</p>
             <span className="coverage-pill" style={{ marginTop: 26, marginBottom: 4 }}>
-              <span className="dot" />Active in {coverageLabel()} — more cities coming
+              <span className="dot" />Active in {coverageLabel()}, more cities coming
             </span>
             <div className="hero-ctas" style={{ marginTop: 28 }}>
               <PinDropTransition href="/property-score" className="btn btn-lg btn-cta">
@@ -148,14 +148,14 @@ export default function Home() {
                     <svg className="hsc-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-5.4-7-11a7 7 0 1 1 14 0c0 5.6-7 11-7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>
                     <div>
                       <span className="hsc-item-label">Safe, well-connected area</span>
-                      <span className="hsc-item-sub">Koramangala — 78/100</span>
+                      <span className="hsc-item-sub">Koramangala - 78/100</span>
                     </div>
                   </div>
                   <div className="hsc-item sun">
                     <svg className="hsc-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M4 20 L10 14 M20 20 L14 14"/></svg>
                     <div>
                       <span className="hsc-item-label">Bright, well-ventilated unit</span>
-                      <span className="hsc-item-sub">Floor 7, SE — 82/100</span>
+                      <span className="hsc-item-sub">Floor 7, SE - 82/100</span>
                     </div>
                   </div>
                 </div>
@@ -174,10 +174,10 @@ export default function Home() {
         <div className="wrap section-inner">
           <div className="section-head reveal">
             <div>
-              <span className="eyebrow">03 — The Team</span>
+              <span className="eyebrow">03 - The Team</span>
               <h2>Two people who got tired of guessing.</h2>
             </div>
-            <p>The two founders behind BlindSpot&apos;s product line — each leading one half of the platform.</p>
+            <p>The two founders behind BlindSpot&apos;s product line, each leading one half of the platform.</p>
           </div>
           <div className="team-grid">
             <div className="team-card reveal">
@@ -185,7 +185,7 @@ export default function Home() {
               <div>
                 <div className="team-name">Arushri Gangji</div>
                 <div className="team-role sun">Co-founder · Home Comfort Score</div>
-                <div className="team-desc">Leads Home Comfort Score, the solar and shadow-analysis engine behind BlindSpot — modelling real sun paths and floor-level shadow hours for a unit, so buyers know exactly how much light a space gets before they sign anything.</div>
+                <div className="team-desc">Leads Home Comfort Score, the solar and shadow-analysis engine behind BlindSpot, modelling real sun paths and floor-level shadow hours for a unit, so buyers know exactly how much light a space gets before they sign anything.</div>
                 <a href="https://www.linkedin.com/in/arushri-gangji-056108381/" target="_blank" rel="noopener" className="team-link">Connect on LinkedIn <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
               </div>
             </div>
@@ -195,7 +195,7 @@ export default function Home() {
               <div>
                 <div className="team-name">Gurshaan Singh Baweja</div>
                 <div className="team-role slate">Co-founder · Neighbourhood Score</div>
-                <div className="team-desc">Leads Neighbourhood Score, the neighbourhood-intelligence engine behind BlindSpot — pulling government data on safety, air quality, power and water into one score, so buyers stop relying on a broker&apos;s word for it.</div>
+                <div className="team-desc">Leads Neighbourhood Score, the neighbourhood-intelligence engine behind BlindSpot, pulling government data on safety, air quality, power and water into one score, so buyers stop relying on a broker&apos;s word for it.</div>
                 <a href="https://www.linkedin.com/in/gurshaan-singh-baweja" target="_blank" rel="noopener" className="team-link">Connect on LinkedIn <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
               </div>
             </div>
@@ -205,7 +205,7 @@ export default function Home() {
 
       <section className="section">
         <div className="wrap closing-inner bento reveal">
-          <h2>Because every property has a blindspot — and we&apos;re making it visible.</h2>
+          <h2>Because every property has a blindspot, and we&apos;re making it visible.</h2>
           <p>See the sunlight. Know the neighbourhood. Two free tools. One pin. Everything the listing wasn&apos;t going to mention.</p>
           <div className="closing-ctas">
             <PinDropTransition href="/property-score" className="btn btn-lg btn-cta">

@@ -159,7 +159,7 @@ export default function ReportModal({
       });
     } catch (e) {
       console.error('Report generation failed:', e);
-      setError("Something went wrong generating your report. This sometimes happens when things are busy — please try again in a minute.");
+      setError("Something went wrong generating your report. This sometimes happens when things are busy, please try again in a minute.");
     } finally {
       setLoading(false);
     }
@@ -212,7 +212,7 @@ export default function ReportModal({
 
             <p style={{ fontSize:13, color:SUB, lineHeight:1.6, marginBottom:26 }}>
               {areaRecord
-                ? `We combine your Neighbourhood Score for ${areaRecord.name || areaRecord.pin_code} with precise sun/shadow data for this exact unit — 12 real screenshots (3 per season) — then use AI to write one combined Home Buyer Verdict covering both. The report itself stays short and readable; the 12 images and their analysis sit in a linked gallery.`
+                ? `We combine your Neighbourhood Score for ${areaRecord.name || areaRecord.pin_code} with precise sun/shadow data for this exact unit - 12 real screenshots (3 per season) - then use AI to write one combined Home Buyer Verdict covering both. The report itself stays short and readable; the 12 images and their analysis sit in a linked gallery.`
                 : 'We compute precise sun/shadow data for this exact location, capture 12 real screenshots (3 per season) at different times, then use AI to narrate the shadow patterns. The images and their analysis open in a linked gallery, keeping the main report short.'}
             </p>
 
@@ -237,7 +237,7 @@ export default function ReportModal({
                       <>
                         <strong>{facing}</strong>
                         <span style={{ color:SUB, fontSize:11.5 }}>
-                          {' '}— {facingTouched ? 'set by you' : facingSuggestion ? 'assumed from nearby buildings, unconfirmed' : 'default, unconfirmed'}
+                          {' '}- {facingTouched ? 'set by you' : facingSuggestion ? 'assumed from nearby buildings, unconfirmed' : 'default, unconfirmed'}
                         </span>
                       </>
                     )}
@@ -310,7 +310,7 @@ export default function ReportModal({
               <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="3" y="3" width="18" height="18"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
             </div>
             <h3 style={{ fontFamily:DISPLAY, fontSize:17, fontWeight:800, color:INK, marginBottom:10 }}>Generating your report</h3>
-            <p style={{ fontFamily:MONO, fontSize:11.5, color:SUB, lineHeight:1.8, marginBottom:20 }}>This can take a minute or two — the AI is reading both the neighbourhood data and the sun/shadow model for this unit.</p>
+            <p style={{ fontFamily:MONO, fontSize:11.5, color:SUB, lineHeight:1.8, marginBottom:20 }}>This can take a minute or two, the AI is reading both the neighbourhood data and the sun/shadow model for this unit.</p>
             <div style={{ background:'#EFEBE3', height:4, overflow:'hidden' }}>
               <div style={{ background:ORG, height:'100%', width:`${progress}%`, transition:'width 0.4s ease' }} />
             </div>

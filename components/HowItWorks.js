@@ -16,25 +16,25 @@ const STEPS = [
   {
     id: 'area',
     tabLabel: '1. Pick your area',
-    eyebrow: 'STEP 1 — AREA',
+    eyebrow: 'STEP 1 - AREA',
     scoreLabel: 'Neighbourhood Score',
     accent: 'slate',
     heading: 'Search a locality, see the score before you see the flat.',
-    copy: "Neighbourhood Score rates every locality 0–100 across crime, air quality, power, water, schools and infrastructure — pulled from government records, not what a broker tells you. Type an area name, get the number in seconds.",
+    copy: "Neighbourhood Score rates every locality 0–100 across crime, air quality, power, water, schools and infrastructure, pulled from government records, not what a broker tells you. Type an area name, get the number in seconds.",
     bullets: [
       'Searchable by name, not just pincode',
       '8 weighted dimensions, one composite score',
       'Nearby-locality comparison built in',
-      'Unlock the full report — inspection notes, price and commute check',
+      'Unlock the full report, inspection notes, price and commute check',
     ],
   },
   {
     id: 'unit',
     tabLabel: '2. Check the unit',
-    eyebrow: 'STEP 2 — UNIT',
+    eyebrow: 'STEP 2 - UNIT',
     scoreLabel: 'Home Comfort Score',
     accent: 'sun',
-    heading: 'Then check the specific flat — floor, facing, and how much sun it actually gets.',
+    heading: 'Then check the specific flat, floor, facing, and how much sun it actually gets.',
     copy: "The area score is the same for every flat on the block. This step is what makes it personal: pick a floor and facing, and real solar geometry returns a Home Comfort Score for that exact unit.",
     bullets: [
       'Real sun-path modelling, not a guess',
@@ -46,10 +46,10 @@ const STEPS = [
   {
     id: 'verdict',
     tabLabel: '3. Get your verdict',
-    eyebrow: 'STEP 3 — VERDICT',
+    eyebrow: 'STEP 3 - VERDICT',
     accent: 'combo',
     heading: 'One weighted score, one plain-English answer.',
-    copy: 'Area and unit combine into a single BlindSpot Score, starting 50/50 — drag the slider if the neighbourhood matters more to you than the sunlight, or the other way round. The verdict tells you straight: recommended, recommended with caution, or not recommended.',
+    copy: 'Area and unit combine into a single BlindSpot Score, starting 50/50, drag the slider if the neighbourhood matters more to you than the sunlight, or the other way round. The verdict tells you straight: recommended, recommended with caution, or not recommended.',
     bullets: [
       'You control the area/unit weighting',
       'Clear recommended / caution / not-recommended verdict',
@@ -77,9 +77,9 @@ const SAMPLE_RECORD = {
 };
 
 const SAMPLE_DIMENSIONS = [
-  { label: 'Safety', weight: 25, score: 90, source: 'Delhi Police Annual Report · est. 2023', explain: '290 crimes reported — safer than 73% of tracked Delhi NCR areas (low tier).' },
+  { label: 'Safety', weight: 25, score: 90, source: 'Delhi Police Annual Report · est. 2023', explain: '290 crimes reported, safer than 73% of tracked Delhi NCR areas (low tier).' },
   { label: 'Infrastructure', weight: 20, score: 45, source: 'DDA Master Plan · DMRC · est. 2024', explain: '0 operational metro station(s) · low highway access · commercial zone.' },
-  { label: 'Air Quality', weight: 15, score: 75, source: 'CPCB live AQI · updated daily', explain: 'AQI ~113, Moderate — okay for healthy people; asthma/heart/lung patients should limit long outdoor exertion.' },
+  { label: 'Air Quality', weight: 15, score: 75, source: 'CPCB live AQI · updated daily', explain: 'AQI ~113, Moderate, okay for healthy people; asthma/heart/lung patients should limit long outdoor exertion.' },
   { label: 'Schools', weight: 10, score: 100, source: 'CBSE affiliation database · est. 2023', explain: '15 CBSE school(s) mapped to this pin.' },
   { label: 'Power', weight: 10, score: 94, source: 'BSES / Tata Power · est. 2023', explain: 'Excellent reliability · ~1.2 outage hrs/month via NDMC.' },
   { label: 'Water Supply', weight: 8, score: 100, source: 'Delhi Jal Board supply & quality · est. 2023', explain: '22 hrs daily supply · Low TDS · 99% piped coverage.' },
@@ -260,7 +260,7 @@ function UnitPanel() {
       <div className="mono ss-tag">HOME COMFORT SCORE</div>
       <h4 className="ss-heading" style={{ marginBottom: 10 }}>Will This Unit Work For You?</h4>
       <p className="hw-live-intro">
-        One score for this exact flat — sun, shade &amp; heat, view, privacy and wind — with the full calculation shown, not just a number.
+        One score for this exact flat - sun, shade &amp; heat, view, privacy and wind - with the full calculation shown, not just a number.
       </p>
       <div className="mono hw-live-unit-readout">
         FLOOR {r.unit.floor} · {r.unit.facing.toUpperCase()}-FACING
@@ -268,7 +268,7 @@ function UnitPanel() {
 
       <div className="hw-live-score-box" style={{ borderLeftColor: SS_GRADE_COLOR[r.grade] }}>
         <div>
-          <div className="mono hw-live-score-label">HOME COMFORT SCORE — COMPOSITE</div>
+          <div className="mono hw-live-score-label">HOME COMFORT SCORE - COMPOSITE</div>
           <div className="hw-live-score-number">{r.liveScore}<span>/100</span></div>
         </div>
         <div className="mono hw-live-grade-pill" style={{ borderColor: SS_GRADE_COLOR[r.grade], color: SS_GRADE_COLOR[r.grade] }}>
@@ -307,7 +307,7 @@ function VerdictPanel() {
         </div>
         <div style={{ height: 4, borderRadius: 3, background: 'linear-gradient(90deg, var(--slate) 50%, var(--sun) 50%)' }} />
         <div className="mono" style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-mute)', marginTop: 6 }}>
-          Starts 50/50 — drag anytime to change how much the neighbourhood matters vs. the specific flat.
+          Starts 50/50, drag anytime to change how much the neighbourhood matters vs. the specific flat.
         </div>
       </div>
 
@@ -330,16 +330,16 @@ function VerdictPanel() {
       </div>
 
       <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 20 }}>
-        Solid area score with a genuinely bright unit — good light most of the year, no major shadow issues at this floor.
+        Solid area score with a genuinely bright unit, good light most of the year, no major shadow issues at this floor.
       </p>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
         <div className="hw-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--slate)', borderRadius: 3, padding: '14px 16px' }}>
-          <div className="mono" style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-mute)', marginBottom: 6 }}>AREA — KORAMANGALA — 50%</div>
+          <div className="mono" style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-mute)', marginBottom: 6 }}>AREA - KORAMANGALA - 50%</div>
           <div style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 22, color: 'var(--slate)' }}>78</div>
         </div>
         <div className="hw-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 3, padding: '14px 16px' }}>
-          <div className="mono" style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-mute)', marginBottom: 6 }}>UNIT (HOME COMFORT) — FL 7, SE — 50%</div>
+          <div className="mono" style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-mute)', marginBottom: 6 }}>UNIT (HOME COMFORT) - FL 7, SE - 50%</div>
           <div style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 22, color: 'var(--sun)' }}>82</div>
         </div>
       </div>
@@ -356,9 +356,9 @@ function VerdictPanel() {
       </div>
 
       <div style={{ fontSize: 12.5, color: 'var(--text-dim)', lineHeight: 1.8 }}>
-        <div>— Area score is the same for every unit in this pincode — only the unit score changes with floor/facing.</div>
-        <div>— View and Privacy are deterministic floor-based estimates, not live building lookups.</div>
-        <div>— Live wind data unavailable — Wind score fell back to a neutral baseline.</div>
+        <div>- Area score is the same for every unit in this pincode, only the unit score changes with floor/facing.</div>
+        <div>- View and Privacy are deterministic floor-based estimates, not live building lookups.</div>
+        <div>- Live wind data unavailable, Wind score fell back to a neutral baseline.</div>
       </div>
     </div>
   );
@@ -431,10 +431,10 @@ export default function HowItWorks() {
       <div className="wrap section-inner">
         <div className="section-head reveal">
           <div>
-            <span className="eyebrow">02 — How It Works</span>
+            <span className="eyebrow">02 - How It Works</span>
             <h2>Area, then unit, then the verdict.</h2>
           </div>
-          <p>Every property decision runs through the same three steps — scroll to see what actually happens when you drop a pin.</p>
+          <p>Every property decision runs through the same three steps, scroll to see what actually happens when you drop a pin.</p>
         </div>
 
         <div className="howworks-tabs reveal">

@@ -39,7 +39,7 @@ export default function ForgotPasswordPage() {
         <p>Enter your email and we&apos;ll send you a link to set a new password.</p>
 
         {sent ? (
-          <p className="auth-success">Check your inbox — we sent a password reset link to {email}.</p>
+          <p className="auth-success">Check your inbox, we sent a password reset link to {email}.</p>
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="auth-field">

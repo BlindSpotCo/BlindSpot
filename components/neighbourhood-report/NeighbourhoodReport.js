@@ -76,17 +76,17 @@ const WEIGHT_PRESETS = {
 // differently.
 function highlights(r) {
   const good = [], bad = [], s = r.scores || {};
-  if (s.crime >= 80) good.push('Very low crime — one of the safer areas.');
-  else if (s.crime != null && s.crime < 40) bad.push('High crime rate — well above average.');
-  if (s.infrastructure >= 70) good.push('Excellent connectivity — metro and highway access.');
-  else if (s.infrastructure != null && s.infrastructure < 40) bad.push('Poor connectivity — limited metro/highway access.');
-  if (s.air >= 80) good.push('Clean air — AQI consistently Good or Satisfactory.');
-  else if (s.air != null && s.air < 50) bad.push('Poor air quality — AQI frequently in Poor range.');
-  if (s.power >= 70) good.push('Reliable power supply — low outage frequency.');
-  else if (s.power != null && s.power < 40) bad.push('Frequent power cuts — high outage hours.');
+  if (s.crime >= 80) good.push('Very low crime, one of the safer areas.');
+  else if (s.crime != null && s.crime < 40) bad.push('High crime rate, well above average.');
+  if (s.infrastructure >= 70) good.push('Excellent connectivity, metro and highway access.');
+  else if (s.infrastructure != null && s.infrastructure < 40) bad.push('Poor connectivity, limited metro/highway access.');
+  if (s.air >= 80) good.push('Clean air, AQI consistently Good or Satisfactory.');
+  else if (s.air != null && s.air < 50) bad.push('Poor air quality, AQI frequently in Poor range.');
+  if (s.power >= 70) good.push('Reliable power supply, low outage frequency.');
+  else if (s.power != null && s.power < 40) bad.push('Frequent power cuts, high outage hours.');
   if (s.schools >= 70) good.push('Strong CBSE school density near this pin.');
-  if (r.waterlogging_risk != null && r.waterlogging_risk <= 2) bad.push(`High monsoon waterlogging risk${r.flooding_incidents_annual ? ` — ~${r.flooding_incidents_annual} flooding incidents a year` : ''}.`);
-  if (s.water != null && s.water < 45) bad.push('Only limited daily water supply — budget for filtration/tankers.');
+  if (r.waterlogging_risk != null && r.waterlogging_risk <= 2) bad.push(`High monsoon waterlogging risk${r.flooding_incidents_annual ? `, ~${r.flooding_incidents_annual} flooding incidents a year` : ''}.`);
+  if (s.water != null && s.water < 45) bad.push('Only limited daily water supply, budget for filtration/tankers.');
   return { good: good.slice(0, 3), bad: bad.slice(0, 3) };
 }
 
@@ -173,7 +173,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 28, paddingBottom: 18, borderBottom: '1px solid color-mix(in srgb, var(--slate) 55%, transparent)' }}>
           <p className="kick" style={{ fontSize: 12 }}>Neighbourhood Intelligence · Spec Sheet</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            {closeHint && <span style={{ fontSize: 11.5, color: 'var(--text-dim)' }}>Couldn&apos;t close automatically — you can close this tab yourself.</span>}
+            {closeHint && <span style={{ fontSize: 11.5, color: 'var(--text-dim)' }}>Couldn&apos;t close automatically, you can close this tab yourself.</span>}
             <SaveReportButton
               source="neighbourhood"
               data={record}
@@ -201,7 +201,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
             <p className="avsheet-label" style={{ color: 'rgba(255,253,248,0.65)' }}>Sheet 01 · {record.area || record.city} · PIN {record.pin_code}</p>
             <h1 className="avsheet-name">{record.name}</h1>
             <p className="avsheet-meta">
-              {record.dimensions_scored || Object.keys(record.scores || {}).length}/{record.dimensions_total || Object.keys(record.scores || {}).length} dimensions · scored {formatDateLong(record.scored_at) || '—'}
+              {record.dimensions_scored || Object.keys(record.scores || {}).length}/{record.dimensions_total || Object.keys(record.scores || {}).length} dimensions · scored {formatDateLong(record.scored_at) || '-'}
             </p>
           </BPF>
 
@@ -263,7 +263,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
                   ))}
                 </div>
                 <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '12px 0 0', lineHeight: 1.5 }}>
-                  Market prices run <strong style={{ color: 'var(--text)' }}>{cm.marketGapLabel}</strong> the {cm.rateTerm} — expect roughly <strong style={{ color: 'var(--text)' }}>{inr(mLo)}–{inr(mHi)}/sq ft</strong> in practice. Indicative government valuation, not a market quote; does not affect the score.
+                  Market prices run <strong style={{ color: 'var(--text)' }}>{cm.marketGapLabel}</strong> the {cm.rateTerm}, expect roughly <strong style={{ color: 'var(--text)' }}>{inr(mLo)}–{inr(mHi)}/sq ft</strong> in practice. Indicative government valuation, not a market quote; does not affect the score.
                 </p>
               </>
             );
@@ -351,7 +351,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
                       <td style={{ padding: '9px 8px 9px 0', borderBottom: '1px dashed var(--line-soft)' }}>{record.name} (this one)</td>
                       <td style={{ textAlign: 'right', padding: '9px 0', borderBottom: '1px dashed var(--line-soft)' }}>{record.nqi_composite}</td>
                       {['crime', 'air', 'water', 'sewerage'].map(f => (
-                        <td key={f} style={{ textAlign: 'right', padding: '9px 0', borderBottom: '1px dashed var(--line-soft)' }}>{record.scores?.[f] ?? '—'}</td>
+                        <td key={f} style={{ textAlign: 'right', padding: '9px 0', borderBottom: '1px dashed var(--line-soft)' }}>{record.scores?.[f] ?? '-'}</td>
                       ))}
                     </tr>
                     {nearby.map(r => (
@@ -359,7 +359,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
                         <td style={{ padding: '9px 8px 9px 0', borderBottom: '1px dashed var(--line-soft)', color: 'var(--text-mute)' }}>{r.name}</td>
                         <td style={{ textAlign: 'right', padding: '9px 0', borderBottom: '1px dashed var(--line-soft)', color: 'var(--text-mute)' }}>{r.nqi_composite}</td>
                         {['crime', 'air', 'water', 'sewerage'].map(f => (
-                          <td key={f} style={{ textAlign: 'right', padding: '9px 0', borderBottom: '1px dashed var(--line-soft)', color: 'var(--text-mute)' }}>{r.scores?.[f] ?? '—'}</td>
+                          <td key={f} style={{ textAlign: 'right', padding: '9px 0', borderBottom: '1px dashed var(--line-soft)', color: 'var(--text-mute)' }}>{r.scores?.[f] ?? '-'}</td>
                         ))}
                       </tr>
                     ))}
@@ -377,7 +377,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
         {/* ── Footer / scope note ── */}
         <div style={{ marginTop: 16, paddingTop: 20, borderTop: '1px solid color-mix(in srgb, var(--slate) 35%, transparent)' }}>
           <p style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, margin: '0 0 10px', maxWidth: 720 }}>
-            <strong style={{ color: 'var(--text)' }}>Scope</strong> — this measures neighbourhood livability from government sources. Not a substitute for legal, title, or physical verification of a specific property.
+            <strong style={{ color: 'var(--text)' }}>Scope</strong>, this measures neighbourhood livability from government sources. Not a substitute for legal, title, or physical verification of a specific property.
           </p>
           <p style={{ fontSize: 11.5, color: 'var(--text-dim)', lineHeight: 1.6, maxWidth: 720 }}>
             Data aggregations for informational and research purposes only, not real-estate, legal or financial advice. Most figures are estimated from government reports last verified 2023–24. Do not rely solely on these scores for a purchase decision.

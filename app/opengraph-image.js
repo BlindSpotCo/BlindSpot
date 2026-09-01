@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 
-export const alt = "BlindSpot — See What Listings Don't Tell You";
+export const alt = "BlindSpot - See What Listings Don't Tell You";
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -47,7 +47,7 @@ export default async function Image() {
             See what listings don't tell you.
           </div>
           <div style={{ fontSize: 26, color: '#5A5140', maxWidth: 880, lineHeight: 1.4 }}>
-            Neighbourhood Score and Home Comfort Score — data-backed property
+            Neighbourhood Score and Home Comfort Score, data-backed property
             intelligence, before you sign anything.
           </div>
         </div>

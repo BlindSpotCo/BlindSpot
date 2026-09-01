@@ -88,13 +88,13 @@ export default async function MyReportsPage() {
 
         {fetchFailed && (
           <div className="reports-empty" style={{ marginBottom: 24 }}>
-            Reports table isn&apos;t set up in Supabase yet — see SUPABASE_SETUP.md.
+            Reports table isn&apos;t set up in Supabase yet, see SUPABASE_SETUP.md.
           </div>
         )}
 
         {!fetchFailed && reports.length === 0 && (
           <div className="reports-empty">
-            Nothing saved yet. Run a Neighbourhood, AI, or Furnishing report and hit &quot;Save report&quot; to see it here — save a few into the same folder (e.g. a flat number) to keep everything about one property together.
+            Nothing saved yet. Run a Neighbourhood, AI, or Furnishing report and hit &quot;Save report&quot; to see it here, save a few into the same folder (e.g. a flat number) to keep everything about one property together.
           </div>
         )}
 

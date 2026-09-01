@@ -290,7 +290,7 @@ export async function POST(req) {
     scorecardCards.push({
       label: 'Family Friendliness',
       value: avg >= 75 ? 'Strong' : avg >= 55 ? 'Moderate' : 'Limited',
-      detail: `Schools ${schools ?? '—'}, crime ${crime ?? '—'}`, color: gradeColor(avg),
+      detail: `Schools ${schools ?? '-'}, crime ${crime ?? '-'}`, color: gradeColor(avg),
     });
   }
   // Elderly Suitability -- derived from floor (lift dependency risk on
@@ -306,7 +306,7 @@ export async function POST(req) {
     scorecardCards.push({
       label: 'Elderly Suitability',
       value: elderlyScore >= 70 ? 'Good' : elderlyScore >= 45 ? 'Fair' : 'Limited',
-      detail: `Floor ${floorN2}${roadsScore != null ? `, roads ${roadsScore}` : ''}${crimeScoreForElderly != null ? `, crime ${crimeScoreForElderly}` : ''} — medical proximity not yet mapped`,
+      detail: `Floor ${floorN2}${roadsScore != null ? `, roads ${roadsScore}` : ''}${crimeScoreForElderly != null ? `, crime ${crimeScoreForElderly}` : ''}, medical proximity not yet mapped`,
       color: gradeColor(elderlyScore),
     });
   }
@@ -319,8 +319,8 @@ export async function POST(req) {
     const airScoreForPlants = avRecord?.scores?.air;
     let plantsValue, plantsColor;
     if (avgH >= 2 && avgH <= 8) { plantsValue = 'Good'; plantsColor = GOOD; }
-    else if (avgH > 8) { plantsValue = 'Fair — may need shading'; plantsColor = OK; }
-    else { plantsValue = 'Limited — low light'; plantsColor = OK; }
+    else if (avgH > 8) { plantsValue = 'Fair, may need shading'; plantsColor = OK; }
+    else { plantsValue = 'Limited, low light'; plantsColor = OK; }
     if (airScoreForPlants != null && airScoreForPlants < 50 && plantsColor === GOOD) { plantsValue = 'Fair'; plantsColor = OK; }
     const plantsDetailParts = [`${avgH}h/day avg light`];
     if (airScoreForPlants != null) plantsDetailParts.push(`air quality ${airScoreForPlants}`);
@@ -398,7 +398,7 @@ export async function POST(req) {
     if (zero.length) cons.push(`No direct sun ${zero[0].month}${zero.length > 1 ? `–${zero[zero.length-1].month}` : ''} (${zero.length} month${zero.length > 1 ? 's' : ''})`);
   }
   if (shadeHeatSub) {
-    if (shadeHeatSub.score >= 70) pros.push('Naturally well-shaded — low summer heat gain');
+    if (shadeHeatSub.score >= 70) pros.push('Naturally well-shaded, low summer heat gain');
     else if (shadeHeatSub.score < 40) cons.push('High summer heat-gain risk');
   }
   if (windSub) {
@@ -543,16 +543,16 @@ export async function POST(req) {
     <div style="display:flex;gap:14px;margin-bottom:28px;flex-wrap:wrap;">
       <div style="background:${GRADIENT};padding:16px 20px;flex:1.3;min-width:160px;">
         <div style="font-size:9.5px;color:rgba(255,255,255,0.75);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">BlindSpot Combined Score</div>
-        <div style="font-size:32px;font-weight:800;color:#fff;font-family:${DISPLAY};line-height:1;">${combinedScore ?? '—'}<span style="font-size:14px;color:rgba(255,255,255,0.75);">/100</span></div>
+        <div style="font-size:32px;font-weight:800;color:#fff;font-family:${DISPLAY};line-height:1;">${combinedScore ?? '-'}<span style="font-size:14px;color:rgba(255,255,255,0.75);">/100</span></div>
       </div>
       <div style="background:${CARD};border:1px solid ${LINE};padding:16px 20px;flex:1;min-width:140px;">
-        <div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Neighbourhood — ${safeAreaName}</div>
+        <div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Neighbourhood, ${safeAreaName}</div>
         <div style="font-size:24px;font-weight:800;color:${WINE};font-family:${DISPLAY};">${avRecord.nqi_composite}<span style="font-size:12px;color:${DIM};">/100</span></div>
-        <div style="font-size:10px;color:${DIM};margin-top:2px;">${Math.round((areaWeight ?? 0.5) * 100)}% weight · Grade ${escapeHtml(avRecord.grade ?? '—')}</div>
+        <div style="font-size:10px;color:${DIM};margin-top:2px;">${Math.round((areaWeight ?? 0.5) * 100)}% weight · Grade ${escapeHtml(avRecord.grade ?? '-')}</div>
       </div>
       <div style="background:${CARD};border:1px solid ${LINE};padding:16px 20px;flex:1;min-width:140px;">
-        <div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Home Comfort — this unit</div>
-        <div style="font-size:24px;font-weight:800;color:${SUN};font-family:${DISPLAY};">${unitScore ?? '—'}<span style="font-size:12px;color:${DIM};">/100</span></div>
+        <div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Home Comfort, this unit</div>
+        <div style="font-size:24px;font-weight:800;color:${SUN};font-family:${DISPLAY};">${unitScore ?? '-'}<span style="font-size:12px;color:${DIM};">/100</span></div>
         <div style="font-size:10px;color:${DIM};margin-top:2px;">${Math.round((unitWeight ?? 0.5) * 100)}% weight · Floor ${safeFloor}, ${safeFacing}</div>
       </div>
     </div>` : '';
@@ -596,9 +596,9 @@ export async function POST(req) {
     <div style="border:1px solid ${LINE};padding:28px;margin-bottom:28px;">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${WINE}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-        <h2 style="font-size:16px;font-weight:800;color:${INK};font-family:${DISPLAY};">Neighbourhood Analysis — ${safeAreaName}</h2>
+        <h2 style="font-size:16px;font-weight:800;color:${INK};font-family:${DISPLAY};">Neighbourhood Analysis, ${safeAreaName}</h2>
       </div>
-      <div style="font-size:11px;color:${DIM};margin-bottom:18px;">Area-level — the same for every unit in this pincode. Source: Neighbourhood Score.</div>
+      <div style="font-size:11px;color:${DIM};margin-bottom:18px;">Area-level, the same for every unit in this pincode. Source: Neighbourhood Score.</div>
       <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:20px;">
         ${neighbourhoodFactorRows}
       </div>
@@ -607,12 +607,12 @@ export async function POST(req) {
         ${avRecord.total_cognizable_crimes != null ? `
         <div style="background:${CARD};border:1px solid ${LINE};padding:12px 16px;flex:1;min-width:130px;">
           <div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;">Crime</div>
-          <div style="font-size:13px;color:${INK};">${avRecord.total_cognizable_crimes}/yr · safer than ${avRecord.crime_percentile ?? '—'}% of areas</div>
+          <div style="font-size:13px;color:${INK};">${avRecord.total_cognizable_crimes}/yr · safer than ${avRecord.crime_percentile ?? '-'}% of areas</div>
         </div>` : ''}
         ${avRecord.schools_count != null ? `
         <div style="background:${CARD};border:1px solid ${LINE};padding:12px 16px;flex:1;min-width:130px;">
           <div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;">Schools mapped</div>
-          <div style="font-size:13px;color:${INK};">${avRecord.schools_count}${(avRecord.schools_list?.length) ? ` — incl. ${escapeHtml(avRecord.schools_list.slice(0,3).map(s=>s.name).join(', '))}` : ''}</div>
+          <div style="font-size:13px;color:${INK};">${avRecord.schools_count}${(avRecord.schools_list?.length) ? `, incl. ${escapeHtml(avRecord.schools_list.slice(0,3).map(s=>s.name).join(', '))}` : ''}</div>
         </div>` : ''}
         ${avRecord.price_context?.rate_sqft ? `
         <div style="background:${CARD};border:1px solid ${LINE};padding:12px 16px;flex:1;min-width:130px;">
@@ -632,7 +632,7 @@ export async function POST(req) {
     <div style="border:1px solid ${LINE};padding:28px;margin-bottom:28px;">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${SUN}" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4.5"/><line x1="12" y1="19.5" x2="12" y2="22"/><line x1="2" y1="12" x2="4.5" y2="12"/><line x1="19.5" y1="12" x2="22" y2="12"/></svg>
-        <h2 style="font-size:16px;font-weight:800;color:${INK};font-family:${DISPLAY};">${hasNeighbourhood ? 'Sun &amp; Shadow Analysis' : 'Summary'} — Floor ${safeFloor}, ${safeFacing}-facing</h2>
+        <h2 style="font-size:16px;font-weight:800;color:${INK};font-family:${DISPLAY};">${hasNeighbourhood ? 'Sun &amp; Shadow Analysis' : 'Summary'}, Floor ${safeFloor}, ${safeFacing}-facing</h2>
       </div>
       ${summary?.solarFeasibility ? `
       <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:20px;">
@@ -658,7 +658,7 @@ export async function POST(req) {
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <title>${hasNeighbourhood ? 'BlindSpot Combined Report' : 'Home Comfort Report'} — ${safeAddress}</title>
+  <title>${hasNeighbourhood ? 'BlindSpot Combined Report' : 'Home Comfort Report'} - ${safeAddress}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
   <style>
@@ -688,7 +688,7 @@ export async function POST(req) {
         <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px;">
           ${markDataUri ? `<img src="${markDataUri}" alt="BlindSpot" style="width:18px;height:20px;object-fit:contain;display:block;"/>` : ''}
           <span style="font-size:12px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.12em;">${hasNeighbourhood ? 'BlindSpot Combined Report' : 'BlindSpot Home Comfort'}</span>
-          <span style="font-size:11px;color:${DIM};">${hasNeighbourhood ? 'Neighbourhood &amp; Home Comfort — One Verdict' : 'Home Buyer Solar Report · Visual AI Analysis'}</span>
+          <span style="font-size:11px;color:${DIM};">${hasNeighbourhood ? 'Neighbourhood &amp; Home Comfort - One Verdict' : 'Home Buyer Solar Report · Visual AI Analysis'}</span>
         </div>
         ${labelPill}
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px;">
@@ -713,7 +713,7 @@ export async function POST(req) {
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="${WINE}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M3 20l6-6 4 4 8-8"/><path d="M15 6h6v6"/></svg>
           <div style="flex:1;">
             <div style="font-size:13px;font-weight:700;color:${INK};">${hasNeighbourhood ? 'See the evidence: neighbourhood data + sun/shadow images' : 'Real 3D map with sun and shadow path'}</div>
-            <div style="font-size:11px;color:${DIM};margin-top:2px;">${shotCount || 12} real map angles, each with its own AI analysis — opens in a new tab →</div>
+            <div style="font-size:11px;color:${DIM};margin-top:2px;">${shotCount || 12} real map angles, each with its own AI analysis, opens in a new tab →</div>
           </div>
         </a>
       </div>
@@ -731,14 +731,14 @@ export async function POST(req) {
       <div style="border:1px solid ${LINE_SOFT};padding:20px 24px;">
         <div style="font-size:11px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">How this report was built</div>
         <ul style="margin:0;padding-left:18px;font-size:11.5px;color:${DIM};line-height:1.7;">
-          ${hasNeighbourhood ? `<li>Neighbourhood factor scores, crime, schools, and price context come from Neighbourhood Score — the same for every unit in this pincode, deterministic, not AI-generated.</li>` : ''}
-          ${hasNeighbourhood ? `<li>The Combined Score is (${avRecord.nqi_composite} × ${Math.round((areaWeight ?? 0.5) * 100)}%) + (${unitScore ?? '—'} × ${Math.round((unitWeight ?? 0.5) * 100)}%) = ${combinedScore ?? '—'} — a weighted average, not AI-generated.</li>` : ''}
-          <li>Sun position and monthly sunlight hours come from a NOAA solar-geometry algorithm — deterministic, not AI-generated.</li>
+          ${hasNeighbourhood ? `<li>Neighbourhood factor scores, crime, schools, and price context come from Neighbourhood Score, the same for every unit in this pincode, deterministic, not AI-generated.</li>` : ''}
+          ${hasNeighbourhood ? `<li>The Combined Score is (${avRecord.nqi_composite} × ${Math.round((areaWeight ?? 0.5) * 100)}%) + (${unitScore ?? '-'} × ${Math.round((unitWeight ?? 0.5) * 100)}%) = ${combinedScore ?? '-'}, a weighted average, not AI-generated.</li>` : ''}
+          <li>Sun position and monthly sunlight hours come from a NOAA solar-geometry algorithm, deterministic, not AI-generated.</li>
           <li>Floor clearance uses a generic urban-obstruction estimate, not a measurement of this property's specific neighboring buildings.</li>
           ${summary?.buildingHeightNote ? `<li>${summary.buildingHeightNote.sentence}</li>` : ''}
           ${safeFacingAssumptionNote ? `<li>${safeFacingAssumptionNote}</li>` : ''}
-          <li>The narrative sections use AI to interpret the real numbers above and describe the screenshots — it is instructed to treat the figures as fact, not to estimate its own.</li>
-          <li>The ${shotCount || 12} sun/shadow map screenshots and their per-image analysis are in a separate gallery, linked near the top of this report (and clickable in the downloaded PDF too) — that link works as long as the browser tab this report was generated in stays open; it won't work if reopened later in a new session, since the gallery isn't hosted on a server yet.</li>
+          <li>The narrative sections use AI to interpret the real numbers above and describe the screenshots, it is instructed to treat the figures as fact, not to estimate its own.</li>
+          <li>The ${shotCount || 12} sun/shadow map screenshots and their per-image analysis are in a separate gallery, linked near the top of this report (and clickable in the downloaded PDF too), that link works as long as the browser tab this report was generated in stays open; it won't work if reopened later in a new session, since the gallery isn't hosted on a server yet.</li>
         </ul>
       </div>
 
@@ -841,7 +841,7 @@ export async function POST(req) {
         status.textContent = '';
       } catch (err) {
         console.error(err);
-        status.textContent = 'Download failed — try Print instead.';
+        status.textContent = 'Download failed, try Print instead.';
       } finally {
         btn.disabled = false;
       }
@@ -861,7 +861,7 @@ export async function POST(req) {
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <title>Sun &amp; Shadow Images — ${safeAddress}</title>
+  <title>Sun &amp; Shadow Images - ${safeAddress}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
   <style>
@@ -882,11 +882,11 @@ export async function POST(req) {
 
   <div style="max-width:900px;margin:0 auto;padding:28px 32px 56px;background:#fff;">
     <p style="font-size:13px;color:${DIM};line-height:1.7;margin-bottom:8px;">
-      ${shotCount || 12} real screenshots of the 3D map at this exact pin — 3 per season, at 9am / noon / 3pm — each with its own AI description of what's casting shade and how much of the unit is in sun at that moment.
+      ${shotCount || 12} real screenshots of the 3D map at this exact pin, 3 per season, at 9am / noon / 3pm, each with its own AI description of what's casting shade and how much of the unit is in sun at that moment.
     </p>
     ${monthlyTableSection ? `
     <div style="padding:24px 0 40px;">
-      <div style="font-size:11px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;">Appendix — Full Technical Data</div>
+      <div style="font-size:11px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;">Appendix, Full Technical Data</div>
       ${monthlyTableSection}
     </div>` : ''}
     ${screenshotPages}
@@ -909,7 +909,7 @@ export async function GET(req) {
       floor: searchParams.get('floor') || '5',
       facing: searchParams.get('facing') || 'South',
       screenshots: [],
-      analysis: 'No analysis available — use POST endpoint with screenshots.',
+      analysis: 'No analysis available, use POST endpoint with screenshots.',
       summary: null,
     }),
   }));

@@ -112,8 +112,8 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
     } catch (e) {
       setError(
         e.message === 'not-signed-in'
-          ? 'Signed-in session not found — please sign in again and retry.'
-          : `Couldn\u2019t save that report (${e.message || 'unknown error'}) — please try again.`
+          ? 'Signed-in session not found, please sign in again and retry.'
+          : `Couldn\u2019t save that report (${e.message || 'unknown error'}), please try again.`
       );
     } finally {
       setSaving(false);

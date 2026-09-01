@@ -43,7 +43,7 @@ export default function LiveScoreCard({ result }) {
       }}>
         <div>
           <div style={{ fontFamily: MONO, fontSize: 10, fontWeight: 500, color: SUB, letterSpacing: '.14em', marginBottom: 6 }}>
-            HOME COMFORT SCORE — COMPOSITE
+            HOME COMFORT SCORE - COMPOSITE
           </div>
           <div className="ls-score-number" style={{ fontFamily: DISPLAY, fontSize: 52, fontWeight: 800, color: INK, lineHeight: 1 }}>
             {result.liveScore}<span style={{ fontSize: 18, color: SUB, fontWeight: 700 }}>/100</span>
@@ -94,7 +94,7 @@ export default function LiveScoreCard({ result }) {
                 fontFamily: MONO, fontSize: 10.5, color: SUB, lineHeight: 1.6,
                 borderTop: `1px dashed ${LINE}`, paddingTop: 7,
               }}>
-                <span style={{ color: ORG, fontWeight: 500 }}>BASIS — </span>{sub.basis}
+                <span style={{ color: ORG, fontWeight: 500 }}>BASIS - </span>{sub.basis}
               </div>
             </div>
           );
@@ -129,7 +129,7 @@ export default function LiveScoreCard({ result }) {
             DATA NOTES
           </div>
           {result.dataNotes.map((note, i) => (
-            <div key={i} style={{ fontSize: 11.5, color: SUB, lineHeight: 1.6 }}>— {note}</div>
+            <div key={i} style={{ fontSize: 11.5, color: SUB, lineHeight: 1.6 }}>- {note}</div>
           ))}
         </div>
       )}

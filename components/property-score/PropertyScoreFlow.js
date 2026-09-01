@@ -239,14 +239,14 @@ export default function PropertyScoreFlow({ initial }) {
     if ((viewStage !== 'unit' && viewStage !== 'verdict') || unitReady || autoGeoTried.current) return;
     autoGeoTried.current = true;
     if (!('geolocation' in navigator)) {
-      setAutoGeoError('Location access isn\u2019t available here — showing a default spot, search above to find yours.');
+      setAutoGeoError('Location access isn\u2019t available here, showing a default spot, search above to find yours.');
       handleAddressConfirmed(28.6139, 77.2090, null, null, '');
       return;
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => handleAddressConfirmed(pos.coords.latitude, pos.coords.longitude, null, null, ''),
       () => {
-        setAutoGeoError('Couldn\u2019t get your location — showing a default spot, search above to find yours.');
+        setAutoGeoError('Couldn\u2019t get your location, showing a default spot, search above to find yours.');
         handleAddressConfirmed(28.6139, 77.2090, null, null, '');
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
@@ -400,7 +400,7 @@ export default function PropertyScoreFlow({ initial }) {
                 className="btn btn-lg btn-cta ps-btn ps-cta-btn"
                 style={{ opacity: unitReady ? 1 : .45, cursor: unitReady ? 'pointer' : 'default' }}
               >
-                Continue — Configure Your Unit <span className="btn-cta-arrow">→</span>
+                Continue - Configure Your Unit <span className="btn-cta-arrow">→</span>
               </button>
               {!unitReady && (
                 <p style={{ fontSize: 12.5, color: 'var(--text-dim)', marginTop: 10 }}>Pick a location to continue.</p>

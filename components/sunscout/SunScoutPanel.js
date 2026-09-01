@@ -145,7 +145,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
 
   const handleMapReady = useCallback((fn) => {
     captureRef.current = fn;
-    console.log('[SunScoutPanel] Map3DShadow onReady fired — captureRef is now set');
+    console.log('[SunScoutPanel] Map3DShadow onReady fired, captureRef is now set');
   }, []);
 
   const clearScreenshotWatchdog = () => {
@@ -153,7 +153,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
   };
 
   const handleScreenshot = useCallback((label, data) => {
-    console.log(`[SunScoutPanel] screenshot received: "${label}" — ${data ? `${Math.round(data.length / 1024)}KB` : 'NULL (failed)'}`);
+    console.log(`[SunScoutPanel] screenshot received: "${label}", ${data ? `${Math.round(data.length / 1024)}KB` : 'NULL (failed)'}`);
     if (data) screenshotBufferRef.current.push({ label, base64: data });
     screenshotIdxRef.current++;
     if (screenshotIdxRef.current < SHOTS.length) {
@@ -163,7 +163,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
       clearScreenshotWatchdog();
       const buf = [...screenshotBufferRef.current];
       const totalKB = Math.round(buf.reduce((s, b) => s + b.base64.length, 0) / 1024);
-      console.log(`[SunScoutPanel] all ${SHOTS.length} shots done — ${buf.length} captured successfully, ~${totalKB}KB total payload`);
+      console.log(`[SunScoutPanel] all ${SHOTS.length} shots done, ${buf.length} captured successfully, ~${totalKB}KB total payload`);
       screenshotResolverRef.current(buf);
       screenshotResolverRef.current = null;
       screenshotRejecterRef.current = null;
@@ -171,7 +171,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
   }, []);
 
   const captureScreenshots = useCallback(() => {
-    console.log('[SunScoutPanel] captureRef.current is', captureRef.current ? 'SET' : 'NULL — Map3DShadow onReady may not have fired yet');
+    console.log('[SunScoutPanel] captureRef.current is', captureRef.current ? 'SET' : 'NULL, Map3DShadow onReady may not have fired yet');
     return new Promise((resolve, reject) => {
       screenshotBufferRef.current = [];
       screenshotIdxRef.current = 0;
@@ -191,7 +191,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
       clearScreenshotWatchdog();
       screenshotWatchdogRef.current = setTimeout(() => {
         if (!captureRef.current && screenshotRejecterRef.current) {
-          console.warn('[SunScoutPanel] screenshot watchdog fired — 3D map never became ready, aborting report generation');
+          console.warn('[SunScoutPanel] screenshot watchdog fired, 3D map never became ready, aborting report generation');
           screenshotRejecterRef.current(new Error('map-not-ready'));
           screenshotResolverRef.current = null;
           screenshotRejecterRef.current = null;
@@ -261,7 +261,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
       </div>
 
       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, color: TEXT_SUB, padding: '5px 10px', background: '#FFFBF5', borderBottom: '1px solid rgba(224,123,0,0.08)' }}>
-        Click anywhere on the map to move the pin — Home Comfort Score below and the AI Report (further down, once you confirm floor/facing) use wherever it lands.
+        Click anywhere on the map to move the pin, Home Comfort Score below and the AI Report (further down, once you confirm floor/facing) use wherever it lands.
       </div>
 
       <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>

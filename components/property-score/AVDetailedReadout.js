@@ -69,7 +69,7 @@ function CategoryCard({ title, tip, stats }) {
         {stats.filter(Boolean).map(([label, val, itemTip]) => (
           <div key={label}>
             <div style={{ fontSize: 11.5, textTransform: 'uppercase', letterSpacing: '.05em', color: 'var(--text-dim)', display: 'flex', alignItems: 'center' }}>{label}<Info text={itemTip} /></div>
-            <div style={{ fontFamily: "'Anton', sans-serif", fontSize: 15.5, fontWeight: 400, marginTop: 3, color: 'var(--text)' }}>{val ?? '—'}</div>
+            <div style={{ fontFamily: "'Anton', sans-serif", fontSize: 15.5, fontWeight: 400, marginTop: 3, color: 'var(--text)' }}>{val ?? '-'}</div>
           </div>
         ))}
       </div>
@@ -79,12 +79,12 @@ function CategoryCard({ title, tip, stats }) {
 
 // AQI category → plain-English meaning, verbatim from AV.
 export const AQI_PLAIN = {
-  'Good': 'Air is clean — safe for everyone.',
-  'Satisfactory': 'Air is acceptable — fine for most; sensitive individuals may feel minor irritation.',
+  'Good': 'Air is clean - safe for everyone.',
+  'Satisfactory': 'Air is acceptable, fine for most; sensitive individuals may feel minor irritation.',
   'Moderate': 'Okay for healthy people; asthma/heart/lung patients should limit long outdoor exertion.',
-  'Poor': 'Unhealthy — prolonged outdoor activity can cause breathing discomfort.',
-  'Very Poor': 'Unhealthy for everyone — avoid outdoor exertion.',
-  'Severe': 'Hazardous — a serious health risk; stay indoors.',
+  'Poor': 'Unhealthy, prolonged outdoor activity can cause breathing discomfort.',
+  'Very Poor': 'Unhealthy for everyone, avoid outdoor exertion.',
+  'Severe': 'Hazardous, a serious health risk; stay indoors.',
 };
 
 // Attribution now lives in lib/aslivastu/cityMeta.js, keyed by city.
@@ -126,13 +126,13 @@ export function source(dimension, city) {
 // an unreachable 90+ shelf.
 export function scoreColor(v) {
   if (v == null) return 'var(--text-dim)';
-  if (v >= 75) return '#5C6B00'; // deep olive green — best (was 90+)
+  if (v >= 75) return '#5C6B00'; // deep olive green, best (was 90+)
   if (v >= 60) return '#B3B232'; // olive (was 75+)
   if (v >= 40) return '#F4AE42'; // orange
-  return '#8F0000';              // red — weakest
+  return '#8F0000';              // red, weakest
 }
 export function waterloggingLabel(v) {
-  if (v == null) return '—';
+  if (v == null) return '-';
   return v >= 4 ? 'Low risk' : v >= 3 ? 'Moderate risk' : 'High risk';
 }
 // scoreColor()'s ramp spans deep-dark olive (best) through bright
@@ -151,10 +151,10 @@ export function readableTextColor(hex) {
 // verdict label/colour block the full report uses, instead of drifting out
 // of sync with a duplicate copy.
 export function verdictFor(nqi) {
-  if (nqi >= 80) return { label: 'Strong Buy', why: 'Scores well across the board — few weak spots to worry about.' };
+  if (nqi >= 80) return { label: 'Strong Buy', why: 'Scores well across the board, few weak spots to worry about.' };
   if (nqi >= 60) return { label: 'Consider', why: 'Decent overall, with some weak dimensions worth inspecting on site before deciding.' };
-  if (nqi >= 45) return { label: 'Below Average', why: 'Below the tracked-area average — compare nearby areas before committing.' };
-  return { label: 'Avoid', why: 'Multiple dimensions score poorly — strongly recommend comparing alternatives.' };
+  if (nqi >= 45) return { label: 'Below Average', why: 'Below the tracked-area average, compare nearby areas before committing.' };
+  return { label: 'Avoid', why: 'Multiple dimensions score poorly, strongly recommend comparing alternatives.' };
 }
 // Moved here from NeighbourhoodReport.js (was a local, unexported function)
 // for the same reason as verdictFor -- AVAreaCard's dimension rows need the
@@ -163,21 +163,21 @@ export function explain(k, r) {
   const city = r.city || 'Delhi NCR';
   switch (k) {
     case 'crime': return r.crime_percentile != null
-      ? `${r.total_cognizable_crimes} crimes reported — safer than ${r.crime_percentile}% of tracked ${city} areas (${(r.crime_tier || '').toLowerCase()} tier).`
+      ? `${r.total_cognizable_crimes} crimes reported, safer than ${r.crime_percentile}% of tracked ${city} areas (${(r.crime_tier || '').toLowerCase()} tier).`
       : 'Cognizable crimes reported for the police catchment.';
-    case 'infrastructure': return `${r.metro_stations_nearby || 0} operational metro station(s) · ${(r.highway_proximity || '—').toLowerCase()} highway access · ${(r.zone_type || 'mixed').toLowerCase()} zone.`;
+    case 'infrastructure': return `${r.metro_stations_nearby || 0} operational metro station(s) · ${(r.highway_proximity || '-').toLowerCase()} highway access · ${(r.zone_type || 'mixed').toLowerCase()} zone.`;
     // Names the station a live reading came from -- a "nearest station"
     // can be several km away, so attributing it matters. Falls back to the
     // plain band sentence for stored readings.
     case 'air': return r.aqi_category
-      ? `AQI ~${Math.round(r.aqi_avg)}, ${r.aqi_category} — ${AQI_PLAIN[r.aqi_category] || 'CPCB band.'}${r.aqi_is_live && r.aqi_station ? ` Nearest station: ${r.aqi_station}.` : ''}`
+      ? `AQI ~${Math.round(r.aqi_avg)}, ${r.aqi_category}, ${AQI_PLAIN[r.aqi_category] || 'CPCB band.'}${r.aqi_is_live && r.aqi_station ? ` Nearest station: ${r.aqi_station}.` : ''}`
       : 'Awaiting an air-quality reading for this area.';
-    case 'power': return `${r.reliability || '—'} reliability · ~${r.avg_outage_hours ?? '—'} outage hrs/month via ${r.discom || 'the local DISCOM'}.`;
+    case 'power': return `${r.reliability || '-'} reliability · ~${r.avg_outage_hours ?? '-'} outage hrs/month via ${r.discom || 'the local DISCOM'}.`;
     case 'schools': return r.schools_count ? `${r.schools_count} CBSE school(s) mapped to this pin.` : 'No CBSE-affiliated school in this exact pin.';
-    case 'water': return `${r.supply_hours ?? '—'} hrs daily supply · ${(r.tds_level || '—')} TDS · ${(r.water_coverage ?? r.coverage_pct) ?? '—'}% piped coverage.`;
-    case 'roads': return `${r.road_condition || '—'} condition · ~${r.pothole_density ?? '—'} potholes/km · last resurfaced ${r.last_resurfaced || '—'}.`;
-    case 'sewerage': { const wl = r.waterlogging_risk; const lvl = wl == null ? '—' : wl >= 4 ? 'low' : wl >= 3 ? 'moderate' : 'high';
-      return `${lvl} monsoon waterlogging risk${r.flooding_incidents_annual ? ` — ~${r.flooding_incidents_annual} flooding incidents a year` : ''}.`; }
+    case 'water': return `${r.supply_hours ?? '-'} hrs daily supply · ${(r.tds_level || '-')} TDS · ${(r.water_coverage ?? r.coverage_pct) ?? '-'}% piped coverage.`;
+    case 'roads': return `${r.road_condition || '-'} condition · ~${r.pothole_density ?? '-'} potholes/km · last resurfaced ${r.last_resurfaced || '-'}.`;
+    case 'sewerage': { const wl = r.waterlogging_risk; const lvl = wl == null ? '-' : wl >= 4 ? 'low' : wl >= 3 ? 'moderate' : 'high';
+      return `${lvl} monsoon waterlogging risk${r.flooding_incidents_annual ? `, ~${r.flooding_incidents_annual} flooding incidents a year` : ''}.`; }
     default: return '';
   }
 }
@@ -207,7 +207,7 @@ export function formatDateLong(iso) {
 // Indian-numbering (lakh/crore) grouping, written out by hand instead of
 // toLocaleString('en-IN') for the same reason as the date formatters above.
 export function inr(n) {
-  if (n == null) return '—';
+  if (n == null) return '-';
   const num = Math.round(n);
   const s = Math.abs(num).toString();
   let out;
@@ -233,40 +233,40 @@ export default function AVDetailedReadout({ record }) {
 
         <CategoryCard title="Safety" tip={source('crime', record.city)} stats={[
           ['Total crimes', record.total_cognizable_crimes, "Total cognizable crimes reported annually for this pin's police-station catchment, which can span a wider area than any one colony."],
-          ['Safety score', s.crime != null ? `${s.crime}/100` : '—', 'Inverse-normalized against total crimes: 250 or fewer scores 100, 650 or more scores 0, linear in between.'],
-          ['Safer than', record.crime_percentile != null ? `${record.crime_percentile}%` : '—', "Percentile rank of this pin's crime count against other tracked areas in the same city (cities ranked separately)."],
+          ['Safety score', s.crime != null ? `${s.crime}/100` : '-', 'Inverse-normalized against total crimes: 250 or fewer scores 100, 650 or more scores 0, linear in between.'],
+          ['Safer than', record.crime_percentile != null ? `${record.crime_percentile}%` : '-', "Percentile rank of this pin's crime count against other tracked areas in the same city (cities ranked separately)."],
           ['Crime tier', record.crime_tier, 'Very Low / Low / Moderate / High / Very High, based on the percentile rank.'],
           ['Source year', '2022–23', 'Reporting year of the source crime data.'],
         ]} />
 
         <CategoryCard title="Air Quality" tip={source('air', record.city)} stats={[
-          ['AQI', record.aqi_avg != null ? Math.round(record.aqi_avg) : '—', 'Air Quality Index, CPCB/KSPCB daily average.'],
+          ['AQI', record.aqi_avg != null ? Math.round(record.aqi_avg) : '-', 'Air Quality Index, CPCB/KSPCB daily average.'],
           ['Category', record.aqi_category, record.aqi_category ? (AQI_PLAIN[record.aqi_category] || '') : 'Good / Satisfactory / Moderate / Poor / Very Poor / Severe, per CPCB bands.'],
-          ['Score', s.air != null ? `${s.air}/100` : '—', 'Normalized against the CPCB AQI band for this reading.'],
+          ['Score', s.air != null ? `${s.air}/100` : '-', 'Normalized against the CPCB AQI band for this reading.'],
         ]} />
 
         <CategoryCard title="Power Supply" tip={source('power', record.city)} stats={[
           ['Discom', record.discom, 'The electricity distribution company serving this area.'],
           ['Reliability', record.reliability, 'Qualitative reliability rating derived from outage frequency and consumer complaint data.'],
-          ['Avg cut hrs', record.avg_outage_hours != null ? `${record.avg_outage_hours} /mo` : '—', 'Average monthly power-outage hours from DISCOM reports — not live-metered.'],
-          ['Score', s.power != null ? `${s.power}/100` : '—', 'Weighted blend of outage frequency (60%) and average outage duration (40%).'],
+          ['Avg cut hrs', record.avg_outage_hours != null ? `${record.avg_outage_hours} /mo` : '-', 'Average monthly power-outage hours from DISCOM reports, not live-metered.'],
+          ['Score', s.power != null ? `${s.power}/100` : '-', 'Weighted blend of outage frequency (60%) and average outage duration (40%).'],
         ]} />
 
         <CategoryCard title="Connectivity & Infrastructure" tip={source('infrastructure', record.city)} stats={[
-          ['Zone', record.zone_type, 'Land-use zone type — residential, mixed, commercial or industrial.'],
+          ['Zone', record.zone_type, 'Land-use zone type, residential, mixed, commercial or industrial.'],
           ['Metro nearby', record.metro_stations_nearby, 'Number of operational metro stations near this pin.'],
           ['Metro planned', record.metro_planned_stations, 'Approved but not-yet-open metro stations nearby.'],
           ['Highway', record.highway_proximity, 'Proximity to major highways / arterial roads.'],
           ['Smart city', record.smart_city_project ? 'Yes' : 'No', 'Whether the area falls under the Smart Cities Mission.'],
-          ['Infra score', (record.infra_score_raw ?? s.infrastructure) != null ? `${record.infra_score_raw ?? s.infrastructure}/100` : '—', 'Composite of metro access, highway proximity, zone type and smart-city status.'],
+          ['Infra score', (record.infra_score_raw ?? s.infrastructure) != null ? `${record.infra_score_raw ?? s.infrastructure}/100` : '-', 'Composite of metro access, highway proximity, zone type and smart-city status.'],
         ]} />
 
         <CategoryCard title="Water Supply" tip={source('water', record.city)} stats={[
-          ['Daily supply', record.supply_hours != null ? `${record.supply_hours} hrs` : '—', 'Average hours of piped water supply available per day.'],
-          ['Quality', record.tds_level ? `${record.tds_level} TDS` : '—', 'TDS = Total Dissolved Solids. Low = ideal drinking water; High = hard water needing filtration.'],
-          ['Coverage', (record.water_coverage ?? record.coverage_pct) != null ? `${record.water_coverage ?? record.coverage_pct}%` : '—', '% of households with a piped municipal water connection. Below 80% means heavy tanker/borewell reliance.'],
-          ['Complaints', record.complaints_per_1000 != null ? `${record.complaints_per_1000}/1k` : '—', 'Water-supply complaints per 1,000 households annually. Lower is better.'],
-          ['Quality score', (record.water_quality ?? record.quality_score) != null ? `${record.water_quality ?? record.quality_score}/5` : '—', 'Composite 1–5 water-quality rating from TDS, complaints and supply hours.'],
+          ['Daily supply', record.supply_hours != null ? `${record.supply_hours} hrs` : '-', 'Average hours of piped water supply available per day.'],
+          ['Quality', record.tds_level ? `${record.tds_level} TDS` : '-', 'TDS = Total Dissolved Solids. Low = ideal drinking water; High = hard water needing filtration.'],
+          ['Coverage', (record.water_coverage ?? record.coverage_pct) != null ? `${record.water_coverage ?? record.coverage_pct}%` : '-', '% of households with a piped municipal water connection. Below 80% means heavy tanker/borewell reliance.'],
+          ['Complaints', record.complaints_per_1000 != null ? `${record.complaints_per_1000}/1k` : '-', 'Water-supply complaints per 1,000 households annually. Lower is better.'],
+          ['Quality score', (record.water_quality ?? record.quality_score) != null ? `${record.water_quality ?? record.quality_score}/5` : '-', 'Composite 1–5 water-quality rating from TDS, complaints and supply hours.'],
         ]} />
 
         <CategoryCard title="Roads" tip={source('roads', record.city)} stats={[
@@ -275,15 +275,15 @@ export default function AVDetailedReadout({ record }) {
           ['Connectivity', record.connectivity, 'How well the area connects to arterial roads and highways.'],
           ['Authority', record.authority, 'Government body responsible for road maintenance here.'],
           ['Last resurfaced', record.last_resurfaced, 'Year the main roads were last resurfaced (every 5–7 years is typical).'],
-          ['Quality score', (record.road_quality ?? record.quality_score) != null ? `${record.road_quality ?? record.quality_score}/5` : '—', 'Composite 1–5 road-quality rating from condition and pothole density.'],
+          ['Quality score', (record.road_quality ?? record.quality_score) != null ? `${record.road_quality ?? record.quality_score}/5` : '-', 'Composite 1–5 road-quality rating from condition and pothole density.'],
         ]} />
 
         <CategoryCard title="Drainage & Sewerage" tip={source('sewerage', record.city)} stats={[
-          ['Sewer coverage', (record.sewerage_coverage ?? record.coverage_pct) != null ? `${record.sewerage_coverage ?? record.coverage_pct}%` : '—', '% of households connected to the underground sewerage network.'],
-          ['Treatment', record.treatment, 'Whether sewage reaches a treatment plant — Adequate / Partial / Inadequate.'],
+          ['Sewer coverage', (record.sewerage_coverage ?? record.coverage_pct) != null ? `${record.sewerage_coverage ?? record.coverage_pct}%` : '-', '% of households connected to the underground sewerage network.'],
+          ['Treatment', record.treatment, 'Whether sewage reaches a treatment plant, Adequate / Partial / Inadequate.'],
           ['Waterlogging', waterloggingLabel(record.waterlogging_risk), 'Monsoon waterlogging risk from drainage capacity, elevation and flooding history.'],
-          ['Open drains', record.open_drains == null ? '—' : (record.open_drains ? 'Yes' : 'No'), 'Whether the area has uncovered drains — a health and flooding hazard.'],
-          ['Flood incidents', record.flooding_incidents_annual != null ? `${record.flooding_incidents_annual}/yr` : '—', 'Significant waterlogging/flooding incidents recorded per year.'],
+          ['Open drains', record.open_drains == null ? '-' : (record.open_drains ? 'Yes' : 'No'), 'Whether the area has uncovered drains, a health and flooding hazard.'],
+          ['Flood incidents', record.flooding_incidents_annual != null ? `${record.flooding_incidents_annual}/yr` : '-', 'Significant waterlogging/flooding incidents recorded per year.'],
         ]} />
 
       </div>
@@ -337,7 +337,7 @@ export default function AVDetailedReadout({ record }) {
           ))}
         </BPF>
         <div style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 10 }}>
-          Scored {formatDate(record.scored_at) || '—'}. Area-level — the same for every unit in this pincode.
+          Scored {formatDate(record.scored_at) || '-'}. Area-level, the same for every unit in this pincode.
         </div>
       </div>
     </div>

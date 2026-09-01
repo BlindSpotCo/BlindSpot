@@ -57,7 +57,7 @@ export default function AVAreaCard({ record: rawRecord, city }) {
           </p>
           <h3 className="avsheet-name">{record.name}</h3>
           <p className="avsheet-meta">
-            {record.dimensions_scored || Object.keys(scores).length}/{record.dimensions_total || Object.keys(scores).length} dimensions · scored {formatDateLong(record.scored_at) || '—'}
+            {record.dimensions_scored || Object.keys(scores).length}/{record.dimensions_total || Object.keys(scores).length} dimensions · scored {formatDateLong(record.scored_at) || '-'}
           </p>
         </BPF>
 
@@ -116,7 +116,7 @@ export default function AVAreaCard({ record: rawRecord, city }) {
       </BPF>
 
       <div style={{ fontSize: 13.5, color: 'var(--text-dim)', marginBottom: 22 }}>
-        Area-level — the same for every unit in this pincode.
+        Area-level, the same for every unit in this pincode.
       </div>
 
       <a

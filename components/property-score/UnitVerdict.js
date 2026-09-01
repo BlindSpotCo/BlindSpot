@@ -140,8 +140,8 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
       err => {
         setGpsError(
           err.code === err.PERMISSION_DENIED
-            ? 'Location permission denied — check your browser/site settings and try again.'
-            : 'Could not get your location right now — try entering lat/lon manually instead.'
+            ? 'Location permission denied, check your browser/site settings and try again.'
+            : 'Could not get your location right now, try entering lat/lon manually instead.'
         );
       }
     );
@@ -172,7 +172,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
         const ss = await res.json();
         setCombined({
           combinedScore: ss.liveScore,
-          verdict: { label: 'Home Comfort Score', detail: 'No Neighbourhood Score data for this pincode yet — this is the unit-only Home Comfort Score.' },
+          verdict: { label: 'Home Comfort Score', detail: 'No Neighbourhood Score data for this pincode yet, this is the unit-only Home Comfort Score.' },
           area: null,
           unit: { source: 'Home Comfort Score', floor: ss.unit?.floor ?? useFloor, facing: ss.unit?.facing ?? useFacing, score: ss.liveScore, grade: ss.grade, weight: 100, subScores: ss.subScores },
           formula: null,
@@ -181,7 +181,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
       }
       onScoreComputed?.();
     } catch {
-      setCombinedError('Could not compute the score right now — please try again in a minute.');
+      setCombinedError('Could not compute the score right now, please try again in a minute.');
     } finally {
       setLoadingCombined(false);
     }
@@ -255,14 +255,14 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
             </button>
             {addressLabel && (
               <button onClick={() => setShowCoords(false)} className="ps-link-btn" style={{ flex: '0 0 100%', background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: 12, textAlign: 'left', textDecoration: 'underline', cursor: 'pointer', padding: 0 }}>
-                Done editing — show location name
+                Done editing - show location name
               </button>
             )}
           </div>
         )}
         {gpsError && <div style={{ color: '#f87171', fontSize: 12.5, marginBottom: 10 }}>{gpsError}</div>}
         <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 14 }}>
-          Use the <strong style={{ color: 'var(--sun)' }}>HOME COMFORT SCORE</strong> button below for the breakdown — once you have a verdict below, you can generate the <strong style={{ color: 'var(--sun)' }}>full AI report</strong> covering both the neighbourhood and this unit.
+          Use the <strong style={{ color: 'var(--sun)' }}>HOME COMFORT SCORE</strong> button below for the breakdown, once you have a verdict below, you can generate the <strong style={{ color: 'var(--sun)' }}>full AI report</strong> covering both the neighbourhood and this unit.
         </div>
 
         {lat && lon && (
@@ -296,7 +296,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                 border: '1px solid var(--sun)', borderRadius: 'var(--radius)', padding: '12px 22px', fontSize: 13.5, fontWeight: 700,
                 letterSpacing: '.03em', textTransform: 'uppercase', textDecoration: 'none', marginTop: 14,
               }}>
-              Furnish This Unit — Upload Floor Plan ↗
+              Furnish This Unit - Upload Floor Plan ↗
             </a>
           </>
         )}
@@ -315,7 +315,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
         <div style={{ marginBottom: 20, display: showUnit ? 'block' : 'none', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: 20 }}>
           <div className="mono" style={{ fontSize: 12, color: 'var(--text)', letterSpacing: '.12em', marginBottom: 4 }}>HOME COMFORT SCORE</div>
           <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 16 }}>
-            {areaRecord ? 'Do this first — the combined verdict below needs this to combine.' : 'Sun, shade & heat, view, privacy, and wind — for this exact floor and facing.'}
+            {areaRecord ? 'Do this first, the combined verdict below needs this to combine.' : 'Sun, shade & heat, view, privacy, and wind - for this exact floor and facing.'}
           </div>
 
           <div style={{ marginBottom: 20 }}>
@@ -392,7 +392,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                     weightDebounceRef.current = setTimeout(() => computeCombined(v), 250);
                   }}
                   style={{ width: '100%', accentColor: 'var(--slate)' }} />
-                <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginTop: 6 }}>Starts 50/50 — drag anytime to change how much the neighbourhood matters vs. the specific flat.</div>
+                <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginTop: 6 }}>Starts 50/50 - drag anytime to change how much the neighbourhood matters vs. the specific flat.</div>
               </div>
             )}
 
@@ -437,17 +437,17 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
             {combined.area ? (
               <div className="uv-score-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
                 <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--slate)', borderRadius: 'var(--radius)', padding: '14px 16px' }}>
-                  <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>AREA — {combined.area.name} — {combined.area.weight}%</div>
+                  <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>AREA - {combined.area.name} - {combined.area.weight}%</div>
                   <div className="uv-score-box-number" style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 24, color: 'var(--slate)' }}>{combined.area.score}</div>
                 </div>
                 <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 'var(--radius)', padding: '14px 16px' }}>
-                  <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT (HOME COMFORT) — FL {combined.unit.floor}, {combined.unit.facing} — {combined.unit.weight}%</div>
+                  <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT (HOME COMFORT) - FL {combined.unit.floor}, {combined.unit.facing} - {combined.unit.weight}%</div>
                   <div className="uv-score-box-number" style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 24, color: 'var(--sun)' }}>{combined.unit.score}</div>
                 </div>
               </div>
             ) : (
               <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 'var(--radius)', padding: '14px 16px', marginBottom: 20 }}>
-                <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT (HOME COMFORT) — FL {combined.unit.floor}, {combined.unit.facing}</div>
+                <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT (HOME COMFORT) - FL {combined.unit.floor}, {combined.unit.facing}</div>
                 <div className="uv-score-box-number" style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 24, color: 'var(--sun)' }}>{combined.unit.score}</div>
               </div>
             )}
@@ -460,7 +460,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
 
             {combined.dataNotes?.length > 0 && (
               <div style={{ fontSize: 12, color: 'var(--text-dim)', lineHeight: 1.7, marginBottom: 20 }}>
-                {combined.dataNotes.map((n, i) => <div key={i}>— {n}</div>)}
+                {combined.dataNotes.map((n, i) => <div key={i}>- {n}</div>)}
               </div>
             )}
 
@@ -472,7 +472,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                 borderRadius: 'var(--radius)', padding: '13px 22px', fontSize: 13.5, fontWeight: 700, cursor: 'pointer',
                 letterSpacing: '.03em', textTransform: 'uppercase', width: '100%',
               }}>
-              {combined.area ? 'Generate Full AI Report — Neighbourhood + Unit' : 'Generate AI Report — Unit'}
+              {combined.area ? 'Generate Full AI Report - Neighbourhood + Unit' : 'Generate AI Report - Unit'}
             </button>
           </div>
         ) : (
@@ -482,7 +482,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
           // persona change resets it. Nothing to show yet, so send them
           // back to compute one instead of a blank tab.
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            <p style={{ fontSize: 14.5, color: 'var(--text-mute)', marginBottom: 20 }}>No score yet for this unit — pick a floor and facing first.</p>
+            <p style={{ fontSize: 14.5, color: 'var(--text-mute)', marginBottom: 20 }}>No score yet for this unit, pick a floor and facing first.</p>
             <button onClick={onBackToUnit} className="btn btn-lg btn-cta ps-btn ps-cta-btn">← Back to Unit</button>
           </div>
         )

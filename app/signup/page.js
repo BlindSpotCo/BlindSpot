@@ -52,7 +52,7 @@ export default function SignupPage() {
         <p>Use the same email whether you&apos;re saving from Home Comfort Score or Neighbourhood Score.</p>
 
         {sent ? (
-          <p className="auth-success">Check your inbox — we sent a confirmation link to {email}. Click it to finish creating your account.</p>
+          <p className="auth-success">Check your inbox, we sent a confirmation link to {email}. Click it to finish creating your account.</p>
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="auth-field">
