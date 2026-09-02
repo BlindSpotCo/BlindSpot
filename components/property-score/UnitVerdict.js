@@ -10,7 +10,7 @@ import SunScoutPanel from '@/components/sunscout/SunScoutPanel';
 import LiveScoreCard from '@/components/sunscout/LiveScoreCard';
 import { getPersona, PERSONA_ORDER } from '@/lib/personas';
 
-const FACING_OPTS = ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'North-West', 'South-West'];
+const FACING_OPTS = ['North', 'North-East', 'East', 'South-East', 'South', 'South-West', 'West', 'North-West'];
 
 // The pitch deck's "05 — THE VERDICT SYSTEM" slide defines these four
 // verdicts as a flat 2x2 colour quadrant, not four labels sharing one
@@ -326,10 +326,17 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
           </div>
 
           <div style={{ marginBottom: 20 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
               <span className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', flexShrink: 0 }}>Floor</span>
               <input type="range" min="0" max="30" value={floor ?? 5} onChange={e => { setFloor(Number(e.target.value)); setSsPreview(null); setCapturedFromSS(false); }} style={{ flex: 1, accentColor: 'var(--sun)' }} />
               <div style={{ background: 'var(--sun)', color: '#fff', borderRadius: 'var(--radius)', padding: '4px 12px', fontSize: 13.5, fontWeight: 700, minWidth: 36, textAlign: 'center' }}>{floor ?? 5}</div>
+            </div>
+            <div className="mono" style={{ fontSize: 10.5, color: 'var(--text-dim)', marginBottom: 16 }}>
+              {(floor ?? 5) === 0 ? 'Floor 0 is the ground floor - more shade, more street noise, easier access.' : `Floor ${floor ?? 5} of the building - higher floors usually get more sun and less street noise.`}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+              <span className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', flexShrink: 0 }}>Facing</span>
+              <span className="mono" style={{ fontSize: 10.5, color: 'var(--text-dim)' }}>Which way this unit's main windows/balcony open - decides how much sun, shade and heat it gets.</span>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0 }}>
               {FACING_OPTS.map(dir => (

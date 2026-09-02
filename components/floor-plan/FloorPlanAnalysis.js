@@ -29,6 +29,7 @@ const CSS = `
 @media (max-width: 900px) { .fp-2col { grid-template-columns: 1fr !important; } }
 `;
 
+const HOME_TYPE_OPTIONS = ['Not sure yet', 'Studio / 1 RK', '1 BHK', '2 BHK', '3 BHK', '4+ BHK', 'Villa / independent house'];
 const STYLE_OPTIONS = ['No preference', 'Minimalist', 'Cozy & warm', 'Modern & sleek', 'Traditional', 'Eclectic / bohemian'];
 const SPACE_OPTIONS = ['No preference', 'Open & airy, fewer dividers', 'Defined, cozy zones'];
 const MUST_HAVE_OPTIONS = [
@@ -85,6 +86,7 @@ export default function FloorPlanAnalysis() {
   const [result, setResult] = useState(null);
   const [activeRoom, setActiveRoom] = useState(null);
   const [dragOver, setDragOver] = useState(false);
+  const [homeType, setHomeType] = useState('Not sure yet');
   const [style, setStyle] = useState('No preference');
   const [spaceFeel, setSpaceFeel] = useState('No preference');
   const [mustHaves, setMustHaves] = useState([]);
@@ -105,7 +107,7 @@ export default function FloorPlanAnalysis() {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('preferences', JSON.stringify({ style, spaceFeel, mustHaves, notes }));
+      formData.append('preferences', JSON.stringify({ homeType, style, spaceFeel, mustHaves, notes }));
       const res = await fetch('/api/floor-plan/analyze', { method: 'POST', body: formData });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Analysis failed.');
@@ -149,6 +151,10 @@ export default function FloorPlanAnalysis() {
             <div style={{ marginBottom: 24 }}>
               <p className="kick" style={{ marginBottom: 14 }}>Tell Us What You Want, Everyone's Dream Home Is Different</p>
               <BPF style={{ padding: '20px 22px' }}>
+                <div style={{ marginBottom: 18 }}>
+                  <div style={{ fontSize: 12.5, fontWeight: 600, marginBottom: 8 }}>Home type</div>
+                  <PillSelect options={HOME_TYPE_OPTIONS} value={homeType} onChange={setHomeType} />
+                </div>
                 <div style={{ marginBottom: 18 }}>
                   <div style={{ fontSize: 12.5, fontWeight: 600, marginBottom: 8 }}>Style</div>
                   <PillSelect options={STYLE_OPTIONS} value={style} onChange={setStyle} />

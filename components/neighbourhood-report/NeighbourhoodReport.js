@@ -19,7 +19,7 @@
 // is here.
 
 import { useState, useMemo } from 'react';
-import AVDetailedReadout, { BPF, source, scoreColor, verdictFor, explain, AQI_PLAIN, formatDateLong, inr, readableTextColor } from '@/components/property-score/AVDetailedReadout';
+import AVDetailedReadout, { BPF, source, scoreColor, verdictFor, explain, AQI_PLAIN, formatDateLong, inr, readableTextColor, Info } from '@/components/property-score/AVDetailedReadout';
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
 import { cityMeta } from '@/lib/aslivastu/cityMeta';
 import useLiveAqi from '@/lib/aslivastu/useLiveAqi';
@@ -240,7 +240,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
           {/* Heading used to hardcode "Guidance Value" -- Karnataka's
               term -- on every city including Delhi, whose own records
               say circle rate. Now follows the record's city. */}
-          <p className="kick">{cityMeta(record.city).rateTermTitle} <span style={{ color: 'var(--text-dim)', fontWeight: 500, textTransform: 'none', letterSpacing: 0 }}>· official government valuation</span></p>
+          <p className="kick">{cityMeta(record.city).rateTermTitle}<Info text={cityMeta(record.city).rateTermNote} /> <span style={{ color: 'var(--text-dim)', fontWeight: 500, textTransform: 'none', letterSpacing: 0 }}>· official government valuation</span></p>
           {pc?.rate_sqft ? (() => {
             const [lo, hi] = pc.rate_sqft;
             const bands = ['Premium', 'Upper', 'Mid', 'Modest', 'Value'];

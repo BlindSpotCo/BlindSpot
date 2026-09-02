@@ -63,6 +63,7 @@ function buildPrompt(preferences) {
   let prefBlock = '';
   if (preferences) {
     const lines = [];
+    if (preferences.homeType && preferences.homeType !== 'Not sure yet') lines.push(`Homeowner says this is a: ${preferences.homeType} (cross-check this against what the plan actually shows; if the room count/type looks different, note that plainly in confidence_note or layout_notes rather than silently trusting the label).`);
     if (preferences.style && preferences.style !== 'No preference') lines.push(`Preferred style: ${preferences.style}`);
     if (preferences.spaceFeel && preferences.spaceFeel !== 'No preference') lines.push(`Preferred space feel: ${preferences.spaceFeel}`);
     if (Array.isArray(preferences.mustHaves) && preferences.mustHaves.length) lines.push(`Must-have items/features to try to fit in somewhere sensible: ${preferences.mustHaves.join(', ')}`);
