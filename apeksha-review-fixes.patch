@@ -1,0 +1,612 @@
+diff --git a/app/api/floor-plan/analyze/route.js b/app/api/floor-plan/analyze/route.js
+index d989a12..393e729 100644
+--- a/app/api/floor-plan/analyze/route.js
++++ b/app/api/floor-plan/analyze/route.js
+@@ -9,6 +9,10 @@
+ import { NextResponse } from 'next/server';
+ import { fileToImageDataUrl, FloorPlanInputError } from '@/lib/floorplan/toImage';
+ 
++// Same reasoning as /api/sunscout/report/analyse -- room-by-room detail
++// plus possible MAX_TOKENS continuations can run long.
++export const maxDuration = 90;
++
+ const GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
+ const GEMINI_URL = (model) => `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+ 
+@@ -129,20 +133,33 @@ export async function POST(req) {
+   let data = null;
+   let rawText = '';
+   try {
++    // One retry per model on a transient failure before moving to the next
++    // model -- see the matching comment in /api/sunscout/report/analyse.
+     const callGemini = async (msgContents) => {
+       for (const model of GEMINI_MODELS) {
+-        const res = await fetch(`${GEMINI_URL(model)}?key=${process.env.GEMINI_API_KEY}`, {
+-          method: 'POST',
+-          headers: { 'Content-Type': 'application/json' },
+-          body: JSON.stringify({
+-            contents: msgContents,
+-            generationConfig: { maxOutputTokens: 32768, temperature: 0.3 },
+-          }),
+-        });
+-        if (res.ok) return res.json();
+-        const errText = await res.text();
+-        console.error(`Gemini Vision request failed (${model}):`, res.status, errText);
+-        if (res.status !== 429) return null;
++        for (let attempt = 0; attempt < 2; attempt++) {
++          let res;
++          try {
++            res = await fetch(`${GEMINI_URL(model)}?key=${process.env.GEMINI_API_KEY}`, {
++              method: 'POST',
++              headers: { 'Content-Type': 'application/json' },
++              body: JSON.stringify({
++                contents: msgContents,
++                generationConfig: { maxOutputTokens: 32768, temperature: 0.3 },
++              }),
++            });
++          } catch (networkErr) {
++            console.error(`Gemini Vision network error (${model}, attempt ${attempt + 1}):`, networkErr);
++            if (attempt === 0) { await new Promise(r => setTimeout(r, 800)); continue; }
++            break;
++          }
++          if (res.ok) return res.json();
++          const errText = await res.text();
++          console.error(`Gemini Vision request failed (${model}, attempt ${attempt + 1}):`, res.status, errText);
++          if (res.status === 429) break;
++          if (attempt === 0 && res.status >= 500) { await new Promise(r => setTimeout(r, 800)); continue; }
++          break;
++        }
+       }
+       return null;
+     };
+diff --git a/app/api/sunscout/report/analyse/route.js b/app/api/sunscout/report/analyse/route.js
+index bc0bfbd..8321fac 100644
+--- a/app/api/sunscout/report/analyse/route.js
++++ b/app/api/sunscout/report/analyse/route.js
+@@ -18,6 +18,15 @@ import { NextResponse } from 'next/server';
+ import { computeSolarSummary } from '@/lib/sunscout/solarReport';
+ import { checkBuildingHeights } from '@/lib/sunscout/buildingHeights';
+ 
++// Vercel's default serverless timeout (10s on Hobby, and even the 60s Pro
++// default) is too short for this route: 12 screenshots + up to 3 Gemini
++// continuation calls can legitimately take 60-120s. Without this, a slow
++// but otherwise-successful generation gets killed mid-flight and the
++// person sees a generic "something went wrong" with no way to tell that
++// from an actual API failure -- this was the most likely cause of the
++// repeated report-generation failures reported in review.
++export const maxDuration = 120;
++
+ const GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
+ const GEMINI_URL = (model) => `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+ 
+@@ -48,8 +57,16 @@ Note: the neighbourhood score is the same for every unit in this pincode — it
+ }
+ 
+ export async function POST(req) {
+-  const { screenshots, lat, lon, address, floor, facing, tzOffset, avRecord, combinedScore, unitScore, areaWeight, unitWeight, personaId } = await req.json();
++  const { screenshots, lat, lon, address, floor, facing, tzOffset, avRecord, combinedScore, unitScore, areaWeight, unitWeight, personaId, customNote } = await req.json();
+   const persona = personaId ? (await import('@/lib/personas')).getPersona(personaId) : null;
++  // Free-text ask from the buyer, captured right before they hit Generate
++  // (see UnitVerdict's own field -- the report modal itself auto-starts,
++  // so this is the only chance to ask). Capped and stripped of the model's
++  // own prompt syntax so it can't be used to inject formatting/section
++  // instructions of its own.
++  const safeCustomNote = typeof customNote === 'string'
++    ? customNote.trim().slice(0, 500).replace(/[`*_#]/g, '')
++    : '';
+ 
+   if (!screenshots || screenshots.length === 0) {
+     return NextResponse.json({ analysis: 'No screenshots provided.' }, { status: 400 });
+@@ -145,6 +162,7 @@ You also have ${screenshots.length} screenshots of the actual 3D map at this loc
+ 
+ Write personally, not clinically — like a knowledgeable friend giving honest advice, not a data report reciting fields. Address the reader as "you" where it reads naturally. Be thorough and specific, not brief. This report is a defensible artifact a buyer will rely on — do not compress away detail to save space, and do not pad it with generic real-estate filler that could apply to any property.
+ ${persona ? `\nWHO'S READING THIS: ${persona.reportFocus}\n` : ''}
++${safeCustomNote ? `\nTHE BUYER'S OWN REQUEST — they typed this themselves right before generating this report, so treat it as the single strongest signal of what they actually care about, above persona defaults or generic coverage: "${safeCustomNote}"\nDirectly address this in the Home Buyer Verdict section — do not just mention it in passing, actually answer it using the ground-truth data above. If the data above genuinely doesn't cover what they asked (e.g. they asked about something this report doesn't measure), say so plainly rather than inventing an answer. Never quote their request back verbatim or write "you mentioned" — just make sure the answer is unmistakably there.\n` : ''}
+ 
+ FORMATTING RULES (follow exactly, every time, regardless of location):
+ - Never use emoji, anywhere, in any section, under any circumstances — not as bullet markers, not as decoration, not inline in a sentence. Plain text only.
+@@ -194,20 +212,36 @@ A full, honest verdict, several sentences to a short paragraph: is the sunlight
+ 
+     const contents = [{ role: 'user', parts: [{ text: `${prompt}\n\nImage order:\n${labelLine}` }, ...imageParts] }];
+ 
++    // One retry per model on a transient failure (5xx, or a thrown network
++    // error) before giving up on that model and falling through to the
++    // next one -- a single blip used to kill the whole report right away.
++    // 429 (rate limit) still skips straight to the next model with no
++    // retry, since retrying the same model won't help there.
+     const callGemini = async (msgContents) => {
+       for (const model of GEMINI_MODELS) {
+-        const res = await fetch(`${GEMINI_URL(model)}?key=${process.env.GEMINI_API_KEY}`, {
+-          method: 'POST',
+-          headers: { 'Content-Type': 'application/json' },
+-          body: JSON.stringify({
+-            contents: msgContents,
+-            generationConfig: { maxOutputTokens: 8192, temperature: 0.2 },
+-          }),
+-        });
+-        if (res.ok) return res.json();
+-        const errText = await res.text();
+-        console.error(`Gemini Vision request failed (${model}):`, res.status, errText);
+-        if (res.status !== 429) return null;
++        for (let attempt = 0; attempt < 2; attempt++) {
++          let res;
++          try {
++            res = await fetch(`${GEMINI_URL(model)}?key=${process.env.GEMINI_API_KEY}`, {
++              method: 'POST',
++              headers: { 'Content-Type': 'application/json' },
++              body: JSON.stringify({
++                contents: msgContents,
++                generationConfig: { maxOutputTokens: 8192, temperature: 0.2 },
++              }),
++            });
++          } catch (networkErr) {
++            console.error(`Gemini Vision network error (${model}, attempt ${attempt + 1}):`, networkErr);
++            if (attempt === 0) { await new Promise(r => setTimeout(r, 800)); continue; }
++            break; // exhausted retries for this model, fall through to the next one
++          }
++          if (res.ok) return res.json();
++          const errText = await res.text();
++          console.error(`Gemini Vision request failed (${model}, attempt ${attempt + 1}):`, res.status, errText);
++          if (res.status === 429) break; // no point retrying the same model
++          if (attempt === 0 && res.status >= 500) { await new Promise(r => setTimeout(r, 800)); continue; }
++          break;
++        }
+       }
+       return null;
+     };
+diff --git a/app/api/sunscout/report/pdf/route.js b/app/api/sunscout/report/pdf/route.js
+index 414a0f5..3389b24 100644
+--- a/app/api/sunscout/report/pdf/route.js
++++ b/app/api/sunscout/report/pdf/route.js
+@@ -31,6 +31,11 @@ import { NextResponse } from 'next/server';
+ import fs from 'node:fs';
+ import path from 'node:path';
+ 
++// This route builds HTML for 12 embedded screenshots plus the full written
++// analysis -- give it the same generous headroom as the analyse route so a
++// slow-but-fine build doesn't get killed by the platform default timeout.
++export const maxDuration = 60;
++
+ // -- BlindSpot theme (mirrors the CSS vars in app/globals.css) --------------
+ const BG        = '#FAF6EE'; // --bg
+ const CARD      = '#F1E9DA'; // --bg-2
+diff --git a/components/floor-plan/FloorPlanAnalysis.js b/components/floor-plan/FloorPlanAnalysis.js
+index 0a06205..32cc3ed 100644
+--- a/components/floor-plan/FloorPlanAnalysis.js
++++ b/components/floor-plan/FloorPlanAnalysis.js
+@@ -80,7 +80,7 @@ function MultiPillSelect({ options, values, onToggle }) {
+   );
+ }
+ 
+-export default function FloorPlanAnalysis() {
++export default function FloorPlanAnalysis({ embedded = false }) {
+   const [status, setStatus] = useState('idle'); // idle | loading | error | done
+   const [error, setError] = useState(null);
+   const [result, setResult] = useState(null);
+@@ -132,19 +132,31 @@ export default function FloorPlanAnalysis() {
+   }
+ 
+   return (
+-    <div className="fp" style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)' }}>
++    <div className="fp" style={{ minHeight: embedded ? 'auto' : '100vh', background: embedded ? 'transparent' : 'var(--bg)', color: 'var(--text)' }}>
+       <style>{CSS}</style>
+-      <div style={{ maxWidth: 1120, margin: '0 auto', padding: '48px 32px 64px' }}>
+-
+-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 28, paddingBottom: 18, borderBottom: '1px solid color-mix(in srgb, var(--sun) 55%, transparent)' }}>
+-          <p className="kick" style={{ fontSize: 12 }}>Unit Intelligence · Floor Plan Furnishing Advisor</p>
+-          <button onClick={() => window.close()} style={{ fontSize: 12.5, fontWeight: 600, border: '1px solid color-mix(in srgb, var(--sun) 45%, transparent)', borderRadius: 3, padding: '9px 16px', color: 'var(--text-mute)', background: 'transparent' }}>← Close</button>
+-        </div>
++      <div style={{ maxWidth: 1120, margin: '0 auto', padding: embedded ? '0 0 24px' : '48px 32px 64px' }}>
++
++        {/* The standalone page's own "← Close" (window.close()) only makes
++            sense when this rendered in a tab opened just for it -- inside
++            the Furnishing tab of the Property Score flow it's already one
++            tab among several, so there's no window to close and no
++            separate header needed; the tab bar above is already the
++            navigation. */}
++        {!embedded && (
++          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 28, paddingBottom: 18, borderBottom: '1px solid color-mix(in srgb, var(--sun) 55%, transparent)' }}>
++            <p className="kick" style={{ fontSize: 12 }}>Unit Intelligence · Floor Plan Furnishing Advisor</p>
++            <button onClick={() => window.close()} style={{ fontSize: 12.5, fontWeight: 600, border: '1px solid color-mix(in srgb, var(--sun) 45%, transparent)', borderRadius: 3, padding: '9px 16px', color: 'var(--text-mute)', background: 'transparent' }}>← Close</button>
++          </div>
++        )}
+ 
+-        <h1 className="cond" style={{ fontSize: 40, fontWeight: 700, margin: '0 0 8px', textTransform: 'uppercase' }}>Furnish This Unit</h1>
+-        <p style={{ fontSize: 14, color: 'var(--text-mute)', maxWidth: 640, marginBottom: 28, lineHeight: 1.6 }}>
+-          Upload a floor plan - a PDF, JPG, or PNG - and get room-by-room furniture and placement suggestions, marked directly on the plan.
+-        </p>
++        {!embedded && (
++          <>
++            <h1 className="cond" style={{ fontSize: 40, fontWeight: 700, margin: '0 0 8px', textTransform: 'uppercase' }}>Furnish This Unit</h1>
++            <p style={{ fontSize: 14, color: 'var(--text-mute)', maxWidth: 640, marginBottom: 28, lineHeight: 1.6 }}>
++              Upload a floor plan - a PDF, JPG, or PNG - and get room-by-room furniture and placement suggestions, marked directly on the plan.
++            </p>
++          </>
++        )}
+ 
+         {status !== 'done' && (
+           <>
+diff --git a/components/property-score/PropertyScoreFlow.js b/components/property-score/PropertyScoreFlow.js
+index 577cb0a..65ab151 100644
+--- a/components/property-score/PropertyScoreFlow.js
++++ b/components/property-score/PropertyScoreFlow.js
+@@ -31,6 +31,7 @@ import UnitVerdict from './UnitVerdict';
+ import PersonaPicker from './PersonaPicker';
+ import PropertyScoreProgress from './PropertyScoreProgress';
+ import SideDataStrip from './SideDataStrip';
++import FloorPlanAnalysis from '@/components/floor-plan/FloorPlanAnalysis';
+ import { PERSONA_ORDER } from '@/lib/personas';
+ 
+ // `initial` -- { stage, personaId, mode, areaRecord, city, lat, lon,
+@@ -271,7 +272,12 @@ export default function PropertyScoreFlow({ initial }) {
+   // relying on the stepper to prevent getting there. An earlier version
+   // gated these behind progress and disabled the button entirely, which
+   // on mobile just read as "these buttons don't work."
+-  const reachableStages = ['priorities', 'location', 'unit', 'verdict'];
++  // Furnishing is the one exception to "always clickable" above -- it's
++  // reached AFTER seeing a score (review flagged the old placement, on
++  // the Unit tab, as showing up before there was any verdict to react
++  // to), so it only unlocks once unitSeen is true rather than being open
++  // from the start like the other four.
++  const reachableStages = ['priorities', 'location', 'unit', 'verdict', ...(unitSeen ? ['furnish'] : [])];
+ 
+   return (
+     <section className="section" id="property-score-flow" style={{ paddingTop: 0 }}>
+@@ -454,6 +460,28 @@ export default function PropertyScoreFlow({ initial }) {
+             </p>
+           </div>
+         )}
++
++        {/* ── Furnishing: deliberately placed after Verdict, not on Unit
++            (see the reachableStages comment above) -- a person lands here
++            once they've actually seen a score, not before. The floor-plan
++            advisor renders inline (embedded) instead of linking out to its
++            own tab, so it's a real step in this flow rather than a side
++            errand. */}
++        <div className="ps-flow-wrap" style={{ width: '100%', display: viewStage === 'furnish' ? 'block' : 'none' }}>
++          {unitSeen ? (
++            <div style={{ maxWidth: 1120, margin: '0 auto' }}>
++              <h2 style={{ fontSize: 'clamp(22px, 2.4vw, 28px)', marginBottom: 8 }}>Furnish this unit.</h2>
++              <p style={{ fontSize: 13, color: 'var(--text-mute)', marginBottom: 28, lineHeight: 1.55, maxWidth: 560 }}>
++                Upload a floor plan - a PDF, JPG, or PNG - and get room-by-room furniture and placement suggestions, marked directly on the plan.
++              </p>
++              <FloorPlanAnalysis embedded />
++            </div>
++          ) : (
++            <div style={{ textAlign: 'center', padding: '60px 0' }}>
++              <p style={{ fontSize: 14.5, color: 'var(--text-mute)' }}>Get a Home Comfort Score on the Unit tab first, then come back here to furnish it.</p>
++            </div>
++          )}
++        </div>
+       </div>
+     </section>
+   );
+diff --git a/components/property-score/PropertyScoreProgress.js b/components/property-score/PropertyScoreProgress.js
+index f3767b3..f872c8f 100644
+--- a/components/property-score/PropertyScoreProgress.js
++++ b/components/property-score/PropertyScoreProgress.js
+@@ -20,6 +20,11 @@ const STAGES = [
+   { key: 'location', label: 'Location' },
+   { key: 'unit', label: 'Unit' },
+   { key: 'verdict', label: 'Verdict' },
++  // Deliberately placed after Verdict, not on Unit -- review flagged the
++  // furnishing CTA sitting on the Unit tab as appearing before there was
++  // any verdict to react to. It only becomes reachable once a score has
++  // actually been seen (see PropertyScoreFlow's reachableStages).
++  { key: 'furnish', label: 'Furnishing' },
+ ];
+ 
+ export default function PropertyScoreProgress({ current, done = [], reachable = [], onSelect }) {
+diff --git a/components/property-score/UnitVerdict.js b/components/property-score/UnitVerdict.js
+index ffe2b10..2de7219 100644
+--- a/components/property-score/UnitVerdict.js
++++ b/components/property-score/UnitVerdict.js
+@@ -38,6 +38,9 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
+   const [ssPreview, setSsPreview] = useState(null);
+ 
+   const [combined, setCombined] = useState(null);
++  // Free-text "focus on this" note for the AI Report -- see where it's
++  // read below, next to the Generate button.
++  const [reportCustomNote, setReportCustomNote] = useState('');
+   const [loadingCombined, setLoadingCombined] = useState(false);
+   const [combinedError, setCombinedError] = useState('');
+   const [areaWeight, setAreaWeight] = useState(persona.defaultAreaWeight);
+@@ -273,39 +276,24 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
+         </div>
+ 
+         {lat && lon && (
+-          <>
+-            <div style={{ width: '100%', maxWidth: '100%', border: '1px solid var(--line)', borderRadius: 'var(--radius)', overflow: 'hidden', height: 680 }}>
+-              <SunScoutPanel
+-                ref={sunScoutRef}
+-                lat={parseFloat(lat)} lon={parseFloat(lon)}
+-                address={addressLabel || areaRecord?.name || ''}
+-                onLocationSelect={handleLocationSelect}
+-                onReportFloorFacing={handleReportFloorFacing}
+-                areaRecord={areaRecord}
+-                combinedScore={combined?.combinedScore}
+-                unitScore={combined?.unit?.score}
+-                unitSubScores={combined?.unit?.subScores}
+-                verdictLabel={combined?.verdict?.label}
+-                areaWeight={areaRecord ? areaWeight / 100 : undefined}
+-                unitWeight={areaRecord ? (100 - areaWeight) / 100 : undefined}
+-                personaId={personaId}
+-                onReportOpenChange={setReportOpen}
+-              />
+-            </div>
+-
+-            <a
+-              href="/floor-plan-analysis"
+-              target="_blank"
+-              rel="noreferrer"
+-              className="ps-btn"
+-              style={{
+-                display: 'block', textAlign: 'center', background: 'transparent', color: 'var(--sun)',
+-                border: '1px solid var(--sun)', borderRadius: 'var(--radius)', padding: '12px 22px', fontSize: 13.5, fontWeight: 700,
+-                letterSpacing: '.03em', textTransform: 'uppercase', textDecoration: 'none', marginTop: 14,
+-              }}>
+-              Furnish This Unit - Upload Floor Plan ↗
+-            </a>
+-          </>
++          <div style={{ width: '100%', maxWidth: '100%', border: '1px solid var(--line)', borderRadius: 'var(--radius)', overflow: 'hidden', height: 680 }}>
++            <SunScoutPanel
++              ref={sunScoutRef}
++              lat={parseFloat(lat)} lon={parseFloat(lon)}
++              address={addressLabel || areaRecord?.name || ''}
++              onLocationSelect={handleLocationSelect}
++              onReportFloorFacing={handleReportFloorFacing}
++              areaRecord={areaRecord}
++              combinedScore={combined?.combinedScore}
++              unitScore={combined?.unit?.score}
++              unitSubScores={combined?.unit?.subScores}
++              verdictLabel={combined?.verdict?.label}
++              areaWeight={areaRecord ? areaWeight / 100 : undefined}
++              unitWeight={areaRecord ? (100 - areaWeight) / 100 : undefined}
++              personaId={personaId}
++              onReportOpenChange={setReportOpen}
++            />
++          </div>
+         )}
+       </div>
+ 
+@@ -328,11 +316,11 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
+           <div style={{ marginBottom: 20 }}>
+             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
+               <span className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', flexShrink: 0 }}>Floor</span>
+-              <input type="range" min="0" max="30" value={floor ?? 5} onChange={e => { setFloor(Number(e.target.value)); setSsPreview(null); setCapturedFromSS(false); }} style={{ flex: 1, accentColor: 'var(--sun)' }} />
+-              <div style={{ background: 'var(--sun)', color: '#fff', borderRadius: 'var(--radius)', padding: '4px 12px', fontSize: 13.5, fontWeight: 700, minWidth: 36, textAlign: 'center' }}>{floor ?? 5}</div>
++              <input type="range" min="0" max="30" value={floor ?? 0} onChange={e => { setFloor(Number(e.target.value)); setSsPreview(null); setCapturedFromSS(false); }} style={{ flex: 1, accentColor: 'var(--sun)' }} />
++              <div style={{ background: 'var(--sun)', color: '#fff', borderRadius: 'var(--radius)', padding: '4px 12px', fontSize: 13.5, fontWeight: 700, minWidth: 36, textAlign: 'center' }}>{floor ?? 0}</div>
+             </div>
+             <div className="mono" style={{ fontSize: 10.5, color: 'var(--text-dim)', marginBottom: 16 }}>
+-              {(floor ?? 5) === 0 ? 'Floor 0 is the ground floor - more shade, more street noise, easier access.' : `Floor ${floor ?? 5} of the building - higher floors usually get more sun and less street noise.`}
++              {(floor ?? 0) === 0 ? 'Floor 0 is the ground floor - more shade, more street noise, easier access.' : `Floor ${floor ?? 0} of the building - higher floors usually get more sun and less street noise.`}
+             </div>
+             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+               <span className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', flexShrink: 0 }}>Facing</span>
+@@ -484,8 +472,27 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
+               </div>
+             )}
+ 
++            {/* The report always auto-generates the instant this modal opens
++                (floor/facing already arrived above -- see the comment on
++                ReportModal's autoGenerate), so a "focus on this" field
++                needs to be captured here, one step before that, rather
++                than inside the report modal's own form, which this flow
++                never shows. */}
++            <div style={{ marginBottom: 16 }}>
++              <label className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', letterSpacing: '.06em', display: 'block', marginBottom: 8, textTransform: 'uppercase' }}>
++                Anything specific you want the report to focus on? <span style={{ textTransform: 'none', letterSpacing: 0 }}>(optional)</span>
++              </label>
++              <textarea
++                value={reportCustomNote}
++                onChange={e => setReportCustomNote(e.target.value)}
++                rows={2}
++                placeholder="e.g. I have young kids and care most about noise and safety, I work from home and need good daylight…"
++                style={{ width: '100%', fontFamily: 'inherit', fontSize: 13, padding: '10px 12px', border: '1px solid var(--line)', borderRadius: 'var(--radius)', resize: 'vertical', background: 'var(--bg)', color: 'var(--text)', boxSizing: 'border-box' }}
++              />
++            </div>
++
+             <button
+-              onClick={() => { onVerdictStart?.(true); sunScoutRef.current?.openReport({ floor: combined.unit.floor, facing: combined.unit.facing }); }}
++              onClick={() => { onVerdictStart?.(true); sunScoutRef.current?.openReport({ floor: combined.unit.floor, facing: combined.unit.facing, customNote: reportCustomNote }); }}
+               className="ps-btn ps-cta-btn"
+               style={{
+                 background: 'var(--brand)', color: '#fff', border: 'none',
+diff --git a/components/sunscout/LiveScoreModal.js b/components/sunscout/LiveScoreModal.js
+index 3551f15..289e8dc 100644
+--- a/components/sunscout/LiveScoreModal.js
++++ b/components/sunscout/LiveScoreModal.js
+@@ -31,7 +31,7 @@ export default function LiveScoreModal({ lat, lon, tzOffset, onClose, onFloorFac
+   // Start from whatever's already picked on the page behind this modal, if
+   // anything -- falls back to the old 5/South defaults only when the page
+   // hasn't had a floor/facing picked yet.
+-  const [floor, setFloor] = useState(prefillFloor != null ? String(prefillFloor) : '5');
++  const [floor, setFloor] = useState(prefillFloor != null ? String(prefillFloor) : '0');
+   const [facing, setFacing] = useState(prefillFacing || 'South');
+   const [weights, setWeights] = useState(DEFAULT_WEIGHTS);
+   const [showWeights, setShowWeights] = useState(false);
+diff --git a/components/sunscout/ReportModal.js b/components/sunscout/ReportModal.js
+index 7c7d777..0346c4e 100644
+--- a/components/sunscout/ReportModal.js
++++ b/components/sunscout/ReportModal.js
+@@ -8,6 +8,7 @@
+ // the combined-score page can reuse the same values without postMessage.
+ 
+ import { useState, useEffect, useRef } from 'react';
++import { createPortal } from 'react-dom';
+ import SaveReportButton from '@/components/reports/SaveReportButton';
+ 
+ const FACING = ['North','South','East','West','North-East','South-East','North-West','South-West'];
+@@ -28,9 +29,9 @@ export default function ReportModal({
+   // report covers the neighbourhood too, not just this unit.
+   areaRecord, combinedScore, unitScore, areaWeight, unitWeight, unitSubScores, verdictLabel,
+   personaId,
+-  prefillFloor, prefillFacing,
++  prefillFloor, prefillFacing, prefillCustomNote,
+ }) {
+-  const [floor, setFloor]     = useState(prefillFloor != null ? String(prefillFloor) : '5');
++  const [floor, setFloor]     = useState(prefillFloor != null ? String(prefillFloor) : '0');
+   const [facing, setFacing]   = useState(prefillFacing || 'South');
+   const [facingTouched, setFacingTouched] = useState(Boolean(prefillFacing));
+   const facingTouchedRef = useRef(Boolean(prefillFacing));
+@@ -38,6 +39,13 @@ export default function ReportModal({
+   const [facingLoading, setFacingLoading] = useState(true);
+   const [facingExpanded, setFacingExpanded] = useState(false);
+   const [reportLabel, setReportLabel] = useState('');
++  // Free-text "focus on this" note -- separate from the floor-plan/
++  // furnishing notes field, this one steers the actual AI Report (verdict
++  // + analysis), not the furnishing advisor. Usually arrives prefilled
++  // from UnitVerdict's own field (the autoGenerate path never shows this
++  // modal's form), but stays editable here too for the standalone-SunScout
++  // path where this modal's form is the only place to say it.
++  const [customNote, setCustomNote] = useState(prefillCustomNote || '');
+   const [loading, setLoading] = useState(false);
+   const [progress, setProgress] = useState(0);
+   const [error, setError]     = useState('');
+@@ -104,9 +112,10 @@ export default function ReportModal({
+     // wiped it out from underneath itself.
+     if (onFloorFacingSubmit && !autoGenerate) onFloorFacingSubmit(parseInt(floor, 10), facing);
+ 
+-    try {
+-      const addr = address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
++    const addr = address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
++    const safeCustomNote = customNote.trim() || undefined;
+ 
++    const attemptOnce = async () => {
+       const screenshots = await captureScreenshots();
+       setProgress(35);
+ 
+@@ -116,7 +125,7 @@ export default function ReportModal({
+         body: JSON.stringify({
+           screenshots, lat, lon, address: addr, floor, facing, tzOffset,
+           avRecord: areaRecord || undefined, combinedScore, unitScore, areaWeight, unitWeight,
+-          personaId,
++          personaId, customNote: safeCustomNote,
+         }),
+       });
+       if (!analyseRes.ok) throw new Error('analysis-failed');
+@@ -157,8 +166,23 @@ export default function ReportModal({
+         lat, lon, verdictLabel, combinedScore, unitScore, areaWeight, unitWeight,
+         hasArea: !!areaRecord,
+       });
++    };
++
++    try {
++      try {
++        await attemptOnce();
++      } catch (firstErr) {
++        // One silent retry before bothering the person with an error --
++        // review found the report failing 3-4 times in a row, which looks
++        // like a broken feature but is consistent with transient
++        // platform/API blips rather than a hard failure every time.
++        console.error('Report generation failed, retrying once:', firstErr);
++        setProgress(5);
++        await new Promise(r => setTimeout(r, 1200));
++        await attemptOnce();
++      }
+     } catch (e) {
+-      console.error('Report generation failed:', e);
++      console.error('Report generation failed after retry:', e);
+       setError("Something went wrong generating your report. This sometimes happens when things are busy, please try again in a minute.");
+     } finally {
+       setLoading(false);
+@@ -172,10 +196,37 @@ export default function ReportModal({
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, []);
+ 
+-  return (
+-    <div className="modal-overlay" style={{ position:'fixed', inset:0, zIndex:1000, background:'rgba(10,5,0,0.6)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
+-      <div style={{ background:'#FFFBF5', border:`1px solid ${LINE}`, padding:0, width:'100%', maxWidth:480, maxHeight:'90vh', overflowY:'auto', boxShadow:'0 30px 90px rgba(0,0,0,0.35)', fontFamily:SANS }}>
+-      <div className="modal-body" style={{ padding:24 }}>
++  // The floor/facing/name FORM step is a short, deliberate input step, so
++  // it stays a real full-screen blocking modal -- that's the one moment
++  // where blocking is actually right. Once "Generate" is clicked (loading)
++  // or the report is ready, this switches to a small non-blocking corner
++  // card instead: no dark backdrop, doesn't cover the rest of the page,
++  // and the person can keep using the site (e.g. the Furnishing tab)
++  // while it finishes. Portalled to document.body so it also survives
++  // sitting inside a display:none ancestor when a tab switch hides the
++  // Unit/Verdict panel this component actually lives in underneath.
++  const isFormStep = !loading && !autoGenerate && !reportUrl;
++
++  const overlayStyle = isFormStep
++    ? { position:'fixed', inset:0, zIndex:1000, background:'rgba(10,5,0,0.6)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }
++    : { position:'fixed', bottom:20, right:20, zIndex:1000, width:360, maxWidth:'calc(100vw - 40px)', pointerEvents:'none' };
++
++  const cardStyle = isFormStep
++    ? { background:'#FFFBF5', border:`1px solid ${LINE}`, padding:0, width:'100%', maxWidth:480, maxHeight:'90vh', overflowY:'auto', boxShadow:'0 30px 90px rgba(0,0,0,0.35)', fontFamily:SANS }
++    : { background:'#FFFBF5', border:`1px solid ${LINE}`, padding:0, width:'100%', maxHeight:'70vh', overflowY:'auto', boxShadow:'0 16px 48px rgba(0,0,0,0.28)', borderRadius:8, fontFamily:SANS, pointerEvents:'auto' };
++
++  if (typeof document === 'undefined') return null;
++
++  return createPortal(
++    <div className="modal-overlay" style={overlayStyle}>
++      <div style={cardStyle}>
++      <div className="modal-body" style={{ padding: isFormStep ? 24 : 18 }}>
++
++        {!isFormStep && !reportUrl && (
++          <div className="mono" style={{ fontSize:10, fontWeight:600, color:ORG, letterSpacing:'.1em', textTransform:'uppercase', marginBottom:10 }}>
++            Report generating - feel free to keep browsing
++          </div>
++        )}
+ 
+         {reportUrl ? (
+           <div style={{ textAlign:'center', padding:'20px 0' }}>
+@@ -219,7 +270,7 @@ export default function ReportModal({
+             <div style={{ marginBottom:22 }}>
+               <label style={{ fontFamily:MONO, fontSize:10.5, fontWeight:500, color:INK, letterSpacing:'.08em', display:'block', marginBottom:10, textTransform:'uppercase' }}>Floor number</label>
+               <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+-                <input type="range" min="1" max="30" value={floor} onChange={e => setFloor(e.target.value)} style={{ flex:1, accentColor:ORG }} />
++                <input type="range" min="0" max="30" value={floor} onChange={e => setFloor(e.target.value)} style={{ flex:1, accentColor:ORG }} />
+                 <div style={{ background:INK, color:'#fff', fontFamily:MONO, fontSize:13, fontWeight:500, padding:'4px 12px', minWidth:40, textAlign:'center' }}>{floor}</div>
+               </div>
+               <div style={{ fontFamily:MONO, fontSize:10.5, color:SUB, marginTop:6 }}>Floor {floor} ≈ {parseInt(floor)*3}m above ground</div>
+@@ -277,6 +328,17 @@ export default function ReportModal({
+               />
+             </div>
+ 
++            <div style={{ marginBottom:24 }}>
++              <label style={{ fontFamily:MONO, fontSize:10.5, fontWeight:500, color:INK, letterSpacing:'.08em', display:'block', marginBottom:10, textTransform:'uppercase' }}>Focus on anything specific? <span style={{ color:SUB, textTransform:'none', letterSpacing:0 }}>(optional)</span></label>
++              <textarea
++                value={customNote}
++                onChange={e => setCustomNote(e.target.value)}
++                rows={2}
++                placeholder="e.g. I care most about noise and safety, I work from home and need good daylight…"
++                style={{ width:'100%', border:`1px solid ${LINE}`, padding:'11px 12px', fontSize:13, fontFamily:'inherit', resize:'vertical', boxSizing:'border-box' }}
++              />
++            </div>
++
+             {error && (
+               <div style={{ border:'1px solid #dc2626', padding:'10px 14px', fontSize:12, color:'#dc2626', marginBottom:16, fontFamily:MONO }}>ERROR: {error}</div>
+             )}
+@@ -322,6 +384,7 @@ export default function ReportModal({
+         `}</style>
+       </div>
+       </div>
+-    </div>
++    </div>,
++    document.body
+   );
+ }
+diff --git a/components/sunscout/SunScoutPanel.js b/components/sunscout/SunScoutPanel.js
+index 1a94b19..900bdcb 100644
+--- a/components/sunscout/SunScoutPanel.js
++++ b/components/sunscout/SunScoutPanel.js
+@@ -83,7 +83,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
+   const [searching, setSearching] = useState(false);
+ 
+   const [showReport, setShowReport] = useState(false);
+-  const [reportPrefill, setReportPrefill] = useState(null); // { floor, facing } | null
++  const [reportPrefill, setReportPrefill] = useState(null); // { floor, facing, customNote? } | null
+ 
+   useImperativeHandle(ref, () => ({
+     // Called from UnitVerdict's Verdict tab -- at that moment this whole
+@@ -295,6 +295,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
+           unitSubScores={unitSubScores} verdictLabel={verdictLabel}
+           personaId={personaId}
+           prefillFloor={reportPrefill?.floor} prefillFacing={reportPrefill?.facing}
++          prefillCustomNote={reportPrefill?.customNote}
+         />
+       )}
+ 

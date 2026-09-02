@@ -80,7 +80,7 @@ function MultiPillSelect({ options, values, onToggle }) {
   );
 }
 
-export default function FloorPlanAnalysis() {
+export default function FloorPlanAnalysis({ embedded = false }) {
   const [status, setStatus] = useState('idle'); // idle | loading | error | done
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
@@ -132,19 +132,31 @@ export default function FloorPlanAnalysis() {
   }
 
   return (
-    <div className="fp" style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)' }}>
+    <div className="fp" style={{ minHeight: embedded ? 'auto' : '100vh', background: embedded ? 'transparent' : 'var(--bg)', color: 'var(--text)' }}>
       <style>{CSS}</style>
-      <div style={{ maxWidth: 1120, margin: '0 auto', padding: '48px 32px 64px' }}>
+      <div style={{ maxWidth: 1120, margin: '0 auto', padding: embedded ? '0 0 24px' : '48px 32px 64px' }}>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 28, paddingBottom: 18, borderBottom: '1px solid color-mix(in srgb, var(--sun) 55%, transparent)' }}>
-          <p className="kick" style={{ fontSize: 12 }}>Unit Intelligence · Floor Plan Furnishing Advisor</p>
-          <button onClick={() => window.close()} style={{ fontSize: 12.5, fontWeight: 600, border: '1px solid color-mix(in srgb, var(--sun) 45%, transparent)', borderRadius: 3, padding: '9px 16px', color: 'var(--text-mute)', background: 'transparent' }}>← Close</button>
-        </div>
+        {/* The standalone page's own "← Close" (window.close()) only makes
+            sense when this rendered in a tab opened just for it -- inside
+            the Furnishing tab of the Property Score flow it's already one
+            tab among several, so there's no window to close and no
+            separate header needed; the tab bar above is already the
+            navigation. */}
+        {!embedded && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 28, paddingBottom: 18, borderBottom: '1px solid color-mix(in srgb, var(--sun) 55%, transparent)' }}>
+            <p className="kick" style={{ fontSize: 12 }}>Unit Intelligence · Floor Plan Furnishing Advisor</p>
+            <button onClick={() => window.close()} style={{ fontSize: 12.5, fontWeight: 600, border: '1px solid color-mix(in srgb, var(--sun) 45%, transparent)', borderRadius: 3, padding: '9px 16px', color: 'var(--text-mute)', background: 'transparent' }}>← Close</button>
+          </div>
+        )}
 
-        <h1 className="cond" style={{ fontSize: 40, fontWeight: 700, margin: '0 0 8px', textTransform: 'uppercase' }}>Furnish This Unit</h1>
-        <p style={{ fontSize: 14, color: 'var(--text-mute)', maxWidth: 640, marginBottom: 28, lineHeight: 1.6 }}>
-          Upload a floor plan - a PDF, JPG, or PNG - and get room-by-room furniture and placement suggestions, marked directly on the plan.
-        </p>
+        {!embedded && (
+          <>
+            <h1 className="cond" style={{ fontSize: 40, fontWeight: 700, margin: '0 0 8px', textTransform: 'uppercase' }}>Furnish This Unit</h1>
+            <p style={{ fontSize: 14, color: 'var(--text-mute)', maxWidth: 640, marginBottom: 28, lineHeight: 1.6 }}>
+              Upload a floor plan - a PDF, JPG, or PNG - and get room-by-room furniture and placement suggestions, marked directly on the plan.
+            </p>
+          </>
+        )}
 
         {status !== 'done' && (
           <>

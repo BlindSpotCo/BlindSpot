@@ -40,6 +40,9 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   const [ssPreview, setSsPreview] = useState(null);
 
   const [combined, setCombined] = useState(null);
+  // Free-text "focus on this" note for the AI Report -- see where it's
+  // read below, next to the Generate button.
+  const [reportCustomNote, setReportCustomNote] = useState('');
   const [loadingCombined, setLoadingCombined] = useState(false);
   const [combinedError, setCombinedError] = useState('');
   const [areaWeight, setAreaWeight] = useState(persona.defaultAreaWeight);
@@ -284,39 +287,24 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
         </div>
 
         {lat && lon && (
-          <>
-            <div style={{ width: '100%', maxWidth: '100%', border: '1px solid var(--line)', borderRadius: 'var(--radius)', overflow: 'hidden', height: 680 }}>
-              <SunScoutPanel
-                ref={sunScoutRef}
-                lat={parseFloat(lat)} lon={parseFloat(lon)}
-                address={addressLabel || areaRecord?.name || ''}
-                onLocationSelect={handleLocationSelect}
-                onReportFloorFacing={handleReportFloorFacing}
-                areaRecord={areaRecord}
-                combinedScore={combined?.combinedScore}
-                unitScore={combined?.unit?.score}
-                unitSubScores={combined?.unit?.subScores}
-                verdictLabel={combined?.verdict?.label}
-                areaWeight={areaRecord ? areaWeight / 100 : undefined}
-                unitWeight={areaRecord ? (100 - areaWeight) / 100 : undefined}
-                personaId={personaId}
-                onReportOpenChange={setReportOpen}
-              />
-            </div>
-
-            <a
-              href="/floor-plan-analysis"
-              target="_blank"
-              rel="noreferrer"
-              className="ps-btn"
-              style={{
-                display: 'block', textAlign: 'center', background: 'transparent', color: 'var(--sun)',
-                border: '1px solid var(--sun)', borderRadius: 'var(--radius)', padding: '12px 22px', fontSize: 13.5, fontWeight: 700,
-                letterSpacing: '.03em', textTransform: 'uppercase', textDecoration: 'none', marginTop: 14,
-              }}>
-              Furnish This Unit - Upload Floor Plan ↗
-            </a>
-          </>
+          <div style={{ width: '100%', maxWidth: '100%', border: '1px solid var(--line)', borderRadius: 'var(--radius)', overflow: 'hidden', height: 680 }}>
+            <SunScoutPanel
+              ref={sunScoutRef}
+              lat={parseFloat(lat)} lon={parseFloat(lon)}
+              address={addressLabel || areaRecord?.name || ''}
+              onLocationSelect={handleLocationSelect}
+              onReportFloorFacing={handleReportFloorFacing}
+              areaRecord={areaRecord}
+              combinedScore={combined?.combinedScore}
+              unitScore={combined?.unit?.score}
+              unitSubScores={combined?.unit?.subScores}
+              verdictLabel={combined?.verdict?.label}
+              areaWeight={areaRecord ? areaWeight / 100 : undefined}
+              unitWeight={areaRecord ? (100 - areaWeight) / 100 : undefined}
+              personaId={personaId}
+              onReportOpenChange={setReportOpen}
+            />
+          </div>
         )}
       </div>
 
@@ -339,11 +327,11 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
           <div style={{ marginBottom: 20 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
               <span className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', flexShrink: 0 }}>Floor</span>
-              <input type="range" min="0" max="30" value={floor ?? 5} onChange={e => { setFloor(Number(e.target.value)); setSsPreview(null); setCapturedFromSS(false); }} style={{ flex: 1, accentColor: 'var(--sun)' }} />
-              <div style={{ background: 'var(--sun)', color: '#fff', borderRadius: 'var(--radius)', padding: '4px 12px', fontSize: 13.5, fontWeight: 700, minWidth: 36, textAlign: 'center' }}>{floor ?? 5}</div>
+              <input type="range" min="0" max="30" value={floor ?? 0} onChange={e => { setFloor(Number(e.target.value)); setSsPreview(null); setCapturedFromSS(false); }} style={{ flex: 1, accentColor: 'var(--sun)' }} />
+              <div style={{ background: 'var(--sun)', color: '#fff', borderRadius: 'var(--radius)', padding: '4px 12px', fontSize: 13.5, fontWeight: 700, minWidth: 36, textAlign: 'center' }}>{floor ?? 0}</div>
             </div>
             <div className="mono" style={{ fontSize: 10.5, color: 'var(--text-dim)', marginBottom: 16 }}>
-              {(floor ?? 5) === 0 ? 'Floor 0 is the ground floor - more shade, more street noise, easier access.' : `Floor ${floor ?? 5} of the building - higher floors usually get more sun and less street noise.`}
+              {(floor ?? 0) === 0 ? 'Floor 0 is the ground floor - more shade, more street noise, easier access.' : `Floor ${floor ?? 0} of the building - higher floors usually get more sun and less street noise.`}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
               <span className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', flexShrink: 0 }}>Facing</span>
@@ -508,8 +496,27 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               </div>
             )}
 
+            {/* The report always auto-generates the instant this modal opens
+                (floor/facing already arrived above -- see the comment on
+                ReportModal's autoGenerate), so a "focus on this" field
+                needs to be captured here, one step before that, rather
+                than inside the report modal's own form, which this flow
+                never shows. */}
+            <div style={{ marginBottom: 16 }}>
+              <label className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', letterSpacing: '.06em', display: 'block', marginBottom: 8, textTransform: 'uppercase' }}>
+                Anything specific you want the report to focus on? <span style={{ textTransform: 'none', letterSpacing: 0 }}>(optional)</span>
+              </label>
+              <textarea
+                value={reportCustomNote}
+                onChange={e => setReportCustomNote(e.target.value)}
+                rows={2}
+                placeholder="e.g. I have young kids and care most about noise and safety, I work from home and need good daylight…"
+                style={{ width: '100%', fontFamily: 'inherit', fontSize: 13, padding: '10px 12px', border: '1px solid var(--line)', borderRadius: 'var(--radius)', resize: 'vertical', background: 'var(--bg)', color: 'var(--text)', boxSizing: 'border-box' }}
+              />
+            </div>
+
             <button
-              onClick={() => { onVerdictStart?.(true); sunScoutRef.current?.openReport({ floor: combined.unit.floor, facing: combined.unit.facing }); }}
+              onClick={() => { onVerdictStart?.(true); sunScoutRef.current?.openReport({ floor: combined.unit.floor, facing: combined.unit.facing, customNote: reportCustomNote }); }}
               className="ps-btn ps-cta-btn"
               style={{
                 background: 'var(--brand)', color: '#fff', border: 'none',

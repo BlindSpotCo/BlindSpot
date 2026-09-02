@@ -9,6 +9,10 @@
 import { NextResponse } from 'next/server';
 import { fileToImageDataUrl, FloorPlanInputError } from '@/lib/floorplan/toImage';
 
+// Same reasoning as /api/sunscout/report/analyse -- room-by-room detail
+// plus possible MAX_TOKENS continuations can run long.
+export const maxDuration = 90;
+
 const GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
 const GEMINI_URL = (model) => `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
@@ -129,20 +133,33 @@ export async function POST(req) {
   let data = null;
   let rawText = '';
   try {
+    // One retry per model on a transient failure before moving to the next
+    // model -- see the matching comment in /api/sunscout/report/analyse.
     const callGemini = async (msgContents) => {
       for (const model of GEMINI_MODELS) {
-        const res = await fetch(`${GEMINI_URL(model)}?key=${process.env.GEMINI_API_KEY}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: msgContents,
-            generationConfig: { maxOutputTokens: 32768, temperature: 0.3 },
-          }),
-        });
-        if (res.ok) return res.json();
-        const errText = await res.text();
-        console.error(`Gemini Vision request failed (${model}):`, res.status, errText);
-        if (res.status !== 429) return null;
+        for (let attempt = 0; attempt < 2; attempt++) {
+          let res;
+          try {
+            res = await fetch(`${GEMINI_URL(model)}?key=${process.env.GEMINI_API_KEY}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: msgContents,
+                generationConfig: { maxOutputTokens: 32768, temperature: 0.3 },
+              }),
+            });
+          } catch (networkErr) {
+            console.error(`Gemini Vision network error (${model}, attempt ${attempt + 1}):`, networkErr);
+            if (attempt === 0) { await new Promise(r => setTimeout(r, 800)); continue; }
+            break;
+          }
+          if (res.ok) return res.json();
+          const errText = await res.text();
+          console.error(`Gemini Vision request failed (${model}, attempt ${attempt + 1}):`, res.status, errText);
+          if (res.status === 429) break;
+          if (attempt === 0 && res.status >= 500) { await new Promise(r => setTimeout(r, 800)); continue; }
+          break;
+        }
       }
       return null;
     };

@@ -20,6 +20,11 @@ const STAGES = [
   { key: 'location', label: 'Location' },
   { key: 'unit', label: 'Unit' },
   { key: 'verdict', label: 'Verdict' },
+  // Deliberately placed after Verdict, not on Unit -- review flagged the
+  // furnishing CTA sitting on the Unit tab as appearing before there was
+  // any verdict to react to. It only becomes reachable once a score has
+  // actually been seen (see PropertyScoreFlow's reachableStages).
+  { key: 'furnish', label: 'Furnishing' },
 ];
 
 export default function PropertyScoreProgress({ current, done = [], reachable = [], onSelect }) {

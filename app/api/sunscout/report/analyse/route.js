@@ -18,6 +18,15 @@ import { NextResponse } from 'next/server';
 import { computeSolarSummary } from '@/lib/sunscout/solarReport';
 import { checkBuildingHeights } from '@/lib/sunscout/buildingHeights';
 
+// Vercel's default serverless timeout (10s on Hobby, and even the 60s Pro
+// default) is too short for this route: 12 screenshots + up to 3 Gemini
+// continuation calls can legitimately take 60-120s. Without this, a slow
+// but otherwise-successful generation gets killed mid-flight and the
+// person sees a generic "something went wrong" with no way to tell that
+// from an actual API failure -- this was the most likely cause of the
+// repeated report-generation failures reported in review.
+export const maxDuration = 120;
+
 const GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
 const GEMINI_URL = (model) => `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
@@ -48,8 +57,16 @@ Note: the neighbourhood score is the same for every unit in this pincode — it 
 }
 
 export async function POST(req) {
-  const { screenshots, lat, lon, address, floor, facing, tzOffset, avRecord, combinedScore, unitScore, areaWeight, unitWeight, personaId } = await req.json();
+  const { screenshots, lat, lon, address, floor, facing, tzOffset, avRecord, combinedScore, unitScore, areaWeight, unitWeight, personaId, customNote } = await req.json();
   const persona = personaId ? (await import('@/lib/personas')).getPersona(personaId) : null;
+  // Free-text ask from the buyer, captured right before they hit Generate
+  // (see UnitVerdict's own field -- the report modal itself auto-starts,
+  // so this is the only chance to ask). Capped and stripped of the model's
+  // own prompt syntax so it can't be used to inject formatting/section
+  // instructions of its own.
+  const safeCustomNote = typeof customNote === 'string'
+    ? customNote.trim().slice(0, 500).replace(/[`*_#]/g, '')
+    : '';
 
   if (!screenshots || screenshots.length === 0) {
     return NextResponse.json({ analysis: 'No screenshots provided.' }, { status: 400 });
@@ -145,6 +162,7 @@ You also have ${screenshots.length} screenshots of the actual 3D map at this loc
 
 Write personally, not clinically — like a knowledgeable friend giving honest advice, not a data report reciting fields. Address the reader as "you" where it reads naturally. Be thorough and specific, not brief. This report is a defensible artifact a buyer will rely on — do not compress away detail to save space, and do not pad it with generic real-estate filler that could apply to any property.
 ${persona ? `\nWHO'S READING THIS: ${persona.reportFocus}\n` : ''}
+${safeCustomNote ? `\nTHE BUYER'S OWN REQUEST — they typed this themselves right before generating this report, so treat it as the single strongest signal of what they actually care about, above persona defaults or generic coverage: "${safeCustomNote}"\nDirectly address this in the Home Buyer Verdict section — do not just mention it in passing, actually answer it using the ground-truth data above. If the data above genuinely doesn't cover what they asked (e.g. they asked about something this report doesn't measure), say so plainly rather than inventing an answer. Never quote their request back verbatim or write "you mentioned" — just make sure the answer is unmistakably there.\n` : ''}
 
 FORMATTING RULES (follow exactly, every time, regardless of location):
 - Never use emoji, anywhere, in any section, under any circumstances — not as bullet markers, not as decoration, not inline in a sentence. Plain text only.
@@ -194,20 +212,36 @@ A full, honest verdict, several sentences to a short paragraph: is the sunlight 
 
     const contents = [{ role: 'user', parts: [{ text: `${prompt}\n\nImage order:\n${labelLine}` }, ...imageParts] }];
 
+    // One retry per model on a transient failure (5xx, or a thrown network
+    // error) before giving up on that model and falling through to the
+    // next one -- a single blip used to kill the whole report right away.
+    // 429 (rate limit) still skips straight to the next model with no
+    // retry, since retrying the same model won't help there.
     const callGemini = async (msgContents) => {
       for (const model of GEMINI_MODELS) {
-        const res = await fetch(`${GEMINI_URL(model)}?key=${process.env.GEMINI_API_KEY}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: msgContents,
-            generationConfig: { maxOutputTokens: 8192, temperature: 0.2 },
-          }),
-        });
-        if (res.ok) return res.json();
-        const errText = await res.text();
-        console.error(`Gemini Vision request failed (${model}):`, res.status, errText);
-        if (res.status !== 429) return null;
+        for (let attempt = 0; attempt < 2; attempt++) {
+          let res;
+          try {
+            res = await fetch(`${GEMINI_URL(model)}?key=${process.env.GEMINI_API_KEY}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: msgContents,
+                generationConfig: { maxOutputTokens: 8192, temperature: 0.2 },
+              }),
+            });
+          } catch (networkErr) {
+            console.error(`Gemini Vision network error (${model}, attempt ${attempt + 1}):`, networkErr);
+            if (attempt === 0) { await new Promise(r => setTimeout(r, 800)); continue; }
+            break; // exhausted retries for this model, fall through to the next one
+          }
+          if (res.ok) return res.json();
+          const errText = await res.text();
+          console.error(`Gemini Vision request failed (${model}, attempt ${attempt + 1}):`, res.status, errText);
+          if (res.status === 429) break; // no point retrying the same model
+          if (attempt === 0 && res.status >= 500) { await new Promise(r => setTimeout(r, 800)); continue; }
+          break;
+        }
       }
       return null;
     };

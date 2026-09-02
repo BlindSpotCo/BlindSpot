@@ -31,6 +31,7 @@ import UnitVerdict from './UnitVerdict';
 import PersonaPicker from './PersonaPicker';
 import PropertyScoreProgress from './PropertyScoreProgress';
 import SideDataStrip from './SideDataStrip';
+import FloorPlanAnalysis from '@/components/floor-plan/FloorPlanAnalysis';
 import { PERSONA_ORDER } from '@/lib/personas';
 
 // `initial` -- { stage, personaId, mode, areaRecord, city, lat, lon,
@@ -271,7 +272,12 @@ export default function PropertyScoreFlow({ initial }) {
   // relying on the stepper to prevent getting there. An earlier version
   // gated these behind progress and disabled the button entirely, which
   // on mobile just read as "these buttons don't work."
-  const reachableStages = ['priorities', 'location', 'unit', 'verdict'];
+  // Furnishing is the one exception to "always clickable" above -- it's
+  // reached AFTER seeing a score (review flagged the old placement, on
+  // the Unit tab, as showing up before there was any verdict to react
+  // to), so it only unlocks once unitSeen is true rather than being open
+  // from the start like the other four.
+  const reachableStages = ['priorities', 'location', 'unit', 'verdict', ...(unitSeen ? ['furnish'] : [])];
 
   return (
     <section className="section" id="property-score-flow" style={{ paddingTop: 0 }}>
@@ -454,6 +460,28 @@ export default function PropertyScoreFlow({ initial }) {
             </p>
           </div>
         )}
+
+        {/* ── Furnishing: deliberately placed after Verdict, not on Unit
+            (see the reachableStages comment above) -- a person lands here
+            once they've actually seen a score, not before. The floor-plan
+            advisor renders inline (embedded) instead of linking out to its
+            own tab, so it's a real step in this flow rather than a side
+            errand. */}
+        <div className="ps-flow-wrap" style={{ width: '100%', display: viewStage === 'furnish' ? 'block' : 'none' }}>
+          {unitSeen ? (
+            <div style={{ maxWidth: 1120, margin: '0 auto' }}>
+              <h2 style={{ fontSize: 'clamp(22px, 2.4vw, 28px)', marginBottom: 8 }}>Furnish this unit.</h2>
+              <p style={{ fontSize: 13, color: 'var(--text-mute)', marginBottom: 28, lineHeight: 1.55, maxWidth: 560 }}>
+                Upload a floor plan - a PDF, JPG, or PNG - and get room-by-room furniture and placement suggestions, marked directly on the plan.
+              </p>
+              <FloorPlanAnalysis embedded />
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '60px 0' }}>
+              <p style={{ fontSize: 14.5, color: 'var(--text-mute)' }}>Get a Home Comfort Score on the Unit tab first, then come back here to furnish it.</p>
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
