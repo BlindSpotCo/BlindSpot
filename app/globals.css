@@ -775,7 +775,7 @@
     color:rgba(255,255,255,.58); display:block; margin:0 0 16px;
   }
   .hero-verdict-heading{
-    font-size:40px; font-weight:700; line-height:1.16; margin:0; letter-spacing:0.01em;
+    font-size:40px; font-weight:700; line-height:1.16; margin:0; letter-spacing:0.03em;
   }
   .hero-verdict-heading .seg.slate{ color:#fff }
   @media (max-width:900px){ .hero-verdict-heading{ font-size:32px } }
