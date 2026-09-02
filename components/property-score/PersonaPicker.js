@@ -54,6 +54,12 @@ export default function PersonaPicker({ personaId, onSelect, showHeading = true 
               <span>
                 <span style={{ display: 'block', fontSize: 14.5, fontWeight: 700, color: active ? p.color : 'var(--ink)' }}>{p.label}</span>
                 <span style={{ display: 'block', fontSize: 13, color: 'var(--text-mute)', lineHeight: 1.4, marginTop: 2 }}>{p.blurb}</span>
+                {/* Only on the active card, right where you just picked
+                    it -- what this choice actually does, not just who it's
+                    for. See lib/personas.js's effect field. */}
+                {active && p.effect && (
+                  <span className="mono" style={{ display: 'block', fontSize: 11, color: p.color, lineHeight: 1.5, marginTop: 6 }}>{p.effect}</span>
+                )}
               </span>
             </button>
           );
