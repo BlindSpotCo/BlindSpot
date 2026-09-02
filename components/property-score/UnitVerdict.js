@@ -8,6 +8,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import SunScoutPanel from '@/components/sunscout/SunScoutPanel';
 import LiveScoreCard from '@/components/sunscout/LiveScoreCard';
+import FloorPlanAnalysis from '@/components/floor-plan/FloorPlanAnalysis';
 import { getPersona, PERSONA_ORDER } from '@/lib/personas';
 import { getActionItems } from '@/lib/property-score/actionItems';
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
@@ -390,6 +391,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
           so unmounting/remounting it on tab switches is safe. */}
       {viewStage === 'verdict' && lat && lon && (
         combined ? (
+          <>
           <div className="uv-combined-card" style={{ border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '28px 26px', background: 'var(--bg-2)' }}>
             {combined.area && (
               <div style={{ marginBottom: 24 }}>
@@ -526,6 +528,22 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               {combined.area ? 'Generate Full AI Report - Neighbourhood + Unit' : 'Generate AI Report - Unit'}
             </button>
           </div>
+
+          {/* Furnishing lives here on the Verdict tab, after the score
+              card above, not as its own top-level tab -- keeping it on
+              the same viewStage means the 3D map panel (which the report
+              modal's captureScreenshots() depends on) never gets hidden
+              via display:none just from someone browsing furnishing
+              while a report generates. A separate "Furnishing" tab did
+              exactly that and silently broke report generation. */}
+          <div style={{ marginTop: 28, paddingTop: 28, borderTop: '1px solid var(--line)' }}>
+            <div className="mono" style={{ fontSize: 12, color: 'var(--sun)', letterSpacing: '.12em', marginBottom: 4 }}>FURNISH THIS UNIT</div>
+            <p style={{ fontSize: 13, color: 'var(--text-mute)', marginBottom: 18, lineHeight: 1.55, maxWidth: 560 }}>
+              Upload a floor plan - a PDF, JPG, or PNG - and get room-by-room furniture and placement suggestions, marked directly on the plan.
+            </p>
+            <FloorPlanAnalysis embedded />
+          </div>
+          </>
         ) : (
           // Reachable by clicking the stepper's Verdict tab directly (once
           // it's been visited before and is therefore clickable again) at
