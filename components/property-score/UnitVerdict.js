@@ -9,6 +9,8 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import SunScoutPanel from '@/components/sunscout/SunScoutPanel';
 import LiveScoreCard from '@/components/sunscout/LiveScoreCard';
 import { getPersona, PERSONA_ORDER } from '@/lib/personas';
+import { getActionItems } from '@/lib/property-score/actionItems';
+import { FACTOR_LABELS } from '@/lib/property-score/ui';
 
 const FACING_OPTS = ['North', 'North-East', 'East', 'South-East', 'South', 'South-West', 'West', 'North-West'];
 
@@ -235,6 +237,15 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   // your report…" is actually seen rather than running invisibly until
   // you happen to click back to Unit.
   const showUnit = viewStage !== 'verdict' || reportOpen;
+
+  // Independent of areaWeight on purpose -- built from the raw
+  // per-dimension scores (area.factors, unit.subScores), not the
+  // weighted combinedScore, so dragging the area/unit slider can't make
+  // a real concern disappear from view (Apeksha, 3:22 PM: "keep
+  // important concerns visible regardless of weighting").
+  const actionItems = combined
+    ? getActionItems({ areaFactors: combined.area?.factors, factorLabels: FACTOR_LABELS, unitSubScores: combined.unit?.subScores })
+    : [];
 
   return (
     <>
@@ -481,6 +492,19 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
             {combined.dataNotes?.length > 0 && (
               <div style={{ fontSize: 12, color: 'var(--text-dim)', lineHeight: 1.7, marginBottom: 20 }}>
                 {combined.dataNotes.map((n, i) => <div key={i}>- {n}</div>)}
+              </div>
+            )}
+
+            {actionItems.length > 0 && (
+              <div style={{ border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '16px 18px', marginBottom: 20, background: 'var(--bg)' }}>
+                <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', letterSpacing: '.1em', marginBottom: 10 }}>WHAT TO CHECK ON YOUR VISIT</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {actionItems.map(item => (
+                    <div key={item.key} style={{ fontSize: 13, color: 'var(--text-mute)', lineHeight: 1.5 }}>
+                      <strong style={{ color: 'var(--text)' }}>{item.label} ({item.score}):</strong> {item.action}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 

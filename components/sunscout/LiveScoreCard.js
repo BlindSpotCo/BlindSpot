@@ -3,6 +3,8 @@
 // Ported from SunScout's components/LiveScoreCard.tsx (TS types stripped,
 // logic unchanged).
 
+import { getActionItems } from '@/lib/property-score/actionItems';
+
 const ORG = '#E07B00';
 const INK = '#1A0A00';
 const SUB = '#8A8A8A';
@@ -31,6 +33,7 @@ const WEIGHT_KEY_MAP = {
 
 export default function LiveScoreCard({ result }) {
   const totalWeight = Object.values(result.weights).reduce((a, b) => a + b, 0) || 1;
+  const actionItems = getActionItems({ unitSubScores: result.subScores });
 
   return (
     <div style={{ fontFamily: SANS }}>
@@ -100,6 +103,21 @@ export default function LiveScoreCard({ result }) {
           );
         })}
       </div>
+
+      {actionItems.length > 0 && (
+        <div style={{ border: `1px solid ${LINE}`, borderTop: 'none', padding: '16px 18px', background: '#FBF8F2' }}>
+          <div style={{ fontFamily: MONO, fontSize: 10, fontWeight: 500, color: ORG, letterSpacing: '.12em', marginBottom: 10 }}>
+            WHAT TO CHECK ON YOUR VISIT
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {actionItems.map(item => (
+              <div key={item.key} style={{ fontSize: 12.5, color: INK, lineHeight: 1.55 }}>
+                <strong>{item.label} ({item.score}):</strong> {item.action}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div style={{ border: `1px solid ${LINE}`, borderTop: 'none', padding: '16px 18px', background: '#FBF8F2' }}>
         <div style={{ fontFamily: MONO, fontSize: 10, fontWeight: 500, color: ORG, letterSpacing: '.12em', marginBottom: 10 }}>
