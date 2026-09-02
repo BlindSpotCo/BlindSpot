@@ -8,6 +8,7 @@
 // the combined-score page can reuse the same values without postMessage.
 
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import SaveReportButton from '@/components/reports/SaveReportButton';
 
 const FACING = ['North','South','East','West','North-East','South-East','North-West','South-West'];
@@ -28,9 +29,9 @@ export default function ReportModal({
   // report covers the neighbourhood too, not just this unit.
   areaRecord, combinedScore, unitScore, areaWeight, unitWeight, unitSubScores, verdictLabel,
   personaId,
-  prefillFloor, prefillFacing,
+  prefillFloor, prefillFacing, prefillCustomNote,
 }) {
-  const [floor, setFloor]     = useState(prefillFloor != null ? String(prefillFloor) : '5');
+  const [floor, setFloor]     = useState(prefillFloor != null ? String(prefillFloor) : '0');
   const [facing, setFacing]   = useState(prefillFacing || 'South');
   const [facingTouched, setFacingTouched] = useState(Boolean(prefillFacing));
   const facingTouchedRef = useRef(Boolean(prefillFacing));
@@ -38,6 +39,13 @@ export default function ReportModal({
   const [facingLoading, setFacingLoading] = useState(true);
   const [facingExpanded, setFacingExpanded] = useState(false);
   const [reportLabel, setReportLabel] = useState('');
+  // Free-text "focus on this" note -- separate from the floor-plan/
+  // furnishing notes field, this one steers the actual AI Report (verdict
+  // + analysis), not the furnishing advisor. Usually arrives prefilled
+  // from UnitVerdict's own field (the autoGenerate path never shows this
+  // modal's form), but stays editable here too for the standalone-SunScout
+  // path where this modal's form is the only place to say it.
+  const [customNote, setCustomNote] = useState(prefillCustomNote || '');
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError]     = useState('');
@@ -104,9 +112,10 @@ export default function ReportModal({
     // wiped it out from underneath itself.
     if (onFloorFacingSubmit && !autoGenerate) onFloorFacingSubmit(parseInt(floor, 10), facing);
 
-    try {
-      const addr = address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+    const addr = address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+    const safeCustomNote = customNote.trim() || undefined;
 
+    const attemptOnce = async () => {
       const screenshots = await captureScreenshots();
       setProgress(35);
 
@@ -116,7 +125,7 @@ export default function ReportModal({
         body: JSON.stringify({
           screenshots, lat, lon, address: addr, floor, facing, tzOffset,
           avRecord: areaRecord || undefined, combinedScore, unitScore, areaWeight, unitWeight,
-          personaId,
+          personaId, customNote: safeCustomNote,
         }),
       });
       if (!analyseRes.ok) throw new Error('analysis-failed');
@@ -157,8 +166,23 @@ export default function ReportModal({
         lat, lon, verdictLabel, combinedScore, unitScore, areaWeight, unitWeight,
         hasArea: !!areaRecord,
       });
+    };
+
+    try {
+      try {
+        await attemptOnce();
+      } catch (firstErr) {
+        // One silent retry before bothering the person with an error --
+        // review found the report failing 3-4 times in a row, which looks
+        // like a broken feature but is consistent with transient
+        // platform/API blips rather than a hard failure every time.
+        console.error('Report generation failed, retrying once:', firstErr);
+        setProgress(5);
+        await new Promise(r => setTimeout(r, 1200));
+        await attemptOnce();
+      }
     } catch (e) {
-      console.error('Report generation failed:', e);
+      console.error('Report generation failed after retry:', e);
       setError("Something went wrong generating your report. This sometimes happens when things are busy, please try again in a minute.");
     } finally {
       setLoading(false);
@@ -172,10 +196,37 @@ export default function ReportModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
-    <div className="modal-overlay" style={{ position:'fixed', inset:0, zIndex:1000, background:'rgba(10,5,0,0.6)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
-      <div style={{ background:'#FFFBF5', border:`1px solid ${LINE}`, padding:0, width:'100%', maxWidth:480, maxHeight:'90vh', overflowY:'auto', boxShadow:'0 30px 90px rgba(0,0,0,0.35)', fontFamily:SANS }}>
-      <div className="modal-body" style={{ padding:24 }}>
+  // The floor/facing/name FORM step is a short, deliberate input step, so
+  // it stays a real full-screen blocking modal -- that's the one moment
+  // where blocking is actually right. Once "Generate" is clicked (loading)
+  // or the report is ready, this switches to a small non-blocking corner
+  // card instead: no dark backdrop, doesn't cover the rest of the page,
+  // and the person can keep using the site (e.g. the Furnishing tab)
+  // while it finishes. Portalled to document.body so it also survives
+  // sitting inside a display:none ancestor when a tab switch hides the
+  // Unit/Verdict panel this component actually lives in underneath.
+  const isFormStep = !loading && !autoGenerate && !reportUrl;
+
+  const overlayStyle = isFormStep
+    ? { position:'fixed', inset:0, zIndex:1000, background:'rgba(10,5,0,0.6)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }
+    : { position:'fixed', bottom:20, right:20, zIndex:1000, width:360, maxWidth:'calc(100vw - 40px)', pointerEvents:'none' };
+
+  const cardStyle = isFormStep
+    ? { background:'#FFFBF5', border:`1px solid ${LINE}`, padding:0, width:'100%', maxWidth:480, maxHeight:'90vh', overflowY:'auto', boxShadow:'0 30px 90px rgba(0,0,0,0.35)', fontFamily:SANS }
+    : { background:'#FFFBF5', border:`1px solid ${LINE}`, padding:0, width:'100%', maxHeight:'70vh', overflowY:'auto', boxShadow:'0 16px 48px rgba(0,0,0,0.28)', borderRadius:8, fontFamily:SANS, pointerEvents:'auto' };
+
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
+    <div className="modal-overlay" style={overlayStyle}>
+      <div style={cardStyle}>
+      <div className="modal-body" style={{ padding: isFormStep ? 24 : 18 }}>
+
+        {!isFormStep && !reportUrl && (
+          <div className="mono" style={{ fontSize:10, fontWeight:600, color:ORG, letterSpacing:'.1em', textTransform:'uppercase', marginBottom:10 }}>
+            Report generating - feel free to keep browsing
+          </div>
+        )}
 
         {reportUrl ? (
           <div style={{ textAlign:'center', padding:'20px 0' }}>
@@ -219,7 +270,7 @@ export default function ReportModal({
             <div style={{ marginBottom:22 }}>
               <label style={{ fontFamily:MONO, fontSize:10.5, fontWeight:500, color:INK, letterSpacing:'.08em', display:'block', marginBottom:10, textTransform:'uppercase' }}>Floor number</label>
               <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-                <input type="range" min="1" max="30" value={floor} onChange={e => setFloor(e.target.value)} style={{ flex:1, accentColor:ORG }} />
+                <input type="range" min="0" max="30" value={floor} onChange={e => setFloor(e.target.value)} style={{ flex:1, accentColor:ORG }} />
                 <div style={{ background:INK, color:'#fff', fontFamily:MONO, fontSize:13, fontWeight:500, padding:'4px 12px', minWidth:40, textAlign:'center' }}>{floor}</div>
               </div>
               <div style={{ fontFamily:MONO, fontSize:10.5, color:SUB, marginTop:6 }}>Floor {floor} ≈ {parseInt(floor)*3}m above ground</div>
@@ -277,6 +328,17 @@ export default function ReportModal({
               />
             </div>
 
+            <div style={{ marginBottom:24 }}>
+              <label style={{ fontFamily:MONO, fontSize:10.5, fontWeight:500, color:INK, letterSpacing:'.08em', display:'block', marginBottom:10, textTransform:'uppercase' }}>Focus on anything specific? <span style={{ color:SUB, textTransform:'none', letterSpacing:0 }}>(optional)</span></label>
+              <textarea
+                value={customNote}
+                onChange={e => setCustomNote(e.target.value)}
+                rows={2}
+                placeholder="e.g. I care most about noise and safety, I work from home and need good daylight…"
+                style={{ width:'100%', border:`1px solid ${LINE}`, padding:'11px 12px', fontSize:13, fontFamily:'inherit', resize:'vertical', boxSizing:'border-box' }}
+              />
+            </div>
+
             {error && (
               <div style={{ border:'1px solid #dc2626', padding:'10px 14px', fontSize:12, color:'#dc2626', marginBottom:16, fontFamily:MONO }}>ERROR: {error}</div>
             )}
@@ -322,6 +384,7 @@ export default function ReportModal({
         `}</style>
       </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

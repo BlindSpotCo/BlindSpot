@@ -31,6 +31,11 @@ import { NextResponse } from 'next/server';
 import fs from 'node:fs';
 import path from 'node:path';
 
+// This route builds HTML for 12 embedded screenshots plus the full written
+// analysis -- give it the same generous headroom as the analyse route so a
+// slow-but-fine build doesn't get killed by the platform default timeout.
+export const maxDuration = 60;
+
 // -- BlindSpot theme (mirrors the CSS vars in app/globals.css) --------------
 const BG        = '#FAF6EE'; // --bg
 const CARD      = '#F1E9DA'; // --bg-2

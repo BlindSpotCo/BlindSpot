@@ -31,7 +31,7 @@ export default function LiveScoreModal({ lat, lon, tzOffset, onClose, onFloorFac
   // Start from whatever's already picked on the page behind this modal, if
   // anything -- falls back to the old 5/South defaults only when the page
   // hasn't had a floor/facing picked yet.
-  const [floor, setFloor] = useState(prefillFloor != null ? String(prefillFloor) : '5');
+  const [floor, setFloor] = useState(prefillFloor != null ? String(prefillFloor) : '0');
   const [facing, setFacing] = useState(prefillFacing || 'South');
   const [weights, setWeights] = useState(DEFAULT_WEIGHTS);
   const [showWeights, setShowWeights] = useState(false);
