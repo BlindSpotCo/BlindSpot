@@ -46,6 +46,13 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   // fire (and setState) after the component's gone.
   const weightDebounceRef = useRef(null);
   useEffect(() => () => clearTimeout(weightDebounceRef.current), []);
+  // True from the instant the slider moves until the recompute it
+  // triggered resolves -- separate from loadingCombined (which only
+  // covers the fetch itself) so the score can visibly react during the
+  // 250ms debounce too, not just once the request is in flight. Without
+  // this, dragging the bar gave no feedback for up to ~250ms before
+  // anything visibly changed, which read as "nothing happened."
+  const [weightUpdating, setWeightUpdating] = useState(false);
 
   const [gpsError, setGpsError] = useState('');
   // Whether the report modal (owned by SunScoutPanel, opened via
@@ -388,11 +395,16 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                   onChange={e => {
                     const v = Number(e.target.value);
                     setAreaWeight(v);
+                    setWeightUpdating(true);
                     clearTimeout(weightDebounceRef.current);
-                    weightDebounceRef.current = setTimeout(() => computeCombined(v), 250);
+                    weightDebounceRef.current = setTimeout(() => {
+                      computeCombined(v).finally(() => setWeightUpdating(false));
+                    }, 250);
                   }}
                   style={{ width: '100%', accentColor: 'var(--slate)' }} />
-                <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginTop: 6 }}>Starts 50/50 - drag anytime to change how much the neighbourhood matters vs. the specific flat.</div>
+                <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginTop: 6 }}>
+                  Starts 50/50, drag to reweight how much the neighbourhood matters vs. the specific flat, the score and verdict below recalculate live. This changes how the same data is read for you, not the property itself.
+                </div>
               </div>
             )}
 
@@ -400,8 +412,9 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               <div>
                 <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', letterSpacing: '.12em', marginBottom: 6 }}>
                   {combined.area ? 'BLINDSPOT COMBINED SCORE' : 'HOME COMFORT SCORE'}
+                  {weightUpdating && <span style={{ color: 'var(--slate)' }}> - recalculating...</span>}
                 </div>
-                <div className="uv-score-number" style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 56, lineHeight: 1, color: 'var(--text)' }}>
+                <div className="uv-score-number" style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 56, lineHeight: 1, color: 'var(--text)', opacity: weightUpdating ? .45 : 1, transition: 'opacity .15s ease' }}>
                   {combined.combinedScore}<span style={{ fontSize: 20, color: 'var(--text-dim)' }}>/100</span>
                 </div>
               </div>
