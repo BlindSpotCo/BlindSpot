@@ -125,6 +125,16 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
+  /* Kills the browser's own automatic "scroll anchoring" -- normally
+     helpful (keeps your reading position stable when something above it
+     resizes), but it actively fights an explicit scrollTo() when content
+     above the fold changes size right after: exactly what happens on the
+     property-score tabs, where async data (LocalityPicker's city list
+     and counts, area scores, etc.) can finish loading a moment after the
+     tab-switch scroll effect already ran and land you back further down
+     the page than that effect intended, with no JS bug involved at all --
+     the browser silently overrides it. */
+  html, body{overflow-anchor:none}
   /* Extra safety net for phone: nothing (image, fixed-width table, long
      unbroken heading/number) should be able to force the page wider than
      the screen. This does NOT set overflow-x on html/body itself (see the

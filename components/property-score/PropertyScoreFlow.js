@@ -212,13 +212,20 @@ export default function PropertyScoreFlow({ initial }) {
   // PropertyScoreProgress.js/globals.css), which is fixed at the source.
   // With that fixed, y=0 -- the actual top of the page -- is always a
   // safe landing spot: header, stepper, and panel heading all render in
-  // their normal, non-overlapping flow from there, on every tab, with no
-  // arithmetic that can drift out of sync with a page that's still
-  // loading its fonts or fetching its own data (both of which caused
-  // over-scrolling in the two previous, more complicated versions of
-  // this fix).
+  // their normal, non-overlapping flow from there, on every tab.
+  //
+  // Repeated a few times over the first second, all at the SAME target
+  // (0) -- unlike the old computed-offset version, there's no arithmetic
+  // here that can be wrong, so repeating it costs nothing and guards
+  // against anything nudging the scroll position back down shortly after
+  // mount (async data landing, a font swap, or a browser's own automatic
+  // scroll-anchoring correction all fall in this category, and there's no
+  // way to verify from here which one it is on an actual phone).
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'auto' });
+    const toTop = () => window.scrollTo({ top: 0, behavior: 'auto' });
+    toTop();
+    const timers = [80, 300, 800].map(ms => setTimeout(toTop, ms));
+    return () => timers.forEach(clearTimeout);
   }, [viewStage]);
 
   // Landing directly on the Location tab (stepper click, direct link,
