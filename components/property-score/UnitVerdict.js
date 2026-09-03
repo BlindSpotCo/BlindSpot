@@ -455,6 +455,25 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
 
             <p style={{ fontSize: 14, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 24 }}>{combined.verdict.detail}</p>
 
+            {actionItems.length > 0 && (
+              <div style={{
+                border: `1px solid var(--brand)`, borderLeft: '4px solid var(--brand)', borderRadius: 'var(--radius)',
+                padding: '18px 20px', marginBottom: 24,
+                background: 'color-mix(in srgb, var(--brand) 7%, var(--bg-2))',
+              }}>
+                <div className="mono" style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--brand)', letterSpacing: '.1em', marginBottom: 12 }}>
+                  📋 WHAT TO CHECK ON YOUR VISIT
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 11 }}>
+                  {actionItems.map(item => (
+                    <div key={item.key} style={{ fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.55 }}>
+                      <strong style={{ color: 'var(--text)' }}>{item.label} ({item.score}):</strong> {item.action}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {combined.area ? (
               <div className="uv-score-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
                 <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--slate)', borderRadius: 'var(--radius)', padding: '14px 16px' }}>
@@ -470,31 +489,6 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 'var(--radius)', padding: '14px 16px', marginBottom: 20 }}>
                 <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT (HOME COMFORT) - FL {combined.unit.floor}, {combined.unit.facing}</div>
                 <div className="uv-score-box-number" style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 24, color: 'var(--sun)' }}>{combined.unit.score}</div>
-              </div>
-            )}
-
-            {combined.formula && (
-              <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', background: 'var(--bg)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '12px 16px', marginBottom: 16 }}>
-                {combined.formula}
-              </div>
-            )}
-
-            {combined.dataNotes?.length > 0 && (
-              <div style={{ fontSize: 12, color: 'var(--text-dim)', lineHeight: 1.7, marginBottom: 20 }}>
-                {combined.dataNotes.map((n, i) => <div key={i}>- {n}</div>)}
-              </div>
-            )}
-
-            {actionItems.length > 0 && (
-              <div style={{ border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '16px 18px', marginBottom: 20, background: 'var(--bg)' }}>
-                <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', letterSpacing: '.1em', marginBottom: 10 }}>WHAT TO CHECK ON YOUR VISIT</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {actionItems.map(item => (
-                    <div key={item.key} style={{ fontSize: 13, color: 'var(--text-mute)', lineHeight: 1.5 }}>
-                      <strong style={{ color: 'var(--text)' }}>{item.label} ({item.score}):</strong> {item.action}
-                    </div>
-                  ))}
-                </div>
               </div>
             )}
 
