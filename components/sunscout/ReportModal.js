@@ -29,7 +29,7 @@ export default function ReportModal({
   // report covers the neighbourhood too, not just this unit.
   areaRecord, combinedScore, unitScore, areaWeight, unitWeight, unitSubScores, verdictLabel,
   personaId,
-  prefillFloor, prefillFacing, prefillCustomNote,
+  prefillFloor, prefillFacing, prefillCustomNote, prefillActionItems,
 }) {
   const [floor, setFloor]     = useState(prefillFloor != null ? String(prefillFloor) : '0');
   const [facing, setFacing]   = useState(prefillFacing || 'South');
@@ -126,6 +126,7 @@ export default function ReportModal({
           screenshots, lat, lon, address: addr, floor, facing, tzOffset,
           avRecord: areaRecord || undefined, combinedScore, unitScore, areaWeight, unitWeight,
           personaId, customNote: safeCustomNote,
+          actionItems: prefillActionItems || undefined,
         }),
       });
       if (!analyseRes.ok) throw new Error('analysis-failed');

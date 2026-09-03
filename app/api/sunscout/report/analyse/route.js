@@ -57,7 +57,7 @@ Note: the neighbourhood score is the same for every unit in this pincode — it 
 }
 
 export async function POST(req) {
-  const { screenshots, lat, lon, address, floor, facing, tzOffset, avRecord, combinedScore, unitScore, areaWeight, unitWeight, personaId, customNote } = await req.json();
+  const { screenshots, lat, lon, address, floor, facing, tzOffset, avRecord, combinedScore, unitScore, areaWeight, unitWeight, personaId, customNote, actionItems } = await req.json();
   const persona = personaId ? (await import('@/lib/personas')).getPersona(personaId) : null;
   // Free-text ask from the buyer, captured right before they hit Generate
   // (see UnitVerdict's own field -- the report modal itself auto-starts,
@@ -67,6 +67,14 @@ export async function POST(req) {
   const safeCustomNote = typeof customNote === 'string'
     ? customNote.trim().slice(0, 500).replace(/[`*_#]/g, '')
     : '';
+
+  // The same weak-score-> concrete-action pairs already shown in the
+  // Verdict screen's own popup (lib/property-score/actionItems.js),
+  // passed straight through rather than recomputed here -- one source of
+  // truth for which dimensions actually flagged as weak enough to act on.
+  const safeActionItems = Array.isArray(actionItems)
+    ? actionItems.filter(i => i && typeof i.label === 'string' && typeof i.action === 'string').slice(0, 10)
+    : [];
 
   if (!screenshots || screenshots.length === 0) {
     return NextResponse.json({ analysis: 'No screenshots provided.' }, { status: 400 });
@@ -150,6 +158,16 @@ Then, after all the sections listed above, add exactly one more section:
 ${personaSectionNumber}. ${ov.sectionTitle}
 ${ov.sectionBody}` : '';
 
+  // Appended after everything else (including persona overlay, if any) so
+  // it always lands as the actual last section regardless of which of the
+  // 4 numbering combinations above are in play this time.
+  const checklistSectionNumber = (hasNeighbourhood ? 6 : 5) + (ov ? 1 : 0);
+  const checklistSection = safeActionItems.length > 0 ? `
+
+${checklistSectionNumber}. WHAT TO CHECK WHEN YOU VISIT
+These are already-written, plain-language action lines for the specific dimensions that scored weak enough to be worth a second look in person — reuse them close to as-is (light rewording for flow is fine, don't invent new ones or drop any) as a short "- " bulleted list, one line per item, each starting with the dimension name in bold-equivalent plain text then a colon. One short sentence before the list is enough context; no restating of scores or numbers already covered elsewhere in this report.
+${safeActionItems.map(i => `- ${i.label} (${i.score}): ${i.action}`).join('\n')}` : '';
+
   const prompt = `You are a solar and neighbourhood intelligence analyst helping a home buyer in India, writing a single combined report for BlindSpot.
 
 Property: ${safeAddressInput} (${latN.toFixed(4)}°N, ${lonN.toFixed(4)}°E)
@@ -161,6 +179,7 @@ ${combinedGroundTruth}
 You also have ${screenshots.length} screenshots of the actual 3D map at this location. The orange circle/dot marks the exact property location; darker areas are rendered shadows from OpenStreetMap building data. Use these images ONLY for narrative color and visual confirmation (e.g. "as the images show, a taller block sits to the southeast") — do NOT estimate hours of sun, shadow duration, or building heights from the images; use the ground-truth numbers above for all figures. If a screenshot looks blank, black, or unreadable, say so explicitly rather than guessing what it would show.
 
 Write personally, not clinically — like a knowledgeable friend giving honest advice, not a data report reciting fields. Address the reader as "you" where it reads naturally. Be thorough and specific, not brief. This report is a defensible artifact a buyer will rely on — do not compress away detail to save space, and do not pad it with generic real-estate filler that could apply to any property.
+Plain language throughout, not just the verdict's opening lines: explain any real-estate or technical term the first time it appears (azimuth, NQI, feasibility band, etc.) in a short clause rather than assuming the reader already knows it, and prefer the everyday word over the technical one wherever both say the same thing.
 ${persona ? `\nWHO'S READING THIS: ${persona.reportFocus}\n` : ''}
 ${safeCustomNote ? `\nTHE BUYER'S OWN REQUEST — they typed this themselves right before generating this report, so treat it as the single strongest signal of what they actually care about, above persona defaults or generic coverage: "${safeCustomNote}"\nDirectly address this in the Home Buyer Verdict section — do not just mention it in passing, actually answer it using the ground-truth data above. If the data above genuinely doesn't cover what they asked (e.g. they asked about something this report doesn't measure), say so plainly rather than inventing an answer. Never quote their request back verbatim or write "you mentioned" — just make sure the answer is unmistakably there.\n` : ''}
 
@@ -186,7 +205,8 @@ ${facingSectionNumber}. ${safeFacingInput.toUpperCase()}-FACING WINDOW ASSESSMEN
 Explain in full when the sun shines directly into a ${safeFacingInput}-facing window here across the year, why (walk through the azimuth/elevation reasoning in plain language), and whether this is a good or bad facing for this specific location and floor — with the reasoning spelled out, not just a verdict.${hasNeighbourhood ? '' : `
 
 4. HOME BUYER VERDICT
-A full, honest verdict, several sentences to a short paragraph: is the sunlight situation good, acceptable, or poor, and why specifically. What floor would you recommend as a minimum, and why. Any specific concerns visible in the shadow patterns across the screenshots. Do not just restate the overall feasibility label — explain what it means for someone actually living there.`}${personaOverlay}`;
+A full, honest verdict, several sentences to a short paragraph: is the sunlight situation good, acceptable, or poor, and why specifically. What floor would you recommend as a minimum, and why. Any specific concerns visible in the shadow patterns across the screenshots. Do not just restate the overall feasibility label — explain what it means for someone actually living there.
+The opening 2-3 sentences of this section must be plain, everyday words — the way you'd say it out loud to a friend with no real-estate or technical background, no jargon or acronyms — before going into any deeper detail.`}${personaOverlay}${checklistSection}`;
 
   if (!process.env.GEMINI_API_KEY) {
     return NextResponse.json(

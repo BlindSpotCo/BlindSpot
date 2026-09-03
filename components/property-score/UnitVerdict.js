@@ -488,13 +488,13 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                 onClick={() => setShowVisitChecklist(true)}
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%',
-                  background: 'transparent', border: '1px solid var(--sun)', borderRadius: 'var(--radius)',
-                  padding: '13px 18px', marginBottom: 24, cursor: 'pointer', textAlign: 'left',
+                  background: 'var(--sun)', border: '2px solid var(--sun)', borderRadius: 'var(--radius)',
+                  padding: '15px 20px', marginBottom: 24, cursor: 'pointer', textAlign: 'left',
                 }}>
-                <span className="mono" style={{ fontSize: 12, color: 'var(--sun)', letterSpacing: '.08em', fontWeight: 500 }}>
+                <span className="mono" style={{ fontSize: 13, color: '#fff', letterSpacing: '.06em', fontWeight: 700 }}>
                   What to check when you visit
                 </span>
-                <span style={{ fontSize: 13, color: 'var(--sun)' }}>→</span>
+                <span style={{ fontSize: 16, color: '#fff', fontWeight: 700 }}>→</span>
               </button>
             )}
 
@@ -543,7 +543,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
             </div>
 
             <button
-              onClick={() => { onVerdictStart?.(true); sunScoutRef.current?.openReport({ floor: combined.unit.floor, facing: combined.unit.facing, customNote: reportCustomNote }); }}
+              onClick={() => { onVerdictStart?.(true); sunScoutRef.current?.openReport({ floor: combined.unit.floor, facing: combined.unit.facing, customNote: reportCustomNote, actionItems }); }}
               className="ps-btn ps-cta-btn"
               style={{
                 background: 'var(--brand)', color: '#fff', border: 'none',

@@ -83,7 +83,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
   const [searching, setSearching] = useState(false);
 
   const [showReport, setShowReport] = useState(false);
-  const [reportPrefill, setReportPrefill] = useState(null); // { floor, facing, customNote? } | null
+  const [reportPrefill, setReportPrefill] = useState(null); // { floor, facing, customNote?, actionItems? } | null
 
   useImperativeHandle(ref, () => ({
     // Called from UnitVerdict's Verdict tab -- at that moment this whole
@@ -291,6 +291,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
           personaId={personaId}
           prefillFloor={reportPrefill?.floor} prefillFacing={reportPrefill?.facing}
           prefillCustomNote={reportPrefill?.customNote}
+          prefillActionItems={reportPrefill?.actionItems}
         />
       )}
 
