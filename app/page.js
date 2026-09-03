@@ -108,7 +108,7 @@ export default function Home() {
           itself, tracking its offset position. Reveals via the same
           .reveal/IntersectionObserver mechanism every other section on
           this page already uses -- no new JS. */}
-      <section className="hero-verdict reveal">
+      <section className="hero-verdict reveal" id="products">
         <div className="wrap hero-verdict-inner">
           <div className="hero-verdict-copy">
             <span className="hero-verdict-eyebrow">The verdict</span>

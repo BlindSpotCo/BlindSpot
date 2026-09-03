@@ -202,6 +202,16 @@
     backdrop-filter:blur(10px);
     border-bottom:1px solid var(--line-soft);
   }
+
+  /* Nav links (#how-it-works, #products, #team) jump straight to these
+     sections' top edge by default -- with the header sticky at z-index:50
+     above everything, that puts the heading and first line of whichever
+     section you tapped right underneath it, hidden. scroll-margin-top
+     reserves that much space above the target when the browser scrolls to
+     it, matching nav.wrap's own height at each breakpoint (66/52px) plus
+     a little breathing room so the heading isn't flush against the bar. */
+  #how-it-works, #products, #team{ scroll-margin-top:90px }
+  @media (max-width:640px){ #how-it-works, #products, #team{ scroll-margin-top:72px } }
   nav.wrap{display:flex; align-items:center; justify-content:space-between; height:66px}
   /* Single child (just .brand) at rest — centers it in the bar instead of
      letting it sit flush left with nothing to balance it. */
@@ -2180,7 +2190,11 @@
   nav.wrap{ height:52px }
   .brand-mark-img{ height:18px }
   .brand-word-img{ height:9px }
-  .nav-burger{ width:38px; height:38px }
+  /* NOT re-shrinking .nav-burger back to 38px here -- the ≤480px pass
+     above deliberately bumps it to 44px for a real thumb-sized tap
+     target, and this block's own "wins by source order" note meant that
+     bump was silently getting undone on every phone ≤640px, including
+     the ones it was written for. Left at 44px on purpose. */
   .btn-cta-sm{ font-size:13px !important; padding:9px 12px !important; }
 
   .hero{ padding:32px 0 36px }
