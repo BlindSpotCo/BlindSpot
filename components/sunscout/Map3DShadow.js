@@ -387,7 +387,6 @@ window.addEventListener('message',function(e){
     ai=best;updateView(allPts[best]);drawArc();
   }
   if(e.data.type==='captureScreenshot'){
-    console.log('[Map3DShadow iframe] captureScreenshot message received for:', e.data.label);
     var lbl=e.data.label;
     var capTime=e.data.time;
     var capDate=e.data.date;
@@ -417,7 +416,6 @@ window.addEventListener('message',function(e){
         try{
           var glCanvas=document.querySelector('#map canvas');
           if(glCanvas){
-            console.log('[Map3DShadow iframe] compositing: found #map canvas, size '+glCanvas.width+'x'+glCanvas.height+', drawing onto '+liveW+'x'+liveH+' capture canvas');
             rctx.drawImage(glCanvas,0,0,liveW,liveH);
           } else {
             var mapEl0=document.getElementById('map');
@@ -440,7 +438,6 @@ window.addEventListener('message',function(e){
           octx.drawImage(raw,0,0,liveW,liveH,0,0,CAP_W,CAP_H);
           try{
             var dataUrl=out.toDataURL('image/jpeg',0.85);
-            console.log('[Map3DShadow iframe] sending screenshotReady for "'+lbl+'", '+Math.round(dataUrl.length/1024)+'KB');
             window.parent.postMessage({type:'screenshotReady',label:lbl,data:dataUrl},'*');
           }catch(err){
             console.error('[Map3DShadow iframe] toDataURL failed (tainted canvas) for "'+lbl+'":', err);

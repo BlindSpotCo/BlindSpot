@@ -145,7 +145,6 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
 
   const handleMapReady = useCallback((fn) => {
     captureRef.current = fn;
-    console.log('[SunScoutPanel] Map3DShadow onReady fired, captureRef is now set');
   }, []);
 
   const clearScreenshotWatchdog = () => {
@@ -153,7 +152,6 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
   };
 
   const handleScreenshot = useCallback((label, data) => {
-    console.log(`[SunScoutPanel] screenshot received: "${label}", ${data ? `${Math.round(data.length / 1024)}KB` : 'NULL (failed)'}`);
     if (data) screenshotBufferRef.current.push({ label, base64: data });
     screenshotIdxRef.current++;
     if (screenshotIdxRef.current < SHOTS.length) {
@@ -162,8 +160,6 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
     } else if (screenshotResolverRef.current) {
       clearScreenshotWatchdog();
       const buf = [...screenshotBufferRef.current];
-      const totalKB = Math.round(buf.reduce((s, b) => s + b.base64.length, 0) / 1024);
-      console.log(`[SunScoutPanel] all ${SHOTS.length} shots done, ${buf.length} captured successfully, ~${totalKB}KB total payload`);
       screenshotResolverRef.current(buf);
       screenshotResolverRef.current = null;
       screenshotRejecterRef.current = null;
@@ -171,7 +167,6 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
   }, []);
 
   const captureScreenshots = useCallback(() => {
-    console.log('[SunScoutPanel] captureRef.current is', captureRef.current ? 'SET' : 'NULL, Map3DShadow onReady may not have fired yet');
     return new Promise((resolve, reject) => {
       screenshotBufferRef.current = [];
       screenshotIdxRef.current = 0;
