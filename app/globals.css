@@ -958,6 +958,23 @@
   .ps-tab-panel-scroll-margin{ scroll-margin-top:130px }
   @media (max-width:640px){ .ps-tab-panel-scroll-margin{ scroll-margin-top:210px } }
 
+  /* The stepper's sticky offset -- this is the actual root cause of the
+     heading-tucked-under-the-header bug, and it's a static CSS mismatch,
+     not a scroll-position issue: `top` was hardcoded to 66px, matching
+     the DESKTOP header's height. Because the stepper sits right at the
+     top of the page, it's effectively "stuck" from the very first frame
+     regardless of scroll position -- so on phone, where the real header
+     is only 52px, the stepper pins itself 14px lower than where it
+     naturally sits, and visually paints over the top 14px of whatever
+     content follows it in the page (the panel heading). No amount of
+     scrollTo correction can fix this -- it's not about scroll position,
+     it's that the stepper's own resting position doesn't match the
+     header's real height. Matching `top` to nav.wrap's actual height at
+     each breakpoint (66px / 52px, see NAV above) removes the mismatch
+     entirely instead of compensating for it after the fact. */
+  .ps-stepper-sticky{ position:sticky; top:66px }
+  @media (max-width:640px){ .ps-stepper-sticky{ top:52px } }
+
   @media (prefers-reduced-motion: reduce){
     .coord-readout .blink, .pcard-tag .dot{animation:none !important}
     .pcard, .team-card, .eyebrow::after, .nav-links a::after, .brand-mark-img{transition:none !important}
