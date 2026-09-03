@@ -207,20 +207,43 @@ export default function PropertyScoreFlow({ initial }) {
   // Deliberately NOT scrollIntoView + a fixed scroll-margin-top: that
   // combination was sized for the stepper's single-row desktop layout
   // (header 66px + one stepper row ≈ 130px) and silently broke on phone,
-  // where the same 4 stages wrap to two rows -- the real sticky height
-  // there runs closer to 180-200px, so the fixed 130px landed the scroll
-  // partway through the panel's own heading every time, tucking it under
-  // the header+stepper. Measuring both live at scroll time means this
-  // stays correct regardless of how tall the stepper happens to be
-  // (wrapped or not) without needing another guessed number later.
+  // where the same 4 stages wrap to two rows.
+  //
+  // The reserved space is the STEPPER's own sticky `top` (its CSS anchors
+  // it a fixed 66px down, see PropertyScoreProgress.js -- read live via
+  // getComputedStyle rather than hardcoded again here, so this can't drift
+  // out of sync with that file) plus the stepper's own live height.
+  // Deliberately NOT the header's actual measured height -- the header is
+  // only 52px on phone, and summing 52 + stepper-height under-reserved by
+  // the 14px gap between the header's real bottom edge and the stepper's
+  // fixed top:66, which was still enough to clip a heading's descenders.
   useEffect(() => {
     const panel = panelRef.current;
-    if (!panel) return;
-    const header = document.querySelector('header');
     const stepper = document.getElementById('ps-stepper');
-    const stickyHeight = (header?.getBoundingClientRect().height || 0) + (stepper?.getBoundingClientRect().height || 0);
-    const panelTop = panel.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo({ top: Math.max(0, panelTop - stickyHeight - 16), behavior: 'auto' });
+    if (!panel || !stepper) return;
+
+    const correctScroll = () => {
+      const stepperTopOffset = parseFloat(getComputedStyle(stepper).top) || 0;
+      const safeBottom = stepperTopOffset + stepper.getBoundingClientRect().height;
+      const panelTop = panel.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: Math.max(0, panelTop - safeBottom - 16), behavior: 'auto' });
+    };
+
+    correctScroll();
+
+    // Re-run once web fonts actually finish loading. Headings on this page
+    // (h2, "Pick your priorities." included) render in Anton, loaded via
+    // Google Fonts with `display=swap` -- the browser shows a fallback
+    // font first, then swaps to Anton once it downloads. Anton's metrics
+    // differ enough from the fallback that the swap reflows the page and
+    // shifts everything below the heading, including the exact position
+    // this effect just scrolled to. Without this, the correction above is
+    // right for an instant and then silently wrong again the moment the
+    // real font loads -- which also explains why this could look "fixed"
+    // on a warm reload (fonts already cached) but not a fresh one.
+    if (document.fonts?.ready) {
+      document.fonts.ready.then(correctScroll);
+    }
   }, [viewStage]);
 
   // Landing directly on the Location tab (stepper click, direct link,

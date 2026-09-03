@@ -9,3 +9,4 @@ node_modules/
 # Python bytecode cache (from scripts/*.py)
 __pycache__/
 *.pyc
+*.patch
