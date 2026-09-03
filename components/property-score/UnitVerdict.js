@@ -6,6 +6,7 @@
 // was matched) or a SunScout-only Home Comfort Score (if not).
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import SunScoutPanel from '@/components/sunscout/SunScoutPanel';
 import LiveScoreCard from '@/components/sunscout/LiveScoreCard';
 import FloorPlanAnalysis from '@/components/floor-plan/FloorPlanAnalysis';
@@ -44,6 +45,9 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   // Free-text "focus on this" note for the AI Report -- see where it's
   // read below, next to the Generate button.
   const [reportCustomNote, setReportCustomNote] = useState('');
+  // Popup state for the "What to check when you visit" checklist -- see
+  // where it's opened, further down.
+  const [showVisitChecklist, setShowVisitChecklist] = useState(false);
   const [loadingCombined, setLoadingCombined] = useState(false);
   const [combinedError, setCombinedError] = useState('');
   const [areaWeight, setAreaWeight] = useState(persona.defaultAreaWeight);
@@ -455,24 +459,6 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
 
             <p style={{ fontSize: 14, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 24 }}>{combined.verdict.detail}</p>
 
-            {actionItems.length > 0 && (
-              <div style={{
-                border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 'var(--radius)',
-                padding: '16px 18px', marginBottom: 24,
-              }}>
-                <div className="mono" style={{ fontSize: 11.5, color: 'var(--sun)', letterSpacing: '.1em', marginBottom: 12 }}>
-                  NEXT - WHAT TO CHECK WHEN YOU VISIT
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 11 }}>
-                  {actionItems.map(item => (
-                    <div key={item.key} style={{ fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.55 }}>
-                      <strong style={{ color: 'var(--text)' }}>{item.label} ({item.score}):</strong> {item.action}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {combined.area ? (
               <div className="uv-score-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
                 <div className="uv-score-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--slate)', borderRadius: 'var(--radius)', padding: '14px 16px' }}>
@@ -489,6 +475,52 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                 <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 6 }}>UNIT (HOME COMFORT) - FL {combined.unit.floor}, {combined.unit.facing}</div>
                 <div className="uv-score-box-number" style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 24, color: 'var(--sun)' }}>{combined.unit.score}</div>
               </div>
+            )}
+
+            {/* A standalone trigger rather than an inline block -- the
+                checklist used to sit wedged between the combined score and
+                its own Area/Unit breakdown, which broke the natural
+                score -> breakdown reading order. This keeps that flow
+                intact and treats the checklist as its own thing you reach
+                for, not a paragraph you have to read past. */}
+            {actionItems.length > 0 && (
+              <button
+                onClick={() => setShowVisitChecklist(true)}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%',
+                  background: 'transparent', border: '1px solid var(--sun)', borderRadius: 'var(--radius)',
+                  padding: '13px 18px', marginBottom: 24, cursor: 'pointer', textAlign: 'left',
+                }}>
+                <span className="mono" style={{ fontSize: 12, color: 'var(--sun)', letterSpacing: '.08em', fontWeight: 500 }}>
+                  What to check when you visit
+                </span>
+                <span style={{ fontSize: 13, color: 'var(--sun)' }}>→</span>
+              </button>
+            )}
+
+            {showVisitChecklist && typeof document !== 'undefined' && createPortal(
+              <div
+                onClick={() => setShowVisitChecklist(false)}
+                style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(10,5,0,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+              >
+                <div
+                  onClick={e => e.stopPropagation()}
+                  style={{ background: 'var(--bg-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', maxWidth: 480, width: '100%', maxHeight: '85vh', overflowY: 'auto', padding: '24px 26px', boxShadow: '0 30px 90px rgba(0,0,0,0.35)' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 18 }}>
+                    <div className="mono" style={{ fontSize: 11.5, color: 'var(--sun)', letterSpacing: '.1em' }}>WHAT TO CHECK WHEN YOU VISIT</div>
+                    <button onClick={() => setShowVisitChecklist(false)} aria-label="Close" style={{ background: 'transparent', border: 'none', fontSize: 20, lineHeight: 1, color: 'var(--text-dim)', cursor: 'pointer', padding: 0 }}>×</button>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                    {actionItems.map(item => (
+                      <div key={item.key} style={{ fontSize: 14, color: 'var(--text-mute)', lineHeight: 1.55 }}>
+                        <strong style={{ color: 'var(--text)' }}>{item.label} ({item.score}):</strong> {item.action}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>,
+              document.body
             )}
 
             {/* The report always auto-generates the instant this modal opens
