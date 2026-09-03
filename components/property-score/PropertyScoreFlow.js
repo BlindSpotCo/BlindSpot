@@ -76,6 +76,23 @@ export default function PropertyScoreFlow({ initial }) {
   const [viewStage, setViewStage] = useState(initial?.stage || (initial?.areaRecord || initial?.lat ? 'unit' : 'priorities'));
 
   const panelRef = useRef(null);
+
+  // Take manual control of scroll restoration, once, for this whole flow.
+  // Every tab change writes to history via replaceState below (viewStage,
+  // personaId, mode, city, floor, facing... all synced to the URL) --
+  // Safari (and other browsers) can associate a remembered scroll
+  // position with each of those history entries and restore it on their
+  // own timeline, independent of and after our own scrollTo() calls run.
+  // That's a plausible, well-documented cause of a scroll position that
+  // silently reverts moments after we set it, on this exact pattern of
+  // an SPA that rewrites its own URL -- 'manual' hands all of that back
+  // to our own code (the effect further down) instead.
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+  }, []);
+
   // Direct Unit/Verdict entry with no location yet auto-geolocates once
   // (see the effect below) rather than showing anything to fill in --
   // this flag is what stops that from retriggering every render, and
