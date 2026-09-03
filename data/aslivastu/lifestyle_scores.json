@@ -1,0 +1,20 @@
+[
+  {
+    "pin_code": "560038",
+    "city": "Bangalore",
+    "source": "osm",
+    "scores": {
+      "nightlife": 0,
+      "dining": 0,
+      "cafes": 0
+    },
+    "nightlife_count": 0,
+    "dining_count": 0,
+    "cafes_count": 0,
+    "top_nightlife": [],
+    "top_dining": [],
+    "lifestyle_composite": 0,
+    "radius_m": 1200,
+    "fetched_at": "2026-08-10T08:24:30.247Z"
+  }
+]
