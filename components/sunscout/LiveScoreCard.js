@@ -4,6 +4,7 @@
 // logic unchanged).
 
 import { getActionItems } from '@/lib/property-score/actionItems';
+import { scoreColor } from '@/components/property-score/AVDetailedReadout';
 
 const ORG = '#E07B00';
 const INK = '#1A0A00';
@@ -19,13 +20,6 @@ const GRADE_COLOR = {
   Fair: ORG,
   Poor: '#dc2626',
 };
-
-function scoreColor(score) {
-  if (score >= 75) return '#16a34a';
-  if (score >= 50) return ORG;
-  if (score >= 25) return '#ea580c';
-  return '#dc2626';
-}
 
 const WEIGHT_KEY_MAP = {
   sun: 'sun', shadeHeat: 'shadeHeat', view: 'view', privacy: 'privacy', wind: 'wind',
