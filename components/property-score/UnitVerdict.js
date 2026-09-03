@@ -457,12 +457,11 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
 
             {actionItems.length > 0 && (
               <div style={{
-                border: `1px solid var(--brand)`, borderLeft: '4px solid var(--brand)', borderRadius: 'var(--radius)',
-                padding: '18px 20px', marginBottom: 24,
-                background: 'color-mix(in srgb, var(--brand) 7%, var(--bg-2))',
+                border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 'var(--radius)',
+                padding: '16px 18px', marginBottom: 24,
               }}>
-                <div className="mono" style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--brand)', letterSpacing: '.1em', marginBottom: 12 }}>
-                  📋 WHAT TO CHECK ON YOUR VISIT
+                <div className="mono" style={{ fontSize: 11.5, color: 'var(--sun)', letterSpacing: '.1em', marginBottom: 12 }}>
+                  NEXT - WHAT TO CHECK WHEN YOU VISIT
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 11 }}>
                   {actionItems.map(item => (
