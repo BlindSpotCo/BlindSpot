@@ -203,8 +203,24 @@ export default function PropertyScoreFlow({ initial }) {
   // switch from a long tab (Unit, with the sun/shadow panel) to a short
   // one (Your Angle) can leave you scrolled to a blank stretch below its
   // actual content, or vice versa.
+  //
+  // Deliberately NOT scrollIntoView + a fixed scroll-margin-top: that
+  // combination was sized for the stepper's single-row desktop layout
+  // (header 66px + one stepper row ≈ 130px) and silently broke on phone,
+  // where the same 4 stages wrap to two rows -- the real sticky height
+  // there runs closer to 180-200px, so the fixed 130px landed the scroll
+  // partway through the panel's own heading every time, tucking it under
+  // the header+stepper. Measuring both live at scroll time means this
+  // stays correct regardless of how tall the stepper happens to be
+  // (wrapped or not) without needing another guessed number later.
   useEffect(() => {
-    panelRef.current?.scrollIntoView({ behavior: 'auto', block: 'start' });
+    const panel = panelRef.current;
+    if (!panel) return;
+    const header = document.querySelector('header');
+    const stepper = document.getElementById('ps-stepper');
+    const stickyHeight = (header?.getBoundingClientRect().height || 0) + (stepper?.getBoundingClientRect().height || 0);
+    const panelTop = panel.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({ top: Math.max(0, panelTop - stickyHeight - 16), behavior: 'auto' });
   }, [viewStage]);
 
   // Landing directly on the Location tab (stepper click, direct link,
@@ -286,7 +302,7 @@ export default function PropertyScoreFlow({ initial }) {
           as a large empty gap under it. .ps-tab-panel (globals.css) is
           smaller, has no border, and is tuned for being the first thing
           under the stepper on every tab. */}
-      <div ref={panelRef} className="wrap ps-tab-panel" style={{ scrollMarginTop: 130 }}>
+      <div ref={panelRef} className="wrap ps-tab-panel ps-tab-panel-scroll-margin">
 
         {/* ── Priorities: persona list + entry-mode choice, side by
             side. Just the choice here -- picking Option A/B doesn't show

@@ -946,6 +946,18 @@
   @media (max-width:900px){ .ps-tab-panel{ padding:32px 0 56px } }
   @media (max-width:640px){ .ps-tab-panel{ padding:24px 0 40px } }
 
+  /* Fallback for scroll-into-view paths the JS effect in
+     PropertyScoreFlow doesn't cover (keyboard focus landing inside the
+     panel, browser scroll restore) -- the JS effect measures the real
+     sticky height live and is the primary fix for the tab-switch case,
+     but this needs its own number since CSS can't measure the DOM. Sized
+     generously for the worst case (mobile, where the 4-stage stepper
+     wraps to two rows) rather than the single-row desktop case that
+     caused the original bug -- a few extra px of gap on desktop is a
+     far smaller problem than a heading tucked under the header again. */
+  .ps-tab-panel-scroll-margin{ scroll-margin-top:130px }
+  @media (max-width:640px){ .ps-tab-panel-scroll-margin{ scroll-margin-top:210px } }
+
   @media (prefers-reduced-motion: reduce){
     .coord-readout .blink, .pcard-tag .dot{animation:none !important}
     .pcard, .team-card, .eyebrow::after, .nav-links a::after, .brand-mark-img{transition:none !important}

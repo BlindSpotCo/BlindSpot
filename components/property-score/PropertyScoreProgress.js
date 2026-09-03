@@ -26,7 +26,7 @@ export default function PropertyScoreProgress({ current, done = [], reachable = 
   const idx = Math.max(0, STAGES.findIndex(s => s.key === current));
 
   return (
-    <div style={{
+    <div id="ps-stepper" style={{
       position: 'sticky', top: 66, zIndex: 5, background: 'var(--bg)',
       borderBottom: '1px solid var(--line)', padding: '10px 0',
     }}>
