@@ -231,19 +231,27 @@ export default function PropertyScoreFlow({ initial }) {
 
     correctScroll();
 
-    // Re-run once web fonts actually finish loading. Headings on this page
-    // (h2, "Pick your priorities." included) render in Anton, loaded via
-    // Google Fonts with `display=swap` -- the browser shows a fallback
-    // font first, then swaps to Anton once it downloads. Anton's metrics
-    // differ enough from the fallback that the swap reflows the page and
-    // shifts everything below the heading, including the exact position
-    // this effect just scrolled to. Without this, the correction above is
-    // right for an instant and then silently wrong again the moment the
-    // real font loads -- which also explains why this could look "fixed"
-    // on a warm reload (fonts already cached) but not a fresh one.
-    if (document.fonts?.ready) {
-      document.fonts.ready.then(correctScroll);
-    }
+    // Keep correcting for a short settle window after the tab becomes
+    // active, not just once. The panel's real height keeps changing after
+    // first paint for more reasons than fonts alone -- most tabs fetch
+    // their own data on mount (LocalityPicker's city list and its counts,
+    // AVDetailedReadout's scores, etc.), and that arriving reflows the
+    // page exactly like a font swap does: the correction was right for
+    // the layout at the instant it ran, then wrong again once real
+    // content replaces the pre-fetch placeholder state. A ResizeObserver
+    // on the panel catches any of these causes generically instead of
+    // chasing each one individually with its own one-off listener --
+    // stops after 2s so it can't fight someone who's since started
+    // reading/scrolling on their own.
+    let settled = false;
+    const stop = () => { if (!settled) { settled = true; ro.disconnect(); clearTimeout(timer); } };
+    const ro = new ResizeObserver(() => { if (!settled) correctScroll(); });
+    ro.observe(panel);
+    const timer = setTimeout(stop, 2000);
+
+    if (document.fonts?.ready) document.fonts.ready.then(() => { if (!settled) correctScroll(); });
+
+    return stop;
   }, [viewStage]);
 
   // Landing directly on the Location tab (stepper click, direct link,
