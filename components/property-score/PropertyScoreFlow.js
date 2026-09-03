@@ -199,59 +199,26 @@ export default function PropertyScoreFlow({ initial }) {
     window.history.replaceState(null, '', window.location.pathname + (qs ? `?${qs}` : ''));
   }, [viewStage, personaId, mode, pinCode, city, areaRecord, lat, lon, addressLabel, floor, facing]);
 
-  // Land on the top of whichever tab just became active -- otherwise a
-  // switch from a long tab (Unit, with the sun/shadow panel) to a short
-  // one (Your Angle) can leave you scrolled to a blank stretch below its
-  // actual content, or vice versa.
+  // Land at the literal top of the page whenever the active tab changes --
+  // otherwise a switch from a long tab (Unit, with the sun/shadow panel)
+  // to a short one (Verdict) can leave you scrolled to a blank stretch
+  // below its actual content, or vice versa.
   //
-  // Deliberately NOT scrollIntoView + a fixed scroll-margin-top: that
-  // combination was sized for the stepper's single-row desktop layout
-  // (header 66px + one stepper row ≈ 130px) and silently broke on phone,
-  // where the same 4 stages wrap to two rows.
-  //
-  // The reserved space is the STEPPER's own sticky `top` (its CSS anchors
-  // it a fixed 66px down, see PropertyScoreProgress.js -- read live via
-  // getComputedStyle rather than hardcoded again here, so this can't drift
-  // out of sync with that file) plus the stepper's own live height.
-  // Deliberately NOT the header's actual measured height -- the header is
-  // only 52px on phone, and summing 52 + stepper-height under-reserved by
-  // the 14px gap between the header's real bottom edge and the stepper's
-  // fixed top:66, which was still enough to clip a heading's descenders.
+  // This used to compute a specific scroll target that tried to land just
+  // below the sticky header+stepper, to avoid the panel's own heading
+  // being covered by them. That entire calculation is unnecessary now:
+  // the actual cause of the covering was a CSS mismatch (the stepper's
+  // sticky `top` not matching the header's real height on phone, see
+  // PropertyScoreProgress.js/globals.css), which is fixed at the source.
+  // With that fixed, y=0 -- the actual top of the page -- is always a
+  // safe landing spot: header, stepper, and panel heading all render in
+  // their normal, non-overlapping flow from there, on every tab, with no
+  // arithmetic that can drift out of sync with a page that's still
+  // loading its fonts or fetching its own data (both of which caused
+  // over-scrolling in the two previous, more complicated versions of
+  // this fix).
   useEffect(() => {
-    const panel = panelRef.current;
-    const stepper = document.getElementById('ps-stepper');
-    if (!panel || !stepper) return;
-
-    const correctScroll = () => {
-      const stepperTopOffset = parseFloat(getComputedStyle(stepper).top) || 0;
-      const safeBottom = stepperTopOffset + stepper.getBoundingClientRect().height;
-      const panelTop = panel.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top: Math.max(0, panelTop - safeBottom - 16), behavior: 'auto' });
-    };
-
-    correctScroll();
-
-    // Keep correcting for a short settle window after the tab becomes
-    // active, not just once. The panel's real height keeps changing after
-    // first paint for more reasons than fonts alone -- most tabs fetch
-    // their own data on mount (LocalityPicker's city list and its counts,
-    // AVDetailedReadout's scores, etc.), and that arriving reflows the
-    // page exactly like a font swap does: the correction was right for
-    // the layout at the instant it ran, then wrong again once real
-    // content replaces the pre-fetch placeholder state. A ResizeObserver
-    // on the panel catches any of these causes generically instead of
-    // chasing each one individually with its own one-off listener --
-    // stops after 2s so it can't fight someone who's since started
-    // reading/scrolling on their own.
-    let settled = false;
-    const stop = () => { if (!settled) { settled = true; ro.disconnect(); clearTimeout(timer); } };
-    const ro = new ResizeObserver(() => { if (!settled) correctScroll(); });
-    ro.observe(panel);
-    const timer = setTimeout(stop, 2000);
-
-    if (document.fonts?.ready) document.fonts.ready.then(() => { if (!settled) correctScroll(); });
-
-    return stop;
+    window.scrollTo({ top: 0, behavior: 'auto' });
   }, [viewStage]);
 
   // Landing directly on the Location tab (stepper click, direct link,
