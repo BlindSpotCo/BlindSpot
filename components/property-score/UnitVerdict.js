@@ -32,7 +32,7 @@ const VERDICT_COLOR = {
   'Reconsider': 'var(--olive-gold)',
 };
 
-export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId, onUnitSeen, onVerdictStart, viewStage, onScoreComputed, onBackToUnit, initialFloor, initialFacing, onUnitPicked, onSeeNeighbourhood, seeNeighbourhoodBusy }) {
+export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId, onUnitSeen, onVerdictStart, viewStage, onScoreComputed, onBackToUnit, initialFloor, initialFacing, onUnitPicked, onSeeNeighbourhood, seeNeighbourhoodBusy, neighbourhoodNote, onDismissNeighbourhoodNote }) {
   const persona = getPersona(personaId) || getPersona(PERSONA_ORDER[0]);
   const sunScoutRef = useRef(null);
   const [floor, setFloor] = useState(initialFloor ?? null);
@@ -283,6 +283,13 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
     computeCombined();
   }, [viewStage, pinCode, floor, facing, lat, lon, combined, loadingCombined, computeCombined]);
 
+  // A failed attempt must not keep its claim on the key, or the retry
+  // button (and any later floor/area change that lands on the same key)
+  // would be silently ignored by the effect above.
+  useEffect(() => {
+    if (combinedError) autoCombineKey.current = null;
+  }, [combinedError]);
+
   // Unit and Verdict are two views over this one mounted instance (see
   // PropertyScoreFlow.js's comment) rather than two components, so
   // SunScoutPanel's own 3D scene survives switching tabs. The sunscout
@@ -457,6 +464,30 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                   </button>
                 )}
               </div>
+              {/* Out of coverage: AsliVastu scores Delhi NCR, Bangalore,
+                  Chandigarh and Mumbai, so a pin anywhere else has no area
+                  to attach. Say that plainly and hand over the unit-only
+                  verdict, which is a real result -- the sun, shade, heat,
+                  view and privacy numbers don't depend on coverage at all.
+                  The floor, facing and score above are untouched. */}
+              {neighbourhoodNote && (
+                <div style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--av)', background: 'color-mix(in srgb, var(--av) 5%, var(--bg-2))', borderRadius: 'var(--radius)', padding: '16px 18px', marginTop: 16 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 6 }}>{neighbourhoodNote}</div>
+                  <p style={{ fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.55, margin: '0 0 14px', maxWidth: '54ch' }}>
+                    Neighbourhood scores cover Delhi NCR, Bangalore, Chandigarh and Mumbai.
+                    Your unit score stands on its own though, sun, shade, heat, view and
+                    privacy are all measured from this exact spot.
+                  </p>
+                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                    <button onClick={() => { onDismissNeighbourhoodNote?.(); computeCombined(); }} disabled={loadingCombined} style={{ background: 'var(--sun)', color: '#fff', border: 'none', borderRadius: 'var(--radius)', padding: '11px 20px', fontSize: 12.5, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', cursor: 'pointer', opacity: loadingCombined ? .6 : 1 }}>
+                      {loadingCombined ? 'Computing…' : 'See your unit verdict →'}
+                    </button>
+                    <button onClick={onDismissNeighbourhoodNote} style={{ background: 'transparent', color: 'var(--text-mute)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '11px 18px', fontSize: 12.5, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', cursor: 'pointer' }}>
+                      Try another address
+                    </button>
+                  </div>
+                </div>
+              )}
               {combinedError && <div style={{ color: '#f87171', fontSize: 13, marginTop: 12 }}>{combinedError}</div>}
             </>
           )}
@@ -636,14 +667,38 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
           // persona change resets it. Nothing to show yet, so send them
           // back to compute one instead of a blank tab.
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            <p style={{ fontSize: 14.5, color: 'var(--text-mute)', marginBottom: 20 }}>
+            {/* Four distinct states, not two. The auto-compute above can
+                fail (a bad pincode, the scoring API down, a dropped
+                connection) and combinedError is only rendered on the Unit
+                screen further up -- so without this branch a failure here
+                showed a permanent "working on it" message with no error,
+                no retry, and no way forward, because the effect had
+                already claimed its key and would never fire again. */}
+            <p style={{ fontSize: 14.5, color: combinedError ? '#c0392b' : 'var(--text-mute)', marginBottom: 20, lineHeight: 1.6 }}>
               {loadingCombined
                 ? 'Combining your area and unit scores\u2026'
-                : (floor != null && facing)
-                  ? 'Working out the verdict for this unit\u2026'
-                  : 'No score yet for this unit, pick a floor and facing first.'}
+                : combinedError
+                  ? combinedError
+                  : (floor != null && facing)
+                    ? 'Working out the verdict for this unit\u2026'
+                    : 'No score yet for this unit, pick a floor and facing first.'}
             </p>
-            {!loadingCombined && !(floor != null && facing) && (
+
+            {!loadingCombined && combinedError && (
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => { autoCombineKey.current = null; setCombinedError(''); computeCombined(); }}
+                  className="btn btn-lg btn-cta ps-btn ps-cta-btn"
+                >
+                  Try again
+                </button>
+                <button onClick={onBackToUnit} style={{ background: 'transparent', color: 'var(--text)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '12px 22px', fontSize: 12, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase' }}>
+                  ← Back to the flat
+                </button>
+              </div>
+            )}
+
+            {!loadingCombined && !combinedError && !(floor != null && facing) && (
               <button onClick={onBackToUnit} className="btn btn-lg btn-cta ps-btn ps-cta-btn">← Back to Unit</button>
             )}
           </div>

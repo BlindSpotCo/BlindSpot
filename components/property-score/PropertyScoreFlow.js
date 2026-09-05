@@ -184,34 +184,42 @@ export default function PropertyScoreFlow({ initial }) {
           if (rec) { found = rec; foundCity = c; break; }
         }
       }
-      setMode('locality');
       if (found) {
-        // Attach the area WITHOUT going through handleAreaSelected. That
-        // helper also moves lat/lon to the locality's centroid, which is
-        // right when you picked an area off a list (you chose a
-        // neighbourhood, not a building) and wrong here: the coordinates
-        // are the flat that was just scored, and moving them both loses
-        // the actual spot and trips UnitVerdict's "new location" reset,
-        // wiping the floor, facing and Home Comfort Score the user is
-        // coming back to. The pin does not move; we only learned its
-        // pincode.
+        // Attach the area WITHOUT going through handleAreaSelected, which
+        // also moves lat/lon to the locality centroid. The pin must not
+        // move: these coordinates are the flat that was just scored, and
+        // moving them trips UnitVerdict's [lat, lon] reset and wipes the
+        // floor, facing and score the user is coming back to.
         setAreaRecord(found);
         setPinCode(found.pin_code);
         setCity(foundCity);
         setAreaFromUnit(true);
+        setViewStage('location');
+        return;
       }
-      else setAreaLookupNote(postcode
-        ? `No neighbourhood data for ${postcode} yet. Pick the closest covered area below.`
-        : "Couldn't work out the pincode for this spot. Pick the area below.");
-      setViewStage('location');
+      // Out of coverage. Deliberately STAY on the unit screen rather than
+      // navigating to the locality browser, which is what the previous
+      // version did and which quietly destroyed the user's work: every
+      // record in that browser carries its own centroid, so picking one
+      // teleports the pin to another city, fires the [lat, lon] reset,
+      // and empties the floor/facing they had just scored. They then land
+      // on Verdict being told to "pick a floor and facing first" for a
+      // unit they had finished. Offering an area we cannot honestly
+      // attach to this pin is worse than offering nothing.
+      //
+      // Reverse-geocoding returns no postcode at all in some countries --
+      // the UAE has no postal-code system, so a Dubai pin comes back with
+      // postcode: null. That's the common case here, not a rare edge, and
+      // it deserves a straight answer rather than a picker.
+      setAreaLookupNote(postcode
+        ? `We don't have neighbourhood data for ${postcode} yet.`
+        : "This location is outside our neighbourhood coverage.");
     } catch {
-      setMode('locality');
-      setAreaLookupNote("Couldn't load neighbourhood data just now. Pick the area below.");
-      setViewStage('location');
+      setAreaLookupNote("Couldn't load neighbourhood data just now, try again in a minute.");
     } finally {
       setAreaLookupBusy(false);
     }
-  }, [lat, lon, handleAreaSelected]);
+  }, [lat, lon]);
 
   const handleAddressConfirmed = useCallback((newLat, newLon, matchedArea, matchCity, label) => {
     setLat(String(newLat));
@@ -491,11 +499,6 @@ export default function PropertyScoreFlow({ initial }) {
               </>
             ) : (
             <>
-            {areaLookupNote && (
-              <div style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--av)', background: 'color-mix(in srgb, var(--av) 6%, var(--bg-2))', borderRadius: 'var(--radius)', padding: '12px 16px', marginBottom: 16, fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.5 }}>
-                {areaLookupNote}
-              </div>
-            )}
             {mode === 'locality' && <LocalityPicker onAreaSelected={handleAreaSelected} selectedPinCode={pinCode} />}
             {mode === 'address' && <AddressPicker onConfirmed={handleAddressConfirmed} />}
 
@@ -547,6 +550,8 @@ export default function PropertyScoreFlow({ initial }) {
               onUnitPicked={handleUnitPicked}
               onSeeNeighbourhood={seeNeighbourhood}
               seeNeighbourhoodBusy={areaLookupBusy}
+              neighbourhoodNote={areaLookupNote}
+              onDismissNeighbourhoodNote={() => setAreaLookupNote('')}
             />
           </div>
         )}
