@@ -1,35 +1,36 @@
 'use client';
 // components/property-score/PropertyScoreFlow.js
-// The Property Score tab's flow: 4 single-screen tabs -- Your Angle,
-// Location, Unit, Verdict -- matching PropertyScoreProgress's own 4
-// stages exactly, which is now the flow's real navigation (click any
-// stage you've already reached to jump back to it) rather than just a
-// status readout above one long continuous scroll. Only the active
-// tab's content is on screen at a time.
+// The property-score flow: a Start screen offering three independent
+// branches -- the area, the flat, furnishing -- and the screens each of
+// those branches needs. Not a wizard. A user who picks "the flat" gets
+// GPS and the 3D shadow view immediately and never sees a locality
+// picker; a user who picks "the area" never sees a floor/facing control
+// until they ask for one. Whichever half they skip is offered afterwards
+// (see StartChooser for the doors, and UnitVerdict's onAddNeighbourhood
+// for the way back across), because the combined score genuinely needs
+// both -- but it's offered, not imposed.
 //
-// Used to be a 3-screen scroll-snap sequence (threshold -> persona ->
-// entry mode) followed by the picker and the unit/verdict panel flowing
-// normally below it -- all of it stacked in one scroll, all four stages
-// visible/scrollable at once regardless of how far you'd actually got.
-// That's exactly the "too much scrolling" complaint this replaces. The
-// old threshold screen's own job -- "here's what's about to happen, four
-// steps" -- is now redundant with the tab bar itself, which already
-// names and orders the same four steps, so it's gone rather than ported.
+// This replaces a 4-stage Priorities -> Location -> Unit -> Verdict
+// stepper. The stages themselves still exist as `viewStage` values and
+// still render one at a time; what's gone is the numbered strip that
+// presented them as an order everyone walks in, plus the persona screen
+// that used to sit at the front of it.
 //
-// Unit and Verdict are two views over the *same* mounted UnitVerdict
+// Unit and Verdict remain two views over the *same* mounted UnitVerdict
 // instance rather than two separate components -- SunScoutPanel's 3D map
 // and the floor/facing/combined-score state it holds all need to survive
-// switching between those two tabs (and back to Location to change area,
+// switching between those two views (and back to Location to change area,
 // and back again), not reset every time. UnitVerdict decides which of
 // its two halves to show via the `viewStage` prop passed straight
 // through; see the comment there for the split.
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import LocalityPicker from './LocalityPicker';
+import AVAreaCard from './AVAreaCard';
 import AddressPicker from './AddressPicker';
 import UnitVerdict from './UnitVerdict';
-import PersonaPicker from './PersonaPicker';
-import PropertyScoreProgress from './PropertyScoreProgress';
+import StartChooser from './StartChooser';
 import SideDataStrip from './SideDataStrip';
 import { PERSONA_ORDER } from '@/lib/personas';
 
@@ -42,14 +43,19 @@ import { PERSONA_ORDER } from '@/lib/personas';
 // restores a reloaded or reopened tab to where it was, not just the
 // original "Continue to Sun Score" hand-off this used to be for.
 export default function PropertyScoreFlow({ initial }) {
+  const router = useRouter();
   const [mode, setMode] = useState(initial?.mode ?? null); // 'locality' | 'address'
-  // Defaults to the first persona rather than null -- every tab is
-  // independently reachable now (see reachableStages below), so a first
-  // visitor who jumps straight to Location or Unit without ever touching
-  // Priorities shouldn't get stuck behind an unmade choice. Priorities
-  // stays fully editable any time; this is just a sane starting point,
-  // not a requirement to visit that tab first.
-  const [personaId, setPersonaId] = useState(initial?.personaId ?? PERSONA_ORDER[0]);
+  // Persona is no longer asked for. It still exists and still weights the
+  // AsliVastu composite (lib/personas.js) and still travels to
+  // /api/property-score and into saved reports -- it's just pinned to a
+  // default here instead of being a screen a first-time visitor has to get
+  // past. Deliberately left as plumbing rather than ripped out: personaId
+  // reaches 16 files including two API routes and every already-saved
+  // report in /my-reports, so removing the *question* is a 3-file change
+  // while removing the *concept* is a migration. An explicit ?persona= in
+  // the URL is still honoured, so nothing already bookmarked or saved
+  // starts reading back differently.
+  const personaId = initial?.personaId ?? PERSONA_ORDER[0];
 
   const [areaRecord, setAreaRecord] = useState(initial?.areaRecord ?? null);
   const [pinCode, setPinCode] = useState(initial?.areaRecord?.pin_code ?? null);
@@ -57,10 +63,6 @@ export default function PropertyScoreFlow({ initial }) {
   const [addressLabel, setAddressLabel] = useState(initial?.addressLabel ?? '');
   const [lat, setLat] = useState(initial?.lat ?? '');
   const [lon, setLon] = useState(initial?.lon ?? '');
-  // "Unit" ticks when Get Combined/Home Comfort Score is clicked;
-  // "Verdict" ticks when the full AI report is generated.
-  const [unitSeen, setUnitSeen] = useState(false);
-  const [verdictStarted, setVerdictStarted] = useState(false);
 
   // Mirrors UnitVerdict's own floor/facing state purely so the URL sync
   // effect below has something to write -- UnitVerdict remains the real
@@ -69,11 +71,10 @@ export default function PropertyScoreFlow({ initial }) {
   const [floor, setFloor] = useState(initial?.floor ?? null);
   const [facing, setFacing] = useState(initial?.facing ?? null);
 
-  // Which tab is actually on screen. Can sit behind what's actually
-  // reachable (reachableStages below) when you've clicked back to review
-  // or change an earlier one -- that's the whole point of the tabs being
-  // independently clickable.
-  const [viewStage, setViewStage] = useState(initial?.stage || (initial?.areaRecord || initial?.lat ? 'unit' : 'priorities'));
+  // Which screen is actually on show. Every value is reachable directly --
+  // from a door on Start, from a cross-branch offer, or from a URL -- so
+  // this is a router, not a cursor walking a fixed sequence.
+  const [viewStage, setViewStage] = useState(initial?.stage || (initial?.areaRecord || initial?.lat ? 'unit' : 'start'));
 
   const panelRef = useRef(null);
 
@@ -101,18 +102,44 @@ export default function PropertyScoreFlow({ initial }) {
   // auto-locate again instead of staying stuck on a stale attempt.
   const autoGeoTried = useRef(false);
   const [autoGeoError, setAutoGeoError] = useState('');
+  const [areaLookupBusy, setAreaLookupBusy] = useState(false);
+  const [areaLookupNote, setAreaLookupNote] = useState('');
+  const [areaFromUnit, setAreaFromUnit] = useState(false);
 
   const resetLocation = () => {
     setAreaRecord(null); setPinCode(null); setCity(null); setAddressLabel('');
-    setLat(''); setLon(''); setUnitSeen(false); setVerdictStarted(false);
+    setLat(''); setLon('');
     setFloor(null); setFacing(null);
     autoGeoTried.current = false; setAutoGeoError('');
   };
 
   const chooseMode = (m) => {
+    setAreaFromUnit(false);
     if (m !== mode) { setMode(m); resetLocation(); }
     setViewStage('location');
   };
+
+  // The three doors on the Start tab. Each one goes straight where it says
+  // it goes -- no shared preamble, no stage in between.
+  //
+  // 'unit' deliberately does NOT set a mode or send you via Location: the
+  // Unit tab already auto-geolocates when it's entered with no lat/lon
+  // (see the GPS effect further down, which predates this change), so
+  // clicking "Check the flat" lands directly in the 3D shadow view at
+  // wherever the user is standing. With no areaRecord attached, Verdict
+  // then correctly shows a Home Comfort Score rather than a combined one,
+  // and the area is offered as the next step at the end of that screen
+  // (see UnitVerdict's onSeeNeighbourhood).
+  //
+  // 'furnishing' leaves this flow entirely -- the Furnishing Advisor is
+  // its own route and takes a floor-plan upload, not a location, so there
+  // is nothing for it to share with the other two branches.
+  const chooseDoor = useCallback((key) => {
+    setAreaFromUnit(false);
+    if (key === 'neighbourhood') { setMode('locality'); setViewStage('location'); return; }
+    if (key === 'unit') { setViewStage('unit'); return; }
+    if (key === 'furnishing') router.push('/floor-plan-analysis');
+  }, [router]);
 
   const handleAreaSelected = useCallback((record, cityName) => {
     setAreaRecord(record);
@@ -124,6 +151,67 @@ export default function PropertyScoreFlow({ initial }) {
       setLon(String(record.lon));
     }
   }, []);
+
+  // Flat-first users finish the Home Comfort Score with no area attached.
+  // This is the hand-off across to the other half, and it resolves the
+  // area from the coordinates they already scored rather than handing
+  // them an empty picker: reverse-geocode the pin to a postcode, then
+  // look that postcode up in the AsliVastu coverage list. Same two calls
+  // and the same pin_code match AddressPicker already uses to decide
+  // whether a searched address is covered -- deliberately not a second,
+  // differently-behaved matching rule sitting alongside it.
+  //
+  // An uncovered postcode is a real outcome rather than an error to
+  // swallow: AsliVastu covers four cities, so a perfectly valid flat can
+  // sit outside all of them. That case lands on the locality browser with
+  // a note saying so, which is the honest fallback -- pick a nearby
+  // covered area, or keep the unit-only score.
+  const seeNeighbourhood = useCallback(async () => {
+    if (!lat || !lon) return;
+    setAreaLookupBusy(true);
+    setAreaLookupNote('');
+    try {
+      const [geoRes, avRes] = await Promise.all([
+        fetch(`/api/sunscout/reverse-geocode?lat=${lat}&lon=${lon}`),
+        fetch('/api/av-localities'),
+      ]);
+      const postcode = (await geoRes.json())?.result?.postcode || '';
+      const { cities } = await avRes.json();
+      let found = null, foundCity = null;
+      if (postcode && cities) {
+        for (const c of Object.keys(cities)) {
+          const rec = cities[c].find(r => r.pin_code === postcode);
+          if (rec) { found = rec; foundCity = c; break; }
+        }
+      }
+      setMode('locality');
+      if (found) {
+        // Attach the area WITHOUT going through handleAreaSelected. That
+        // helper also moves lat/lon to the locality's centroid, which is
+        // right when you picked an area off a list (you chose a
+        // neighbourhood, not a building) and wrong here: the coordinates
+        // are the flat that was just scored, and moving them both loses
+        // the actual spot and trips UnitVerdict's "new location" reset,
+        // wiping the floor, facing and Home Comfort Score the user is
+        // coming back to. The pin does not move; we only learned its
+        // pincode.
+        setAreaRecord(found);
+        setPinCode(found.pin_code);
+        setCity(foundCity);
+        setAreaFromUnit(true);
+      }
+      else setAreaLookupNote(postcode
+        ? `No neighbourhood data for ${postcode} yet. Pick the closest covered area below.`
+        : "Couldn't work out the pincode for this spot. Pick the area below.");
+      setViewStage('location');
+    } catch {
+      setMode('locality');
+      setAreaLookupNote("Couldn't load neighbourhood data just now. Pick the area below.");
+      setViewStage('location');
+    } finally {
+      setAreaLookupBusy(false);
+    }
+  }, [lat, lon, handleAreaSelected]);
 
   const handleAddressConfirmed = useCallback((newLat, newLon, matchedArea, matchCity, label) => {
     setLat(String(newLat));
@@ -226,7 +314,7 @@ export default function PropertyScoreFlow({ initial }) {
   // being covered by them. That entire calculation is unnecessary now:
   // the actual cause of the covering was a CSS mismatch (the stepper's
   // sticky `top` not matching the header's real height on phone, see
-  // PropertyScoreProgress.js/globals.css), which is fixed at the source.
+  // globals.css), which is fixed at the source.
   // With that fixed, y=0 -- the actual top of the page -- is always a
   // safe landing spot: header, stepper, and panel heading all render in
   // their normal, non-overlapping flow from there, on every tab.
@@ -292,28 +380,32 @@ export default function PropertyScoreFlow({ initial }) {
   }, [viewStage, unitReady, handleAddressConfirmed]);
 
 
-  // Coarse but reliable -- derived straight from state this component
-  // already owns. "Unit" and "Verdict" tick (done) independently of which
-  // tab is currently in view -- see PropertyScoreProgress's `done` prop.
-  const progressDone = [
-    ...(personaId ? ['priorities'] : []),
-    ...(unitReady ? ['location'] : []),
-    ...(unitSeen ? ['unit'] : []),
-    ...(verdictStarted ? ['verdict'] : []),
-  ];
-  // All four stepper tabs are always clickable -- these are tabs, not a
-  // wizard with locked steps. Tapping ahead to Unit or Verdict before
-  // there's a location/score yet doesn't dead-end: both render their own
-  // "nothing here yet, here's where to go" prompt (see the !unitReady
-  // block below, and UnitVerdict's own combined-less branch) rather than
-  // relying on the stepper to prevent getting there. An earlier version
-  // gated these behind progress and disabled the button entirely, which
-  // on mobile just read as "these buttons don't work."
-  const reachableStages = ['priorities', 'location', 'unit', 'verdict'];
-
   return (
     <section className="section" id="property-score-flow" style={{ paddingTop: 0 }}>
-      <PropertyScoreProgress current={viewStage} done={progressDone} reachable={reachableStages} onSelect={setViewStage} />
+      {/* The 4-step stepper that used to sit here is gone. It described a
+          Start -> Area -> Flat -> Verdict sequence, and there is no such
+          sequence any more: a user who picks "the flat" never passes
+          through Area, and the numbered ticks kept implying they'd skipped
+          something. What the stepper did carry that nothing else did is
+          the way back out of a branch, so that -- and only that -- is what
+          replaces it. Moving between Flat and Verdict already has its own
+          controls inside UnitVerdict (onBackToUnit, and the score button
+          forward), so this doesn't need to duplicate them. */}
+      {viewStage !== 'start' && (
+        <div className="wrap" style={{ paddingTop: 20, paddingBottom: 4 }}>
+          <button
+            onClick={() => setViewStage('start')}
+            style={{
+              background: 'none', border: 'none', padding: '4px 0', cursor: 'pointer',
+              fontSize: 13, color: 'var(--text-mute)', display: 'inline-flex',
+              alignItems: 'center', gap: 7,
+            }}
+          >
+            <span aria-hidden="true" style={{ fontSize: 15, lineHeight: 1 }}>&#8592;</span>
+            All three options
+          </button>
+        </div>
+      )}
       <SideDataStrip />
 
       {/* .section-inner's 88px top padding + top border were sized for
@@ -326,71 +418,12 @@ export default function PropertyScoreFlow({ initial }) {
           under the stepper on every tab. */}
       <div ref={panelRef} className="wrap ps-tab-panel ps-tab-panel-scroll-margin">
 
-        {/* ── Priorities: persona list + entry-mode choice, side by
-            side. Just the choice here -- picking Option A/B doesn't show
-            the actual picker on this screen, it advances straight to the
-            Location tab (see chooseMode above), which is where the real
-            browsing/searching happens. */}
-        <div className="ps-flow-wrap" style={{ width: '100%', display: viewStage === 'priorities' ? 'block' : 'none' }}>
-          <div style={{ maxWidth: 900, margin: '0 auto' }}>
-            {/* One heading for the whole screen -- both columns below get
-                only a small eyebrow of their own (same size/margin as
-                each other), not a second full headline, so their card
-                lists start at the same height without any manual
-                spacing hacks. */}
-            <h2 style={{ fontSize: 'clamp(22px, 2.4vw, 28px)', marginBottom: 8 }}>Pick your priorities.</h2>
-            <p style={{ fontSize: 13, color: 'var(--text-mute)', marginBottom: 28, lineHeight: 1.55, maxWidth: 520 }}>
-              This tunes the score to what matters most to you.
-            </p>
-
-            <div style={{ display: 'flex', gap: 48, alignItems: 'flex-start', flexWrap: 'wrap' }}>
-              <div style={{ flex: '1 1 340px', maxWidth: 420 }}>
-                <PersonaPicker personaId={personaId} onSelect={setPersonaId} showHeading={false} />
-              </div>
-
-              {/* Same card language as the persona list -- round icon
-                  badge + title + one-line blurb, same padding and gap --
-                  so the two columns read as one matched set instead of
-                  two differently-styled pickers glued together. */}
-              <div style={{ flex: '1 1 340px', maxWidth: 420 }}>
-                <div className="mono" style={{ fontSize: 11, color: 'var(--sun)', letterSpacing: '.14em', marginBottom: 10 }}>HOW DO YOU WANT TO START?</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <button onClick={() => chooseMode('locality')} className="ps-mode-btn ps-btn"
-                  style={{
-                    textAlign: 'left', display: 'flex', alignItems: 'center', gap: 14,
-                    padding: '14px 16px', borderRadius: 'var(--radius)', cursor: 'pointer',
-                    background: mode === 'locality' ? 'color-mix(in srgb, var(--slate) 14%, var(--bg-2))' : 'var(--bg-2)',
-                    border: `1px solid ${mode === 'locality' ? 'var(--slate)' : 'var(--line)'}`,
-                  }}>
-                  <span style={{
-                    width: 34, height: 34, borderRadius: '50%', flexShrink: 0, background: 'var(--slate)', color: '#fff',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14,
-                  }}>A</span>
-                  <span>
-                    <span style={{ display: 'block', fontSize: 14.5, fontWeight: 700, color: mode === 'locality' ? 'var(--slate)' : 'var(--ink)' }}>Browse areas</span>
-                    <span style={{ display: 'block', fontSize: 13, color: 'var(--text-mute)', lineHeight: 1.4, marginTop: 2 }}>See scored neighbourhoods, then pick a unit.</span>
-                  </span>
-                </button>
-                <button onClick={() => chooseMode('address')} className="ps-mode-btn ps-btn"
-                  style={{
-                    textAlign: 'left', display: 'flex', alignItems: 'center', gap: 14,
-                    padding: '14px 16px', borderRadius: 'var(--radius)', cursor: 'pointer',
-                    background: mode === 'address' ? 'color-mix(in srgb, var(--sun) 14%, var(--bg-2))' : 'var(--bg-2)',
-                    border: `1px solid ${mode === 'address' ? 'var(--sun)' : 'var(--line)'}`,
-                  }}>
-                  <span style={{
-                    width: 34, height: 34, borderRadius: '50%', flexShrink: 0, background: 'var(--sun)', color: '#fff',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14,
-                  }}>B</span>
-                  <span>
-                    <span style={{ display: 'block', fontSize: 14.5, fontWeight: 700, color: mode === 'address' ? 'var(--sun)' : 'var(--ink)' }}>I have an address</span>
-                    <span style={{ display: 'block', fontSize: 13, color: 'var(--text-mute)', lineHeight: 1.4, marginTop: 2 }}>We&apos;ll place the pin and find the area for you.</span>
-                  </span>
-                </button>
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* ── Start: one question, three doors. Replaces the old
+            Priorities screen (persona list + entry-mode A/B), which asked
+            two things before the user had seen anything. StartChooser
+            routes each door itself via chooseDoor above. */}
+        <div className="ps-flow-wrap" style={{ width: '100%', display: viewStage === 'start' ? 'block' : 'none' }}>
+          <StartChooser onChoose={chooseDoor} />
         </div>
 
         {/* ── Location: the real picker for whichever mode was chosen on
@@ -411,9 +444,10 @@ export default function PropertyScoreFlow({ initial }) {
               narrower than 640, let alone 1100 -- so mobile's vertical
               layout is untouched. */}
           <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-            {/* Switch between the two entry modes right here -- no need to
-                go back to Priorities for this. */}
-            <div style={{ textAlign: 'right', marginBottom: 14 }}>
+            {/* Switch between the two entry modes. Hidden on the
+                resolved-from-the-flat path, where there is no picker on
+                screen for either link to switch between. */}
+            <div style={{ textAlign: 'right', marginBottom: 14, display: (areaFromUnit && areaRecord) ? 'none' : 'block' }}>
               {mode === 'address' ? (
                 <button onClick={() => chooseMode('locality')} className="ps-link-btn"
                   style={{ background: 'none', border: 'none', color: 'var(--text-mute)', fontSize: 12.5, textDecoration: 'underline', cursor: 'pointer' }}>
@@ -426,11 +460,50 @@ export default function PropertyScoreFlow({ initial }) {
                 </button>
               )}
             </div>
+            {/* Arrived here from the flat, with the area already resolved
+                from the coordinates that were just scored -- so there is
+                nothing left to choose and no picker to show. AVAreaCard is
+                the same sheet LocalityPicker renders once you've selected
+                something, and carries its own link out to the full
+                /neighbourhood-report page. The "pick a different area"
+                link below is the escape hatch for a wrong pincode match,
+                not the main path. */}
+            {areaFromUnit && areaRecord ? (
+              <>
+                <AVAreaCard record={areaRecord} city={city} />
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginTop: 28 }}>
+                  <button
+                    onClick={() => { setAreaFromUnit(false); }}
+                    style={{ background: 'none', border: 'none', padding: 0, fontSize: 12.5, color: 'var(--text-mute)', textDecoration: 'underline', cursor: 'pointer' }}
+                  >
+                    Not the right area? Pick it yourself
+                  </button>
+                  <button
+                    onClick={() => setViewStage('verdict')}
+                    className="btn btn-lg btn-cta ps-btn ps-cta-btn"
+                  >
+                    See your combined verdict <span className="btn-cta-arrow">&#8594;</span>
+                  </button>
+                </div>
+                <p style={{ fontSize: 12.5, color: 'var(--text-dim)', marginTop: 10, textAlign: 'right' }}>
+                  Straight to the verdict, the flat is already scored.
+                </p>
+              </>
+            ) : (
+            <>
+            {areaLookupNote && (
+              <div style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--av)', background: 'color-mix(in srgb, var(--av) 6%, var(--bg-2))', borderRadius: 'var(--radius)', padding: '12px 16px', marginBottom: 16, fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.5 }}>
+                {areaLookupNote}
+              </div>
+            )}
             {mode === 'locality' && <LocalityPicker onAreaSelected={handleAreaSelected} selectedPinCode={pinCode} />}
             {mode === 'address' && <AddressPicker onConfirmed={handleAddressConfirmed} />}
+
+            </>
+            )}
           </div>
 
-          {mode === 'locality' && (
+          {mode === 'locality' && !areaFromUnit && (
             <div style={{ textAlign: 'center', marginTop: 36 }}>
               <button
                 onClick={() => unitReady && setViewStage('unit')}
@@ -466,14 +539,14 @@ export default function PropertyScoreFlow({ initial }) {
               setLon={setLon}
               addressLabel={addressLabel}
               personaId={personaId}
-              onUnitSeen={setUnitSeen}
-              onVerdictStart={setVerdictStarted}
               viewStage={viewStage}
               onScoreComputed={() => setViewStage('verdict')}
               onBackToUnit={() => setViewStage('unit')}
               initialFloor={floor}
               initialFacing={facing}
               onUnitPicked={handleUnitPicked}
+              onSeeNeighbourhood={seeNeighbourhood}
+              seeNeighbourhoodBusy={areaLookupBusy}
             />
           </div>
         )}
