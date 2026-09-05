@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server';
 import fs from 'node:fs';
 import path from 'node:path';
 import { getPersona, recomputeAreaScore, gradeFor } from '@/lib/personas';
+import { computeLiveScore } from '@/lib/sunscout/scoring/scoreAggregator';
 
 const DEFAULT_WEIGHT_AREA = 0.5;
 const DEFAULT_WEIGHT_UNIT = 0.5;
@@ -52,17 +53,31 @@ export async function GET(req) {
     const { PIN_META } = await import('@/lib/aslivastu/pinMeta');
     const meta = PIN_META[pinCode];
 
-    const scoreUrl = new URL('/api/sunscout/score', req.url);
-    scoreUrl.searchParams.set('lat', lat);
-    scoreUrl.searchParams.set('lon', lon);
-    scoreUrl.searchParams.set('floor', floor);
-    scoreUrl.searchParams.set('facing', facing);
-    scoreUrl.searchParams.set('tzOffset', tzOffset);
-    const ssRes = await fetch(scoreUrl.toString());
-    if (!ssRes.ok) {
-      return NextResponse.json({ error: `Home Comfort Score computation returned HTTP ${ssRes.status}` }, { status: 502 });
-    }
-    const ssResult = await ssRes.json();
+    // Call the scorer directly rather than making an HTTP request back to
+    // our own /api/sunscout/score. That self-call was a real outage on
+    // Vercel: any deployment with Deployment Protection enabled (which is
+    // the DEFAULT for preview deployments) answers an un-authenticated
+    // request with a 302 to vercel.com/login. A browser hitting
+    // /api/sunscout/score directly carries the Vercel SSO cookie and is
+    // fine -- but this route runs server-side with no cookies at all, so
+    // its own deployment bounced it to a login page, ssRes.ok was false,
+    // and every combined verdict came back "Could not compute the score
+    // right now" while the unit-only score on the previous screen worked.
+    //
+    // The self-call bought nothing to begin with: /api/sunscout/score is
+    // a thin wrapper over computeLiveScore() in the same process. Calling
+    // the function is one less network hop, one less cold start, and has
+    // no auth surface to get caught on -- so this can't break again on a
+    // protection setting, a preview URL, or a proxy in front of the app.
+    //
+    // Same defaulting as /api/sunscout/score applies to its own query
+    // params, so a blank or junk ?floor= behaves identically on both
+    // routes instead of quietly reaching the scorer as NaN.
+    const floorNum = Number.isFinite(parseInt(floor, 10)) ? parseInt(floor, 10) : 5;
+    const tzNum = Number.isFinite(parseInt(tzOffset, 10)) ? parseInt(tzOffset, 10) : 330;
+    const ssResult = await computeLiveScore({
+      lat, lon, floor: floorNum, facing, tzOffsetMinutes: tzNum,
+    });
 
     const areaScore = persona
       ? (recomputeAreaScore(avRecord.scores, persona.avWeights) ?? avRecord.nqi_composite)
