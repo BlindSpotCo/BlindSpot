@@ -29,7 +29,7 @@ export default async function PropertyScorePage({ searchParams }) {
   // A bookmarked ?stage=angle (from before Priorities and Location were
   // merged into one screen) maps onto that same merged 'location' stage.
   const rawStage = sp?.continue === 'unit' ? 'unit' : (sp?.stage || null);
-  const stage = rawStage === 'angle' ? 'location' : rawStage;
+  const stage = rawStage === 'angle' ? 'location' : (rawStage === 'priorities' ? 'start' : rawStage);
 
   let areaRecord = null;
   if (sp?.pin) {

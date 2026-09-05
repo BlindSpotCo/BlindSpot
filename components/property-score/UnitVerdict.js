@@ -9,7 +9,6 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import SunScoutPanel from '@/components/sunscout/SunScoutPanel';
 import LiveScoreCard from '@/components/sunscout/LiveScoreCard';
-import FloorPlanAnalysis from '@/components/floor-plan/FloorPlanAnalysis';
 import { getPersona, PERSONA_ORDER } from '@/lib/personas';
 import { getActionItems } from '@/lib/property-score/actionItems';
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
@@ -33,7 +32,7 @@ const VERDICT_COLOR = {
   'Reconsider': 'var(--olive-gold)',
 };
 
-export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId, onUnitSeen, onVerdictStart, viewStage, onScoreComputed, onBackToUnit, initialFloor, initialFacing, onUnitPicked }) {
+export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId, onUnitSeen, onVerdictStart, viewStage, onScoreComputed, onBackToUnit, initialFloor, initialFacing, onUnitPicked, onSeeNeighbourhood, seeNeighbourhoodBusy, neighbourhoodNote, onDismissNeighbourhoodNote }) {
   const persona = getPersona(personaId) || getPersona(PERSONA_ORDER[0]);
   const sunScoutRef = useRef(null);
   const [floor, setFloor] = useState(initialFloor ?? null);
@@ -92,6 +91,14 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   // that "change" is just this component mounting with a location that
   // was restored from the URL, and clearing floor/facing/combined right
   // back out again would defeat the whole point of restoring them.
+  //
+  // Split into two, because "the pin moved" and "we learned this pin's
+  // pincode" are not the same event and used to share one wipe. A
+  // flat-first user scores their unit, taps "See the neighbourhood", and
+  // an areaRecord gets attached at the *same* coordinates -- under the
+  // old single effect that pincode change wiped floor, facing, ssPreview
+  // and the score, so Verdict greeted them with "pick a floor and facing
+  // first" for a unit they had just finished scoring.
   const isFirstLocationEffect = useRef(true);
   useEffect(() => {
     if (isFirstLocationEffect.current) { isFirstLocationEffect.current = false; return; }
@@ -99,7 +106,20 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
     setCapturedFromSS(false); setSsPreview(null); setAreaWeight(50);
     onUnitSeen?.(false);
     onVerdictStart?.(false);
-  }, [pinCode, lat, lon]);
+  }, [lat, lon]);
+
+  // A pincode change on its own means the same flat, newly matched to a
+  // different (or a first) area. Only the combined score depended on which
+  // area that was, so only the combined score is stale -- the floor, the
+  // facing and the SunScout preview all still describe this unit and are
+  // kept. The verdict effect further down then recomputes against the new
+  // area on its own.
+  const isFirstPinEffect = useRef(true);
+  useEffect(() => {
+    if (isFirstPinEffect.current) { isFirstPinEffect.current = false; return; }
+    setCombined(null);
+    setAreaWeight(50);
+  }, [pinCode]);
 
   // Mirror floor/facing up to PropertyScoreFlow purely so it has a
   // current value to write into the URL -- this component stays the
@@ -210,6 +230,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   // floor/facing but no number, which is its own kind of "lost your
   // place." Fires once on mount only.
   const didAutoRestore = useRef(false);
+  const autoCombineKey = useRef(null);
   useEffect(() => {
     if (didAutoRestore.current) return;
     // viewStage here is this render's (mount's) value, captured by the
@@ -218,11 +239,56 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
     // floor/facing mid-pick that just hasn't been submitted yet.
     if (viewStage === 'verdict' && initialFloor != null && initialFacing && lat && lon) {
       didAutoRestore.current = true;
+      // Claim the key the verdict effect below would otherwise compute
+      // against. floor/facing are seeded from initialFloor/initialFacing,
+      // so without this both effects fire computeCombined on the same
+      // mount -- two identical in-flight requests racing to set the same
+      // state. Effects run in declaration order, so this lands first.
+      autoCombineKey.current = `${pinCode || 'none'}|${initialFloor}|${initialFacing}`;
       computeCombined(undefined, initialFloor, initialFacing);
     }
     // Mount-only, deliberately -- see didAutoRestore.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Landing on Verdict with a floor/facing already scored but no matching
+  // `combined` for the current area -- compute it here rather than making
+  // the user walk back through the Unit screen to press Continue again.
+  //
+  // The case this exists for: a flat-first user scores the unit, goes off
+  // to "See the neighbourhood", and comes back with an areaRecord now
+  // attached that wasn't there when they scored. `combined` at that point
+  // is either null or a Home Comfort Score with no `area` on it, and both
+  // are stale the moment a pincode arrives -- the number they came back
+  // for is the combined one.
+  //
+  // Keyed on pincode+floor+facing rather than a bare boolean so it fires
+  // again when any of those genuinely change (a different area matched, a
+  // different floor picked) but cannot re-fire against its own result:
+  // computeCombined writes `combined`, this effect's key is unchanged by
+  // that write, so there's no loop even when the API legitimately returns
+  // no area for a covered-looking pincode.
+  useEffect(() => {
+    if (viewStage !== 'verdict') return;
+    if (floor == null || !facing || !lat || !lon) return;
+    if (loadingCombined) return;
+    const key = `${pinCode || 'none'}|${floor}|${facing}`;
+    if (autoCombineKey.current === key) return;
+    // Nothing to do if we already hold the right shape of answer: an
+    // area-backed combined score when there's a pincode, or a unit-only
+    // one when there isn't.
+    const needs = !combined || (Boolean(pinCode) && !combined.area);
+    if (!needs) { autoCombineKey.current = key; return; }
+    autoCombineKey.current = key;
+    computeCombined();
+  }, [viewStage, pinCode, floor, facing, lat, lon, combined, loadingCombined, computeCombined]);
+
+  // A failed attempt must not keep its claim on the key, or the retry
+  // button (and any later floor/area change that lands on the same key)
+  // would be silently ignored by the effect above.
+  useEffect(() => {
+    if (combinedError) autoCombineKey.current = null;
+  }, [combinedError]);
 
   // Unit and Verdict are two views over this one mounted instance (see
   // PropertyScoreFlow.js's comment) rather than two components, so
@@ -379,10 +445,49 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                     computeCombined() below both fetches the real combined
                     number and (via onScoreComputed) flips the wizard to
                     the Verdict tab. */}
-                <button onClick={() => computeCombined()} disabled={loadingCombined} style={{ background: 'var(--brand)', color: '#fff', border: 'none', padding: '12px 22px', fontSize: 12, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase', opacity: loadingCombined ? .6 : 1 }}>
-                  {loadingCombined ? 'Computing…' : (areaRecord ? 'Continue to Verdict →' : 'Continue →')}
-                </button>
+                {areaRecord ? (
+                  <button onClick={() => computeCombined()} disabled={loadingCombined} style={{ background: 'var(--brand)', color: '#fff', border: 'none', padding: '12px 22px', fontSize: 12, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase', opacity: loadingCombined ? .6 : 1 }}>
+                    {loadingCombined ? 'Computing…' : 'Continue to Verdict →'}
+                  </button>
+                ) : (
+                  /* No area yet -- almost always a flat-first arrival. The
+                     next useful thing is the neighbourhood for this exact
+                     spot, not a unit-only verdict, so this goes straight
+                     there (onSeeNeighbourhood resolves the area from the
+                     coordinates already scored above). Coming back with an
+                     areaRecord attached turns this same button into
+                     Continue to Verdict, and the verdict is a real
+                     combined one rather than a Home Comfort Score with an
+                     upsell bolted underneath it. */
+                  <button onClick={onSeeNeighbourhood} disabled={seeNeighbourhoodBusy} style={{ background: 'var(--av)', color: '#fff', border: 'none', padding: '12px 22px', fontSize: 12, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase', opacity: seeNeighbourhoodBusy ? .6 : 1 }}>
+                    {seeNeighbourhoodBusy ? 'Finding the area…' : 'See the neighbourhood →'}
+                  </button>
+                )}
               </div>
+              {/* Out of coverage: AsliVastu scores Delhi NCR, Bangalore,
+                  Chandigarh and Mumbai, so a pin anywhere else has no area
+                  to attach. Say that plainly and hand over the unit-only
+                  verdict, which is a real result -- the sun, shade, heat,
+                  view and privacy numbers don't depend on coverage at all.
+                  The floor, facing and score above are untouched. */}
+              {neighbourhoodNote && (
+                <div style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--av)', background: 'color-mix(in srgb, var(--av) 5%, var(--bg-2))', borderRadius: 'var(--radius)', padding: '16px 18px', marginTop: 16 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 6 }}>{neighbourhoodNote}</div>
+                  <p style={{ fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.55, margin: '0 0 14px', maxWidth: '54ch' }}>
+                    Neighbourhood scores cover Delhi NCR, Bangalore, Chandigarh and Mumbai.
+                    Your unit score stands on its own though, sun, shade, heat, view and
+                    privacy are all measured from this exact spot.
+                  </p>
+                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                    <button onClick={() => { onDismissNeighbourhoodNote?.(); computeCombined(); }} disabled={loadingCombined} style={{ background: 'var(--sun)', color: '#fff', border: 'none', borderRadius: 'var(--radius)', padding: '11px 20px', fontSize: 12.5, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', cursor: 'pointer', opacity: loadingCombined ? .6 : 1 }}>
+                      {loadingCombined ? 'Computing…' : 'See your unit verdict →'}
+                    </button>
+                    <button onClick={onDismissNeighbourhoodNote} style={{ background: 'transparent', color: 'var(--text-mute)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '11px 18px', fontSize: 12.5, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', cursor: 'pointer' }}>
+                      Try another address
+                    </button>
+                  </div>
+                </div>
+              )}
               {combinedError && <div style={{ color: '#f87171', fontSize: 13, marginTop: 12 }}>{combinedError}</div>}
             </>
           )}
@@ -554,20 +659,6 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
             </button>
           </div>
 
-          {/* Furnishing lives here on the Verdict tab, after the score
-              card above, not as its own top-level tab -- keeping it on
-              the same viewStage means the 3D map panel (which the report
-              modal's captureScreenshots() depends on) never gets hidden
-              via display:none just from someone browsing furnishing
-              while a report generates. A separate "Furnishing" tab did
-              exactly that and silently broke report generation. */}
-          <div style={{ marginTop: 28, paddingTop: 28, borderTop: '1px solid var(--line)' }}>
-            <div className="mono" style={{ fontSize: 12, color: 'var(--sun)', letterSpacing: '.12em', marginBottom: 4 }}>FURNISH THIS UNIT</div>
-            <p style={{ fontSize: 13, color: 'var(--text-mute)', marginBottom: 18, lineHeight: 1.55, maxWidth: 560 }}>
-              Upload a floor plan - a PDF, JPG, or PNG - and get room-by-room furniture and placement suggestions, marked directly on the plan.
-            </p>
-            <FloorPlanAnalysis embedded />
-          </div>
           </>
         ) : (
           // Reachable by clicking the stepper's Verdict tab directly (once
@@ -576,8 +667,40 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
           // persona change resets it. Nothing to show yet, so send them
           // back to compute one instead of a blank tab.
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            <p style={{ fontSize: 14.5, color: 'var(--text-mute)', marginBottom: 20 }}>No score yet for this unit, pick a floor and facing first.</p>
-            <button onClick={onBackToUnit} className="btn btn-lg btn-cta ps-btn ps-cta-btn">← Back to Unit</button>
+            {/* Four distinct states, not two. The auto-compute above can
+                fail (a bad pincode, the scoring API down, a dropped
+                connection) and combinedError is only rendered on the Unit
+                screen further up -- so without this branch a failure here
+                showed a permanent "working on it" message with no error,
+                no retry, and no way forward, because the effect had
+                already claimed its key and would never fire again. */}
+            <p style={{ fontSize: 14.5, color: combinedError ? '#c0392b' : 'var(--text-mute)', marginBottom: 20, lineHeight: 1.6 }}>
+              {loadingCombined
+                ? 'Combining your area and unit scores\u2026'
+                : combinedError
+                  ? combinedError
+                  : (floor != null && facing)
+                    ? 'Working out the verdict for this unit\u2026'
+                    : 'No score yet for this unit, pick a floor and facing first.'}
+            </p>
+
+            {!loadingCombined && combinedError && (
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => { autoCombineKey.current = null; setCombinedError(''); computeCombined(); }}
+                  className="btn btn-lg btn-cta ps-btn ps-cta-btn"
+                >
+                  Try again
+                </button>
+                <button onClick={onBackToUnit} style={{ background: 'transparent', color: 'var(--text)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '12px 22px', fontSize: 12, fontWeight: 700, cursor: 'pointer', letterSpacing: '.03em', textTransform: 'uppercase' }}>
+                  ← Back to the flat
+                </button>
+              </div>
+            )}
+
+            {!loadingCombined && !combinedError && !(floor != null && facing) && (
+              <button onClick={onBackToUnit} className="btn btn-lg btn-cta ps-btn ps-cta-btn">← Back to Unit</button>
+            )}
           </div>
         )
       )}
