@@ -147,56 +147,136 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
     captureRef.current = fn;
   }, []);
 
+  // Real state of the iframe document, reported BY that document (see
+  // Map3DShadow's notifyParent). 'loading' until its script has run and
+  // registered its message listener; 'failed' if the map CDN or WebGL let
+  // us down. Capture is only meaningful in 'ready'.
+  const mapStatusRef = useRef('loading');
+  const handleMapStatus = useCallback((status, reason) => {
+    mapStatusRef.current = status;
+    if (status === 'failed') console.warn('[SunScoutPanel] 3D map failed to initialise:', reason);
+    // A failure arriving mid-capture ends the run now, with a reason,
+    // instead of leaving it waiting on shots that can never arrive.
+    if (status === 'failed' && screenshotRejecterRef.current) {
+      finishCapture(new Error(`map-failed:${reason || 'unknown'}`));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const clearScreenshotWatchdog = () => {
     if (screenshotWatchdogRef.current) { clearTimeout(screenshotWatchdogRef.current); screenshotWatchdogRef.current = null; }
   };
 
-  const handleScreenshot = useCallback((label, data) => {
-    if (data) screenshotBufferRef.current.push({ label, base64: data });
-    screenshotIdxRef.current++;
-    if (screenshotIdxRef.current < SHOTS.length) {
-      const next = SHOTS[screenshotIdxRef.current];
-      setTimeout(() => { captureRef.current?.(next.label, next.time, next.date); }, 350);
-    } else if (screenshotResolverRef.current) {
-      clearScreenshotWatchdog();
-      const buf = [...screenshotBufferRef.current];
-      screenshotResolverRef.current(buf);
-      screenshotResolverRef.current = null;
-      screenshotRejecterRef.current = null;
-    }
+  // Single exit point for a capture run, so no path can leave the promise
+  // pending. Called with an Error to fail, or with nothing to resolve
+  // whatever shots we managed to collect.
+  const finishCapture = useCallback((err) => {
+    clearScreenshotWatchdog();
+    const resolveFn = screenshotResolverRef.current;
+    const rejectFn = screenshotRejecterRef.current;
+    screenshotResolverRef.current = null;
+    screenshotRejecterRef.current = null;
+    if (!resolveFn && !rejectFn) return;
+    if (err) { rejectFn?.(err); return; }
+    resolveFn?.([...screenshotBufferRef.current]);
   }, []);
 
-  const captureScreenshots = useCallback(() => {
+  // Ask the iframe for one shot, and start the clock on it. Each shot has
+  // ~4.2s of deliberate settle time inside the iframe before it composites,
+  // so 20s is far past "slow"; a shot still missing by then is a shot that
+  // is never coming (a wedged tile fetch, a lost postMessage, a document
+  // that reloaded underneath us). Rather than hang -- which is exactly what
+  // this used to do, indefinitely and silently -- we count it as a failed
+  // frame and move to the next one. A report with 11 of 12 frames is a real
+  // report; a spinner that never resolves is not.
+  const requestShot = useCallback((index) => {
+    const shot = SHOTS[index];
+    if (!shot) return;
+    clearScreenshotWatchdog();
+    screenshotWatchdogRef.current = setTimeout(() => {
+      if (!screenshotResolverRef.current) return;
+      console.warn(`[SunScoutPanel] screenshot "${shot.label}" (${index + 1}/${SHOTS.length}) timed out, skipping it`);
+      handleScreenshotRef.current?.(shot.label, null);
+    }, 20000);
+    captureRef.current?.(shot.label, shot.time, shot.date);
+  }, []);
+
+  // handleScreenshot and requestShot call each other; a ref breaks the
+  // definition cycle without making either of them unstable.
+  const handleScreenshotRef = useRef(null);
+
+  const handleScreenshot = useCallback((label, data) => {
+    // Not in a capture run (a stray late message from a previous
+    // attempt): ignore rather than corrupting the next run's buffer.
+    if (!screenshotResolverRef.current) return;
+    if (data) screenshotBufferRef.current.push({ label, base64: data });
+    screenshotIdxRef.current++;
+    const done = screenshotIdxRef.current;
+    // The capture phase is the long half of report generation -- twelve
+    // frames at ~4.5s each, close to a minute. The progress bar used to
+    // sit motionless at 5% for all of it, which reads as frozen, and is
+    // most of why a slow-but-working run is indistinguishable from a
+    // hung one. Walk it 5 -> 35 as the frames land.
+    onCaptureProgressRef.current?.(done, SHOTS.length);
+    if (done < SHOTS.length) {
+      setTimeout(() => requestShot(done), 350);
+      return;
+    }
+    clearScreenshotWatchdog();
+    // Every single frame failed -- that's not a report worth writing, and
+    // the analysis step downstream would produce nonsense from it. Fail
+    // with something the person can act on instead.
+    if (screenshotBufferRef.current.length === 0) {
+      finishCapture(new Error('no-frames-captured'));
+      return;
+    }
+    finishCapture();
+  }, [requestShot, finishCapture]);
+
+  useEffect(() => { handleScreenshotRef.current = handleScreenshot; }, [handleScreenshot]);
+
+  const onCaptureProgressRef = useRef(null);
+
+  const captureScreenshots = useCallback((onProgress) => {
     return new Promise((resolve, reject) => {
       screenshotBufferRef.current = [];
       screenshotIdxRef.current = 0;
       screenshotResolverRef.current = resolve;
       screenshotRejecterRef.current = reject;
+      onCaptureProgressRef.current = onProgress || null;
 
-      // Watchdog: if the 3D map library never loads (Map3DShadow's onReady
-      // never fires -- confirmed real case: a slow/blocked map-CDN
-      // connection), captureRef.current stays null forever and every
-      // captureRef.current?.(...) below is a silent no-op. Nothing was
-      // ever calling reject/resolve in that case, so this promise hung
-      // forever and "Generating your report" just sat frozen with no way
-      // out. 12s is generously past normal load time for the map library;
-      // if it's still not ready by then, fail loudly instead of hanging --
-      // ReportModal's existing error UI (with Try Again) takes it from
-      // there.
-      clearScreenshotWatchdog();
-      screenshotWatchdogRef.current = setTimeout(() => {
-        if (!captureRef.current && screenshotRejecterRef.current) {
-          console.warn('[SunScoutPanel] screenshot watchdog fired, 3D map never became ready, aborting report generation');
-          screenshotRejecterRef.current(new Error('map-not-ready'));
-          screenshotResolverRef.current = null;
-          screenshotRejecterRef.current = null;
+      if (mapStatusRef.current === 'failed') {
+        finishCapture(new Error('map-failed'));
+        return;
+      }
+
+      // Wait for the iframe to actually announce itself before posting
+      // anything into it. It usually already has (the map has been on
+      // screen since the Unit step), so this is normally a no-op -- but
+      // when it hasn't, polling for it is the difference between a clean
+      // "the map didn't load" error and an eternal spinner.
+      const startedAt = Date.now();
+      const beginWhenReady = () => {
+        if (!screenshotResolverRef.current) return; // cancelled
+        if (mapStatusRef.current === 'ready') { requestShot(0); return; }
+        if (mapStatusRef.current === 'failed') { finishCapture(new Error('map-failed')); return; }
+        if (Date.now() - startedAt > 20000) {
+          console.warn('[SunScoutPanel] 3D map never reported ready, aborting report generation');
+          finishCapture(new Error('map-not-ready'));
+          return;
         }
-      }, 12000);
-
-      const first = SHOTS[0];
-      setTimeout(() => { captureRef.current?.(first.label, first.time, first.date); }, 500);
+        setTimeout(beginWhenReady, 250);
+      };
+      setTimeout(beginWhenReady, 300);
     });
-  }, []);
+  }, [requestShot, finishCapture]);
+
+  // Nothing may outlive this component: a pending run would otherwise keep
+  // its timer alive and its promise unsettled forever.
+  useEffect(() => () => {
+    clearScreenshotWatchdog();
+    if (screenshotRejecterRef.current) finishCapture(new Error('cancelled'));
+  }, [finishCapture]);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -269,6 +349,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
             sunTimes={data.sunTimes}
             animating={animating}
             onReady={handleMapReady}
+            onStatus={handleMapStatus}
             onScreenshot={handleScreenshot}
             onLocationSelect={onLocationSelect}
           />
