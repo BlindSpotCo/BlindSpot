@@ -6,7 +6,7 @@
 
 import { useEffect, useMemo, useRef } from 'react';
 
-export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTimes, animating, onLocationSelect, onScreenshot, onReady }) {
+export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTimes, animating, onLocationSelect, onScreenshot, onReady, onStatus }) {
   const iframeRef = useRef(null);
 
   useEffect(() => {
@@ -123,14 +123,26 @@ html,body{background:var(--bg-2);overflow:hidden;}
 // simply never runs, and the page was previously left as a silent black
 // screen with no explanation — indistinguishable from "still loading". Catch
 // that here and show a retry affordance instead.
-window.onerror = function(){
-  try{ var el=document.getElementById('sdk-error'); if(el) el.classList.add('show'); }catch(e){}
+// Tell the parent, too. This iframe is not always on screen -- during
+// report generation it renders parked outside the viewport, where its
+// own retry panel is invisible -- and the parent needs to know the
+// difference between "still loading" and "never going to load" so a
+// report can fail with a reason instead of waiting forever.
+function notifyParent(type, reason){
+  try{ window.parent.postMessage({type:type, reason:reason||null}, '*'); }catch(e){}
+}
+window.onerror = function(e){
+  try{ var el=document.getElementById('sdk-error'); if(el) el.classList.add('show'); }catch(err){}
+  notifyParent('map3d_failed','script-error');
   return false;
 };
 setTimeout(function(){
   try{
     var hasCanvas = document.querySelector('#map canvas');
-    if(!hasCanvas){ var el=document.getElementById('sdk-error'); if(el) el.classList.add('show'); }
+    if(!hasCanvas){
+      var el=document.getElementById('sdk-error'); if(el) el.classList.add('show');
+      notifyParent('map3d_failed','no-canvas');
+    }
   }catch(e){}
 }, 9000);
 
@@ -486,6 +498,20 @@ window.addEventListener('message',function(e){
     },4200);
   }
 });
+
+// Posted only from HERE -- the very last line of this script, after the
+// message listener above is actually registered. That is the only moment
+// at which a captureScreenshot message sent by the parent will be
+// received and answered.
+//
+// The parent used to infer readiness from React's onReady callback,
+// which fires when the <iframe> ELEMENT mounts -- before this document
+// has loaded, let alone before OSMBuildings has run. So its "map never
+// became ready" watchdog tested a condition that was already false a few
+// milliseconds in and could never fire, and if this script had thrown
+// (blocked map CDN, no WebGL) the parent posted capture requests into a
+// document with no listener and waited on them forever.
+notifyParent('map3d_ready');
 </script></body></html>`;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lat, lon, pathData.length > 0 ? pathData[0].iso.slice(0,10) : '']);
@@ -494,10 +520,21 @@ window.addEventListener('message',function(e){
     const handler = (e) => {
       if(e.data?.type==='map3d_click' && onLocationSelect) onLocationSelect(e.data.lat, e.data.lon);
       if(e.data?.type==='screenshotReady' && onScreenshot) onScreenshot(e.data.label, e.data.data);
+      // Real readiness/failure, reported by the iframe document itself
+      // rather than guessed from this component's mount -- see the
+      // notifyParent comments in the srcDoc script.
+      if(e.data?.type==='map3d_ready') onStatus?.('ready');
+      if(e.data?.type==='map3d_failed') onStatus?.('failed', e.data.reason);
     };
     window.addEventListener('message', handler);
     return () => window.removeEventListener('message', handler);
-  }, [onLocationSelect, onScreenshot]);
+  }, [onLocationSelect, onScreenshot, onStatus]);
+
+  // A new srcDoc is a whole new document: it has to announce itself again
+  // before anything may be posted into it. Without this, moving the pin
+  // mid-session left the parent believing the PREVIOUS document's
+  // readiness still applied.
+  useEffect(() => { onStatus?.('loading'); }, [html, onStatus]);
 
   useEffect(() => {
     iframeRef.current?.contentWindow?.postMessage({type:'setAnimating',value:animating},'*');
