@@ -32,7 +32,26 @@ const VERDICT_COLOR = {
   'Reconsider': 'var(--olive-gold)',
 };
 
-export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId, onUnitSeen, onVerdictStart, viewStage, onScoreComputed, onBackToUnit, initialFloor, initialFacing, onUnitPicked, onSeeNeighbourhood, seeNeighbourhoodBusy, neighbourhoodNote, onDismissNeighbourhoodNote }) {
+// While the AI report is generating, the 3D map has to keep rendering --
+// the report is built from 12 screenshots read straight off that map's
+// WebGL canvas (see SunScoutPanel.captureScreenshots), and a display:none
+// ancestor kills the whole subtree. It does NOT have to be *looked at*
+// though, which is the difference this style makes: the panel stays fully
+// laid out and painting, just parked outside the viewport, so the person
+// stays on the Verdict card they pressed the button from instead of being
+// thrown back to the map behind a popup.
+//
+// Deliberately not `visibility:hidden`, `opacity:0` or a 0x0 box: all
+// three are license for the browser to stop painting the canvas, and the
+// capture reads real pixels back out of it. A real-sized box parked at
+// -20000px is the one form of "hidden" that provably still renders.
+const OFFSCREEN_LIVE = {
+  position: 'fixed', left: '-20000px', top: 0,
+  width: '1000px', height: '760px',
+  overflow: 'hidden', pointerEvents: 'none',
+};
+
+export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId, onUnitSeen, onVerdictStart, viewStage, onScoreComputed, onBackToUnit, initialFloor, initialFacing, onUnitPicked, onSeeNeighbourhood, seeNeighbourhoodBusy, neighbourhoodNote, onDismissNeighbourhoodNote, onTryAnotherAddress, onReportOpenChange }) {
   const persona = getPersona(personaId) || getPersona(PERSONA_ORDER[0]);
   const sunScoutRef = useRef(null);
   const [floor, setFloor] = useState(initialFloor ?? null);
@@ -65,9 +84,17 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
 
   const [gpsError, setGpsError] = useState('');
   // Whether the report modal (owned by SunScoutPanel, opened via
-  // sunScoutRef.openReport) is currently up -- see showUnit below for
-  // why this needs to be tracked here at all.
-  const [reportOpen, setReportOpen] = useState(false);
+  // sunScoutRef.openReport) is currently up -- see mapStyle below for
+  // why this needs to be tracked here at all. Also bubbled up to
+  // PropertyScoreFlow, which has the same problem one level out: if the
+  // person wanders off to another tab entirely while the report runs,
+  // the flow's own wrapper would display:none this whole component and
+  // stop the capture dead.
+  const [reportOpen, setReportOpenState] = useState(false);
+  const setReportOpen = useCallback((v) => {
+    setReportOpenState(v);
+    onReportOpenChange?.(v);
+  }, [onReportOpenChange]);
   // Lat/lon are already populated by the time this panel renders -- from
   // the locality's area record, or the pin the user just confirmed on the
   // map in AddressPicker. Showing them up front as two blank-looking
@@ -103,9 +130,14 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   useEffect(() => {
     if (isFirstLocationEffect.current) { isFirstLocationEffect.current = false; return; }
     setCombined(null); setFloor(null); setFacing(null);
-    setCapturedFromSS(false); setSsPreview(null); setAreaWeight(50);
+    // Back to the PERSONA's default split, not a hardcoded 50 -- the
+    // persona effect above sets it from persona.defaultAreaWeight, and
+    // these two disagreeing meant a new location silently re-weighted
+    // the verdict differently from the one the persona had asked for.
+    setCapturedFromSS(false); setSsPreview(null); setAreaWeight(persona.defaultAreaWeight);
     onUnitSeen?.(false);
     onVerdictStart?.(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lat, lon]);
 
   // A pincode change on its own means the same flat, newly matched to a
@@ -118,7 +150,8 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   useEffect(() => {
     if (isFirstPinEffect.current) { isFirstPinEffect.current = false; return; }
     setCombined(null);
-    setAreaWeight(50);
+    setAreaWeight(persona.defaultAreaWeight);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pinCode]);
 
   // Mirror floor/facing up to PropertyScoreFlow purely so it has a
@@ -127,6 +160,24 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   useEffect(() => {
     onUnitPicked?.(floor, facing);
   }, [floor, facing, onUnitPicked]);
+
+  // Escape closes the visit checklist, and the page behind it doesn't
+  // scroll while it's up. Both are what every other dialog on the web
+  // does, and without them the overlay trapped a phone user's scroll
+  // gesture on the page underneath while looking un-dismissable to a
+  // keyboard user (the only close was a small x, or a click on the
+  // backdrop nobody thinks to try).
+  useEffect(() => {
+    if (!showVisitChecklist || typeof document === 'undefined') return;
+    const onKey = (e) => { if (e.key === 'Escape') setShowVisitChecklist(false); };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [showVisitChecklist]);
 
   const [comfortLoading, setComfortLoading] = useState(false);
   const [comfortError, setComfortError] = useState('');
@@ -296,21 +347,29 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   // panel + floor/facing/Get Score block below both belong to the Unit
   // tab and hide via display:none rather than unmounting when Verdict is
   // active -- SunScoutPanel specifically needs that (its map/drag state
-  // would otherwise reset); the floor/facing block has no state at risk
-  // itself but shares the same toggle for one obvious on/off switch
-  // instead of two separate conditions to keep in sync. The verdict card
-  // further down is a plain conditional -- nothing in it holds state of
-  // its own, `combined` already lives in this component regardless of
-  // which branch renders it.
+  // would otherwise reset). The verdict card further down is a plain
+  // conditional -- nothing in it holds state of its own, `combined`
+  // already lives in this component regardless of which branch renders it.
+  //
   // "Generate Full AI Report" (further down, the Verdict tab's own
-  // button) opens this modal via the ref while sitting ON the Verdict
-  // tab -- which means normally this whole panel, modal included, would
-  // be sitting inside a display:none ancestor the instant it opens (a
-  // hidden ancestor hides its entire subtree). reportOpen keeps this
-  // panel visible for exactly as long as that modal is, so "Generating
-  // your report…" is actually seen rather than running invisibly until
-  // you happen to click back to Unit.
-  const showUnit = viewStage !== 'verdict' || reportOpen;
+  // button) opens the report modal while sitting ON the Verdict tab, and
+  // the report is built from screenshots of that map -- so the map has to
+  // keep rendering while it runs. It used to do that by simply un-hiding
+  // the whole Unit block, which dropped the person back onto the map with
+  // the verdict shoved a screenful below it: exactly the thing they were
+  // done with. Now the map goes offscreen-but-live instead
+  // (OFFSCREEN_LIVE above), so it keeps feeding the capture while the
+  // Verdict card stays put and the progress card sits in the corner.
+  //
+  // The floor/facing picker gets no such treatment -- it isn't part of
+  // the capture, so on Verdict it's simply hidden, report or no report.
+  const onUnitTab = viewStage !== 'verdict';
+  const mapOffscreen = !onUnitTab && reportOpen;
+  const mapStyle = onUnitTab
+    ? { marginBottom: 36, display: 'block' }
+    : mapOffscreen
+      ? OFFSCREEN_LIVE
+      : { marginBottom: 36, display: 'none' };
 
   // Independent of areaWeight on purpose -- built from the raw
   // per-dimension scores (area.factors, unit.subScores), not the
@@ -324,7 +383,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   return (
     <>
       {/* SUNSCOUT PANEL */}
-      <div style={{ marginBottom: 36, display: showUnit ? 'block' : 'none' }}>
+      <div style={mapStyle} aria-hidden={mapOffscreen || undefined}>
         <div className="mono" style={{ fontSize: 12, color: 'var(--sun)', letterSpacing: '.12em', marginBottom: 12 }}>SUN &amp; SHADOW FOR THIS FLAT</div>
 
         {lat && lon && addressLabel && !showCoords ? (
@@ -389,7 +448,7 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
           Home Comfort Score -> Continue to Verdict, instead of open
           popup -> pick again inside it -> get score -> Done. */}
       {lat && lon && (
-        <div style={{ marginBottom: 20, display: showUnit ? 'block' : 'none', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: 20 }}>
+        <div style={{ marginBottom: 20, display: onUnitTab ? 'block' : 'none', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: 20 }}>
           <div className="mono" style={{ fontSize: 12, color: 'var(--text)', letterSpacing: '.12em', marginBottom: 4 }}>HOME COMFORT SCORE</div>
           <div className="mono" style={{ fontSize: 11.5, color: 'var(--text-dim)', marginBottom: 16 }}>
             {areaRecord ? 'Do this first, the combined verdict below needs this to combine.' : 'Sun, shade & heat, view, privacy, and wind - for this exact floor and facing.'}
@@ -482,8 +541,18 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
                     <button onClick={() => { onDismissNeighbourhoodNote?.(); computeCombined(); }} disabled={loadingCombined} style={{ background: 'var(--sun)', color: '#fff', border: 'none', borderRadius: 'var(--radius)', padding: '11px 20px', fontSize: 12.5, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', cursor: 'pointer', opacity: loadingCombined ? .6 : 1 }}>
                       {loadingCombined ? 'Computing…' : 'See your unit verdict →'}
                     </button>
-                    <button onClick={onDismissNeighbourhoodNote} style={{ background: 'transparent', color: 'var(--text-mute)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '11px 18px', fontSize: 12.5, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', cursor: 'pointer' }}>
-                      Try another address
+                    {/* This used to say "Try another address" and do
+                        nothing but dismiss the message -- the person was
+                        left on the same address they'd just been told
+                        wasn't covered, with no picker in sight. Either
+                        take them to the address search (which is what
+                        the label promises) or, if the caller hasn't
+                        given us a way to, say what the button actually
+                        does. */}
+                    <button
+                      onClick={() => { onDismissNeighbourhoodNote?.(); onTryAnotherAddress?.(); }}
+                      style={{ background: 'transparent', color: 'var(--text-mute)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '11px 18px', fontSize: 12.5, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', cursor: 'pointer' }}>
+                      {onTryAnotherAddress ? 'Try another address' : 'Dismiss'}
                     </button>
                   </div>
                 </div>
@@ -647,16 +716,46 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
               />
             </div>
 
+            {/* Disabled while a report is already running. It used to stay
+                live, and pressing it again did nothing visible at all --
+                the modal was already open, the auto-generate only fires
+                once on mount -- so on a slow run people pressed it
+                repeatedly, saw no response, and concluded it was broken.
+                Say what's happening on the button itself instead; the
+                progress card is in the corner. */}
             <button
               onClick={() => { onVerdictStart?.(true); sunScoutRef.current?.openReport({ floor: combined.unit.floor, facing: combined.unit.facing, customNote: reportCustomNote, actionItems }); }}
+              disabled={reportOpen}
               className="ps-btn ps-cta-btn"
               style={{
                 background: 'var(--brand)', color: '#fff', border: 'none',
-                borderRadius: 'var(--radius)', padding: '13px 22px', fontSize: 13.5, fontWeight: 700, cursor: 'pointer',
+                borderRadius: 'var(--radius)', padding: '13px 22px', fontSize: 13.5, fontWeight: 700,
+                cursor: reportOpen ? 'default' : 'pointer', opacity: reportOpen ? .55 : 1,
                 letterSpacing: '.03em', textTransform: 'uppercase', width: '100%',
               }}>
-              {combined.area ? 'Generate Full AI Report - Neighbourhood + Unit' : 'Generate AI Report - Unit'}
+              {reportOpen
+                ? 'Report in progress — see the card in the corner'
+                : combined.area ? 'Generate Full AI Report - Neighbourhood + Unit' : 'Generate AI Report - Unit'}
             </button>
+          </div>
+
+          {/* The verdict card is tall enough that by the time you've read
+              to the bottom of it the back link at the top of the page is
+              well out of sight -- and the bottom is exactly where you
+              decide the floor was wrong and you want to try another one.
+              Only rendered once there IS a verdict: the empty/error
+              branch below has its own. */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 14, flexWrap: 'wrap', marginTop: 18 }}>
+            <button
+              onClick={onBackToUnit}
+              style={{ background: 'none', border: 'none', padding: '4px 0', fontSize: 13, color: 'var(--text-mute)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 7 }}
+            >
+              <span aria-hidden="true" style={{ fontSize: 15, lineHeight: 1 }}>&#8592;</span>
+              Change the floor or facing
+            </button>
+            <span className="mono" style={{ fontSize: 11, color: 'var(--text-dim)' }}>
+              Your score is kept, nothing here is lost by going back.
+            </span>
           </div>
 
           </>

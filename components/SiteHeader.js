@@ -33,7 +33,14 @@ export default function SiteHeader({ homeHref = '/' }) {
   // step rather than the thing you already did to get here. Derived from
   // the route so it self-manages rather than needing a prop at each usage.
   const pathname = usePathname();
-  const onFlow = pathname?.startsWith('/property-score');
+  // /floor-plan-analysis counts as "in the flow" too: it's the third of
+  // the three doors on the Property Score start screen, reached by an
+  // ordinary in-tab navigation from it. Treating it as a marketing page
+  // meant a floating "Uncover Your BlindSpot" pill sat over that tool's
+  // own form while you were filling it in, inviting you to abandon the
+  // thing you were in the middle of -- and the nav didn't appear until
+  // you scrolled, so the page opened with no way out at all.
+  const onFlow = pathname?.startsWith('/property-score') || pathname?.startsWith('/floor-plan-analysis');
 
   const [user, setUser] = useState(null);
   const [checkedAuth, setCheckedAuth] = useState(false);

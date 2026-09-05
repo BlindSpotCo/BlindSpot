@@ -10,6 +10,7 @@
 // clearly different parts of the product.
 
 import { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import SaveReportButton from '@/components/reports/SaveReportButton';
 
 const CSS = `
@@ -93,6 +94,22 @@ export default function FloorPlanAnalysis({ embedded = false }) {
   const [notes, setNotes] = useState('');
   const fileInputRef = useRef(null);
   const roomRefs = useRef({});
+  const router = useRouter();
+
+  // The header button used to be a bare window.close(). That only works
+  // on a tab the browser itself considers script-opened, and the
+  // Furnishing door on the Property Score start screen reaches this page
+  // by an ordinary in-tab navigation -- so for the main way in, the only
+  // control on the page did nothing at all when clicked, on a page with
+  // no site header and no other way out. Go back to where they came from
+  // if there is a there to go back to, and fall back to the flow itself
+  // (a direct link, a bookmark, a shared URL) rather than a no-op.
+  const leave = () => {
+    if (typeof window === 'undefined') return;
+    if (window.opener && !window.opener.closed) { window.close(); return; }
+    if (window.history.length > 1) { router.back(); return; }
+    router.push('/property-score');
+  };
 
   function toggleMustHave(opt) {
     setMustHaves(prev => prev.includes(opt) ? prev.filter(x => x !== opt) : [...prev, opt]);
@@ -136,16 +153,14 @@ export default function FloorPlanAnalysis({ embedded = false }) {
       <style>{CSS}</style>
       <div style={{ maxWidth: 1120, margin: '0 auto', padding: embedded ? '0 0 24px' : '48px 32px 64px' }}>
 
-        {/* The standalone page's own "← Close" (window.close()) only makes
-            sense when this rendered in a tab opened just for it -- inside
-            the Furnishing tab of the Property Score flow it's already one
-            tab among several, so there's no window to close and no
-            separate header needed; the tab bar above is already the
-            navigation. */}
+        {/* Only for the standalone page -- when this is embedded inside
+            the Property Score flow the surrounding tab bar is already
+            the navigation, so a second one would just be noise. See
+            `leave` above for why this is no longer a window.close(). */}
         {!embedded && (
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 28, paddingBottom: 18, borderBottom: '1px solid color-mix(in srgb, var(--sun) 55%, transparent)' }}>
             <p className="kick" style={{ fontSize: 12 }}>Unit Intelligence · Floor Plan Furnishing Advisor</p>
-            <button onClick={() => window.close()} style={{ fontSize: 12.5, fontWeight: 600, border: '1px solid color-mix(in srgb, var(--sun) 45%, transparent)', borderRadius: 3, padding: '9px 16px', color: 'var(--text-mute)', background: 'transparent' }}>← Close</button>
+            <button onClick={leave} style={{ fontSize: 12.5, fontWeight: 600, border: '1px solid color-mix(in srgb, var(--sun) 45%, transparent)', borderRadius: 3, padding: '9px 16px', color: 'var(--text-mute)', background: 'transparent', cursor: 'pointer' }}>← Back</button>
           </div>
         )}
 
