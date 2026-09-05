@@ -88,10 +88,16 @@ export default function PropertyScoreFlow({ initial }) {
   // silently reverts moments after we set it, on this exact pattern of
   // an SPA that rewrites its own URL -- 'manual' hands all of that back
   // to our own code (the effect further down) instead.
+  //
+  // Handed back on unmount: this is a global browser setting, not a
+  // per-page one, so leaving it on 'manual' meant every other page the
+  // person visited afterwards in this tab (My Reports, the neighbourhood
+  // report, home) also lost its scroll position on Back, for no reason.
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
-      window.history.scrollRestoration = 'manual';
-    }
+    if (typeof window === 'undefined' || !('scrollRestoration' in window.history)) return;
+    const previous = window.history.scrollRestoration;
+    window.history.scrollRestoration = 'manual';
+    return () => { window.history.scrollRestoration = previous; };
   }, []);
 
   // Direct Unit/Verdict entry with no location yet auto-geolocates once
@@ -105,6 +111,10 @@ export default function PropertyScoreFlow({ initial }) {
   const [areaLookupBusy, setAreaLookupBusy] = useState(false);
   const [areaLookupNote, setAreaLookupNote] = useState('');
   const [areaFromUnit, setAreaFromUnit] = useState(false);
+  // True while the AI report modal is up (UnitVerdict owns it, but this
+  // component decides whether UnitVerdict is allowed to be hidden) --
+  // see unitPanelStyle further down.
+  const [reportOpen, setReportOpen] = useState(false);
 
   const resetLocation = () => {
     setAreaRecord(null); setPinCode(null); setCity(null); setAddressLabel('');
@@ -113,9 +123,22 @@ export default function PropertyScoreFlow({ initial }) {
     autoGeoTried.current = false; setAutoGeoError('');
   };
 
+  // Switching between "search an address" and "browse scored areas".
+  //
+  // This used to wipe the location -- pin, area, floor, facing, the lot --
+  // on every toggle. But the toggle is a link that reads "Prefer to
+  // browse scored areas instead?", i.e. an invitation to *look*, and
+  // looking cost people everything they had entered, with no warning and
+  // no undo. Nothing is actually stale at the moment of the toggle
+  // either: the pin is still the pin until they pick something else in
+  // the other picker, and picking something else already replaces it
+  // (handleAreaSelected / handleAddressConfirmed both do), which then
+  // resets floor and facing through UnitVerdict's own [lat, lon] effect.
+  // So the destructive step happens where it belongs -- on an actual new
+  // choice -- and merely peeking at the other picker is free.
   const chooseMode = (m) => {
     setAreaFromUnit(false);
-    if (m !== mode) { setMode(m); resetLocation(); }
+    setMode(m);
     setViewStage('location');
   };
 
@@ -288,14 +311,57 @@ export default function PropertyScoreFlow({ initial }) {
   // lat/lon), floor/facing once picked, and whichever tab is on screen.
   // This is what makes a reload (or a bookmarked/shared link) land back
   // on the same tab with everything already filled in, instead of
-  // starting over from Your Angle. Plain history.replaceState rather
-  // than a Next.js router push -- this should never itself trigger a
-  // navigation or a server round-trip, only rewrite the address bar.
-  // Skipped entirely on the very first render (the effect's own
-  // dependencies already equal what page.js put in the URL then).
+  // starting over.
+  //
+  // The important part is WHICH history operation each change gets:
+  //
+  //  - A change of tab (viewStage) does a pushState, so it becomes its
+  //    own entry in the browser's history. Everything used to be a
+  //    replaceState, which meant the entire flow -- Start, the area, the
+  //    flat, the verdict, half an hour of picking -- collapsed into ONE
+  //    history entry, and the browser/phone Back gesture took you
+  //    straight out to whatever page you were on before the flow. That's
+  //    the "I go back and I'm on the home screen and I've lost
+  //    everything" bug: Back never meant "the previous screen of this
+  //    flow", because as far as the browser knew there had only ever
+  //    been one screen. Now Back walks Verdict -> Flat -> Area -> Start
+  //    and only then leaves the page.
+  //  - A change WITHIN a tab (dragging the floor slider, moving the pin,
+  //    picking a facing) stays a replaceState. Those are edits, not
+  //    navigations; giving each one a history entry would mean twenty
+  //    Back presses to get out of the floor slider.
+  //
+  // Plain history API rather than a Next.js router push either way --
+  // this must never trigger a navigation or a server round-trip, only
+  // rewrite the address bar. Skipped entirely on the very first render
+  // (the effect's dependencies already equal what page.js put in the URL
+  // then), and once more immediately after a popstate we handled
+  // ourselves (the URL is already correct at that point, and pushing
+  // there would fight the Back press that caused it).
   const firstSync = useRef(true);
+  const lastSyncedStage = useRef(initial?.stage || null);
+  const skipNextSync = useRef(false);
   useEffect(() => {
-    if (firstSync.current) { firstSync.current = false; return; }
+    if (firstSync.current) {
+      firstSync.current = false;
+      lastSyncedStage.current = viewStage;
+      // Stamp the entry we arrived on so a Back press that lands here
+      // is recognisable as ours (see the popstate handler below) rather
+      // than looking like an entry from before the flow.
+      // Third argument omitted on purpose: passing a URL here (even '')
+      // would rewrite the address bar, and '' in particular resolves to
+      // the bare path and would silently drop the query string we were
+      // opened with. Omitting it leaves the URL exactly as it is and
+      // only attaches our marker to the entry.
+      try { window.history.replaceState({ ...window.history.state, bsStage: viewStage }, ''); } catch { /* non-fatal */ }
+      return;
+    }
+    // Just came back from a popstate we handled: the browser has already
+    // moved to that entry, so this run must REPLACE it (bringing its
+    // query string back in line with the state we're actually holding)
+    // rather than push a new one on top and break Forward.
+    const fromPop = skipNextSync.current;
+    skipNextSync.current = false;
     const params = new URLSearchParams();
     if (viewStage) params.set('stage', viewStage);
     if (personaId) params.set('persona', personaId);
@@ -309,8 +375,39 @@ export default function PropertyScoreFlow({ initial }) {
     if (floor != null) params.set('floor', String(floor));
     if (facing) params.set('facing', facing);
     const qs = params.toString();
-    window.history.replaceState(null, '', window.location.pathname + (qs ? `?${qs}` : ''));
+    const url = window.location.pathname + (qs ? `?${qs}` : '');
+    const stageChanged = !fromPop && viewStage !== lastSyncedStage.current;
+    lastSyncedStage.current = viewStage;
+    const state = { ...(window.history.state || null), bsStage: viewStage };
+    if (stageChanged) window.history.pushState(state, '', url);
+    else window.history.replaceState(state, '', url);
   }, [viewStage, personaId, mode, pinCode, city, areaRecord, lat, lon, addressLabel, floor, facing]);
+
+  // The other half of the pushState above: a Back (or Forward) press
+  // inside the flow. Everything the flow holds -- the area record, the
+  // pin, the floor, the computed verdict -- is still sitting right here
+  // in React state, because nothing actually navigated; the only thing
+  // that needs restoring is which tab is showing. So read that off the
+  // entry the browser just moved to and switch to it, and let all the
+  // work stand.
+  //
+  // Falls back to reading ?stage= off the URL for an entry that predates
+  // this (a link someone had open before a deploy). An entry with
+  // neither is from before the flow started, and that's a real exit --
+  // the browser does a full navigation for those and this never runs.
+  useEffect(() => {
+    const onPop = (e) => {
+      let next = e.state?.bsStage;
+      if (!next) {
+        try { next = new URLSearchParams(window.location.search).get('stage'); } catch { /* ignore */ }
+      }
+      if (!next || next === viewStage) return;
+      skipNextSync.current = true;
+      setViewStage(next);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, [viewStage]);
 
   // Land at the literal top of the page whenever the active tab changes --
   // otherwise a switch from a long tab (Unit, with the sun/shadow panel)
@@ -334,11 +431,27 @@ export default function PropertyScoreFlow({ initial }) {
   // mount (async data landing, a font swap, or a browser's own automatic
   // scroll-anchoring correction all fall in this category, and there's no
   // way to verify from here which one it is on an actual phone).
+  //
+  // The repeats are cancelled the moment the person scrolls (or touches,
+  // or spins a wheel) themselves. Without that, the guard turns into the
+  // bug: switch tab, start reading immediately, and 300ms later the page
+  // yanks itself back to the top under your finger -- twice. An intent to
+  // scroll is unambiguous, and it always outranks a defensive re-snap.
   useEffect(() => {
     const toTop = () => window.scrollTo({ top: 0, behavior: 'auto' });
     toTop();
     const timers = [80, 300, 800].map(ms => setTimeout(toTop, ms));
-    return () => timers.forEach(clearTimeout);
+    const cancel = () => timers.forEach(clearTimeout);
+    const opts = { passive: true, once: true };
+    window.addEventListener('wheel', cancel, opts);
+    window.addEventListener('touchmove', cancel, opts);
+    window.addEventListener('keydown', cancel, opts);
+    return () => {
+      cancel();
+      window.removeEventListener('wheel', cancel);
+      window.removeEventListener('touchmove', cancel);
+      window.removeEventListener('keydown', cancel);
+    };
   }, [viewStage]);
 
   // Landing directly on the Location tab (stepper click, direct link,
@@ -355,6 +468,40 @@ export default function PropertyScoreFlow({ initial }) {
   }, [viewStage, mode]);
 
   const unitReady = Boolean(lat && lon);
+
+  // The AI report is generated from live screenshots of the 3D map inside
+  // UnitVerdict, so that component has to keep rendering for as long as
+  // the report is running -- even if the person wanders back to Start or
+  // Location while it works (the report card itself says "feel free to
+  // keep browsing", so they will). display:none would kill the capture,
+  // so park the panel offscreen instead: same real box, same painting,
+  // just outside the viewport. See UnitVerdict's OFFSCREEN_LIVE for the
+  // same trick one level down, and why none of the cheaper ways of
+  // hiding a thing work here.
+  // One step back, named for what it actually goes back to. The screen
+  // before Verdict is the flat you scored, not the start of the product;
+  // the screen before the flat is the area you picked it in, when there
+  // was one. Only Location genuinely has nothing behind it but Start.
+  // Where "pick up where I left off" goes: the furthest point their work
+  // actually reaches, not just whatever tab they happened to leave from.
+  const resumeStage = (floor != null && facing) ? 'verdict' : 'unit';
+
+  const back = viewStage === 'verdict'
+    ? { to: 'unit', label: 'Back to the flat' }
+    : viewStage === 'unit' && (areaRecord || mode === 'locality')
+      ? { to: 'location', label: 'Back to the area' }
+      // Arrived on Location from the flat ("See the neighbourhood"),
+      // so the flat -- not Start -- is the screen behind this one.
+      : viewStage === 'location' && areaFromUnit
+        ? { to: 'unit', label: 'Back to the flat' }
+        : { to: 'start', label: 'All three options' };
+
+  const unitPanelParked = !(viewStage === 'unit' || viewStage === 'verdict') && reportOpen;
+  const unitPanelStyle = (viewStage === 'unit' || viewStage === 'verdict')
+    ? { width: '100%', display: 'block' }
+    : unitPanelParked
+      ? { position: 'fixed', left: '-20000px', top: 0, width: '1000px', height: '760px', overflow: 'hidden', pointerEvents: 'none' }
+      : { width: '100%', display: 'none' };
 
   // Landed on Unit or Verdict directly with no location yet -- skip the
   // neighbourhood-matching address flow entirely (that's Location's mode
@@ -400,18 +547,36 @@ export default function PropertyScoreFlow({ initial }) {
           controls inside UnitVerdict (onBackToUnit, and the score button
           forward), so this doesn't need to duplicate them. */}
       {viewStage !== 'start' && (
-        <div className="wrap" style={{ paddingTop: 20, paddingBottom: 4 }}>
+        <div className="wrap" style={{ paddingTop: 20, paddingBottom: 4, display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap' }}>
           <button
-            onClick={() => setViewStage('start')}
+            onClick={() => setViewStage(back.to)}
             style={{
               background: 'none', border: 'none', padding: '4px 0', cursor: 'pointer',
-              fontSize: 13, color: 'var(--text-mute)', display: 'inline-flex',
-              alignItems: 'center', gap: 7,
+              fontSize: 13, color: 'var(--text)', display: 'inline-flex',
+              alignItems: 'center', gap: 7, fontWeight: 600,
             }}
           >
             <span aria-hidden="true" style={{ fontSize: 15, lineHeight: 1 }}>&#8592;</span>
-            All three options
+            {back.label}
           </button>
+          {/* The way out of the whole branch, kept separate from the back
+              step above. These used to be the same control -- one "All
+              three options" link that, from any screen, threw you all the
+              way to the start. That's fine as an escape hatch and awful
+              as a back button, and it was the only one on the page, so
+              stepping back one screen (Verdict -> the flat, to change a
+              floor) meant restarting the branch. Two links, two jobs. */}
+          {back.to !== 'start' && (
+            <button
+              onClick={() => setViewStage('start')}
+              style={{
+                background: 'none', border: 'none', padding: '4px 0', cursor: 'pointer',
+                fontSize: 12.5, color: 'var(--text-mute)', textDecoration: 'underline',
+              }}
+            >
+              All three options
+            </button>
+          )}
         </div>
       )}
       <SideDataStrip />
@@ -431,6 +596,43 @@ export default function PropertyScoreFlow({ initial }) {
             two things before the user had seen anything. StartChooser
             routes each door itself via chooseDoor above. */}
         <div className="ps-flow-wrap" style={{ width: '100%', display: viewStage === 'start' ? 'block' : 'none' }}>
+          {/* Coming back to Start with work already done -- via the "All
+              three options" link, or Back, or a reopened tab -- used to
+              look exactly like a first visit: three doors, no sign that
+              the address, floor, facing and verdict you'd already got
+              were still sitting there. People reasonably assumed they'd
+              lost it and started over. This says plainly that it's still
+              there, gives one click back to it, and makes throwing it
+              away a deliberate, labelled act rather than a side effect of
+              clicking a door again. */}
+          {unitReady && (
+            <div style={{
+              border: '1px solid var(--line)', borderLeft: '3px solid var(--brand)',
+              borderRadius: 'var(--radius)', padding: '14px 18px', marginBottom: 26,
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap',
+            }}>
+              <div style={{ fontSize: 13.5, color: 'var(--text-mute)', lineHeight: 1.5 }}>
+                <strong style={{ color: 'var(--text)' }}>Still in progress</strong>
+                {addressLabel ? ` — ${addressLabel}` : ''}
+                {floor != null && facing ? ` · floor ${floor}, ${facing}` : ''}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => setViewStage(resumeStage)}
+                  className="ps-btn"
+                  style={{ background: 'var(--brand)', color: '#fff', border: 'none', borderRadius: 'var(--radius)', padding: '9px 18px', fontSize: 12.5, fontWeight: 700, cursor: 'pointer' }}
+                >
+                  Pick up where I left off →
+                </button>
+                <button
+                  onClick={() => { setAreaFromUnit(false); resetLocation(); }}
+                  style={{ background: 'none', border: 'none', padding: 0, fontSize: 12.5, color: 'var(--text-mute)', textDecoration: 'underline', cursor: 'pointer' }}
+                >
+                  Start fresh
+                </button>
+              </div>
+            </div>
+          )}
           <StartChooser onChoose={chooseDoor} />
         </div>
 
@@ -531,7 +733,7 @@ export default function PropertyScoreFlow({ initial }) {
             display:none rather than unmounted whenever a location IS
             picked but neither tab is currently active. */}
         {unitReady && (
-          <div className="ps-flow-wrap" style={{ width: '100%', display: (viewStage === 'unit' || viewStage === 'verdict') ? 'block' : 'none' }}>
+          <div className="ps-flow-wrap" style={unitPanelStyle} aria-hidden={unitPanelParked || undefined}>
             <UnitVerdict
               areaRecord={areaRecord}
               pinCode={pinCode}
@@ -552,6 +754,8 @@ export default function PropertyScoreFlow({ initial }) {
               seeNeighbourhoodBusy={areaLookupBusy}
               neighbourhoodNote={areaLookupNote}
               onDismissNeighbourhoodNote={() => setAreaLookupNote('')}
+              onTryAnotherAddress={() => chooseMode('address')}
+              onReportOpenChange={setReportOpen}
             />
           </div>
         )}

@@ -208,6 +208,44 @@ export default function ReportModal({
   // Unit/Verdict panel this component actually lives in underneath.
   const isFormStep = !loading && !autoGenerate && !reportUrl;
 
+  // Escape closes this -- but deliberately NOT while it's generating.
+  // There is no cancel button during generation for the same reason:
+  // closing throws away a run that takes a minute or two of real work
+  // (12 map captures plus two model calls), and a stray Escape while
+  // waiting is exactly the kind of thing that happens. Once there's
+  // something to dismiss -- the form, an error, or the finished report --
+  // Escape does the same thing as the Cancel/Close button next to it.
+  const canDismiss = !loading || Boolean(error) || Boolean(reportUrl);
+  useEffect(() => {
+    if (!canDismiss) return;
+    const onKey = (e) => { if (e.key === 'Escape') onClose?.(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [canDismiss, onClose]);
+
+  // A report in flight is a minute or two of work that cannot be
+  // recovered -- 12 map captures plus two model calls, all of it living
+  // only in this tab. Closing or reloading mid-run throws it away
+  // silently, so ask first. Deliberately scoped to exactly that window:
+  // no prompt before it starts, and none once the report is ready (the
+  // blob is already made, and by then the person is done here).
+  useEffect(() => {
+    if (!loading || error) return;
+    const onBeforeUnload = (e) => { e.preventDefault(); e.returnValue = ''; };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [loading, error]);
+
+  // The form step is the only blocking, full-screen state, so it's the
+  // only one that should stop the page behind it scrolling. The corner
+  // progress card explicitly invites you to keep browsing.
+  useEffect(() => {
+    if (!isFormStep || typeof document === 'undefined') return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [isFormStep]);
+
   const overlayStyle = isFormStep
     ? { position:'fixed', inset:0, zIndex:1000, background:'rgba(10,5,0,0.6)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }
     : { position:'fixed', bottom:20, right:20, zIndex:1000, width:360, maxWidth:'calc(100vw - 40px)', pointerEvents:'none' };
