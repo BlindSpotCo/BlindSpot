@@ -23234,5 +23234,2790 @@
       "market_gap_note": "Actual market prices in Mumbai typically run well above the Ready Reckoner Rate, with the widest gaps in supply-constrained South Mumbai and Bandra. The RRR is only the legal floor for stamp duty — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Converted from the notified ₹/sq metre rate (1 sq m = 10.764 sq ft). Figures use the general zone band, not individual-building outliers. Not part of the NQI score."
     }
+  },
+  {
+    "pin_code": "500002",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 65,
+      "infrastructure": 37,
+      "air": 75,
+      "power": 61,
+      "schools": 60,
+      "water": 70,
+      "roads": 45,
+      "sewerage": 39
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 58,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 294,
+    "schools_count": 8,
+    "schools_list": [
+      "Scholars Model High School",
+      "Indo Embassy High School",
+      "Limra School",
+      "Solar High School",
+      "Dawn Model High School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 29,
+    "crime_tier": "High",
+    "price_tier": 5,
+    "price_context": {
+      "tier": 5,
+      "label": "Value",
+      "rate_sqft": [
+        4800,
+        5600
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Old City -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500053",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 62,
+      "infrastructure": 33,
+      "air": 76,
+      "power": 58,
+      "schools": 57,
+      "water": 67,
+      "roads": 42,
+      "sewerage": 32
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 55,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 302,
+    "schools_count": 2,
+    "schools_list": [
+      "Narayana Schools (Falaknuma)",
+      "Integral Foundation School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 20,
+    "crime_tier": "High",
+    "price_tier": 5,
+    "price_context": {
+      "tier": 5,
+      "label": "Value",
+      "rate_sqft": [
+        4800,
+        5600
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Old City -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500023",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 59,
+      "infrastructure": 36,
+      "air": 76,
+      "power": 55,
+      "schools": 54,
+      "water": 64,
+      "roads": 39,
+      "sewerage": 42
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 54,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 266,
+    "schools_count": 2,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "schools_sourced": false,
+    "crime_percentile": 54,
+    "crime_tier": "Moderate",
+    "price_tier": 5,
+    "price_context": {
+      "tier": 5,
+      "label": "Value",
+      "rate_sqft": [
+        4800,
+        5600
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Old City -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500064",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 64,
+      "infrastructure": 33,
+      "air": 53,
+      "power": 60,
+      "schools": 59,
+      "water": 69,
+      "roads": 44,
+      "sewerage": 34
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 53,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 298,
+    "schools_count": 6,
+    "schools_list": [
+      "Asian Grammar High School",
+      "Guru Nanak High School",
+      "Royal Indian High School",
+      "The Progress Global High School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 22,
+    "crime_tier": "High",
+    "price_tier": 5,
+    "price_context": {
+      "tier": 5,
+      "label": "Value",
+      "rate_sqft": [
+        4800,
+        5600
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Old City -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500065",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 65,
+      "infrastructure": 34,
+      "air": 74,
+      "power": 61,
+      "schools": 60,
+      "water": 70,
+      "roads": 45,
+      "sewerage": 35
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 57,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 282,
+    "schools_count": 1,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "schools_sourced": false,
+    "crime_percentile": 39,
+    "crime_tier": "High",
+    "price_tier": 5,
+    "price_context": {
+      "tier": 5,
+      "label": "Value",
+      "rate_sqft": [
+        4800,
+        5600
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Old City -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500058",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 67,
+      "infrastructure": 38,
+      "air": 75,
+      "power": 63,
+      "schools": 49,
+      "water": 72,
+      "roads": 47,
+      "sewerage": 37
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 58,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 303,
+    "schools_count": 1,
+    "schools_list": [
+      "Kendriya Vidyalaya Kanchanbagh"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 17,
+    "crime_tier": "Very High",
+    "price_tier": 5,
+    "price_context": {
+      "tier": 5,
+      "label": "Value",
+      "rate_sqft": [
+        4800,
+        5600
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Old City -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500059",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 68,
+      "infrastructure": 39,
+      "air": 77,
+      "power": 64,
+      "schools": 50,
+      "water": 73,
+      "roads": 48,
+      "sewerage": 38
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 59,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 287,
+    "schools_count": 3,
+    "schools_list": [
+      "Cambridge High School Saidabad",
+      "IPS International School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 32,
+    "crime_tier": "High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Modest",
+      "rate_sqft": [
+        4800,
+        5600
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Old City -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500012",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 57,
+      "infrastructure": 36,
+      "air": 77,
+      "power": 66,
+      "schools": 52,
+      "water": 62,
+      "roads": 37,
+      "sewerage": 40
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 54,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 351,
+    "schools_count": 3,
+    "schools_list": [
+      "Goodwill High School",
+      "Shrung Rishi High School",
+      "Gowtham Model School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 0,
+    "crime_tier": "Very High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Modest",
+      "rate_sqft": [
+        4800,
+        5600
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Old City -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500006",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 56,
+      "infrastructure": 30,
+      "air": 76,
+      "power": 65,
+      "schools": 51,
+      "water": 74,
+      "roads": 36,
+      "sewerage": 43
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 54,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 295,
+    "schools_count": 2,
+    "schools_list": [
+      "Nehru Children's High School",
+      "Smart School Karwan"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 27,
+    "crime_tier": "High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Modest",
+      "rate_sqft": [
+        4800,
+        5600
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Old City -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500034",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 69,
+      "infrastructure": 40,
+      "air": 78,
+      "power": 59,
+      "schools": 69,
+      "water": 68,
+      "roads": 67,
+      "sewerage": 68
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 63,
+    "grade": "B",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 222,
+    "schools_count": 6,
+    "schools_list": [
+      "Sultan-ul-Uloom Public School",
+      "Delhi School of Excellence",
+      "Ivy League CBSE School",
+      "Academic Heights Public School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 93,
+    "crime_tier": "Very Low",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        13500,
+        13500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Central -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision",
+      "source": "Telangana Registration & Stamps Department (IGRS) via squareyards.com locality circle-rate listing, updated 4 June 2026",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500033",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 68,
+      "infrastructure": 39,
+      "air": 80,
+      "power": 58,
+      "schools": 68,
+      "water": 67,
+      "roads": 66,
+      "sewerage": 67
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 63,
+    "grade": "B",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 238,
+    "schools_count": 2,
+    "schools_list": [
+      "Jubilee Hills Public School",
+      "Bharatiya Vidya Bhavan's Public School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 80,
+    "crime_tier": "Very Low",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        14000,
+        14000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Central -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision",
+      "source": "Telangana Registration & Stamps Department (IGRS) via squareyards.com locality circle-rate listing, updated 4 June 2026",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500082",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 72,
+      "infrastructure": 33,
+      "air": 67,
+      "power": 62,
+      "schools": 72,
+      "water": 71,
+      "roads": 70,
+      "sewerage": 58
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 62,
+    "grade": "B",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 233,
+    "schools_count": 2,
+    "schools_list": [
+      "Mount Banyan Global School",
+      "Zikra High School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 85,
+    "crime_tier": "Very Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper",
+      "rate_sqft": [
+        8500,
+        12500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Central -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500038",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 73,
+      "infrastructure": 53,
+      "air": 78,
+      "power": 63,
+      "schools": 73,
+      "water": 72,
+      "roads": 71,
+      "sewerage": 59
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 68,
+    "grade": "B",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 239,
+    "schools_count": 1,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "schools_sourced": false,
+    "crime_percentile": 78,
+    "crime_tier": "Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper",
+      "rate_sqft": [
+        7750,
+        7750
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Central -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision",
+      "source": "Telangana Registration & Stamps Department (IGRS) via squareyards.com locality circle-rate listing, updated 4 June 2026",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500004",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 75,
+      "infrastructure": 43,
+      "air": 78,
+      "power": 65,
+      "schools": 62,
+      "water": 74,
+      "roads": 73,
+      "sewerage": 65
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 66,
+    "grade": "B",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 222,
+    "schools_count": 7,
+    "schools_list": [
+      "Nasr School",
+      "Nirmala High School",
+      "Holy Mary High School",
+      "Vidyaranya High School",
+      "Mark's High School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 93,
+    "crime_tier": "Very Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper",
+      "rate_sqft": [
+        8500,
+        12500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Central -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500028",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 72,
+      "infrastructure": 34,
+      "air": 77,
+      "power": 62,
+      "schools": 72,
+      "water": 71,
+      "roads": 70,
+      "sewerage": 58
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 63,
+    "grade": "B",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 227,
+    "schools_count": 6,
+    "schools_list": [
+      "Govt HS Humayunnagar No. 1",
+      "Govt HS Humayun Nagar No. II",
+      "Brilliant Grammar High School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 90,
+    "crime_tier": "Very Low",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        8500,
+        12500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Central -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500096",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 64,
+      "infrastructure": 36,
+      "air": 79,
+      "power": 67,
+      "schools": 64,
+      "water": 76,
+      "roads": 62,
+      "sewerage": 63
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 62,
+    "grade": "B",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 246,
+    "schools_count": 2,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "schools_sourced": false,
+    "crime_percentile": 73,
+    "crime_tier": "Low",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        8500,
+        12500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Central -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500073",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 72,
+      "infrastructure": 35,
+      "air": 77,
+      "power": 62,
+      "schools": 72,
+      "water": 71,
+      "roads": 70,
+      "sewerage": 58
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 63,
+    "grade": "B",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 205,
+    "schools_count": 1,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "schools_sourced": false,
+    "crime_percentile": 98,
+    "crime_tier": "Very Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper",
+      "rate_sqft": [
+        8500,
+        12500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Central -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500032",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 61,
+      "infrastructure": 42,
+      "air": 62,
+      "power": 58,
+      "schools": 63,
+      "water": 46,
+      "roads": 77,
+      "sewerage": 62
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 57,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 284,
+    "schools_count": 9,
+    "schools_list": [
+      "EuroSchool Hyderabad",
+      "School of Accelerated Learning",
+      "Active Farm School",
+      "Samashti International School",
+      "CHIREC International School (Gachibowli campus)"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 34,
+    "crime_tier": "High",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        10850,
+        10850
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Cyberabad -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision",
+      "source": "Telangana Registration & Stamps Department (IGRS) via squareyards.com locality circle-rate listing, updated 4 June 2026",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500081",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 65,
+      "infrastructure": 67,
+      "air": 80,
+      "power": 62,
+      "schools": 67,
+      "water": 50,
+      "roads": 81,
+      "sewerage": 53
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 67,
+    "grade": "B",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 279,
+    "schools_count": 8,
+    "schools_list": [
+      "Meridian School Madhapur",
+      "Narayana E-Techno School",
+      "Sri Chaitanya Techno School",
+      "AP Model School",
+      "CGR International School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 41,
+    "crime_tier": "Moderate",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        11300,
+        11300
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Cyberabad -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision",
+      "source": "Telangana Registration & Stamps Department (IGRS) via squareyards.com locality circle-rate listing, updated 4 June 2026",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500084",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 68,
+      "infrastructure": 39,
+      "air": 78,
+      "power": 65,
+      "schools": 70,
+      "water": 53,
+      "roads": 84,
+      "sewerage": 56
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 63,
+    "grade": "B",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 231,
+    "schools_count": 10,
+    "schools_list": [
+      "Sanskriti School",
+      "CHIREC International School (Kondapur)",
+      "Maharishi Vidya Mandir",
+      "Githanjali The Global School",
+      "Academic Heights Public School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 88,
+    "crime_tier": "Very Low",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        8750,
+        8750
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Cyberabad -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision",
+      "source": "Telangana Registration & Stamps Department (IGRS) via squareyards.com locality circle-rate listing, updated 4 June 2026",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500089",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 60,
+      "infrastructure": 44,
+      "air": 54,
+      "power": 57,
+      "schools": 62,
+      "water": 45,
+      "roads": 76,
+      "sewerage": 61
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 56,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 297,
+    "schools_count": 7,
+    "schools_list": [
+      "Elate International School",
+      "Delhi School of Excellence",
+      "Krishnaveni Talent School",
+      "Delhi Public School (Chitrapuri Colony)"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 24,
+    "crime_tier": "High",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper",
+      "rate_sqft": [
+        8000,
+        8000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": 4478,
+      "land_exact": true,
+      "basis": "Cyberabad -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision",
+      "source": "Telangana Registration & Stamps Department (IGRS) via squareyards.com locality circle-rate listing, updated 4 June 2026",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500072",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 65,
+      "infrastructure": 48,
+      "air": 80,
+      "power": 62,
+      "schools": 67,
+      "water": 50,
+      "roads": 81,
+      "sewerage": 53
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 63,
+    "grade": "B",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 251,
+    "schools_count": 9,
+    "schools_list": [
+      "Sanghamitra School",
+      "Bhashyam Brooks UPS School",
+      "Meridian School Kukatpally",
+      "DAV Public School",
+      "Global Edge School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 68,
+    "crime_tier": "Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper",
+      "rate_sqft": [
+        7000,
+        7000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Cyberabad -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision",
+      "source": "Telangana Registration & Stamps Department (IGRS) via squareyards.com locality circle-rate listing, updated 4 June 2026",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500008",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 60,
+      "infrastructure": 40,
+      "air": 45,
+      "power": 57,
+      "schools": 62,
+      "water": 45,
+      "roads": 76,
+      "sewerage": 52
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 53,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 334,
+    "schools_count": 5,
+    "schools_list": [
+      "The Gaudium School",
+      "Oakridge International School",
+      "The Shri Ram Universal School",
+      "Kairos International School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 7,
+    "crime_tier": "Very High",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        7500,
+        10500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Cyberabad -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500090",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 65,
+      "infrastructure": 45,
+      "air": 79,
+      "power": 62,
+      "schools": 67,
+      "water": 50,
+      "roads": 81,
+      "sewerage": 53
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 62,
+    "grade": "B",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 307,
+    "schools_count": 7,
+    "schools_list": [
+      "Sri Chaitanya Junior College Bachupally",
+      "Surya Academy The Global School",
+      "Keshava Reddy Educational Hub",
+      "The Creek Planet School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 15,
+    "crime_tier": "Very High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        7500,
+        10500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Cyberabad -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500106",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 69,
+      "infrastructure": 39,
+      "air": 54,
+      "power": 66,
+      "schools": 58,
+      "water": 54,
+      "roads": 85,
+      "sewerage": 64
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 59,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 270,
+    "schools_count": 3,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "schools_sourced": false,
+    "crime_percentile": 51,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper",
+      "rate_sqft": [
+        7500,
+        10500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": 2511,
+      "land_exact": true,
+      "basis": "Cyberabad -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500049",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 69,
+      "infrastructure": 47,
+      "air": 79,
+      "power": 66,
+      "schools": 58,
+      "water": 54,
+      "roads": 85,
+      "sewerage": 57
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 64,
+    "grade": "B",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 265,
+    "schools_count": 8,
+    "schools_list": [
+      "Gautami Vidya Kshetra School",
+      "MNR Indo-English High School",
+      "Janapriya Techno School",
+      "Meru International School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 56,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper",
+      "rate_sqft": [
+        6200,
+        6200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Cyberabad -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision",
+      "source": "Telangana Registration & Stamps Department (IGRS) via squareyards.com locality circle-rate listing, updated 4 June 2026",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500003",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 72,
+      "infrastructure": 50,
+      "air": 78,
+      "power": 63,
+      "schools": 66,
+      "water": 67,
+      "roads": 64,
+      "sewerage": 58
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 65,
+    "grade": "B",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 248,
+    "schools_count": 5,
+    "schools_list": [
+      "St. Mary's Centenary Jr. College",
+      "Sri Chaitanya Junior Kalasala",
+      "New Govt. Jr. College Secunderabad",
+      "Gujarathi High School",
+      "Gitanjali Devshala"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 71,
+    "crime_tier": "Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper",
+      "rate_sqft": [
+        6500,
+        8500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Cantonment belt -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500011",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 62,
+      "infrastructure": 37,
+      "air": 76,
+      "power": 66,
+      "schools": 56,
+      "water": 70,
+      "roads": 54,
+      "sewerage": 57
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 59,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 256,
+    "schools_count": 3,
+    "schools_list": [
+      "Bhashyam School Bowenpally",
+      "Kendriya Vidyalaya Bowenpally",
+      "Rainbow Concept School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 66,
+    "crime_tier": "Low",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        6500,
+        8500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Cantonment belt -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500017",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 68,
+      "infrastructure": 32,
+      "air": 76,
+      "power": 59,
+      "schools": 62,
+      "water": 63,
+      "roads": 60,
+      "sewerage": 50
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 59,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 241,
+    "schools_count": 3,
+    "schools_list": [
+      "Sacred Heart High School",
+      "Takshashila Public School",
+      "Govt PS(B) Lalagudano I"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 76,
+    "crime_tier": "Low",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        6500,
+        8500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Cantonment belt -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500061",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 67,
+      "infrastructure": 32,
+      "air": 79,
+      "power": 58,
+      "schools": 61,
+      "water": 62,
+      "roads": 59,
+      "sewerage": 62
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 59,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 235,
+    "schools_count": 4,
+    "schools_list": [
+      "Vedic Vidyalayam PS School",
+      "MS Creative School",
+      "Sri Sai Vidyalay High School",
+      "Sri Chaitanya Techno School Sitaphalmandi"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 83,
+    "crime_tier": "Very Low",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        6500,
+        8500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Cantonment belt -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500015",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 66,
+      "infrastructure": 41,
+      "air": 76,
+      "power": 57,
+      "schools": 60,
+      "water": 61,
+      "roads": 58,
+      "sewerage": 61
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 60,
+    "grade": "B",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 273,
+    "schools_count": 4,
+    "schools_list": [
+      "St. Joseph's High School",
+      "Kendriya Vidyalaya Trimulgherry",
+      "St. Thomas (SPG) PS",
+      "Prashanth Academy"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 46,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        6500,
+        8500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Cantonment belt -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500047",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 71,
+      "infrastructure": 40,
+      "air": 77,
+      "power": 62,
+      "schools": 65,
+      "water": 66,
+      "roads": 63,
+      "sewerage": 53
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 62,
+    "grade": "B",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 277,
+    "schools_count": 1,
+    "schools_list": [
+      "Anandbagh High School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 44,
+    "crime_tier": "Moderate",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Modest",
+      "rate_sqft": [
+        6500,
+        8500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Cantonment belt -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500056",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 63,
+      "infrastructure": 37,
+      "air": 77,
+      "power": 61,
+      "schools": 63,
+      "water": 57,
+      "roads": 61,
+      "sewerage": 49
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 58,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 264,
+    "schools_count": 5,
+    "schools_list": [
+      "St Sai Grammar High School",
+      "Nalanda High School",
+      "SR Digi School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 59,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        5000,
+        6000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Malkajgiri belt -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500094",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 65,
+      "infrastructure": 31,
+      "air": 78,
+      "power": 63,
+      "schools": 52,
+      "water": 59,
+      "roads": 63,
+      "sewerage": 51
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 57,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 263,
+    "schools_count": 9,
+    "schools_list": [
+      "Sainikpuri High School",
+      "Bharatiya Vidya Bhavan Sainikpuri",
+      "Vignan High School",
+      "Eastern Public School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 61,
+    "crime_tier": "Low",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        5000,
+        6000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Malkajgiri belt -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500040",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 56,
+      "infrastructure": 32,
+      "air": 79,
+      "power": 54,
+      "schools": 56,
+      "water": 50,
+      "roads": 54,
+      "sewerage": 55
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 54,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 348,
+    "schools_count": 4,
+    "schools_list": [
+      "Kakatiya Techno School",
+      "Frobels Garden High School",
+      "St. Jude's High School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 2,
+    "crime_tier": "Very High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        5000,
+        6000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Malkajgiri belt -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500044",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 60,
+      "infrastructure": 36,
+      "air": 79,
+      "power": 58,
+      "schools": 60,
+      "water": 54,
+      "roads": 58,
+      "sewerage": 46
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 57,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 284,
+    "schools_count": 6,
+    "schools_list": [
+      "Matrusri E & L School",
+      "Aryabhatta School",
+      "St. Hannah's High School",
+      "Narayana IIT Academy"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 34,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        5000,
+        6000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Malkajgiri belt -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500074",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 63,
+      "infrastructure": 43,
+      "air": 80,
+      "power": 61,
+      "schools": 63,
+      "water": 57,
+      "roads": 61,
+      "sewerage": 49
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 60,
+    "grade": "B",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 320,
+    "schools_count": 5,
+    "schools_list": [
+      "Suvidhya 21st Century Schools",
+      "Academic Heights Public School",
+      "Sanskriti The School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 10,
+    "crime_tier": "Very High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        5750,
+        5750
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Malkajgiri belt -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision",
+      "source": "Telangana Registration & Stamps Department (IGRS) via squareyards.com locality circle-rate listing, updated 4 June 2026",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500039",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 64,
+      "infrastructure": 41,
+      "air": 77,
+      "power": 62,
+      "schools": 64,
+      "water": 58,
+      "roads": 62,
+      "sewerage": 50
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 60,
+    "grade": "B",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 273,
+    "schools_count": 11,
+    "schools_list": [
+      "Rankers Concept School",
+      "Sri Chaitanya Techno School Uppal",
+      "Little Flower School",
+      "Sage International School",
+      "Global Indian International School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 46,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        5250,
+        5250
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Malkajgiri belt -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision",
+      "source": "Telangana Registration & Stamps Department (IGRS) via squareyards.com locality circle-rate listing, updated 4 June 2026",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500062",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 60,
+      "infrastructure": 32,
+      "air": 68,
+      "power": 58,
+      "schools": 60,
+      "water": 54,
+      "roads": 58,
+      "sewerage": 46
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 54,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 340,
+    "schools_count": 7,
+    "schools_list": [
+      "Atomic Energy Central School",
+      "Narayana e-Techno School",
+      "Vignan Global Gen School",
+      "Ravindra Bharathi School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 5,
+    "crime_tier": "Very High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        5000,
+        6000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Malkajgiri belt -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500100",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 57,
+      "infrastructure": 35,
+      "air": 79,
+      "power": 56,
+      "schools": 55,
+      "water": 48,
+      "roads": 51,
+      "sewerage": 48
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 54,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 315,
+    "schools_count": 9,
+    "schools_list": [
+      "Delhi International School Kompally",
+      "DRS International School",
+      "St. Peters International Residential School",
+      "Ryan International School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 12,
+    "crime_tier": "Very High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        6500,
+        6500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "North Hyderabad -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision",
+      "source": "Telangana Registration & Stamps Department (IGRS) via squareyards.com locality circle-rate listing, updated 4 June 2026",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "500010",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 64,
+      "infrastructure": 33,
+      "air": 80,
+      "power": 63,
+      "schools": 49,
+      "water": 55,
+      "roads": 58,
+      "sewerage": 48
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 57,
+    "grade": "C+",
+    "scored_at": "2026-09-06T00:00:00",
+    "total_cognizable_crimes": 257,
+    "schools_count": 10,
+    "schools_list": [
+      "Pallavi Model School",
+      "Orchids The School",
+      "St Michael's School",
+      "St. Xavier's Convent High School",
+      "St. Ann's High School"
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 63,
+    "crime_tier": "Low",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Modest",
+      "rate_sqft": [
+        5800,
+        6800
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "North Hyderabad -- Telangana Registration & Stamps Dept. (IGRS) market value, post the June 2026 statewide revision (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from IGRS-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Telangana calls this the 'market value' -- functionally the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value: the government's minimum property value for stamp duty and registration. Land/plots are priced per sq YARD, apartments/flats per sq FT -- the same unit split Chandigarh's collector rate carries, kept separate here (land_sqft vs rate_sqft) rather than blended.",
+      "market_gap_note": "Actual market prices in Hyderabad typically run well above this government minimum, reportedly by 43-59% per the same source -- budget for the difference in your own funds.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate -- treat as a wider band than the sourced pincodes above. Not part of the NQI score."
+    }
   }
 ]
