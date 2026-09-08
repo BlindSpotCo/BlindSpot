@@ -2404,11 +2404,8 @@
    the gradient gives it some depth, closer to foil/metallic gold. */
 .hlm-h1-accent{
   font-family:'Playfair Display', serif; font-style:italic; font-weight:600;
-  font-size:1em;
-  background:linear-gradient(135deg, #FBE7AE 0%, #F0C24C 40%, #C6912F 100%);
-  -webkit-background-clip:text; background-clip:text; color:transparent;
-  text-shadow:0 4px 30px rgba(0,0,0,0.35);
-  filter:drop-shadow(0 0 30px rgba(245,195,67,0.35));
+  font-size:1em; color:var(--brand-yellow);
+  text-shadow:0 4px 30px rgba(0,0,0,0.5), 0 0 40px rgba(245,195,67,0.35);
 }
 
 .sr-only{
