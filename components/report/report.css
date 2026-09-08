@@ -195,19 +195,39 @@
   min-width:92px;text-align:right;flex:none;
 }
 
-/* ---------------- the two questions ----------------
-   Above the breakdown they drive, and marked out as inputs rather than
-   more results: tinted panel, not another row of the card. */
-.bsr-asks{
-  margin-top:16px;padding:14px 16px;border-radius:5px;
+/* ---------------- which flat, said in the card ---------------- */
+.bsr-setfor{
+  margin-top:12px;font-size:15.5px;color:var(--text-mute,#5A5140);
+}
+.bsr-setfor strong{color:var(--bsr-poor)}
+.bsr-setfor a{
+  color:var(--ss,#AF5F30);font-weight:600;
+  text-decoration:underline;text-underline-offset:3px;white-space:nowrap;
+}
+
+/* ---------------- which flat, set on the map ----------------
+   Directly under the block it describes, with the resulting score in the
+   same bar: the effect of a click is visible where the click happens. */
+.bsr-flatbar{
+  display:flex;align-items:center;gap:22px;flex-wrap:wrap;
+  margin-top:14px;padding:12px 14px;border-radius:5px;
   background:var(--bg,#FAF6EE);
   border:1px solid var(--line-soft,rgba(28,24,18,.08));
-  display:grid;gap:11px;
 }
-.bsr-asks-lede{font-size:14.5px;line-height:1.45;color:var(--text-mute,#5A5140)}
-.bsr-ask-inline{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.bsr-ask-inline .bsr-q{
-  margin-bottom:0;font-size:15.5px;font-weight:600;flex:none;min-width:74px;
+.bsr-flatbar-group{display:flex;align-items:center;gap:10px}
+.bsr-flatbar-label{
+  font-size:15.5px;font-weight:600;color:var(--text,#1C1812);flex:none;
+}
+.bsr-flatbar-out{
+  margin-left:auto;font-size:15.5px;color:var(--text-mute,#5A5140);
+  display:flex;align-items:baseline;gap:6px;white-space:nowrap;
+}
+.bsr-flatbar-out strong.is-good{color:var(--bsr-good)}
+.bsr-flatbar-out strong.is-avg{color:var(--bsr-avg)}
+.bsr-flatbar-out strong.is-poor{color:var(--bsr-poor)}
+.bsr-flatbar-n{
+  font-size:19px;font-weight:800;color:var(--text,#1C1812);
+  font-variant-numeric:tabular-nums;
 }
 .bsr-q{font-size:17px;font-weight:600;margin-bottom:10px}
 .bsr-floor{display:flex;align-items:center;gap:8px}
