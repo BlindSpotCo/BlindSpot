@@ -10,7 +10,7 @@ export default function ClosingCTA() {
   return (
     <section className="section section-closing2 reveal">
       <div className="wrap closing2-inner">
-        <h2>Because every property has a blindspot, and we&apos;re making it visible.</h2>
+        <h2>Because every property has a blindspot, and we&apos;re making it <span className="gold-word">visible</span>.</h2>
         <p>See the sunlight. Know the neighbourhood. Two free tools. One pin. Everything the listing wasn&apos;t going to mention.</p>
         <div className="closing2-ctas">
           <PinDropTransition href="/property-score" className="btn btn-lg btn-cta">

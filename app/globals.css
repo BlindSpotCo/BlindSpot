@@ -2687,6 +2687,42 @@ header.header-on-dark .brand-word-img{
    & radius scale) rather than inventing a second design language.
    ===================================================================== */
 
+/* Repeats the hero's own italic-serif/gold accent-word treatment
+   (.hlm-h1-accent in the hero) on one word per section heading below --
+   the one cheap signature that ties every section back to the hero
+   instead of reading as a bolted-on light-theme page under a dark,
+   cinematic hero. */
+.gold-word{
+  font-family:'Playfair Display', serif; font-style:italic; font-weight:600;
+  color:var(--brand-yellow);
+}
+
+/* Section 01 sits directly under the hero and carries its exact dark
+   background (#0E0D07, see .hero.hero-statement/.hlm-root) plus the
+   same grain overlay recipe (.hlm-grain) -- so scrolling off the hero
+   doesn't hard-cut into the site's ordinary light theme. Everything
+   from section 02 (Two Scores) down stays light/functional; the
+   closing CTA (already dark, var(--brand)) bookends it at the bottom. */
+.section-dark01{
+  position:relative; background:#0E0D07; color:#fff;
+  padding-bottom:var(--space-8);
+}
+.sd01-grain{
+  position:absolute; inset:0; pointer-events:none; z-index:0;
+  opacity:0.05; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+.section-dark01 .section-inner{ position:relative; z-index:1; border-top-color:rgba(255,255,255,0.1) }
+.section-dark01 .eyebrow{ color:rgba(255,253,248,0.5) }
+.section-dark01 .eyebrow::after{ background:var(--brand-yellow) }
+.section-dark01 h2{ color:#fff }
+.section-dark01 .ps3-item{
+  background:rgba(255,255,255,0.04); border-color:rgba(255,255,255,0.1);
+}
+.section-dark01 .ps3-item-label{ color:rgba(255,253,248,0.9) }
+.section-dark01 .ps3-eq-op{ color:rgba(255,253,248,0.5) }
+.section-dark01 .ps3-eq-result{ color:#fff }
+
 /* ---------- 01 — Problem / Solution (icon grid) ---------- */
 .ps3-grid{
   display:grid; grid-template-columns:repeat(6, 1fr); gap:var(--space-4);

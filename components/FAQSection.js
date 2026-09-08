@@ -43,7 +43,7 @@ export default function FAQSection() {
         <div className="section-head">
           <div>
             <span className="eyebrow">05 - Questions</span>
-            <h2>Before you ask.</h2>
+            <h2>Before you <span className="gold-word">ask</span>.</h2>
           </div>
         </div>
 

@@ -57,12 +57,13 @@ const BLINDSPOTS = [
 
 export default function ProblemSolution() {
   return (
-    <section className="section reveal">
+    <section className="section section-dark01 reveal">
+      <div className="sd01-grain" aria-hidden="true" />
       <div className="wrap section-inner">
         <div className="section-head">
           <div>
             <span className="eyebrow">01 - What Listings Leave Out</span>
-            <h2>Every photo is real. Not every photo is the whole story.</h2>
+            <h2>Every photo is real. Not every photo is the <span className="gold-word">whole story</span>.</h2>
           </div>
         </div>
 
