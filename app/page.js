@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import SiteHeader from '@/components/SiteHeader';
 import HowItWorks from '@/components/HowItWorks';
 import PersonaSamples from '@/components/PersonaSamples';
-import HeroMap from '@/components/HeroMap';
+import HeroLiveMap from '@/components/HeroLiveMap';
 import PinDropTransition from '@/components/PinDropTransition';
 import { coverageLabel } from '@/lib/aslivastu/cityMeta';
 
@@ -12,36 +12,6 @@ export default function Home() {
   // Auth state, scroll-reveal and the mobile menu all now live in
   // SiteHeader (shared across every page) — this file only needs the
   // hero's own coordinate-readout ref.
-  const coordRef = useRef(null);
-
-  // Rotating coordinate readout in the hero — ported directly from the
-  // original inline script.
-  useEffect(() => {
-    // Only covered cities -- this readout runs live on the homepage, so
-    // citing an uncovered city (Mumbai used to be here) sets an
-    // expectation the product can't back up the moment someone tries it.
-    const spots = [
-      { c: '12.9716° N, 77.5946° E', l: 'checking Bengaluru' },
-      { c: '28.5245° N, 77.1855° E', l: 'scoring Vasant Kunj, Delhi' },
-      { c: '28.4595° N, 77.0266° E', l: 'pulling AQI + power data, Gurugram' },
-      { c: '12.9784° N, 77.6408° E', l: 'mapping shadow hours, Indiranagar' },
-      { c: '30.7410° N, 76.7822° E', l: 'reading collector rates, Chandigarh' },
-      { c: '18.9339° N, 72.8352° E', l: 'checking Ready Reckoner rates, Fort' },
-    ];
-    let i = 0;
-    const el = coordRef.current;
-    if (!el) return;
-    el.style.transition = 'opacity .26s ease';
-    const timer = setInterval(() => {
-      i = (i + 1) % spots.length;
-      el.style.opacity = 0;
-      setTimeout(() => {
-        el.textContent = spots[i].c + ', ' + spots[i].l;
-        el.style.opacity = 1;
-      }, 260);
-    }, 3400);
-    return () => clearInterval(timer);
-  }, []);
 
   // Reveal-on-scroll for .reveal elements — same behavior as the original.
   useEffect(() => {
@@ -74,22 +44,15 @@ export default function Home() {
     <>
       <SiteHeader />
 
-      {/* ===== HERO, BEAT 1 -- the statement, alone =====
-          Old hero opened with headline + tagline + sub-paragraph +
-          coverage pill + CTA + score card all sharing one first screen --
-          exactly the "nothing grabs attention because everything's
-          competing" problem. Jeton's own hero does the opposite: one
-          line, alone, full screen. Everything else the old hero also
-          said moves down into beat 2 below, where it gets its own room
-          instead of fighting this line for space. */}
+      {/* ===== HERO -- the map itself is the hero =====
+          Live Leaflet map (CartoDB Dark Matter tiles), search bar
+          floating on top, real /api/sunscout/geocode-suggest results.
+          Selecting a result flies in, drops a pin, and reveals a few
+          preview insight chips -- everything lives in
+          components/HeroLiveMap.js / HeroLiveMapCanvas.js so this file
+          only has to mount it. */}
       <section className="hero hero-statement">
-        <HeroMap />
-        <div className="wrap hero-statement-inner">
-          <span className="hero-eyebrow">Property Intelligence</span>
-          <h1>Know the <span className="hero-word-green">place,</span><br /> before you <span className="hero-word-yellow">commit.</span></h1>
-          <div className="coord-readout"><span className="blink"></span><span ref={coordRef} className="mono">12.9716° N, 77.5946° E - checking Bengaluru</span></div>
-        </div>
-        <span className="hero-scroll-cue mono">Scroll<span className="hero-scroll-cue-arrow">↓</span></span>
+        <HeroLiveMap />
       </section>
 
       {/* ===== HERO, BEAT 2 -- the verdict, big, on its own field =====
