@@ -51,19 +51,19 @@ export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTi
   --ss:#AF5F30; --ss-fill:#D1901F; --ss-sun:#E9A94A;
   --radius:4px; --radius-md:8px;
 }
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Geist',sans-serif;}
 html,body{background:var(--bg-2);overflow:hidden;}
 #map{width:100%;height:100vh;}
-.tbadge{position:absolute;top:14px;left:14px;z-index:25;background:rgba(255,253,248,0.94);border:1px solid var(--line);border-radius:var(--radius-md);padding:7px 14px;color:var(--ss);font-size:13px;font-weight:600;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em;pointer-events:none;}
-.hint{position:absolute;bottom:12px;left:14px;z-index:25;color:var(--text-mute);font-size:11px;pointer-events:none;font-family:'IBM Plex Mono',monospace;background:rgba(255,253,248,.92);border:1px solid var(--line);padding:5px 14px;border-radius:20px;white-space:nowrap;}
+.tbadge{position:absolute;top:14px;left:14px;z-index:25;background:rgba(255,253,248,0.94);border:1px solid var(--line);border-radius:var(--radius-md);padding:7px 14px;color:var(--ss);font-size:13px;font-weight:600;font-family:'Geist Mono',monospace;letter-spacing:.04em;pointer-events:none;}
+.hint{position:absolute;bottom:12px;left:14px;z-index:25;color:var(--text-mute);font-size:11px;pointer-events:none;font-family:'Geist Mono',monospace;background:rgba(255,253,248,.92);border:1px solid var(--line);padding:5px 14px;border-radius:20px;white-space:nowrap;}
 .tile-row{position:absolute;top:14px;left:14px;z-index:25;display:flex;gap:6px;}
-.tile-btn{background:rgba(255,253,248,.94);border:1px solid var(--line);color:var(--text-mute);font-size:13px;font-weight:600;font-family:'IBM Plex Mono',monospace;padding:7px 16px;border-radius:var(--radius-md);cursor:pointer;}
+.tile-btn{background:rgba(255,253,248,.94);border:1px solid var(--line);color:var(--text-mute);font-size:13px;font-weight:600;font-family:'Geist Mono',monospace;padding:7px 16px;border-radius:var(--radius-md);cursor:pointer;}
 .tile-btn.on{border-color:var(--ss);color:var(--ss);background:rgba(175,95,48,.08);}
 .cb{background:var(--paper);border:1.5px solid var(--line);color:var(--text-mute);font-size:13px;font-weight:700;padding:7px 11px;border-radius:var(--radius-md);cursor:pointer;line-height:1;}
 .cb:hover{border-color:var(--ss);color:var(--ss);background:rgba(175,95,48,.08);}
-.cb.N{border-color:var(--ss);color:var(--ss);font-size:10px;font-weight:800;font-family:'IBM Plex Mono',monospace;}
+.cb.N{border-color:var(--ss);color:var(--ss);font-size:10px;font-weight:800;font-family:'Geist Mono',monospace;}
 .leaflet-control-attribution,.osmb-attribution{display:none!important;}
-.sdk-error{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg-2);color:var(--ink);font-family:'Inter',sans-serif;text-align:center;padding:24px;}
+.sdk-error{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg-2);color:var(--ink);font-family:'Geist',sans-serif;text-align:center;padding:24px;}
 .sdk-error.show{display:flex;}
 .sdk-error button{background:var(--ss);color:#fff;border:none;border-radius:var(--radius-md);padding:10px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
 @media(max-width:768px){.view-controls{display:none!important;}}</style></head><body>
@@ -80,7 +80,7 @@ html,body{background:var(--bg-2);overflow:hidden;}
   </div>
   <div class="hint">Tap to move pin · drag to look around</div>
   <div class="view-controls" style="position:absolute;top:14px;right:14px;z-index:25;display:flex;flex-direction:column;gap:5px;align-items:center;background:rgba(255,253,248,0.97);border:1px solid var(--line);border-radius:var(--radius-md);padding:10px 9px;box-shadow:0 2px 12px rgba(28,24,18,0.08);">
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;white-space:nowrap;line-height:1.4;text-align:center;">Set view angle<br/><span style="font-size:10.5px;font-weight:500;color:var(--text-mute);text-transform:none;letter-spacing:0;opacity:0.85;">e.g. balcony view</span></div>
+    <div style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;white-space:nowrap;line-height:1.4;text-align:center;">Set view angle<br/><span style="font-size:10.5px;font-weight:500;color:var(--text-mute);text-transform:none;letter-spacing:0;opacity:0.85;">e.g. balcony view</span></div>
     <button class="cb" id="btn-up">▲</button>
     <div style="display:flex;gap:4px;">
       <button class="cb" id="btn-left">◀</button>
@@ -93,10 +93,10 @@ html,body{background:var(--bg-2);overflow:hidden;}
     <svg id="cmp" width="30" height="30" viewBox="-20 -20 40 40" style="transition:transform .2s;">
       <polygon points="0,-12 3,0 0,3 -3,0" fill="#AF5F30"/>
       <polygon points="0,12 3,0 0,-3 -3,0" fill="#5A5140"/>
-      <text x="0" y="-14" text-anchor="middle" fill="#AF5F30" font-size="5.5" font-weight="bold" font-family="'IBM Plex Mono',monospace">N</text>
-      <text x="0" y="19" text-anchor="middle" fill="#5A5140" font-size="5.5" font-family="'IBM Plex Mono',monospace">S</text>
-      <text x="15" y="3" text-anchor="middle" fill="#5A5140" font-size="5.5" font-family="'IBM Plex Mono',monospace">E</text>
-      <text x="-15" y="3" text-anchor="middle" fill="#5A5140" font-size="5.5" font-family="'IBM Plex Mono',monospace">W</text>
+      <text x="0" y="-14" text-anchor="middle" fill="#AF5F30" font-size="5.5" font-weight="bold" font-family="'Geist Mono',monospace">N</text>
+      <text x="0" y="19" text-anchor="middle" fill="#5A5140" font-size="5.5" font-family="'Geist Mono',monospace">S</text>
+      <text x="15" y="3" text-anchor="middle" fill="#5A5140" font-size="5.5" font-family="'Geist Mono',monospace">E</text>
+      <text x="-15" y="3" text-anchor="middle" fill="#5A5140" font-size="5.5" font-family="'Geist Mono',monospace">W</text>
     </svg>
   </div>
   <svg id="arc-svg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:18;overflow:visible;"></svg>
@@ -111,7 +111,7 @@ html,body{background:var(--bg-2);overflow:hidden;}
         <line x1="-11.3" y1="11.3" x2="-15.6" y2="15.6"/><line x1="11.3" y1="-11.3" x2="15.6" y2="-15.6"/>
       </g>
     </svg>
-    <div id="sun-time" style="position:absolute;left:0;top:26px;transform:translate(-50%,0);font-size:12.5px;font-weight:600;font-family:'IBM Plex Mono',monospace;background:rgba(255,253,248,.96);color:#1C1812;border:1px solid rgba(28,24,18,0.14);border-radius:7px;padding:3px 10px;white-space:nowrap;">--:--</div>
+    <div id="sun-time" style="position:absolute;left:0;top:26px;transform:translate(-50%,0);font-size:12.5px;font-weight:600;font-family:'Geist Mono',monospace;background:rgba(255,253,248,.96);color:#1C1812;border:1px solid rgba(28,24,18,0.14);border-radius:7px;padding:3px 10px;white-space:nowrap;">--:--</div>
   </div>
   <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:22;">
     <div style="width:14px;height:14px;border-radius:50%;background:#AF5F30;border:3px solid #FFFDF8;box-shadow:0 0 0 3px rgba(175,95,48,0.35);"></div>
@@ -248,7 +248,7 @@ function drawArc(){
   var riseLabel='Rise ' + '${sunTimes.rise}', setLabel='Set ' + '${sunTimes.set}';
   [{pt:sc[0],txt:riseLabel,anchor:'end'},{pt:sc[sc.length-1],txt:setLabel,anchor:'start'}].forEach(function(lbl){
     const ci=document.createElementNS('http://www.w3.org/2000/svg','circle');ci.setAttribute('cx',lbl.pt[0].toFixed(1));ci.setAttribute('cy',lbl.pt[1].toFixed(1));ci.setAttribute('r','4.5');ci.setAttribute('fill','#AF5F30');arcSvg.appendChild(ci);
-    const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',(lbl.pt[0]+(lbl.anchor==='end'?-10:10)).toFixed(1));t.setAttribute('y',(lbl.pt[1]-8).toFixed(1));t.setAttribute('fill','#1C1812');t.setAttribute('font-size','13');t.setAttribute('font-family',"'IBM Plex Mono',monospace");t.setAttribute('font-weight','600');t.setAttribute('text-anchor',lbl.anchor);t.setAttribute('opacity','0.9');t.textContent=lbl.txt;arcSvg.appendChild(t);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',(lbl.pt[0]+(lbl.anchor==='end'?-10:10)).toFixed(1));t.setAttribute('y',(lbl.pt[1]-8).toFixed(1));t.setAttribute('fill','#1C1812');t.setAttribute('font-size','13');t.setAttribute('font-family',"'Geist Mono',monospace");t.setAttribute('font-weight','600');t.setAttribute('text-anchor',lbl.anchor);t.setAttribute('opacity','0.9');t.textContent=lbl.txt;arcSvg.appendChild(t);
   });
 }
 

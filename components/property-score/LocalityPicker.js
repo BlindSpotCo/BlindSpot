@@ -193,7 +193,7 @@ export default function LocalityPicker({ onAreaSelected, selectedPinCode }) {
                   )}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                  <span style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 16, color: 'var(--slate)' }}>{r.nqi_composite}</span>
+                  <span style={{ fontFamily: "'Geist', sans-serif", fontWeight: 400, fontSize: 16, color: 'var(--slate)' }}>{r.nqi_composite}</span>
                   <GradeBadge grade={r.grade} color="var(--slate)" />
                 </div>
               </button>

@@ -10,7 +10,7 @@ const ORG = '#E07B00';
 const INK = '#1A0A00';
 const SUB = '#8A8A8A';
 const LINE = 'rgba(26,10,0,0.12)';
-const MONO = "'IBM Plex Mono', monospace";
+const MONO = "'Geist Mono', monospace";
 const SANS = "'Plus Jakarta Sans', sans-serif";
 const DISPLAY = "'Space Grotesk', sans-serif";
 

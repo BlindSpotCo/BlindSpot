@@ -314,7 +314,7 @@ function VerdictPanel() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18, flexWrap: 'wrap', gap: 14 }}>
         <div>
           <div className="mono" style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-mute)', letterSpacing: '.12em', marginBottom: 6 }}>BLINDSPOT SCORE</div>
-          <div style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 46, lineHeight: 1, color: 'var(--text)' }}>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontWeight: 400, fontSize: 46, lineHeight: 1, color: 'var(--text)' }}>
             80<span style={{ fontSize: 18, color: 'var(--text-mute)' }}>/100</span>
           </div>
         </div>
@@ -324,7 +324,7 @@ function VerdictPanel() {
             the real product. Two strong scores (78/82) is what the real
             system calls "Prime Pick", coloured var(--brand) -- which this
             already happened to use, so only the label text was wrong. */}
-        <div style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 18, color: '#fff', background: 'var(--brand)', padding: '8px 16px', borderRadius: 3 }}>
+        <div style={{ fontFamily: "'Geist', sans-serif", fontWeight: 400, fontSize: 18, color: '#fff', background: 'var(--brand)', padding: '8px 16px', borderRadius: 3 }}>
           Prime Pick
         </div>
       </div>
@@ -336,11 +336,11 @@ function VerdictPanel() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
         <div className="hw-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--slate)', borderRadius: 3, padding: '14px 16px' }}>
           <div className="mono" style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-mute)', marginBottom: 6 }}>AREA - KORAMANGALA - 50%</div>
-          <div style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 22, color: 'var(--slate)' }}>78</div>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontWeight: 400, fontSize: 22, color: 'var(--slate)' }}>78</div>
         </div>
         <div className="hw-box" style={{ border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)', borderRadius: 3, padding: '14px 16px' }}>
           <div className="mono" style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-mute)', marginBottom: 6 }}>UNIT (HOME COMFORT) - FL 7, SE - 50%</div>
-          <div style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: 22, color: 'var(--sun)' }}>82</div>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontWeight: 400, fontSize: 22, color: 'var(--sun)' }}>82</div>
         </div>
       </div>
 

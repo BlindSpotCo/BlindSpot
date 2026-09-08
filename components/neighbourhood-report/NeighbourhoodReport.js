@@ -39,11 +39,11 @@ import SaveReportButton from '@/components/reports/SaveReportButton';
    for numeric readouts, same mapping the property-score card and the
    homepage mockup use. */
 const CSS = `
-.nr { font-family: 'Inter', sans-serif; }
-.nr .kick { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .14em; font-weight: 600; color: var(--slate); margin: 0; }
+.nr { font-family: 'Geist', sans-serif; }
+.nr .kick { font-family: 'Geist Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .14em; font-weight: 600; color: var(--slate); margin: 0; }
 .nr a { color: var(--slate); text-decoration: none; }
 .nr a:hover { opacity: .75; }
-.nr button { font-family: 'Inter', sans-serif; cursor: pointer; }
+.nr button { font-family: 'Geist', sans-serif; cursor: pointer; }
 .bpf-av { position: relative; }
 .bpf-av > .m { position: absolute; color: var(--slate); font-size: 12px; line-height: 1; opacity: .5; }
 /* The hero row, its 3 boxes and the dimension-readout rows used to have
@@ -251,7 +251,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
             return (
               <>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, margin: '8px 0 2px', flexWrap: 'wrap' }}>
-                  <span style={{ fontFamily: "'Anton', sans-serif", fontSize: 30, fontWeight: 400 }}>{inr(lo)}–{inr(hi)}</span>
+                  <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 30, fontWeight: 400 }}>{inr(lo)}–{inr(hi)}</span>
                   <span style={{ fontSize: 12, color: 'var(--text-dim)' }}>per sq ft · {pc.label?.toLowerCase()} band for {cm.shortName}</span>
                 </div>
                 <div style={{ display: 'flex', gap: 5, margin: '14px 0 6px' }}>

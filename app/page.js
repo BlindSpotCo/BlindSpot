@@ -166,7 +166,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section section-closing">
         <div className="wrap closing-inner bento reveal">
           <h2>Because every property has a blindspot, and we&apos;re making it visible.</h2>
           <p>See the sunlight. Know the neighbourhood. Two free tools. One pin. Everything the listing wasn&apos;t going to mention.</p>

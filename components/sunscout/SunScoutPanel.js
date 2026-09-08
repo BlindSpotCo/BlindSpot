@@ -335,7 +335,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
         )}
       </div>
 
-      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, color: TEXT_SUB, padding: '5px 10px', background: '#FFFBF5', borderBottom: '1px solid rgba(224,123,0,0.08)' }}>
+      <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 10.5, color: TEXT_SUB, padding: '5px 10px', background: '#FFFBF5', borderBottom: '1px solid rgba(224,123,0,0.08)' }}>
         Click anywhere on the map to move the pin, Home Comfort Score below and the AI Report (further down, once you confirm floor/facing) use wherever it lands.
       </div>
 
@@ -354,7 +354,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
             onLocationSelect={onLocationSelect}
           />
         ) : (
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0A0C10', color: ORG, fontFamily: "'IBM Plex Mono', monospace", fontSize: 13 }}>
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0A0C10', color: ORG, fontFamily: "'Geist Mono', monospace", fontSize: 13 }}>
             {loading ? 'Loading solar data…' : 'No data yet'}
           </div>
         )}
