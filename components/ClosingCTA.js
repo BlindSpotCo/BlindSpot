@@ -6,40 +6,25 @@
 // this time (merus1894.com's footer): the difference isn't more
 // content, it's that their wordmark is a real BOLD statement in its
 // own row -- not decoration bleeding through behind other content --
-// plus a genuinely interactive hover moment on it. Rebuilt around
-// that:
+// plus a genuine hover *animation* on it: hovering the wordmark wipes
+// it away left-to-right and reveals a second line underneath in the
+// same spot (their case: "MERUS" -> "SINCE 1894"). Rebuilt around
+// that, not the cursor-spotlight glow tried first:
 // - Small brand lockup as its own top strip (was mixed in as a 3rd
 //   column before).
 // - Three real link columns instead of two -- added Connect, the
 //   two founders' actual LinkedIn links (same URLs as TeamSection.js),
 //   not an invented Careers/Investors column.
-// - The wordmark is now its own full-width statement row, not a
-//   background layer -- bold, and dim by default with a soft gold
-//   spotlight that follows the cursor (radial mask, position driven by
-//   --mx/--my custom properties set on mousemove below) revealing it
-//   in full colour where the pointer passes. Ties directly back to the
-//   section's own line right above it ("...we're making it visible")
-//   instead of being a generic effect borrowed wholesale.
+// - The wordmark is its own full-width statement row. Two stacked
+//   layers occupy the same box: BLINDSPOT on top, and the same real
+//   tagline already used above (.footer-tagline's "Property
+//   Intelligence" -- not invented copy) underneath. Hovering the row
+//   clip-path-wipes the top layer away while the tagline wipes in,
+//   pure CSS, no JS needed.
 
-import { useRef } from 'react';
 import PinDropTransition from '@/components/PinDropTransition';
 
 export default function ClosingCTA() {
-  // Tracked against the wordmark row itself (not the whole footer) so
-  // the mask's radial-gradient percentages -- which are relative to
-  // THAT element's own box -- actually line up with the cursor.
-  const wordmarkRef = useRef(null);
-
-  const handleMove = (e) => {
-    const el = wordmarkRef.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const x = ((e.clientX - r.left) / r.width) * 100;
-    const y = ((e.clientY - r.top) / r.height) * 100;
-    el.style.setProperty('--mx', `${x}%`);
-    el.style.setProperty('--my', `${y}%`);
-  };
-
   return (
     <section className="section section-closing2 reveal">
       <div className="cc-grain" aria-hidden="true" />
@@ -85,9 +70,9 @@ export default function ClosingCTA() {
           </div>
         </div>
 
-        <div className="cc-foot-wordmark-wrap" ref={wordmarkRef} onMouseMove={handleMove} aria-hidden="true">
-          <span className="cc-foot-wordmark cc-foot-wordmark-base">BLINDSPOT</span>
-          <span className="cc-foot-wordmark cc-foot-wordmark-glow">BLINDSPOT</span>
+        <div className="cc-foot-wordmark-wrap" aria-hidden="true">
+          <span className="cc-foot-wordmark cc-foot-wordmark-main">BLINDSPOT</span>
+          <span className="cc-foot-wordmark cc-foot-wordmark-alt">PROPERTY INTELLIGENCE</span>
         </div>
 
         <div className="wrap">
