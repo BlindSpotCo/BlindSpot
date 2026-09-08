@@ -111,7 +111,12 @@ export default function HeroLiveMapCanvas() {
         center={[center.lat, center.lon]}
         zoom={pin ? FLY_ZOOM : DEFAULT_ZOOM}
         zoomControl={false}
-        scrollWheelZoom
+        scrollWheelZoom={false}
+        dragging={false}
+        doubleClickZoom={false}
+        touchZoom={false}
+        boxZoom={false}
+        keyboard={false}
         className="hlm-map"
       >
         <TileLayer
