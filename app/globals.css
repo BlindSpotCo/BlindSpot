@@ -2718,18 +2718,17 @@ header.header-on-dark .brand-word-img{
   color:var(--av);
 }
 
-/* Every section below the hero shares one light "stone" field -- a
-   deliberate step away from the plain --bg/--paper cream (which is what
-   read as flat/default) without going dark: a hair of --brand (the
-   mandatory parent colour) mixed into --paper reads as a warm pale
-   sage-stone that's still unmistakably light, and it lets every card
-   below (--paper, i.e. brighter/whiter than this) sit visibly on top of
-   it instead of blending flat into the page. One colour, reused
-   uniformly section to section, same reasoning as the dark version this
-   replaced -- still just one field, not five different backgrounds. */
+/* Every section below the hero shares one light field. First attempt
+   mixed --brand (olive) into --paper for a "stone" tone -- on an
+   actual screen that read as a flat grey-green, not premium, so this
+   is --bg-2 instead: the site's own existing warm cream token (used
+   elsewhere already, e.g. .coverage-pill), not another invented
+   colour. Still a real step down from --paper's near-white, still one
+   colour reused uniformly section to section, just warm instead of
+   grey. */
 .section-tint{
   position:relative;
-  background:color-mix(in srgb, var(--brand) 10%, var(--paper));
+  background:var(--bg-2);
   color:var(--ink);
 }
 .st-grain{
