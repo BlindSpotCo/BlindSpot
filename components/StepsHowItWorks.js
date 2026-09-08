@@ -1,33 +1,37 @@
 'use client';
 // components/StepsHowItWorks.js
-// "How it works," redone as a plain 3-step flow instead of the old
-// scroll-driven, tab-synced interactive walkthrough (components/HowItWorks.js,
-// now removed from the homepage) -- same real 3-step product flow
-// (area -> unit -> verdict) that CombinedScoreFlow actually runs, just
-// told in three sentences instead of three full mock panels.
+// V2 -- swapped the plain "01/02/03" mono numerals for an icon badge per
+// step (search / split-score / verdict-check) sitting on a connecting
+// rail, and cut each step's copy down to one short line instead of a
+// full sentence -- same real 3-step flow, less to read to get it.
 
 import PinDropTransition from '@/components/PinDropTransition';
 import { coverageLabel } from '@/lib/aslivastu/cityMeta';
 
 const STEPS = [
   {
-    n: '01',
     accent: 'av',
     title: 'Search an address',
-    copy: 'Type any address or locality. Works across ',
-    trailing: ', more cities coming.',
+    copy: coverageLabel() + ', more cities coming.',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    ),
   },
   {
-    n: '02',
     accent: 'ss',
     title: 'Get both scores',
-    copy: 'Neighbourhood Score for the area, Home Comfort Score for that exact floor and facing.',
+    copy: 'Area, then the exact floor and facing.',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="10" width="6" height="11" rx="1"/><rect x="15" y="5" width="6" height="16" rx="1"/><rect x="9" y="14" width="6" height="7" rx="1"/></svg>
+    ),
   },
   {
-    n: '03',
     accent: 'brand',
     title: 'See your verdict',
-    copy: 'One BlindSpot Score, a plain-English recommendation, and the specific blindspots for that property.',
+    copy: 'One score. Recommended, or not.',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>
+    ),
   },
 ];
 
@@ -40,19 +44,14 @@ export default function StepsHowItWorks() {
             <span className="eyebrow">03 - How It Works</span>
             <h2>Three steps. No broker required.</h2>
           </div>
-          <p>The same flow every report on this site runs, start to finish.</p>
         </div>
 
-        <div className="hiw2-steps">
+        <div className="hiw3-rail">
           {STEPS.map((s) => (
-            <div key={s.n} className={`hiw2-step accent-${s.accent}`}>
-              <span className="mono hiw2-step-n">{s.n}</span>
+            <div key={s.title} className={`hiw3-step accent-${s.accent}`}>
+              <span className="hiw3-badge">{s.icon}</span>
               <h3>{s.title}</h3>
-              <p>
-                {s.copy}
-                {s.n === '01' && <strong>{coverageLabel()}</strong>}
-                {s.trailing}
-              </p>
+              <p>{s.copy}</p>
             </div>
           ))}
         </div>
