@@ -2418,14 +2418,14 @@
    it just always having been coloured differently. */
 .hlm-h1-accent{
   font-family:'Playfair Display', serif; font-style:italic; font-weight:600;
-  font-size:1em; color:#FFFDF8;
+  font-size:1em; color:#FFFDF8; -webkit-text-fill-color:#FFFDF8;
   text-shadow:0 4px 30px rgba(0,0,0,0.5);
   animation:hlmAccentGold 0.8s ease-out 2.9s forwards;
 }
 @keyframes hlmAccentGold{
-  from{ color:#FFFDF8; text-shadow:0 4px 30px rgba(0,0,0,0.5); }
+  from{ color:#FFFDF8; -webkit-text-fill-color:#FFFDF8; text-shadow:0 4px 30px rgba(0,0,0,0.5); }
   to{
-    color:var(--brand-yellow);
+    color:var(--brand-yellow); -webkit-text-fill-color:var(--brand-yellow);
     text-shadow:0 4px 30px rgba(0,0,0,0.5), 0 0 40px rgba(245,195,67,0.35);
   }
 }
@@ -2474,7 +2474,7 @@
   .hlm-eyebrow, .hlm-content .hlm-h1, .hlm-h1-accent, .hlm-searchwrap, .hlm-typed-line, .hlm-resolve{ animation:none !important; opacity:1 !important; transform:none !important; filter:none !important; }
   .hlm-typed-cursor{ animation:none !important; display:none !important; }
   .hlm-content .hlm-h1{ background:none !important; color:#FFFDF8 !important; -webkit-text-fill-color:#FFFDF8 !important; }
-  .hlm-h1-accent{ color:var(--brand-yellow) !important; text-shadow:0 4px 30px rgba(0,0,0,0.5), 0 0 40px rgba(245,195,67,0.35) !important; }
+  .hlm-h1-accent{ color:var(--brand-yellow) !important; -webkit-text-fill-color:var(--brand-yellow) !important; text-shadow:0 4px 30px rgba(0,0,0,0.5), 0 0 40px rgba(245,195,67,0.35) !important; }
 }
 
 .hlm-searchwrap{
