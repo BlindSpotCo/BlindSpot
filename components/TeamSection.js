@@ -24,7 +24,8 @@ const TEAM = [
 
 export default function TeamSection() {
   return (
-    <section className="section reveal" id="team">
+    <section className="section section-dark reveal" id="team">
+      <div className="sd-grain" aria-hidden="true" />
       <div className="wrap section-inner">
         <div className="section-head">
           <span className="eyebrow">04 - The Team</span>

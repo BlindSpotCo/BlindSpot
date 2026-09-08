@@ -38,7 +38,8 @@ function ScoreCard({ accentVar, tag, name, blurb, score, grade, example, dims })
 
 export default function TwoScores() {
   return (
-    <section className="section reveal" id="products">
+    <section className="section section-dark reveal" id="products">
+      <div className="sd-grain" aria-hidden="true" />
       <div className="wrap section-inner">
         <div className="section-head">
           <div>

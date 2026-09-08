@@ -169,7 +169,14 @@ export default function SiteHeader({ homeHref = '/' }) {
 
   return (
     <>
-      <header className={revealNav ? 'scrolled' : (isHome ? 'header-on-dark' : '')}>
+      {/* The whole homepage is now one continuous dark surface (hero
+          through the closing CTA -- see .section-dark in globals.css),
+          so the header stays in its dark/glass treatment for the entire
+          home page rather than switching to the light `.scrolled` bar
+          once you scroll past the hero -- that light bar only makes
+          sense over light page content, which the homepage no longer
+          has below the fold. Every other page is unaffected. */}
+      <header className={isHome ? 'header-on-dark' : (revealNav ? 'scrolled' : '')}>
       <nav className={`wrap${revealNav ? '' : ' nav-centered'}`}>
         <Link href={homeHref} className="brand">
           <img className="brand-mark-img" src="/mark.png" alt="BlindSpot" />
