@@ -565,10 +565,10 @@ export default function ReportScreen() {
           </ul>
 
           <p className="bsr-more">
-            <a href={`${flowHref('unit')}&report=1`} target="_blank" rel="noopener">Generate the detailed flat report →</a>
+            <a href={`${flowHref('unit')}&report=unit`} target="_blank" rel="noopener">Generate the sun & shadow report →</a>
             <span className="bsr-more-note">
-              A PDF for this floor and facing: shadow by season and time of day, month-by-month sunlight
-              hours, and 12 map angles with their own analysis.
+              12 map angles at this exact pin, 3 per season at 9am / noon / 3pm, each with its own
+              analysis — plus the monthly sunlight table for this floor.
             </span>
           </p>
         </section>

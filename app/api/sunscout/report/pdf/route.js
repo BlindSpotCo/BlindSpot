@@ -714,13 +714,6 @@ export async function POST(req) {
           <div style="font-size:30px;font-weight:800;color:${SUN};line-height:1;font-family:${DISPLAY};">${safeFacing}</div>
           <div style="font-size:10px;color:${DIM};margin-top:2px;">${facingAssumptionNote ? 'window orientation · assumed, unconfirmed' : 'window orientation'}</div>
         </div>
-        <a id="gallery-link-card" href="__GALLERY_URL__" target="_blank" rel="noopener" style="background:${CARD};border:1px solid ${LINE};padding:14px 18px;flex:3;min-width:200px;display:flex;align-items:center;gap:12px;text-decoration:none;cursor:pointer;">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="${WINE}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M3 20l6-6 4 4 8-8"/><path d="M15 6h6v6"/></svg>
-          <div style="flex:1;">
-            <div style="font-size:13px;font-weight:700;color:${INK};">${hasNeighbourhood ? 'See the evidence: neighbourhood data + sun/shadow images' : 'Real 3D map with sun and shadow path'}</div>
-            <div style="font-size:11px;color:${DIM};margin-top:2px;">${shotCount || 12} real map angles, each with its own AI analysis, opens in a new tab →</div>
-          </div>
-        </a>
       </div>
 
       ${combinedScoreSection}
