@@ -69,7 +69,7 @@ export default function ProblemSolution() {
 
         <div className="ps3-grid">
           {BLINDSPOTS.map((b) => (
-            <div key={b.label} className={`ps3-item accent-${b.accent}`}>
+            <div key={b.label} className={`ps3-item reveal accent-${b.accent}`}>
               <span className="ps3-icon">{b.icon}</span>
               <span className="ps3-item-label">{b.label}</span>
             </div>

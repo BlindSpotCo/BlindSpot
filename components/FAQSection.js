@@ -52,7 +52,7 @@ export default function FAQSection() {
           {items.map((item, i) => {
             const isOpen = open === i;
             return (
-              <div key={item.q} className={`faq2-item${isOpen ? ' is-open' : ''}`}>
+              <div key={item.q} className={`faq2-item reveal${isOpen ? ' is-open' : ''}`}>
                 <button
                   type="button"
                   className="faq2-q"
