@@ -526,42 +526,13 @@ export default function ReportScreen() {
           </p>
 
 
-          {/* The only two things that change this score, and neither is in
-              a listing -- so they belong above the breakdown they drive,
-              not underneath it. */}
-          <div className="bsr-asks">
-            <p className="bsr-asks-lede">
-              {assumed
-                ? 'Assumed \u2014 set your actual flat and the scores below update.'
-                : 'Everything below is for this flat.'}
-            </p>
-
-            <div className="bsr-ask bsr-ask-inline">
-              <p className="bsr-q" id="bsr-q-floor">Floor</p>
-              <p className="bsr-floor">
-                <button type="button" onClick={() => bumpFloor(-1)} aria-label="One floor lower">−</button>
-                <span className="bsr-floor-n" aria-live="polite">{floor}</span>
-                <button type="button" onClick={() => bumpFloor(1)} aria-label="One floor higher">+</button>
-              </p>
-            </div>
-
-            <div className="bsr-ask bsr-ask-inline">
-              <p className="bsr-q" id="bsr-q-facing">Balcony faces</p>
-              <div className="bsr-dirs" role="group" aria-labelledby="bsr-q-facing">
-                {FACING_OPTS.map((f) => (
-                  <button
-                    key={f}
-                    type="button"
-                    aria-label={f}
-                    aria-pressed={f === facing}
-                    onClick={() => { setAssumed(false); setFacing(f); }}
-                  >
-                    {SHORT[f]}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+          {/* The controls live with the map, where you can see the thing
+              they describe. Here we only say which flat this is for. */}
+          <p className="bsr-setfor">
+            {assumed ? <strong>Assumed: </strong> : null}
+            {ord(floor)} floor, facing {facing.toLowerCase()}.{' '}
+            <a href="#the-block">{assumed ? 'Set your flat \u2193' : 'Change it \u2193'}</a>
+          </p>
 
           <ul className="bsr-rows">
             {(unit.subScores || []).map((s) => (
@@ -628,6 +599,44 @@ export default function ReportScreen() {
               {solarFailed ? 'The 3D view couldn’t load. The scores below are unaffected.' : 'Building the 3D view…'}
             </p>
           )}
+        </div>
+
+        {/* Which flat, set while looking at the block it sits in -- with the
+            score right here, so the effect shows where the click happens
+            instead of 600px above it. */}
+        <div className="bsr-flatbar">
+          <span className="bsr-flatbar-group">
+            <span className="bsr-flatbar-label">Floor</span>
+            <span className="bsr-floor">
+              <button type="button" onClick={() => bumpFloor(-1)} aria-label="One floor lower">−</button>
+              <span className="bsr-floor-n" aria-live="polite">{floor}</span>
+              <button type="button" onClick={() => bumpFloor(1)} aria-label="One floor higher">+</button>
+            </span>
+          </span>
+
+          <span className="bsr-flatbar-group">
+            <span className="bsr-flatbar-label" id="bsr-q-facing">Faces</span>
+            <span className="bsr-dirs" role="group" aria-labelledby="bsr-q-facing">
+              {FACING_OPTS.map((f) => (
+                <button
+                  key={f}
+                  type="button"
+                  aria-label={f}
+                  aria-pressed={f === facing}
+                  onClick={() => { setAssumed(false); setFacing(f); }}
+                >
+                  {SHORT[f]}
+                </button>
+              ))}
+            </span>
+          </span>
+
+          <span className="bsr-flatbar-out" aria-live="polite">
+            Home comfort{' '}
+            <strong className={`is-${toneOf(unit.score)}`}>{word(unit.score)}</strong>{' '}
+            <span className="bsr-flatbar-n">{unit.score}</span>
+            {busy ? <span className="bsr-busy"> updating…</span> : null}
+          </span>
         </div>
 
         <p className="bsr-timerow">
