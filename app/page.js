@@ -6,6 +6,7 @@ import HowItWorks from '@/components/HowItWorks';
 import PersonaSamples from '@/components/PersonaSamples';
 import HeroLiveMap from '@/components/HeroLiveMap';
 import PinDropTransition from '@/components/PinDropTransition';
+import CountUp from '@/components/CountUp';
 import { coverageLabel } from '@/lib/aslivastu/cityMeta';
 
 export default function Home() {
@@ -97,7 +98,7 @@ export default function Home() {
                   <span className="hsc-label">BlindSpot Score</span>
                   <span className="hsc-badge">Recommended</span>
                 </div>
-                <div className="hsc-number">80<span>/100</span></div>
+                <div className="hsc-number"><CountUp to={80} duration={1200} /><span>/100</span></div>
                 {/* Leads with the plain-English takeaway before any raw
                     numbers — directly per the mentor's report feedback in
                     the shared sheet ("the fundamental question is not 'how

@@ -64,6 +64,27 @@ function FlyTo({ lat, lon, zoom, flyKey }) {
   return null;
 }
 
+// First-load moment: the map mounts a couple of zoom levels out and
+// glides in to its real resting zoom, like descending toward the city
+// rather than the whole page just appearing already-arrived. Fires once
+// per mount, never again -- this is an entrance, not something that
+// should replay on every re-render.
+const INTRO_ZOOM_OFFSET = 2.4;
+function IntroFly({ lat, lon, zoom }) {
+  const map = useMap();
+  const fired = useRef(false);
+  useEffect(() => {
+    if (fired.current) return;
+    fired.current = true;
+    const t = setTimeout(() => {
+      map.flyTo([lat, lon], zoom, { duration: 2.2, easeLinearity: 0.12 });
+    }, 200);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return null;
+}
+
 // AQI's 0-500 scale runs the opposite direction of a 0-100 "score" --
 // low AQI is good. This only decides the chip's accent colour, same
 // bands aqiCategory() already uses.
@@ -171,7 +192,7 @@ export default function HeroLiveMapCanvas() {
     <div className="hlm-root">
       <MapContainer
         center={[center.lat, center.lon]}
-        zoom={pin ? FLY_ZOOM : DEFAULT_ZOOM}
+        zoom={pin ? FLY_ZOOM : DEFAULT_ZOOM - INTRO_ZOOM_OFFSET}
         zoomControl={false}
         scrollWheelZoom={false}
         dragging={false}
@@ -188,6 +209,7 @@ export default function HeroLiveMapCanvas() {
         />
         {pin && <Marker position={[pin.lat, pin.lon]} icon={pinIcon} />}
         <FlyTo lat={center.lat} lon={center.lon} zoom={pin ? FLY_ZOOM : DEFAULT_ZOOM} flyKey={flyKey} />
+        {!pin && <IntroFly lat={DEFAULT_CENTER.lat} lon={DEFAULT_CENTER.lon} zoom={DEFAULT_ZOOM} />}
       </MapContainer>
 
       <div className="hlm-scrim" aria-hidden="true" />
