@@ -36,6 +36,13 @@ const FACTOR_MEANS = {
   sewerage: 'Drainage coverage, treatment and waterlogging risk',
 };
 
+// North at the top, the way a compass is read. null is the middle cell.
+const COMPASS = ['North-West', 'North', 'North-East', 'West', null, 'East', 'South-West', 'South', 'South-East'];
+const SHORT = {
+  'North': 'N', 'North-East': 'NE', 'East': 'E', 'South-East': 'SE',
+  'South': 'S', 'South-West': 'SW', 'West': 'W', 'North-West': 'NW',
+};
+
 const TZ = 330;
 const DEFAULT_FLOOR = 5;
 const DEFAULT_FACING = 'South-East';
@@ -123,6 +130,11 @@ export default function ReportScreen() {
   const [floor, setFloor] = useState(parseInt(params.get('floor'), 10) || DEFAULT_FLOOR);
   const [facing, setFacing] = useState(params.get('facing') || DEFAULT_FACING);
   const [areaWeight, setAreaWeight] = useState(0.5);
+  // A listing gives you the tower, not the unit -- so these two arrive
+  // as defaults far more often than not. Say so until they're set.
+  const [assumed, setAssumed] = useState(
+    () => !params.get('floor') || !params.get('facing')
+  );
 
   const [scores, setScores] = useState(null);   // { area|null, unit, combined|null }
   const [state, setState] = useState('loading'); // loading | ready | error
@@ -302,7 +314,7 @@ export default function ReportScreen() {
     return () => window.removeEventListener('message', onMessage);
   }, []);
 
-  const bumpFloor = useCallback((d) => setFloor((f) => Math.max(1, Math.min(60, f + d))), []);
+  const bumpFloor = useCallback((d) => { setAssumed(false); setFloor((f) => Math.max(1, Math.min(60, f + d))); }, []);
 
   const flowHref = useCallback(
     (stage) => buildFlowHref(stage, { pinCode, address, lat, lon, floor, facing }),
@@ -514,6 +526,52 @@ export default function ReportScreen() {
           </p>
 
 
+          {/* The only two things that change this score, and neither is in
+              a listing -- so they belong above the breakdown they drive,
+              not underneath it. */}
+          <div className="bsr-asks">
+            <p className="bsr-asks-lede">
+              {assumed
+                ? 'We\u2019ve assumed a mid floor facing south-east. Set the real ones and every score below changes.'
+                : 'Change either one and every score below is recalculated.'}
+            </p>
+
+            <div className="bsr-ask">
+              <p className="bsr-q" id="bsr-q-floor">Which floor?</p>
+              <p className="bsr-floor">
+                <button type="button" onClick={() => bumpFloor(-1)} aria-label="One floor lower">\u2212</button>
+                <span className="bsr-floor-n" aria-live="polite">{floor}</span>
+                <button type="button" onClick={() => bumpFloor(1)} aria-label="One floor higher">+</button>
+                <span className="bsr-floor-note">Higher floors change light, outlook and privacy.</span>
+              </p>
+            </div>
+
+            <div className="bsr-ask">
+              <p className="bsr-q" id="bsr-q-facing">Which way does the main balcony face?</p>
+              {/* Laid out as a compass, because that is the thing being
+                  asked about. Eight buttons in a list made people read
+                  labels to find "the one pointing that way". */}
+              <div className="bsr-compass" role="group" aria-labelledby="bsr-q-facing">
+                {COMPASS.map((f, i) => (
+                  f === null
+                    ? <span key={`c${i}`} className="bsr-compass-mid" aria-hidden="true">{SHORT[facing] || ''}</span>
+                    : (
+                      <button
+                        key={f}
+                        type="button"
+                        aria-label={f}
+                        aria-pressed={f === facing}
+                        onClick={() => { setAssumed(false); setFacing(f); }}
+                      >
+                        {SHORT[f]}
+                      </button>
+                    )
+                ))}
+              </div>
+              <p className="bsr-facing-now">Facing <strong>{facing.toLowerCase()}</strong></p>
+            </div>
+          </div>
+
           <ul className="bsr-rows">
             {(unit.subScores || []).map((s) => (
               <li key={s.key}>
@@ -526,27 +584,6 @@ export default function ReportScreen() {
             ))}
           </ul>
 
-          <div className="bsr-asks">
-            <div className="bsr-ask">
-              <p className="bsr-q">Which floor is the flat on?</p>
-              <p className="bsr-floor">
-                <button type="button" onClick={() => bumpFloor(-1)} aria-label="One floor lower">−</button>
-                <span className="bsr-floor-n">{floor}</span>
-                <button type="button" onClick={() => bumpFloor(1)} aria-label="One floor higher">+</button>
-              </p>
-            </div>
-            <div className="bsr-ask">
-              <p className="bsr-q" id="bsr-q-facing">Which way does the main balcony face?</p>
-              <div className="bsr-facings" role="group" aria-labelledby="bsr-q-facing">
-                {FACING_OPTS.map((f) => (
-                  <button key={f} type="button" aria-pressed={f === facing} onClick={() => setFacing(f)}>
-                    {f}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
           <p className="bsr-more">
             <a href={flowHref('unit')} target="_blank" rel="noopener">See the detailed flat report →</a>
             <span className="bsr-more-note">
@@ -556,7 +593,6 @@ export default function ReportScreen() {
         </section>
       </div>
 
-      {/* ---------- what to check on the visit ---------- */}
       {/* ---------- the map, full width ----------
           It lived inside the flat's card until the card's ~500px made
           Map3DShadow hide its own view-angle pad (its stylesheet drops

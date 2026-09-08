@@ -195,14 +195,23 @@
   min-width:92px;text-align:right;flex:none;
 }
 
-/* ---------------- the two questions ---------------- */
+/* ---------------- the two questions ----------------
+   Above the breakdown they drive, and marked out as inputs rather than
+   more results: tinted panel, not another row of the card. */
 .bsr-asks{
-  margin-top:22px;padding-top:20px;
-  border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
-  display:grid;gap:22px;
+  margin-top:18px;padding:18px 20px 20px;border-radius:5px;
+  background:var(--bg,#FAF6EE);
+  border:1px solid var(--line-soft,rgba(28,24,18,.08));
+  display:grid;gap:20px;
+}
+.bsr-asks-lede{
+  font-size:15.5px;line-height:1.5;color:var(--text-mute,#5A5140);
 }
 .bsr-q{font-size:17px;font-weight:600;margin-bottom:10px}
-.bsr-floor{display:flex;align-items:center;gap:16px}
+.bsr-floor{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.bsr-floor-note{
+  font-size:14.5px;color:var(--text-mute,#5A5140);flex:1;min-width:170px;line-height:1.4;
+}
 .bsr-floor button{
   width:50px;height:50px;flex:none;border-radius:4px;cursor:pointer;
   font-size:25px;line-height:1;font-family:inherit;color:inherit;
@@ -214,17 +223,28 @@
   font-variant-numeric:tabular-nums;
 }
 
-.bsr-facings{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:440px}
-.bsr-facings button{
-  font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;
-  min-height:48px;padding:0 12px;border-radius:4px;
+/* a compass, because that is what is being asked about */
+.bsr-compass{
+  display:grid;grid-template-columns:repeat(3,58px);grid-auto-rows:48px;
+  gap:6px;justify-content:start;
+}
+.bsr-compass button{
+  font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;
+  border-radius:4px;padding:0;
   background:var(--paper,#FFFDF8);border:1px solid var(--line,rgba(28,24,18,.14));
   color:var(--text-mute,#5A5140);
 }
-.bsr-facings button:hover{border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
-.bsr-facings button[aria-pressed="true"]{
-  background:rgba(175,95,48,.09);border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30);
+.bsr-compass button:hover{border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
+.bsr-compass button[aria-pressed="true"]{
+  background:var(--ss,#AF5F30);border-color:var(--ss,#AF5F30);color:#FFFDF8;
 }
+.bsr-compass-mid{
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:700;color:var(--ss,#AF5F30);
+  border:1px dashed var(--line,rgba(28,24,18,.14));border-radius:4px;
+}
+.bsr-facing-now{margin-top:10px;font-size:15.5px;color:var(--text-mute,#5A5140)}
+.bsr-facing-now strong{color:var(--text,#1C1812)}
 
 /* ---------------- visit checklist ---------------- */
 .bsr-visit{
