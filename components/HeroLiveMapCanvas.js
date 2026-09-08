@@ -195,8 +195,7 @@ export default function HeroLiveMapCanvas() {
       <div className="hlm-content">
         <div className="hlm-copy">
           <span className="hlm-eyebrow">Property Intelligence</span>
-          <h1 className="hlm-h1">What do you want to know about this place?</h1>
-          <p className="hlm-sub">See beyond the listing. BlindSpot reveals what you can&apos;t see from the map alone.</p>
+          <h1 className="hlm-h1">See what listings don&apos;t tell you.</h1>
         </div>
 
         <div className="hlm-searchwrap" ref={boxRef}>
