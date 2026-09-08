@@ -221,12 +221,15 @@ export default function HeroLiveMapCanvas() {
         keyboard={false}
         className="hlm-map"
       >
+        {/* CARTO's basemaps.cartocdn.com now requires a registered API
+            key -- unauthenticated requests come back as tiles watermarked
+            "API key required", which is what shipped here briefly. Back
+            to plain OSM tiles (proven, no key) with the dark treatment
+            done entirely via the .hlm-tiles CSS filter below. */}
         <TileLayer
           className="hlm-tiles"
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-          maxZoom={20}
-          detectRetina
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         />
         {pin && <Marker position={[pin.lat, pin.lon]} icon={pinIcon} />}
         <FlyTo lat={center.lat} lon={center.lon} zoom={pin ? FLY_ZOOM : DEFAULT_ZOOM} flyKey={flyKey} />
