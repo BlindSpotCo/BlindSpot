@@ -2583,10 +2583,19 @@
    entirely -- SiteHeader.js adds this class only on "/" and only until
    scroll passes the hero's own height. */
 header.header-on-dark{
-  background:#0E0D07; border-bottom:1px solid rgba(255,255,255,0.07);
+  background:var(--brand); border-bottom:1px solid rgba(255,255,255,0.1);
 }
-header.header-on-dark .brand-mark-img{ filter:brightness(0) invert(1); }
-header.header-on-dark .brand-word-img{ filter:none; }
+/* mark.png is black source art, wordmark.png is white source art -- two
+   different filter chains, each numerically solved (not eyeballed) to
+   land on the exact --brand-yellow (#F5C343) from their own starting
+   colour: black->gold and white->gold need different invert/sepia/
+   hue-rotate values to hit the same target. */
+header.header-on-dark .brand-mark-img{
+  filter:invert(47%) sepia(66%) saturate(587%) hue-rotate(334deg) brightness(161%) contrast(126%);
+}
+header.header-on-dark .brand-word-img{
+  filter:invert(35%) sepia(61%) saturate(291%) hue-rotate(348deg) brightness(87%) contrast(247%);
+}
 
 /* ---------- Closing CTA + footer, dark bookend ----------
    The page opens on the live-map hero's near-black field -- closing on
