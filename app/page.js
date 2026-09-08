@@ -76,7 +76,7 @@ export default function Home() {
           <div className="hero-verdict-copy">
             <span className="hero-verdict-eyebrow">The verdict</span>
             <h2 className="hero-verdict-heading"><span className="seg sun">One pin.</span> <span className="seg slate">Two honest answers.</span></h2>
-            <p className="hero-sub">Drop a pin. See exactly what the neighbourhood around it is really like, and exactly how sunlight moves through the unit. Real government records. Real solar geometry. No broker spin.</p>
+            <p className="hero-sub">Drop a pin. See what the neighbourhood is really like, and how much sunlight the unit actually gets. Real data, not broker spin.</p>
             <span className="coverage-pill" style={{ marginTop: 26, marginBottom: 4 }}>
               <span className="dot" />Active in {coverageLabel()}, more cities coming
             </span>
