@@ -38,7 +38,8 @@ export default function FAQSection() {
   const [open, setOpen] = useState(0);
 
   return (
-    <section className="section reveal">
+    <section className="section section-dark reveal">
+      <div className="sd-grain" aria-hidden="true" />
       <div className="wrap section-inner">
         <div className="section-head">
           <div>

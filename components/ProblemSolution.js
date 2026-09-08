@@ -57,8 +57,8 @@ const BLINDSPOTS = [
 
 export default function ProblemSolution() {
   return (
-    <section className="section section-dark01 reveal">
-      <div className="sd01-grain" aria-hidden="true" />
+    <section className="section section-dark reveal">
+      <div className="sd-grain" aria-hidden="true" />
       <div className="wrap section-inner">
         <div className="section-head">
           <div>
