@@ -2676,3 +2676,172 @@ header.header-on-dark .brand-word-img{
   .section-closing{ padding:var(--space-7) 0 0; }
   .section-closing footer{ margin-top:var(--space-7); }
 }
+
+/* =====================================================================
+   SITE REDO — everything below the hero, redone from scratch.
+   New components: ProblemSolution, TwoScores, StepsHowItWorks,
+   TeamSection, FAQSection, ClosingCTA. Hero itself (.hero-statement /
+   .hlm-*) is untouched — none of the rules below touch those selectors.
+   Reuses existing tokens/utilities (.wrap/.section/.section-inner/
+   .eyebrow/.reveal/.btn/.mono/--brand/--av/--ss/--brand-yellow/spacing
+   & radius scale) rather than inventing a second design language.
+   ===================================================================== */
+
+/* ---------- 01 — Problem / Solution ---------- */
+.ps2-grid{
+  display:grid; grid-template-columns:1.1fr 0.9fr; gap:var(--space-8);
+  align-items:start;
+}
+.ps2-label{
+  display:block; font-size:12px; letter-spacing:.1em; color:var(--text-mute);
+  margin-bottom:var(--space-4);
+}
+.ps2-label-solution{ color:var(--brand) }
+.ps2-tags{ list-style:none; display:flex; flex-wrap:wrap; gap:10px }
+.ps2-tag{
+  font-size:14px; font-weight:500; color:var(--text);
+  background:var(--bg-2); border:1px solid var(--line);
+  border-radius:var(--radius-pill); padding:8px 16px;
+}
+.ps2-solution{
+  border-left:2px solid var(--brand); padding-left:var(--space-6);
+}
+.ps2-solution-lead{ font-size:19px; line-height:1.55; color:var(--text) }
+.ps2-solution-lead strong{ color:var(--brand); font-weight:700 }
+@media (max-width:900px){
+  .ps2-grid{ grid-template-columns:1fr; gap:var(--space-6) }
+  .ps2-solution{ border-left:none; border-top:2px solid var(--brand); padding-left:0; padding-top:var(--space-5) }
+}
+
+/* ---------- 02 — Two Scores ---------- */
+.ts2-grid{ display:grid; grid-template-columns:1fr 1fr; gap:var(--space-6) }
+.ts2-card{
+  position:relative; background:var(--paper); border:1px solid var(--line);
+  border-top:3px solid var(--ts2-accent); border-radius:var(--radius-lg);
+  padding:var(--space-6);
+}
+.ts2-tag{
+  display:inline-block; font-size:11.5px; letter-spacing:.1em; color:var(--ts2-accent);
+  background:color-mix(in srgb, var(--ts2-accent) 12%, transparent);
+  border-radius:var(--radius-sm); padding:4px 10px; margin-bottom:var(--space-3);
+}
+.ts2-name{ font-size:24px; margin-bottom:6px }
+.ts2-tagline{ font-size:14.5px; color:var(--text-mute); margin-bottom:var(--space-5) }
+.ts2-dims{ display:flex; flex-direction:column; gap:14px; margin-bottom:var(--space-5) }
+.ts2-dim-top{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px }
+.ts2-dim-label{ font-size:14px; font-weight:600; color:var(--text) }
+.ts2-dim-weight{ font-size:12px; color:var(--text-dim) }
+.ts2-dim-track{ height:5px; border-radius:3px; background:var(--bg-2); overflow:hidden }
+.ts2-dim-fill{ height:100%; border-radius:3px; background:var(--ts2-accent) }
+.ts2-source{ font-size:12.5px; line-height:1.6; color:var(--text-dim); border-top:1px solid var(--line-soft); padding-top:var(--space-4) }
+.ts2-combine{
+  margin-top:var(--space-7); text-align:center; max-width:680px; margin-left:auto; margin-right:auto;
+}
+.ts2-combine-label{ display:block; font-size:11.5px; letter-spacing:.12em; color:var(--text-mute); margin-bottom:10px }
+.ts2-combine p{ font-size:15.5px; line-height:1.7; color:var(--text-mute) }
+.ts2-combine strong{ color:var(--ink) }
+@media (max-width:900px){
+  .ts2-grid{ grid-template-columns:1fr }
+}
+
+/* ---------- 03 — How It Works (steps) ---------- */
+.hiw2-steps{ display:grid; grid-template-columns:repeat(3, 1fr); gap:var(--space-6) }
+.hiw2-step{ border-top:2px solid var(--line); padding-top:var(--space-4) }
+.hiw2-step-n{ display:block; font-size:12px; letter-spacing:.1em; color:var(--text-mute); margin-bottom:10px }
+.hiw2-step h3{ font-size:19px; margin-bottom:8px }
+.hiw2-step p{ font-size:14.5px; line-height:1.65; color:var(--text-mute) }
+.hiw2-step p strong{ color:var(--ink) }
+.hiw2-step.accent-av{ border-top-color:var(--av) }
+.hiw2-step.accent-av .hiw2-step-n{ color:var(--av) }
+.hiw2-step.accent-ss{ border-top-color:var(--ss) }
+.hiw2-step.accent-ss .hiw2-step-n{ color:var(--ss) }
+.hiw2-step.accent-brand{ border-top-color:var(--brand) }
+.hiw2-step.accent-brand .hiw2-step-n{ color:var(--brand) }
+.hiw2-cta{ margin-top:var(--space-7); display:flex; justify-content:center }
+@media (max-width:900px){
+  .hiw2-steps{ grid-template-columns:1fr; gap:var(--space-5) }
+}
+
+/* ---------- 04 — Team ---------- */
+.team2-grid{ display:grid; grid-template-columns:1fr 1fr; gap:var(--space-6) }
+.team2-card{
+  display:flex; gap:var(--space-5); align-items:flex-start;
+  background:var(--paper); border:1px solid var(--line); border-radius:var(--radius-lg);
+  padding:var(--space-6);
+}
+.team2-avatar{
+  flex-shrink:0; width:56px; height:56px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; font-weight:600; color:#fff; background:var(--brand);
+}
+.team2-card.accent-ss .team2-avatar{ background:var(--ss) }
+.team2-card.accent-av .team2-avatar{ background:var(--av) }
+.team2-name{ font-size:18px; margin-bottom:2px }
+.team2-role{ font-size:12.5px; letter-spacing:.06em; font-weight:600; margin-bottom:10px }
+.team2-card.accent-ss .team2-role{ color:var(--ss) }
+.team2-card.accent-av .team2-role{ color:var(--av) }
+.team2-desc{ font-size:14px; line-height:1.7; color:var(--text-mute); margin-bottom:14px }
+.team2-link{
+  display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:600;
+  color:var(--text); text-decoration:none; border-bottom:1px solid var(--line);
+}
+.team2-link:hover{ color:var(--brand); border-color:var(--brand) }
+@media (max-width:640px){
+  .team2-grid{ grid-template-columns:1fr }
+  .team2-card{ flex-direction:column; align-items:flex-start }
+}
+
+/* ---------- 05 — FAQ ---------- */
+.faq2-list{ max-width:760px }
+.faq2-item{ border-bottom:1px solid var(--line) }
+.faq2-q{
+  width:100%; display:flex; align-items:center; justify-content:space-between; gap:var(--space-4);
+  background:none; border:none; cursor:pointer; text-align:left;
+  padding:var(--space-5) 0; font-family:'Geist',sans-serif; font-size:16.5px; font-weight:600; color:var(--ink);
+}
+.faq2-plus{
+  position:relative; flex-shrink:0; width:16px; height:16px;
+}
+.faq2-plus::before, .faq2-plus::after{
+  content:''; position:absolute; background:var(--text-mute); border-radius:2px;
+  transition:transform .2s ease, opacity .2s ease;
+}
+.faq2-plus::before{ left:0; top:7px; width:16px; height:2px }
+.faq2-plus::after{ left:7px; top:0; width:2px; height:16px }
+.faq2-item.is-open .faq2-plus::after{ transform:rotate(90deg); opacity:0 }
+.faq2-item.is-open .faq2-q{ color:var(--brand) }
+.faq2-a-wrap{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .25s ease }
+.faq2-item.is-open .faq2-a-wrap{ grid-template-rows:1fr }
+.faq2-a-wrap > .faq2-a{ overflow:hidden; min-height:0 }
+.faq2-a{ font-size:14.5px; line-height:1.7; color:var(--text-mute); padding-bottom:var(--space-5) }
+
+/* ---------- 06 — Closing CTA + footer ---------- */
+.section-closing2{
+  position:relative; overflow:hidden; background:var(--brand); color:#fff;
+  padding:var(--space-9) 0 0;
+}
+.section-closing2::before{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.04) 0 1px, transparent 1px 96px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.04) 0 1px, transparent 1px 96px);
+}
+.closing2-inner{
+  position:relative; z-index:1; text-align:center; max-width:720px; margin:0 auto;
+  padding:0 0 var(--space-9);
+}
+.closing2-inner h2{ font-size:clamp(28px, 4vw, 42px); color:#fff; margin-bottom:var(--space-4) }
+.closing2-inner p{ font-size:16px; line-height:1.6; color:rgba(255,253,248,0.78); margin-bottom:var(--space-6) }
+.closing2-ctas{ display:flex; justify-content:center }
+.section-closing2 footer{
+  position:relative; z-index:1; border-top:1px solid rgba(255,255,255,0.1);
+}
+.section-closing2 footer .brand-mark-img{ filter:brightness(0) invert(1); }
+.section-closing2 footer .brand-word-img{ filter:none; }
+.section-closing2 footer .footer-links a{ color:rgba(255,253,248,0.62); }
+.section-closing2 footer .footer-links a:hover{ color:#fff; }
+.section-closing2 footer .footer-fine{ color:rgba(255,253,248,0.4); }
+@media (max-width:640px){
+  .section-closing2{ padding:var(--space-7) 0 0 }
+  .closing2-inner{ padding-bottom:var(--space-7) }
+}
