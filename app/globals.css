@@ -2391,7 +2391,7 @@
   font-size:clamp(40px, 6.2vw, 90px); line-height:1.02; margin:0;
   text-shadow:0 4px 30px rgba(0,0,0,0.5); letter-spacing:-0.015em;
   background:linear-gradient(90deg,
-    #FFFDF8 0%, #FFFDF8 40%, #FFFFFF 47%, #F5C343 50%, #FFFFFF 53%, #FFFDF8 60%, #FFFDF8 100%);
+    #FFFDF8 0%, #FFFDF8 40%, #FFFFFF 50%, #FFFDF8 60%, #FFFDF8 100%);
   background-size:220% 100%; background-position:200% 0;
   -webkit-background-clip:text; background-clip:text;
   color:transparent; -webkit-text-fill-color:transparent;
