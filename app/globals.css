@@ -2480,3 +2480,40 @@ header.header-on-dark{
 }
 header.header-on-dark .brand-mark-img{ filter:brightness(0) invert(1); }
 header.header-on-dark .brand-word-img{ filter:none; }
+
+/* ---------- Closing CTA + footer, dark bookend ----------
+   The page opens on the live-map hero's near-black field -- closing on
+   the same dark tone (rather than fading back to plain cream) gives the
+   whole page a deliberate frame instead of just trailing off. The warm
+   olive CTA card sits on it exactly the way the hero's own search card
+   sits on the map: one warm, tactile object on a dark field, same idiom
+   both times. .section-closing is added in app/page.js on this specific
+   section only -- .section itself stays background:transparent
+   everywhere else (team, HowItWorks, etc. all still want the page's
+   normal cream field). */
+.section-closing{
+  position:relative; overflow:hidden;
+  background:#0E0D07;
+  padding:var(--space-9) 0 0;
+}
+.section-closing::before{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.04) 0 1px, transparent 1px 96px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.04) 0 1px, transparent 1px 96px);
+}
+.section-closing .closing-inner.bento{ position:relative; z-index:1; }
+.section-closing footer{
+  position:relative; z-index:1;
+  border-top:1px solid rgba(255,255,255,0.1);
+  margin-top:var(--space-9);
+}
+.section-closing footer .brand-mark-img{ filter:brightness(0) invert(1); }
+.section-closing footer .brand-word-img{ filter:none; }
+.section-closing footer .footer-links a{ color:rgba(255,253,248,0.62); }
+.section-closing footer .footer-links a:hover{ color:#fff; }
+.section-closing footer .footer-fine{ color:rgba(255,253,248,0.4); }
+@media (max-width:640px){
+  .section-closing{ padding:var(--space-7) 0 0; }
+  .section-closing footer{ margin-top:var(--space-7); }
+}
