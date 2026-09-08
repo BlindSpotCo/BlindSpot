@@ -243,7 +243,7 @@ export default function HeroLiveMapCanvas() {
       <div className="hlm-content">
         <div className="hlm-copy">
           <span className="hlm-eyebrow">Property Intelligence</span>
-          <h1 className="hlm-h1">Every property has a <span className="hlm-h1-accent">blindspot.</span></h1>
+          <h1 className="hlm-h1">Every property has a <span className="hlm-h1-accent" data-text="blindspot.">blindspot.</span></h1>
           <p className="hlm-typed-line">
             <TypewriterCycle
               items={BLINDSPOT_EXAMPLES}
