@@ -199,52 +199,40 @@
    Above the breakdown they drive, and marked out as inputs rather than
    more results: tinted panel, not another row of the card. */
 .bsr-asks{
-  margin-top:18px;padding:18px 20px 20px;border-radius:5px;
+  margin-top:16px;padding:14px 16px;border-radius:5px;
   background:var(--bg,#FAF6EE);
   border:1px solid var(--line-soft,rgba(28,24,18,.08));
-  display:grid;gap:20px;
+  display:grid;gap:11px;
 }
-.bsr-asks-lede{
-  font-size:15.5px;line-height:1.5;color:var(--text-mute,#5A5140);
+.bsr-asks-lede{font-size:14.5px;line-height:1.45;color:var(--text-mute,#5A5140)}
+.bsr-ask-inline{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.bsr-ask-inline .bsr-q{
+  margin-bottom:0;font-size:15.5px;font-weight:600;flex:none;min-width:74px;
 }
 .bsr-q{font-size:17px;font-weight:600;margin-bottom:10px}
-.bsr-floor{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.bsr-floor-note{
-  font-size:14.5px;color:var(--text-mute,#5A5140);flex:1;min-width:170px;line-height:1.4;
-}
+.bsr-floor{display:flex;align-items:center;gap:8px}
 .bsr-floor button{
-  width:50px;height:50px;flex:none;border-radius:4px;cursor:pointer;
-  font-size:25px;line-height:1;font-family:inherit;color:inherit;
+  width:34px;height:34px;flex:none;border-radius:4px;cursor:pointer;
+  font-size:18px;line-height:1;font-family:inherit;color:inherit;
   background:var(--paper,#FFFDF8);border:1px solid var(--line,rgba(28,24,18,.14));
 }
 .bsr-floor button:hover{border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
 .bsr-floor-n{
-  font-size:30px;font-weight:700;min-width:52px;text-align:center;
+  font-size:19px;font-weight:700;min-width:30px;text-align:center;
   font-variant-numeric:tabular-nums;
 }
 
-/* a compass, because that is what is being asked about */
-.bsr-compass{
-  display:grid;grid-template-columns:repeat(3,58px);grid-auto-rows:48px;
-  gap:6px;justify-content:start;
-}
-.bsr-compass button{
-  font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;
-  border-radius:4px;padding:0;
+.bsr-dirs{display:flex;gap:5px;flex-wrap:wrap}
+.bsr-dirs button{
+  font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;
+  min-width:38px;height:34px;padding:0 7px;border-radius:4px;
   background:var(--paper,#FFFDF8);border:1px solid var(--line,rgba(28,24,18,.14));
   color:var(--text-mute,#5A5140);
 }
-.bsr-compass button:hover{border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
-.bsr-compass button[aria-pressed="true"]{
+.bsr-dirs button:hover{border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
+.bsr-dirs button[aria-pressed="true"]{
   background:var(--ss,#AF5F30);border-color:var(--ss,#AF5F30);color:#FFFDF8;
 }
-.bsr-compass-mid{
-  display:flex;align-items:center;justify-content:center;
-  font-size:15px;font-weight:700;color:var(--ss,#AF5F30);
-  border:1px dashed var(--line,rgba(28,24,18,.14));border-radius:4px;
-}
-.bsr-facing-now{margin-top:10px;font-size:15.5px;color:var(--text-mute,#5A5140)}
-.bsr-facing-now strong{color:var(--text,#1C1812)}
 
 /* ---------------- visit checklist ---------------- */
 .bsr-visit{
