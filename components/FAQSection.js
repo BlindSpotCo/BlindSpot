@@ -1,9 +1,29 @@
 'use client';
 // components/FAQSection.js
-// New section, wasn't on the page before. Every answer is a real fact
-// about the actual product (free to search, no login required for a
-// score, government-record + solar-geometry sourcing, live coverage via
-// coverageLabel(), 50/50 adjustable weighting) -- no invented stats.
+// Every answer is a real fact about the actual product (free to search,
+// no login required for a score, government-record + solar-geometry
+// sourcing, live coverage via coverageLabel(), 50/50 adjustable
+// weighting) -- no invented stats.
+//
+// v2 -- two changes:
+// 1. Each row got its own `.reveal` class so the list would cascade in
+//    on scroll -- but .reveal's "in-view" class is added imperatively
+//    (classList.add, in page.js's IntersectionObserver) straight to the
+//    DOM node, and this component re-renders EVERY row whenever `open`
+//    changes (clicking any question re-renders the whole list, and the
+//    row whose isOpen flips gets a genuinely new className string).
+//    React then reapplies that row's className from scratch, wiping
+//    the manually-added "in-view" class the observer had set --
+//    exactly what made rows silently go transparent after any click,
+//    not just the one you opened. Reveal now lives on the outer
+//    <section> only (untouched by `open`, so it's safe), and the list
+//    cascades in via pure CSS keyed off .section-tint.in-view instead
+//    (see .faq2-item in globals.css) -- nothing here mutates a row's
+//    classList imperatively, so there's nothing for a re-render to
+//    stomp on.
+// 2. Added a small numbered badge per row (alternating the same --av/
+//    --ss accents as every other section) that lights up on open --
+//    was just a plain text list before.
 
 import { useState } from 'react';
 import { coverageLabel } from '@/lib/aslivastu/cityMeta';
@@ -51,15 +71,19 @@ export default function FAQSection() {
         <div className="faq2-list">
           {items.map((item, i) => {
             const isOpen = open === i;
+            const accent = i % 2 === 0 ? 'av' : 'ss';
             return (
-              <div key={item.q} className={`faq2-item reveal${isOpen ? ' is-open' : ''}`}>
+              <div key={item.q} className={`faq2-item accent-${accent}${isOpen ? ' is-open' : ''}`}>
                 <button
                   type="button"
                   className="faq2-q"
                   onClick={() => setOpen(isOpen ? -1 : i)}
                   aria-expanded={isOpen}
                 >
-                  <span>{item.q}</span>
+                  <span className="faq2-q-left">
+                    <span className="faq2-num">{String(i + 1).padStart(2, '0')}</span>
+                    <span>{item.q}</span>
+                  </span>
                   <span className="faq2-plus" aria-hidden="true" />
                 </button>
                 <div className="faq2-a-wrap">
