@@ -223,15 +223,19 @@ export default function HeroLiveMapCanvas() {
       >
         <TileLayer
           className="hlm-tiles"
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          maxZoom={20}
+          detectRetina
         />
         {pin && <Marker position={[pin.lat, pin.lon]} icon={pinIcon} />}
         <FlyTo lat={center.lat} lon={center.lon} zoom={pin ? FLY_ZOOM : DEFAULT_ZOOM} flyKey={flyKey} />
         {!pin && <IntroFly lat={DEFAULT_CENTER.lat} lon={DEFAULT_CENTER.lon} zoom={DEFAULT_ZOOM} />}
       </MapContainer>
 
+      <div className="hlm-glow" aria-hidden="true" />
       <div className="hlm-scrim" aria-hidden="true" />
+      <div className="hlm-grain" aria-hidden="true" />
 
       <div className="hlm-content">
         <div className="hlm-copy">
@@ -247,7 +251,7 @@ export default function HeroLiveMapCanvas() {
               We catch things like hidden water damage, poor natural light, high pollution, extra noise, and safety risks the listing photos won&apos;t show you.
             </span>
           </p>
-          <p className="hlm-resolve">Find yours in one search.</p>
+          <p className="hlm-resolve">Search your address to find yours.</p>
         </div>
 
         <div className="hlm-searchwrap" ref={boxRef}>
