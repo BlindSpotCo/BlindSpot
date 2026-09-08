@@ -184,7 +184,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
                 Score step for this same pin, not a second stop back at
                 the location picker. Kept the plain "Close" above it too,
                 for the person who genuinely is just done looking. */}
-            <button onClick={handleContinueToSunScore} style={{ fontSize: 12.5, fontWeight: 700, border: 'none', borderRadius: 3, padding: '9px 18px', color: '#fff', background: 'var(--slate)' }}>Continue to Sun Score →</button>
+            <button onClick={handleContinueToSunScore} style={{ fontSize: 12.5, fontWeight: 700, border: 'none', borderRadius: 3, padding: '9px 18px', color: '#fff', background: 'var(--slate)' }}>Continue to the flat →</button>
           </div>
         </div>
 

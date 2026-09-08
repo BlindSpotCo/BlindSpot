@@ -40,7 +40,13 @@ export default function SiteHeader({ homeHref = '/' }) {
   // own form while you were filling it in, inviting you to abandon the
   // thing you were in the middle of -- and the nav didn't appear until
   // you scrolled, so the page opened with no way out at all.
-  const onFlow = pathname?.startsWith('/property-score') || pathname?.startsWith('/floor-plan-analysis');
+  // /report is the same thing again: it IS the flow now -- the address
+  // search on the homepage lands straight on it. Treated as a marketing
+  // page it hid its own nav until you scrolled and floated an "Uncover
+  // Your BlindSpot" pill over a report you had already uncovered.
+  const onFlow = pathname?.startsWith('/property-score')
+    || pathname?.startsWith('/floor-plan-analysis')
+    || pathname?.startsWith('/report');
 
   const [user, setUser] = useState(null);
   const [checkedAuth, setCheckedAuth] = useState(false);

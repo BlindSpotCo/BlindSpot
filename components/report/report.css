@@ -1,0 +1,340 @@
+/* components/report/report.css
+   Built on the app's own tokens. The two halves take the two engine
+   accents the rest of the app already uses -- --av for the area,
+   --ss for the flat -- so the split reads as the product's own two
+   halves rather than a new colour scheme.
+
+   Type runs larger than the rest of the app on purpose: this is the
+   screen a buyer reads, and some of them are buying their last home,
+   not their first. */
+
+.bsr{
+  --bsr-good:#3C7A50;
+  --bsr-good-bg:#E8F0E9;
+  --bsr-avg:#7C6C52;
+  --bsr-avg-bg:#F2EDE3;
+  --bsr-poor:#A2483C;
+  --bsr-poor-bg:#F8E9E5;
+  --bsr-none-bg:#EEEAE1;
+
+  max-width:1120px;
+  margin:0 auto;
+  padding:0 20px 64px;
+  color:var(--text,#1C1812);
+  font-size:17px;
+  line-height:1.6;
+}
+.bsr h1,.bsr h2{margin:0;text-wrap:balance;letter-spacing:-.01em}
+.bsr p{margin:0}
+
+.bsr-boot,.bsr-empty{padding:64px 20px;text-align:center;color:var(--text-mute,#5A5140)}
+.bsr-empty h1{font-size:28px;margin-bottom:10px}
+.bsr-empty p{max-width:46ch;margin:0 auto 22px;font-size:17px}
+
+/* ---------------- address bar ---------------- */
+.bsr-head{
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  padding:18px 0 15px;border-bottom:1px solid var(--line,rgba(28,24,18,.14));
+}
+.bsr-addr{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.bsr-pin{
+  width:11px;height:11px;border-radius:50%;flex:none;
+  background:var(--ss,#AF5F30);box-shadow:0 0 0 4px rgba(175,95,48,.15);
+}
+.bsr-addr-text{
+  font-size:16.5px;font-weight:600;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.bsr-head-links{display:flex;gap:18px;flex:none}
+.bsr-head-links a{
+  color:var(--ss,#AF5F30);font-size:15px;font-weight:600;
+  text-decoration:underline;text-underline-offset:3px;white-space:nowrap;
+}
+
+/* ---------------- the answer ---------------- */
+.bsr-answer{
+  display:flex;align-items:center;gap:32px;flex-wrap:wrap;
+  background:var(--paper,#FFFDF8);
+  border:1px solid var(--line,rgba(28,24,18,.14));
+  border-top:4px solid var(--bsr-good);
+  border-radius:5px;padding:30px 32px;margin-top:24px;
+}
+.bsr-answer.is-avg{border-top-color:var(--bsr-avg)}
+.bsr-answer.is-poor{border-top-color:var(--bsr-poor)}
+
+.bsr-big{display:flex;flex-direction:column;flex:none}
+.bsr-big-n{
+  font-size:78px;line-height:.88;font-weight:800;letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums;color:var(--bsr-good);
+}
+.bsr-answer.is-avg .bsr-big-n{color:var(--bsr-avg)}
+.bsr-answer.is-poor .bsr-big-n{color:var(--bsr-poor)}
+.bsr-big-of{font-size:15px;font-weight:500;color:var(--text-mute,#5A5140);margin-top:9px}
+
+.bsr-answer-say{flex:1;min-width:290px}
+.bsr-answer-say h1{font-size:30px;line-height:1.24;font-weight:700;margin-bottom:10px}
+.bsr-answer-say p{font-size:17.5px;color:var(--text-mute,#5A5140);max-width:62ch}
+
+/* ---------------- the two halves ---------------- */
+.bsr-halves{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px;align-items:stretch}
+.bsr-half{
+  background:var(--paper,#FFFDF8);
+  border:1px solid var(--line,rgba(28,24,18,.14));
+  border-radius:5px;padding:24px 26px 26px;min-width:0;
+  display:flex;flex-direction:column;
+}
+.bsr-area{border-top:3px solid var(--av,#7A2E43)}
+.bsr-unit{border-top:3px solid var(--ss,#AF5F30)}
+
+.bsr-kicker{
+  font-size:13.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  margin-bottom:6px;
+}
+.bsr-area .bsr-kicker{color:var(--av,#7A2E43)}
+.bsr-unit .bsr-kicker{color:var(--ss,#AF5F30)}
+.bsr-half h2{font-size:24px;font-weight:700;line-height:1.25}
+.bsr-sub{color:var(--text-mute,#5A5140);font-size:16px;margin-top:3px}
+
+.bsr-rating{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:18px}
+.bsr-word{font-size:28px;font-weight:700;letter-spacing:-.02em}
+.bsr-word.is-good{color:var(--bsr-good)}
+.bsr-word.is-avg{color:var(--bsr-avg)}
+.bsr-word.is-poor{color:var(--bsr-poor)}
+.bsr-word.is-none{color:var(--text-mute,#5A5140)}
+.bsr-outof{font-size:16px;color:var(--text-mute,#5A5140);font-variant-numeric:tabular-nums}
+
+/* ---------------- rows: a word, not a bar ---------------- */
+.bsr-rows{
+  list-style:none;margin:20px 0 0;padding:14px 0 0;
+  border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
+}
+.bsr-rows li{
+  display:flex;align-items:center;gap:14px;padding:10px 0;
+  border-bottom:1px solid var(--line-soft,rgba(28,24,18,.08));
+  font-size:16.5px;
+}
+.bsr-rows li:last-child{border-bottom:0}
+.bsr-row-what{flex:1;min-width:0}
+.bsr-row-note{display:block;font-size:14.5px;color:var(--text-mute,#5A5140);line-height:1.45}
+.bsr-tag{
+  flex:none;font-size:14.5px;font-weight:600;
+  padding:4px 12px;border-radius:3px;white-space:nowrap;
+}
+.bsr-tag.is-good{background:var(--bsr-good-bg);color:var(--bsr-good)}
+.bsr-tag.is-avg{background:var(--bsr-avg-bg);color:var(--bsr-avg)}
+.bsr-tag.is-poor{background:var(--bsr-poor-bg);color:var(--bsr-poor)}
+.bsr-tag.is-none{background:var(--bsr-none-bg);color:var(--text-mute,#5A5140)}
+
+/* ---------------- not covered ---------------- */
+.bsr-nocover{
+  margin-top:18px;padding:18px 20px;border-radius:4px;
+  background:var(--bg-2,#F1E9DA);color:var(--text-mute,#5A5140);font-size:16.5px;
+}
+.bsr-nocover-aqi{margin-top:10px;color:var(--text,#1C1812)}
+
+/* ---------------- report links ---------------- */
+.bsr-more{
+  margin-top:auto;padding-top:22px;
+  display:flex;flex-direction:column;align-items:flex-start;gap:4px;
+}
+.bsr-more a{
+  display:inline-flex;align-items:center;min-height:46px;
+  font-size:17px;font-weight:700;text-decoration:underline;text-underline-offset:4px;
+}
+.bsr-area .bsr-more a{color:var(--av,#7A2E43)}
+.bsr-unit .bsr-more a{color:var(--ss,#AF5F30)}
+.bsr-more-note{font-size:15px;color:var(--text-mute,#5A5140);max-width:52ch}
+
+/* ---------------- the map, its own full-width band ----------------
+   Wide on purpose: Map3DShadow hides its own view-angle pad below 768px,
+   so a half-width card left half the map unreachable. */
+.bsr-mapzone{
+  margin-top:22px;padding:24px 26px 26px;border-radius:5px;
+  background:var(--paper,#FFFDF8);
+  border:1px solid var(--line,rgba(28,24,18,.14));
+  border-top:3px solid var(--ss,#AF5F30);
+}
+.bsr-mapzone .bsr-kicker{color:var(--ss,#AF5F30)}
+/* A real `height`, not min-height: Map3DShadow's iframe carries an inline
+   height:100%, which beats any class rule and resolves against nothing
+   when the parent's height is auto -- that's what collapsed the map to a
+   strip with dead space under it. */
+.bsr-map{
+  margin-top:14px;border:1px solid var(--line,rgba(28,24,18,.14));
+  border-radius:4px;overflow:hidden;position:relative;
+  height:min(70vh, 620px);
+  background:var(--bg-2,#F1E9DA);
+}
+.bsr-map > *{width:100%;height:100%}
+.bsr-map-wait{
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  height:100%;padding:0 24px;color:var(--text-mute,#5A5140);font-size:16px;
+}
+
+.bsr-timerow{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px}
+.bsr-timerow label{font-size:16px;font-weight:600;flex:none}
+.bsr-timerow input[type=range]{flex:1;min-width:150px;height:26px;accent-color:var(--ss,#AF5F30)}
+.bsr-clock{
+  font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;
+  min-width:92px;text-align:right;flex:none;
+}
+
+/* ---------------- the two questions ---------------- */
+.bsr-asks{
+  margin-top:22px;padding-top:20px;
+  border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
+  display:grid;gap:22px;
+}
+.bsr-q{font-size:17px;font-weight:600;margin-bottom:10px}
+.bsr-floor{display:flex;align-items:center;gap:16px}
+.bsr-floor button{
+  width:50px;height:50px;flex:none;border-radius:4px;cursor:pointer;
+  font-size:25px;line-height:1;font-family:inherit;color:inherit;
+  background:var(--paper,#FFFDF8);border:1px solid var(--line,rgba(28,24,18,.14));
+}
+.bsr-floor button:hover{border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
+.bsr-floor-n{
+  font-size:30px;font-weight:700;min-width:52px;text-align:center;
+  font-variant-numeric:tabular-nums;
+}
+
+.bsr-facings{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:440px}
+.bsr-facings button{
+  font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;
+  min-height:48px;padding:0 12px;border-radius:4px;
+  background:var(--paper,#FFFDF8);border:1px solid var(--line,rgba(28,24,18,.14));
+  color:var(--text-mute,#5A5140);
+}
+.bsr-facings button:hover{border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
+.bsr-facings button[aria-pressed="true"]{
+  background:rgba(175,95,48,.09);border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30);
+}
+
+/* ---------------- visit checklist ---------------- */
+.bsr-visit{
+  margin-top:22px;padding:28px 30px;border-radius:5px;
+  background:var(--paper,#FFFDF8);
+  border:1px solid var(--line,rgba(28,24,18,.14));
+  border-left:4px solid var(--brand,#7A2E43);
+}
+.bsr-visit h2{font-size:24px;font-weight:700}
+.bsr-visit-lede{margin-top:8px;color:var(--text-mute,#5A5140);max-width:68ch;font-size:17px}
+.bsr-todo{list-style:none;margin:22px 0 0;padding:0}
+.bsr-todo li{
+  display:flex;gap:16px;padding:16px 0;
+  border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
+}
+.bsr-box{
+  flex:none;width:22px;height:22px;margin-top:4px;border-radius:4px;
+  border:1.5px solid var(--brand,#7A2E43);background:rgba(122,46,67,.07);
+}
+.bsr-todo-body{min-width:0}
+.bsr-todo-title{display:block;font-size:17px;font-weight:700;margin-bottom:3px}
+.bsr-todo-text{display:block;font-size:16.5px;color:var(--text-mute,#5A5140)}
+
+/* ---------------- weighting, inside the answer card ---------------- */
+.bsr-matters{
+  flex-basis:100%;
+  margin-top:24px;padding-top:20px;
+  border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+}
+.bsr-matters .bsr-q{margin-bottom:0;font-size:18px;flex:none}
+.bsr-opts{display:flex;gap:10px;flex-wrap:wrap}
+.bsr-opts button{
+  font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;
+  min-height:48px;padding:11px 18px;border-radius:4px;
+  background:var(--bg,#FAF6EE);border:1px solid var(--line,rgba(28,24,18,.14));
+  color:var(--text-mute,#5A5140);
+}
+.bsr-opts button:hover{border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
+.bsr-opts button[aria-pressed="true"]{
+  background:rgba(175,95,48,.09);border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30);
+}
+.bsr-matters-note{font-size:15px;color:var(--text-mute,#5A5140);flex:1;min-width:190px}
+
+/* ---------------- close ---------------- */
+.bsr-close{
+  margin-top:26px;padding:34px 28px;text-align:center;border-radius:5px;
+  background:var(--paper,#FFFDF8);border:1px solid var(--line,rgba(28,24,18,.14));
+}
+.bsr-close h2{font-size:25px;font-weight:700}
+.bsr-close h2 em{font-style:italic;color:var(--ss,#AF5F30)}
+.bsr-close > p{margin:10px auto 22px;max-width:56ch;color:var(--text-mute,#5A5140);font-size:17px}
+.bsr-cta{
+  display:inline-block;font-size:18px;font-weight:700;text-decoration:none;
+  padding:16px 32px;border-radius:4px;
+  background:var(--ss,#AF5F30);color:#FFFDF8;
+}
+.bsr-cta:hover{background:#95502A}
+.bsr-free{display:block;margin-top:12px;font-size:15px;color:var(--text-mute,#5A5140)}
+.bsr-also{
+  display:block;margin-top:24px;padding-top:22px;font-size:16px;
+  border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
+  color:var(--text-mute,#5A5140);
+}
+.bsr-also a{
+  color:var(--ss,#AF5F30);font-weight:600;
+  text-decoration:underline;text-underline-offset:4px;
+}
+
+.bsr-foot{
+  margin-top:22px;text-align:center;font-size:14.5px;line-height:1.7;
+  color:var(--text-mute,#5A5140);
+}
+
+/* ---------------- focus, always ---------------- */
+.bsr a:focus-visible,
+.bsr button:focus-visible,
+.bsr input:focus-visible{
+  outline:2px solid var(--ss,#AF5F30);outline-offset:3px;border-radius:3px;
+}
+
+@media (max-width:1000px){
+  /* below this the iframe is under 768px and hides its own controls;
+     let it be tall instead so panning is still workable */
+  .bsr-map{height:62vh}
+}
+@media (max-width:900px){
+  .bsr-halves{grid-template-columns:1fr}
+  .bsr-big-n{font-size:64px}
+  .bsr-answer{gap:22px;padding:24px}
+  .bsr-answer-say h1{font-size:25px}
+  .bsr-head-links{width:100%}
+}
+
+/* ---------------- moving the pin ---------------- */
+.bsr-locbar{
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:18px;
+}
+.bsr-locbar input[type=search]{
+  flex:1;min-width:170px;font:inherit;font-size:16px;
+  padding:11px 14px;border-radius:4px;min-height:46px;
+  border:1px solid var(--line,rgba(28,24,18,.14));
+  background:var(--paper,#FFFDF8);color:inherit;
+}
+.bsr-locbar button{
+  font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;
+  min-height:46px;padding:0 16px;border-radius:4px;
+  border:1px solid var(--line,rgba(28,24,18,.14));
+  background:var(--paper,#FFFDF8);color:var(--text-mute,#5A5140);
+}
+.bsr-locbar button:hover:not(:disabled){border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
+.bsr-locbar button:disabled{opacity:.55;cursor:default}
+.bsr-locerror{
+  margin-top:9px;font-size:15px;color:var(--poor,#A2483C);
+}
+.bsr-maphint{
+  margin-top:8px;font-size:14.5px;color:var(--text-mute,#5A5140);
+}
+
+/* ---------------- watching the day ---------------- */
+.bsr-play{
+  font:inherit;font-size:15.5px;font-weight:700;cursor:pointer;flex:none;
+  min-height:46px;padding:0 18px;border-radius:4px;
+  border:1px solid var(--ss,#AF5F30);
+  background:var(--paper,#FFFDF8);color:var(--ss,#AF5F30);
+}
+.bsr-play.is-on{background:var(--ss,#AF5F30);color:#FFFDF8}
+.bsr-play:hover{filter:brightness(.96)}
+.bsr-sunhint{font-size:15px;color:var(--text-mute,#5A5140);flex:1;min-width:180px}
