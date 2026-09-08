@@ -58,6 +58,37 @@ export default function SiteHeader({ homeHref = '/' }) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // The homepage opens on the live-map hero -- a near-black field, not the
+  // usual cream page background. The header's normal resting state (fully
+  // transparent, dark-ink logo) is tuned for sitting over that cream
+  // background: transparent over the dark hero just let the header's own
+  // 66px row show the cream <body> behind it, which is what read as a
+  // stray empty bar above the map. `heroCleared` tracks whether we've
+  // scrolled past the hero's own height (not just the old 24px threshold)
+  // -- while it's false we're guaranteed to still be over the dark field,
+  // so the header can paint itself the same dark tone (see
+  // header.header-on-dark in globals.css) and swap the logo to its light
+  // variant, instead of leaving the row transparent. Every other page
+  // starts "cleared" immediately -- nothing there needs this treatment.
+  const isHome = pathname === '/';
+  const [heroCleared, setHeroCleared] = useState(!isHome);
+  useEffect(() => {
+    if (!isHome) { setHeroCleared(true); return undefined; }
+    setHeroCleared(false);
+    const compute = () => {
+      const heroEl = document.querySelector('.hero-statement');
+      const h = heroEl ? heroEl.getBoundingClientRect().height : window.innerHeight;
+      setHeroCleared(window.scrollY > h - 80);
+    };
+    compute();
+    window.addEventListener('scroll', compute, { passive: true });
+    window.addEventListener('resize', compute);
+    return () => {
+      window.removeEventListener('scroll', compute);
+      window.removeEventListener('resize', compute);
+    };
+  }, [isHome]);
+
   // Floating "Uncover Your BlindSpot" pill -- used to live only in
   // app/page.js, originally gated behind a scroll threshold so it only
   // appeared once beat 2's own full-size CTA had had its moment -- per
@@ -68,7 +99,7 @@ export default function SiteHeader({ homeHref = '/' }) {
   // keeps it, not just the homepage. Suppressed on the property-score
   // flow itself, same as the nav CTA above -- pointing at the page
   // you're already on is dead weight.
-  const floatingCtaVisible = !onFlow;
+  const floatingCtaVisible = !onFlow && heroCleared;
 
   useEffect(() => {
     const supabase = createClient();
@@ -134,11 +165,11 @@ export default function SiteHeader({ homeHref = '/' }) {
   // never crosses that threshold, so the nav (and with it, the only way
   // back to Tools/How It Works/home besides the browser's own back
   // button) just never appears for the whole time they're in the flow.
-  const revealNav = scrolled || onFlow;
+  const revealNav = onFlow || (isHome ? heroCleared : scrolled);
 
   return (
     <>
-      <header className={revealNav ? 'scrolled' : ''}>
+      <header className={revealNav ? 'scrolled' : (isHome ? 'header-on-dark' : '')}>
       <nav className={`wrap${revealNav ? '' : ' nav-centered'}`}>
         <Link href={homeHref} className="brand">
           <img className="brand-mark-img" src="/mark.png" alt="BlindSpot" />
