@@ -1,0 +1,25 @@
+// app/report/page.js
+//
+// The screen a picked address lands on. No chooser step in between: the hero
+// search knows the address, so this page opens straight into both answers.
+//
+// Everything it needs arrives in the query string:
+//   /report?lat=&lon=&pin_code=&address=
+// pin_code is optional -- an address outside neighbourhood coverage still
+// gets the flat's half, and the page says so rather than failing.
+
+import { Suspense } from 'react';
+import ReportScreen from '@/components/report/ReportScreen';
+
+export const metadata = {
+  title: 'Your BlindSpot report',
+  description: 'The neighbourhood, the flat, and one honest verdict for the two together.',
+};
+
+export default function ReportPage() {
+  return (
+    <Suspense fallback={<div className="bsr-boot">Opening this address…</div>}>
+      <ReportScreen />
+    </Suspense>
+  );
+}

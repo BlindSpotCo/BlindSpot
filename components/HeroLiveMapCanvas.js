@@ -158,7 +158,7 @@ export default function HeroLiveMapCanvas() {
   };
 
   const pick = (r) => {
-    setPin({ lat: r.lat, lon: r.lon });
+    setPin({ lat: r.lat, lon: r.lon, postcode: r.postcode || '', label: r.displayName || '' });
     setQuery(r.displayName);
     setOpen(false);
     setResults([]);
@@ -306,7 +306,12 @@ export default function HeroLiveMapCanvas() {
                 )}
               </div>
             )}
-            <PinDropTransition href="/property-score" className="hlm-cta">
+            <PinDropTransition
+              href={`/report?lat=${pin.lat}&lon=${pin.lon}` +
+                    `&pin_code=${encodeURIComponent(pin.postcode || '')}` +
+                    `&address=${encodeURIComponent(pin.label || query || '')}`}
+              className="hlm-cta"
+            >
               {hasAnyInsight ? 'See sunlight, safety & more' : 'See the full breakdown'} <span>→</span>
             </PinDropTransition>
           </div>
