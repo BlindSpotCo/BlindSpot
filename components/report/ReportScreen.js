@@ -43,6 +43,8 @@ const SHORT = {
   'South': 'S', 'South-West': 'SW', 'West': 'W', 'North-West': 'NW',
 };
 
+const FLOORS = Array.from({ length: 60 }, (_, i) => i + 1);
+
 const TZ = 330;
 const DEFAULT_FLOOR = 5;
 const DEFAULT_FACING = 'South-East';
@@ -510,38 +512,31 @@ export default function ReportScreen() {
         <section className="bsr-half bsr-unit" id="the-flat" ref={unitRef}>
           <p className="bsr-kicker">The flat itself</p>
 
-          {/* The heading is the control. Naming the flat and changing it are
-              the same act, so nothing here is a dead label and nothing sits
-              a screen away from the score it moves. */}
-          <div className="bsr-which">
-            <span className="bsr-which-floor">
-              <button type="button" onClick={() => bumpFloor(-1)} aria-label="One floor lower">−</button>
-              <span className="bsr-which-n" aria-live="polite">{ord(floor)}</span>
-              <button type="button" onClick={() => bumpFloor(1)} aria-label="One floor higher">+</button>
-              <span className="bsr-which-word">floor</span>
-            </span>
+          <h2>{ord(floor)} floor, faces {facing.toLowerCase()}</h2>
 
-            <span className="bsr-which-facing">
-              <span className="bsr-which-word" id="bsr-q-facing">balcony faces</span>
-              <span className="bsr-dirs" role="group" aria-labelledby="bsr-q-facing">
-                {FACING_OPTS.map((f) => (
-                  <button
-                    key={f}
-                    type="button"
-                    aria-label={f}
-                    aria-pressed={f === facing}
-                    onClick={() => { setAssumed(false); setFacing(f); }}
-                  >
-                    {SHORT[f]}
-                  </button>
-                ))}
-              </span>
-            </span>
-          </div>
-
-          {assumed ? (
-            <p className="bsr-assumed">Assumed — set the real floor and facing above.</p>
-          ) : null}
+          {/* Two inputs, said the way a form says them, directly under the
+              title they change and directly above the score they move. */}
+          <p className="bsr-set">
+            <label>
+              <span>Floor</span>
+              <select
+                value={floor}
+                onChange={(e) => { setAssumed(false); setFloor(Number(e.target.value)); }}
+              >
+                {FLOORS.map((f) => <option key={f} value={f}>{f}</option>)}
+              </select>
+            </label>
+            <label>
+              <span>Faces</span>
+              <select
+                value={facing}
+                onChange={(e) => { setAssumed(false); setFacing(e.target.value); }}
+              >
+                {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
+              </select>
+            </label>
+            {assumed ? <span className="bsr-assumed">assumed — set yours</span> : null}
+          </p>
 
           <p className="bsr-rating" aria-live="polite">
             <span className={`bsr-word is-${toneOf(unit.score)}`}>{word(unit.score)}</span>
@@ -570,9 +565,10 @@ export default function ReportScreen() {
           </ul>
 
           <p className="bsr-more">
-            <a href={flowHref('unit')} target="_blank" rel="noopener">See the detailed flat report →</a>
+            <a href={`${flowHref('unit')}&report=1`} target="_blank" rel="noopener">Generate the detailed flat report →</a>
             <span className="bsr-more-note">
-              Shadow by season and time of day, month-by-month sunlight, and how other floors compare.
+              A PDF for this floor and facing: shadow by season and time of day, month-by-month sunlight
+              hours, and 12 map angles with their own analysis.
             </span>
           </p>
         </section>

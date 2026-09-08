@@ -55,6 +55,10 @@ export default async function PropertyScorePage({ searchParams }) {
     addressLabel: sp?.addr || areaRecord?.name || null,
     floor: sp?.floor != null && sp.floor !== '' ? Number(sp.floor) : null,
     facing: sp?.facing || null,
+    // ?report=1 -- arrive and generate the PDF, rather than landing on a
+    // screen with a Generate button on it. Used by /report's "detailed
+    // flat report" link, which promises the report itself.
+    autoReport: sp?.report === '1',
   };
   // Nothing at all in the URL -- plain fresh visit, don't force any tab.
   const hasSelection = Boolean(initial.stage || initial.personaId || initial.mode || initial.lat);

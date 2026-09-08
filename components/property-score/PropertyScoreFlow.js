@@ -749,6 +749,7 @@ export default function PropertyScoreFlow({ initial }) {
               onBackToUnit={() => setViewStage('unit')}
               initialFloor={floor}
               initialFacing={facing}
+              autoReport={initial?.autoReport}
               onUnitPicked={handleUnitPicked}
               onSeeNeighbourhood={seeNeighbourhood}
               seeNeighbourhoodBusy={areaLookupBusy}
