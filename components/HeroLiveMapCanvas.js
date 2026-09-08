@@ -96,7 +96,7 @@ function IntroFly({ lat, lon, zoom }) {
     if (fired.current) return;
     fired.current = true;
     const t = setTimeout(() => {
-      map.flyTo([lat, lon], zoom, { duration: 3.1, easeLinearity: 0.18 });
+      map.flyTo([lat, lon], zoom, { duration: 2.1, easeLinearity: 0.18 });
     }, 350);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
