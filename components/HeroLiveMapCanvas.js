@@ -236,9 +236,8 @@ export default function HeroLiveMapCanvas() {
       <div className="hlm-content">
         <div className="hlm-copy">
           <span className="hlm-eyebrow">Property Intelligence</span>
-          <h1 className="hlm-h1">See what listings don&apos;t tell you.</h1>
+          <h1 className="hlm-h1">Every property has a blindspot.</h1>
           <p className="hlm-typed-line">
-            <span className="hlm-typed-label">We catch things like</span>
             <TypewriterCycle
               items={BLINDSPOT_EXAMPLES}
               className="hlm-typed-text"
