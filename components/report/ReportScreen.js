@@ -572,9 +572,8 @@ export default function ReportScreen() {
               type="button"
               className="bsr-genlink"
               onClick={() => setReportOpen('gallery')}
-              disabled={!capture.ready}
             >
-              {capture.ready ? 'Generate the sun & shadow report →' : 'Waiting for the 3D map…'}
+              Generate the sun &amp; shadow report →
             </button>
             <span className="bsr-more-note">
               12 map angles at this exact pin, 3 per season at 9am / noon / 3pm, each with its own
@@ -702,9 +701,8 @@ export default function ReportScreen() {
           type="button"
           className="bsr-cta"
           onClick={() => setReportOpen('full')}
-          disabled={!capture.ready}
         >
-          {capture.ready ? 'Generate the full report' : 'Waiting for the 3D map…'}
+          Generate the full report
         </button>
         <span className="bsr-free">Opens in a new tab, so this page keeps your floor and facing. Your first address is free.</span>
         <span className="bsr-also">
