@@ -23,11 +23,17 @@ import './report.css';
 // first, the plumbing of daily life after.
 const FACTOR_ORDER = ['crime', 'schools', 'air', 'water', 'power', 'roads', 'infrastructure', 'sewerage'];
 
-// Sub-scores whose method the buyer deserves to know, in their words.
-const UNIT_NOTES = {
-  view: 'Estimated from your floor, not this exact window',
-  privacy: 'Estimated from your floor, not this exact window',
-  wind: 'From live wind readings',
+// What each government-sourced factor actually measures. The API sends a
+// number and a label; "Sewerage: Excellent" means nothing on its own.
+const FACTOR_MEANS = {
+  crime: 'Recorded crime, against other localities in the city',
+  schools: 'How many schools are within reach, and their boards',
+  air: 'Air quality across the year',
+  water: 'Supply hours, coverage and water quality',
+  power: 'How often the power goes, and for how long',
+  roads: 'Road condition, potholes and when it was last resurfaced',
+  infrastructure: 'Metro, highways and what is planned nearby',
+  sewerage: 'Drainage coverage, treatment and waterlogging risk',
 };
 
 const TZ = 330;
@@ -124,6 +130,7 @@ export default function ReportScreen() {
   const [solar, setSolar] = useState(null);
   const [solarFailed, setSolarFailed] = useState(false);
   const [aqi, setAqi] = useState(null);
+  const [busy, setBusy] = useState(false);
   const [minutes, setMinutes] = useState(630);   // only meaningful while paused
   // The animation runs inside Map3DShadow while `animating` is true --
   // SunScoutPanel starts it playing, and the shadows moving is the whole
@@ -144,6 +151,7 @@ export default function ReportScreen() {
 
     const id = ++scoreReq.current;
     let cancelled = false;
+    setBusy(true);
     setState((s) => (s === 'ready' ? 'ready' : 'loading')); // keep the page up while re-scoring
 
     const common = `lat=${lat}&lon=${lon}&floor=${floor}&facing=${encodeURIComponent(facing)}&tzOffset=${TZ}`;
@@ -189,7 +197,7 @@ export default function ReportScreen() {
         setFailure('scoring');
       }
     }
-    run();
+    run().finally(() => { if (!cancelled && id === scoreReq.current) setBusy(false); });
     return () => { cancelled = true; };
   }, [hasPlace, lat, lon, pinCode, floor, facing, areaWeight]);
 
@@ -432,7 +440,10 @@ export default function ReportScreen() {
               <ul className="bsr-rows">
                 {factorKeys.map((k) => (
                   <li key={k}>
-                    <span className="bsr-row-what">{FACTOR_LABELS[k] || k}</span>
+                    <span className="bsr-row-what">
+                      {FACTOR_LABELS[k] || k}
+                      {FACTOR_MEANS[k] ? <span className="bsr-row-note">{FACTOR_MEANS[k]}</span> : null}
+                    </span>
                     <span className={`bsr-tag is-${toneOf(area.factors[k])}`}>{word(area.factors[k])}</span>
                   </li>
                 ))}
@@ -484,7 +495,7 @@ export default function ReportScreen() {
         </section>
 
         {/* ================= THE FLAT ================= */}
-        <section className="bsr-half bsr-unit" ref={unitRef}>
+        <section className="bsr-half bsr-unit" id="the-flat" ref={unitRef}>
           <p className="bsr-kicker">The flat itself</p>
           <h2>{ord(floor)} floor</h2>
           <p className="bsr-sub">Main balcony faces {facing.toLowerCase()}.</p>
@@ -492,6 +503,14 @@ export default function ReportScreen() {
           <p className="bsr-rating" aria-live="polite">
             <span className={`bsr-word is-${toneOf(unit.score)}`}>{word(unit.score)}</span>
             <span className="bsr-outof">{unit.score} out of 100</span>
+            {busy ? <span className="bsr-busy">recalculating…</span> : null}
+          </p>
+          {/* The five scores below are computed off the 3D model further
+              down the page. Without saying so they read as five numbers
+              from nowhere. */}
+          <p className="bsr-source">
+            Worked out from the sun&apos;s real path over the buildings around this one.{' '}
+            <a href="#the-block">See the block in 3D ↓</a>
           </p>
 
 
@@ -500,7 +519,7 @@ export default function ReportScreen() {
               <li key={s.key}>
                 <span className="bsr-row-what">
                   {s.label}
-                  {UNIT_NOTES[s.key] ? <span className="bsr-row-note">{UNIT_NOTES[s.key]}</span> : null}
+                  {s.summary ? <span className="bsr-row-note">{s.summary}</span> : null}
                 </span>
                 <span className={`bsr-tag is-${toneOf(s.score)}`}>{word(s.score)}</span>
               </li>
@@ -543,8 +562,13 @@ export default function ReportScreen() {
           Map3DShadow hide its own view-angle pad (its stylesheet drops
           .view-controls under 768px), so half the map was unreachable.
           Full width gives the controls back and gives the shadows room. */}
-      <section className="bsr-mapzone" aria-label="The block in 3D">
-        <p className="bsr-kicker">The block around it</p>
+      <section className="bsr-mapzone" id="the-block" aria-label="The block in 3D">
+        <p className="bsr-kicker">Where the flat&apos;s score comes from</p>
+        <p className="bsr-mapzone-lede">
+          The sun&apos;s path across this block today, over the real buildings around it. Sun, Shade &amp; Heat and
+          Wind for the {ord(floor)} floor facing {facing.toLowerCase()} are read off this.{' '}
+          <a href="#the-flat">Back to the flat&apos;s scores ↑</a>
+        </p>
         <form className="bsr-locbar" onSubmit={onSearchSubmit}>
           <input
             type="search"

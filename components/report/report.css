@@ -109,7 +109,7 @@
   border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
 }
 .bsr-rows li{
-  display:flex;align-items:center;gap:14px;padding:10px 0;
+  display:flex;align-items:flex-start;gap:14px;padding:11px 0;
   border-bottom:1px solid var(--line-soft,rgba(28,24,18,.08));
   font-size:16.5px;
 }
@@ -117,7 +117,7 @@
 .bsr-row-what{flex:1;min-width:0}
 .bsr-row-note{display:block;font-size:14.5px;color:var(--text-mute,#5A5140);line-height:1.45}
 .bsr-tag{
-  flex:none;font-size:14.5px;font-weight:600;
+  flex:none;margin-top:1px;font-size:14.5px;font-weight:600;
   padding:4px 12px;border-radius:3px;white-space:nowrap;
 }
 .bsr-tag.is-good{background:var(--bsr-good-bg);color:var(--bsr-good)}
@@ -131,6 +131,22 @@
   background:var(--bg-2,#F1E9DA);color:var(--text-mute,#5A5140);font-size:16.5px;
 }
 .bsr-nocover-aqi{margin-top:10px;color:var(--text,#1C1812)}
+
+/* ---------------- where a score comes from ---------------- */
+.bsr-source{
+  margin-top:10px;font-size:15px;line-height:1.5;
+  color:var(--text-mute,#5A5140);
+}
+.bsr-source a, .bsr-mapzone-lede a{
+  color:var(--ss,#AF5F30);font-weight:600;
+  text-decoration:underline;text-underline-offset:3px;white-space:nowrap;
+}
+.bsr-mapzone-lede{
+  margin-top:6px;font-size:16px;color:var(--text-mute,#5A5140);max-width:78ch;
+}
+.bsr-busy{
+  font-size:14px;color:var(--text-mute,#5A5140);font-style:italic;
+}
 
 /* ---------------- report links ---------------- */
 .bsr-more{
@@ -338,3 +354,6 @@
 .bsr-play.is-on{background:var(--ss,#AF5F30);color:#FFFDF8}
 .bsr-play:hover{filter:brightness(.96)}
 .bsr-sunhint{font-size:15px;color:var(--text-mute,#5A5140);flex:1;min-width:180px}
+
+/* anchor jumps between the flat and the map read better eased */
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
