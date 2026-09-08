@@ -3028,27 +3028,18 @@ header.header-on-dark .brand-word-img{
 .section-closing2 footer{
   position:relative; z-index:1; overflow:hidden; border-top:1px solid rgba(255,255,255,0.1);
 }
-/* Large faint background wordmark behind the link columns -- the one
-   idea worth borrowing wholesale from CollectUI's footer category
-   (several of the best ones there run the brand name oversized and
-   near-invisible behind the actual footer content). Purely
-   decorative, aria-hidden, clipped by footer's own overflow:hidden so
-   it can't create horizontal scroll. */
-.cc-foot-wordmark{
-  position:absolute; z-index:0; left:50%; bottom:-0.24em; transform:translateX(-50%);
-  font-family:'Geist',sans-serif; font-weight:600; font-size:clamp(64px, 14vw, 200px);
-  line-height:1; letter-spacing:-0.02em; color:rgba(255,255,255,0.04);
-  white-space:nowrap; pointer-events:none; user-select:none;
+.footer-top{
+  position:relative; z-index:1; display:flex; align-items:center; gap:16px;
+  padding:var(--space-7) 0 var(--space-6); border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.footer-tagline{
+  font-family:'Geist Mono',monospace; font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+  color:rgba(255,253,248,0.4); padding-left:16px; border-left:1px solid rgba(255,255,255,0.15);
 }
 .footer-row2{
   position:relative; z-index:1;
-  display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:var(--space-6);
-  padding:var(--space-8) 0 var(--space-6);
-}
-.footer-col-brand{ display:flex; flex-direction:column; gap:12px }
-.footer-tagline{
-  font-family:'Geist Mono',monospace; font-size:12.5px; letter-spacing:.08em; text-transform:uppercase;
-  color:rgba(255,253,248,0.45);
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:var(--space-6);
+  padding:var(--space-6) 0;
 }
 .footer-col{ display:flex; flex-direction:column; gap:12px }
 .footer-col-title{
@@ -3068,6 +3059,33 @@ header.header-on-dark .brand-word-img{
 }
 .footer-col a:hover{ color:#fff }
 .footer-col a:hover::after{ transform:scaleX(1) }
+
+/* The wordmark is now its own full-width statement row (not a
+   background layer behind other content) -- bold and dim by default,
+   with a soft gold spotlight that tracks the cursor (ClosingCTA.js
+   sets --mx/--my on mousemove) revealing it in full colour underneath
+   the pointer. Two stacked copies of the same text: the dim base
+   layer always visible, the bright gold layer clipped to a small
+   circle around the pointer via a radial-gradient mask so only that
+   circle reads at full colour. Falls back to a fixed soft highlight
+   near the top on touch devices (no mousemove ever fires, --mx/--my
+   just keep their default) -- still looks deliberate, not broken. */
+.cc-foot-wordmark-wrap{
+  --mx:50%; --my:50%;
+  position:relative; z-index:1; height:clamp(70px, 15vw, 200px);
+  overflow:hidden; user-select:none; cursor:default;
+}
+.cc-foot-wordmark{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:'Geist',sans-serif; font-weight:700; font-size:clamp(56px, 14vw, 190px);
+  line-height:1; letter-spacing:-0.02em; white-space:nowrap;
+}
+.cc-foot-wordmark-base{ color:rgba(255,253,248,0.07); }
+.cc-foot-wordmark-glow{
+  color:var(--brand-yellow);
+  -webkit-mask-image:radial-gradient(circle 200px at var(--mx) var(--my), #000 0%, transparent 72%);
+  mask-image:radial-gradient(circle 200px at var(--mx) var(--my), #000 0%, transparent 72%);
+}
 .footer-bottom{
   position:relative; z-index:1;
   display:flex; align-items:center; justify-content:space-between; gap:var(--space-4); flex-wrap:wrap;
@@ -3077,14 +3095,15 @@ header.header-on-dark .brand-word-img{
 .footer-copyright{ font-size:12.5px; color:rgba(255,253,248,0.4) }
 @media (max-width:900px){
   .footer-row2{ grid-template-columns:1fr 1fr; }
-  .footer-col-brand{ grid-column:1 / -1; margin-bottom:var(--space-2) }
 }
 @media (max-width:640px){
   .section-closing2{ padding:var(--space-7) 0 0 }
   .closing2-inner{ padding-bottom:var(--space-7) }
-  .footer-row2{ grid-template-columns:1fr; gap:var(--space-5); padding:var(--space-7) 0 var(--space-5) }
+  .footer-top{ padding:var(--space-6) 0 var(--space-5) }
+  .footer-row2{ grid-template-columns:1fr; gap:var(--space-5); padding:var(--space-5) 0 }
   .footer-bottom{ flex-direction:column; align-items:flex-start; gap:8px }
+  .cc-foot-wordmark-wrap{ height:clamp(46px, 22vw, 90px) }
 }
 @media (prefers-reduced-motion: reduce){
-  .cc-foot-wordmark{ display:none }
+  .cc-foot-wordmark-glow{ -webkit-mask-image:none; mask-image:none; opacity:.5 }
 }
