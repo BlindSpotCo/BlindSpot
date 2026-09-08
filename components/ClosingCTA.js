@@ -1,16 +1,45 @@
 'use client';
 // components/ClosingCTA.js
-// Final CTA + footer -- same real closing line as before, footer
-// redesigned after looking at CollectUI's footer inspiration category:
-// the recurring pattern there is a large faint background wordmark
-// behind grouped link columns (a small caps label + a short real list
-// under each) instead of one bare row. Only two columns here, both
-// entirely real routes/anchors already in SiteHeader.js -- no invented
-// Legal/Privacy pages, this app doesn't have any.
+// Footer v2 -- the v1 redesign (grain, glow, two link columns, a faint
+// 4%-opacity wordmark sitting behind everything as pure texture) still
+// read as flat per feedback. Followed the specific CollectUI reference
+// this time (merus1894.com's footer): the difference isn't more
+// content, it's that their wordmark is a real BOLD statement in its
+// own row -- not decoration bleeding through behind other content --
+// plus a genuinely interactive hover moment on it. Rebuilt around
+// that:
+// - Small brand lockup as its own top strip (was mixed in as a 3rd
+//   column before).
+// - Three real link columns instead of two -- added Connect, the
+//   two founders' actual LinkedIn links (same URLs as TeamSection.js),
+//   not an invented Careers/Investors column.
+// - The wordmark is now its own full-width statement row, not a
+//   background layer -- bold, and dim by default with a soft gold
+//   spotlight that follows the cursor (radial mask, position driven by
+//   --mx/--my custom properties set on mousemove below) revealing it
+//   in full colour where the pointer passes. Ties directly back to the
+//   section's own line right above it ("...we're making it visible")
+//   instead of being a generic effect borrowed wholesale.
 
+import { useRef } from 'react';
 import PinDropTransition from '@/components/PinDropTransition';
 
 export default function ClosingCTA() {
+  // Tracked against the wordmark row itself (not the whole footer) so
+  // the mask's radial-gradient percentages -- which are relative to
+  // THAT element's own box -- actually line up with the cursor.
+  const wordmarkRef = useRef(null);
+
+  const handleMove = (e) => {
+    const el = wordmarkRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width) * 100;
+    const y = ((e.clientY - r.top) / r.height) * 100;
+    el.style.setProperty('--mx', `${x}%`);
+    el.style.setProperty('--my', `${y}%`);
+  };
+
   return (
     <section className="section section-closing2 reveal">
       <div className="cc-grain" aria-hidden="true" />
@@ -26,16 +55,16 @@ export default function ClosingCTA() {
       </div>
 
       <footer>
-        <div className="cc-foot-wordmark" aria-hidden="true">BLINDSPOT</div>
         <div className="wrap">
-          <div className="footer-row2">
-            <div className="footer-col footer-col-brand">
-              <div className="footer-brand">
-                <img className="brand-mark-img" src="/mark.png" alt="BlindSpot" style={{ height: 19 }} />
-                <img className="brand-word-img" src="/wordmark.png" alt="BlindSpot" style={{ height: 10 }} />
-              </div>
-              <p className="footer-tagline">Property Intelligence</p>
+          <div className="footer-top">
+            <div className="footer-brand">
+              <img className="brand-mark-img" src="/mark.png" alt="BlindSpot" style={{ height: 19 }} />
+              <img className="brand-word-img" src="/wordmark.png" alt="BlindSpot" style={{ height: 10 }} />
             </div>
+            <p className="footer-tagline">Property Intelligence</p>
+          </div>
+
+          <div className="footer-row2">
             <div className="footer-col">
               <span className="footer-col-title">Explore</span>
               <a href="/#how-it-works">How It Works</a>
@@ -48,7 +77,20 @@ export default function ClosingCTA() {
               <a href="/signup">Create an account</a>
               <a href="/login">Sign in</a>
             </div>
+            <div className="footer-col">
+              <span className="footer-col-title">Connect</span>
+              <a href="https://www.linkedin.com/in/gurshaan-singh-baweja" target="_blank" rel="noopener">Gurshaan · LinkedIn</a>
+              <a href="https://www.linkedin.com/in/arushri-gangji-056108381/" target="_blank" rel="noopener">Arushri · LinkedIn</a>
+            </div>
           </div>
+        </div>
+
+        <div className="cc-foot-wordmark-wrap" ref={wordmarkRef} onMouseMove={handleMove} aria-hidden="true">
+          <span className="cc-foot-wordmark cc-foot-wordmark-base">BLINDSPOT</span>
+          <span className="cc-foot-wordmark cc-foot-wordmark-glow">BLINDSPOT</span>
+        </div>
+
+        <div className="wrap">
           <div className="footer-bottom">
             <div className="footer-fine">DATA FROM GOVERNMENT SOURCES + REAL SOLAR GEOMETRY</div>
             <div className="footer-copyright">© 2026 BlindSpot</div>
