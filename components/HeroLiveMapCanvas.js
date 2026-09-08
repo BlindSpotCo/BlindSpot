@@ -12,12 +12,33 @@
 // absolute positioning -- copy, search, and the insight row all sit in
 // normal flow, so nothing can overlap regardless of how tall the
 // headline wraps on a given screen.
+//
+// The insight strip below the search box used to be three static,
+// invented lines ("Bright most of the year" etc.) that never changed no
+// matter what you searched -- looked like decoration, not product, and
+// didn't describe anything BlindSpot actually does per-address without a
+// floor/facing. It's real now, sourced from the same two things the rest
+// of the app already treats as ground truth for a picked address:
+//   - /api/av-localities/lookup -- the real scored Neighbourhood record
+//     for this exact PIN code, when BlindSpot has one (five cities,
+//     309 pincodes right now -- see lib/aslivastu). Reuses verdictFor()/
+//     scoreColor() from AVDetailedReadout.js so the phrasing/colour
+//     matches the real report, not a homepage-only invention.
+//   - /api/aqi -- live modelled air quality for the exact coordinate,
+//     works for effectively any point in India, not just covered pins
+//     (see that route's own header comment). aqiCategory() is the same
+//     CPCB-band function the real scoring pipeline uses.
+// A floor/facing-based Home Comfort number genuinely can't be shown here
+// -- the hero only has a pin, not a unit -- so rather than fake one, the
+// CTA copy says plainly what the next step actually adds.
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import PinDropTransition from '@/components/PinDropTransition';
+import { verdictFor, scoreColor } from '@/components/property-score/AVDetailedReadout';
+import { aqiCategory } from '@/lib/aslivastu/aqi';
 
 // Same default coordinates as the homepage's original rotating
 // coordinate readout -- opens on the same place that readout used to cite.
@@ -43,11 +64,15 @@ function FlyTo({ lat, lon, zoom, flyKey }) {
   return null;
 }
 
-const INSIGHTS = [
-  { key: 'light', label: 'Bright most of the year', sub: 'Home Comfort preview', accent: 'sun' },
-  { key: 'area', label: 'Safe, well-connected area', sub: 'Neighbourhood preview', accent: 'slate' },
-  { key: 'watch', label: 'One thing worth checking', sub: 'Flagged in full report', accent: 'warn' },
-];
+// AQI's 0-500 scale runs the opposite direction of a 0-100 "score" --
+// low AQI is good. This only decides the chip's accent colour, same
+// bands aqiCategory() already uses.
+function aqiAccent(aqi) {
+  if (aqi == null) return 'warn';
+  if (aqi <= 100) return 'sun';
+  if (aqi <= 200) return 'warn';
+  return 'plum';
+}
 
 export default function HeroLiveMapCanvas() {
   const [query, setQuery] = useState('');
@@ -57,8 +82,11 @@ export default function HeroLiveMapCanvas() {
   const [pin, setPin] = useState(null);
   const [flyKey, setFlyKey] = useState(0);
   const [revealed, setRevealed] = useState(false);
+  const [neighbourhood, setNeighbourhood] = useState(null); // null | {found, record?}
+  const [aqi, setAqi] = useState(null); // null | {aqi,...} | 'unavailable'
   const debounceRef = useRef(null);
   const boxRef = useRef(null);
+  const requestIdRef = useRef(0);
 
   const center = pin || DEFAULT_CENTER;
 
@@ -96,7 +124,35 @@ export default function HeroLiveMapCanvas() {
     setResults([]);
     setFlyKey((k) => k + 1);
     setRevealed(false);
-    setTimeout(() => setRevealed(true), 900);
+    setNeighbourhood(null);
+    setAqi(null);
+
+    // Guards against a fast second pick's response landing after an
+    // even-faster third pick -- same idiom lib/aslivastu/useLiveAqi.js
+    // already uses for exactly this race.
+    const reqId = ++requestIdRef.current;
+
+    const neighbourhoodPromise = r.postcode
+      ? fetch(`/api/av-localities/lookup?pin=${encodeURIComponent(r.postcode)}`)
+          .then((res) => res.json())
+          .catch(() => ({ found: false }))
+      : Promise.resolve({ found: false });
+
+    const aqiPromise = fetch(`/api/aqi?lat=${r.lat}&lon=${r.lon}`)
+      .then((res) => res.json())
+      .catch(() => ({ aqi: null }));
+
+    Promise.allSettled([neighbourhoodPromise, aqiPromise]).then(([nRes, aRes]) => {
+      if (reqId !== requestIdRef.current) return;
+      const nData = nRes.status === 'fulfilled' ? nRes.value : { found: false };
+      const aData = aRes.status === 'fulfilled' ? aRes.value : { aqi: null };
+      setNeighbourhood(nData);
+      setAqi(aData?.aqi != null ? aData : 'unavailable');
+      // Small deliberate floor so the pin-drop + fly animation always
+      // gets to register before the strip pops in, even when both
+      // fetches resolve near-instantly from a warm cache.
+      setTimeout(() => { if (reqId === requestIdRef.current) setRevealed(true); }, 450);
+    });
   };
 
   useEffect(() => {
@@ -104,6 +160,12 @@ export default function HeroLiveMapCanvas() {
     document.addEventListener('mousedown', onDoc);
     return () => document.removeEventListener('mousedown', onDoc);
   }, []);
+
+  const nRecord = neighbourhood?.found ? neighbourhood.record : null;
+  const nVerdict = nRecord ? verdictFor(nRecord.nqi_composite) : null;
+  const aqiValue = aqi && aqi !== 'unavailable' ? aqi.aqi : null;
+  const aqiLabel = aqiValue != null ? aqiCategory(aqiValue) : null;
+  const hasAnyInsight = !!nRecord || aqiValue != null;
 
   return (
     <div className="hlm-root">
@@ -162,15 +224,32 @@ export default function HeroLiveMapCanvas() {
         </div>
 
         {pin && (
-          <div className={`hlm-insights${revealed ? ' is-visible' : ''}`}>
-            {INSIGHTS.map((ins) => (
-              <div className={`hlm-chip hlm-chip-${ins.accent}`} key={ins.key}>
-                <span className="hlm-chip-label">{ins.label}</span>
-                <span className="hlm-chip-sub">{ins.sub}</span>
+          <div className={`hlm-panel${revealed ? ' is-visible' : ''}${hasAnyInsight ? '' : ' hlm-panel-cta-only'}`}>
+            {hasAnyInsight && (
+              <div className="hlm-panel-facts">
+                {nRecord && (
+                  <div className="hlm-fact">
+                    <span className="hlm-fact-dot" style={{ background: scoreColor(nRecord.nqi_composite) }} />
+                    <div>
+                      <span className="hlm-fact-label">{nRecord.area || nRecord.name} &middot; {nVerdict.label}</span>
+                      <span className="hlm-fact-sub">Neighbourhood Score {nRecord.nqi_composite}/100</span>
+                    </div>
+                  </div>
+                )}
+                {nRecord && aqiValue != null && <span className="hlm-fact-div" aria-hidden="true" />}
+                {aqiValue != null && (
+                  <div className="hlm-fact">
+                    <span className="hlm-fact-dot" style={{ background: aqiAccent(aqiValue) === 'sun' ? 'var(--ss)' : aqiAccent(aqiValue) === 'plum' ? 'var(--plum)' : 'var(--brand-yellow)' }} />
+                    <div>
+                      <span className="hlm-fact-label">{aqiLabel} air quality</span>
+                      <span className="hlm-fact-sub">Live AQI {aqiValue} right now</span>
+                    </div>
+                  </div>
+                )}
               </div>
-            ))}
+            )}
             <PinDropTransition href="/property-score" className="hlm-cta">
-              See the full breakdown <span>→</span>
+              {hasAnyInsight ? 'See sunlight, safety & more' : 'See the full breakdown'} <span>→</span>
             </PinDropTransition>
           </div>
         )}
