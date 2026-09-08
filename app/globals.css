@@ -2929,12 +2929,44 @@ header.header-on-dark .brand-word-img{
 
 /* ---------- 05 — FAQ ---------- */
 .faq2-list{ max-width:760px }
-.faq2-item{ border-bottom:1px solid var(--line) }
+.faq2-item{
+  border-bottom:1px solid var(--line);
+  opacity:0; /* pre-reveal state -- see the cascade rule below */
+}
+/* Cascades the list in on scroll via a plain CSS animation keyed off
+   the ANCESTOR section's .in-view (added once, to the <section> itself,
+   by page.js's IntersectionObserver -- see the FAQSection.js comment
+   for why that class no longer lives on these rows directly). Nothing
+   here touches a row's own classList, so clicking a question to
+   open/close it (which re-renders every row's className) can't stomp
+   on this the way the old per-row .reveal did. */
+@keyframes faqRise{ from{ opacity:0; transform:translateY(14px) } to{ opacity:1; transform:translateY(0) } }
+.section-tint.in-view .faq2-item{ animation:faqRise .6s cubic-bezier(.16,1,.3,1) both }
+.section-tint.in-view .faq2-item:nth-child(1){ animation-delay:0s }
+.section-tint.in-view .faq2-item:nth-child(2){ animation-delay:.09s }
+.section-tint.in-view .faq2-item:nth-child(3){ animation-delay:.18s }
+.section-tint.in-view .faq2-item:nth-child(4){ animation-delay:.27s }
+.section-tint.in-view .faq2-item:nth-child(5){ animation-delay:.36s }
+@media (prefers-reduced-motion: reduce){
+  .faq2-item{ opacity:1 }
+  .section-tint.in-view .faq2-item{ animation:none }
+}
 .faq2-q{
   width:100%; display:flex; align-items:center; justify-content:space-between; gap:var(--space-4);
   background:none; border:none; cursor:pointer; text-align:left;
   padding:var(--space-5) 0; font-family:'Geist',sans-serif; font-size:16.5px; font-weight:600; color:var(--ink);
 }
+.faq2-q-left{ display:flex; align-items:baseline; gap:16px }
+/* Numbered badge, alternating the same --av/--ss accents every other
+   section uses -- lights up in its own accent once its row is open
+   instead of just staying neutral grey, so the list reads less like a
+   plain FAQ block. */
+.faq2-num{
+  font-family:'Geist Mono',monospace; font-size:12.5px; font-weight:600; letter-spacing:.02em;
+  color:var(--text-dim); flex-shrink:0; width:22px; display:inline-block; transition:color .3s ease;
+}
+.faq2-item.accent-av.is-open .faq2-num{ color:var(--av) }
+.faq2-item.accent-ss.is-open .faq2-num{ color:var(--ss) }
 .faq2-plus{
   position:relative; flex-shrink:0; width:16px; height:16px;
 }
@@ -2945,11 +2977,20 @@ header.header-on-dark .brand-word-img{
 .faq2-plus::before{ left:0; top:7px; width:16px; height:2px }
 .faq2-plus::after{ left:7px; top:0; width:2px; height:16px }
 .faq2-item.is-open .faq2-plus::after{ transform:rotate(90deg); opacity:0 }
+.faq2-item.is-open .faq2-plus::before{ background:var(--brand) }
 .faq2-item.is-open .faq2-q{ color:var(--brand) }
-.faq2-a-wrap{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .25s ease }
+.faq2-a-wrap{
+  display:grid; grid-template-rows:0fr; overflow:hidden;
+  transition:grid-template-rows .3s cubic-bezier(.16,1,.3,1);
+}
 .faq2-item.is-open .faq2-a-wrap{ grid-template-rows:1fr }
 .faq2-a-wrap > .faq2-a{ overflow:hidden; min-height:0 }
-.faq2-a{ font-size:14.5px; line-height:1.7; color:var(--text-mute); padding-bottom:var(--space-5) }
+.faq2-a{
+  font-size:14.5px; line-height:1.7; color:var(--text-mute); padding:0 0 var(--space-5) 38px;
+  opacity:0; transform:translateY(-4px);
+  transition:opacity .3s ease .05s, transform .3s ease .05s;
+}
+.faq2-item.is-open .faq2-a{ opacity:1; transform:translateY(0) }
 
 /* ---------- 06 — Closing CTA + footer ---------- */
 .section-closing2{
