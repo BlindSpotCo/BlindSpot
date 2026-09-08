@@ -17,7 +17,7 @@
 //
 // The two AsliVastu/SunScout tool buttons that used to live here were
 // deliberately removed site-wide in favor of one "Uncover Your BlindSpot"
-// entry point into the real 3-step flow at /property-score.
+// entry point into the report: the address search on the home page.
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -27,7 +27,7 @@ import { openSignInPopup } from '@/lib/auth/popupSignIn';
 import PinDropTransition from '@/components/PinDropTransition';
 
 export default function SiteHeader({ homeHref = '/' }) {
-  // The CTA is an entry point into /property-score -- pointing at the page
+  // The CTA is an entry point into the report -- pointing at the page
   // you're already on is dead weight in the nav, and (with the progress
   // stepper right below it) actively confusing, since it reads as another
   // step rather than the thing you already did to get here. Derived from
@@ -44,9 +44,8 @@ export default function SiteHeader({ homeHref = '/' }) {
   // search on the homepage lands straight on it. Treated as a marketing
   // page it hid its own nav until you scrolled and floated an "Uncover
   // Your BlindSpot" pill over a report you had already uncovered.
-  const onFlow = pathname?.startsWith('/property-score')
-    || pathname?.startsWith('/floor-plan-analysis')
-    || pathname?.startsWith('/report');
+  const onFlow = pathname?.startsWith('/report')
+    || pathname?.startsWith('/floor-plan-analysis');
 
   const [user, setUser] = useState(null);
   const [checkedAuth, setCheckedAuth] = useState(false);
@@ -190,7 +189,7 @@ export default function SiteHeader({ homeHref = '/' }) {
             </div>
             <div className="nav-cta">
               {!onFlow && (
-                <Link href="/property-score" className="btn-cta-sm">
+                <Link href="/#find" className="btn-cta-sm">
                   <span className="btn-cta-full">Uncover Your BlindSpot</span>
                   <span className="btn-cta-short">Start</span>
                 </Link>
@@ -234,7 +233,7 @@ export default function SiteHeader({ homeHref = '/' }) {
             <Link href="/#how-it-works" onClick={closeMobile}>How It Works</Link>
             <Link href="/#products" onClick={closeMobile}>Tools</Link>
             <Link href="/#team" onClick={closeMobile}>The Team</Link>
-            {!onFlow && <Link href="/property-score" onClick={closeMobile}>Uncover Your BlindSpot</Link>}
+            {!onFlow && <Link href="/#find" onClick={closeMobile}>Uncover Your BlindSpot</Link>}
             {checkedAuth && (
               user ? (
                 <>
@@ -261,7 +260,7 @@ export default function SiteHeader({ homeHref = '/' }) {
           establishes a containing block for fixed descendants) can never
           re-pin this to the header bar instead of the viewport bottom. */}
       <div className={`floating-cta${floatingCtaVisible ? ' is-visible' : ''}`} aria-hidden={!floatingCtaVisible}>
-        <PinDropTransition href="/property-score" className="btn-cta-sm floating-cta-btn">
+        <PinDropTransition href="/#find" className="btn-cta-sm floating-cta-btn">
           Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
         </PinDropTransition>
       </div>

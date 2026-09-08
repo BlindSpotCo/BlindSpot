@@ -82,9 +82,9 @@ export default function Home() {
               <span className="dot" />Active in {coverageLabel()}, more cities coming
             </span>
             <div className="hero-ctas" style={{ marginTop: 28 }}>
-              <PinDropTransition href="/property-score" className="btn btn-lg btn-cta">
+              <a href="#find" className="btn btn-lg btn-cta">
                 Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
-              </PinDropTransition>
+              </a>
             </div>
           </div>
 
@@ -172,9 +172,9 @@ export default function Home() {
           <h2>Because every property has a blindspot, and we&apos;re making it visible.</h2>
           <p>See the sunlight. Know the neighbourhood. Two free tools. One pin. Everything the listing wasn&apos;t going to mention.</p>
           <div className="closing-ctas">
-            <PinDropTransition href="/property-score" className="btn btn-lg btn-cta">
+            <a href="#find" className="btn btn-lg btn-cta">
               Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
-            </PinDropTransition>
+            </a>
           </div>
         </div>
 

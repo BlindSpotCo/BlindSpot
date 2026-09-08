@@ -43,7 +43,7 @@ const TOTAL_MS = 1560;
 const NAV_AT_MS = 1560;  // ~1400ms of animation + ~160ms hold on the resolved frame
 const REDUCED_MS = 320;  // reduced-motion: brief fade, then go
 
-export default function PinDropTransition({ href = '/property-score', className, children }) {
+export default function PinDropTransition({ href = '/#find', className, children }) {
   const router = useRouter();
   const [playing, setPlaying] = useState(false);
   const timers = useRef([]);

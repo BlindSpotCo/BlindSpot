@@ -153,12 +153,33 @@
   margin-top:auto;padding-top:22px;
   display:flex;flex-direction:column;align-items:flex-start;gap:4px;
 }
+.bsr-genlink{
+  font-family:inherit;font-size:17px;font-weight:700;cursor:pointer;
+  background:none;border:0;padding:0;min-height:46px;
+  color:var(--ss,#AF5F30);
+  text-decoration:underline;text-underline-offset:4px;text-align:left;
+}
+.bsr-genlink:hover{color:#95502A}
 .bsr-more a{
   display:inline-flex;align-items:center;min-height:46px;
   font-size:17px;font-weight:700;text-decoration:underline;text-underline-offset:4px;
 }
-.bsr-area .bsr-more a{color:var(--av,#7A2E43)}
-.bsr-unit .bsr-more a{color:var(--ss,#AF5F30)}
+.bsr-area .bsr-genlink{
+  font-family:inherit;font-size:17px;font-weight:700;cursor:pointer;
+  background:none;border:0;padding:0;min-height:46px;
+  color:var(--ss,#AF5F30);
+  text-decoration:underline;text-underline-offset:4px;text-align:left;
+}
+.bsr-genlink:hover{color:#95502A}
+.bsr-more a{color:var(--av,#7A2E43)}
+.bsr-unit .bsr-genlink{
+  font-family:inherit;font-size:17px;font-weight:700;cursor:pointer;
+  background:none;border:0;padding:0;min-height:46px;
+  color:var(--ss,#AF5F30);
+  text-decoration:underline;text-underline-offset:4px;text-align:left;
+}
+.bsr-genlink:hover{color:#95502A}
+.bsr-more a{color:var(--ss,#AF5F30)}
 .bsr-more-note{font-size:15px;color:var(--text-mute,#5A5140);max-width:52ch}
 
 /* ---------------- the map, its own full-width band ----------------

@@ -208,7 +208,7 @@ export default function HeroLiveMapCanvas() {
   const hasAnyInsight = !!nRecord || aqiValue != null;
 
   return (
-    <div className="hlm-root">
+    <div className="hlm-root" id="find">
       <MapContainer
         center={[center.lat, center.lon]}
         zoom={pin ? FLY_ZOOM : DEFAULT_ZOOM - INTRO_ZOOM_OFFSET}

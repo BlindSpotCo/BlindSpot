@@ -15,6 +15,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Map3DShadow from '@/components/sunscout/Map3DShadow';
+import ReportModal from '@/components/sunscout/ReportModal';
+import useMapCapture from '@/lib/sunscout/useMapCapture';
 import { FACTOR_LABELS, FACING_OPTS } from '@/lib/property-score/ui';
 import { getActionItems } from '@/lib/property-score/actionItems';
 import './report.css';
@@ -103,20 +105,6 @@ function aqiWord(v) {
   return 'Very poor';
 }
 
-// PropertyScoreFlow reads `pin` and `addr` (not pin_code/address) and
-// writes exactly these params itself -- matching them is what makes the
-// deep link open already-filled instead of back at "Use my location".
-function buildFlowHref(stage, { pinCode, address, lat, lon, floor, facing }) {
-  const q = new URLSearchParams({ stage });
-  if (pinCode) q.set('pin', pinCode);
-  if (address) q.set('addr', address);
-  q.set('lat', String(lat));
-  q.set('lon', String(lon));
-  q.set('floor', String(floor));
-  q.set('facing', facing);
-  return `/property-score?${q.toString()}`;
-}
-
 export default function ReportScreen() {
   const params = useSearchParams();
 
@@ -145,6 +133,14 @@ export default function ReportScreen() {
   const [solarFailed, setSolarFailed] = useState(false);
   const [aqi, setAqi] = useState(null);
   const [busy, setBusy] = useState(false);
+  // The sun & shadow report generates here, from the map already on this
+  // page -- no second screen, no second map, nothing to navigate back from.
+  // null | 'gallery' (sun & shadow only) | 'full' (both halves).
+  const [reportOpen, setReportOpen] = useState(null);
+  // The raw locality record the report generator wants -- the summary the
+  // scoring API returns isn't the same shape.
+  const [avRecord, setAvRecord] = useState(null);
+  const capture = useMapCapture();
   const [minutes, setMinutes] = useState(630);   // only meaningful while paused
   // The animation runs inside Map3DShadow while `animating` is true --
   // SunScoutPanel starts it playing, and the shadows moving is the whole
@@ -236,6 +232,17 @@ export default function ReportScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasPlace, lat, lon, animating, animating ? null : minutes]);
 
+  /* ---------------- the raw locality record, for the report ---------------- */
+  useEffect(() => {
+    if (!pinCode) { setAvRecord(null); return; }
+    let live = true;
+    fetch(`/api/av-localities/lookup?pin=${encodeURIComponent(pinCode)}`)
+      .then((r) => r.json())
+      .then((j) => live && setAvRecord(j?.found ? j.record : null))
+      .catch(() => {});
+    return () => { live = false; };
+  }, [pinCode]);
+
   /* ---------------- today's air ---------------- */
   useEffect(() => {
     if (!hasPlace) return;
@@ -318,10 +325,6 @@ export default function ReportScreen() {
 
   const bumpFloor = useCallback((d) => { setAssumed(false); setFloor((f) => Math.max(1, Math.min(60, f + d))); }, []);
 
-  const flowHref = useCallback(
-    (stage) => buildFlowHref(stage, { pinCode, address, lat, lon, floor, facing }),
-    [pinCode, address, lat, lon, floor, facing]
-  );
 
   // Keep the URL honest as the floor/facing change, so a refresh or a
   // shared link reopens the same flat rather than the defaults.
@@ -565,7 +568,9 @@ export default function ReportScreen() {
           </ul>
 
           <p className="bsr-more">
-            <a href={`${flowHref('unit')}&report=unit`} target="_blank" rel="noopener">Generate the sun & shadow report →</a>
+            <button type="button" className="bsr-genlink" onClick={() => setReportOpen('gallery')}>
+              Generate the sun &amp; shadow report →
+            </button>
             <span className="bsr-more-note">
               12 map angles at this exact pin, 3 per season at 9am / noon / 3pm, each with its own
               analysis — plus the monthly sunlight table for this floor.
@@ -688,7 +693,9 @@ export default function ReportScreen() {
           One written verdict for this address — the area, the flat, and the two read together, with the
           questions to put to the seller. Downloadable as a PDF.
         </p>
-        <a className="bsr-cta" href={flowHref('verdict')} target="_blank" rel="noopener">See the full report</a>
+        <button type="button" className="bsr-cta" onClick={() => setReportOpen('full')}>
+          Generate the full report
+        </button>
         <span className="bsr-free">Opens in a new tab, so this page keeps your floor and facing. Your first address is free.</span>
         <span className="bsr-also">
           Already have the floor plan? <a href="/floor-plan-analysis">Get room-by-room furnishing advice →</a>
@@ -696,6 +703,26 @@ export default function ReportScreen() {
       </section>
 
       {scores.notes?.length ? <p className="bsr-foot">{scores.notes.join(' ')}</p> : null}
+
+      {reportOpen && (
+        <ReportModal
+          lat={lat}
+          lon={lon}
+          tzOffset={TZ}
+          address={address}
+          captureScreenshots={capture.captureScreenshots}
+          galleryOnly={reportOpen === 'gallery'}
+          prefillFloor={floor}
+          prefillFacing={facing}
+          unitScore={unit.score}
+          unitSubScores={unit.subScores}
+          areaRecord={reportOpen === 'full' ? avRecord : undefined}
+          combinedScore={reportOpen === 'full' ? scores.combined : undefined}
+          areaWeight={reportOpen === 'full' ? areaWeight : undefined}
+          unitWeight={reportOpen === 'full' ? 1 - areaWeight : undefined}
+          onClose={() => setReportOpen(null)}
+        />
+      )}
     </div>
   );
 }

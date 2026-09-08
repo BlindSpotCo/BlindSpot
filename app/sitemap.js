@@ -6,7 +6,6 @@ const SITE_URL = 'https://blindspotco.net';
 export default function sitemap() {
   const staticRoutes = [
     { url: `${SITE_URL}/`, changeFrequency: 'weekly', priority: 1 },
-    { url: `${SITE_URL}/property-score`, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${SITE_URL}/floor-plan-analysis`, changeFrequency: 'monthly', priority: 0.7 },
   ].map((r) => ({ ...r, lastModified: new Date() }));
 
