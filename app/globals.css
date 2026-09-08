@@ -2398,7 +2398,7 @@
   opacity:0;
   animation:
     hlmRise 1s cubic-bezier(.16,1,.3,1) 0.5s forwards,
-    hlmShimmer 1.4s cubic-bezier(.4,0,.2,1) 2.1s 1 both;
+    hlmShimmer 2.3s cubic-bezier(.4,0,.2,1) 2.1s 1 both;
 }
 @keyframes hlmShimmer{
   from{ background-position:200% 0; }
@@ -2411,13 +2411,23 @@
    premium/editorial serif -- after Instrument Serif (too script) and
    Fraunces (too soft/rounded, reads chunky at display size) both came
    across as clumsy rather than elegant.
-   Colour is a gold gradient clipped to the text, not a flat fill --
-   flat --brand-yellow read as a plain mustard block at this size;
-   the gradient gives it some depth, closer to foil/metallic gold. */
+   Starts the same white as the rest of the headline (not gold from
+   frame one) and only turns gold partway through the shimmer sweep
+   above, roughly timed to land while the sweep's bright band is
+   crossing -- reads as the light "giving" it its colour rather than
+   it just always having been coloured differently. */
 .hlm-h1-accent{
   font-family:'Playfair Display', serif; font-style:italic; font-weight:600;
-  font-size:1em; color:var(--brand-yellow);
-  text-shadow:0 4px 30px rgba(0,0,0,0.5), 0 0 40px rgba(245,195,67,0.35);
+  font-size:1em; color:#FFFDF8;
+  text-shadow:0 4px 30px rgba(0,0,0,0.5);
+  animation:hlmAccentGold 0.8s ease-out 2.9s forwards;
+}
+@keyframes hlmAccentGold{
+  from{ color:#FFFDF8; text-shadow:0 4px 30px rgba(0,0,0,0.5); }
+  to{
+    color:var(--brand-yellow);
+    text-shadow:0 4px 30px rgba(0,0,0,0.5), 0 0 40px rgba(245,195,67,0.35);
+  }
 }
 
 .sr-only{
@@ -2461,9 +2471,10 @@
   to{ opacity:1; transform:translateY(0); filter:blur(0); }
 }
 @media (prefers-reduced-motion: reduce){
-  .hlm-eyebrow, .hlm-content .hlm-h1, .hlm-searchwrap, .hlm-typed-line, .hlm-resolve{ animation:none !important; opacity:1 !important; transform:none !important; filter:none !important; }
+  .hlm-eyebrow, .hlm-content .hlm-h1, .hlm-h1-accent, .hlm-searchwrap, .hlm-typed-line, .hlm-resolve{ animation:none !important; opacity:1 !important; transform:none !important; filter:none !important; }
   .hlm-typed-cursor{ animation:none !important; display:none !important; }
   .hlm-content .hlm-h1{ background:none !important; color:#FFFDF8 !important; -webkit-text-fill-color:#FFFDF8 !important; }
+  .hlm-h1-accent{ color:var(--brand-yellow) !important; text-shadow:0 4px 30px rgba(0,0,0,0.5), 0 0 40px rgba(245,195,67,0.35) !important; }
 }
 
 .hlm-searchwrap{
