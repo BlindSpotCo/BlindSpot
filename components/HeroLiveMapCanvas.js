@@ -47,18 +47,22 @@ const DEFAULT_CENTER = { lat: 12.9716, lon: 77.5946 };
 const DEFAULT_ZOOM = 12.4;
 const FLY_ZOOM = 15;
 
-// Placeholder examples -- swap this for the real, curated list of
-// blindspots BlindSpot actually surfaces per listing (Gurshaan has the
-// real copy incoming). Keep each entry short -- under ~44 characters --
-// so it types out in well under two seconds and doesn't wrap mid-type
-// on a narrow screen.
+// Real categories BlindSpot actually scores -- not invented copy.
+// Sunlight/obstruction/shadow come from the Sunscout floor+facing engine
+// (lib/sunscout/solarReport.js); crime/infrastructure/air/power/water/
+// roads/schools come from the NQI neighbourhood pipeline's own weighted
+// dimensions (lib/aslivastu/aqi.js); AQI is the live route. Keep each
+// entry short -- under ~44 characters -- so it types out in well under
+// two seconds and doesn't wrap mid-type on a narrow screen.
 const BLINDSPOT_EXAMPLES = [
-  'Afternoon shadow from the tower next door',
-  '68 AQI on this exact block, right now',
-  'West-facing heat gain after 3pm',
-  'Water-logging risk this monsoon',
-  'The traffic noise the photos hide',
+  'Only 3 usable sunlight hours on this floor',
+  'AQI over 180 on winter mornings here',
   'A crime spike two streets over',
+  'Water supply flagged irregular this block',
+  'North-facing units lose light by 11am',
+  'Infrastructure score below the city median',
+  'Power cuts logged above average nearby',
+  'The tower next door blocks afternoon sun',
 ];
 
 const pinIcon = L.divIcon({
