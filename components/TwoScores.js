@@ -1,42 +1,35 @@
 'use client';
 // components/TwoScores.js
-// V2 -- was two white cards with a full sentence + an 8-row list of thin
-// progress bars, read as dense/text-heavy. Same real weighted data
-// (weights_applied for PIN 110001 / DEFAULT_WEIGHTS, both unchanged, see
-// the v1 comment history), now shown as a dark stat-grid card -- big bold
-// weight numbers you can scan in a glance, not a paragraph you have to
-// read.
+// V3 -- v2 showed only the per-dimension weight numbers, which isn't
+// the part that matters to a visitor deciding whether to bother
+// searching their address. Replaced the weight grid with what each
+// engine actually produces: a real example score (same real records
+// HowItWorks.js used -- PIN 110001 / Connaught Place, nqi_composite 82,
+// grade A, from data/aslivastu/nqi_scores.json; and the real
+// computeLiveScore() output for floor 5/South, liveScore 50, grade
+// Fair -- both unchanged real numbers, not invented for this card),
+// plus what it measures (in words, not percentages) and where the data
+// comes from.
 
-const NEIGHBOURHOOD_DIMENSIONS = [
-  { label: 'Safety', weight: 25 },
-  { label: 'Infrastructure', weight: 20 },
-  { label: 'Air Quality', weight: 15 },
-  { label: 'Schools', weight: 10 },
-  { label: 'Power', weight: 10 },
-  { label: 'Water', weight: 8 },
-  { label: 'Roads', weight: 7 },
-  { label: 'Drainage', weight: 5 },
-];
+const NEIGHBOURHOOD_DIMS = ['Safety', 'Infrastructure', 'Air Quality', 'Schools', 'Power', 'Water', 'Roads', 'Drainage'];
+const COMFORT_DIMS = ['Sun', 'Shade & Heat', 'View', 'Privacy', 'Wind'];
 
-const COMFORT_DIMENSIONS = [
-  { label: 'Sun', weight: 30 },
-  { label: 'Shade & Heat', weight: 25 },
-  { label: 'View', weight: 20 },
-  { label: 'Privacy', weight: 15 },
-  { label: 'Wind', weight: 10 },
-];
-
-function ScoreCard({ accentVar, tag, name, dims }) {
+function ScoreCard({ accentVar, tag, name, blurb, score, grade, example, dims }) {
   return (
-    <div className="ts3-card" style={{ '--ts3-accent': `var(${accentVar})` }}>
-      <span className="mono ts3-tag">{tag}</span>
-      <h3 className="ts3-name">{name}</h3>
-      <div className="ts3-stat-grid">
+    <div className="ts4-card" style={{ '--ts4-accent': `var(${accentVar})` }}>
+      <span className="mono ts4-tag">{tag}</span>
+      <h3 className="ts4-name">{name}</h3>
+      <p className="ts4-blurb">{blurb}</p>
+
+      <div className="ts4-readout">
+        <div className="ts4-score">{score}<span>/100</span></div>
+        <span className="ts4-grade">{grade}</span>
+      </div>
+      <p className="ts4-example">{example}</p>
+
+      <div className="ts4-dims">
         {dims.map((d) => (
-          <div key={d.label} className="ts3-stat">
-            <div className="ts3-stat-num">{d.weight}<span>%</span></div>
-            <div className="ts3-stat-label">{d.label}</div>
-          </div>
+          <span key={d} className="ts4-dim">{d}</span>
         ))}
       </div>
     </div>
@@ -54,9 +47,27 @@ export default function TwoScores() {
           </div>
         </div>
 
-        <div className="ts3-grid">
-          <ScoreCard accentVar="--av" tag="ENGINE 1 · GOVERNMENT RECORDS" name="Neighbourhood Score" dims={NEIGHBOURHOOD_DIMENSIONS} />
-          <ScoreCard accentVar="--ss" tag="ENGINE 2 · REAL SOLAR GEOMETRY" name="Home Comfort Score" dims={COMFORT_DIMENSIONS} />
+        <div className="ts4-grid">
+          <ScoreCard
+            accentVar="--av"
+            tag="ENGINE 1 · GOVERNMENT RECORDS"
+            name="Neighbourhood Score"
+            blurb="Rates the area: crime, air, power, water, schools, roads — pulled from government records, not a broker's word for it."
+            score={82}
+            grade="Grade A"
+            example="Connaught Place, Central Delhi — real report"
+            dims={NEIGHBOURHOOD_DIMS}
+          />
+          <ScoreCard
+            accentVar="--ss"
+            tag="ENGINE 2 · REAL SOLAR GEOMETRY"
+            name="Home Comfort Score"
+            blurb="Rates the exact unit: sun, shade & heat, view, privacy, wind — modelled from the floor and facing you pick."
+            score={50}
+            grade="Fair"
+            example="Floor 5, South-facing — real report"
+            dims={COMFORT_DIMS}
+          />
         </div>
 
         <p className="ts3-combine">
