@@ -39,12 +39,27 @@ import 'leaflet/dist/leaflet.css';
 import PinDropTransition from '@/components/PinDropTransition';
 import { verdictFor, scoreColor } from '@/components/property-score/AVDetailedReadout';
 import { aqiCategory } from '@/lib/aslivastu/aqi';
+import TypewriterCycle from '@/components/TypewriterCycle';
 
 // Same default coordinates as the homepage's original rotating
 // coordinate readout -- opens on the same place that readout used to cite.
 const DEFAULT_CENTER = { lat: 12.9716, lon: 77.5946 };
 const DEFAULT_ZOOM = 12.4;
 const FLY_ZOOM = 15;
+
+// Placeholder examples -- swap this for the real, curated list of
+// blindspots BlindSpot actually surfaces per listing (Gurshaan has the
+// real copy incoming). Keep each entry short -- under ~44 characters --
+// so it types out in well under two seconds and doesn't wrap mid-type
+// on a narrow screen.
+const BLINDSPOT_EXAMPLES = [
+  'Afternoon shadow from the tower next door',
+  '68 AQI on this exact block, right now',
+  'West-facing heat gain after 3pm',
+  'Water-logging risk this monsoon',
+  'The traffic noise the photos hide',
+  'A crime spike two streets over',
+];
 
 const pinIcon = L.divIcon({
   className: 'hlm-pin-icon',
@@ -218,6 +233,17 @@ export default function HeroLiveMapCanvas() {
         <div className="hlm-copy">
           <span className="hlm-eyebrow">Property Intelligence</span>
           <h1 className="hlm-h1">See what listings don&apos;t tell you.</h1>
+          <p className="hlm-typed-line">
+            <span className="hlm-typed-label">We catch things like</span>
+            <TypewriterCycle
+              items={BLINDSPOT_EXAMPLES}
+              className="hlm-typed-text"
+              cursorClassName="hlm-typed-cursor"
+            />
+            <span className="sr-only">
+              We catch things like hidden water damage, poor natural light, high pollution, extra noise, and safety risks the listing photos won&apos;t show you.
+            </span>
+          </p>
         </div>
 
         <div className="hlm-searchwrap" ref={boxRef}>
