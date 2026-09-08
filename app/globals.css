@@ -2388,16 +2388,18 @@
   box-shadow:0 0 0 4px rgba(245,195,67,0.18);
 }
 .hlm-content .hlm-h1{
-  font-size:clamp(46px, 7vw, 104px); line-height:1.0; color:#FFFDF8; margin:0;
+  font-size:clamp(40px, 6.2vw, 90px); line-height:1.02; color:#FFFDF8; margin:0;
   text-shadow:0 4px 30px rgba(0,0,0,0.5); letter-spacing:-0.015em;
   opacity:0; animation:hlmRise 1s cubic-bezier(.16,1,.3,1) 0.5s forwards;
 }
-/* Different typeface, not just colour -- an italic serif dropped into
-   the sans headline reads as a deliberate highlight (the classic
-   editorial accent-word trick) instead of just changed ink colour. */
+/* Different typeface, not just colour -- a soft-serif italic dropped
+   into the sans headline reads as a deliberate highlight (the classic
+   editorial accent-word trick) instead of just changed ink colour.
+   Fraunces, not Instrument Serif -- that one's italic came out too
+   script/calligraphic, this one stays a legible display serif. */
 .hlm-h1-accent{
-  font-family:'Instrument Serif', serif; font-style:italic; font-weight:400;
-  font-size:1.08em; color:var(--brand-yellow);
+  font-family:'Fraunces', serif; font-style:italic; font-weight:480;
+  font-size:1em; color:var(--brand-yellow);
   text-shadow:0 4px 30px rgba(0,0,0,0.5), 0 0 46px rgba(245,195,67,0.4);
 }
 
@@ -2553,12 +2555,12 @@
 @keyframes hlm-pin-pulse{ 0%{ transform:scale(0.6); opacity:0.7; } 100%{ transform:scale(1.9); opacity:0; } }
 
 @media (max-width:900px){
-  .hlm-content .hlm-h1{ font-size:clamp(36px, 7.5vw, 56px); }
+  .hlm-content .hlm-h1{ font-size:clamp(32px, 6.8vw, 50px); }
 }
 @media (max-width:640px){
   .hlm-root{ height:96vh; min-height:600px; }
   .hlm-content{ padding:74px 18px 64px; gap:24px; }
-  .hlm-content .hlm-h1{ font-size:clamp(32px, 10.5vw, 46px); }
+  .hlm-content .hlm-h1{ font-size:clamp(28px, 9.5vw, 40px); }
   .hlm-chip{ width:100%; max-width:320px; }
   .hlm-scroll-cue{ display:none; }
 }
