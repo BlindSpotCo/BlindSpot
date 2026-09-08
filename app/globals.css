@@ -2467,8 +2467,8 @@
   .hlm-resolve{ font-size:12px; }
 }
 @keyframes hlmRise{
-  from{ opacity:0; transform:translateY(16px); filter:blur(7px); }
-  to{ opacity:1; transform:translateY(0); filter:blur(0); }
+  from{ opacity:0; transform:translateY(16px); }
+  to{ opacity:1; transform:translateY(0); }
 }
 @media (prefers-reduced-motion: reduce){
   .hlm-eyebrow, .hlm-content .hlm-h1, .hlm-h1-accent, .hlm-searchwrap, .hlm-typed-line, .hlm-resolve{ animation:none !important; opacity:1 !important; transform:none !important; filter:none !important; }
