@@ -37,8 +37,8 @@ const STEPS = [
 
 export default function StepsHowItWorks() {
   return (
-    <section className="section section-dark reveal" id="how-it-works">
-      <div className="sd-grain" aria-hidden="true" />
+    <section className="section section-tint reveal" id="how-it-works">
+      <div className="st-grain" aria-hidden="true" />
       <div className="wrap section-inner">
         <div className="section-head">
           <div>
