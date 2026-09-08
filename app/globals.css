@@ -2693,28 +2693,41 @@ header.header-on-dark .brand-word-img{
   margin-top:var(--space-2);
 }
 .ps3-item{
-  display:flex; flex-direction:column; align-items:flex-start; gap:12px;
+  display:flex; flex-direction:column; align-items:flex-start; gap:14px;
   padding:var(--space-5) var(--space-4);
-  background:var(--paper); border:1px solid var(--line); border-radius:var(--radius-lg);
+  background:var(--paper); border:1px solid var(--line); border-top:3px solid var(--line);
+  border-radius:var(--radius-lg);
 }
+.ps3-item.accent-av{ border-top-color:var(--av) }
+.ps3-item.accent-ss{ border-top-color:var(--ss) }
 .ps3-icon{
   display:flex; align-items:center; justify-content:center;
-  width:38px; height:38px; border-radius:var(--radius-md);
-  background:var(--bg-2); color:var(--brand);
+  width:44px; height:44px; border-radius:var(--radius-md);
+  background:var(--brand); color:#fff;
 }
-.ps3-icon svg{ width:20px; height:20px }
+.ps3-item.accent-av .ps3-icon{ background:var(--av) }
+.ps3-item.accent-ss .ps3-icon{ background:var(--ss) }
+.ps3-icon svg{ width:22px; height:22px }
 .ps3-item-label{ font-size:13.5px; font-weight:600; color:var(--ink); line-height:1.3 }
-.ps3-fix{
-  margin-top:var(--space-7); font-size:19px; line-height:1.6; color:var(--text-mute);
-  max-width:680px;
+
+.ps3-eq{
+  margin-top:var(--space-7); display:flex; align-items:center; flex-wrap:wrap; gap:14px;
 }
-.ps3-fix strong{ color:var(--brand); font-weight:700 }
+.ps3-eq-badge{
+  font-family:'Geist Mono',monospace; font-size:12.5px; font-weight:600; letter-spacing:.02em;
+  color:#fff; padding:9px 16px; border-radius:var(--radius-pill);
+}
+.ps3-eq-badge.accent-av{ background:var(--av) }
+.ps3-eq-badge.accent-ss{ background:var(--ss) }
+.ps3-eq-op{ font-size:20px; color:var(--text-dim); font-weight:600 }
+.ps3-eq-result{ font-size:17px; color:var(--text); font-weight:600 }
 @media (max-width:900px){
   .ps3-grid{ grid-template-columns:repeat(3, 1fr) }
 }
 @media (max-width:640px){
   .ps3-grid{ grid-template-columns:repeat(2, 1fr); gap:var(--space-3) }
-  .ps3-fix{ font-size:17px }
+  .ps3-eq{ gap:10px }
+  .ps3-eq-result{ font-size:15px }
 }
 
 /* ---------- 02 — Two Scores (dark stat-grid cards) ---------- */
