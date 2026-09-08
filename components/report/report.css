@@ -195,39 +195,28 @@
   min-width:92px;text-align:right;flex:none;
 }
 
-/* ---------------- which flat, said in the card ---------------- */
-.bsr-setfor{
-  margin-top:12px;font-size:15.5px;color:var(--text-mute,#5A5140);
+/* ---------------- the heading is the control ----------------
+   Naming the flat and changing it are the same act. Reads as a heading,
+   behaves as an input, and sits directly above the score it moves. */
+.bsr-which{
+  display:flex;align-items:center;gap:8px 18px;flex-wrap:wrap;margin-top:2px;
 }
-.bsr-setfor strong{color:var(--bsr-poor)}
-.bsr-setfor a{
-  color:var(--ss,#AF5F30);font-weight:600;
-  text-decoration:underline;text-underline-offset:3px;white-space:nowrap;
+.bsr-which-floor,.bsr-which-facing{display:flex;align-items:center;gap:8px}
+.bsr-which-n{
+  font-size:26px;font-weight:700;letter-spacing:-.02em;
+  min-width:44px;text-align:center;font-variant-numeric:tabular-nums;
 }
-
-/* ---------------- which flat, set on the map ----------------
-   Directly under the block it describes, with the resulting score in the
-   same bar: the effect of a click is visible where the click happens. */
-.bsr-flatbar{
-  display:flex;align-items:center;gap:22px;flex-wrap:wrap;
-  margin-top:14px;padding:12px 14px;border-radius:5px;
-  background:var(--bg,#FAF6EE);
-  border:1px solid var(--line-soft,rgba(28,24,18,.08));
+.bsr-which-word{font-size:19px;font-weight:600;color:var(--text,#1C1812)}
+.bsr-which-floor button{
+  width:30px;height:30px;flex:none;border-radius:50%;cursor:pointer;
+  font-size:17px;line-height:1;font-family:inherit;
+  color:var(--ss,#AF5F30);
+  background:var(--paper,#FFFDF8);
+  border:1px solid var(--line,rgba(28,24,18,.14));
 }
-.bsr-flatbar-group{display:flex;align-items:center;gap:10px}
-.bsr-flatbar-label{
-  font-size:15.5px;font-weight:600;color:var(--text,#1C1812);flex:none;
-}
-.bsr-flatbar-out{
-  margin-left:auto;font-size:15.5px;color:var(--text-mute,#5A5140);
-  display:flex;align-items:baseline;gap:6px;white-space:nowrap;
-}
-.bsr-flatbar-out strong.is-good{color:var(--bsr-good)}
-.bsr-flatbar-out strong.is-avg{color:var(--bsr-avg)}
-.bsr-flatbar-out strong.is-poor{color:var(--bsr-poor)}
-.bsr-flatbar-n{
-  font-size:19px;font-weight:800;color:var(--text,#1C1812);
-  font-variant-numeric:tabular-nums;
+.bsr-which-floor button:hover{background:var(--ss,#AF5F30);border-color:var(--ss,#AF5F30);color:#FFFDF8}
+.bsr-assumed{
+  margin-top:8px;font-size:14.5px;font-weight:600;color:var(--bsr-poor);
 }
 .bsr-q{font-size:17px;font-weight:600;margin-bottom:10px}
 .bsr-floor{display:flex;align-items:center;gap:8px}
@@ -242,10 +231,10 @@
   font-variant-numeric:tabular-nums;
 }
 
-.bsr-dirs{display:flex;gap:5px;flex-wrap:wrap}
+.bsr-dirs{display:flex;gap:4px;flex-wrap:wrap}
 .bsr-dirs button{
-  font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;
-  min-width:38px;height:34px;padding:0 7px;border-radius:4px;
+  font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;
+  min-width:33px;height:30px;padding:0 6px;border-radius:4px;
   background:var(--paper,#FFFDF8);border:1px solid var(--line,rgba(28,24,18,.14));
   color:var(--text-mute,#5A5140);
 }
