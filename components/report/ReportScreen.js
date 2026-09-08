@@ -532,43 +532,34 @@ export default function ReportScreen() {
           <div className="bsr-asks">
             <p className="bsr-asks-lede">
               {assumed
-                ? 'We\u2019ve assumed a mid floor facing south-east. Set the real ones and every score below changes.'
-                : 'Change either one and every score below is recalculated.'}
+                ? 'Assumed \u2014 set your actual flat and the scores below update.'
+                : 'Everything below is for this flat.'}
             </p>
 
-            <div className="bsr-ask">
-              <p className="bsr-q" id="bsr-q-floor">Which floor?</p>
+            <div className="bsr-ask bsr-ask-inline">
+              <p className="bsr-q" id="bsr-q-floor">Floor</p>
               <p className="bsr-floor">
-                <button type="button" onClick={() => bumpFloor(-1)} aria-label="One floor lower">\u2212</button>
+                <button type="button" onClick={() => bumpFloor(-1)} aria-label="One floor lower">−</button>
                 <span className="bsr-floor-n" aria-live="polite">{floor}</span>
                 <button type="button" onClick={() => bumpFloor(1)} aria-label="One floor higher">+</button>
-                <span className="bsr-floor-note">Higher floors change light, outlook and privacy.</span>
               </p>
             </div>
 
-            <div className="bsr-ask">
-              <p className="bsr-q" id="bsr-q-facing">Which way does the main balcony face?</p>
-              {/* Laid out as a compass, because that is the thing being
-                  asked about. Eight buttons in a list made people read
-                  labels to find "the one pointing that way". */}
-              <div className="bsr-compass" role="group" aria-labelledby="bsr-q-facing">
-                {COMPASS.map((f, i) => (
-                  f === null
-                    ? <span key={`c${i}`} className="bsr-compass-mid" aria-hidden="true">{SHORT[facing] || ''}</span>
-                    : (
-                      <button
-                        key={f}
-                        type="button"
-                        aria-label={f}
-                        aria-pressed={f === facing}
-                        onClick={() => { setAssumed(false); setFacing(f); }}
-                      >
-                        {SHORT[f]}
-                      </button>
-                    )
+            <div className="bsr-ask bsr-ask-inline">
+              <p className="bsr-q" id="bsr-q-facing">Balcony faces</p>
+              <div className="bsr-dirs" role="group" aria-labelledby="bsr-q-facing">
+                {FACING_OPTS.map((f) => (
+                  <button
+                    key={f}
+                    type="button"
+                    aria-label={f}
+                    aria-pressed={f === facing}
+                    onClick={() => { setAssumed(false); setFacing(f); }}
+                  >
+                    {SHORT[f]}
+                  </button>
                 ))}
               </div>
-              <p className="bsr-facing-now">Facing <strong>{facing.toLowerCase()}</strong></p>
             </div>
           </div>
 
