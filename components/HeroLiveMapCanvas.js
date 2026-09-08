@@ -236,7 +236,7 @@ export default function HeroLiveMapCanvas() {
       <div className="hlm-content">
         <div className="hlm-copy">
           <span className="hlm-eyebrow">Property Intelligence</span>
-          <h1 className="hlm-h1">Every property has a blindspot.</h1>
+          <h1 className="hlm-h1">Every property has a <span className="hlm-h1-accent">blindspot.</span></h1>
           <p className="hlm-typed-line">
             <TypewriterCycle
               items={BLINDSPOT_EXAMPLES}
@@ -247,6 +247,7 @@ export default function HeroLiveMapCanvas() {
               We catch things like hidden water damage, poor natural light, high pollution, extra noise, and safety risks the listing photos won&apos;t show you.
             </span>
           </p>
+          <p className="hlm-resolve">Find yours in one search.</p>
         </div>
 
         <div className="hlm-searchwrap" ref={boxRef}>

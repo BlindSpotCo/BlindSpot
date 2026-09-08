@@ -2362,6 +2362,10 @@
   text-shadow:0 4px 30px rgba(0,0,0,0.5); letter-spacing:-0.01em;
   opacity:0; animation:hlmRise 1s cubic-bezier(.16,1,.3,1) 0.5s forwards;
 }
+.hlm-h1-accent{
+  color:var(--brand-yellow);
+  text-shadow:0 4px 30px rgba(0,0,0,0.5), 0 0 42px rgba(245,195,67,0.35);
+}
 
 .sr-only{
   position:absolute; width:1px; height:1px; padding:0; margin:-1px;
@@ -2374,25 +2378,36 @@
    sits in mono like the eyebrow rather than the headline's display font. */
 .hlm-typed-line{
   display:flex; align-items:baseline; justify-content:center; gap:8px;
-  flex-wrap:wrap; margin:16px 0 0; font-family:'Geist Mono',monospace;
-  font-size:14px; color:rgba(255,253,248,0.86);
+  flex-wrap:wrap; margin:20px 0 0; padding:8px 20px;
+  background:rgba(245,195,67,0.09); border:1px solid rgba(245,195,67,0.22);
+  border-radius:var(--radius-pill);
+  font-family:'Geist Mono',monospace; font-size:clamp(16px, 1.7vw, 19px);
   opacity:0; animation:hlmRise 1s cubic-bezier(.16,1,.3,1) 0.62s forwards;
 }
-.hlm-typed-text{ color:var(--brand-yellow); font-weight:500; }
+.hlm-typed-text{
+  color:var(--brand-yellow); font-weight:600;
+  text-shadow:0 0 26px rgba(245,195,67,0.45);
+}
 .hlm-typed-cursor{
-  display:inline-block; width:2px; height:14px; margin-left:2px;
-  background:var(--brand-yellow); vertical-align:-2px;
+  display:inline-block; width:2px; height:17px; margin-left:2px;
+  background:var(--brand-yellow); vertical-align:-3px;
   animation:blink 1s steps(1) infinite;
 }
+.hlm-resolve{
+  margin:14px 0 0; font-family:'Geist Mono',monospace; font-size:13px;
+  letter-spacing:0.02em; color:rgba(255,253,248,0.56);
+  opacity:0; animation:hlmRise 1s cubic-bezier(.16,1,.3,1) 0.74s forwards;
+}
 @media (max-width:640px){
-  .hlm-typed-line{ font-size:12.5px; }
+  .hlm-typed-line{ font-size:14.5px; padding:7px 16px; }
+  .hlm-resolve{ font-size:12px; }
 }
 @keyframes hlmRise{
   from{ opacity:0; transform:translateY(16px); }
   to{ opacity:1; transform:translateY(0); }
 }
 @media (prefers-reduced-motion: reduce){
-  .hlm-eyebrow, .hlm-content .hlm-h1, .hlm-searchwrap, .hlm-typed-line{ animation:none !important; opacity:1 !important; transform:none !important; }
+  .hlm-eyebrow, .hlm-content .hlm-h1, .hlm-searchwrap, .hlm-typed-line, .hlm-resolve{ animation:none !important; opacity:1 !important; transform:none !important; }
   .hlm-typed-cursor{ animation:none !important; display:none !important; }
 }
 
