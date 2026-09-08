@@ -3060,32 +3060,36 @@ header.header-on-dark .brand-word-img{
 .footer-col a:hover{ color:#fff }
 .footer-col a:hover::after{ transform:scaleX(1) }
 
-/* The wordmark is now its own full-width statement row (not a
-   background layer behind other content) -- bold and dim by default,
-   with a soft gold spotlight that tracks the cursor (ClosingCTA.js
-   sets --mx/--my on mousemove) revealing it in full colour underneath
-   the pointer. Two stacked copies of the same text: the dim base
-   layer always visible, the bright gold layer clipped to a small
-   circle around the pointer via a radial-gradient mask so only that
-   circle reads at full colour. Falls back to a fixed soft highlight
-   near the top on touch devices (no mousemove ever fires, --mx/--my
-   just keep their default) -- still looks deliberate, not broken. */
+/* The wordmark is its own full-width statement row. On hover it
+   performs a wipe transition: BLINDSPOT clips away left-to-right
+   while the tagline (the same "Property Intelligence" line used
+   above in .footer-tagline) wipes in underneath it, in the same
+   spot -- a moving vertical edge sweeps across the row, old text
+   still showing to the right of the edge, new text already showing
+   to its left. Both layers occupy the same box (stacked via grid),
+   so nothing shifts layout. Touch devices get no hover, so they
+   simply see the static wordmark -- still a deliberate, finished
+   look, not a broken one. */
 .cc-foot-wordmark-wrap{
-  --mx:50%; --my:50%;
   position:relative; z-index:1; height:clamp(70px, 15vw, 200px);
   overflow:hidden; user-select:none; cursor:default;
 }
 .cc-foot-wordmark{
   position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  font-family:'Geist',sans-serif; font-weight:700; font-size:clamp(56px, 14vw, 190px);
-  line-height:1; letter-spacing:-0.02em; white-space:nowrap;
+  font-family:'Geist',sans-serif; font-weight:700;
+  line-height:1; letter-spacing:-0.02em; white-space:nowrap; color:var(--brand-yellow);
+  clip-path:inset(0 0 0 0);
+  transition:clip-path .65s cubic-bezier(.76,0,.24,1);
 }
-.cc-foot-wordmark-base{ color:rgba(255,253,248,0.07); }
-.cc-foot-wordmark-glow{
-  color:var(--brand-yellow);
-  -webkit-mask-image:radial-gradient(circle 200px at var(--mx) var(--my), #000 0%, transparent 72%);
-  mask-image:radial-gradient(circle 200px at var(--mx) var(--my), #000 0%, transparent 72%);
+.cc-foot-wordmark-main{
+  font-size:clamp(56px, 14vw, 190px);
 }
+.cc-foot-wordmark-alt{
+  font-size:clamp(20px, 4.2vw, 58px); letter-spacing:0.14em;
+  clip-path:inset(0 100% 0 0);
+}
+.cc-foot-wordmark-wrap:hover .cc-foot-wordmark-main{ clip-path:inset(0 100% 0 0); }
+.cc-foot-wordmark-wrap:hover .cc-foot-wordmark-alt{ clip-path:inset(0 0 0 0); }
 .footer-bottom{
   position:relative; z-index:1;
   display:flex; align-items:center; justify-content:space-between; gap:var(--space-4); flex-wrap:wrap;
@@ -3105,5 +3109,5 @@ header.header-on-dark .brand-word-img{
   .cc-foot-wordmark-wrap{ height:clamp(46px, 22vw, 90px) }
 }
 @media (prefers-reduced-motion: reduce){
-  .cc-foot-wordmark-glow{ -webkit-mask-image:none; mask-image:none; opacity:.5 }
+  .cc-foot-wordmark-main, .cc-foot-wordmark-alt{ transition:none }
 }
