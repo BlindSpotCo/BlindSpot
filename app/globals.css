@@ -2319,6 +2319,18 @@
      centring text that this component already centres itself. .hlm-root
      below owns 100% of this section's real size now. */
   padding:0; min-height:0; display:block; text-align:left;
+  /* The header is `position:sticky` and transparent at rest, which
+     normally just floats over whatever comes next -- but sticky still
+     reserves its own 66px in normal flow, so without this the hero
+     started AT y=66px, leaving a 66px strip of plain cream body
+     background above it for the header to sit on. That's what made
+     header.header-on-dark's dark/blur fill read as a flat opaque bar
+     instead of a glass panel: it had the cream page background behind
+     it, not the map. Pulling the hero up by the header's own height
+     (nav.wrap's 66px) makes the hero's dark field start at the true
+     page top, extending underneath the header, so the header's blur
+     has real hero pixels to blur -- see header.header-on-dark below. */
+  margin-top:-66px;
 }
 .hlm-root{
   position:relative; width:100%; height:94vh; min-height:660px; max-height:900px;
@@ -2607,6 +2619,8 @@
 }
 @media (max-width:640px){
   .hlm-root{ height:96vh; min-height:600px; }
+  /* nav.wrap drops to 52px at this breakpoint -- match the pull-up. */
+  .hero.hero-statement{ margin-top:-52px; }
   .hlm-content{ padding:74px 18px 64px; gap:24px; }
   .hlm-content .hlm-h1{ font-size:clamp(28px, 9.5vw, 40px); }
   .hlm-chip{ width:100%; max-width:320px; }
@@ -2693,92 +2707,42 @@ header.header-on-dark .brand-word-img{
    & radius scale) rather than inventing a second design language.
    ===================================================================== */
 
-/* Repeats the hero's own italic-serif/gold accent-word treatment
+/* Repeats the hero's own italic-serif accent-word treatment
    (.hlm-h1-accent in the hero) on one word per section heading below --
-   the one cheap signature that ties every section back to the hero
-   instead of reading as a bolted-on light-theme page under a dark,
-   cinematic hero. */
+   the one cheap signature that ties every section back to the hero.
+   Colour is --av (wine), not the hero's --brand-yellow gold -- gold is
+   tuned for the hero's near-black field and goes low-contrast on the
+   light sections below, per its own token comment in :root. */
 .gold-word{
   font-family:'Playfair Display', serif; font-style:italic; font-weight:600;
-  color:var(--brand-yellow);
+  color:var(--av);
 }
 
-/* Every section below the hero now carries the hero's own dark field
-   (#0E0D07, see .hero.hero-statement/.hlm-root) and the same grain
-   overlay recipe (.hlm-grain) -- one continuous dark surface from the
-   hero down to the closing CTA (which stays var(--brand) olive as a
-   deliberate colour punctuation right before the footer, not a
-   departure from the dark theme), instead of alternating light/dark
-   blocks that read as stitched-together sections. Card/chip/badge
-   surfaces throughout reuse one "glass" recipe --
-   rgba(255,255,255,0.04) fill, rgba(255,255,255,0.1) border -- rather
-   than each section inventing its own. */
-.section-dark{
-  position:relative; background:#0E0D07; color:#fff;
+/* Every section below the hero shares one light "stone" field -- a
+   deliberate step away from the plain --bg/--paper cream (which is what
+   read as flat/default) without going dark: a hair of --brand (the
+   mandatory parent colour) mixed into --paper reads as a warm pale
+   sage-stone that's still unmistakably light, and it lets every card
+   below (--paper, i.e. brighter/whiter than this) sit visibly on top of
+   it instead of blending flat into the page. One colour, reused
+   uniformly section to section, same reasoning as the dark version this
+   replaced -- still just one field, not five different backgrounds. */
+.section-tint{
+  position:relative;
+  background:color-mix(in srgb, var(--brand) 10%, var(--paper));
+  color:var(--ink);
 }
-.sd-grain{
+.st-grain{
   position:absolute; inset:0; pointer-events:none; z-index:0;
-  opacity:0.05; mix-blend-mode:overlay;
+  opacity:0.035; mix-blend-mode:multiply;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
-.section-dark .section-inner{ position:relative; z-index:1; border-top-color:rgba(255,255,255,0.08) }
-.section-dark .eyebrow{ color:rgba(255,253,248,0.5) }
-.section-dark .eyebrow::after{ background:var(--brand-yellow) }
-.section-dark h2{ color:#fff }
-.section-dark h3{ color:#fff }
-.section-dark .section-head p{ color:rgba(255,253,248,0.6) }
-
-/* Problem/Solution icon chips */
-.section-dark .ps3-item{ background:rgba(255,255,255,0.04); border-color:rgba(255,255,255,0.1) }
-.section-dark .ps3-item-label{ color:rgba(255,253,248,0.9) }
-.section-dark .ps3-eq-op{ color:rgba(255,253,248,0.5) }
-.section-dark .ps3-eq-result{ color:#fff }
-
-/* Two Scores cards -- --av/--ss are tuned for AA contrast against light
-   --paper, so on a near-black card they need lightening (color-mix
-   toward white) rather than using the raw token, or the wine accent in
-   particular reads as almost the same tone as the dark card itself. */
-.section-dark .ts4-card{
-  background:rgba(255,255,255,0.04); border-color:rgba(255,255,255,0.1);
-  border-top-color:color-mix(in srgb, var(--ts4-accent) 70%, white);
-}
-.section-dark .ts4-tag{ color:color-mix(in srgb, var(--ts4-accent) 70%, white) }
-.section-dark .ts4-name{ color:#fff }
-.section-dark .ts4-blurb{ color:rgba(255,253,248,0.62) }
-.section-dark .ts4-score{ color:color-mix(in srgb, var(--ts4-accent) 70%, white) }
-.section-dark .ts4-score span{ color:rgba(255,253,248,0.55) }
-.section-dark .ts4-grade{ color:color-mix(in srgb, var(--ts4-accent) 70%, white) }
-.section-dark .ts4-example{ color:rgba(255,253,248,0.45) }
-.section-dark .ts4-dims{ border-top-color:rgba(255,255,255,0.08) }
-.section-dark .ts4-dim{ background:rgba(255,255,255,0.06); color:rgba(255,253,248,0.72) }
-.section-dark .ts3-combine{ color:rgba(255,253,248,0.62) }
-.section-dark .ts3-combine strong{ color:#fff }
-
-/* How It Works rail -- same lightening for the thin outline badges,
-   which have less coloured area than a solid chip so low contrast
-   shows up faster. */
-.section-dark .hiw3-rail::before{ background:rgba(255,255,255,0.12) }
-.section-dark .hiw3-badge{ background:rgba(255,255,255,0.04); border-color:rgba(255,255,255,0.16) }
-.section-dark .hiw3-step p{ color:rgba(255,253,248,0.6) }
-.section-dark .hiw3-step.accent-av .hiw3-badge{ color:color-mix(in srgb, var(--av) 65%, white); border-color:color-mix(in srgb, var(--av) 65%, white) }
-.section-dark .hiw3-step.accent-ss .hiw3-badge{ color:color-mix(in srgb, var(--ss) 70%, white); border-color:color-mix(in srgb, var(--ss) 70%, white) }
-.section-dark .hiw3-step.accent-brand .hiw3-badge{ color:var(--brand-yellow); border-color:var(--brand-yellow) }
-
-/* Team cards */
-.section-dark .team2-card{ background:rgba(255,255,255,0.04); border-color:rgba(255,255,255,0.1) }
-.section-dark .team2-avatar{ box-shadow:0 0 0 1px rgba(255,255,255,0.15) }
-.section-dark .team2-name{ color:#fff }
-.section-dark .team2-card.accent-ss .team2-role{ color:color-mix(in srgb, var(--ss) 70%, white) }
-.section-dark .team2-card.accent-av .team2-role{ color:color-mix(in srgb, var(--av) 65%, white) }
-.section-dark .team2-link{ color:rgba(255,253,248,0.85); border-color:rgba(255,255,255,0.2) }
-.section-dark .team2-link:hover{ color:var(--brand-yellow); border-color:var(--brand-yellow) }
-
-/* FAQ accordion */
-.section-dark .faq2-item{ border-bottom-color:rgba(255,255,255,0.1) }
-.section-dark .faq2-q{ color:#fff }
-.section-dark .faq2-item.is-open .faq2-q{ color:var(--brand-yellow) }
-.section-dark .faq2-plus::before, .section-dark .faq2-plus::after{ background:rgba(255,253,248,0.6) }
-.section-dark .faq2-a{ color:rgba(255,253,248,0.62) }
+.section-tint .section-inner{ position:relative; z-index:1 }
+/* Everything else -- .eyebrow, h2/h3, .section-head p, the ps3/ts4/
+   hiw3/team2/faq2 component styles below -- was already written
+   against --ink/--text-mute/--paper/--line, i.e. already tuned for a
+   light surface, so none of it needs a .section-tint override; it just
+   reads correctly on the new stone field for free. */
 
 /* ---------- 01 — Problem / Solution (icon grid) ---------- */
 .ps3-grid{
