@@ -2626,7 +2626,13 @@
    entirely -- SiteHeader.js adds this class only on "/" and only until
    scroll passes the hero's own height. */
 header.header-on-dark{
-  background:var(--brand); border-bottom:1px solid rgba(255,255,255,0.1);
+  /* Was a flat solid --brand bar -- reads as a slapped-on nav strip
+     over a cinematic map hero. Same frosted-glass recipe as the hero's
+     own .hlm-typed-line pill (dark wash + blur), so the header reads as
+     part of the hero surface instead of a UI bar sitting on top of it. */
+  background:rgba(14,13,7,0.32);
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,0.08);
 }
 /* mark.png is black source art, wordmark.png is white source art -- two
    different filter chains, each numerically solved (not eyeballed) to
