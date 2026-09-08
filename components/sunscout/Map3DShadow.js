@@ -11,9 +11,14 @@ export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTi
 
   useEffect(() => {
     if (onReady) {
-      onReady((label, time, date) => {
-        iframeRef.current?.contentWindow?.postMessage({ type: 'captureScreenshot', label, time, date }, '*');
-      });
+      onReady(
+        (label, time, date) => {
+          iframeRef.current?.contentWindow?.postMessage({ type: 'captureScreenshot', label, time, date }, '*');
+        },
+        () => {
+          iframeRef.current?.contentWindow?.postMessage({ type: 'map3d_ping' }, '*');
+        },
+      );
     }
   }, [onReady]);
 
@@ -392,6 +397,12 @@ if(isAnimating)startAnim();
 
 window.addEventListener('message',function(e){
   if(!e.data)return;
+  // A ping is answered with the same ready notice the script posts on
+  // load. The parent may have mounted its listener after that first one
+  // went out (or been remounted since), and a missed ready is
+  // indistinguishable from a map that never loaded -- which is a report
+  // refusing to generate on top of a perfectly good map.
+  if(e.data.type==='map3d_ping'){notifyParent('map3d_ready');return;}
   if(e.data.type==='setAnimating'){isAnimating=e.data.value;if(isAnimating)startAnim();else stopAnim();}
   if(e.data.type==='seekTime'&&!isAnimating){
     var parts=e.data.time.split(':'),mins=parseInt(parts[0])*60+parseInt(parts[1]),best=0,bd=99999;
