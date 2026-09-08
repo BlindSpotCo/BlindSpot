@@ -51,7 +51,7 @@ const OFFSCREEN_LIVE = {
   overflow: 'hidden', pointerEvents: 'none',
 };
 
-export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId, onUnitSeen, onVerdictStart, viewStage, onScoreComputed, onBackToUnit, initialFloor, initialFacing, onUnitPicked, onSeeNeighbourhood, seeNeighbourhoodBusy, neighbourhoodNote, onDismissNeighbourhoodNote, onTryAnotherAddress, onReportOpenChange }) {
+export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLat, setLon, addressLabel, personaId, onUnitSeen, onVerdictStart, viewStage, onScoreComputed, onBackToUnit, initialFloor, initialFacing, onUnitPicked, onSeeNeighbourhood, seeNeighbourhoodBusy, neighbourhoodNote, onDismissNeighbourhoodNote, onTryAnotherAddress, onReportOpenChange, autoReport }) {
   const persona = getPersona(personaId) || getPersona(PERSONA_ORDER[0]);
   const sunScoutRef = useRef(null);
   const [floor, setFloor] = useState(initialFloor ?? null);
@@ -60,6 +60,19 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
   const [ssPreview, setSsPreview] = useState(null);
 
   const [combined, setCombined] = useState(null);
+  // ?report=1: open the report the moment we have a floor and facing to
+  // generate it for. ReportModal auto-generates when both are supplied
+  // (see its autoGenerate), so this produces the PDF rather than another
+  // screen with a Generate button. Once per visit.
+  const autoReportFired = useRef(false);
+  useEffect(() => {
+    if (!autoReport || autoReportFired.current) return;
+    if (floor == null || !facing || !sunScoutRef.current) return;
+    autoReportFired.current = true;
+    onVerdictStart?.(true);
+    sunScoutRef.current.openReport({ floor, facing });
+  }, [autoReport, floor, facing, onVerdictStart]);
+
   // Free-text "focus on this" note for the AI Report -- see where it's
   // read below, next to the Generate button.
   const [reportCustomNote, setReportCustomNote] = useState('');
