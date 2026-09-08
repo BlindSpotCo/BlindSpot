@@ -218,7 +218,7 @@ export default function ReportModal({
       const msg = String(e?.message || '');
       setError(
         msg.startsWith('map-failed') || msg === 'map-not-ready'
-          ? "The 3D map didn't load, so there was nothing to photograph for the report. That's usually a slow or blocked connection to the map provider, not a problem with your address. Go back to the flat, wait for the map to appear, then try again."
+          ? "The 3D map didn't load, so there was nothing to photograph for the report. That's usually a slow or blocked connection to the map provider, not a problem with your address. Close this, scroll to the map and wait for the buildings to appear, then try again."
           : msg === 'no-frames-captured'
             ? "The map loaded but none of the frames came back, so there was nothing to build a report from. This is usually a temporary problem with the map tiles, please try again in a minute."
             : "Something went wrong generating your report. This sometimes happens when things are busy, please try again in a minute."

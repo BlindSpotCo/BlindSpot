@@ -568,8 +568,13 @@ export default function ReportScreen() {
           </ul>
 
           <p className="bsr-more">
-            <button type="button" className="bsr-genlink" onClick={() => setReportOpen('gallery')}>
-              Generate the sun &amp; shadow report →
+            <button
+              type="button"
+              className="bsr-genlink"
+              onClick={() => setReportOpen('gallery')}
+              disabled={!capture.ready}
+            >
+              {capture.ready ? 'Generate the sun & shadow report →' : 'Waiting for the 3D map…'}
             </button>
             <span className="bsr-more-note">
               12 map angles at this exact pin, 3 per season at 9am / noon / 3pm, each with its own
@@ -693,8 +698,13 @@ export default function ReportScreen() {
           One written verdict for this address — the area, the flat, and the two read together, with the
           questions to put to the seller. Downloadable as a PDF.
         </p>
-        <button type="button" className="bsr-cta" onClick={() => setReportOpen('full')}>
-          Generate the full report
+        <button
+          type="button"
+          className="bsr-cta"
+          onClick={() => setReportOpen('full')}
+          disabled={!capture.ready}
+        >
+          {capture.ready ? 'Generate the full report' : 'Waiting for the 3D map…'}
         </button>
         <span className="bsr-free">Opens in a new tab, so this page keeps your floor and facing. Your first address is free.</span>
         <span className="bsr-also">
