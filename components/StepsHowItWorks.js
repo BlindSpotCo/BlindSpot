@@ -49,7 +49,7 @@ export default function StepsHowItWorks() {
 
         <div className="hiw3-rail">
           {STEPS.map((s) => (
-            <div key={s.title} className={`hiw3-step accent-${s.accent}`}>
+            <div key={s.title} className={`hiw3-step reveal accent-${s.accent}`}>
               <span className="hiw3-badge">{s.icon}</span>
               <h3>{s.title}</h3>
               <p>{s.copy}</p>

@@ -1,28 +1,94 @@
 'use client';
 // components/TwoScores.js
-// V3 -- v2 showed only the per-dimension weight numbers, which isn't
-// the part that matters to a visitor deciding whether to bother
-// searching their address. Replaced the weight grid with what each
-// engine actually produces: a real example score (same real records
-// HowItWorks.js used -- PIN 110001 / Connaught Place, nqi_composite 82,
-// grade A, from data/aslivastu/nqi_scores.json; and the real
-// computeLiveScore() output for floor 5/South, liveScore 50, grade
-// Fair -- both unchanged real numbers, not invented for this card),
-// plus what it measures (in words, not percentages) and where the data
-// comes from.
+// V4 -- the score used to be a bare number (".ts4-score"), which read
+// as more of the same text-heavy page. Replaced it with an animated SVG
+// ring that fills to the real score and a count-up from 0, so the two
+// numbers that matter most on the page (82, 50) are the one genuinely
+// visual, animated moment in this section instead of another line of
+// text. Same real numbers as v3 -- nothing invented, just presented
+// as a chart instead of a label.
+
+import { useEffect, useRef, useState } from 'react';
 
 const NEIGHBOURHOOD_DIMS = ['Safety', 'Infrastructure', 'Air Quality', 'Schools', 'Power', 'Water', 'Roads', 'Drainage'];
 const COMFORT_DIMS = ['Sun', 'Shade & Heat', 'View', 'Privacy', 'Wind'];
 
+const RING_R = 42;
+const RING_C = 2 * Math.PI * RING_R;
+
+function ScoreRing({ score }) {
+  const ref = useRef(null);
+  const [inView, setInView] = useState(false);
+  const [count, setCount] = useState(0);
+
+  // Own IntersectionObserver rather than reusing the page-level .reveal
+  // one below -- this needs to *know* when it's visible (to start the
+  // count-up loop and flip the ring's real dashoffset), not just get a
+  // class added to it.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return undefined;
+    if (!('IntersectionObserver' in window)) { setInView(true); return undefined; }
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) { setInView(true); io.unobserve(el); }
+        });
+      },
+      { threshold: 0.4 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!inView) return undefined;
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setCount(score);
+      return undefined;
+    }
+    const duration = 1200;
+    const start = performance.now();
+    let raf;
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - (1 - t) ** 3;
+      setCount(Math.round(eased * score));
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [inView, score]);
+
+  const offset = RING_C * (1 - (inView ? score : 0) / 100);
+
+  return (
+    <div className="ts4-ring-wrap" ref={ref}>
+      <svg className="ts4-ring" viewBox="0 0 96 96" width="96" height="96" aria-hidden="true">
+        <circle className="ts4-ring-track" cx="48" cy="48" r={RING_R} />
+        <circle
+          className="ts4-ring-fill"
+          cx="48" cy="48" r={RING_R}
+          style={{ strokeDasharray: RING_C, strokeDashoffset: offset }}
+        />
+      </svg>
+      <div className="ts4-ring-center">
+        <span className="ts4-ring-num">{count}</span>
+        <span className="ts4-ring-max">/100</span>
+      </div>
+    </div>
+  );
+}
+
 function ScoreCard({ accentVar, tag, name, blurb, score, grade, example, dims }) {
   return (
-    <div className="ts4-card" style={{ '--ts4-accent': `var(${accentVar})` }}>
+    <div className="ts4-card reveal" style={{ '--ts4-accent': `var(${accentVar})` }}>
       <span className="mono ts4-tag">{tag}</span>
       <h3 className="ts4-name">{name}</h3>
       <p className="ts4-blurb">{blurb}</p>
 
       <div className="ts4-readout">
-        <div className="ts4-score">{score}<span>/100</span></div>
+        <ScoreRing score={score} />
         <span className="ts4-grade">{grade}</span>
       </div>
       <p className="ts4-example">{example}</p>

@@ -33,7 +33,7 @@ export default function TeamSection() {
 
         <div className="team2-grid">
           {TEAM.map((m) => (
-            <div key={m.name} className={`team2-card accent-${m.accent}`}>
+            <div key={m.name} className={`team2-card reveal accent-${m.accent}`}>
               <div className="team2-avatar">{m.initials}</div>
               <div className="team2-body">
                 <div className="team2-name">{m.name}</div>
