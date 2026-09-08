@@ -2687,80 +2687,99 @@ header.header-on-dark .brand-word-img{
    & radius scale) rather than inventing a second design language.
    ===================================================================== */
 
-/* ---------- 01 — Problem / Solution ---------- */
-.ps2-grid{
-  display:grid; grid-template-columns:1.1fr 0.9fr; gap:var(--space-8);
-  align-items:start;
+/* ---------- 01 — Problem / Solution (icon grid) ---------- */
+.ps3-grid{
+  display:grid; grid-template-columns:repeat(6, 1fr); gap:var(--space-4);
+  margin-top:var(--space-2);
 }
-.ps2-label{
-  display:block; font-size:12px; letter-spacing:.1em; color:var(--text-mute);
-  margin-bottom:var(--space-4);
+.ps3-item{
+  display:flex; flex-direction:column; align-items:flex-start; gap:12px;
+  padding:var(--space-5) var(--space-4);
+  background:var(--paper); border:1px solid var(--line); border-radius:var(--radius-lg);
 }
-.ps2-label-solution{ color:var(--brand) }
-.ps2-tags{ list-style:none; display:flex; flex-wrap:wrap; gap:10px }
-.ps2-tag{
-  font-size:14px; font-weight:500; color:var(--text);
-  background:var(--bg-2); border:1px solid var(--line);
-  border-radius:var(--radius-pill); padding:8px 16px;
+.ps3-icon{
+  display:flex; align-items:center; justify-content:center;
+  width:38px; height:38px; border-radius:var(--radius-md);
+  background:var(--bg-2); color:var(--brand);
 }
-.ps2-solution{
-  border-left:2px solid var(--brand); padding-left:var(--space-6);
+.ps3-icon svg{ width:20px; height:20px }
+.ps3-item-label{ font-size:13.5px; font-weight:600; color:var(--ink); line-height:1.3 }
+.ps3-fix{
+  margin-top:var(--space-7); font-size:19px; line-height:1.6; color:var(--text-mute);
+  max-width:680px;
 }
-.ps2-solution-lead{ font-size:19px; line-height:1.55; color:var(--text) }
-.ps2-solution-lead strong{ color:var(--brand); font-weight:700 }
+.ps3-fix strong{ color:var(--brand); font-weight:700 }
 @media (max-width:900px){
-  .ps2-grid{ grid-template-columns:1fr; gap:var(--space-6) }
-  .ps2-solution{ border-left:none; border-top:2px solid var(--brand); padding-left:0; padding-top:var(--space-5) }
+  .ps3-grid{ grid-template-columns:repeat(3, 1fr) }
+}
+@media (max-width:640px){
+  .ps3-grid{ grid-template-columns:repeat(2, 1fr); gap:var(--space-3) }
+  .ps3-fix{ font-size:17px }
 }
 
-/* ---------- 02 — Two Scores ---------- */
-.ts2-grid{ display:grid; grid-template-columns:1fr 1fr; gap:var(--space-6) }
-.ts2-card{
-  position:relative; background:var(--paper); border:1px solid var(--line);
-  border-top:3px solid var(--ts2-accent); border-radius:var(--radius-lg);
+/* ---------- 02 — Two Scores (dark stat-grid cards) ---------- */
+.ts3-grid{ display:grid; grid-template-columns:1fr 1fr; gap:var(--space-6) }
+.ts3-card{
+  position:relative; overflow:hidden;
+  background:var(--ink); border-radius:var(--radius-lg);
   padding:var(--space-6);
 }
-.ts2-tag{
-  display:inline-block; font-size:11.5px; letter-spacing:.1em; color:var(--ts2-accent);
-  background:color-mix(in srgb, var(--ts2-accent) 12%, transparent);
-  border-radius:var(--radius-sm); padding:4px 10px; margin-bottom:var(--space-3);
+.ts3-card::before{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--ts3-accent) 30%, transparent), transparent 60%);
 }
-.ts2-name{ font-size:24px; margin-bottom:6px }
-.ts2-tagline{ font-size:14.5px; color:var(--text-mute); margin-bottom:var(--space-5) }
-.ts2-dims{ display:flex; flex-direction:column; gap:14px; margin-bottom:var(--space-5) }
-.ts2-dim-top{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px }
-.ts2-dim-label{ font-size:14px; font-weight:600; color:var(--text) }
-.ts2-dim-weight{ font-size:12px; color:var(--text-dim) }
-.ts2-dim-track{ height:5px; border-radius:3px; background:var(--bg-2); overflow:hidden }
-.ts2-dim-fill{ height:100%; border-radius:3px; background:var(--ts2-accent) }
-.ts2-source{ font-size:12.5px; line-height:1.6; color:var(--text-dim); border-top:1px solid var(--line-soft); padding-top:var(--space-4) }
-.ts2-combine{
-  margin-top:var(--space-7); text-align:center; max-width:680px; margin-left:auto; margin-right:auto;
+.ts3-tag{
+  position:relative; display:block; font-size:11px; letter-spacing:.1em; color:var(--ts3-accent);
+  margin-bottom:var(--space-3);
 }
-.ts2-combine-label{ display:block; font-size:11.5px; letter-spacing:.12em; color:var(--text-mute); margin-bottom:10px }
-.ts2-combine p{ font-size:15.5px; line-height:1.7; color:var(--text-mute) }
-.ts2-combine strong{ color:var(--ink) }
+.ts3-name{ position:relative; font-size:23px; color:#fff; margin-bottom:var(--space-5) }
+.ts3-stat-grid{
+  position:relative; display:grid; grid-template-columns:repeat(2, 1fr); gap:1px;
+  background:rgba(255,255,255,0.08); border-radius:var(--radius-md); overflow:hidden;
+}
+.ts3-stat{ background:var(--ink); padding:16px 14px }
+.ts3-stat-num{ font-family:'Geist',sans-serif; font-weight:600; font-size:28px; color:var(--ts3-accent); line-height:1 }
+.ts3-stat-num span{ font-size:14px; opacity:.7; margin-left:1px }
+.ts3-stat-label{ font-size:12px; color:rgba(255,255,255,0.6); margin-top:6px }
+.ts3-combine{
+  margin-top:var(--space-6); font-size:15px; color:var(--text-mute); text-align:center;
+}
+.ts3-combine strong{ color:var(--ink) }
 @media (max-width:900px){
-  .ts2-grid{ grid-template-columns:1fr }
+  .ts3-grid{ grid-template-columns:1fr }
+}
+@media (max-width:480px){
+  .ts3-stat-grid{ grid-template-columns:repeat(2, 1fr) }
+  .ts3-stat-num{ font-size:24px }
 }
 
-/* ---------- 03 — How It Works (steps) ---------- */
-.hiw2-steps{ display:grid; grid-template-columns:repeat(3, 1fr); gap:var(--space-6) }
-.hiw2-step{ border-top:2px solid var(--line); padding-top:var(--space-4) }
-.hiw2-step-n{ display:block; font-size:12px; letter-spacing:.1em; color:var(--text-mute); margin-bottom:10px }
-.hiw2-step h3{ font-size:19px; margin-bottom:8px }
-.hiw2-step p{ font-size:14.5px; line-height:1.65; color:var(--text-mute) }
-.hiw2-step p strong{ color:var(--ink) }
-.hiw2-step.accent-av{ border-top-color:var(--av) }
-.hiw2-step.accent-av .hiw2-step-n{ color:var(--av) }
-.hiw2-step.accent-ss{ border-top-color:var(--ss) }
-.hiw2-step.accent-ss .hiw2-step-n{ color:var(--ss) }
-.hiw2-step.accent-brand{ border-top-color:var(--brand) }
-.hiw2-step.accent-brand .hiw2-step-n{ color:var(--brand) }
+/* ---------- 03 — How It Works (icon rail) ---------- */
+.hiw3-rail{
+  position:relative; display:grid; grid-template-columns:repeat(3, 1fr); gap:var(--space-6);
+}
+.hiw3-rail::before{
+  content:''; position:absolute; left:0; right:0; top:24px; height:1px; background:var(--line);
+  z-index:0;
+}
+.hiw3-step{ position:relative; z-index:1 }
+.hiw3-badge{
+  display:flex; align-items:center; justify-content:center;
+  width:48px; height:48px; border-radius:50%;
+  background:var(--paper); border:1.5px solid var(--line); color:var(--brand);
+  margin-bottom:var(--space-4);
+}
+.hiw3-badge svg{ width:22px; height:22px }
+.hiw3-step h3{ font-size:19px; margin-bottom:6px }
+.hiw3-step p{ font-size:14px; color:var(--text-mute) }
+.hiw3-step.accent-av .hiw3-badge{ color:var(--av); border-color:var(--av) }
+.hiw3-step.accent-ss .hiw3-badge{ color:var(--ss); border-color:var(--ss) }
+.hiw3-step.accent-brand .hiw3-badge{ color:var(--brand); border-color:var(--brand) }
 .hiw2-cta{ margin-top:var(--space-7); display:flex; justify-content:center }
 @media (max-width:900px){
-  .hiw2-steps{ grid-template-columns:1fr; gap:var(--space-5) }
+  .hiw3-rail{ grid-template-columns:1fr; gap:var(--space-6) }
+  .hiw3-rail::before{ display:none }
 }
+
 
 /* ---------- 04 — Team ---------- */
 .team2-grid{ display:grid; grid-template-columns:1fr 1fr; gap:var(--space-6) }
