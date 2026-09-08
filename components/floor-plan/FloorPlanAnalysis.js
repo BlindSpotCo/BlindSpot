@@ -108,7 +108,7 @@ export default function FloorPlanAnalysis({ embedded = false }) {
     if (typeof window === 'undefined') return;
     if (window.opener && !window.opener.closed) { window.close(); return; }
     if (window.history.length > 1) { router.back(); return; }
-    router.push('/property-score');
+    router.push('/#find');
   };
 
   function toggleMustHave(opt) {

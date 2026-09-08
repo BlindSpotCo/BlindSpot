@@ -152,15 +152,12 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
       } catch { /* opener gone or cross-origin -- fall through to direct nav */ }
     }
     // No opener (direct link, bookmark, a saved report reopened later) --
-    // this is the only tab there is, so navigate it straight to the same
-    // spot instead of asking the person to start the flow over. The pin
-    // itself gets resolved server-side (app/property-score/page.js) into
-    // the Unit tab directly -- the flow is 4 single-screen tabs, not one
-    // long scroll, so there's no in-page position left to jump to; simply
-    // opening on the right tab already is the fix.
-    const q = new URLSearchParams({ continue: 'unit', pin: String(record.pin_code), city: record.city || '' });
-    if (record.sectorNum != null) q.set('sector', String(record.sectorNum));
-    window.location.href = `/property-score?${q.toString()}`;
+    // this is the only tab there is, so take it straight to the combined
+    // report for this pin instead of asking the person to start over.
+    const q = new URLSearchParams({ pin_code: String(record.pin_code) });
+    if (record.lat != null && record.lon != null) { q.set('lat', String(record.lat)); q.set('lon', String(record.lon)); }
+    if (record.name) q.set('address', record.name);
+    window.location.href = `/report?${q.toString()}`;
   }
 
   return (

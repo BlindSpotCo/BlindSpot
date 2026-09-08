@@ -56,7 +56,7 @@ const jsonLd = {
     "See what listings don't tell you, Neighbourhood Score and Home Comfort Score property intelligence.",
   potentialAction: {
     '@type': 'SearchAction',
-    target: `${SITE_URL}/property-score?q={search_term_string}`,
+    target: `${SITE_URL}/?q={search_term_string}`,
     'query-input': 'required name=search_term_string',
   },
 };
