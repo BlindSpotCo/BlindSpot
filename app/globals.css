@@ -2332,8 +2332,21 @@
      has real hero pixels to blur -- see header.header-on-dark below. */
   margin-top:-66px;
 }
+/* Fill the actual viewport, not a capped fraction of it -- was
+   94vh with a max-height:900px ceiling, tuned on a laptop screen,
+   which on anything taller (an external monitor, a big desktop) left
+   a real gap of plain page background showing below the map before
+   the next section started. 100vh first (universal fallback), then
+   100dvh where it's supported -- dvh tracks the *real* visible
+   viewport on mobile browsers (their address/tab bar shrinks the
+   usable height, and plain vh is sized against the larger static
+   viewport, cutting the bottom of the map off behind that bar) --
+   so this now genuinely fills the screen on a phone, a laptop, or an
+   ultrawide alike. min-height is just a sane floor for very short
+   viewports (a landscape phone), not a visual target. */
 .hlm-root{
-  position:relative; width:100%; height:94vh; min-height:660px; max-height:900px;
+  position:relative; width:100%;
+  height:100vh; height:100dvh; min-height:520px;
   overflow:hidden; background:#0E0D07;
 }
 .hlm-loading{ background:#0E0D07; }
@@ -2618,7 +2631,10 @@
   .hlm-content .hlm-h1{ font-size:clamp(32px, 6.8vw, 50px); }
 }
 @media (max-width:640px){
-  .hlm-root{ height:96vh; min-height:600px; }
+  /* Same reasoning as the base .hlm-root rule above -- full real
+     viewport, dvh over vh where supported -- just a smaller floor
+     since actual phones can be shorter than 520px in landscape. */
+  .hlm-root{ height:100vh; height:100dvh; min-height:420px; }
   /* nav.wrap drops to 52px at this breakpoint -- match the pull-up. */
   .hero.hero-statement{ margin-top:-52px; }
   .hlm-content{ padding:74px 18px 64px; gap:24px; }
