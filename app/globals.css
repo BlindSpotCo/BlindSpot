@@ -2381,7 +2381,7 @@
   display:inline-flex; align-items:center; gap:8px;
   font-family:'Geist Mono',monospace; font-weight:500; font-size:11px;
   letter-spacing:0.14em; text-transform:uppercase; color:var(--brand-yellow); margin:0 0 18px;
-  opacity:0; animation:hlmRise 0.9s cubic-bezier(.16,1,.3,1) 0.35s forwards;
+  opacity:0; animation:hlmRise 1.2s cubic-bezier(.16,1,.3,1) 0.4s forwards;
 }
 .hlm-eyebrow::before{
   content:''; width:6px; height:6px; border-radius:50%; background:var(--brand-yellow); flex-shrink:0;
@@ -2397,8 +2397,8 @@
   color:transparent; -webkit-text-fill-color:transparent;
   opacity:0;
   animation:
-    hlmRise 1s cubic-bezier(.16,1,.3,1) 0.5s forwards,
-    hlmShimmer 2.3s cubic-bezier(.4,0,.2,1) 2.1s 1 both;
+    hlmRise 1.3s cubic-bezier(.16,1,.3,1) 0.6s forwards,
+    hlmShimmer 2.6s cubic-bezier(.4,0,.2,1) 2.3s 1 both;
 }
 @keyframes hlmShimmer{
   from{ background-position:200% 0; }
@@ -2420,7 +2420,7 @@
   font-family:'Playfair Display', serif; font-style:italic; font-weight:600;
   font-size:1em; color:#FFFDF8; -webkit-text-fill-color:#FFFDF8;
   text-shadow:0 4px 30px rgba(0,0,0,0.5);
-  animation:hlmAccentGold 0.8s ease-out 2.9s forwards;
+  animation:hlmAccentGold 1s ease-out 3.2s forwards;
 }
 @keyframes hlmAccentGold{
   from{ color:#FFFDF8; -webkit-text-fill-color:#FFFDF8; text-shadow:0 4px 30px rgba(0,0,0,0.5); }
@@ -2446,7 +2446,7 @@
   border-radius:var(--radius-pill);
   backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
   font-family:'Geist Mono',monospace; font-size:clamp(16px, 1.7vw, 19px);
-  opacity:0; animation:hlmRise 1s cubic-bezier(.16,1,.3,1) 0.62s forwards;
+  opacity:0; animation:hlmRise 1.3s cubic-bezier(.16,1,.3,1) 0.78s forwards;
 }
 .hlm-typed-text{
   color:#FFFDF8; font-weight:500;
@@ -2460,7 +2460,7 @@
   margin:16px 0 0; font-family:'Geist',sans-serif; font-size:16px; font-weight:500;
   letter-spacing:-0.005em; color:rgba(255,253,248,0.92);
   text-shadow:0 2px 16px rgba(0,0,0,0.6);
-  opacity:0; animation:hlmRise 1s cubic-bezier(.16,1,.3,1) 0.74s forwards;
+  opacity:0; animation:hlmRise 1.3s cubic-bezier(.16,1,.3,1) 0.92s forwards;
 }
 @media (max-width:640px){
   .hlm-typed-line{ font-size:14.5px; padding:7px 16px; }
@@ -2479,7 +2479,7 @@
 
 .hlm-searchwrap{
   position:relative; pointer-events:auto; width:min(600px, 88vw); flex-shrink:0;
-  opacity:0; animation:hlmRise 1s cubic-bezier(.16,1,.3,1) 0.68s forwards;
+  opacity:0; animation:hlmRise 1.3s cubic-bezier(.16,1,.3,1) 0.85s forwards;
 }
 .hlm-search{
   display:flex; align-items:center; gap:12px;
