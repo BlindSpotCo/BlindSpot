@@ -23,6 +23,10 @@ const DISPLAY = "'Space Grotesk', sans-serif";
 
 export default function ReportModal({
   lat, lon, tzOffset, address, onClose, captureScreenshots, onFloorFacingSubmit,
+  // galleryOnly: this run was asked for the sun & shadow document -- the 12
+  // map angles and the monthly sunlight table -- not the combined verdict.
+  // Same pipeline either way; only which blob we hand back changes.
+  galleryOnly,
   // Combined-report context, passed down from UnitVerdict via SunScoutPanel
   // when this modal is opened from the Property Score flow (as opposed to
   // SunScout used standalone). When avRecord is present, the generated
@@ -175,7 +179,7 @@ export default function ReportModal({
 
       const blob = new Blob([finalMainHtml], { type: 'text/html' });
       const url = URL.createObjectURL(blob);
-      setReportUrl(url);
+      setReportUrl(galleryOnly ? galleryUrl : url);
       setSavableData({
         mainHtml: finalMainHtml, galleryHtml,
         analysis, summary, address: addr, floor, facing,
@@ -304,7 +308,7 @@ export default function ReportModal({
         {reportUrl ? (
           <div style={{ textAlign:'center', padding:'20px 0' }}>
             <div style={{ fontFamily:MONO, fontSize:11, fontWeight:500, color:'#16a34a', letterSpacing:'.1em', textTransform:'uppercase', marginBottom:14, border:'1px solid #16a34a', display:'inline-block', padding:'5px 14px' }}>Report Ready</div>
-            <h3 style={{ fontFamily:DISPLAY, fontSize:18, fontWeight:800, color:INK, marginBottom:8 }}>Your report is ready</h3>
+            <h3 style={{ fontFamily:DISPLAY, fontSize:18, fontWeight:800, color:INK, marginBottom:8 }}>{galleryOnly ? 'Your sun & shadow report is ready' : 'Your report is ready'}</h3>
             <p style={{ fontSize:13, color:SUB, lineHeight:1.6, marginBottom:20 }}>Opens in a new tab.</p>
             {savableData && (
               <div style={{ display:'flex', justifyContent:'center', marginBottom:20 }}>
@@ -317,7 +321,7 @@ export default function ReportModal({
             )}
             <div style={{ display:'flex', flexDirection:'column', gap:0 }}>
               <button onClick={() => window.open(reportUrl, '_blank')} style={{ background:INK, color:'#fff', border:'none', padding:'13px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
-                Open Report
+                {galleryOnly ? 'Open Sun & Shadow Report' : 'Open Report'}
               </button>
               <button onClick={onClose} style={{ background:'none', color:SUB, border:`1px solid ${LINE}`, borderTop:'none', padding:'12px', fontSize:12, cursor:'pointer', fontFamily:MONO, letterSpacing:'.05em', textTransform:'uppercase' }}>
                 Close

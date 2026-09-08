@@ -70,7 +70,9 @@ export default function UnitVerdict({ areaRecord, pinCode, city, lat, lon, setLa
     if (floor == null || !facing || !sunScoutRef.current) return;
     autoReportFired.current = true;
     onVerdictStart?.(true);
-    sunScoutRef.current.openReport({ floor, facing });
+    // 'unit' -> the sun & shadow document only; anything else -> the full
+    // combined report the Verdict tab's own button generates.
+    sunScoutRef.current.openReport({ floor, facing, galleryOnly: autoReport === 'unit' });
   }, [autoReport, floor, facing, onVerdictStart]);
 
   // Free-text "focus on this" note for the AI Report -- see where it's

@@ -373,6 +373,7 @@ const SunScoutPanel = forwardRef(function SunScoutPanel({
           prefillFloor={reportPrefill?.floor} prefillFacing={reportPrefill?.facing}
           prefillCustomNote={reportPrefill?.customNote}
           prefillActionItems={reportPrefill?.actionItems}
+          galleryOnly={reportPrefill?.galleryOnly}
         />
       )}
 
