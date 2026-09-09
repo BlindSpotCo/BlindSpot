@@ -63,7 +63,7 @@ export default function FAQSection() {
       <div className="wrap section-inner">
         <div className="section-head">
           <div>
-            <span className="eyebrow">05 - Questions</span>
+            <span className="eyebrow">04 - Questions</span>
             <h2>Before you <span className="gold-word">ask</span>.</h2>
           </div>
         </div>

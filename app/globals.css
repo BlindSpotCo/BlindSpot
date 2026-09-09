@@ -2905,40 +2905,6 @@ header.header-on-dark .brand-word-img{
 }
 
 
-/* ---------- 04 — Team ---------- */
-.team2-grid{ display:grid; grid-template-columns:1fr 1fr; gap:var(--space-6) }
-.team2-card{
-  display:flex; gap:var(--space-5); align-items:flex-start;
-  background:var(--paper); border:1px solid var(--line); border-radius:var(--radius-lg);
-  padding:var(--space-6);
-  transition:transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s ease, border-color .3s ease;
-}
-.team2-card:hover{
-  transform:translateY(-4px); box-shadow:0 16px 32px -18px rgba(28,24,18,.22);
-  border-color:color-mix(in srgb, var(--brand) 35%, var(--line));
-}
-.team2-avatar{
-  flex-shrink:0; width:56px; height:56px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  font-size:16px; font-weight:600; color:#fff; background:var(--brand);
-}
-.team2-card.accent-ss .team2-avatar{ background:var(--ss) }
-.team2-card.accent-av .team2-avatar{ background:var(--av) }
-.team2-name{ font-size:18px; margin-bottom:2px }
-.team2-role{ font-size:12.5px; letter-spacing:.06em; font-weight:600; margin-bottom:10px }
-.team2-card.accent-ss .team2-role{ color:var(--ss) }
-.team2-card.accent-av .team2-role{ color:var(--av) }
-.team2-desc{ font-size:14px; line-height:1.7; color:var(--text-mute); margin-bottom:14px }
-.team2-link{
-  display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:600;
-  color:var(--text); text-decoration:none; border-bottom:1px solid var(--line);
-}
-.team2-link:hover{ color:var(--brand); border-color:var(--brand) }
-@media (max-width:640px){
-  .team2-grid{ grid-template-columns:1fr }
-  .team2-card{ flex-direction:column; align-items:flex-start }
-}
-
 /* ---------- 05 — FAQ ---------- */
 .faq2-list{ max-width:760px }
 .faq2-item{
@@ -3052,6 +3018,12 @@ header.header-on-dark .brand-word-img{
 .closing2-inner h2{ font-size:clamp(28px, 4vw, 42px); color:#fff; margin-bottom:var(--space-4) }
 .closing2-inner p{ font-size:16px; line-height:1.6; color:rgba(255,253,248,0.78); margin-bottom:var(--space-6) }
 .closing2-ctas{ display:flex; justify-content:center }
+/* Unlike the light sections below, this surface is dark (--brand olive),
+   so --brand-yellow reads fine here (it's already used elsewhere on this
+   same surface -- the eyebrow underline, the radial glow, footer link
+   hovers) -- scoped override, not a change to the shared .gold-word rule
+   used on the light sections, where --av is required for contrast. */
+.section-closing2 .gold-word{ color:var(--brand-yellow); }
 .section-closing2 .btn-cta{
   background:#fff; color:var(--brand);
   box-shadow:0 16px 34px -14px rgba(0,0,0,0.4);
@@ -3062,7 +3034,7 @@ header.header-on-dark .brand-word-img{
   position:relative; z-index:1; overflow:hidden; border-top:1px solid rgba(255,255,255,0.1);
 }
 .footer-top{
-  position:relative; z-index:1; display:flex; align-items:center; gap:16px;
+  position:relative; z-index:1; display:flex; align-items:center; justify-content:center; gap:16px;
   padding:var(--space-7) 0 var(--space-6); border-bottom:1px solid rgba(255,255,255,0.08);
 }
 .footer-tagline{
@@ -3074,7 +3046,7 @@ header.header-on-dark .brand-word-img{
   display:grid; grid-template-columns:repeat(3, 1fr); gap:var(--space-6);
   padding:var(--space-6) 0;
 }
-.footer-col{ display:flex; flex-direction:column; gap:12px }
+.footer-col{ display:flex; flex-direction:column; gap:12px; align-items:center; text-align:center }
 .footer-col-title{
   font-family:'Geist Mono',monospace; font-size:11.5px; letter-spacing:.1em; text-transform:uppercase;
   color:rgba(255,253,248,0.4); margin-bottom:2px;
@@ -3092,6 +3064,34 @@ header.header-on-dark .brand-word-img{
 }
 .footer-col a:hover{ color:#fff }
 .footer-col a:hover::after{ transform:scaleX(1) }
+
+/* Founder cards, moved into the footer's "Team" column from the old
+   standalone TeamSection (see ClosingCTA.js's top comment) -- own look
+   rather than reusing .team2-card since that was built for a paper
+   card on the light --bg-2 tint; this sits directly on the dark
+   --brand footer instead, so it borrows the same
+   rgba(255,253,248,..)-on-dark palette the rest of the footer already
+   uses. The default .footer-col a underline is switched off (::after
+   is display:none below) since a full-width underline reads oddly
+   under an avatar + two lines of text -- the name colour shift on
+   hover is the link's own affordance instead. */
+.footer-founder{
+  display:flex; align-items:center; gap:10px; width:fit-content;
+  text-decoration:none; margin-top:2px;
+}
+.footer-founder::after{ display:none }
+.footer-founder-avatar{
+  flex-shrink:0; width:32px; height:32px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11.5px; font-weight:600; color:#fff;
+  background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.22);
+}
+.footer-founder.accent-ss .footer-founder-avatar{ background:color-mix(in srgb, var(--ss) 60%, transparent) }
+.footer-founder.accent-av .footer-founder-avatar{ background:color-mix(in srgb, var(--av) 60%, transparent) }
+.footer-founder-info{ display:flex; flex-direction:column; gap:1px; text-align:left }
+.footer-founder-name{ font-size:14px; font-weight:600; color:rgba(255,253,248,0.9); transition:color .2s ease }
+.footer-founder-role{ font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:rgba(255,253,248,0.42) }
+.footer-founder:hover .footer-founder-name{ color:var(--brand-yellow) }
 
 /* The wordmark is its own full-width statement row. On hover it
    performs a wipe transition: BLINDSPOT clips away left-to-right

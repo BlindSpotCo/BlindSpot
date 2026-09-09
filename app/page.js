@@ -6,7 +6,6 @@ import HeroLiveMap from '@/components/HeroLiveMap';
 import ProblemSolution from '@/components/ProblemSolution';
 import TwoScores from '@/components/TwoScores';
 import StepsHowItWorks from '@/components/StepsHowItWorks';
-import TeamSection from '@/components/TeamSection';
 import FAQSection from '@/components/FAQSection';
 import ClosingCTA from '@/components/ClosingCTA';
 
@@ -59,13 +58,14 @@ export default function Home() {
       </section>
 
       {/* ===== THE REST OF THE PAGE -- redone from scratch =====
-          Six sections, each its own component: the problem/solution
+          Five sections, each its own component: the problem/solution
           framing, the two real scoring engines explained, the 3-step
-          flow, the team, an FAQ, and the closing CTA + footer. */}
+          flow, an FAQ, and the closing CTA + footer. The team used to
+          be its own sixth section here -- moved into ClosingCTA's
+          footer instead (see that file's top comment for why). */}
       <ProblemSolution />
       <TwoScores />
       <StepsHowItWorks />
-      <TeamSection />
       <FAQSection />
       <ClosingCTA />
     </>

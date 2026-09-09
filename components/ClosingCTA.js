@@ -12,9 +12,15 @@
 // that, not the cursor-spotlight glow tried first:
 // - Small brand lockup as its own top strip (was mixed in as a 3rd
 //   column before).
-// - Three real link columns instead of two -- added Connect, the
-//   two founders' actual LinkedIn links (same URLs as TeamSection.js),
-//   not an invented Careers/Investors column.
+// - Three real link columns instead of two. The third is now the
+//   team itself, moved here from the old standalone TeamSection --
+//   that section left a large stacked-padding gap after How It Works
+//   (its own 88px top padding on top of How It Works' 88px bottom
+//   padding + the step rail's CTA margin) with barely any content to
+//   justify a full section, so the two founder cards (same real
+//   names/roles/LinkedIn links TeamSection used) live here instead.
+//   id="team" carries over so the nav's existing #team links still
+//   land in the right place.
 // - The wordmark is its own full-width statement row. Two stacked
 //   layers occupy the same box: BLINDSPOT on top, and the same real
 //   tagline already used above (.footer-tagline's "Property
@@ -24,14 +30,28 @@
 
 import PinDropTransition from '@/components/PinDropTransition';
 
+const TEAM = [
+  {
+    initials: 'AG',
+    name: 'Arushri Gangji',
+    accent: 'ss',
+    linkedin: 'https://www.linkedin.com/in/arushri-gangji-056108381/',
+  },
+  {
+    initials: 'GB',
+    name: 'Gurshaan Singh Baweja',
+    accent: 'av',
+    linkedin: 'https://www.linkedin.com/in/gurshaan-singh-baweja',
+  },
+];
+
 export default function ClosingCTA() {
   return (
     <section className="section section-closing2 reveal">
       <div className="cc-grain" aria-hidden="true" />
       <div className="wrap closing2-inner">
-        <span className="eyebrow">06 - One Pin Away</span>
+        <span className="eyebrow">05 - One Pin Away</span>
         <h2>Because every property has a blindspot, and we&apos;re making it <span className="gold-word">visible</span>.</h2>
-        <p>See the sunlight. Know the neighbourhood. Two free tools. One pin. Everything the listing wasn&apos;t going to mention.</p>
         <div className="closing2-ctas">
           <PinDropTransition href="/#find" className="btn btn-lg btn-cta">
             Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
@@ -62,10 +82,23 @@ export default function ClosingCTA() {
               <a href="/signup">Create an account</a>
               <a href="/login">Sign in</a>
             </div>
-            <div className="footer-col">
-              <span className="footer-col-title">Connect</span>
-              <a href="https://www.linkedin.com/in/gurshaan-singh-baweja" target="_blank" rel="noopener">Gurshaan · LinkedIn</a>
-              <a href="https://www.linkedin.com/in/arushri-gangji-056108381/" target="_blank" rel="noopener">Arushri · LinkedIn</a>
+            <div className="footer-col" id="team">
+              <span className="footer-col-title">The Team</span>
+              {TEAM.map((m) => (
+                <a
+                  key={m.name}
+                  href={m.linkedin}
+                  target="_blank"
+                  rel="noopener"
+                  className={`footer-founder accent-${m.accent}`}
+                >
+                  <span className="footer-founder-avatar">{m.initials}</span>
+                  <span className="footer-founder-info">
+                    <span className="footer-founder-name">{m.name}</span>
+                    <span className="footer-founder-role">Co-founder</span>
+                  </span>
+                </a>
+              ))}
             </div>
           </div>
         </div>
