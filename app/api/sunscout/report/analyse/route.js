@@ -103,6 +103,78 @@ function geminiCaller({ budgetMs = 48_000, maxOutputTokens = 6144 } = {}) {
   return { call, left };
 }
 
+// Per-image descriptions for the sun & shadow gallery.
+//
+// Twelve images in one request is the wrong shape for this, and it is what
+// produced captions that stopped mid-sentence on image 2 and were simply
+// absent from image 3 onwards: the model hit its output ceiling partway down
+// the list and every image after the cut got nothing. A bigger ceiling only
+// moves where the cliff is.
+//
+// So: small batches, run at once. Four images per call sits well inside any
+// output limit, the batches go in parallel so it costs one call's latency
+// rather than three, and a batch that fails takes four captions with it
+// instead of the whole set.
+//
+// This is also its own job now, separate from the report narrative. The full
+// report used to ask for these twelve descriptions as one section among six,
+// which is how a long shadow section could eat the token budget the rest of
+// the report needed -- and why the same truncation showed up there too.
+async function describeImages({ screenshots, groundTruthText, floorN, facing, budgetMs = 38_000 }) {
+  const BATCH = 4;
+  const batches = [];
+  for (let i = 0; i < screenshots.length; i += BATCH) {
+    batches.push({ offset: i, shots: screenshots.slice(i, i + BATCH) });
+  }
+
+  const promptFor = (offset, shots) => `You are a solar analyst describing map screenshots for a home buyer in India.
+
+${groundTruthText}
+
+These are screenshots of a 3D map of one location. The orange circle marks the exact property; darker areas are shadows cast by real OpenStreetMap building data. The unit in question is on floor ${floorN}, facing ${facing}.
+
+You are being given ${shots.length} of the images, and they are numbered ${offset + 1} to ${offset + shots.length}. Write ONE line per image and nothing else. Each line must be exactly this form, no bullet, no heading, no blank line between them:
+@N@ <description>
+using those exact numbers, in order, starting at @${offset + 1}@.
+
+Each description is 2-4 sentences of plain, everyday English, and must end as a complete sentence -- never stop mid-sentence. Say what is casting the shadow near the marker (a taller building, a row of low-rise structures, nothing nearby), which way the shadow falls, roughly how much of the area around the marker is in shade versus sun at that moment, and what that means for this floor and facing at that time of year. Be concrete about what you can actually see. If an image looks blank, black or unreadable, say so on its line instead of guessing. Never use emoji.
+
+Image order:
+${shots.map((sh, i) => `Image ${offset + i + 1}: ${sh.label}`).join('\n')}`;
+
+  const partsFor = (shots) => shots.map((sh) => {
+    const match = sh.base64.match(/^data:(image\/\w+);base64,(.+)$/);
+    return { inlineData: { mimeType: match ? match[1] : 'image/jpeg', data: match ? match[2] : sh.base64 } };
+  });
+
+  const { call } = geminiCaller({ budgetMs, maxOutputTokens: 2048 });
+
+  const texts = await Promise.all(batches.map(async ({ offset, shots }) => {
+    try {
+      const d = await call([{ role: 'user', parts: [{ text: promptFor(offset, shots) }, ...partsFor(shots)] }]);
+      const cand = d?.candidates?.[0];
+      let text = cand?.content?.parts?.[0]?.text || '';
+      // If a batch was cut off anyway, drop the unfinished last line rather
+      // than showing half a sentence under an image.
+      if (cand?.finishReason === 'MAX_TOKENS') {
+        const lines = text.split('\n');
+        lines.pop();
+        text = lines.join('\n');
+        console.warn(`[report/analyse] caption batch at ${offset} hit MAX_TOKENS; dropped its last line.`);
+      }
+      return text;
+    } catch (err) {
+      console.error(`[report/analyse] caption batch at ${offset} failed:`, err?.message || err);
+      return '';
+    }
+  }));
+
+  const text = texts.filter(Boolean).join('\n');
+  const count = (text.match(/^@\d+@/gm) || []).length;
+  console.log(`[report/analyse] captions: ${count}/${screenshots.length} images described.`);
+  return { text, count };
+}
+
 export async function POST(req) {
   const { screenshots, lat, lon, address, floor, facing, tzOffset, avRecord, combinedScore, unitScore, areaWeight, unitWeight, personaId, customNote, actionItems, skipAi, captionsOnly } = await req.json();
   const persona = personaId ? (await import('@/lib/personas')).getPersona(personaId) : null;
@@ -176,37 +248,22 @@ Note: floor clearance is an estimate based on typical urban obstruction heights,
       return NextResponse.json({ analysis: '', summary: reportSummary, aiUnavailable: true, aiReason: 'not-configured' });
     }
 
-    const captionPrompt = `You are a solar analyst describing map screenshots for a home buyer in India.
-
-${groundTruthText}
-
-You have ${screenshots.length} screenshots of a 3D map of one location. The orange circle marks the exact property; darker areas are shadows cast by real OpenStreetMap building data. The unit in question is on floor ${floorN}, facing ${safeFacingInput}.
-
-Write ONE line per screenshot and nothing else. Each line must be exactly in this form, with no bullet, no heading, no blank lines between them:
-@N@ <description>
-where N is the image number from the "Image order" list below, 1 to ${screenshots.length}, in order.
-
-Each description is 3-5 sentences of plain, everyday English: what is casting the shadow near the marker (a taller building, a row of low-rise structures, nothing nearby), which way the shadow falls, roughly how much of the area around the marker is in shade versus sun at that moment, and what that means for this floor and facing at that time of year. Be concrete about what you can actually see. If an image looks blank, black or unreadable, say so on its line instead of guessing. Never use emoji. Do not write anything before the first @1@ line or after the last one.`;
-
-    const captionLabels = screenshots.map((sh, i) => `Image ${i + 1}: ${sh.label}`).join('\n');
-    const captionParts = screenshots.map((sh) => {
-      const match = sh.base64.match(/^data:(image\/\w+);base64,(.+)$/);
-      return { inlineData: { mimeType: match ? match[1] : 'image/jpeg', data: match ? match[2] : sh.base64 } };
+    const { text: capText, count: captioned } = await describeImages({
+      screenshots, groundTruthText, floorN, facing: safeFacingInput,
     });
-
-    const { call } = geminiCaller({ budgetMs: 32_000, maxOutputTokens: 3072 });
-    const capData = await call([{ role: 'user', parts: [{ text: `${captionPrompt}\n\nImage order:\n${captionLabels}` }, ...captionParts] }]);
-    const capText = capData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
     // One usable @N@ line is the bar. Anything less and the gallery is
     // better off saying nothing than showing a stray sentence under one
     // image and nothing under the other eleven.
-    if (!/^@\d+@/m.test(capText)) {
+    if (captioned === 0) {
       console.warn('[report/analyse] caption pass came back without @N@ lines; shipping the gallery without descriptions.');
       return NextResponse.json({ analysis: '', summary: reportSummary, aiUnavailable: true, aiReason: 'captions-empty' });
     }
 
-    return NextResponse.json({ analysis: capText, summary: reportSummary, captions: true });
+    return NextResponse.json({
+      analysis: capText, summary: reportSummary, captions: true,
+      captionedCount: captioned, imageCount: screenshots.length,
+    });
   }
 
   // No key configured is a deployment problem, not a busy model, and it
@@ -226,9 +283,18 @@ Each description is 3-5 sentences of plain, everyday English: what is casting th
   const combinedGroundTruth = hasNeighbourhood ? `
 COMBINED BLINDSPOT SCORE: ${combinedScore ?? 'not computed'}/100 — built from the neighbourhood score (${avRecord.nqi_composite}/100, weighted ${Math.round((areaWeight ?? 0.5) * 100)}%) and this unit's Home Comfort Score (${unitScore ?? 'not computed'}/100, weighted ${Math.round((unitWeight ?? 0.5) * 100)}%). Treat both of these figures as fact, do not recompute them.` : '';
 
-  const imageSectionNumber = hasNeighbourhood ? 3 : 1;
-  const floorSectionNumber = hasNeighbourhood ? 4 : 2;
-  const facingSectionNumber = hasNeighbourhood ? 5 : 3;
+  // Section 2 is new and it is the point of a *combined* report: the two
+  // halves read against each other. Before this, the area and the flat were
+  // analysed in separate sections that never mentioned one another, and the
+  // only place they met was one clause of the verdict paragraph. A buyer
+  // deciding between a good area with a dark flat and a bright flat in a
+  // weaker area got no help with exactly that question.
+  const togetherSectionNumber = 2;
+  const neighbourhoodSectionNumber = 3;
+  // Floor and facing were two sections that repeated each other -- both
+  // walked through the same monthly numbers, one keyed on height and one on
+  // orientation. One section, and the output is shorter as well as clearer.
+  const flatSectionNumber = hasNeighbourhood ? 4 : 1;
 
   const verdictInstruction = hasNeighbourhood
     ? `1. HOME BUYER VERDICT
@@ -237,10 +303,18 @@ The FIRST paragraph specifically must be written in simple, everyday words — t
 After that opening paragraph, add 2-4 more sentences going one level deeper: any real trade-offs (e.g. strong area but a shaded unit, or a bright unit in a weaker area), and a concrete recommendation — buy/consider/reconsider, and what floor or facing would improve things if relevant.
 Close this section with one short line starting exactly "- Best fit for: " naming the 1-2 buyer types (from: families with young kids, young professionals/singles, remote workers, retirees, investors, renters) this specific property suits best given everything above — one clause of reasoning per type, not a restated summary.
 
-2. NEIGHBOURHOOD FULL ANALYSIS
+${togetherSectionNumber}. THE AREA AND THE FLAT, READ TOGETHER
+This is the section that only a combined report can write, so do not let it become a summary of the two that follow.
+Answer one question: do these two halves point the same way, or do they pull against each other? Name it in the first sentence. There are only three honest answers and you must commit to one — both strong, both weak, or split (a good area with a compromised flat, or a comfortable flat in a weaker area).
+Then, in 3-5 sentences of plain everyday English, say what that combination means in practice for someone living here. Be concrete about the trade: an area scoring ${hasNeighbourhood ? avRecord.nqi_composite : 'X'}/100 with a flat at ${unitScore ?? 'Y'}/100 is a different proposition from the reverse, and the reader wants to know which one they are being offered and whether the weaker half is fixable. Say plainly which of the two halves is doing the work in the combined score of ${combinedScore ?? '-'}/100, given the area is weighted ${Math.round((areaWeight ?? 0.5) * 100)}% and the flat ${Math.round((unitWeight ?? 0.5) * 100)}%.
+Then say which half is fixable and which is not, because this is the practical difference: a dark flat can often be answered by a higher floor, a different unit in the same tower, or a different facing — the neighbourhood cannot be changed at all. If a specific floor or facing in this same building would fix a weak flat score, say which and roughly what it would gain. If the weakness is the area, say plainly that no unit in this building escapes it.
+Finish with one sentence naming the single biggest risk in this pairing and the one thing that would most change your mind about it.
+Do not use bullets in this section. Do not repeat the verdict's wording.
+
+${neighbourhoodSectionNumber}. NEIGHBOURHOOD FULL ANALYSIS
 Do NOT simply restate the ground-truth numbers one by one — that data is already shown in a table alongside this section, so repeating it here adds nothing. Instead, ANALYSE it: which 1-2 factors are this area's clear strength, which 1-2 are its clear weakness, and what does that combination actually mean for someone living here day to day. Weave in the specific numbers naturally as evidence for your points, not as a checklist. Cover infrastructure/roads, schools, crime/safety, water/power, air quality where available, and what the price context implies — but organised around the 2-3 things that matter most here, not a uniform tour through every field. This section is about the AREA ONLY — do not discuss sunlight, shadows, or the specific unit here; that comes later.
 Then make it personal and sell the area to different kinds of buyers, each grounded in the real numbers above (never invent a number that isn't in the ground truth). End the section with exactly 3 bullet lines, each starting with "- " and a buyer type, addressing a DIFFERENT type in each line from this set: families with school-age kids, young professionals/singles, and investors/renters. Each line should read like real advice, not a label — e.g. "- Families: the schools score of X and low crime tier make this a strong pick if school runs and safety matter most to you." / "- Young professionals: with Y for infrastructure/connectivity, this suits someone who prioritises commute and convenience over quiet." / "- Investors: price band is Z per sqft against a composite score of W, which reads as [undervalued for the fundamentals / priced in line with the area's strengths / a premium for the location] — say which, honestly, based on the actual numbers." Do not force a positive spin for a buyer type the area genuinely doesn't suit — say so plainly if that's the honest read.`
-    : `1. SHADOW ANALYSIS BY SEASON & TIME`;
+    : '';
 
   // Persona overlay. Appended AFTER the full section list so it wins on any
   // conflict of emphasis, and resolves to '' when no persona is selected --
@@ -249,7 +323,7 @@ Then make it personal and sell the area to different kinds of buyers, each groun
   // of the sections above; it only re-slants them and appends ONE extra
   // trailing section, which the generic `N. TITLE` parser in the PDF route
   // picks up as bottom narrative without any change there.
-  const personaSectionNumber = hasNeighbourhood ? 6 : 5;
+  const personaSectionNumber = hasNeighbourhood ? 5 : 3;
   const ov = persona?.reportOverlay || null;
   const personaOverlay = ov ? `
 
@@ -257,7 +331,7 @@ READER OVERLAY — this applies on top of everything above and overrides it wher
 
 WHO THIS IS FOR: ${ov.readerLine}
 
-Re-slant the whole report for this reader. Keep every numbered section above exactly as specified — same titles, same numbers, same order, same formatting rules, same @N@ line format for the shadow section. What changes is emphasis, what leads each section, and which findings get a full paragraph versus one clause.
+Re-slant the whole report for this reader. Keep every numbered section above exactly as specified — same titles, same numbers, same order, same formatting rules. What changes is emphasis, what leads each section, and which findings get a full paragraph versus one clause.
 
 GIVE MORE SPACE TO: ${ov.weightUp}
 GIVE LESS SPACE TO: ${ov.weightDown}
@@ -274,7 +348,7 @@ ${ov.sectionBody}` : '';
   // Appended after everything else (including persona overlay, if any) so
   // it always lands as the actual last section regardless of which of the
   // 4 numbering combinations above are in play this time.
-  const checklistSectionNumber = (hasNeighbourhood ? 6 : 5) + (ov ? 1 : 0);
+  const checklistSectionNumber = (hasNeighbourhood ? 5 : 3) + (ov ? 1 : 0);
   const checklistSection = safeActionItems.length > 0 ? `
 
 ${checklistSectionNumber}. WHAT TO CHECK WHEN YOU VISIT
@@ -289,7 +363,7 @@ ${groundTruthText}
 ${neighbourhoodGroundTruth}
 ${combinedGroundTruth}
 
-You also have ${screenshots.length} screenshots of the actual 3D map at this location. The orange circle/dot marks the exact property location; darker areas are rendered shadows from OpenStreetMap building data. Use these images ONLY for narrative color and visual confirmation (e.g. "as the images show, a taller block sits to the southeast") — do NOT estimate hours of sun, shadow duration, or building heights from the images; use the ground-truth numbers above for all figures. If a screenshot looks blank, black, or unreadable, say so explicitly rather than guessing what it would show.
+You also have ${screenshots.length} screenshots of the actual 3D map at this location. They are described one by one elsewhere, in a separate gallery -- do NOT write per-image descriptions here. The orange circle/dot marks the exact property location; darker areas are rendered shadows from OpenStreetMap building data. Use these images ONLY for narrative color and visual confirmation (e.g. "as the images show, a taller block sits to the southeast") — do NOT estimate hours of sun, shadow duration, or building heights from the images; use the ground-truth numbers above for all figures. If a screenshot looks blank, black, or unreadable, say so explicitly rather than guessing what it would show.
 
 Write personally, not clinically — like a knowledgeable friend giving honest advice, not a data report reciting fields. Address the reader as "you" where it reads naturally. Be thorough and specific, not brief. This report is a defensible artifact a buyer will rely on — do not compress away detail to save space, and do not pad it with generic real-estate filler that could apply to any property.
 Plain language throughout, not just the verdict's opening lines: explain any real-estate or technical term the first time it appears (azimuth, NQI, feasibility band, etc.) in a short clause rather than assuming the reader already knows it, and prefer the everyday word over the technical one wherever both say the same thing.
@@ -302,22 +376,21 @@ FORMATTING RULES (follow exactly, every time, regardless of location):
 - Use plain "- " for bullet points, not "*".
 - Do not use markdown bold (**) anywhere except to emphasize a single key figure inline.
 - Always include every numbered section below, in order, even if a section is short for this location.
-- For the "SHADOW ANALYSIS BY SEASON & TIME" section ONLY, do not write prose paragraphs or bullets. Instead output exactly one line per screenshot, in this exact machine-readable form and nothing else on the line: @N@ <description>, where N is the image number from the "Image order" list below (1 to ${screenshots.length}). Output the lines in image order, one per image, no blank lines between them, no sub-headers.
 
 Provide, in this exact order:
 
 ${verdictInstruction}
 
-${imageSectionNumber}. SHADOW ANALYSIS BY SEASON & TIME
-For each screenshot (one @N@ line per image, per the formatting rule above), write a detailed 4-6 sentence description: what specifically is casting the shadow near the property marker (a taller building, a row of low-rise structures, nothing nearby), which direction the shadow falls, roughly how much of the visible area around the marker is shaded vs sunlit at this exact time, and how that connects to the ground-truth numbers for this season. Be concrete and descriptive, not generic — this is the reader's main evidence per image, so do not shortchange it. This section is shown to the reader separately, in a dedicated image gallery linked from the main report, not inline — write it as a standalone reference, not as something the reader has already seen above.
+${flatSectionNumber}. THE FLAT ITSELF, FLOOR ${floorN} FACING ${safeFacingInput.toUpperCase()}
+Height and orientation are one story, not two — write them as one. Cover, in plain everyday English and in this order:
+- What a day in this flat is actually like for light. When the sun first reaches it, when it leaves, and how many usable hours that is, using the ground-truth figures.
+- How that changes across the year. Name the best and worst months by name and say what the difference feels like to live in, not just the hour count.
+- Whether ${safeFacingInput}-facing is a good or bad orientation at this latitude and on this floor, with the reasoning spelled out in ordinary words — no azimuth or elevation figures unless you immediately explain what they mean.
+- Heat as well as light. A facing that is generous with winter sun may be punishing in May; say which side of that this flat falls on.
+- What practically follows: whether this flat needs lights on during the day, whether the afternoon side will need blinds or heavy curtains, and whether a different floor in this same building would meaningfully change the answer.
+Write it as flowing paragraphs, not as the bulleted list above — those bullets are your coverage checklist, not the shape of the section.${hasNeighbourhood ? '' : `
 
-${floorSectionNumber}. FLOOR ${floorN} SPECIFIC ANALYSIS
-Using the ground-truth floor clearance data, give a full, detailed explanation: when does direct sunlight first reach this unit in summer vs winter, how many hours per day in the best and worst months, how that changes month to month, and what this practically means for someone living on this floor (natural light for daily use, need for artificial lighting, heat gain, etc). Do not compress this into a couple of sentences — explain the reasoning, not just the conclusion.
-
-${facingSectionNumber}. ${safeFacingInput.toUpperCase()}-FACING WINDOW ASSESSMENT
-Explain in full when the sun shines directly into a ${safeFacingInput}-facing window here across the year, why (walk through the azimuth/elevation reasoning in plain language), and whether this is a good or bad facing for this specific location and floor — with the reasoning spelled out, not just a verdict.${hasNeighbourhood ? '' : `
-
-4. HOME BUYER VERDICT
+2. HOME BUYER VERDICT
 A full, honest verdict, several sentences to a short paragraph: is the sunlight situation good, acceptable, or poor, and why specifically. What floor would you recommend as a minimum, and why. Any specific concerns visible in the shadow patterns across the screenshots. Do not just restate the overall feasibility label — explain what it means for someone actually living there.
 The opening 2-3 sentences of this section must be plain, everyday words — the way you'd say it out loud to a friend with no real-estate or technical background, no jargon or acronyms — before going into any deeper detail.`}${personaOverlay}${checklistSection}`;
 
@@ -352,10 +425,24 @@ The opening 2-3 sentences of this section must be plain, everyday words — the 
     // retry, since retrying the same model won't help there.
     const { call: callGemini, left } = geminiCaller();
 
+    // The twelve image descriptions are their own batched job now, started
+    // here so it runs alongside the narrative rather than after it. Asking
+    // for them inside the report is what let one long shadow section eat the
+    // budget the other five sections needed.
+    const captionsPromise = describeImages({
+      screenshots, groundTruthText, floorN, facing: safeFacingInput, budgetMs: 38_000,
+    }).catch((err) => {
+      console.error('[report/analyse] image descriptions failed:', err?.message || err);
+      return { text: '', count: 0 };
+    });
+
     let data = await callGemini(contents);
     if (!data) {
+      // The narrative didn't come back, but the image descriptions may well
+      // have -- they are a different, smaller job. Ship what landed.
+      const caps = await captionsPromise;
       return NextResponse.json({
-        analysis: '',
+        analysis: caps.text || '',
         summary: reportSummary,
         avRecord: avRecord || null,
         combinedScore: combinedScore ?? null,
@@ -400,8 +487,9 @@ The opening 2-3 sentences of this section must be plain, everyday words — the 
         'Gemini analysis came back empty/short. finishReason:', finishReason,
         'full response:', JSON.stringify(data).slice(0, 2000)
       );
+      const capsOnly = await captionsPromise;
       return NextResponse.json({
-        analysis: '',
+        analysis: capsOnly.text || '',
         summary: reportSummary,
         avRecord: avRecord || null,
         combinedScore: combinedScore ?? null,
@@ -415,7 +503,14 @@ The opening 2-3 sentences of this section must be plain, everyday words — the 
       analysis += '\n\n*(Note: this analysis was cut short by a length limit — the data table above remains fully accurate.)*';
     }
 
-    return NextResponse.json({ analysis, summary: reportSummary, avRecord: avRecord || null, combinedScore: combinedScore ?? null });
+    const caps = await captionsPromise;
+    const withImages = caps.text ? `${analysis}\n\n${caps.text}` : analysis;
+
+    return NextResponse.json({
+      analysis: withImages, summary: reportSummary,
+      avRecord: avRecord || null, combinedScore: combinedScore ?? null,
+      captionedCount: caps.count, imageCount: screenshots.length,
+    });
   } catch (err) {
     console.error('Gemini Vision error:', err);
     return NextResponse.json({

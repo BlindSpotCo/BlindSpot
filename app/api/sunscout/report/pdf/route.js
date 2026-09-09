@@ -250,9 +250,16 @@ export async function POST(req) {
   const { body: verdictBody, rest: afterVerdict } = hasNeighbourhood
     ? extractSection(cleanedRest, /home\s*buyer\s*verdict/i)
     : { body: '', rest: moveVerdictFirst(cleanedRest) };
-  const { body: neighbourhoodBody, rest: afterNeighbourhood } = hasNeighbourhood
-    ? extractSection(afterVerdict, /neighbourhood full analysis/i)
+  // The section that only a combined report can write -- the two halves read
+  // against each other. Pulled out to sit directly under the verdict, where
+  // the question "so is this a good area with a dark flat, or the reverse?"
+  // is the one actually being asked.
+  const { body: togetherBody, rest: afterTogether } = hasNeighbourhood
+    ? extractSection(afterVerdict, /read\s*together|area and the flat/i)
     : { body: '', rest: afterVerdict };
+  const { body: neighbourhoodBody, rest: afterNeighbourhood } = hasNeighbourhood
+    ? extractSection(afterTogether, /neighbourhood full analysis/i)
+    : { body: '', rest: afterTogether };
 
   const rawAnalysis = afterNeighbourhood;
 
@@ -268,6 +275,7 @@ export async function POST(req) {
 
   const formattedVerdictBody = verdictBodyMinusIdeal ? formatNarrative(verdictBodyMinusIdeal) : '';
   const formattedNeighbourhoodBody = neighbourhoodBody ? formatNarrative(neighbourhoodBody) : '';
+  const formattedTogetherBody = togetherBody ? formatNarrative(togetherBody) : '';
   const formattedAnalysis = formatNarrative(rawAnalysis);
 
   // ---- Deterministic Consumer Scorecard + Pros/Cons -------------------
@@ -468,10 +476,11 @@ export async function POST(req) {
               ${PROPERTY_MARKER_HTML}
               <div style="position:absolute;top:12px;left:12px;background:rgba(201,129,46,0.95);color:#fff;font-size:16px;font-weight:800;padding:5px 14px;letter-spacing:.02em;box-shadow:0 3px 10px rgba(0,0,0,0.25);">${shot.label.split(' · ')[1] || shot.label}</div>
             </div>
-            ${perImage[shot.idx] ? `
             <div style="padding:16px 20px;background:#fff;border-top:1px solid ${LINE_SOFT};">
-              <div style="font-size:14.5px;color:${MUTE};line-height:1.8;">${perImage[shot.idx]}</div>
-            </div>` : ''}
+              ${perImage[shot.idx]
+                ? `<div style="font-size:14.5px;color:${MUTE};line-height:1.8;">${perImage[shot.idx]}</div>`
+                : `<div style="font-size:13px;color:${DIM};line-height:1.7;font-style:italic;">No description came back for this frame. The image itself and the sunlight figures for this month are unaffected.</div>`}
+            </div>
           </div>
         `).join('')}
       </div>
@@ -588,6 +597,86 @@ export async function POST(req) {
       </div>
     </div>` : '';
 
+  // Said once, plainly, in the place the writing would have been. The
+  // numbers around it were computed here and are not affected.
+  const aiNote = `
+    <div style="border-left:3px solid ${DIM};background:${CARD};padding:14px 18px;margin-bottom:18px;">
+      <div style="font-size:13.5px;color:${INK};line-height:1.7;">
+        The written sections could not be generated this time, so this report has the measurements without the narration.
+        Everything computed is still here and is unaffected: both scores and how they combine, the scorecard, the
+        strengths and concerns, the monthly sunlight table and the ${shotCount || 12} map images.
+        Generating the report again usually brings the written part back.
+      </div>
+    </div>`;
+
+  // ---- The two halves, read against each other ------------------------
+  // The reason a combined report exists. Before this the area and the flat
+  // were analysed in separate cards that never mentioned one another, so a
+  // buyer choosing between a good area with a dark flat and a bright flat in
+  // a weaker area got two write-ups and no answer.
+  //
+  // The headline is computed here, not written by the model, so it is always
+  // present and always consistent with the numbers -- including on a run
+  // where the narrative didn't come back at all.
+  const togetherRead = (() => {
+    if (!hasNeighbourhood || typeof unitScore !== 'number') return null;
+    const a = avRecord.nqi_composite;
+    const u = unitScore;
+    const gap = a - u;
+    const strong = (n) => n >= 65;
+    const weak = (n) => n < 50;
+
+    if (gap >= 15) return {
+      kind: 'split',
+      headline: 'A stronger area than flat',
+      line: `The neighbourhood scores ${a} and this flat ${u} — the area is carrying this one. That gap is the thing to look at, and it is the half you can still do something about: a different floor or facing in this same building changes the flat, nothing changes the area.`,
+    };
+    if (gap <= -15) return {
+      kind: 'split',
+      headline: 'A better flat than area',
+      line: `This flat scores ${u} against a neighbourhood of ${a} — you are buying a comfortable home in a weaker locality. The flat is the good news here, and it is the half that stays good; the area is the half no unit in this building escapes.`,
+    };
+    if (strong(a) && strong(u)) return {
+      kind: 'agree-good',
+      headline: 'Both halves agree, and both are strong',
+      line: `Area ${a}, flat ${u}. Nothing here is being propped up by the other half — this is the uncomplicated case, and the checks below are ordinary diligence rather than doubts.`,
+    };
+    if (weak(a) && weak(u)) return {
+      kind: 'agree-bad',
+      headline: 'Both halves agree, and both are weak',
+      line: `Area ${a}, flat ${u}. Neither side rescues the other, so a better floor or facing in this building would not be enough on its own — the locality would still be what it is.`,
+    };
+    return {
+      kind: 'middle',
+      headline: 'Both halves land in the middle',
+      line: `Area ${a}, flat ${u}. Close enough that neither is clearly the problem — which usually means the decision comes down to the specific things in the checklist below rather than to either score.`,
+    };
+  })();
+
+  const togetherBar = (label, value, color) => `
+    <div style="flex:1;min-width:150px;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:11px;color:${DIM};margin-bottom:5px;">
+        <span style="text-transform:uppercase;letter-spacing:.07em;">${label}</span>
+        <span style="font-size:15px;font-weight:800;color:${INK};font-family:${DISPLAY};">${value}</span>
+      </div>
+      <div style="background:${LINE_SOFT};height:8px;"><div style="width:${Math.max(2, Math.min(100, value))}%;height:100%;background:${color};"></div></div>
+    </div>`;
+
+  const togetherSection = togetherRead ? `
+    <div style="border:1px solid ${LINE};border-top:4px solid ${WINE};padding:26px 28px;margin-bottom:28px;">
+      <div style="font-size:11px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">The area and the flat, together</div>
+      <h2 style="font-size:20px;font-weight:800;color:${INK};font-family:${DISPLAY};margin-bottom:14px;letter-spacing:-.01em;">${togetherRead.headline}</h2>
+
+      <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px;">
+        ${togetherBar(`The area, ${safeAreaName}`, avRecord.nqi_composite, WINE)}
+        ${togetherBar(`This flat, floor ${safeFloor} ${safeFacing}`, unitScore, SUN)}
+      </div>
+
+      ${formattedTogetherBody
+        ? `<div style="font-size:14.5px;line-height:1.8;color:${INK};">${formattedTogetherBody.replace(new RegExp(`color:${MUTE}`, 'g'), `color:${INK}`)}</div>`
+        : `<p style="font-size:14.5px;line-height:1.8;color:${INK};margin:0;font-family:Arial,sans-serif;">${togetherRead.line}</p>`}
+    </div>` : '';
+
   // Neighbourhood Full Analysis -- AI narrative grounded in AsliVastu's real
   // factor scores, crime detail, schools, and price context. Styled with
   // the exact same card treatment (border, padding, icon size, heading
@@ -641,17 +730,6 @@ export async function POST(req) {
   // combined report the Verdict + Neighbourhood boxes above already cover
   // the overall picture, so this is scoped explicitly to sun & shadow --
   // and matches the neighbourhood card's exact styling for visual parity.
-  // Said once, plainly, in the place the writing would have been. The
-  // numbers around it were computed here and are not affected.
-  const aiNote = `
-    <div style="border-left:3px solid ${DIM};background:${CARD};padding:14px 18px;margin-bottom:18px;">
-      <div style="font-size:13.5px;color:${INK};line-height:1.7;">
-        The written commentary could not be generated this time, so this report has the measurements without the narration.
-        Every figure here, the scorecard, the monthly sunlight table and the ${shotCount || 12} map images are unaffected.
-        Generating the report again usually brings the written part back.
-      </div>
-    </div>`;
-
   const fullAnalysisSection = `
     <div style="border:1px solid ${LINE};padding:28px;margin-bottom:28px;">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
@@ -673,7 +751,7 @@ export async function POST(req) {
           <div><div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.06em;">Daily Average</div><div style="font-size:12.5px;font-weight:700;color:${INK};">${summary.solarFeasibility.avgUsableHours}h usable sun</div></div>
         </div>
       </div>` : ''}
-      ${formattedAnalysis || (aiUnavailable ? aiNote : '')}
+      ${formattedAnalysis}
       ${sunBarChart}
       ${summary?.solarFeasibility ? `<div style="font-size:11px;color:${DIM};">Best months: ${summary.solarFeasibility.bestMonths.join(', ')} · Worst months: ${summary.solarFeasibility.worstMonths.join(', ')}</div>` : ''}
     </div>`;
@@ -712,7 +790,7 @@ export async function POST(req) {
         <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px;">
           ${markDataUri ? `<img src="${markDataUri}" alt="BlindSpot" style="width:18px;height:20px;object-fit:contain;display:block;"/>` : ''}
           <span style="font-size:12px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.12em;">${hasNeighbourhood ? 'BlindSpot Combined Report' : 'BlindSpot Home Comfort'}</span>
-          <span style="font-size:11px;color:${DIM};">${hasNeighbourhood ? 'Neighbourhood &amp; Home Comfort - One Verdict' : 'Home Buyer Solar Report · Visual AI Analysis'}</span>
+          <span style="font-size:11px;color:${DIM};">${hasNeighbourhood ? 'The area and the flat, in one verdict' : 'One flat, through a year of sun'}</span>
         </div>
         ${labelPill}
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px;">
@@ -720,6 +798,26 @@ export async function POST(req) {
           ${badge ? `<span style="background:${badge.color};color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:5px 12px;text-transform:uppercase;">${badge.text}</span>` : ''}
         </div>
         <div style="font-size:11px;color:${DIM};display:flex;align-items:center;gap:5px;"><span style="color:${DIM};">${PIN_SVG}</span>${parseFloat(lat).toFixed(5)}°N, ${parseFloat(lon).toFixed(5)}°E · ${date}</div>
+
+        <p style="font-size:14px;line-height:1.75;color:${MUTE};margin-top:16px;max-width:62ch;font-family:Arial,sans-serif;">
+          ${hasNeighbourhood
+            ? `Two things decide whether you'll be happy here, and a listing tells you neither: what the area around this building is actually like, and what this particular flat is like to live in. This report measures both and then reads them against each other. Everything in it is either a government record or a calculation from the sun's real path over the real buildings on this block — where a figure is an estimate, it says so.`
+            : `A listing tells you the floor and the direction the windows face. It doesn't tell you what that means for light through the year. This report works it out from the sun's real path over the real buildings on this block — where a figure is an estimate, it says so.`}
+        </p>
+
+        <div style="display:flex;gap:0;flex-wrap:wrap;margin-top:18px;border:1px solid ${LINE_SOFT};">
+          ${[
+            hasNeighbourhood ? 'The verdict' : null,
+            hasNeighbourhood ? 'How the two halves add up' : null,
+            hasNeighbourhood ? `The area, ${safeAreaName}` : null,
+            `The flat, floor ${safeFloor} ${safeFacing}`,
+            'Sunlight month by month',
+            `${shotCount || 12} map images`,
+            'What to check on the visit',
+          ].filter(Boolean).map((t, i) => `
+            <span style="font-size:11px;color:${MUTE};padding:8px 13px;${i ? `border-left:1px solid ${LINE_SOFT};` : ''}">${t}</span>
+          `).join('')}
+        </div>
       </div>
 
       <div style="display:flex;gap:14px;margin-bottom:28px;flex-wrap:wrap;">
@@ -736,7 +834,9 @@ export async function POST(req) {
       </div>
 
       ${combinedScoreSection}
+      ${aiUnavailable ? aiNote : ''}
       ${verdictBoxSection}
+      ${togetherSection}
       ${scorecardSection}
       ${prosConsSection}
       ${neighbourhoodSection}
