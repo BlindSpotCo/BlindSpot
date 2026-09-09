@@ -65,6 +65,20 @@ const BLINDSPOT_EXAMPLES = [
   'The tower next door blocks afternoon sun',
 ];
 
+// The search box used to only make sense as an address search --
+// placeholder said so outright, and nothing signalled that typing just
+// "Koramangala" or "Bengaluru" also works (Photon/Nominatim both handle
+// place-level queries fine, the box just never said so). These three
+// modes bias the geocode-suggest request to the matching OSM place tier
+// (see that route's OSM_TAGS_BY_TYPE) and swap the placeholder to match,
+// so someone who only knows the neighbourhood, not a street address,
+// has an explicit way to say that instead of getting an empty dropdown.
+const SEARCH_MODES = [
+  { value: 'city', label: 'City', placeholder: 'Search a city, e.g. Bengaluru.' },
+  { value: 'neighbourhood', label: 'Neighbourhood', placeholder: 'Search a neighbourhood or locality.' },
+  { value: 'address', label: 'Address', placeholder: 'Search your address to find yours.' },
+];
+
 const pinIcon = L.divIcon({
   className: 'hlm-pin-icon',
   html: '<span class="hlm-pin-ring"></span><span class="hlm-pin-dot"></span>',
@@ -116,6 +130,7 @@ function aqiAccent(aqi) {
 
 export default function HeroLiveMapCanvas() {
   const [query, setQuery] = useState('');
+  const [searchMode, setSearchMode] = useState('address');
   const [results, setResults] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -130,13 +145,19 @@ export default function HeroLiveMapCanvas() {
 
   const center = pin || DEFAULT_CENTER;
 
-  const runSearch = useCallback((q) => {
+  const runSearch = useCallback((q, mode) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (q.trim().length < 2) { setResults([]); setLoading(false); return; }
     setLoading(true);
     debounceRef.current = setTimeout(async () => {
       try {
         const params = new URLSearchParams({ q, lat: String(center.lat), lon: String(center.lon) });
+        // 'address' is the same unfiltered query every existing call made
+        // before search modes existed -- only send `type` for the two
+        // that actually restrict the geocoder (see that route's own
+        // OSM_TAGS_BY_TYPE), so a stray/older client-side cache entry
+        // never behaves differently just because this param exists now.
+        if (mode && mode !== 'address') params.set('type', mode);
         const res = await fetch(`/api/sunscout/geocode-suggest?${params.toString()}`);
         const data = await res.json();
         setResults(Array.isArray(data?.results) ? data.results : []);
@@ -154,7 +175,16 @@ export default function HeroLiveMapCanvas() {
     setQuery(v);
     setOpen(true);
     setRevealed(false);
-    runSearch(v);
+    runSearch(v, searchMode);
+  };
+
+  // Switching mode with an existing query re-runs the search under the
+  // new place-type filter rather than leaving stale address-mode results
+  // sitting in a now-mismatched "Search a city" box.
+  const handleModeChange = (mode) => {
+    if (mode === searchMode) return;
+    setSearchMode(mode);
+    if (query.trim().length >= 2) { setOpen(true); runSearch(query, mode); }
   };
 
   const pick = (r) => {
@@ -257,13 +287,27 @@ export default function HeroLiveMapCanvas() {
         </div>
 
         <div className="hlm-searchwrap" ref={boxRef}>
+          <div className="hlm-search-modes" role="tablist" aria-label="Search by">
+            {SEARCH_MODES.map((m) => (
+              <button
+                key={m.value}
+                type="button"
+                role="tab"
+                aria-selected={searchMode === m.value}
+                className={`hlm-search-mode${searchMode === m.value ? ' is-active' : ''}`}
+                onClick={() => handleModeChange(m.value)}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
           <div className="hlm-search">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
             <input
               value={query}
               onChange={handleChange}
               onFocus={() => setOpen(true)}
-              placeholder="Search your address to find yours."
+              placeholder={SEARCH_MODES.find((m) => m.value === searchMode)?.placeholder}
               className="hlm-search-input"
             />
             {loading && <span className="hlm-search-spinner" aria-hidden="true" />}

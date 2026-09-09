@@ -96,10 +96,24 @@ function cacheSet(key, results) {
   cache.set(key, { at: Date.now(), results });
 }
 
-async function fetchPhoton(q, bias) {
+// City/neighbourhood mode restricts Photon's own OSM place tags via its
+// osm_tag param (repeatable) so "Search a city" doesn't come back with
+// individual buildings/streets mixed in, and vice versa -- Photon
+// indexes OSM's place=* hierarchy directly, so this maps onto real OSM
+// place types rather than anything BlindSpot invented. Nominatim has no
+// equivalent single-param type filter, so it's skipped entirely for
+// these two modes (see the GET handler) rather than returning
+// unfiltered address-level noise alongside the filtered Photon results.
+const OSM_TAGS_BY_TYPE = {
+  city: ['place:city', 'place:town', 'place:village'],
+  neighbourhood: ['place:suburb', 'place:neighbourhood', 'place:quarter', 'place:hamlet', 'place:borough'],
+};
+
+async function fetchPhoton(q, bias, osmTags) {
   try {
+    const tagParams = (osmTags || []).map(t => `&osm_tag=${encodeURIComponent(t)}`).join('');
     const r = await fetch(
-      `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=8&lang=en&lat=${bias.lat}&lon=${bias.lon}`,
+      `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=8&lang=en&lat=${bias.lat}&lon=${bias.lon}${tagParams}`,
       { signal: AbortSignal.timeout(5000) }
     );
     if (!r.ok) {
@@ -171,17 +185,27 @@ export async function GET(req) {
   const hasRealBias = Number.isFinite(latParam) && Number.isFinite(lonParam);
   const bias = hasRealBias ? { lat: latParam, lon: lonParam } : INDIA_BIAS;
 
-  const cacheKey = `${q.trim().toLowerCase()}|${hasRealBias ? `${bias.lat.toFixed(2)},${bias.lon.toFixed(2)}` : 'in'}`;
+  // `type` is the hero search box's City/Neighbourhood/Address mode --
+  // anything other than a recognised city/neighbourhood value (including
+  // no param at all, every existing caller) behaves exactly as before:
+  // both providers, no place-type filter.
+  const type = searchParams.get('type');
+  const osmTags = OSM_TAGS_BY_TYPE[type] || null;
+
+  const cacheKey = `${q.trim().toLowerCase()}|${hasRealBias ? `${bias.lat.toFixed(2)},${bias.lon.toFixed(2)}` : 'in'}|${type || 'address'}`;
   const cached = cacheGet(cacheKey);
   if (cached) return NextResponse.json({ results: cached });
 
   // Run both providers in parallel -- this doubles the outbound requests
   // per keystroke-pause, but the client-side debounce+cache already
   // collapse most of that, and one slow/failed provider (allSettled)
-  // never blocks the other from returning.
+  // never blocks the other from returning. City/neighbourhood mode skips
+  // Nominatim outright (see OSM_TAGS_BY_TYPE's own comment) rather than
+  // filtering its results after the fact -- it has no per-request place
+  // type param, so nothing here can ask it for "cities only".
   const [photonOutcome, nominatimOutcome] = await Promise.allSettled([
-    fetchPhoton(q, bias),
-    fetchNominatim(q),
+    fetchPhoton(q, bias, osmTags),
+    osmTags ? Promise.resolve([]) : fetchNominatim(q),
   ]);
   const photonResults = photonOutcome.status === 'fulfilled' ? photonOutcome.value : [];
   const nominatimResults = nominatimOutcome.status === 'fulfilled' ? nominatimOutcome.value : [];
