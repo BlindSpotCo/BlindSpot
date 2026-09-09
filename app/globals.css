@@ -281,6 +281,10 @@
     transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
   }
   .btn-cta:hover{ transform:translateY(-1px); box-shadow:0 16px 34px -12px rgba(61,65,22,0.65); background:#2E310F }
+  /* Pressed state -- the hover lift settles back down and the shadow
+     tightens under it, so a click reads as a real press rather than
+     the button just sitting there mid-hover. */
+  .btn-cta:active{ transform:translateY(0); box-shadow:0 8px 16px -10px rgba(61,65,22,0.55) }
   .btn-cta-sm{
     display:inline-flex; align-items:center;
     padding:8px 16px; border-radius:var(--radius); font-size:14px; font-weight:600;
@@ -290,6 +294,7 @@
     transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
   }
   .btn-cta-sm:hover{ transform:translateY(-1px); box-shadow:0 10px 22px -8px rgba(61,65,22,0.65); background:#2E310F }
+  .btn-cta-sm:active{ transform:translateY(0); box-shadow:0 5px 12px -6px rgba(61,65,22,0.55) }
   /* The one deliberate accent on an otherwise flat button -- the arrow
      glyph in the button label ("Uncover Your BlindSpot →") gets its own
      span so it can carry the SunScout orange while the rest of the label
