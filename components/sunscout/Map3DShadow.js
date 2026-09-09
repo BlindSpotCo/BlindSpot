@@ -6,6 +6,11 @@
 
 import { useEffect, useMemo, useRef } from 'react';
 
+// Diagnostics for the parent<->iframe handshake. On in dev, silent in
+// production: this channel is invisible when it breaks, and a failure in it
+// looks exactly like a map that never loaded.
+const DEBUG = process.env.NODE_ENV !== 'production';
+
 export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTimes, animating, onLocationSelect, onScreenshot, onReady, onStatus }) {
   const iframeRef = useRef(null);
 
@@ -133,14 +138,141 @@ html,body{background:var(--bg-2);overflow:hidden;}
 // own retry panel is invisible -- and the parent needs to know the
 // difference between "still loading" and "never going to load" so a
 // report can fail with a reason instead of waiting forever.
+var DEBUG=${DEBUG ? 'true' : 'false'};
 function notifyParent(type, reason){
-  try{ window.parent.postMessage({type:type, reason:reason||null}, '*'); }catch(e){}
+  if(DEBUG)console.log('[iframe] posting to parent:', type, reason||'');
+  try{ window.parent.postMessage({type:type, reason:reason||null}, '*'); }catch(e){ if(DEBUG)console.log('[iframe] postMessage threw', e); }
 }
 window.onerror = function(e){
   try{ var el=document.getElementById('sdk-error'); if(el) el.classList.add('show'); }catch(err){}
   notifyParent('map3d_failed','script-error');
   return false;
 };
+
+// Registered here rather than at the end of the script. Every line below
+// can throw -- a blocked CDN, no WebGL, a bad tile -- and when it did, this
+// listener never existed: the parent got no answer to a ping and no answer
+// to a capture request, which is indistinguishable from a dead iframe even
+// when the map is plainly on screen. Wiring the channel before the work
+// means this document can always say what happened to it.
+if(DEBUG)console.log('[iframe] message listener registered');
+window.addEventListener('message',function(e){
+  if(!e.data)return;
+  if(DEBUG&&e.data.type)console.log('[iframe] received', e.data.type);
+  // Answer a ping with what is actually true: a rendered map has a canvas
+  // in #map. The parent may have missed the notice posted on load -- and a
+  // missed notice is not evidence of a missing map.
+  if(e.data.type==='map3d_ping'){
+    var ok=false; try{ ok=!!document.querySelector('#map canvas'); }catch(err){}
+    notifyParent(ok?'map3d_ready':'map3d_failed', ok?null:'no-canvas');
+    return;
+  }
+  if(e.data.type==='setAnimating'){isAnimating=e.data.value;if(isAnimating)startAnim();else stopAnim();}
+  if(e.data.type==='seekTime'&&!isAnimating){
+    var parts=e.data.time.split(':'),mins=parseInt(parts[0])*60+parseInt(parts[1]),best=0,bd=99999;
+    for(var j=0;j<allPts.length;j++){var t=allPts[j].time.split(':'),d=Math.abs(parseInt(t[0])*60+parseInt(t[1])-mins);if(d<bd){bd=d;best=j;}}
+    ai=best;updateView(allPts[best]);drawArc();
+  }
+  if(e.data.type==='captureScreenshot'){
+    var lbl=e.data.label;
+    var capTime=e.data.time;
+    var capDate=e.data.date;
+    isAnimating=false;
+    stopAnim();
+    if(capDate){
+      try{ map.setDate(new Date(capDate+'T'+capTime+':00')); }catch(err){}
+    }
+    var parts2=capTime.split(':'),mins2=parseInt(parts2[0])*60+parseInt(parts2[1]),best2=0,bd2=99999;
+    for(var k=0;k<allPts.length;k++){var t2=allPts[k].time.split(':'),d2=Math.abs(parseInt(t2[0])*60+parseInt(t2[1])-mins2);if(d2<bd2){bd2=d2;best2=k;}}
+    ai=best2;updateView(allPts[best2]);drawArc();
+    if(!allPts||allPts.length===0){console.warn('[Map3DShadow iframe] allPts empty, sending null screenshot');window.parent.postMessage({type:'screenshotReady',label:lbl,data:null},'*');return;}
+
+    // Wait for tiles/shadows to render, then composite into a FIXED output size
+    // so every screenshot in the report is identical dimensions regardless of
+    // the live iframe's viewport at capture time.
+    setTimeout(function(){
+      try{
+        var liveW=window.innerWidth, liveH=window.innerHeight;
+        var CAP_W=960, CAP_H=640;
+
+        var raw=document.createElement('canvas');
+        raw.width=liveW; raw.height=liveH;
+        var rctx=raw.getContext('2d');
+        rctx.fillStyle='#F1E9DA';
+        rctx.fillRect(0,0,liveW,liveH);
+        try{
+          var glCanvas=document.querySelector('#map canvas');
+          if(glCanvas){
+            rctx.drawImage(glCanvas,0,0,liveW,liveH);
+          } else {
+            var mapEl0=document.getElementById('map');
+            console.warn('[Map3DShadow iframe] compositing: no canvas found inside #map -- screenshot will be blank/black. #map innerHTML starts with:', mapEl0 ? mapEl0.innerHTML.slice(0,200) : 'no #map element at all');
+          }
+        }catch(err){
+          console.error('[Map3DShadow iframe] compositing: drawImage(glCanvas) threw:', err);
+        }
+
+        var svgEl=document.getElementById('arc-svg');
+        var svgData=new XMLSerializer().serializeToString(svgEl);
+        var svgBlob=new Blob([svgData],{type:'image/svg+xml'});
+        var svgUrl=URL.createObjectURL(svgBlob);
+        var svgImg=new Image();
+
+        function finish(){
+          var out=document.createElement('canvas');
+          out.width=CAP_W; out.height=CAP_H;
+          var octx=out.getContext('2d');
+          octx.drawImage(raw,0,0,liveW,liveH,0,0,CAP_W,CAP_H);
+          try{
+            var dataUrl=out.toDataURL('image/jpeg',0.85);
+            window.parent.postMessage({type:'screenshotReady',label:lbl,data:dataUrl},'*');
+          }catch(err){
+            console.error('[Map3DShadow iframe] toDataURL failed (tainted canvas) for "'+lbl+'":', err);
+            window.parent.postMessage({type:'screenshotReady',label:lbl,data:null,error:'tainted_canvas'},'*');
+          }
+        }
+
+        svgImg.onload=function(){
+          rctx.drawImage(svgImg,0,0,liveW,liveH);
+          URL.revokeObjectURL(svgUrl);
+          var sunDiv=document.getElementById('sun');
+          if(sunDiv&&sunDiv.style.display!=='none'){
+            // Matches the on-screen #sun SVG (circle + rays, brand gold) instead
+            // of the old emoji glyph, so exported report images look like what
+            // the user actually saw in the live view.
+            var sx=parseFloat(sunDiv.style.left||'0'), sy=parseFloat(sunDiv.style.top||'0');
+            rctx.save();
+            rctx.translate(sx,sy);
+            rctx.strokeStyle='#FFD23C';rctx.lineWidth=2.5;rctx.lineCap='round';rctx.globalAlpha=0.9;
+            [[0,-16,0,-22],[0,16,0,22],[-16,0,-22,0],[16,0,22,0],[-11.3,-11.3,-15.6,-15.6],[11.3,11.3,15.6,15.6],[-11.3,11.3,-15.6,15.6],[11.3,-11.3,15.6,-15.6]].forEach(function(r){
+              rctx.beginPath();rctx.moveTo(r[0],r[1]);rctx.lineTo(r[2],r[3]);rctx.stroke();
+            });
+            rctx.globalAlpha=0.95;rctx.strokeStyle='#FFFDF8';rctx.lineWidth=2.5;
+            rctx.beginPath();rctx.arc(0,0,14,0,Math.PI*2);rctx.stroke();
+            rctx.globalAlpha=1;rctx.fillStyle='#FFD23C';
+            rctx.beginPath();rctx.arc(0,0,12,0,Math.PI*2);rctx.fill();
+            rctx.restore();
+          }
+          rctx.fillStyle='rgba(175,95,48,0.9)';
+          rctx.font='bold 16px monospace';
+          rctx.fillText(lbl,20,40);
+          finish();
+        };
+        svgImg.onerror=function(){
+          console.warn('[Map3DShadow iframe] svgImg.onerror fired for "'+lbl+'"');
+          rctx.fillStyle='rgba(175,95,48,0.9)';
+          rctx.font='bold 20px monospace';
+          rctx.fillText(lbl+', map render unavailable',40,liveH/2);
+          finish();
+        };
+        svgImg.src=svgUrl;
+      }catch(err){
+        console.error('[Map3DShadow iframe] captureScreenshot outer catch for "'+lbl+'":', err);
+        window.parent.postMessage({type:'screenshotReady',label:lbl,data:null},'*');
+      }
+    },4200);
+  }
+});
 setTimeout(function(){
   try{
     var hasCanvas = document.querySelector('#map canvas');
@@ -395,120 +527,7 @@ function startAnim(){if(animFrame)return;animStartT=null;animFrame=requestAnimat
 function stopAnim(){if(animFrame){cancelAnimationFrame(animFrame);animFrame=null;}}
 if(isAnimating)startAnim();
 
-window.addEventListener('message',function(e){
-  if(!e.data)return;
-  // A ping is answered with the same ready notice the script posts on
-  // load. The parent may have mounted its listener after that first one
-  // went out (or been remounted since), and a missed ready is
-  // indistinguishable from a map that never loaded -- which is a report
-  // refusing to generate on top of a perfectly good map.
-  if(e.data.type==='map3d_ping'){notifyParent('map3d_ready');return;}
-  if(e.data.type==='setAnimating'){isAnimating=e.data.value;if(isAnimating)startAnim();else stopAnim();}
-  if(e.data.type==='seekTime'&&!isAnimating){
-    var parts=e.data.time.split(':'),mins=parseInt(parts[0])*60+parseInt(parts[1]),best=0,bd=99999;
-    for(var j=0;j<allPts.length;j++){var t=allPts[j].time.split(':'),d=Math.abs(parseInt(t[0])*60+parseInt(t[1])-mins);if(d<bd){bd=d;best=j;}}
-    ai=best;updateView(allPts[best]);drawArc();
-  }
-  if(e.data.type==='captureScreenshot'){
-    var lbl=e.data.label;
-    var capTime=e.data.time;
-    var capDate=e.data.date;
-    isAnimating=false;
-    stopAnim();
-    if(capDate){
-      try{ map.setDate(new Date(capDate+'T'+capTime+':00')); }catch(err){}
-    }
-    var parts2=capTime.split(':'),mins2=parseInt(parts2[0])*60+parseInt(parts2[1]),best2=0,bd2=99999;
-    for(var k=0;k<allPts.length;k++){var t2=allPts[k].time.split(':'),d2=Math.abs(parseInt(t2[0])*60+parseInt(t2[1])-mins2);if(d2<bd2){bd2=d2;best2=k;}}
-    ai=best2;updateView(allPts[best2]);drawArc();
-    if(!allPts||allPts.length===0){console.warn('[Map3DShadow iframe] allPts empty, sending null screenshot');window.parent.postMessage({type:'screenshotReady',label:lbl,data:null},'*');return;}
 
-    // Wait for tiles/shadows to render, then composite into a FIXED output size
-    // so every screenshot in the report is identical dimensions regardless of
-    // the live iframe's viewport at capture time.
-    setTimeout(function(){
-      try{
-        var liveW=window.innerWidth, liveH=window.innerHeight;
-        var CAP_W=960, CAP_H=640;
-
-        var raw=document.createElement('canvas');
-        raw.width=liveW; raw.height=liveH;
-        var rctx=raw.getContext('2d');
-        rctx.fillStyle='#F1E9DA';
-        rctx.fillRect(0,0,liveW,liveH);
-        try{
-          var glCanvas=document.querySelector('#map canvas');
-          if(glCanvas){
-            rctx.drawImage(glCanvas,0,0,liveW,liveH);
-          } else {
-            var mapEl0=document.getElementById('map');
-            console.warn('[Map3DShadow iframe] compositing: no canvas found inside #map -- screenshot will be blank/black. #map innerHTML starts with:', mapEl0 ? mapEl0.innerHTML.slice(0,200) : 'no #map element at all');
-          }
-        }catch(err){
-          console.error('[Map3DShadow iframe] compositing: drawImage(glCanvas) threw:', err);
-        }
-
-        var svgEl=document.getElementById('arc-svg');
-        var svgData=new XMLSerializer().serializeToString(svgEl);
-        var svgBlob=new Blob([svgData],{type:'image/svg+xml'});
-        var svgUrl=URL.createObjectURL(svgBlob);
-        var svgImg=new Image();
-
-        function finish(){
-          var out=document.createElement('canvas');
-          out.width=CAP_W; out.height=CAP_H;
-          var octx=out.getContext('2d');
-          octx.drawImage(raw,0,0,liveW,liveH,0,0,CAP_W,CAP_H);
-          try{
-            var dataUrl=out.toDataURL('image/jpeg',0.85);
-            window.parent.postMessage({type:'screenshotReady',label:lbl,data:dataUrl},'*');
-          }catch(err){
-            console.error('[Map3DShadow iframe] toDataURL failed (tainted canvas) for "'+lbl+'":', err);
-            window.parent.postMessage({type:'screenshotReady',label:lbl,data:null,error:'tainted_canvas'},'*');
-          }
-        }
-
-        svgImg.onload=function(){
-          rctx.drawImage(svgImg,0,0,liveW,liveH);
-          URL.revokeObjectURL(svgUrl);
-          var sunDiv=document.getElementById('sun');
-          if(sunDiv&&sunDiv.style.display!=='none'){
-            // Matches the on-screen #sun SVG (circle + rays, brand gold) instead
-            // of the old emoji glyph, so exported report images look like what
-            // the user actually saw in the live view.
-            var sx=parseFloat(sunDiv.style.left||'0'), sy=parseFloat(sunDiv.style.top||'0');
-            rctx.save();
-            rctx.translate(sx,sy);
-            rctx.strokeStyle='#FFD23C';rctx.lineWidth=2.5;rctx.lineCap='round';rctx.globalAlpha=0.9;
-            [[0,-16,0,-22],[0,16,0,22],[-16,0,-22,0],[16,0,22,0],[-11.3,-11.3,-15.6,-15.6],[11.3,11.3,15.6,15.6],[-11.3,11.3,-15.6,15.6],[11.3,-11.3,15.6,-15.6]].forEach(function(r){
-              rctx.beginPath();rctx.moveTo(r[0],r[1]);rctx.lineTo(r[2],r[3]);rctx.stroke();
-            });
-            rctx.globalAlpha=0.95;rctx.strokeStyle='#FFFDF8';rctx.lineWidth=2.5;
-            rctx.beginPath();rctx.arc(0,0,14,0,Math.PI*2);rctx.stroke();
-            rctx.globalAlpha=1;rctx.fillStyle='#FFD23C';
-            rctx.beginPath();rctx.arc(0,0,12,0,Math.PI*2);rctx.fill();
-            rctx.restore();
-          }
-          rctx.fillStyle='rgba(175,95,48,0.9)';
-          rctx.font='bold 16px monospace';
-          rctx.fillText(lbl,20,40);
-          finish();
-        };
-        svgImg.onerror=function(){
-          console.warn('[Map3DShadow iframe] svgImg.onerror fired for "'+lbl+'"');
-          rctx.fillStyle='rgba(175,95,48,0.9)';
-          rctx.font='bold 20px monospace';
-          rctx.fillText(lbl+', map render unavailable',40,liveH/2);
-          finish();
-        };
-        svgImg.src=svgUrl;
-      }catch(err){
-        console.error('[Map3DShadow iframe] captureScreenshot outer catch for "'+lbl+'":', err);
-        window.parent.postMessage({type:'screenshotReady',label:lbl,data:null},'*');
-      }
-    },4200);
-  }
-});
 
 // Posted only from HERE -- the very last line of this script, after the
 // message listener above is actually registered. That is the only moment
@@ -534,6 +553,7 @@ notifyParent('map3d_ready');
       // Real readiness/failure, reported by the iframe document itself
       // rather than guessed from this component's mount -- see the
       // notifyParent comments in the srcDoc script.
+      if (DEBUG && e.data?.type?.startsWith?.('map3d')) console.log('[map3d] parent heard:', e.data.type);
       if(e.data?.type==='map3d_ready') onStatus?.('ready');
       if(e.data?.type==='map3d_failed') onStatus?.('failed', e.data.reason);
     };
@@ -545,7 +565,10 @@ notifyParent('map3d_ready');
   // before anything may be posted into it. Without this, moving the pin
   // mid-session left the parent believing the PREVIOUS document's
   // readiness still applied.
-  useEffect(() => { onStatus?.('loading'); }, [html, onStatus]);
+  useEffect(() => {
+    if (DEBUG) console.log('[map3d] status reset to loading');
+    onStatus?.('loading');
+  }, [html, onStatus]);
 
   useEffect(() => {
     iframeRef.current?.contentWindow?.postMessage({type:'setAnimating',value:animating},'*');

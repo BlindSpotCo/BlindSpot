@@ -178,7 +178,7 @@ export default function ReportScreen() {
           if (cancelled || id !== scoreReq.current) return;
 
           if (res.ok && !json.error) {
-            setScores({ area: json.area, unit: json.unit, combined: json.combinedScore, verdict: json.verdict, notes: json.dataNotes });
+            setScores({ area: json.area, unit: json.unit, combined: json.combinedScore, notes: json.dataNotes });
             setState('ready');
             return;
           }
@@ -197,7 +197,6 @@ export default function ReportScreen() {
           area: null,
           unit: { score: unitScore, grade: json.grade, floor, facing, subScores: json.subScores || [] },
           combined: null,
-          verdict: null,
           notes: json.dataNotes,
         });
         setState('ready');

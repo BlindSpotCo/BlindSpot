@@ -803,26 +803,6 @@ export async function POST(req) {
           var position = 0;
           pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
 
-          // The rasterized page is one flat image, so nothing on it is
-          // clickable by default -- add a real jsPDF link annotation on top
-          // of wherever the "See the evidence" gallery card actually landed
-          // on this page, pointing at the same URL the on-screen card links
-          // to. Only page 1 (i === 0) has the card, and it sits near the
-          // top, so it's always on this first (position 0) slice.
-          if (i === 0) {
-            var galleryLink = document.getElementById('gallery-link-card');
-            if (galleryLink && galleryLink.href) {
-              var pageRect = pages[i].getBoundingClientRect();
-              var linkRect = galleryLink.getBoundingClientRect();
-              var scaleFactor = imgWidth / pageRect.width;
-              pdf.link(
-                (linkRect.left - pageRect.left) * scaleFactor,
-                (linkRect.top - pageRect.top) * scaleFactor,
-                linkRect.width * scaleFactor,
-                linkRect.height * scaleFactor,
-                { url: galleryLink.href }
-              );
-            }
           }
 
           heightLeft -= pageHeight;
