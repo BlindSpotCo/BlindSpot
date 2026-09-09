@@ -10,6 +10,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import SaveReportButton from '@/components/reports/SaveReportButton';
+import { SHOTS } from '@/lib/sunscout/useMapCapture';
 
 const FACING = ['North','South','East','West','North-East','South-East','North-West','South-West'];
 
@@ -39,6 +40,10 @@ export default function ReportModal({
   const [facing, setFacing]   = useState(prefillFacing || 'South');
   const [facingTouched, setFacingTouched] = useState(Boolean(prefillFacing));
   const facingTouchedRef = useRef(Boolean(prefillFacing));
+  // Every object URL this modal hands out, so they can be released when it
+  // goes. galleryHtml carries all twelve JPEGs inline; a couple of "Try
+  // Again"s left several megabytes pinned for the life of the tab.
+  const madeUrlsRef = useRef([]);
   const [facingSuggestion, setFacingSuggestion] = useState(null);
   const [facingLoading, setFacingLoading] = useState(true);
   const [facingExpanded, setFacingExpanded] = useState(false);
@@ -69,6 +74,12 @@ export default function ReportModal({
   // the report is still worth opening, and saying nothing about the gap
   // would be worse than the gap.
   const [aiNotice, setAiNotice] = useState(false);
+  // What actually landed, so the finished card can say so rather than
+  // claiming twelve of everything. Partial results were being presented as
+  // complete ones: eleven frames could time out and the modal still said
+  // "frame 12 of 12" and "Report Ready".
+  const [shortfall, setShortfall] = useState(null); // { frames, captions, table }
+
 
   // Floor + facing were already picked one step earlier, in UnitVerdict's
   // own combined-score card (the button that opens this modal always
@@ -113,6 +124,7 @@ export default function ReportModal({
     setLoading(true);
     setError('');
     setAiNotice(false);
+    setShortfall(null);
     setProgress(5);
 
     // Only bubble floor/facing up when they were just picked in THIS
@@ -146,6 +158,13 @@ export default function ReportModal({
 
     // One retry, on the network steps only, and only for the failures a
     // retry can actually change.
+    // A ceiling on each request. Without one, a response that never
+    // arrives -- a proxy holding the socket, the platform killing the
+    // function without closing it -- leaves this awaiting forever, and
+    // there is deliberately no cancel button during generation. The result
+    // was a card spinning on "laying out the document" with no way out but
+    // a page reload. The analyse route budgets itself at ~48s, so 90s here
+    // is generous and still finite.
     const postJson = async (url, payload, label) => {
       for (let attempt = 0; attempt < 2; attempt++) {
         let res;
@@ -154,6 +173,7 @@ export default function ReportModal({
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
+            signal: AbortSignal.timeout(90_000),
           });
         } catch (netErr) {
           if (attempt === 0) { await new Promise(r => setTimeout(r, 1200)); continue; }
@@ -187,8 +207,21 @@ export default function ReportModal({
         captionsOnly: Boolean(galleryOnly),
       }, 'analysis');
 
-      const { analysis, summary, aiUnavailable } = analysed || {};
+      const { analysis, summary, aiUnavailable, captionedCount } = analysed || {};
       if (aiUnavailable) setAiNotice(true);
+
+      // Three separate ways a run can come back short of what this modal
+      // promised, none of which used to be visible anywhere: frames that
+      // timed out, images the model didn't describe, and a solar
+      // computation that failed and took the monthly table with it.
+      const missingFrames = SHOTS.length - screenshots.length;
+      const missingCaptions = typeof captionedCount === 'number'
+        ? Math.max(0, screenshots.length - captionedCount)
+        : 0;
+      const noTable = !summary?.monthlySummary?.length;
+      if (missingFrames > 0 || missingCaptions > 0 || noTable) {
+        setShortfall({ frames: missingFrames, captions: missingCaptions, table: noTable });
+      }
 
       setStep('writing');
       setProgress(78);
@@ -215,9 +248,13 @@ export default function ReportModal({
       const galleryUrl = URL.createObjectURL(galleryBlob);
       const finalMainHtml = mainHtml.replaceAll('__GALLERY_URL__', galleryUrl);
 
-      const blob = new Blob([finalMainHtml], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      setReportUrl(galleryOnly ? galleryUrl : url);
+      // Only make the URL we are going to hand out. A gallery run used to
+      // create a second object URL for the main report, never reference it,
+      // and pin a full copy of that HTML for the life of the tab.
+      const url = galleryOnly ? galleryUrl : URL.createObjectURL(new Blob([finalMainHtml], { type: 'text/html' }));
+      madeUrlsRef.current.push(galleryUrl);
+      if (url !== galleryUrl) madeUrlsRef.current.push(url);
+      setReportUrl(url);
       setSavableData({
         // A gallery-only run must save the document it actually produced.
         // Storing the combined report here meant reopening a saved sun &
@@ -254,6 +291,13 @@ export default function ReportModal({
       setLoading(false);
     }
   };
+
+  useEffect(() => () => {
+    // Not on regenerate -- a report the person already opened in another
+    // tab must keep working. Only when this modal is done for good.
+    madeUrlsRef.current.forEach((u) => { try { URL.revokeObjectURL(u); } catch {} });
+    madeUrlsRef.current = [];
+  }, []);
 
   useEffect(() => {
     if (autoGenerate) generate();
@@ -334,13 +378,39 @@ export default function ReportModal({
 
         {reportUrl ? (
           <div style={{ textAlign:'center', padding:'20px 0' }}>
-            <div style={{ fontFamily:MONO, fontSize:11, fontWeight:500, color:'#16a34a', letterSpacing:'.1em', textTransform:'uppercase', marginBottom:14, border:'1px solid #16a34a', display:'inline-block', padding:'5px 14px' }}>Report Ready</div>
+            <div style={{ fontFamily:MONO, fontSize:11, fontWeight:500, color:(shortfall || aiNotice) ? '#B45309' : '#16a34a', letterSpacing:'.1em', textTransform:'uppercase', marginBottom:14, border:`1px solid ${(shortfall || aiNotice) ? '#B45309' : '#16a34a'}`, display:'inline-block', padding:'5px 14px' }}>{(shortfall || aiNotice) ? 'Ready, with gaps' : 'Report Ready'}</div>
             <h3 style={{ fontFamily:DISPLAY, fontSize:18, fontWeight:800, color:INK, marginBottom:8 }}>{galleryOnly ? 'Your sun & shadow report is ready' : 'Your report is ready'}</h3>
-            <p style={{ fontSize:13, color:SUB, lineHeight:1.6, marginBottom:aiNotice ? 12 : 20 }}>
+            <p style={{ fontSize:13, color:SUB, lineHeight:1.6, marginBottom:(aiNotice || shortfall) ? 12 : 20 }}>
               {galleryOnly
-                ? 'The 12 map images through the year, with the monthly sunlight table. Opens in a new tab.'
+                ? `${SHOTS.length - (shortfall?.frames || 0)} map images through the year${shortfall?.table ? '' : ', with the monthly sunlight table'}. Opens in a new tab.`
                 : 'The full write-up, with the neighbourhood and the flat together. Opens in a new tab.'}
             </p>
+
+            {/* Said here because it is the last moment anyone will look. A
+                run that came back short used to reach this card announcing
+                "Report Ready" and twelve of everything. */}
+            {shortfall && (
+              <ul style={{ fontSize:12.5, color:INK, lineHeight:1.65, marginBottom:20, textAlign:'left', border:`1px solid ${LINE}`, background:'#FFF6E8', padding:'11px 14px 11px 30px' }}>
+                {shortfall.frames > 0 && (
+                  <li style={{ marginBottom:4 }}>
+                    {SHOTS.length - shortfall.frames} of {SHOTS.length} map frames came back — the map was slow or
+                    a few tiles never arrived. What&apos;s here is real; there is just less of it.
+                  </li>
+                )}
+                {shortfall.captions > 0 && (
+                  <li style={{ marginBottom:4 }}>
+                    {shortfall.captions} {shortfall.captions === 1 ? 'image has' : 'images have'} no written description.
+                    The images and the sunlight figures are unaffected.
+                  </li>
+                )}
+                {shortfall.table && (
+                  <li>
+                    The monthly sunlight table couldn&apos;t be computed for this pin, so it isn&apos;t in the document.
+                  </li>
+                )}
+                <li style={{ marginTop:6, color:SUB }}>Generating again usually fills these in.</li>
+              </ul>
+            )}
             {aiNotice && (
               <p style={{ fontSize:12.5, color:INK, lineHeight:1.6, marginBottom:20, textAlign:'left', border:`1px solid ${LINE}`, background:'#FFF6E8', padding:'10px 13px' }}>
                 {galleryOnly

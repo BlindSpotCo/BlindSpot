@@ -173,10 +173,16 @@ ${shots.map((sh, i) => `Image ${i + 1}: ${sh.label}`).join('\n')}`;
     return { inlineData: { mimeType: match ? match[1] : 'image/jpeg', data: match ? match[2] : sh.base64 } };
   });
 
-  const { call } = geminiCaller({ budgetMs, maxOutputTokens: 2048 });
+  // A budget per batch, not one clock shared by all of them. With a single
+  // caller created up front, a slow first batch could eat 33 of the 38
+  // seconds and the second would find too little left to even ask -- so six
+  // images came back described and six came back blank, with nothing
+  // anywhere reporting that as a failure.
+  const perBatchMs = Math.max(15_000, Math.floor(budgetMs / Math.max(1, batches.length)));
 
   const runBatch = async ({ offset, shots }) => {
     try {
+      const { call } = geminiCaller({ budgetMs: perBatchMs, maxOutputTokens: 2048 });
       const d = await call([{ role: 'user', parts: [{ text: promptFor(shots) }, ...partsFor(shots)] }]);
       const cand = d?.candidates?.[0];
       let text = cand?.content?.parts?.[0]?.text || '';

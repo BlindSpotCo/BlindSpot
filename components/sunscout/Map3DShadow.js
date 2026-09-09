@@ -146,7 +146,19 @@ function notifyParent(type, reason){
   if(DEBUG)console.log('[iframe] posting to parent:', type, reason||'');
   try{ window.parent.postMessage({type:type, reason:reason||null}, '*'); }catch(e){ if(DEBUG)console.log('[iframe] postMessage threw', e); }
 }
+// Set once the map has actually come up, so a later throw is reported as
+// what it is. window.onerror catches EVERY uncaught error in this document
+// -- a bad tile, a throw inside an animation tick, a handler that ran at a
+// bad moment -- and reporting all of them as "the map failed to load" told
+// the parent to abandon a run over a map that is plainly on screen, and
+// told the person to go wait for buildings that had already appeared.
+var mapIsUp = false;
 window.onerror = function(e){
+  if(mapIsUp){
+    if(DEBUG)console.log('[iframe] error after the map was up; not treating it as a load failure', e);
+    notifyParent('map3d_error','script-error');
+    return false;
+  }
   try{ var el=document.getElementById('sdk-error'); if(el) el.classList.add('show'); }catch(err){}
   notifyParent('map3d_failed','script-error');
   return false;
@@ -167,6 +179,7 @@ window.addEventListener('message',function(e){
   // missed notice is not evidence of a missing map.
   if(e.data.type==='map3d_ping'){
     var ok=false; try{ ok=!!document.querySelector('#map canvas'); }catch(err){}
+    if(ok) mapIsUp = true;
     notifyParent(ok?'map3d_ready':'map3d_failed', ok?null:'no-canvas');
     return;
   }
@@ -187,8 +200,13 @@ window.addEventListener('message',function(e){
     }
     var parts2=capTime.split(':'),mins2=parseInt(parts2[0])*60+parseInt(parts2[1]),best2=0,bd2=99999;
     for(var k=0;k<allPts.length;k++){var t2=allPts[k].time.split(':'),d2=Math.abs(parseInt(t2[0])*60+parseInt(t2[1])-mins2);if(d2<bd2){bd2=d2;best2=k;}}
-    ai=best2;updateView(allPts[best2]);drawArc();
+    // This check has to come FIRST. It used to sit on the next line, below
+    // updateView(allPts[best2]) -- with allPts empty that reads
+    // undefined.iso and throws, window.onerror fires, and the run dies with
+    // "the 3D map didn't load" instead of skipping one frame. The graceful
+    // path it describes was unreachable.
     if(!allPts||allPts.length===0){console.warn('[Map3DShadow iframe] allPts empty, sending null screenshot');window.parent.postMessage({type:'screenshotReady',label:lbl,data:null},'*');return;}
+    ai=best2;updateView(allPts[best2]);drawArc();
 
     // Wait for tiles/shadows to render, then composite into a FIXED output size
     // so every screenshot in the report is identical dimensions regardless of
@@ -544,6 +562,7 @@ if(isAnimating)startAnim();
 // milliseconds in and could never fire, and if this script had thrown
 // (blocked map CDN, no WebGL) the parent posted capture requests into a
 // document with no listener and waited on them forever.
+mapIsUp = true;
 notifyParent('map3d_ready');
 </script></body></html>`;
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -559,6 +578,9 @@ notifyParent('map3d_ready');
       if (DEBUG && e.data?.type) console.log('[map3d] parent heard:', e.data.type);
       if(e.data?.type==='map3d_ready') onStatus?.('ready');
       if(e.data?.type==='map3d_failed') onStatus?.('failed', e.data.reason);
+      // Non-fatal: something threw inside a map that is up and running.
+      // Worth knowing about, not worth abandoning a capture over.
+      if(e.data?.type==='map3d_error') console.warn('[map3d] the map reported a non-fatal error:', e.data.reason);
     };
     window.addEventListener('message', handler);
     if (DEBUG) console.log('[map3d] parent listening; iframe el:', !!iframeRef.current,
