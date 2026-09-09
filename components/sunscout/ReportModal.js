@@ -55,7 +55,7 @@ export default function ReportModal({
   // Which half of the job is running, and how far through the frame
   // capture we are -- both purely so the waiting state can say something
   // true instead of one fixed sentence for two minutes.
-  const [step, setStep] = useState('capturing'); // 'capturing' | 'analysing' | 'building' | 'writing'
+  const [step, setStep] = useState('capturing'); // 'capturing' | 'analysing' | 'captioning' | 'writing'
   const [captured, setCaptured] = useState({ done: 0, total: 12 });
   const [error, setError]     = useState('');
   const [reportUrl, setReportUrl] = useState(null);
@@ -173,7 +173,7 @@ export default function ReportModal({
       // Both are computed from solar geometry; the model was only ever
       // adding captions. Asking for it anyway is what made this document
       // fail whenever the model was busy -- for something it doesn't need.
-      setStep(galleryOnly ? 'building' : 'analysing');
+      setStep(galleryOnly ? 'captioning' : 'analysing');
       setProgress(50);
 
       const analysed = await postJson('/api/sunscout/report/analyse', {
@@ -181,11 +181,14 @@ export default function ReportModal({
         avRecord: areaRecord || undefined, combinedScore, unitScore, areaWeight, unitWeight,
         personaId, customNote: safeCustomNote,
         actionItems: prefillActionItems || undefined,
-        skipAi: Boolean(galleryOnly),
+        // The sun & shadow document wants the per-image descriptions and
+        // nothing else -- not the eight-section combined report it used to
+        // ask for and then throw away all but a twelfth of.
+        captionsOnly: Boolean(galleryOnly),
       }, 'analysis');
 
       const { analysis, summary, aiUnavailable } = analysed || {};
-      if (aiUnavailable && !galleryOnly) setAiNotice(true);
+      if (aiUnavailable) setAiNotice(true);
 
       setStep('writing');
       setProgress(78);
@@ -340,9 +343,9 @@ export default function ReportModal({
             </p>
             {aiNotice && (
               <p style={{ fontSize:12.5, color:INK, lineHeight:1.6, marginBottom:20, textAlign:'left', border:`1px solid ${LINE}`, background:'#FFF6E8', padding:'10px 13px' }}>
-                The written commentary didn&apos;t come back this time, so this report has the measurements
-                without the narration — the scorecard, the sunlight table and all 12 images are there and
-                are unaffected. Generating again usually brings the writing back.
+                {galleryOnly
+                  ? 'The descriptions under each image didn\u2019t come back this time, so this one has the 12 images and the sunlight table without them. Both are measured, not written, so nothing here is affected. Generating again usually brings the descriptions back.'
+                  : 'The written commentary didn\u2019t come back this time, so this report has the measurements without the narration — the scorecard, the sunlight table and all 12 images are there and are unaffected. Generating again usually brings the writing back.'}
               </p>
             )}
             {savableData && (
@@ -492,7 +495,7 @@ export default function ReportModal({
                 model reading all of it. Say which one this is, and how
                 long it should take. */}
             <p style={{ fontFamily:MONO, fontSize:10.5, color:SUB, letterSpacing:'.04em', textTransform:'uppercase', marginBottom:12 }}>
-              {galleryOnly ? '12 map images + sunlight table · no AI · ~1 min' : 'Images + AI written analysis · ~2 min'}
+              {galleryOnly ? '12 map images, described · + sunlight table · ~1 min' : 'The written verdict, area and flat together · ~2 min'}
             </p>
             {/* Says which phase is running, and counts the frames through
                 the long one. One unchanging sentence for two minutes is
@@ -500,8 +503,8 @@ export default function ReportModal({
             <p style={{ fontFamily:MONO, fontSize:11.5, color:SUB, lineHeight:1.8, marginBottom:20 }}>
               {step === 'capturing'
                 ? `Photographing the sun and shadow through the year — frame ${Math.min(captured.done + 1, captured.total)} of ${captured.total}.`
-                : step === 'building'
-                  ? 'Frames captured. Working out the monthly sunlight figures.'
+                : step === 'captioning'
+                  ? 'Frames captured. Writing what each one shows.'
                   : step === 'analysing'
                     ? 'Frames captured. The AI is now reading them alongside the neighbourhood data.'
                     : 'Almost there, laying out the document.'}

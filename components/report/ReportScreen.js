@@ -382,6 +382,29 @@ export default function ReportScreen() {
   // Anchor for the flat half, still used by the in-page "the flat" link.
   const unitRef = useRef(null);
 
+  /* ---------------- the twelve map frames, captured once ----------------
+     Photographing the map is the slow half of both reports -- twelve frames,
+     about a minute -- and the frames depend only on where the pin is, not on
+     the floor or the facing (the capture asks for a date and a time and
+     nothing else). Generating the sun & shadow document and then the full
+     report meant sitting through that minute twice for identical pictures.
+     Keep them for as long as the pin doesn't move. */
+  const frameCache = useRef({ key: '', frames: null });
+  const captureOnce = useCallback(async (onProgress) => {
+    const key = `${lat},${lon}`;
+    const held = frameCache.current;
+    if (held.key === key && held.frames?.length) {
+      onProgress?.(held.frames.length, held.frames.length);
+      return held.frames;
+    }
+    const frames = await capture.captureScreenshots(onProgress);
+    frameCache.current = { key, frames };
+    return frames;
+    // capture.captureScreenshots is stable (useCallback inside the hook);
+    // the object around it is not, so depend on the function itself.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [capture.captureScreenshots, lat, lon]);
+
   /* ---------------- the site-visit checklist ----------------
      These rendered as squares that looked exactly like checkboxes and did
      nothing when you pressed them -- the one thing on this page that
@@ -722,8 +745,9 @@ export default function ReportScreen() {
               Generate the sun &amp; shadow report →
             </button>
             <span className="bsr-more-note">
-              12 map angles at this exact pin, 3 per season at 9am / noon / 3pm, plus the monthly
-              sunlight table for this floor. Takes about a minute. No AI involved — it&apos;s all measured.
+              12 map angles at this exact pin, 3 per season at 9am / noon / 3pm, each with a short
+              description of what&apos;s casting shade — plus the monthly sunlight table for this floor.
+              About a minute.
             </span>
           </p>
         </section>
@@ -882,7 +906,7 @@ export default function ReportScreen() {
           lon={lon}
           tzOffset={TZ}
           address={address}
-          captureScreenshots={capture.captureScreenshots}
+          captureScreenshots={captureOnce}
           galleryOnly={reportOpen === 'gallery'}
           prefillFloor={floor}
           prefillFacing={facing}
