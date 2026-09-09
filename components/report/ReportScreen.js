@@ -115,6 +115,8 @@ export default function ReportScreen() {
     address: params.get('address') || '',
   }));
   const { lat, lon, pinCode, address } = place;
+  // ?debug=1 turns the map handshake logging on in any build.
+  const debug = params.get('debug') === '1';
   const hasPlace = Number.isFinite(lat) && Number.isFinite(lon);
 
   const [floor, setFloor] = useState(parseInt(params.get('floor'), 10) || DEFAULT_FLOOR);
@@ -620,6 +622,10 @@ export default function ReportScreen() {
               sunTimes={solar.sunTimes}
               animating={animating}
               onLocationSelect={onMapClick}
+              onReady={capture.onReady}
+              onScreenshot={capture.onScreenshot}
+              onStatus={capture.onStatus}
+              debug={debug}
             />
           ) : (
             <p className="bsr-map-wait">
