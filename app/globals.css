@@ -2983,8 +2983,16 @@ header.header-on-dark .brand-word-img{
   display:inline-block; color:rgba(255,253,248,0.5); padding-bottom:10px; margin-bottom:var(--space-4);
 }
 .closing2-inner .eyebrow::after{ left:50%; transform:translateX(-50%); background:var(--brand-yellow); width:34px }
-.closing2-inner h2{ font-size:clamp(28px, 4vw, 42px); color:#fff; margin-bottom:var(--space-4) }
-.closing2-inner p{ font-size:16px; line-height:1.6; color:rgba(255,253,248,0.78); margin-bottom:var(--space-6) }
+/* max-width:none overrides the generic ".section h2{ max-width:600px }"
+   rule (globals.css, the shared heading style for the light sections
+   below -- this section carries the plain .section class too, so it
+   was matching here as well). That rule boxed this h2 at 600px inside
+   its actual 720px container; text-align:center on .closing2-inner
+   then centered the wrapped lines correctly *within that undersized
+   600px box*, but the box itself sat flush left (block, margin:0) --
+   so the whole headline read as shifted left of the eyebrow/CTA below
+   it, which really are centered on the container's true middle. */
+.closing2-inner h2{ font-size:clamp(28px, 4vw, 42px); color:#fff; margin-bottom:var(--space-4); max-width:none }
 .closing2-ctas{ display:flex; justify-content:center }
 /* Unlike the light sections below, this surface is dark (--brand olive),
    so --brand-yellow reads fine here (it's already used elsewhere on this
