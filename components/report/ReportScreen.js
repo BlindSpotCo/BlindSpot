@@ -742,12 +742,13 @@ export default function ReportScreen() {
               className="bsr-genlink"
               onClick={() => setReportOpen('gallery')}
             >
-              Generate the sun &amp; shadow report →
+              See the sun and shadow through the year →
             </button>
             <span className="bsr-more-note">
-              12 map angles at this exact pin, 3 per season at 9am / noon / 3pm, each with a short
-              description of what&apos;s casting shade — plus the monthly sunlight table for this floor.
-              About a minute.
+              The evidence behind the five scores above: this block photographed at 12 points through
+              the year, 3 per season at 9am / noon / 3pm, each described, with the month-by-month
+              sunlight figures for this floor. About a minute, and the full report below then builds
+              on the same photographs instead of taking them again.
             </span>
           </p>
         </section>
