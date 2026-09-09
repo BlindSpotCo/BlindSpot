@@ -2463,8 +2463,13 @@
 @keyframes hlmAccentGold{
   from{ color:#FFFDF8; -webkit-text-fill-color:#FFFDF8; text-shadow:0 4px 30px rgba(0,0,0,0.5); }
   to{
+    /* No colour glow on the end state -- a bright gold bloom read as
+       cheap/neon rather than the flat foil-gold look a premium brand
+       wants. Same dark drop-shadow the white starting state already
+       had, just carried over for legibility/depth against the map,
+       nothing added on top of it. */
     color:var(--brand-yellow); -webkit-text-fill-color:var(--brand-yellow);
-    text-shadow:0 4px 30px rgba(0,0,0,0.5), 0 0 40px rgba(245,195,67,0.35);
+    text-shadow:0 4px 30px rgba(0,0,0,0.5);
   }
 }
 .hlm-h1-accent::after{
@@ -2472,9 +2477,9 @@
   filter:blur(1.5px);
   background:linear-gradient(122deg,
     transparent 0%, transparent 28%,
-    rgba(255,255,255,0.22) 40%,
-    rgba(255,255,255,0.98) 48%, rgba(255,255,255,0.98) 52%,
-    rgba(255,255,255,0.22) 60%,
+    rgba(255,255,255,0.14) 40%,
+    rgba(255,255,255,0.8) 48%, rgba(255,255,255,0.8) 52%,
+    rgba(255,255,255,0.14) 60%,
     transparent 72%, transparent 100%);
   background-size:400% 100%; background-position:-150% 0;
   -webkit-background-clip:text; background-clip:text; color:transparent;
@@ -2522,7 +2527,7 @@
   .hlm-eyebrow, .hlm-content .hlm-h1, .hlm-h1-accent, .hlm-searchwrap, .hlm-typed-line{ animation:none !important; opacity:1 !important; transform:none !important; filter:none !important; }
   .hlm-typed-cursor{ animation:none !important; display:none !important; }
   .hlm-content .hlm-h1{ background:none !important; color:#FFFDF8 !important; -webkit-text-fill-color:#FFFDF8 !important; }
-  .hlm-h1-accent{ color:var(--brand-yellow) !important; -webkit-text-fill-color:var(--brand-yellow) !important; text-shadow:0 4px 30px rgba(0,0,0,0.5), 0 0 40px rgba(245,195,67,0.35) !important; }
+  .hlm-h1-accent{ color:var(--brand-yellow) !important; -webkit-text-fill-color:var(--brand-yellow) !important; text-shadow:0 4px 30px rgba(0,0,0,0.5) !important; }
   .hlm-h1-accent::after{ display:none !important; }
 }
 
