@@ -55,7 +55,7 @@ export default function ReportModal({
   // Which half of the job is running, and how far through the frame
   // capture we are -- both purely so the waiting state can say something
   // true instead of one fixed sentence for two minutes.
-  const [step, setStep] = useState('capturing'); // 'capturing' | 'analysing' | 'writing'
+  const [step, setStep] = useState('capturing'); // 'capturing' | 'analysing' | 'building' | 'writing'
   const [captured, setCaptured] = useState({ done: 0, total: 12 });
   const [error, setError]     = useState('');
   const [reportUrl, setReportUrl] = useState(null);
@@ -65,6 +65,10 @@ export default function ReportModal({
   // summary + the report's own HTML, so a saved report can be reopened
   // later exactly as generated) for the Save button below.
   const [savableData, setSavableData] = useState(null);
+  // Set when the report was built but the written commentary wasn't --
+  // the report is still worth opening, and saying nothing about the gap
+  // would be worse than the gap.
+  const [aiNotice, setAiNotice] = useState(false);
 
   // Floor + facing were already picked one step earlier, in UnitVerdict's
   // own combined-score card (the button that opens this modal always
@@ -108,6 +112,7 @@ export default function ReportModal({
   const generate = async () => {
     setLoading(true);
     setError('');
+    setAiNotice(false);
     setProgress(5);
 
     // Only bubble floor/facing up when they were just picked in THIS
@@ -124,49 +129,79 @@ export default function ReportModal({
     const addr = address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
     const safeCustomNote = customNote.trim() || undefined;
 
-    const attemptOnce = async () => {
-      // Capture is the long half of this -- twelve frames, ~4.5s each,
-      // near enough a minute. Reporting each frame as it lands is what
-      // makes a slow run distinguishable from a hung one; before, the bar
-      // sat at 5% for the whole phase and every healthy run looked frozen.
+    // Capturing twelve frames off the 3D map takes about a minute. It is
+    // by far the most expensive part of this and it either works or it
+    // doesn't -- so it happens ONCE. The old shape retried the whole run,
+    // which meant a busy model cost the person a second minute of
+    // photographing before failing at the same step.
+    const capture = async () => {
       setStep('capturing');
-      const screenshots = await captureScreenshots((done, total) => {
+      const shots = await captureScreenshots((done, total) => {
         setCaptured({ done, total });
-        setProgress(5 + Math.round((done / total) * 30));
+        setProgress(5 + Math.round((done / total) * 40));
       });
-      setStep('analysing');
-      setProgress(35);
+      if (!shots || shots.length === 0) throw new Error('no-frames-captured');
+      return shots;
+    };
 
-      const analyseRes = await fetch('/api/sunscout/report/analyse', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          screenshots, lat, lon, address: addr, floor, facing, tzOffset,
-          avRecord: areaRecord || undefined, combinedScore, unitScore, areaWeight, unitWeight,
-          personaId, customNote: safeCustomNote,
-          actionItems: prefillActionItems || undefined,
-        }),
-      });
-      if (!analyseRes.ok) throw new Error('analysis-failed');
-      const { analysis, summary } = await analyseRes.json();
+    // One retry, on the network steps only, and only for the failures a
+    // retry can actually change.
+    const postJson = async (url, payload, label) => {
+      for (let attempt = 0; attempt < 2; attempt++) {
+        let res;
+        try {
+          res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+        } catch (netErr) {
+          if (attempt === 0) { await new Promise(r => setTimeout(r, 1200)); continue; }
+          throw new Error(`${label}-unreachable`);
+        }
+        if (res.ok) return res.json();
+        if (attempt === 0 && res.status >= 500) { await new Promise(r => setTimeout(r, 1200)); continue; }
+        throw new Error(`${label}-failed-${res.status}`);
+      }
+      throw new Error(`${label}-failed`);
+    };
+
+    try {
+      const screenshots = await capture();
+
+      // The sun & shadow document is the frames plus the monthly table.
+      // Both are computed from solar geometry; the model was only ever
+      // adding captions. Asking for it anyway is what made this document
+      // fail whenever the model was busy -- for something it doesn't need.
+      setStep(galleryOnly ? 'building' : 'analysing');
+      setProgress(50);
+
+      const analysed = await postJson('/api/sunscout/report/analyse', {
+        screenshots, lat, lon, address: addr, floor, facing, tzOffset,
+        avRecord: areaRecord || undefined, combinedScore, unitScore, areaWeight, unitWeight,
+        personaId, customNote: safeCustomNote,
+        actionItems: prefillActionItems || undefined,
+        skipAi: Boolean(galleryOnly),
+      }, 'analysis');
+
+      const { analysis, summary, aiUnavailable } = analysed || {};
+      if (aiUnavailable && !galleryOnly) setAiNotice(true);
+
       setStep('writing');
-      setProgress(75);
+      setProgress(78);
 
-      const pdfRes = await fetch('/api/sunscout/report/pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          lat, lon, tzOffset, address: addr, floor, facing, screenshots, analysis, summary,
-          reportLabel: reportLabel || undefined,
-          facingAssumptionNote: (!facingTouched && facingSuggestion) ? facingSuggestion.sentence : undefined,
-          avRecord: areaRecord || undefined, combinedScore, unitScore, areaWeight, unitWeight,
-          unitSubScores, verdictLabel,
-        }),
-      });
-      if (!pdfRes.ok) throw new Error('pdf-failed');
+      const { mainHtml, galleryHtml } = await postJson('/api/sunscout/report/pdf', {
+        lat, lon, tzOffset, address: addr, floor, facing, screenshots,
+        analysis: analysis || '', summary,
+        reportLabel: reportLabel || undefined,
+        facingAssumptionNote: (!facingTouched && facingSuggestion) ? facingSuggestion.sentence : undefined,
+        avRecord: areaRecord || undefined, combinedScore, unitScore, areaWeight, unitWeight,
+        unitSubScores, verdictLabel,
+        aiUnavailable: Boolean(aiUnavailable) && !galleryOnly,
+        galleryOnly: Boolean(galleryOnly),
+      }, 'pdf');
+
       setProgress(100);
-
-      const { mainHtml, galleryHtml } = await pdfRes.json();
 
       // The gallery (12 screenshots + per-image analysis) is its own blob
       // with its own URL. The main report links out to it via a
@@ -184,47 +219,33 @@ export default function ReportModal({
         // A gallery-only run must save the document it actually produced.
         // Storing the combined report here meant reopening a saved sun &
         // shadow report showed something the person never generated.
-        mainHtml: galleryOnly ? galleryHtml : finalMainHtml, galleryHtml,
-        analysis, summary, address: addr, floor, facing,
+        //
+        // galleryHtml is deliberately NOT saved alongside it. Nothing reads
+        // it back -- /my-reports/[id] renders mainHtml and nothing else --
+        // and it carries all twelve JPEGs inline, a couple of megabytes.
+        // On a sun & shadow save it was the same document twice, which is
+        // how a save of a perfectly good report came back as a failure.
+        mainHtml: galleryOnly ? galleryHtml : finalMainHtml,
+        analysis: analysis || '', summary, address: addr, floor, facing,
         lat, lon, verdictLabel, combinedScore, unitScore, areaWeight, unitWeight,
         hasArea: !!areaRecord,
+        kind: galleryOnly ? 'sun-shadow' : (areaRecord ? 'combined' : 'unit'),
       });
-    };
-
-    try {
-      try {
-        await attemptOnce();
-      } catch (firstErr) {
-        // One silent retry before bothering the person with an error --
-        // review found the report failing 3-4 times in a row, which looks
-        // like a broken feature but is consistent with transient
-        // platform/API blips rather than a hard failure every time.
-        console.error('Report generation failed, retrying once:', firstErr);
-        // A map that hasn't loaded will not have loaded 1.2 seconds
-        // later, and each of those attempts costs a 20s wait before it
-        // gives up. Retry the transient things; report the structural
-        // ones straight away instead of doubling the person's wait for
-        // an answer that cannot change.
-        const m = String(firstErr?.message || '');
-        if (m.startsWith('map-failed') || m === 'map-not-ready') throw firstErr;
-        setProgress(5);
-        setCaptured({ done: 0, total: 12 });
-        await new Promise(r => setTimeout(r, 1200));
-        await attemptOnce();
-      }
     } catch (e) {
-      console.error('Report generation failed after retry:', e);
+      console.error('Report generation failed:', e);
       // The map failing to load is a different problem from the AI being
       // busy, and it needs a different response from the person -- "try
       // again in a minute" is useless advice for a blocked CDN. The
-      // capture layer now reports which one it was, so say so.
+      // capture layer reports which one it was, so say so.
       const msg = String(e?.message || '');
       setError(
         msg.startsWith('map-failed') || msg === 'map-not-ready'
           ? "The 3D map didn't load, so there was nothing to photograph for the report. That's usually a slow or blocked connection to the map provider, not a problem with your address. Close this, scroll to the map and wait for the buildings to appear, then try again."
           : msg === 'no-frames-captured'
             ? "The map loaded but none of the frames came back, so there was nothing to build a report from. This is usually a temporary problem with the map tiles, please try again in a minute."
-            : "Something went wrong generating your report. This sometimes happens when things are busy, please try again in a minute."
+            : msg.startsWith('analysis-') || msg.startsWith('pdf-')
+              ? `We photographed the map fine, but building the document failed (${msg}). The frames are gone now, so this needs a fresh run \u2014 please try again in a minute.`
+              : "Something went wrong generating your report. This sometimes happens when things are busy, please try again in a minute."
       );
     } finally {
       setLoading(false);
@@ -304,7 +325,7 @@ export default function ReportModal({
 
         {!isFormStep && !reportUrl && (
           <div className="mono" style={{ fontSize:10, fontWeight:600, color:ORG, letterSpacing:'.1em', textTransform:'uppercase', marginBottom:10 }}>
-            Report generating - feel free to keep browsing
+            {galleryOnly ? 'Sun & shadow report' : 'Full AI report'} generating - feel free to keep browsing
           </div>
         )}
 
@@ -312,7 +333,18 @@ export default function ReportModal({
           <div style={{ textAlign:'center', padding:'20px 0' }}>
             <div style={{ fontFamily:MONO, fontSize:11, fontWeight:500, color:'#16a34a', letterSpacing:'.1em', textTransform:'uppercase', marginBottom:14, border:'1px solid #16a34a', display:'inline-block', padding:'5px 14px' }}>Report Ready</div>
             <h3 style={{ fontFamily:DISPLAY, fontSize:18, fontWeight:800, color:INK, marginBottom:8 }}>{galleryOnly ? 'Your sun & shadow report is ready' : 'Your report is ready'}</h3>
-            <p style={{ fontSize:13, color:SUB, lineHeight:1.6, marginBottom:20 }}>Opens in a new tab.</p>
+            <p style={{ fontSize:13, color:SUB, lineHeight:1.6, marginBottom:aiNotice ? 12 : 20 }}>
+              {galleryOnly
+                ? 'The 12 map images through the year, with the monthly sunlight table. Opens in a new tab.'
+                : 'The full write-up, with the neighbourhood and the flat together. Opens in a new tab.'}
+            </p>
+            {aiNotice && (
+              <p style={{ fontSize:12.5, color:INK, lineHeight:1.6, marginBottom:20, textAlign:'left', border:`1px solid ${LINE}`, background:'#FFF6E8', padding:'10px 13px' }}>
+                The written commentary didn&apos;t come back this time, so this report has the measurements
+                without the narration — the scorecard, the sunlight table and all 12 images are there and
+                are unaffected. Generating again usually brings the writing back.
+              </p>
+            )}
             {savableData && (
               <div style={{ display:'flex', justifyContent:'center', marginBottom:20 }}>
                 <SaveReportButton
@@ -451,17 +483,28 @@ export default function ReportModal({
             <div style={{ marginBottom:20, animation:'rm-spin 1.6s linear infinite', display:'inline-block', color:ORG }}>
               <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="3" y="3" width="18" height="18"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
             </div>
-            <h3 style={{ fontFamily:DISPLAY, fontSize:17, fontWeight:800, color:INK, marginBottom:10 }}>Generating your report</h3>
-            {/* Says which of the three phases is running, and counts the
-                frames through the long one. One unchanging sentence for
-                two minutes is why a working run and a stuck run looked
-                identical. */}
+            <h3 style={{ fontFamily:DISPLAY, fontSize:17, fontWeight:800, color:INK, marginBottom:4 }}>
+              {galleryOnly ? 'Building your sun & shadow report' : 'Writing your full AI report'}
+            </h3>
+            {/* The two runs are genuinely different jobs and used to look
+                identical while they ran. One photographs the map and lays
+                the frames out with the sunlight table; the other adds a
+                model reading all of it. Say which one this is, and how
+                long it should take. */}
+            <p style={{ fontFamily:MONO, fontSize:10.5, color:SUB, letterSpacing:'.04em', textTransform:'uppercase', marginBottom:12 }}>
+              {galleryOnly ? '12 map images + sunlight table · no AI · ~1 min' : 'Images + AI written analysis · ~2 min'}
+            </p>
+            {/* Says which phase is running, and counts the frames through
+                the long one. One unchanging sentence for two minutes is
+                why a working run and a stuck run looked identical. */}
             <p style={{ fontFamily:MONO, fontSize:11.5, color:SUB, lineHeight:1.8, marginBottom:20 }}>
               {step === 'capturing'
                 ? `Photographing the sun and shadow through the year — frame ${Math.min(captured.done + 1, captured.total)} of ${captured.total}.`
-                : step === 'analysing'
-                  ? 'Frames captured. The AI is now reading them alongside the neighbourhood data.'
-                  : 'Almost there, writing up your report.'}
+                : step === 'building'
+                  ? 'Frames captured. Working out the monthly sunlight figures.'
+                  : step === 'analysing'
+                    ? 'Frames captured. The AI is now reading them alongside the neighbourhood data.'
+                    : 'Almost there, laying out the document.'}
             </p>
             <div style={{ background:'#EFEBE3', height:4, overflow:'hidden' }}>
               <div style={{ background:ORG, height:'100%', width:`${progress}%`, transition:'width 0.4s ease' }} />

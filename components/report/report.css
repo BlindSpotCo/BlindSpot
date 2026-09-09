@@ -135,6 +135,10 @@
 /* Correcting the pincode by hand -- the reverse lookup mis-tags Indian
    postcodes often enough that a person who knows theirs must be able to
    say so rather than being told their area isn't covered. */
+.bsr-pinlink{
+  font:inherit;font-size:inherit;font-weight:600;background:none;border:0;padding:0;cursor:pointer;
+  color:var(--brand,#7A2E43);text-decoration:underline;text-underline-offset:3px;
+}
 .bsr-pinfix{margin-top:14px;display:flex;flex-direction:column;gap:8px}
 .bsr-pinfix label{font-size:15.5px;color:var(--text,#1C1812);font-weight:600}
 .bsr-pinfix span{display:flex;gap:8px;flex-wrap:wrap}
@@ -288,17 +292,53 @@
 .bsr-visit h2{font-size:24px;font-weight:700}
 .bsr-visit-lede{margin-top:8px;color:var(--text-mute,#5A5140);max-width:68ch;font-size:17px}
 .bsr-todo{list-style:none;margin:22px 0 0;padding:0}
-.bsr-todo li{
-  display:flex;gap:16px;padding:16px 0;
-  border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
+.bsr-todo li{border-top:1px solid var(--line-soft,rgba(28,24,18,.08))}
+.bsr-todo-plain{display:flex;gap:16px;padding:16px 0}
+
+/* The whole row is the target, not the 22px square -- this list gets used
+   one-handed while walking around a flat. */
+.bsr-todo-row{
+  display:flex;gap:16px;padding:16px 8px 16px 0;cursor:pointer;
+  border-radius:4px;
 }
+.bsr-todo-row:hover{background:rgba(122,46,67,.04)}
+.bsr-todo-row:has(.bsr-box:focus-visible){outline:2px solid var(--brand,#7A2E43);outline-offset:2px}
+
 .bsr-box{
-  flex:none;width:22px;height:22px;margin-top:4px;border-radius:4px;
+  appearance:none;-webkit-appearance:none;
+  flex:none;width:22px;height:22px;margin:4px 0 0;border-radius:4px;
   border:1.5px solid var(--brand,#7A2E43);background:rgba(122,46,67,.07);
+  cursor:pointer;display:grid;place-content:center;
+  transition:background .12s ease,border-color .12s ease;
 }
+.bsr-box::after{
+  content:"";width:11px;height:6px;margin-top:-3px;
+  border-left:2.5px solid #FFFDF8;border-bottom:2.5px solid #FFFDF8;
+  transform:rotate(-45deg) scale(0);transition:transform .12s ease;
+}
+.bsr-box:checked{background:var(--brand,#7A2E43);border-color:var(--brand,#7A2E43)}
+.bsr-box:checked::after{transform:rotate(-45deg) scale(1)}
+
 .bsr-todo-body{min-width:0}
 .bsr-todo-title{display:block;font-size:17px;font-weight:700;margin-bottom:3px}
 .bsr-todo-text{display:block;font-size:16.5px;color:var(--text-mute,#5A5140)}
+
+/* Ticked rows recede rather than disappear -- you still need to be able to
+   read what you already checked. */
+.bsr-todo li.is-done .bsr-todo-title{text-decoration:line-through;color:var(--text-mute,#5A5140)}
+.bsr-todo li.is-done .bsr-todo-text{color:var(--text-dim,#847C70)}
+
+.bsr-todo-count{
+  margin-top:14px;font-size:15.5px;color:var(--text-mute,#5A5140);
+}
+.bsr-todo-count button{
+  font:inherit;font-weight:600;background:none;border:0;padding:0;cursor:pointer;
+  color:var(--brand,#7A2E43);text-decoration:underline;text-underline-offset:3px;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .bsr-box,.bsr-box::after{transition:none}
+}
 
 /* ---------------- weighting, inside the answer card ---------------- */
 .bsr-matters{

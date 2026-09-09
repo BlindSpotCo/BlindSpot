@@ -31,6 +31,14 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
   const [folderChoice, setFolderChoice] = useState(''); // existing folder id, or '' (none), or '__new'
   const [newFolderName, setNewFolderName] = useState('');
   const [title, setTitle] = useState(defaultTitle);
+  const titleTouched = useRef(false);
+  // The report this button saves often doesn't exist yet when the button
+  // mounts -- the modal renders it, then fills in the address a minute
+  // later. Without this the title box stayed empty for exactly the reports
+  // that most needed a name.
+  useEffect(() => {
+    if (!titleTouched.current && defaultTitle) setTitle(defaultTitle);
+  }, [defaultTitle]);
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -98,10 +106,20 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
       : (folders.find(f => f.id === folderChoice)?.name || '');
 
     try {
+      const payload = JSON.stringify({ source, data, title: title.trim() || undefined, folderName: folderName || undefined });
+
+      // A sun & shadow report carries twelve JPEGs inline. Past roughly
+      // four megabytes the platform rejects the request before it ever
+      // reaches us, and the person saw a bare "save-failed-413" for a
+      // report that was perfectly fine. Catch it here and say what it is.
+      if (payload.length > 3_800_000) {
+        throw new Error('too-large');
+      }
+
       const res = await fetch('/api/reports', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ source, data, title: title.trim() || undefined, folderName: folderName || undefined }),
+        body: payload,
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
@@ -110,10 +128,15 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
       setSaved(true);
       setTimeout(() => setOpen(false), 1200);
     } catch (e) {
+      const m = String(e?.message || '');
       setError(
-        e.message === 'not-signed-in'
+        m === 'not-signed-in'
           ? 'Signed-in session not found, please sign in again and retry.'
-          : `Couldn\u2019t save that report (${e.message || 'unknown error'}), please try again.`
+          : m === 'too-large'
+            ? 'This report is too big to save with all its images. Open it and use your browser\u2019s Save as PDF instead.'
+            : m.startsWith('save-failed-401') || m === 'save-failed'
+              ? 'Your sign-in seems to have expired. Sign in again and retry.'
+              : `Couldn\u2019t save that report (${m || 'unknown error'}), please try again.`
       );
     } finally {
       setSaving(false);
@@ -149,7 +172,7 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
               <label style={{ display: 'block', fontSize: 11, textTransform: 'uppercase', letterSpacing: '.06em', color: '#8A8A8A', marginBottom: 6 }}>Title</label>
               <input
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => { titleTouched.current = true; setTitle(e.target.value); }}
                 placeholder="e.g. an address or PIN"
                 style={{ width: '100%', boxSizing: 'border-box', padding: '8px 10px', fontSize: 13, border: '1px solid rgba(26,10,0,0.15)', borderRadius: 4, marginBottom: 12 }}
               />
