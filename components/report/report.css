@@ -132,6 +132,25 @@
 }
 .bsr-nocover-aqi{margin-top:10px;color:var(--text,#1C1812)}
 
+/* Correcting the pincode by hand -- the reverse lookup mis-tags Indian
+   postcodes often enough that a person who knows theirs must be able to
+   say so rather than being told their area isn't covered. */
+.bsr-pinfix{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+.bsr-pinfix label{font-size:15.5px;color:var(--text,#1C1812);font-weight:600}
+.bsr-pinfix span{display:flex;gap:8px;flex-wrap:wrap}
+.bsr-pinfix input{
+  font:inherit;font-size:16px;letter-spacing:.06em;width:8.5em;
+  padding:11px 12px;border:1px solid var(--line,#DCCFB8);border-radius:4px;
+  background:#FFFDF8;color:var(--text,#1C1812);min-height:46px;
+}
+.bsr-pinfix input:focus{outline:2px solid var(--ss,#AF5F30);outline-offset:1px}
+.bsr-pinfix button{
+  font:inherit;font-weight:700;cursor:pointer;min-height:46px;padding:11px 18px;
+  border:0;border-radius:4px;background:var(--ss,#AF5F30);color:#FFFDF8;
+}
+.bsr-pinfix button:hover:not(:disabled){background:#95502A}
+.bsr-pinfix button:disabled{opacity:.45;cursor:default}
+
 /* ---------------- where a score comes from ---------------- */
 .bsr-source{
   margin-top:10px;font-size:15px;line-height:1.5;
