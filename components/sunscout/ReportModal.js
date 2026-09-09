@@ -35,6 +35,7 @@ export default function ReportModal({
   areaRecord, combinedScore, unitScore, areaWeight, unitWeight, unitSubScores, verdictLabel,
   personaId,
   prefillFloor, prefillFacing, prefillCustomNote, prefillActionItems,
+  onBusyChange,
 }) {
   const [floor, setFloor]     = useState(prefillFloor != null ? String(prefillFloor) : '0');
   const [facing, setFacing]   = useState(prefillFacing || 'South');
@@ -283,14 +284,26 @@ export default function ReportModal({
           ? "The 3D map didn't load, so there was nothing to photograph for the report. That's usually a slow or blocked connection to the map provider, not a problem with your address. Close this, scroll to the map and wait for the buildings to appear, then try again."
           : msg === 'no-frames-captured'
             ? "The map loaded but none of the frames came back, so there was nothing to build a report from. This is usually a temporary problem with the map tiles, please try again in a minute."
+            : msg === 'capture-not-wired'
+              ? "The 3D map hasn't finished loading, so there was nothing to photograph. Close this, wait for the buildings to appear on the map, then try again."
+            : msg === 'capture-already-running'
+              ? 'A report is already being built from this spot. Let that one finish first.'
+            : msg === 'capture-cancelled'
+              ? 'That run was stopped before it finished.'
             : msg.startsWith('analysis-') || msg.startsWith('pdf-')
-              ? `We photographed the map fine, but building the document failed (${msg}). The frames are gone now, so this needs a fresh run \u2014 please try again in a minute.`
+              ? `We photographed the map fine, but building the document failed (${msg}). The photographs are kept, so trying again picks up from there rather than starting over.`
               : "Something went wrong generating your report. This sometimes happens when things are busy, please try again in a minute."
       );
     } finally {
       setLoading(false);
     }
   };
+
+  // The page locks the map pin while frames are being captured. That has to
+  // track the run, not this component's presence: the finished and failed
+  // cards stay mounted until dismissed.
+  useEffect(() => { onBusyChange?.(loading); }, [loading, onBusyChange]);
+  useEffect(() => () => { onBusyChange?.(false); }, [onBusyChange]);
 
   useEffect(() => () => {
     // Not on regenerate -- a report the person already opened in another
@@ -448,8 +461,8 @@ export default function ReportModal({
 
             <p style={{ fontSize:13, color:SUB, lineHeight:1.6, marginBottom:26 }}>
               {areaRecord
-                ? `We combine your Neighbourhood Score for ${areaRecord.name || areaRecord.pin_code} with precise sun/shadow data for this exact unit - 12 real screenshots (3 per season) - then use AI to write one combined Home Buyer Verdict covering both. The report itself stays short and readable; the 12 images and their analysis sit in a linked gallery.`
-                : 'We compute precise sun/shadow data for this exact location, capture 12 real screenshots (3 per season) at different times, then use AI to narrate the shadow patterns. The images and their analysis open in a linked gallery, keeping the main report short.'}
+                ? `We combine your Neighbourhood Score for ${areaRecord.name || areaRecord.pin_code} with precise sun/shadow data for this exact unit - 12 real screenshots (3 per season) - then use AI to write one combined Home Buyer Verdict covering both. The report itself stays short and readable; the images and their descriptions sit in a gallery linked from the top of it.`
+                : 'We compute precise sun/shadow data for this exact location, capture 12 real screenshots (3 per season) at different times, then use AI to narrate the shadow patterns. The images and their descriptions open in a gallery linked from the top of the report, keeping the report itself short.'}
             </p>
 
             <div style={{ marginBottom:22 }}>
@@ -534,7 +547,7 @@ export default function ReportModal({
               </button>
               <button onClick={onClose} style={{ background:'transparent', color:SUB, border:`1px solid ${LINE}`, borderLeft:'none', padding:'14px 20px', fontSize:13, cursor:'pointer' }}>Cancel</button>
             </div>
-            <div style={{ fontFamily:MONO, fontSize:10.5, color:SUB, textAlign:'center', marginTop:12, letterSpacing:'.03em' }}>TAKES ~30 SECONDS · FREE · AI-POWERED</div>
+            <div style={{ fontFamily:MONO, fontSize:10.5, color:SUB, textAlign:'center', marginTop:12, letterSpacing:'.03em' }}>ABOUT TWO MINUTES · PHOTOGRAPHS THE MAP, THEN WRITES IT UP</div>
           </>
         ) : error ? (
           // Only reachable via the autoGenerate path -- the manual form

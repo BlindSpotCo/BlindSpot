@@ -609,6 +609,25 @@ export async function POST(req) {
       </div>
     </div>`;
 
+  // ---- The way to the twelve images -----------------------------------
+  // This card went missing at some point and nothing noticed, because the
+  // failure is silent: mainHtml carried no anchor at all, so ReportModal's
+  // replaceAll('__GALLERY_URL__', ...) matched nothing and the methodology
+  // section went on telling the reader the images were "linked near the top
+  // of this report". They weren't linked anywhere. The twelve frames the
+  // person waited two minutes for were unreachable from the document.
+  const galleryLinkSection = (!galleryOnly && shotCount > 0) ? `
+    <a href="__GALLERY_URL__" target="_blank" style="display:block;text-decoration:none;border:1px solid ${LINE};border-left:4px solid ${SUN};background:${CARD};padding:20px 24px;margin-bottom:28px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:${SUN};text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;">See the evidence</div>
+          <div style="font-size:16px;font-weight:800;color:${INK};font-family:${DISPLAY};margin-bottom:4px;">The ${shotCount} map images this report is read from</div>
+          <div style="font-size:12.5px;color:${DIM};line-height:1.6;">This block photographed through the year, ${Object.keys(perImage).length ? 'each frame described, ' : ''}with the full monthly sunlight table. Opens in a new tab.</div>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:${SUN};white-space:nowrap;">Open the images &rarr;</div>
+      </div>
+    </a>` : '';
+
   // ---- The two halves, read against each other ------------------------
   // The reason a combined report exists. Before this the area and the flat
   // were analysed in separate cards that never mentioned one another, so a
@@ -837,6 +856,7 @@ export async function POST(req) {
       ${aiUnavailable ? aiNote : ''}
       ${verdictBoxSection}
       ${togetherSection}
+      ${galleryLinkSection}
       ${scorecardSection}
       ${prosConsSection}
       ${neighbourhoodSection}
@@ -855,7 +875,7 @@ export async function POST(req) {
           ${summary?.buildingHeightNote ? `<li>${summary.buildingHeightNote.sentence}</li>` : ''}
           ${safeFacingAssumptionNote ? `<li>${safeFacingAssumptionNote}</li>` : ''}
           <li>The narrative sections use AI to interpret the real numbers above and describe the screenshots, it is instructed to treat the figures as fact, not to estimate its own.</li>
-          <li>The ${shotCount || 12} sun/shadow map screenshots and their per-image analysis are in a separate gallery, linked near the top of this report (and clickable in the downloaded PDF too), that link works as long as the browser tab this report was generated in stays open; it won't work if reopened later in a new session, since the gallery isn't hosted on a server yet.</li>
+          ${galleryOnly ? '' : `<li>The ${shotCount || 12} sun/shadow map screenshots and their descriptions are in a separate gallery, linked from the "See the evidence" card above. That link works for as long as the browser tab this report was generated in stays open; it won't work if the report is reopened later in a new session, since the gallery isn't hosted on a server yet.</li>`}
         </ul>
       </div>
 
