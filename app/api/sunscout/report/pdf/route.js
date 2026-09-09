@@ -193,6 +193,14 @@ export async function POST(req) {
     facingAssumptionNote,
     avRecord, combinedScore, unitScore, areaWeight, unitWeight,
     unitSubScores, verdictLabel,
+    // aiUnavailable: the model didn't answer this time. Everything below
+    // that is computed rather than written still renders; only the prose
+    // is missing, and the report says so instead of showing a gap.
+    aiUnavailable,
+    // galleryOnly: this run was asked for the sun & shadow document alone,
+    // so the gallery is the artifact, not an appendix to a report that
+    // exists in another tab.
+    galleryOnly,
      // optional short label/nickname for the report, e.g. "Skyline Residences · Unit 502"
   } = await req.json();
 
@@ -633,6 +641,17 @@ export async function POST(req) {
   // combined report the Verdict + Neighbourhood boxes above already cover
   // the overall picture, so this is scoped explicitly to sun & shadow --
   // and matches the neighbourhood card's exact styling for visual parity.
+  // Said once, plainly, in the place the writing would have been. The
+  // numbers around it were computed here and are not affected.
+  const aiNote = `
+    <div style="border-left:3px solid ${DIM};background:${CARD};padding:14px 18px;margin-bottom:18px;">
+      <div style="font-size:13.5px;color:${INK};line-height:1.7;">
+        The written commentary could not be generated this time, so this report has the measurements without the narration.
+        Every figure here, the scorecard, the monthly sunlight table and the ${shotCount || 12} map images are unaffected.
+        Generating the report again usually brings the written part back.
+      </div>
+    </div>`;
+
   const fullAnalysisSection = `
     <div style="border:1px solid ${LINE};padding:28px;margin-bottom:28px;">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
@@ -654,7 +673,7 @@ export async function POST(req) {
           <div><div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.06em;">Daily Average</div><div style="font-size:12.5px;font-weight:700;color:${INK};">${summary.solarFeasibility.avgUsableHours}h usable sun</div></div>
         </div>
       </div>` : ''}
-      ${formattedAnalysis}
+      ${formattedAnalysis || (aiUnavailable ? aiNote : '')}
       ${sunBarChart}
       ${summary?.solarFeasibility ? `<div style="font-size:11px;color:${DIM};">Best months: ${summary.solarFeasibility.bestMonths.join(', ')} · Worst months: ${summary.solarFeasibility.worstMonths.join(', ')}</div>` : ''}
     </div>`;
@@ -839,7 +858,7 @@ export async function POST(req) {
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <title>Sun &amp; Shadow Images - ${safeAddress}</title>
+  <title>${galleryOnly ? 'Sun &amp; Shadow Report' : 'Sun &amp; Shadow Images'} - ${safeAddress}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
   <style>
@@ -852,15 +871,18 @@ export async function POST(req) {
   <div class="no-print" style="position:sticky;top:0;z-index:100;background:${BG};border-bottom:1px solid ${LINE};padding:14px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
     <div style="display:flex;align-items:center;gap:9px;">
       ${markDataUri ? `<img src="${markDataUri}" alt="BlindSpot" style="width:16px;height:18px;object-fit:contain;"/>` : ''}
-      <span style="font-size:12px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.1em;">Sun &amp; Shadow Evidence</span>
+      <span style="font-size:12px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.1em;">${galleryOnly ? 'Sun &amp; Shadow Report' : 'Sun &amp; Shadow Evidence'}</span>
       <span style="font-size:11px;color:${DIM};">${safeAddress} · Floor ${safeFloor}, ${safeFacing}-facing</span>
     </div>
-    <button onclick="if(window.opener&&!window.opener.closed){window.opener.focus();window.close();}else{window.close();}" style="background:#fff;color:${WINE};border:1px solid ${WINE};padding:9px 16px;font-size:12.5px;font-weight:700;cursor:pointer;">← Back to report</button>
+    <div style="display:flex;gap:8px;">
+      <button onclick="window.print()" style="background:${WINE};color:#fff;border:1px solid ${WINE};padding:9px 16px;font-size:12.5px;font-weight:700;cursor:pointer;">Save as PDF</button>
+      <button onclick="if(window.opener&&!window.opener.closed){window.opener.focus();window.close();}else{window.close();}" style="background:#fff;color:${WINE};border:1px solid ${WINE};padding:9px 16px;font-size:12.5px;font-weight:700;cursor:pointer;">${galleryOnly ? 'Close' : '\u2190 Back to report'}</button>
+    </div>
   </div>
 
   <div style="max-width:900px;margin:0 auto;padding:28px 32px 56px;background:#fff;">
     <p style="font-size:13px;color:${DIM};line-height:1.7;margin-bottom:8px;">
-      ${shotCount || 12} real screenshots of the 3D map at this exact pin, 3 per season, at 9am / noon / 3pm, each with its own AI description of what's casting shade and how much of the unit is in sun at that moment.
+      ${shotCount || 12} real screenshots of the 3D map at this exact pin, 3 per season, at 9am / noon / 3pm, showing what is casting shade and how much of the unit is in sun at each of those moments.${Object.keys(perImage).length ? ' Each one carries its own written description.' : ''}
     </p>
     ${monthlyTableSection ? `
     <div style="padding:24px 0 40px;">

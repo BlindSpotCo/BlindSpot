@@ -234,7 +234,11 @@ export default function FloorPlanAnalysis({ embedded = false }) {
           <>
             <div style={{ marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
               <button onClick={() => { setStatus('idle'); setResult(null); }} style={{ fontSize: 12.5, fontWeight: 600, border: '1px solid color-mix(in srgb, var(--sun) 45%, transparent)', borderRadius: 3, padding: '8px 14px', color: 'var(--text-mute)', background: 'transparent' }}>↺ Analyse a different plan</button>
-              <SaveReportButton source="furnishing" data={result} defaultTitle={result.dream_home_vision ? undefined : 'Furnishing report'} />
+              <SaveReportButton
+                source="furnishing"
+                data={result}
+                defaultTitle={`Furnishing plan · ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}`}
+              />
             </div>
 
             {result.confidence_note && (

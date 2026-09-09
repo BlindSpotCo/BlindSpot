@@ -149,6 +149,7 @@ export default function ReportScreen() {
   // Nominatim's postcode tagging for India misses and mis-tags often enough
   // that the old flow let people correct it by hand. Same here.
   const [pinEntry, setPinEntry] = useState('');
+  const [pinFixOpen, setPinFixOpen] = useState(false);
   const capture = useMapCapture();
   const [minutes, setMinutes] = useState(630);   // only meaningful while paused
   // The animation runs inside Map3DShadow while `animating` is true --
@@ -378,19 +379,38 @@ export default function ReportScreen() {
     );
   }, [moveTo]);
 
-  // The detailed area report (opened from here) posts this when someone
-  // clicks "Continue to the flat" and closes itself. Without a listener the
-  // tab just vanished and this page did nothing.
+  // Anchor for the flat half, still used by the in-page "the flat" link.
   const unitRef = useRef(null);
+
+  /* ---------------- the site-visit checklist ----------------
+     These rendered as squares that looked exactly like checkboxes and did
+     nothing when you pressed them -- the one thing on this page that
+     invites a click and then ignores it. They are real now, and they
+     remember what you ticked for this address, because the whole point of
+     the list is that you carry it around a flat and tick things off. */
+  const [ticked, setTicked] = useState(() => new Set());
+  const tickKey = hasPlace ? `bs-checklist:${lat.toFixed(5)},${lon.toFixed(5)}` : '';
+
   useEffect(() => {
-    function onMessage(e) {
-      if (e.origin !== window.location.origin) return;
-      if (e.data?.type !== 'blindspot:continue-to-unit') return;
-      unitRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-    window.addEventListener('message', onMessage);
-    return () => window.removeEventListener('message', onMessage);
-  }, []);
+    if (!tickKey) return;
+    try {
+      const raw = window.localStorage.getItem(tickKey);
+      setTicked(new Set(raw ? JSON.parse(raw) : []));
+    } catch { setTicked(new Set()); }
+  }, [tickKey]);
+
+  const toggleTick = useCallback((key) => {
+    setTicked((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key); else next.add(key);
+      if (tickKey) {
+        // Private browsing and blocked site data both throw here. Ticking
+        // still works for this visit; it just won't be remembered.
+        try { window.localStorage.setItem(tickKey, JSON.stringify([...next])); } catch {}
+      }
+      return next;
+    });
+  }, [tickKey]);
 
   const bumpFloor = useCallback((d) => { setAssumed(false); setFloor((f) => Math.max(1, Math.min(60, f + d))); }, []);
 
@@ -451,6 +471,37 @@ export default function ReportScreen() {
   const hasArea = Boolean(area);
   const topScore = hasArea ? scores.combined : unit.score;
   const topTone = toneOf(topScore);
+
+  // One form, used from both the covered and the not-covered state. The
+  // reverse lookup is a best guess -- it returns the pincode of whatever
+  // OSM object sits nearest the pin, which on a boundary is the one next
+  // door. Whoever is buying the flat knows theirs; let them say it.
+  const applyPin = (e) => {
+    e.preventDefault();
+    const v = pinEntry.trim();
+    if (!/^\d{6}$/.test(v)) return;
+    setPlace((p) => ({ ...p, pinCode: v }));
+    setPinEntry('');
+    setPinFixOpen(false);
+  };
+  const pinFixForm = (
+    <form className="bsr-pinfix" onSubmit={applyPin}>
+      <label htmlFor="bsr-pin">
+        {pinCode ? 'Type the correct pincode:' : 'Know the pincode? Type it in:'}
+      </label>
+      <span>
+        <input
+          id="bsr-pin"
+          inputMode="numeric"
+          maxLength={6}
+          placeholder="560067"
+          value={pinEntry}
+          onChange={(e) => setPinEntry(e.target.value.replace(/\D/g, '').slice(0, 6))}
+        />
+        <button type="submit" disabled={!/^\d{6}$/.test(pinEntry.trim())}>Use this pincode</button>
+      </span>
+    </form>
+  );
 
   const factorKeys = hasArea
     ? FACTOR_ORDER.filter((k) => typeof area.factors?.[k] === 'number')
@@ -518,7 +569,21 @@ export default function ReportScreen() {
               : pinPending
                 ? 'Finding the pincode for this pin\u2026'
                 : 'Not covered yet.'}
+            {hasArea && (
+              <>
+                {' '}
+                <button type="button" className="bsr-pinlink" onClick={() => setPinFixOpen((v) => !v)}>
+                  {pinFixOpen ? 'Never mind' : 'Wrong pincode?'}
+                </button>
+              </>
+            )}
           </p>
+
+          {/* The lookup lands on a neighbouring pincode often enough that
+              this has to be reachable from the covered state too, not only
+              when nothing was found. 560066 and 560067 are both Whitefield
+              and they are not the same set of records. */}
+          {hasArea && pinFixOpen && pinFixForm}
 
           {hasArea ? (
             <>
@@ -582,33 +647,7 @@ export default function ReportScreen() {
                 </p>
               )}
 
-              {!pinPending && (
-                <form
-                  className="bsr-pinfix"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const v = pinEntry.trim();
-                    if (!/^\d{6}$/.test(v)) return;
-                    setPlace((p) => ({ ...p, pinCode: v }));
-                    setPinEntry('');
-                  }}
-                >
-                  <label htmlFor="bsr-pin">
-                    {pinCode ? 'Wrong pincode? Type the right one:' : 'Know the pincode? Type it in:'}
-                  </label>
-                  <span>
-                    <input
-                      id="bsr-pin"
-                      inputMode="numeric"
-                      maxLength={6}
-                      placeholder="560067"
-                      value={pinEntry}
-                      onChange={(e) => setPinEntry(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    />
-                    <button type="submit" disabled={!/^\d{6}$/.test(pinEntry.trim())}>Use this pincode</button>
-                  </span>
-                </form>
-              )}
+              {!pinPending && pinFixForm}
               {aqi != null && (
                 <p className="bsr-nocover-aqi">
                   What we can tell you: air today is <strong>{aqiWord(aqi).toLowerCase()}</strong>, AQI {aqi}.
@@ -683,8 +722,8 @@ export default function ReportScreen() {
               Generate the sun &amp; shadow report →
             </button>
             <span className="bsr-more-note">
-              12 map angles at this exact pin, 3 per season at 9am / noon / 3pm, each with its own
-              analysis — plus the monthly sunlight table for this floor.
+              12 map angles at this exact pin, 3 per season at 9am / noon / 3pm, plus the monthly
+              sunlight table for this floor. Takes about a minute. No AI involved — it&apos;s all measured.
             </span>
           </p>
         </section>
@@ -773,13 +812,12 @@ export default function ReportScreen() {
       <section className="bsr-visit">
         <h2>What to check before you decide</h2>
         <p className="bsr-visit-lede">
-          These come from the weakest scores above. Take the list with you on the site visit — it stays the
-          same whatever you choose below.
+          These come from the weakest scores on this page. Tick them off as you go — the list doesn&apos;t
+          change with the area-or-flat choice above, and your ticks are remembered on this device.
         </p>
         <ul className="bsr-todo">
           {actions.length === 0 ? (
-            <li>
-              <span className="bsr-box" aria-hidden="true" />
+            <li className="bsr-todo-plain">
               <span className="bsr-todo-body">
                 <strong className="bsr-todo-title">Nothing scored poorly.</strong>
                 <span className="bsr-todo-text">Still worth one visit at rush hour and one after dark before you commit.</span>
@@ -787,35 +825,50 @@ export default function ReportScreen() {
             </li>
           ) : (
             actions.map((a) => (
-              <li key={a.key}>
-                <span className="bsr-box" aria-hidden="true" />
-                <span className="bsr-todo-body">
-                  <strong className="bsr-todo-title">{a.label} — {String(word(a.score)).toLowerCase()} ({a.score})</strong>
-                  <span className="bsr-todo-text">{a.action}</span>
-                </span>
+              <li key={a.key} className={ticked.has(a.key) ? 'is-done' : undefined}>
+                <label className="bsr-todo-row">
+                  <input
+                    type="checkbox"
+                    className="bsr-box"
+                    checked={ticked.has(a.key)}
+                    onChange={() => toggleTick(a.key)}
+                  />
+                  <span className="bsr-todo-body">
+                    <strong className="bsr-todo-title">{a.label} — {String(word(a.score)).toLowerCase()} ({a.score})</strong>
+                    <span className="bsr-todo-text">{a.action}</span>
+                  </span>
+                </label>
               </li>
             ))
           )}
         </ul>
+        {actions.length > 0 && ticked.size > 0 && (
+          <p className="bsr-todo-count">
+            {ticked.size} of {actions.length} checked.{' '}
+            <button type="button" onClick={() => {
+              setTicked(new Set());
+              if (tickKey) { try { window.localStorage.removeItem(tickKey); } catch {} }
+            }}>Clear</button>
+          </p>
+        )}
       </section>
-
-      {/* ---------- weighting, asked as a question ---------- */}
 
       {/* ---------- the written verdict ---------- */}
       <section className="bsr-close">
         <h2>Every property has a <em>blindspot.</em></h2>
         <p>
-          One written verdict for this address — the area, the flat, and the two read together, with the
-          questions to put to the seller. Downloadable as a PDF.
+          {hasArea
+            ? 'One written verdict for this address — the area, the flat, and the two read together, with the questions to put to the seller. Downloadable as a PDF.'
+            : 'One written verdict for this flat — the sun, the shade, the view and the questions to put to the seller. We have no neighbourhood records for this pincode, so this report covers the flat only. Downloadable as a PDF.'}
         </p>
         <button
           type="button"
           className="bsr-cta"
           onClick={() => setReportOpen('full')}
         >
-          Generate the full report
+          {hasArea ? 'Generate the full report' : 'Generate the full flat report'}
         </button>
-        <span className="bsr-free">Opens in a new tab, so this page keeps your floor and facing. Your first address is free.</span>
+        <span className="bsr-free">Takes about two minutes and opens in a new tab, so this page keeps your floor and facing. Your first address is free.</span>
         <span className="bsr-also">
           Already have the floor plan? <a href="/floor-plan-analysis">Get room-by-room furnishing advice →</a>
         </span>

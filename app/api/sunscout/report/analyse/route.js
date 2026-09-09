@@ -57,7 +57,7 @@ Note: the neighbourhood score is the same for every unit in this pincode — it 
 }
 
 export async function POST(req) {
-  const { screenshots, lat, lon, address, floor, facing, tzOffset, avRecord, combinedScore, unitScore, areaWeight, unitWeight, personaId, customNote, actionItems } = await req.json();
+  const { screenshots, lat, lon, address, floor, facing, tzOffset, avRecord, combinedScore, unitScore, areaWeight, unitWeight, personaId, customNote, actionItems, skipAi } = await req.json();
   const persona = personaId ? (await import('@/lib/personas')).getPersona(personaId) : null;
   // Free-text ask from the buyer, captured right before they hit Generate
   // (see UnitVerdict's own field -- the report modal itself auto-starts,
@@ -106,6 +106,26 @@ Note: floor clearance is an estimate based on typical urban obstruction heights,
 
   const buildingHeightNote = await checkBuildingHeights(latN, lonN).catch(() => null);
   const reportSummary = solarSummary ? { ...solarSummary, buildingHeightNote } : null;
+
+  // The sun & shadow document is twelve map frames and the monthly table.
+  // Both are computed here, deterministically, from solar geometry -- the
+  // model only ever added the per-image captions. Asking Gemini for it
+  // anyway meant that document failed every time the model was busy, for
+  // nothing it needed. Hand back the summary and stop.
+  if (skipAi) {
+    return NextResponse.json({ analysis: '', summary: reportSummary, aiSkipped: true });
+  }
+
+  // No key configured is a deployment problem, not a busy model, and it
+  // will not fix itself on a retry -- say so once and let the report ship
+  // with everything that doesn't depend on it.
+  if (!process.env.GEMINI_API_KEY) {
+    console.error('[report/analyse] GEMINI_API_KEY is not set — shipping the report without the written analysis.');
+    return NextResponse.json({
+      analysis: '', summary: reportSummary, avRecord: avRecord || null,
+      combinedScore: combinedScore ?? null, aiUnavailable: true, aiReason: 'not-configured',
+    });
+  }
 
   const neighbourhoodGroundTruth = buildNeighbourhoodGroundTruth(avRecord);
   const hasNeighbourhood = Boolean(avRecord);
@@ -237,9 +257,23 @@ The opening 2-3 sentences of this section must be plain, everyday words — the 
     // next one -- a single blip used to kill the whole report right away.
     // 429 (rate limit) still skips straight to the next model with no
     // retry, since retrying the same model won't help there.
+    // A budget, not just a retry count. The platform kills this function at
+    // its own ceiling and the caller then sees a 502 with nothing in it --
+    // no summary, no table, no reason. Every attempt below is bounded, and
+    // the loop stops trying once there isn't time left for another one, so
+    // we always return our own answer rather than being cut off mid-flight.
+    const startedAt = Date.now();
+    const BUDGET_MS = 48_000;
+    const left = () => BUDGET_MS - (Date.now() - startedAt);
+
     const callGemini = async (msgContents) => {
       for (const model of GEMINI_MODELS) {
         for (let attempt = 0; attempt < 2; attempt++) {
+          const remaining = left();
+          if (remaining < 6_000) {
+            console.warn('Gemini Vision: out of time budget, giving up before', model);
+            return null;
+          }
           let res;
           try {
             res = await fetch(`${GEMINI_URL(model)}?key=${process.env.GEMINI_API_KEY}`, {
@@ -247,43 +281,62 @@ The opening 2-3 sentences of this section must be plain, everyday words — the 
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 contents: msgContents,
-                generationConfig: { maxOutputTokens: 8192, temperature: 0.2 },
+                generationConfig: { maxOutputTokens: 6144, temperature: 0.2 },
               }),
+              signal: AbortSignal.timeout(Math.min(remaining, 40_000)),
             });
           } catch (networkErr) {
-            console.error(`Gemini Vision network error (${model}, attempt ${attempt + 1}):`, networkErr);
-            if (attempt === 0) { await new Promise(r => setTimeout(r, 800)); continue; }
+            console.error(`Gemini Vision network error (${model}, attempt ${attempt + 1}):`, networkErr?.message || networkErr);
+            if (attempt === 0 && left() > 12_000) { await new Promise(r => setTimeout(r, 800)); continue; }
             break; // exhausted retries for this model, fall through to the next one
           }
           if (res.ok) return res.json();
           const errText = await res.text();
-          console.error(`Gemini Vision request failed (${model}, attempt ${attempt + 1}):`, res.status, errText);
+          console.error(`Gemini Vision request failed (${model}, attempt ${attempt + 1}):`, res.status, errText.slice(0, 500));
           if (res.status === 429) break; // no point retrying the same model
-          if (attempt === 0 && res.status >= 500) { await new Promise(r => setTimeout(r, 800)); continue; }
+          if (attempt === 0 && res.status >= 500 && left() > 12_000) { await new Promise(r => setTimeout(r, 800)); continue; }
           break;
         }
       }
       return null;
     };
 
+    // A 200 with aiUnavailable, not a 502. Everything else in the report --
+    // the scorecard, the pros and cons, the monthly sunlight table, the
+    // factor bars, the twelve frames -- is computed here from real numbers
+    // and is sitting ready. Failing the whole request threw all of that
+    // away because the written commentary was missing, which is what the
+    // person actually saw: a dead end after a two-minute wait.
     let data = await callGemini(contents);
     if (!data) {
-      return NextResponse.json(
-        { analysis: 'AI analysis request failed. Please try again in a moment.', summary: reportSummary },
-        { status: 502 }
-      );
+      return NextResponse.json({
+        analysis: '',
+        summary: reportSummary,
+        avRecord: avRecord || null,
+        combinedScore: combinedScore ?? null,
+        aiUnavailable: true,
+        aiReason: 'busy',
+      });
     }
 
     let candidate = data?.candidates?.[0];
     let analysis = candidate?.content?.parts?.[0]?.text || '';
     let finishReason = candidate?.finishReason;
 
+    // Continuations carry the TEXT forward, not the images. Each of the
+    // twelve frames costs real upload time and real vision tokens, and
+    // resending all of them up to three more times turned one call into
+    // four full vision requests -- which is how a report that worked once
+    // started timing out at the platform's ceiling and coming back a 502.
+    // The model has already described the images; it needs its own draft
+    // and the instruction to keep going, nothing more.
+    const textOnlyPrompt = [{ text: `${prompt}\n\nImage order:\n${labelLine}\n\n(The map images were provided with the first part of this request; continue from your own draft below.)` }];
     let continuations = 0;
-    while (finishReason === 'MAX_TOKENS' && continuations < 3) {
+    while (finishReason === 'MAX_TOKENS' && continuations < 2 && left() > 15_000) {
       continuations++;
       console.warn(`Gemini hit MAX_TOKENS, requesting continuation #${continuations}`);
       const followUpContents = [
-        ...contents,
+        { role: 'user', parts: textOnlyPrompt },
         { role: 'model', parts: [{ text: analysis }] },
         { role: 'user', parts: [{ text: 'Continue exactly where you left off, mid-sentence if needed. Do not repeat anything you already wrote, and do not restart the section headers.' }] },
       ];
@@ -302,13 +355,14 @@ The opening 2-3 sentences of this section must be plain, everyday words — the 
         'Gemini analysis came back empty/short. finishReason:', finishReason,
         'full response:', JSON.stringify(data).slice(0, 2000)
       );
-      return NextResponse.json(
-        {
-          analysis: `AI analysis was incomplete (reason: ${finishReason || 'unknown'}). The data table above is still accurate — try regenerating the report for the full write-up.`,
-          summary: reportSummary,
-        },
-        { status: 200 }
-      );
+      return NextResponse.json({
+        analysis: '',
+        summary: reportSummary,
+        avRecord: avRecord || null,
+        combinedScore: combinedScore ?? null,
+        aiUnavailable: true,
+        aiReason: finishReason ? `stopped: ${finishReason}` : 'empty',
+      });
     }
 
     if (finishReason === 'MAX_TOKENS') {
@@ -319,9 +373,13 @@ The opening 2-3 sentences of this section must be plain, everyday words — the 
     return NextResponse.json({ analysis, summary: reportSummary, avRecord: avRecord || null, combinedScore: combinedScore ?? null });
   } catch (err) {
     console.error('Gemini Vision error:', err);
-    return NextResponse.json(
-      { analysis: 'Could not reach Gemini Vision. Please try again in a moment.', summary: reportSummary },
-      { status: 502 }
-    );
+    return NextResponse.json({
+      analysis: '',
+      summary: reportSummary,
+      avRecord: avRecord || null,
+      combinedScore: combinedScore ?? null,
+      aiUnavailable: true,
+      aiReason: 'unreachable',
+    });
   }
 }
