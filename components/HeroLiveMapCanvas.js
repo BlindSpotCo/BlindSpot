@@ -254,7 +254,6 @@ export default function HeroLiveMapCanvas() {
               We catch things like hidden water damage, poor natural light, high pollution, extra noise, and safety risks the listing photos won&apos;t show you.
             </span>
           </p>
-          <p className="hlm-resolve">Search your address to find yours.</p>
         </div>
 
         <div className="hlm-searchwrap" ref={boxRef}>
@@ -264,7 +263,7 @@ export default function HeroLiveMapCanvas() {
               value={query}
               onChange={handleChange}
               onFocus={() => setOpen(true)}
-              placeholder="Search an address or drop a pin"
+              placeholder="Search your address to find yours."
               className="hlm-search-input"
             />
             {loading && <span className="hlm-search-spinner" aria-hidden="true" />}
