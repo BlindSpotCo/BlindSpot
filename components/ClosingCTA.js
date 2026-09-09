@@ -33,7 +33,7 @@ export default function ClosingCTA() {
         <h2>Because every property has a blindspot, and we&apos;re making it <span className="gold-word">visible</span>.</h2>
         <p>See the sunlight. Know the neighbourhood. Two free tools. One pin. Everything the listing wasn&apos;t going to mention.</p>
         <div className="closing2-ctas">
-          <PinDropTransition href="/property-score" className="btn btn-lg btn-cta">
+          <PinDropTransition href="/#find" className="btn btn-lg btn-cta">
             Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
           </PinDropTransition>
         </div>
@@ -58,7 +58,7 @@ export default function ClosingCTA() {
             </div>
             <div className="footer-col">
               <span className="footer-col-title">Get Started</span>
-              <a href="/property-score">Uncover Your BlindSpot</a>
+              <a href="/#find">Uncover Your BlindSpot</a>
               <a href="/signup">Create an account</a>
               <a href="/login">Sign in</a>
             </div>

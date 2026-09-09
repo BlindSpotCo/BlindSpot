@@ -58,7 +58,7 @@ export default function StepsHowItWorks() {
         </div>
 
         <div className="hiw2-cta">
-          <PinDropTransition href="/property-score" className="btn btn-lg btn-cta">
+          <PinDropTransition href="/#find" className="btn btn-lg btn-cta">
             Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
           </PinDropTransition>
         </div>
