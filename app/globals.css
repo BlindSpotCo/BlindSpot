@@ -3080,7 +3080,17 @@ header.header-on-dark .brand-word-img{
   font-family:'Geist',sans-serif; font-weight:700;
   line-height:1; letter-spacing:-0.02em; white-space:nowrap; color:var(--brand-yellow);
   clip-path:inset(0 0 0 0);
-  transition:clip-path .65s cubic-bezier(.76,0,.24,1);
+  /* Was cubic-bezier(.76,0,.24,1) at .65s -- that curve sits nearly flat
+     at both ends and rushes through the middle, which on a clip sweeping
+     the full width of a ~190px headline read as a jerky snap rather than
+     a smooth wipe. A plain ease-in-out cubic reads as fluid the whole
+     way through instead of "slow, snap, slow". will-change promotes this
+     to its own compositor layer up front (rather than only once the
+     transition starts) so the very first hover doesn't have to eat that
+     layer-promotion cost mid-animation, which is its own source of
+     jank on a box this large. */
+  transition:clip-path .7s cubic-bezier(.65,0,.35,1);
+  will-change:clip-path;
 }
 .cc-foot-wordmark-main{
   font-size:clamp(56px, 14vw, 190px);
