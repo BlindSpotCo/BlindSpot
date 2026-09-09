@@ -142,6 +142,13 @@ export default function ReportScreen() {
   // The raw locality record the report generator wants -- the summary the
   // scoring API returns isn't the same shape.
   const [avRecord, setAvRecord] = useState(null);
+  // True while the arrival lookup is in flight, so the area half says
+  // "still looking" rather than flashing "not covered" at a pin we simply
+  // haven't asked about yet.
+  const [pinPending, setPinPending] = useState(false);
+  // Nominatim's postcode tagging for India misses and mis-tags often enough
+  // that the old flow let people correct it by hand. Same here.
+  const [pinEntry, setPinEntry] = useState('');
   const capture = useMapCapture();
   const [minutes, setMinutes] = useState(630);   // only meaningful while paused
   // The animation runs inside Map3DShadow while `animating` is true --
@@ -156,6 +163,9 @@ export default function ReportScreen() {
 
   const scoreReq = useRef(0);
   const solarReq = useRef(0);
+  // Which coordinates we've already asked the postcode for, so a pin with
+  // genuinely no postcode is asked about once and not on every render.
+  const pinAsked = useRef('');
 
   /* ---------------- scores ---------------- */
   useEffect(() => {
@@ -255,6 +265,36 @@ export default function ReportScreen() {
     return () => { live = false; };
   }, [hasPlace, lat, lon]);
 
+  /* ---------------- the postcode, when we arrived without one ----------------
+     The area half is looked up by postcode, so a pin that arrives with only
+     coordinates -- a hero suggestion that carried no postcode, a shared link,
+     a saved bookmark -- had nothing to look up, and the page said "not
+     covered yet" when the truth was that we never asked. Ask on arrival, the
+     same way moving the pin does. */
+  useEffect(() => {
+    if (!hasPlace || pinCode) return;
+    const key = `${lat},${lon}`;
+    if (pinAsked.current === key) return;
+    pinAsked.current = key;
+
+    let live = true;
+    setPinPending(true);
+    fetch(`/api/sunscout/reverse-geocode?lat=${lat}&lon=${lon}`)
+      .then((r) => r.json())
+      .then((j) => {
+        const res = j?.result;
+        if (!live) return;
+        if (res) {
+          setPlace((p) => (p.lat === lat && p.lon === lon && !p.pinCode
+            ? { ...p, pinCode: res.postcode || '', address: p.address || res.displayName || '' }
+            : p));
+        }
+      })
+      .catch(() => {})
+      .finally(() => { if (live) setPinPending(false); });
+    return () => { live = false; setPinPending(false); };
+  }, [hasPlace, lat, lon, pinCode]);
+
   const actions = useMemo(
     () => getActionItems({
       areaFactors: scores?.area?.factors,
@@ -272,6 +312,7 @@ export default function ReportScreen() {
     setLocError('');
     setSolar(null); setSolarFailed(false); setAqi(null);
     setPlace({ lat: toLat, lon: toLon, pinCode: '', address: label || '' });
+    pinAsked.current = `${toLat},${toLon}`;
     fetch(`/api/sunscout/reverse-geocode?lat=${toLat}&lon=${toLon}`)
       .then((r) => r.json())
       .then((j) => {
@@ -472,7 +513,11 @@ export default function ReportScreen() {
           <p className="bsr-kicker">The area around it</p>
           <h2>{hasArea ? area.name : 'This locality'}</h2>
           <p className="bsr-sub">
-            {hasArea ? `Government records for pin ${area.pinCode}.` : 'Not covered yet.'}
+            {hasArea
+              ? `Government records for pin ${area.pinCode}.`
+              : pinPending
+                ? 'Finding the pincode for this pin\u2026'
+                : 'Not covered yet.'}
           </p>
 
           {hasArea ? (
@@ -526,10 +571,44 @@ export default function ReportScreen() {
             </>
           ) : (
             <div className="bsr-nocover">
-              <p>
-                BlindSpot has neighbourhood records for Delhi NCR, Bangalore, Chandigarh, Hyderabad and Mumbai.
-                This pin isn&apos;t in them yet, so we won&apos;t guess at safety, water or schools here.
-              </p>
+              {pinPending ? (
+                <p>Looking up which pincode this pin falls in\u2026</p>
+              ) : (
+                <p>
+                  {pinCode
+                    ? `Pin ${pinCode} isn't in our neighbourhood records yet, so we won't guess at safety, water or schools here.`
+                    : "We couldn't work out the pincode for this exact spot, so there's nothing to look the area up by."}
+                  {' '}BlindSpot has records for Delhi NCR, Bangalore, Chandigarh, Hyderabad and Mumbai.
+                </p>
+              )}
+
+              {!pinPending && (
+                <form
+                  className="bsr-pinfix"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const v = pinEntry.trim();
+                    if (!/^\d{6}$/.test(v)) return;
+                    setPlace((p) => ({ ...p, pinCode: v }));
+                    setPinEntry('');
+                  }}
+                >
+                  <label htmlFor="bsr-pin">
+                    {pinCode ? 'Wrong pincode? Type the right one:' : 'Know the pincode? Type it in:'}
+                  </label>
+                  <span>
+                    <input
+                      id="bsr-pin"
+                      inputMode="numeric"
+                      maxLength={6}
+                      placeholder="560067"
+                      value={pinEntry}
+                      onChange={(e) => setPinEntry(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    />
+                    <button type="submit" disabled={!/^\d{6}$/.test(pinEntry.trim())}>Use this pincode</button>
+                  </span>
+                </form>
+              )}
               {aqi != null && (
                 <p className="bsr-nocover-aqi">
                   What we can tell you: air today is <strong>{aqiWord(aqi).toLowerCase()}</strong>, AQI {aqi}.
