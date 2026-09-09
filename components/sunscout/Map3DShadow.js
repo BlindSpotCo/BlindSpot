@@ -9,9 +9,12 @@ import { useEffect, useMemo, useRef } from 'react';
 // Diagnostics for the parent<->iframe handshake. On in dev, silent in
 // production: this channel is invisible when it breaks, and a failure in it
 // looks exactly like a map that never loaded.
-const DEBUG = process.env.NODE_ENV !== 'production';
-
-export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTimes, animating, onLocationSelect, onScreenshot, onReady, onStatus }) {
+export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTimes, animating, onLocationSelect, onScreenshot, onReady, onStatus, debug }) {
+  // Diagnostics for the parent<->iframe handshake. Dev by default, and
+  // switchable on in a production build (?debug=1): when this channel
+  // breaks it is completely invisible, and a break in it looks exactly
+  // like a map that never loaded.
+  const DEBUG = debug ?? (process.env.NODE_ENV !== 'production');
   const iframeRef = useRef(null);
 
   useEffect(() => {
@@ -553,13 +556,15 @@ notifyParent('map3d_ready');
       // Real readiness/failure, reported by the iframe document itself
       // rather than guessed from this component's mount -- see the
       // notifyParent comments in the srcDoc script.
-      if (DEBUG && e.data?.type?.startsWith?.('map3d')) console.log('[map3d] parent heard:', e.data.type);
+      if (DEBUG && e.data?.type) console.log('[map3d] parent heard:', e.data.type);
       if(e.data?.type==='map3d_ready') onStatus?.('ready');
       if(e.data?.type==='map3d_failed') onStatus?.('failed', e.data.reason);
     };
     window.addEventListener('message', handler);
+    if (DEBUG) console.log('[map3d] parent listening; iframe el:', !!iframeRef.current,
+      'contentWindow:', !!iframeRef.current?.contentWindow);
     return () => window.removeEventListener('message', handler);
-  }, [onLocationSelect, onScreenshot, onStatus]);
+  }, [onLocationSelect, onScreenshot, onStatus, DEBUG]);
 
   // A new srcDoc is a whole new document: it has to announce itself again
   // before anything may be posted into it. Without this, moving the pin
