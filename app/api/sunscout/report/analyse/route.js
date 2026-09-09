@@ -56,8 +56,55 @@ Price context: ${pc?.rate_sqft ? `₹${Math.round(pc.rate_sqft[0]).toLocaleStrin
 Note: the neighbourhood score is the same for every unit in this pincode — it does not change with floor or facing.`;
 }
 
+// A budget, not just a retry count. The platform kills this function at its
+// own ceiling and the caller then sees a 502 with nothing in it -- no
+// summary, no table, no reason. Every attempt below is bounded, and the loop
+// stops trying once there isn't time left for another one, so this route
+// always returns its own answer rather than being cut off mid-flight.
+function geminiCaller({ budgetMs = 48_000, maxOutputTokens = 6144 } = {}) {
+  const startedAt = Date.now();
+  const left = () => budgetMs - (Date.now() - startedAt);
+
+  const call = async (msgContents) => {
+    for (const model of GEMINI_MODELS) {
+      for (let attempt = 0; attempt < 2; attempt++) {
+        const remaining = left();
+        if (remaining < 6_000) {
+          console.warn('Gemini Vision: out of time budget, giving up before', model);
+          return null;
+        }
+        let res;
+        try {
+          res = await fetch(`${GEMINI_URL(model)}?key=${process.env.GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: msgContents,
+              generationConfig: { maxOutputTokens, temperature: 0.2 },
+            }),
+            signal: AbortSignal.timeout(Math.min(remaining, 40_000)),
+          });
+        } catch (networkErr) {
+          console.error(`Gemini Vision network error (${model}, attempt ${attempt + 1}):`, networkErr?.message || networkErr);
+          if (attempt === 0 && left() > 12_000) { await new Promise(r => setTimeout(r, 800)); continue; }
+          break; // exhausted retries for this model, fall through to the next one
+        }
+        if (res.ok) return res.json();
+        const errText = await res.text();
+        console.error(`Gemini Vision request failed (${model}, attempt ${attempt + 1}):`, res.status, errText.slice(0, 500));
+        if (res.status === 429) break; // no point retrying the same model
+        if (attempt === 0 && res.status >= 500 && left() > 12_000) { await new Promise(r => setTimeout(r, 800)); continue; }
+        break;
+      }
+    }
+    return null;
+  };
+
+  return { call, left };
+}
+
 export async function POST(req) {
-  const { screenshots, lat, lon, address, floor, facing, tzOffset, avRecord, combinedScore, unitScore, areaWeight, unitWeight, personaId, customNote, actionItems, skipAi } = await req.json();
+  const { screenshots, lat, lon, address, floor, facing, tzOffset, avRecord, combinedScore, unitScore, areaWeight, unitWeight, personaId, customNote, actionItems, skipAi, captionsOnly } = await req.json();
   const persona = personaId ? (await import('@/lib/personas')).getPersona(personaId) : null;
   // Free-text ask from the buyer, captured right before they hit Generate
   // (see UnitVerdict's own field -- the report modal itself auto-starts,
@@ -107,13 +154,59 @@ Note: floor clearance is an estimate based on typical urban obstruction heights,
   const buildingHeightNote = await checkBuildingHeights(latN, lonN).catch(() => null);
   const reportSummary = solarSummary ? { ...solarSummary, buildingHeightNote } : null;
 
-  // The sun & shadow document is twelve map frames and the monthly table.
-  // Both are computed here, deterministically, from solar geometry -- the
-  // model only ever added the per-image captions. Asking Gemini for it
-  // anyway meant that document failed every time the model was busy, for
-  // nothing it needed. Hand back the summary and stop.
+  // Hard bypass -- no model at all. Kept for a caller that explicitly wants
+  // only the measured half.
   if (skipAi) {
     return NextResponse.json({ analysis: '', summary: reportSummary, aiSkipped: true });
+  }
+
+  // The sun & shadow document needs ONE thing from the model: a description
+  // under each frame. It was getting that by asking for the entire combined
+  // report -- eight sections, thousands of tokens, continuations that
+  // resent all twelve images -- and then throwing all but the captions
+  // away. That is why it kept failing: the cost and the fragility of the
+  // full report, for a twelfth of its output.
+  //
+  // So ask for exactly the captions. One call, one short answer, a tight
+  // budget. And if it still doesn't come back, the frames and the monthly
+  // table go out without it rather than the whole document failing.
+  if (captionsOnly) {
+    if (!process.env.GEMINI_API_KEY) {
+      console.error('[report/analyse] GEMINI_API_KEY is not set — sun & shadow images will have no descriptions.');
+      return NextResponse.json({ analysis: '', summary: reportSummary, aiUnavailable: true, aiReason: 'not-configured' });
+    }
+
+    const captionPrompt = `You are a solar analyst describing map screenshots for a home buyer in India.
+
+${groundTruthText}
+
+You have ${screenshots.length} screenshots of a 3D map of one location. The orange circle marks the exact property; darker areas are shadows cast by real OpenStreetMap building data. The unit in question is on floor ${floorN}, facing ${safeFacingInput}.
+
+Write ONE line per screenshot and nothing else. Each line must be exactly in this form, with no bullet, no heading, no blank lines between them:
+@N@ <description>
+where N is the image number from the "Image order" list below, 1 to ${screenshots.length}, in order.
+
+Each description is 3-5 sentences of plain, everyday English: what is casting the shadow near the marker (a taller building, a row of low-rise structures, nothing nearby), which way the shadow falls, roughly how much of the area around the marker is in shade versus sun at that moment, and what that means for this floor and facing at that time of year. Be concrete about what you can actually see. If an image looks blank, black or unreadable, say so on its line instead of guessing. Never use emoji. Do not write anything before the first @1@ line or after the last one.`;
+
+    const captionLabels = screenshots.map((sh, i) => `Image ${i + 1}: ${sh.label}`).join('\n');
+    const captionParts = screenshots.map((sh) => {
+      const match = sh.base64.match(/^data:(image\/\w+);base64,(.+)$/);
+      return { inlineData: { mimeType: match ? match[1] : 'image/jpeg', data: match ? match[2] : sh.base64 } };
+    });
+
+    const { call } = geminiCaller({ budgetMs: 32_000, maxOutputTokens: 3072 });
+    const capData = await call([{ role: 'user', parts: [{ text: `${captionPrompt}\n\nImage order:\n${captionLabels}` }, ...captionParts] }]);
+    const capText = capData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+    // One usable @N@ line is the bar. Anything less and the gallery is
+    // better off saying nothing than showing a stray sentence under one
+    // image and nothing under the other eleven.
+    if (!/^@\d+@/m.test(capText)) {
+      console.warn('[report/analyse] caption pass came back without @N@ lines; shipping the gallery without descriptions.');
+      return NextResponse.json({ analysis: '', summary: reportSummary, aiUnavailable: true, aiReason: 'captions-empty' });
+    }
+
+    return NextResponse.json({ analysis: capText, summary: reportSummary, captions: true });
   }
 
   // No key configured is a deployment problem, not a busy model, and it
@@ -257,56 +350,8 @@ The opening 2-3 sentences of this section must be plain, everyday words — the 
     // next one -- a single blip used to kill the whole report right away.
     // 429 (rate limit) still skips straight to the next model with no
     // retry, since retrying the same model won't help there.
-    // A budget, not just a retry count. The platform kills this function at
-    // its own ceiling and the caller then sees a 502 with nothing in it --
-    // no summary, no table, no reason. Every attempt below is bounded, and
-    // the loop stops trying once there isn't time left for another one, so
-    // we always return our own answer rather than being cut off mid-flight.
-    const startedAt = Date.now();
-    const BUDGET_MS = 48_000;
-    const left = () => BUDGET_MS - (Date.now() - startedAt);
+    const { call: callGemini, left } = geminiCaller();
 
-    const callGemini = async (msgContents) => {
-      for (const model of GEMINI_MODELS) {
-        for (let attempt = 0; attempt < 2; attempt++) {
-          const remaining = left();
-          if (remaining < 6_000) {
-            console.warn('Gemini Vision: out of time budget, giving up before', model);
-            return null;
-          }
-          let res;
-          try {
-            res = await fetch(`${GEMINI_URL(model)}?key=${process.env.GEMINI_API_KEY}`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: msgContents,
-                generationConfig: { maxOutputTokens: 6144, temperature: 0.2 },
-              }),
-              signal: AbortSignal.timeout(Math.min(remaining, 40_000)),
-            });
-          } catch (networkErr) {
-            console.error(`Gemini Vision network error (${model}, attempt ${attempt + 1}):`, networkErr?.message || networkErr);
-            if (attempt === 0 && left() > 12_000) { await new Promise(r => setTimeout(r, 800)); continue; }
-            break; // exhausted retries for this model, fall through to the next one
-          }
-          if (res.ok) return res.json();
-          const errText = await res.text();
-          console.error(`Gemini Vision request failed (${model}, attempt ${attempt + 1}):`, res.status, errText.slice(0, 500));
-          if (res.status === 429) break; // no point retrying the same model
-          if (attempt === 0 && res.status >= 500 && left() > 12_000) { await new Promise(r => setTimeout(r, 800)); continue; }
-          break;
-        }
-      }
-      return null;
-    };
-
-    // A 200 with aiUnavailable, not a 502. Everything else in the report --
-    // the scorecard, the pros and cons, the monthly sunlight table, the
-    // factor bars, the twelve frames -- is computed here from real numbers
-    // and is sitting ready. Failing the whole request threw all of that
-    // away because the written commentary was missing, which is what the
-    // person actually saw: a dead end after a two-minute wait.
     let data = await callGemini(contents);
     if (!data) {
       return NextResponse.json({
