@@ -78,7 +78,7 @@ export default function ResetPasswordPage() {
                 placeholder="••••••••"
               />
             </div>
-            {error && <p style={{ color: '#e5484d', fontSize: 13, marginBottom: 12 }}>{error}</p>}
+            {error && <p className="auth-error">{error}</p>}
             <button type="submit" className="auth-submit" disabled={sending}>
               {sending ? 'Updating…' : 'Update password'}
             </button>
