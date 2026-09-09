@@ -3042,21 +3042,28 @@ header.header-on-dark .brand-word-img{
    uses. The default .footer-col a underline is switched off (::after
    is display:none below) since a full-width underline reads oddly
    under an avatar + two lines of text -- the name colour shift on
-   hover is the link's own affordance instead. */
+   hover is the link's own affordance instead.
+   Stacked (avatar above name/role), not side-by-side -- side-by-side
+   put the avatar on the left and the text flush to its right, so the
+   *card's own bounding box* was centred under "The Team" but the text
+   itself (the part someone's eye actually reads) sat visibly off to
+   one side of that centre, by exactly half the avatar's width. Every
+   element on its own centre axis is centred, full stop, no matter how
+   the avatar/name/role widths compare to each other. */
 .footer-founder{
-  display:flex; align-items:center; gap:10px; width:fit-content;
-  text-decoration:none; margin-top:2px;
+  display:flex; flex-direction:column; align-items:center; gap:8px; width:fit-content;
+  text-decoration:none; margin-top:6px;
 }
 .footer-founder::after{ display:none }
 .footer-founder-avatar{
-  flex-shrink:0; width:32px; height:32px; border-radius:50%;
+  flex-shrink:0; width:40px; height:40px; border-radius:50%;
   display:flex; align-items:center; justify-content:center;
-  font-size:11.5px; font-weight:600; color:#fff;
+  font-size:13px; font-weight:600; color:#fff;
   background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.22);
 }
 .footer-founder.accent-ss .footer-founder-avatar{ background:color-mix(in srgb, var(--ss) 60%, transparent) }
 .footer-founder.accent-av .footer-founder-avatar{ background:color-mix(in srgb, var(--av) 60%, transparent) }
-.footer-founder-info{ display:flex; flex-direction:column; gap:1px; text-align:left }
+.footer-founder-info{ display:flex; flex-direction:column; align-items:center; gap:1px; text-align:center }
 .footer-founder-name{ font-size:14px; font-weight:600; color:rgba(255,253,248,0.9); transition:color .2s ease }
 .footer-founder-role{ font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:rgba(255,253,248,0.42) }
 .footer-founder:hover .footer-founder-name{ color:var(--brand-yellow) }
