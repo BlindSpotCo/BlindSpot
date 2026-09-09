@@ -92,7 +92,12 @@ function geminiCaller({ budgetMs = 48_000, maxOutputTokens = 6144 } = {}) {
         if (res.ok) return res.json();
         const errText = await res.text();
         console.error(`Gemini Vision request failed (${model}, attempt ${attempt + 1}):`, res.status, errText.slice(0, 500));
-        if (res.status === 429) break; // no point retrying the same model
+        // 429 is a rate limit, and on a free-tier key it is usually a
+        // per-minute one that clears in a second or two. Abandoning the
+        // model on the first one meant a burst of requests came back empty
+        // rather than a little slower.
+        if (attempt === 0 && res.status === 429 && left() > 10_000) { await new Promise(r => setTimeout(r, 2_000)); continue; }
+        if (res.status === 429) break;
         if (attempt === 0 && res.status >= 500 && left() > 12_000) { await new Promise(r => setTimeout(r, 800)); continue; }
         break;
       }
@@ -121,26 +126,47 @@ function geminiCaller({ budgetMs = 48_000, maxOutputTokens = 6144 } = {}) {
 // which is how a long shadow section could eat the token budget the rest of
 // the report needed -- and why the same truncation showed up there too.
 async function describeImages({ screenshots, groundTruthText, floorN, facing, budgetMs = 38_000 }) {
-  const BATCH = 4;
+  // Six per batch, not four: two requests instead of three, which matters
+  // more than batch size does. Six descriptions of 2-4 sentences is around
+  // 600 output tokens, comfortably inside the 2048 ceiling below.
+  const BATCH = 6;
   const batches = [];
   for (let i = 0; i < screenshots.length; i += BATCH) {
     batches.push({ offset: i, shots: screenshots.slice(i, i + BATCH) });
   }
 
-  const promptFor = (offset, shots) => `You are a solar analyst describing map screenshots for a home buyer in India.
+  // Every batch numbers its own images from 1. Telling batch two that its
+  // images are "5 to 8" and trusting the answer to come back that way is a
+  // bet on the model's arithmetic, and when it loses, batch two's lines are
+  // numbered 1-4, overwrite batch one, and eight images end up with no
+  // description at all. The offset is applied here instead, in code.
+  const promptFor = (shots) => `You are a solar analyst describing map screenshots for a home buyer in India.
 
 ${groundTruthText}
 
 These are screenshots of a 3D map of one location. The orange circle marks the exact property; darker areas are shadows cast by real OpenStreetMap building data. The unit in question is on floor ${floorN}, facing ${facing}.
 
-You are being given ${shots.length} of the images, and they are numbered ${offset + 1} to ${offset + shots.length}. Write ONE line per image and nothing else. Each line must be exactly this form, no bullet, no heading, no blank line between them:
+You are being given ${shots.length} images. Write ONE line per image and nothing else -- ${shots.length} lines, no more, no fewer. Each line must be exactly this form, no bullet, no heading, no blank line between them:
 @N@ <description>
-using those exact numbers, in order, starting at @${offset + 1}@.
+numbered @1@ to @${shots.length}@, in the order the images are listed below.
 
 Each description is 2-4 sentences of plain, everyday English, and must end as a complete sentence -- never stop mid-sentence. Say what is casting the shadow near the marker (a taller building, a row of low-rise structures, nothing nearby), which way the shadow falls, roughly how much of the area around the marker is in shade versus sun at that moment, and what that means for this floor and facing at that time of year. Be concrete about what you can actually see. If an image looks blank, black or unreadable, say so on its line instead of guessing. Never use emoji.
 
 Image order:
-${shots.map((sh, i) => `Image ${offset + i + 1}: ${sh.label}`).join('\n')}`;
+${shots.map((sh, i) => `Image ${i + 1}: ${sh.label}`).join('\n')}`;
+
+  // Local 1..N back to this batch's real position in the twelve.
+  const renumber = (text, offset, shotCount) => text
+    .split('\n')
+    .map((line) => {
+      const m = line.match(/^@(\d+)@\s*(.+)$/);
+      if (!m) return null;
+      const local = parseInt(m[1], 10);
+      if (!(local >= 1 && local <= shotCount)) return null;
+      return `@${offset + local}@ ${m[2].trim()}`;
+    })
+    .filter(Boolean)
+    .join('\n');
 
   const partsFor = (shots) => shots.map((sh) => {
     const match = sh.base64.match(/^data:(image\/\w+);base64,(.+)$/);
@@ -149,9 +175,9 @@ ${shots.map((sh, i) => `Image ${offset + i + 1}: ${sh.label}`).join('\n')}`;
 
   const { call } = geminiCaller({ budgetMs, maxOutputTokens: 2048 });
 
-  const texts = await Promise.all(batches.map(async ({ offset, shots }) => {
+  const runBatch = async ({ offset, shots }) => {
     try {
-      const d = await call([{ role: 'user', parts: [{ text: promptFor(offset, shots) }, ...partsFor(shots)] }]);
+      const d = await call([{ role: 'user', parts: [{ text: promptFor(shots) }, ...partsFor(shots)] }]);
       const cand = d?.candidates?.[0];
       let text = cand?.content?.parts?.[0]?.text || '';
       // If a batch was cut off anyway, drop the unfinished last line rather
@@ -162,15 +188,44 @@ ${shots.map((sh, i) => `Image ${offset + i + 1}: ${sh.label}`).join('\n')}`;
         text = lines.join('\n');
         console.warn(`[report/analyse] caption batch at ${offset} hit MAX_TOKENS; dropped its last line.`);
       }
-      return text;
+      const numbered = renumber(text, offset, shots.length);
+      if (!numbered) console.warn(`[report/analyse] caption batch at ${offset} came back with no usable lines.`);
+      return numbered;
     } catch (err) {
       console.error(`[report/analyse] caption batch at ${offset} failed:`, err?.message || err);
       return '';
     }
-  }));
+  };
 
-  const text = texts.filter(Boolean).join('\n');
-  const count = (text.match(/^@\d+@/gm) || []).length;
+  // One at a time. Firing every batch at once tripled the request rate at
+  // the same instant, and on a free-tier key that reads as a rate limit and
+  // comes back as nothing -- which is worse than the truncation it was
+  // meant to fix. Sequential costs a few seconds and asks for one thing at
+  // a time, which is what the quota is counting.
+  const texts = [];
+  for (const b of batches) texts.push(await runBatch(b));
+
+  let text = texts.filter(Boolean).join('\n');
+  let count = (text.match(/^@\d+@/gm) || []).length;
+
+  // Last resort: one call for the lot, the shape this used to be. Slower
+  // and it can truncate, but a truncated set of descriptions beats none,
+  // and this only runs when the batches have already come back empty.
+  if (count === 0 && batches.length > 1) {
+    console.warn('[report/analyse] all caption batches came back empty; retrying as a single request.');
+    const { call: oneCall } = geminiCaller({ budgetMs: 30_000, maxOutputTokens: 4096 });
+    try {
+      const d = await oneCall([{ role: 'user', parts: [{ text: promptFor(screenshots) }, ...partsFor(screenshots)] }]);
+      const whole = renumber(d?.candidates?.[0]?.content?.parts?.[0]?.text || '', 0, screenshots.length);
+      if (/^@\d+@/m.test(whole)) {
+        text = whole;
+        count = (whole.match(/^@\d+@/gm) || []).length;
+      }
+    } catch (err) {
+      console.error('[report/analyse] single-request caption fallback failed:', err?.message || err);
+    }
+  }
+
   console.log(`[report/analyse] captions: ${count}/${screenshots.length} images described.`);
   return { text, count };
 }
@@ -429,12 +484,17 @@ The opening 2-3 sentences of this section must be plain, everyday words — the 
     // here so it runs alongside the narrative rather than after it. Asking
     // for them inside the report is what let one long shadow section eat the
     // budget the other five sections needed.
-    const captionsPromise = describeImages({
-      screenshots, groundTruthText, floorN, facing: safeFacingInput, budgetMs: 38_000,
-    }).catch((err) => {
-      console.error('[report/analyse] image descriptions failed:', err?.message || err);
-      return { text: '', count: 0 };
-    });
+    // Staggered, not simultaneous. Both this and the narrative call go to
+    // the same key and the same per-minute quota; starting them in the same
+    // instant is how a burst turns into a 429 that neither of them needed.
+    const captionsPromise = new Promise((r) => setTimeout(r, 1_500))
+      .then(() => describeImages({
+        screenshots, groundTruthText, floorN, facing: safeFacingInput, budgetMs: 38_000,
+      }))
+      .catch((err) => {
+        console.error('[report/analyse] image descriptions failed:', err?.message || err);
+        return { text: '', count: 0 };
+      });
 
     let data = await callGemini(contents);
     if (!data) {
