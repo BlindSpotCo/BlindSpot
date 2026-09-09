@@ -27,8 +27,19 @@
 //   Intelligence" -- not invented copy) underneath. Hovering the row
 //   clip-path-wipes the top layer away while the tagline wipes in,
 //   pure CSS, no JS needed.
+// - The main CTA button below is a plain scroll-to-hero Link now, not
+//   PinDropTransition. That animation plays an "ACQUIRING SITE" pin-lock
+//   sequence themed around a real picked address, then navigates -- fine
+//   for the hero's own CTA (HeroLiveMapCanvas.js), which only renders
+//   once a real pin is chosen and pushes to /report with real
+//   coordinates. Used here it was misleading (nothing had been "found"
+//   yet) and, since /#find is on this same page, router.push() doesn't
+//   remount PinDropTransition -- its `playing` state never got reset,
+//   so the full-screen overlay stayed up forever. Every generic
+//   "Uncover Your BlindSpot" entry point (this one, the nav, the
+//   footer link) now just scrolls straight to the hero's address box.
 
-import PinDropTransition from '@/components/PinDropTransition';
+import Link from 'next/link';
 
 const TEAM = [
   {
@@ -53,9 +64,9 @@ export default function ClosingCTA() {
         <span className="eyebrow">05 - One Pin Away</span>
         <h2>Because every property has a blindspot, and we&apos;re making it <span className="gold-word">visible</span>.</h2>
         <div className="closing2-ctas">
-          <PinDropTransition href="/#find" className="btn btn-lg btn-cta">
+          <Link href="/#find" className="btn btn-lg btn-cta">
             Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
-          </PinDropTransition>
+          </Link>
         </div>
       </div>
 

@@ -21,8 +21,9 @@
 // in place. `.pdt` is `position:fixed; inset:0` so it should always cover
 // the full viewport -- but `position:fixed` is fixed to the nearest
 // ancestor that establishes a containing block, and any ancestor with a
-// `transform` (e.g. .floating-cta's translate(), used to slide the pill
-// CTA in/out) creates exactly that. Rendered in place inside a transformed
+// `transform` (e.g. the old .floating-cta pill's translate(), used to
+// slide it in/out before that button was removed) creates exactly that.
+// Rendered in place inside a transformed
 // wrapper, the whole "lock onto the pin" animation shrank down to and
 // played inside that wrapper's own small box instead of filling the
 // screen. A portal to document.body sidesteps the whole containing-block
@@ -62,7 +63,24 @@ export default function PinDropTransition({ href = '/#find', className, children
     router.prefetch?.(href);
 
     const navAt = reduced ? REDUCED_MS : NAV_AT_MS;
-    timers.current.push(setTimeout(() => router.push(href), navAt));
+    timers.current.push(setTimeout(() => {
+      router.push(href);
+      // `playing` was never reset after this. Harmless for the current
+      // sole use (the hero's own CTA, which always pushes to a
+      // different page -- /report -- so this component unmounts along
+      // with the rest of the tree). But this same component used to
+      // also power every generic "Uncover Your BlindSpot" button
+      // (nav, footer, steps CTA) linking to /#find on this same page,
+      // where router.push doesn't remount anything -- `playing` stayed
+      // true forever and the full-screen overlay below never went
+      // away. Those were switched to plain scroll links instead (see
+      // ClosingCTA.js's comment), but resetting here too so this
+      // component is safe by default if it's ever reused for another
+      // same-page destination. A short buffer past the nav itself, so
+      // it clears just after the new content is in rather than
+      // mid-navigation.
+      timers.current.push(setTimeout(() => setPlaying(false), 400));
+    }, navAt));
   }, [playing, router, href]);
 
   return (

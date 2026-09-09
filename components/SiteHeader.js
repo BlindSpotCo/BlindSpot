@@ -18,13 +18,18 @@
 // The two AsliVastu/SunScout tool buttons that used to live here were
 // deliberately removed site-wide in favor of one "Uncover Your BlindSpot"
 // entry point into the report: the address search on the home page.
+//
+// Used to also float a persistent "Uncover Your BlindSpot" pill above
+// everything once you'd scrolled past the hero, on every page -- on top
+// of the nav's own CTA right above it, that was one too many identical
+// buttons on screen at once. Removed; the nav CTA (and, on the homepage,
+// the closing section's CTA) already covers it.
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { openSignInPopup } from '@/lib/auth/popupSignIn';
-import PinDropTransition from '@/components/PinDropTransition';
 
 export default function SiteHeader({ homeHref = '/' }) {
   // The CTA is an entry point into the report -- pointing at the page
@@ -36,14 +41,13 @@ export default function SiteHeader({ homeHref = '/' }) {
   // /floor-plan-analysis counts as "in the flow" too: it's the third of
   // the three doors on the Property Score start screen, reached by an
   // ordinary in-tab navigation from it. Treating it as a marketing page
-  // meant a floating "Uncover Your BlindSpot" pill sat over that tool's
-  // own form while you were filling it in, inviting you to abandon the
-  // thing you were in the middle of -- and the nav didn't appear until
-  // you scrolled, so the page opened with no way out at all.
+  // meant the nav's own "Uncover Your BlindSpot" CTA sat above that
+  // tool's own form while you were filling it in, inviting you to
+  // abandon the thing you were in the middle of.
   // /report is the same thing again: it IS the flow now -- the address
-  // search on the homepage lands straight on it. Treated as a marketing
-  // page it hid its own nav until you scrolled and floated an "Uncover
-  // Your BlindSpot" pill over a report you had already uncovered.
+  // search on the homepage lands straight on it, so pointing its own nav
+  // CTA back at "Uncover Your BlindSpot" would be aiming at a report
+  // you'd already uncovered.
   const onFlow = pathname?.startsWith('/report')
     || pathname?.startsWith('/floor-plan-analysis');
 
@@ -93,18 +97,6 @@ export default function SiteHeader({ homeHref = '/' }) {
       window.removeEventListener('resize', compute);
     };
   }, [isHome]);
-
-  // Floating "Uncover Your BlindSpot" pill -- used to live only in
-  // app/page.js, originally gated behind a scroll threshold so it only
-  // appeared once beat 2's own full-size CTA had had its moment -- per
-  // direct request it's now on from the very first screen too (the
-  // homepage hero has no CTA of its own, by design, see beat 1's own
-  // comment in app/page.js), so there's no longer a scroll-position case
-  // where the next action isn't one tap away. Moved here so every page
-  // keeps it, not just the homepage. Suppressed on the property-score
-  // flow itself, same as the nav CTA above -- pointing at the page
-  // you're already on is dead weight.
-  const floatingCtaVisible = !onFlow && heroCleared;
 
   useEffect(() => {
     const supabase = createClient();
@@ -259,17 +251,6 @@ export default function SiteHeader({ homeHref = '/' }) {
         </div>
       )}
       </header>
-
-      {/* Fixed-position, so its place in the tree doesn't matter for where
-          it renders -- kept as a sibling of <header>, not a descendant,
-          so header.scrolled's backdrop-filter (which -- like `filter` --
-          establishes a containing block for fixed descendants) can never
-          re-pin this to the header bar instead of the viewport bottom. */}
-      <div className={`floating-cta${floatingCtaVisible ? ' is-visible' : ''}`} aria-hidden={!floatingCtaVisible}>
-        <PinDropTransition href="/#find" className="btn-cta-sm floating-cta-btn">
-          Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
-        </PinDropTransition>
-      </div>
     </>
   );
 }

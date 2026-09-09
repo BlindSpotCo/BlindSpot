@@ -1863,39 +1863,8 @@
 
   .footer-brand{display:flex; align-items:center; gap:10px}
 
-  /* ---------- FLOATING CTA (app/page.js) -----------
-     Jeton keeps its own nav/support pill on screen through the entire
-     scroll, so the next action is never more than a tap away -- this is
-     the same idea, on from the very first screen (see SiteHeader.js's own
-     comment). `visibility` (not just opacity) is what actually removes it
-     from keyboard tab order while hidden -- PinDropTransition doesn't
-     forward a tabIndex prop, so this had to happen in CSS instead. The
-     delay is asymmetric on purpose: showing is instant (0s delay) so it's
-     focusable the moment it's visible, hiding waits for the opacity fade
-     to finish first so a keyboard user isn't dropped mid-transition.
-     bottom:84px, not a smaller value hugging the edge -- the homepage's
-     hero beat 1 has its own "Scroll ↓" cue fixed at the literal bottom of
-     that first screen (.hero-scroll-cue, bottom:36px), and this pill is
-     now visible there too, so it needs real clearance above that cue
-     rather than sitting on top of it. */
-  .floating-cta{
-    position:fixed; left:50%; bottom:84px; z-index:50;
-    transform:translate(-50%,20px); opacity:0; visibility:hidden; pointer-events:none;
-    transition:opacity .3s ease, transform .3s ease, visibility 0s linear .3s;
-  }
-  .floating-cta.is-visible{
-    transform:translate(-50%,0); opacity:1; visibility:visible; pointer-events:auto;
-    transition:opacity .3s ease, transform .3s ease, visibility 0s linear 0s;
-  }
-  .floating-cta-btn{ box-shadow:0 14px 34px -14px rgba(61,65,22,0.55) }
-  @media (max-width:640px){
-    .floating-cta{ left:16px; right:16px; transform:translateY(20px) }
-    .floating-cta.is-visible{ transform:translateY(0) }
-    .floating-cta-btn{ display:flex; justify-content:center }
-  }
-  @media (prefers-reduced-motion: reduce){
-    .floating-cta, .floating-cta.is-visible{ transition:opacity .15s ease, visibility 0s linear }
-  }
+/* .floating-cta (the persistent "Uncover Your BlindSpot" pill) removed --
+   see SiteHeader.js's own comment on why. */
 
 /* ---------- AUTH (added for account/login feature) ---------- */
 .btn-auth{
@@ -2898,7 +2867,6 @@ header.header-on-dark .brand-word-img{
 .hiw3-step.accent-av .hiw3-badge{ color:var(--av); border-color:var(--av) }
 .hiw3-step.accent-ss .hiw3-badge{ color:var(--ss); border-color:var(--ss) }
 .hiw3-step.accent-brand .hiw3-badge{ color:var(--brand); border-color:var(--brand) }
-.hiw2-cta{ margin-top:var(--space-7); display:flex; justify-content:center }
 @media (max-width:900px){
   .hiw3-rail{ grid-template-columns:1fr; gap:var(--space-6) }
   .hiw3-rail::before{ display:none }

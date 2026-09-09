@@ -4,8 +4,13 @@
 // step (search / split-score / verdict-check) sitting on a connecting
 // rail, and cut each step's copy down to one short line instead of a
 // full sentence -- same real 3-step flow, less to read to get it.
+//
+// No longer ends in its own "Uncover Your BlindSpot" button -- with the
+// closing section's own CTA now only a couple of sections away (and the
+// nav's CTA always reachable), this was one too many identical buttons
+// down the page. This section's job is explaining the steps, not
+// closing.
 
-import PinDropTransition from '@/components/PinDropTransition';
 import { coverageLabel } from '@/lib/aslivastu/cityMeta';
 
 const STEPS = [
@@ -55,12 +60,6 @@ export default function StepsHowItWorks() {
               <p>{s.copy}</p>
             </div>
           ))}
-        </div>
-
-        <div className="hiw2-cta">
-          <PinDropTransition href="/#find" className="btn btn-lg btn-cta">
-            Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
-          </PinDropTransition>
         </div>
       </div>
     </section>
