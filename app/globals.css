@@ -2449,7 +2449,7 @@
        underlines) where the brighter value is still right. Same hue
        family, just muted toward brass/antique gold instead of bright
        marigold -- "whispers" instead of "shines". */
-    color:#C9A24A; -webkit-text-fill-color:#C9A24A;
+    color:#DDB65A; -webkit-text-fill-color:#DDB65A;
     text-shadow:0 4px 30px rgba(0,0,0,0.5);
   }
 }
@@ -2458,9 +2458,9 @@
   filter:blur(1.5px);
   background:linear-gradient(122deg,
     transparent 0%, transparent 28%,
-    rgba(255,255,255,0.14) 40%,
-    rgba(255,255,255,0.8) 48%, rgba(255,255,255,0.8) 52%,
-    rgba(255,255,255,0.14) 60%,
+    rgba(255,255,255,0.2) 40%,
+    rgba(255,255,255,0.92) 48%, rgba(255,255,255,0.92) 52%,
+    rgba(255,255,255,0.2) 60%,
     transparent 72%, transparent 100%);
   background-size:400% 100%; background-position:-150% 0;
   -webkit-background-clip:text; background-clip:text; color:transparent;
@@ -2508,7 +2508,7 @@
   .hlm-eyebrow, .hlm-content .hlm-h1, .hlm-h1-accent, .hlm-searchwrap, .hlm-typed-line{ animation:none !important; opacity:1 !important; transform:none !important; filter:none !important; }
   .hlm-typed-cursor{ animation:none !important; display:none !important; }
   .hlm-content .hlm-h1{ background:none !important; color:#FFFDF8 !important; -webkit-text-fill-color:#FFFDF8 !important; }
-  .hlm-h1-accent{ color:#C9A24A !important; -webkit-text-fill-color:#C9A24A !important; text-shadow:0 4px 30px rgba(0,0,0,0.5) !important; }
+  .hlm-h1-accent{ color:#DDB65A !important; -webkit-text-fill-color:#DDB65A !important; text-shadow:0 4px 30px rgba(0,0,0,0.5) !important; }
   .hlm-h1-accent::after{ display:none !important; }
 }
 
