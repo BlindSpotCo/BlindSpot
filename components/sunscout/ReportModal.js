@@ -181,7 +181,10 @@ export default function ReportModal({
       const url = URL.createObjectURL(blob);
       setReportUrl(galleryOnly ? galleryUrl : url);
       setSavableData({
-        mainHtml: finalMainHtml, galleryHtml,
+        // A gallery-only run must save the document it actually produced.
+        // Storing the combined report here meant reopening a saved sun &
+        // shadow report showed something the person never generated.
+        mainHtml: galleryOnly ? galleryHtml : finalMainHtml, galleryHtml,
         analysis, summary, address: addr, floor, facing,
         lat, lon, verdictLabel, combinedScore, unitScore, areaWeight, unitWeight,
         hasArea: !!areaRecord,
@@ -315,7 +318,7 @@ export default function ReportModal({
                 <SaveReportButton
                   source="ai-report"
                   data={savableData}
-                  defaultTitle={savableData.address}
+                  defaultTitle={galleryOnly ? `${savableData.address} · sun & shadow` : savableData.address}
                 />
               </div>
             )}
