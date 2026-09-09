@@ -290,14 +290,41 @@ export default function ReportScreen() {
     e.preventDefault();
     const q = search.trim();
     if (!q) return;
-    setLocBusy(true); setLocError('');
+
+    // Typed coordinates go straight through. When the lookup services are
+    // unreachable -- a VPN, an egress rule, a rate limit -- this is the one
+    // way in that depends on nothing, and it costs a regex.
+    const pair = q.match(/^\s*(-?\d{1,3}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)\s*$/);
+    if (pair) {
+      const toLat = parseFloat(pair[1]);
+      const toLon = parseFloat(pair[2]);
+      if (Math.abs(toLat) <= 90 && Math.abs(toLon) <= 180) {
+        moveTo(toLat, toLon, '');
+        setSearch('');
+        return;
+      }
+    }
+
+    setLocBusy(true);
+    setLocError('');
     try {
       const j = await fetch(`/api/sunscout/geocode?q=${encodeURIComponent(q)}`).then((r) => r.json());
-      if (Array.isArray(j?.result)) { moveTo(j.result[0], j.result[1], q); setSearch(''); }
-      else setLocError('We couldn\u2019t find that address. Try adding the city.');
+      if (Array.isArray(j?.result)) {
+        moveTo(j.result[0], j.result[1], q);
+        setSearch('');
+      } else if (j?.reason === 'unreachable') {
+        // Say which of the two it is. "We couldn't find that address" for a
+        // service that never answered sends people to re-type a correct
+        // address, over and over.
+        setLocError('The address lookup service isn\u2019t reachable from this network (a VPN will often do it). You can paste coordinates instead \u2014 for example 12.9716, 77.5946.');
+      } else {
+        setLocError('We couldn\u2019t find that address. Try adding the city, or paste coordinates like 12.9716, 77.5946.');
+      }
     } catch {
-      setLocError('The address lookup didn\u2019t answer. Try again in a moment.');
-    } finally { setLocBusy(false); }
+      setLocError('The address lookup didn\u2019t answer. Try again, or paste coordinates like 12.9716, 77.5946.');
+    } finally {
+      setLocBusy(false);
+    }
   }, [search, moveTo]);
 
   const useMyLocation = useCallback(() => {
@@ -601,7 +628,7 @@ export default function ReportScreen() {
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Move to another address"
+            placeholder="Move to another address, or paste lat, lon"
             aria-label="Move to another address"
           />
           <button type="submit" disabled={locBusy}>{locBusy ? 'Finding…' : 'Go'}</button>
