@@ -2458,6 +2458,11 @@
   font-family:'Playfair Display', serif; font-style:italic; font-weight:600;
   font-size:1em; color:#FFFDF8; -webkit-text-fill-color:#FFFDF8;
   text-shadow:0 4px 30px rgba(0,0,0,0.5);
+  /* Tightened from the global -0.01em -- a touch more optical kerning
+     on the one word carrying the whole "premium" read, same idea as
+     the letter-spacing/line-height tightening recommended for large
+     display type generally. */
+  letter-spacing:-0.02em;
   animation:hlmAccentGold 0.5s ease-out 1.1s forwards;
 }
 @keyframes hlmAccentGold{
@@ -2467,8 +2472,15 @@
        cheap/neon rather than the flat foil-gold look a premium brand
        wants. Same dark drop-shadow the white starting state already
        had, just carried over for legibility/depth against the map,
-       nothing added on top of it. */
-    color:var(--brand-yellow); -webkit-text-fill-color:var(--brand-yellow);
+       nothing added on top of it.
+       Colour itself is a deliberately deeper/less-saturated step down
+       from --brand-yellow (#F5C343), not that token itself -- kept
+       scoped to just this word rather than touching the shared token,
+       since --brand-yellow is used elsewhere (CTA glow, eyebrow
+       underlines) where the brighter value is still right. Same hue
+       family, just muted toward brass/antique gold instead of bright
+       marigold -- "whispers" instead of "shines". */
+    color:#C9A24A; -webkit-text-fill-color:#C9A24A;
     text-shadow:0 4px 30px rgba(0,0,0,0.5);
   }
 }
@@ -2527,7 +2539,7 @@
   .hlm-eyebrow, .hlm-content .hlm-h1, .hlm-h1-accent, .hlm-searchwrap, .hlm-typed-line{ animation:none !important; opacity:1 !important; transform:none !important; filter:none !important; }
   .hlm-typed-cursor{ animation:none !important; display:none !important; }
   .hlm-content .hlm-h1{ background:none !important; color:#FFFDF8 !important; -webkit-text-fill-color:#FFFDF8 !important; }
-  .hlm-h1-accent{ color:var(--brand-yellow) !important; -webkit-text-fill-color:var(--brand-yellow) !important; text-shadow:0 4px 30px rgba(0,0,0,0.5) !important; }
+  .hlm-h1-accent{ color:#C9A24A !important; -webkit-text-fill-color:#C9A24A !important; text-shadow:0 4px 30px rgba(0,0,0,0.5) !important; }
   .hlm-h1-accent::after{ display:none !important; }
 }
 
