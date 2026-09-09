@@ -61,6 +61,23 @@
        since both use it. */
     --olive-gold:#77652E;
 
+    /* ===== SEMANTIC STATE COLOURS =====
+       Didn't exist before this -- every error message on the auth pages
+       (signup/login/forgot-password/reset-password) was hardcoding its
+       own inline #e5484d, and the one success message (.auth-success)
+       wasn't colour-coded at all, just plain --ink. Same AA-on-paper
+       discipline as every brand token above: #e5484d itself only cleared
+       3.85:1 on --paper (needs 4.5:1 for text) -- danger below is a
+       darkened, same-hue red that actually passes, the same fix already
+       applied to --sun's old failing value in the comment right below
+       this block. No --warning call site exists in the app yet, but it's
+       defined here so the next one (an optional-field warning, a
+       password-strength meter, whatever it ends up being) reaches for
+       this instead of another one-off inline hex. */
+    --danger:#C6373D;   /* error text/borders -- 5.15:1 on paper, 4.85:1 on --bg */
+    --success:#166B37;  /* success text -- 6.47:1 on paper, 6.1:1 on --bg */
+    --warning:#7A4E00;  /* warning text -- 7.08:1 on paper, 6.68:1 on --bg -- unused so far */
+
     /* Legacy aliases so every existing --sun/--slate usage below keeps
        working during migration, but with the accessible values:
        --slate was already ≈ --brand at the time this alias was written
@@ -1913,7 +1930,8 @@
 .auth-submit:hover{ background:#332c22 }
 .auth-submit:disabled{ opacity:0.5; cursor:default }
 .auth-note{ font-size:14px; color:var(--text-dim); margin-top:18px; line-height:1.6 }
-.auth-success{ color:var(--ink); font-size:14px; line-height:1.6 }
+.auth-success{ color:var(--success); font-size:14px; line-height:1.6 }
+.auth-error{ color:var(--danger); font-size:13px; margin-bottom:12px }
 .auth-links{ display:flex; flex-direction:column; gap:10px; margin-top:20px }
 .auth-links a{ font-size:14px; color:var(--text-mute); text-decoration:none; border-bottom:1px solid var(--line) }
 .auth-links a:hover{ color:var(--ink); border-color:var(--ink) }
