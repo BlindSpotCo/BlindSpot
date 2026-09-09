@@ -63,7 +63,14 @@ export default function PopupComplete() {
       // same-origin case if window.opener does happen to still be alive.
       if (window.opener) {
         try {
-          window.opener.postMessage(payload, '*');
+          // Targeted, not '*'. The payload is a live access token and a
+          // refresh token; posting it with a wildcard target hands it to
+          // whatever origin the opener happens to hold at that moment, which
+          // is not necessarily the one that opened this window. `origin` has
+          // already been checked against ALLOWED_ORIGINS above, so it is safe
+          // to name here -- and naming it means the browser refuses the
+          // delivery if the opener is anywhere else.
+          window.opener.postMessage(payload, origin);
           delivered = true;
         } catch {}
       }

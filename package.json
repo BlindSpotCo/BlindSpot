@@ -13,7 +13,6 @@
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.45.4",
     "@vercel/analytics": "^2.0.1",
-    "geo-tz": "^8.1.8",
     "leaflet": "^1.9.4",
     "next": "16.2.11",
     "react": "19.1.7",
