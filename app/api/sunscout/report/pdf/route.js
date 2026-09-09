@@ -982,7 +982,9 @@ export async function POST(req) {
 
   <div style="max-width:900px;margin:0 auto;padding:28px 32px 56px;background:#fff;">
     <p style="font-size:13px;color:${DIM};line-height:1.7;margin-bottom:8px;">
-      ${shotCount || 12} real screenshots of the 3D map at this exact pin, 3 per season, at 9am / noon / 3pm, showing what is casting shade and how much of the unit is in sun at each of those moments.${Object.keys(perImage).length ? ' Each one carries its own written description.' : ''}
+      ${shotCount >= 12
+        ? `12 real screenshots of the 3D map at this exact pin, 3 per season, at 9am / noon / 3pm, showing what is casting shade and how much of the unit is in sun at each of those moments.`
+        : `${shotCount} real screenshots of the 3D map at this exact pin, showing what is casting shade and how much of the unit is in sun at each of those moments. This is fewer than the 12 we aim for &mdash; the rest didn't come back from the map in time, so those points in the year aren't shown here. Generating the report again usually gets the full set.`}${Object.keys(perImage).length ? ' Each one carries its own written description.' : ''}
     </p>
     ${monthlyTableSection ? `
     <div style="padding:24px 0 40px;">

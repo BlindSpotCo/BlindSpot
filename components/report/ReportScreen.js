@@ -16,7 +16,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Map3DShadow from '@/components/sunscout/Map3DShadow';
 import ReportModal from '@/components/sunscout/ReportModal';
-import useMapCapture from '@/lib/sunscout/useMapCapture';
+import useMapCapture, { SHOTS } from '@/lib/sunscout/useMapCapture';
 import { FACTOR_LABELS, FACING_OPTS } from '@/lib/property-score/ui';
 import { getActionItems } from '@/lib/property-score/actionItems';
 import './report.css';
@@ -326,10 +326,20 @@ export default function ReportScreen() {
       .catch(() => {});
   }, []);
 
-  const onMapClick = useCallback((clickLat, clickLon) => moveTo(clickLat, clickLon, ''), [moveTo]);
+  // Moving the pin mid-capture put frames of two different blocks into one
+  // report: the iframe is replaced, but the run in flight keeps
+  // photographing whatever is now on screen, while the modal still holds the
+  // original address to title and analyse it with. The result was cached
+  // under the OLD pin, so regenerating there returned the mixed set.
+  const reportRunning = reportOpen !== null;
+  const onMapClick = useCallback((clickLat, clickLon) => {
+    if (reportRunning) { setLocError('The report is being built from this spot — let it finish, then move the pin.'); return; }
+    moveTo(clickLat, clickLon, '');
+  }, [moveTo, reportRunning]);
 
   const onSearchSubmit = useCallback(async (e) => {
     e.preventDefault();
+    if (reportRunning) { setLocError('The report is being built from this spot — let it finish, then search.'); return; }
     const q = search.trim();
     if (!q) return;
 
@@ -367,9 +377,10 @@ export default function ReportScreen() {
     } finally {
       setLocBusy(false);
     }
-  }, [search, moveTo]);
+  }, [search, moveTo, reportRunning]);
 
   const useMyLocation = useCallback(() => {
+    if (reportRunning) { setLocError('The report is being built from this spot — let it finish first.'); return; }
     if (!navigator.geolocation) { setLocError('This browser won\u2019t share your location.'); return; }
     setLocBusy(true); setLocError('');
     navigator.geolocation.getCurrentPosition(
@@ -377,7 +388,7 @@ export default function ReportScreen() {
       () => { setLocBusy(false); setLocError('We couldn\u2019t get your location. Search the address instead.'); },
       { timeout: 10000 }
     );
-  }, [moveTo]);
+  }, [moveTo, reportRunning]);
 
   // Anchor for the flat half, still used by the in-page "the flat" link.
   const unitRef = useRef(null);
@@ -393,12 +404,17 @@ export default function ReportScreen() {
   const captureOnce = useCallback(async (onProgress) => {
     const key = `${lat},${lon}`;
     const held = frameCache.current;
-    if (held.key === key && held.frames?.length) {
+    if (held.key === key && held.frames?.length === SHOTS.length) {
       onProgress?.(held.frames.length, held.frames.length);
       return held.frames;
     }
     const frames = await capture.captureScreenshots(onProgress);
-    frameCache.current = { key, frames };
+    // Only a COMPLETE set is worth keeping. Caching a run where eight of
+    // twelve frames timed out meant every later report at this pin silently
+    // reused the crippled set -- instantly, so it looked like a feature --
+    // and the only way out was to move the pin.
+    if (frames.length === SHOTS.length) frameCache.current = { key, frames };
+    else frameCache.current = { key: '', frames: null };
     return frames;
     // capture.captureScreenshots is stable (useCallback inside the hook);
     // the object around it is not, so depend on the function itself.
@@ -831,7 +847,11 @@ export default function ReportScreen() {
             </>
           )}
         </p>
-        <p className="bsr-maphint">Click anywhere on the map to move the pin to another building.</p>
+        <p className="bsr-maphint">
+          {reportRunning
+            ? 'The pin is locked while the report is built from this spot — moving it now would mix two blocks into one report.'
+            : 'Click anywhere on the map to move the pin to another building.'}
+        </p>
       </section>
 
       <section className="bsr-visit">
@@ -903,6 +923,12 @@ export default function ReportScreen() {
 
       {reportOpen && (
         <ReportModal
+          /* Without a key React reuses this instance when the type changes,
+             so switching from the sun & shadow run to the full report kept
+             the finished gallery's state and simply relabelled it: "Your
+             report is ready — the full write-up", opening the gallery blob,
+             and saving the gallery under the full report's name. */
+          key={reportOpen}
           lat={lat}
           lon={lon}
           tzOffset={TZ}
