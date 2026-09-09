@@ -125,7 +125,7 @@ export default function ReportScreen() {
   // A listing gives you the tower, not the unit -- so these two arrive
   // as defaults far more often than not. Say so until they're set.
   const [assumed, setAssumed] = useState(
-    () => !params.get('floor') || !params.get('facing')
+    () => params.get('assumed') === '1' || !params.get('floor') || !params.get('facing')
   );
 
   const [scores, setScores] = useState(null);   // { area|null, unit, combined|null }
@@ -150,6 +150,9 @@ export default function ReportScreen() {
   // that the old flow let people correct it by hand. Same here.
   const [pinEntry, setPinEntry] = useState('');
   const [pinFixOpen, setPinFixOpen] = useState(false);
+  // The area half didn't load because something broke, not because this
+  // pincode is uncovered. Those need different words in front of a person.
+  const [areaFailed, setAreaFailed] = useState(false);
   const capture = useMapCapture();
   const [minutes, setMinutes] = useState(630);   // only meaningful while paused
   // The animation runs inside Map3DShadow while `animating` is true --
@@ -162,6 +165,9 @@ export default function ReportScreen() {
   const [locError, setLocError] = useState('');
   const [search, setSearch] = useState('');
 
+  // Bumped by the retry button, so the scores effect can be re-run without
+  // changing the address it is scoring.
+  const [scoreNonce, setScoreNonce] = useState(0);
   const scoreReq = useRef(0);
   const solarReq = useRef(0);
   // Which coordinates we've already asked the postcode for, so a pin with
@@ -192,11 +198,24 @@ export default function ReportScreen() {
 
           if (res.ok && !json.error) {
             setScores({ area: json.area, unit: json.unit, combined: json.combinedScore, notes: json.dataNotes });
+            setFailure('');
             setState('ready');
             return;
           }
-          // 404 here means "we don't have this locality", not a failure --
-          // fall through to the unit-only path and say so on screen.
+          // ONLY a 404 means "we don't have this locality". Every other
+          // status is a failure, and treating them all the same told people
+          // their pincode wasn't covered when the truth was that the route
+          // threw -- a 502 for a pin that is in the shipped dataset, with
+          // the whole neighbourhood half quietly vanishing and the top score
+          // switching to unit-only with no sign anything had gone wrong.
+          if (res.status !== 404) {
+            console.error('[report] property-score failed:', res.status, json?.error || '');
+            setAreaFailed(true);
+          } else {
+            setAreaFailed(false);
+          }
+        } else {
+          setAreaFailed(false);
         }
 
         const res = await fetch(`/api/sunscout/score?${common}`);
@@ -221,7 +240,7 @@ export default function ReportScreen() {
     }
     run().finally(() => { if (!cancelled && id === scoreReq.current) setBusy(false); });
     return () => { cancelled = true; };
-  }, [hasPlace, lat, lon, pinCode, floor, facing, areaWeight]);
+  }, [hasPlace, lat, lon, pinCode, floor, facing, areaWeight, scoreNonce]);
 
   /* ---------------- sun path for the map ---------------- */
   useEffect(() => {
@@ -331,7 +350,13 @@ export default function ReportScreen() {
   // photographing whatever is now on screen, while the modal still holds the
   // original address to title and analyse it with. The result was cached
   // under the OLD pin, so regenerating there returned the mixed set.
-  const reportRunning = reportOpen !== null;
+  // Locked while a capture is actually running, not for as long as the
+  // card is on screen. The finished and failed cards both stay mounted
+  // until the person closes them, and the pin was staying locked -- with
+  // "the report is being built from this spot" -- for a report that had
+  // finished five minutes earlier.
+  const [reportBusy, setReportBusy] = useState(false);
+  const reportRunning = reportOpen !== null && reportBusy;
   const onMapClick = useCallback((clickLat, clickLon) => {
     if (reportRunning) { setLocError('The report is being built from this spot — let it finish, then move the pin.'); return; }
     moveTo(clickLat, clickLon, '');
@@ -451,7 +476,16 @@ export default function ReportScreen() {
     });
   }, [tickKey]);
 
-  const bumpFloor = useCallback((d) => { setAssumed(false); setFloor((f) => Math.max(1, Math.min(60, f + d))); }, []);
+  // Only count ticks against items actually on the list. The ticks are
+  // stored per address, but the list is derived from the floor and facing --
+  // change the floor and items drop off it, which used to leave the counter
+  // reading "3 of 1 checked".
+  const tickedHere = useMemo(
+    () => actions.filter((a) => ticked.has(a.key)).length,
+    [actions, ticked]
+  );
+
+
 
 
   // Keep the URL honest as the floor/facing change, so a refresh or a
@@ -465,8 +499,14 @@ export default function ReportScreen() {
     if (address) q.set('address', address);
     q.set('floor', String(floor));
     q.set('facing', facing);
+    // Carry the fact that these are still guesses. This effect writes the
+    // defaults into the URL on mount, so on the next load `floor` was
+    // present and `assumed` initialised false -- a refresh, or a link you
+    // sent someone, presented floor 5 / south-east as confirmed when nobody
+    // had confirmed anything, with the whole unit score resting on them.
+    if (assumed) q.set('assumed', '1');
     window.history.replaceState(window.history.state, '', `${window.location.pathname}?${q.toString()}`);
-  }, [hasPlace, lat, lon, pinCode, address, floor, facing]);
+  }, [hasPlace, lat, lon, pinCode, address, floor, facing, assumed]);
 
   /* ---------------- states that aren't the report ---------------- */
   if (!hasPlace) {
@@ -490,7 +530,17 @@ export default function ReportScreen() {
               ? 'The scoring service didn’t answer. This is on us, not the address — try again in a moment.'
               : 'Something went wrong reading this address.'}
           </p>
-          <a className="bsr-cta" href="/">Try another address</a>
+          {/* This screen returns above the map, the search bar and the
+              floor/facing controls, so nothing on the page could change the
+              inputs the failed effect depends on -- "try again in a moment"
+              with no way to try again, and a browser reload the only escape.
+              Retry re-runs it in place. */}
+          <p className="bsr-empty-actions">
+            <button type="button" onClick={() => { setFailure(''); setState('loading'); setScoreNonce((n) => n + 1); }}>
+              Try again
+            </button>
+            <a href="/">Start with another address</a>
+          </p>
         </div>
       </div>
     );
@@ -607,7 +657,9 @@ export default function ReportScreen() {
               ? `Government records for pin ${area.pinCode}.`
               : pinPending
                 ? 'Finding the pincode for this pin\u2026'
-                : 'Not covered yet.'}
+                : areaFailed
+                  ? 'Couldn\u2019t be loaded.'
+                  : 'Not covered yet.'}
             {hasArea && (
               <>
                 {' '}
@@ -676,14 +728,25 @@ export default function ReportScreen() {
           ) : (
             <div className="bsr-nocover">
               {pinPending ? (
-                <p>Looking up which pincode this pin falls in\u2026</p>
+                <p>Looking up which pincode this pin falls in…</p>
               ) : (
-                <p>
-                  {pinCode
-                    ? `Pin ${pinCode} isn't in our neighbourhood records yet, so we won't guess at safety, water or schools here.`
-                    : "We couldn't work out the pincode for this exact spot, so there's nothing to look the area up by."}
-                  {' '}BlindSpot has records for Delhi NCR, Bangalore, Chandigarh, Hyderabad and Mumbai.
-                </p>
+                <>
+                  <p>
+                    {areaFailed
+                      ? `We couldn't load the neighbourhood records for pin ${pinCode} just now — that's a fault on our side, not a gap in coverage. The flat's own scores below are unaffected.`
+                      : pinCode
+                        ? `Pin ${pinCode} isn't in our neighbourhood records yet, so we won't guess at safety, water or schools here.`
+                        : "We couldn't work out the pincode for this exact spot, so there's nothing to look the area up by."}
+                    {areaFailed ? '' : ' BlindSpot has records for Delhi NCR, Bangalore, Chandigarh, Hyderabad and Mumbai.'}
+                  </p>
+                  {areaFailed && (
+                    <p style={{ marginTop: 10 }}>
+                      <button type="button" className="bsr-pinlink" onClick={() => setScoreNonce((n) => n + 1)}>
+                        Try loading the area again
+                      </button>
+                    </p>
+                  )}
+                </>
               )}
 
               {!pinPending && pinFixForm}
@@ -756,6 +819,8 @@ export default function ReportScreen() {
             <button
               type="button"
               className="bsr-genlink"
+              disabled={!solar?.pathData}
+              title={!solar?.pathData ? 'The 3D map has to load first — there is nothing to photograph without it.' : undefined}
               onClick={() => setReportOpen('gallery')}
             >
               See the sun and shadow through the year →
@@ -887,9 +952,9 @@ export default function ReportScreen() {
             ))
           )}
         </ul>
-        {actions.length > 0 && ticked.size > 0 && (
+        {actions.length > 0 && tickedHere > 0 && (
           <p className="bsr-todo-count">
-            {ticked.size} of {actions.length} checked.{' '}
+            {tickedHere} of {actions.length} checked.{' '}
             <button type="button" onClick={() => {
               setTicked(new Set());
               if (tickKey) { try { window.localStorage.removeItem(tickKey); } catch {} }
@@ -906,14 +971,23 @@ export default function ReportScreen() {
             ? 'One written verdict for this address — the area, the flat, and the two read together, with the questions to put to the seller. Downloadable as a PDF.'
             : 'One written verdict for this flat — the sun, the shade, the view and the questions to put to the seller. We have no neighbourhood records for this pincode, so this report covers the flat only. Downloadable as a PDF.'}
         </p>
+        {/* Both reports are built from photographs of the map. With no map
+            there is nothing to photograph, and the run used to fail with
+            "something went wrong, things are busy" -- which is neither true
+            nor actionable. Say the real reason before they click. */}
         <button
           type="button"
           className="bsr-cta"
+          disabled={!solar?.pathData}
           onClick={() => setReportOpen('full')}
         >
           {hasArea ? 'Generate the full report' : 'Generate the full flat report'}
         </button>
-        <span className="bsr-free">Takes about two minutes and opens in a new tab, so this page keeps your floor and facing. Your first address is free.</span>
+        <span className="bsr-free">
+          {solar?.pathData
+            ? 'Takes about two minutes. It builds here on this page, so you keep your floor and facing, and you open it when it\u2019s ready.'
+            : 'Waiting for the 3D map — both reports are built from photographs of it, so there\u2019s nothing to make until it loads.'}
+        </span>
         <span className="bsr-also">
           Already have the floor plan? <a href="/floor-plan-analysis">Get room-by-room furnishing advice →</a>
         </span>
@@ -943,7 +1017,8 @@ export default function ReportScreen() {
           combinedScore={reportOpen === 'full' ? scores.combined : undefined}
           areaWeight={reportOpen === 'full' ? areaWeight : undefined}
           unitWeight={reportOpen === 'full' ? 1 - areaWeight : undefined}
-          onClose={() => setReportOpen(null)}
+          onBusyChange={setReportBusy}
+          onClose={() => { setReportOpen(null); setReportBusy(false); }}
         />
       )}
     </div>

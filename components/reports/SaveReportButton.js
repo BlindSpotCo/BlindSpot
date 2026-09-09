@@ -28,6 +28,10 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
 
   const [folders, setFolders] = useState([]);
   const [loadingFolders, setLoadingFolders] = useState(false);
+  // An empty dropdown reads as "you have no folders". When the fetch failed
+  // it means the opposite -- we don't know what folders you have -- and
+  // saving would quietly file the report loose.
+  const [foldersFailed, setFoldersFailed] = useState(false);
   const [folderChoice, setFolderChoice] = useState(''); // existing folder id, or '' (none), or '__new'
   const [newFolderName, setNewFolderName] = useState('');
   const [title, setTitle] = useState(defaultTitle);
@@ -67,14 +71,42 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
 
   const loadFolders = async () => {
     setLoadingFolders(true);
+    setFoldersFailed(false);
     try {
       const res = await fetch('/api/folders');
       const d = await res.json();
       setFolders(d.folders || []);
+      setFoldersFailed(false);
     } catch {
       setFolders([]);
+      setFoldersFailed(true);
     } finally {
       setLoadingFolders(false);
+    }
+  };
+
+  const signIn = async () => {
+    setSigningIn(true);
+    try {
+      const supabase = createClient();
+      const { access_token, refresh_token } = await openSignInPopup();
+      await supabase.auth.setSession({ access_token, refresh_token });
+      setSignedIn(true);
+      return true;
+    } catch (e) {
+      // Swallowing this made the button do nothing at all, forever, with no
+      // message: popups are blocked by default in several browsers and by
+      // most corporate policies, so "click Save, watch nothing happen" was
+      // a whole category of user hitting a dead end in silence.
+      setError(
+        String(e?.message || '') === 'popup-blocked'
+          ? 'Your browser blocked the sign-in window. Allow pop-ups for this site and press Save again — or open the report and use your browser’s Save as PDF instead.'
+          : 'Sign-in didn’t complete, so there’s nothing to save this to yet. Press Save to try again.'
+      );
+      setOpen(true); // show the panel so the message has somewhere to appear
+      return false;
+    } finally {
+      setSigningIn(false);
     }
   };
 
@@ -82,17 +114,8 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
     setError('');
     setSaved(false);
     if (!signedIn) {
-      setSigningIn(true);
-      try {
-        const supabase = createClient();
-        const { access_token, refresh_token } = await openSignInPopup();
-        await supabase.auth.setSession({ access_token, refresh_token });
-        setSignedIn(true);
-      } catch {
-        setSigningIn(false);
-        return; // popup blocked or closed without signing in -- don't open the panel
-      }
-      setSigningIn(false);
+      const ok = await signIn();
+      if (!ok) return;
     }
     setOpen(true);
     loadFolders();
@@ -129,9 +152,10 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
       setTimeout(() => setOpen(false), 1200);
     } catch (e) {
       const m = String(e?.message || '');
+      if (m === 'not-signed-in') setSignedIn(false); // the panel then offers a way back in
       setError(
         m === 'not-signed-in'
-          ? 'Signed-in session not found, please sign in again and retry.'
+          ? 'Your sign-in has expired. Sign in again below, then press Save.'
           : m === 'too-large'
             ? 'This report is too big to save with all its images. Open it and use your browser\u2019s Save as PDF instead.'
             : m.startsWith('save-failed-401') || m === 'save-failed'
@@ -195,6 +219,12 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
                     ))}
                     <option value="__new">+ New folder…</option>
                   </select>
+                  {foldersFailed && (
+                    <p style={{ fontSize: 11.5, color: '#8A8A8A', margin: '0 0 8px', lineHeight: 1.5 }}>
+                      We couldn&apos;t load your folders just now, so only a new one can be made here.
+                      Saving without a folder still works — you can file it later from My Reports.
+                    </p>
+                  )}
                   {folderChoice === '__new' && (
                     <input
                       value={newFolderName}
@@ -207,11 +237,25 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
                 </>
               )}
 
-              {error && <p style={{ fontSize: 12, color: '#e5484d', margin: '0 0 10px' }}>{error}</p>}
+              {error && <p style={{ fontSize: 12, color: '#e5484d', margin: '0 0 10px', lineHeight: 1.55 }}>{error}</p>}
+
+              {!signedIn && (
+                <button
+                  onClick={signIn}
+                  disabled={signingIn}
+                  style={{
+                    width: '100%', padding: '10px', fontSize: 13, fontWeight: 700, border: '1px solid #1A0A00',
+                    borderRadius: 4, background: 'transparent', color: '#1A0A00', cursor: 'pointer', marginBottom: 8,
+                  }}
+                >
+                  {signingIn ? 'Signing in…' : 'Sign in'}
+                </button>
+              )}
 
               <button
                 onClick={handleSave}
-                disabled={saving || (folderChoice === '__new' && !newFolderName.trim())}
+                title={!signedIn ? 'Sign in first — saved reports live in your account.' : undefined}
+                disabled={saving || !signedIn || (folderChoice === '__new' && !newFolderName.trim())}
                 style={{
                   width: '100%', padding: '10px', fontSize: 13, fontWeight: 700, border: 'none', borderRadius: 4,
                   background: '#1A0A00', color: '#fff', cursor: 'pointer', opacity: saving ? 0.6 : 1,

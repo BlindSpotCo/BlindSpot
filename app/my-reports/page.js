@@ -88,7 +88,8 @@ export default async function MyReportsPage() {
 
         {fetchFailed && (
           <div className="reports-empty" style={{ marginBottom: 24 }}>
-            Reports table isn&apos;t set up in Supabase yet, see SUPABASE_SETUP.md.
+            We couldn&apos;t load your saved reports just now. This is on our side, not your account —
+            refresh in a moment and they should be here.
           </div>
         )}
 

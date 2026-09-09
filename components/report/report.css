@@ -11,7 +11,7 @@
 .bsr{
   --bsr-good:#3C7A50;
   --bsr-good-bg:#E8F0E9;
-  --bsr-avg:#7C6C52;
+  --bsr-avg:#6B5C43;
   --bsr-avg-bg:#F2EDE3;
   --bsr-poor:#A2483C;
   --bsr-poor-bg:#F8E9E5;
@@ -28,6 +28,18 @@
 .bsr p{margin:0}
 
 .bsr-boot,.bsr-empty{padding:64px 20px;text-align:center;color:var(--text-mute,#5A5140)}
+.bsr-empty-actions{
+  display:flex;gap:16px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:22px;
+}
+.bsr-empty-actions button{
+  font:inherit;font-weight:700;cursor:pointer;min-height:48px;padding:13px 26px;
+  border:0;border-radius:4px;background:var(--ss,#AF5F30);color:#FFFDF8;
+}
+.bsr-empty-actions button:hover{filter:brightness(.9)}
+.bsr-empty-actions a{
+  font-weight:600;color:var(--ss,#AF5F30);text-decoration:underline;text-underline-offset:4px;
+}
+
 .bsr-empty h1{font-size:28px;margin-bottom:10px}
 .bsr-empty p{max-width:46ch;margin:0 auto 22px;font-size:17px}
 
@@ -176,42 +188,27 @@
   margin-top:auto;padding-top:22px;
   display:flex;flex-direction:column;align-items:flex-start;gap:4px;
 }
+/* One declaration, and the two halves keep their own accent. This was
+   copy-pasted three times; the last copy's `.bsr-more a{color:var(--ss)}`
+   won for BOTH halves, so the area's "detailed area report" link rendered
+   in the flat's colour and the two-accent scheme quietly stopped working. */
 .bsr-genlink{
   font-family:inherit;font-size:17px;font-weight:700;cursor:pointer;
   background:none;border:0;padding:0;min-height:46px;
-  color:var(--ss,#AF5F30);
   text-decoration:underline;text-underline-offset:4px;text-align:left;
+  color:var(--ss,#AF5F30);
 }
-.bsr-genlink:hover:not(:disabled){color:#95502A}
-.bsr-genlink:disabled,.bsr-cta:disabled{
-  opacity:.55;cursor:default;text-decoration:none;
-}
+.bsr-genlink:hover:not(:disabled){filter:brightness(.88)}
+.bsr-genlink:disabled,.bsr-cta:disabled{opacity:.55;cursor:not-allowed;text-decoration:none}
+
 .bsr-more a{
   display:inline-flex;align-items:center;min-height:46px;
   font-size:17px;font-weight:700;text-decoration:underline;text-underline-offset:4px;
 }
-.bsr-area .bsr-genlink{
-  font-family:inherit;font-size:17px;font-weight:700;cursor:pointer;
-  background:none;border:0;padding:0;min-height:46px;
-  color:var(--ss,#AF5F30);
-  text-decoration:underline;text-underline-offset:4px;text-align:left;
-}
-.bsr-genlink:hover:not(:disabled){color:#95502A}
-.bsr-genlink:disabled,.bsr-cta:disabled{
-  opacity:.55;cursor:default;text-decoration:none;
-}
-.bsr-more a{color:var(--av,#7A2E43)}
-.bsr-unit .bsr-genlink{
-  font-family:inherit;font-size:17px;font-weight:700;cursor:pointer;
-  background:none;border:0;padding:0;min-height:46px;
-  color:var(--ss,#AF5F30);
-  text-decoration:underline;text-underline-offset:4px;text-align:left;
-}
-.bsr-genlink:hover:not(:disabled){color:#95502A}
-.bsr-genlink:disabled,.bsr-cta:disabled{
-  opacity:.55;cursor:default;text-decoration:none;
-}
-.bsr-more a{color:var(--ss,#AF5F30)}
+/* wine for the area, sun for the flat */
+.bsr-area .bsr-more a,.bsr-area .bsr-genlink{color:var(--av,#7A2E43)}
+.bsr-unit .bsr-more a,.bsr-unit .bsr-genlink{color:var(--ss,#AF5F30)}
+
 .bsr-more-note{font-size:15px;color:var(--text-mute,#5A5140);max-width:52ch}
 
 /* ---------------- the map, its own full-width band ----------------
@@ -269,20 +266,6 @@
   font-size:14px;font-weight:600;color:var(--bsr-poor);
 }
 .bsr-q{font-size:17px;font-weight:600;margin-bottom:10px}
-.bsr-floor{display:flex;align-items:center;gap:8px}
-.bsr-floor button{
-  width:34px;height:34px;flex:none;border-radius:4px;cursor:pointer;
-  font-size:18px;line-height:1;font-family:inherit;color:inherit;
-  background:var(--paper,#FFFDF8);border:1px solid var(--line,rgba(28,24,18,.14));
-}
-.bsr-floor button:hover{border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
-.bsr-floor-n{
-  font-size:19px;font-weight:700;min-width:30px;text-align:center;
-  font-variant-numeric:tabular-nums;
-}
-
-
-/* ---------------- visit checklist ---------------- */
 .bsr-visit{
   margin-top:22px;padding:28px 30px;border-radius:5px;
   background:var(--paper,#FFFDF8);
@@ -374,6 +357,12 @@
   padding:16px 32px;border-radius:4px;
   background:var(--ss,#AF5F30);color:#FFFDF8;
 }
+/* .bsr-cta is used as both an <a> and the page's primary <button>. Buttons
+   carry a UA border, the system font and a default cursor; the links don't.
+   Without this the two rendered as different controls. */
+button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appearance:none;appearance:none}
+button.bsr-cta:disabled,.bsr-genlink:disabled{cursor:not-allowed}
+
 .bsr-cta:hover{background:#95502A}
 .bsr-free{display:block;margin-top:12px;font-size:15px;color:var(--text-mute,#5A5140)}
 .bsr-also{

@@ -145,10 +145,16 @@ export default async function ReportDetailPage({ params }) {
         {report.source === 'ai-report' && (
           <>
             {d.mainHtml ? (
+              /* sandbox, because a srcDoc frame otherwise inherits this
+                 origin -- and this HTML came out of a database row that the
+                 save route stores without inspecting. Nothing in a report
+                 needs to run script or reach the session; it is a document.
+                 allow-popups keeps the gallery link working. */
               <iframe
                 srcDoc={d.mainHtml.replaceAll('__GALLERY_URL__', '#')}
+                sandbox="allow-popups allow-popups-to-escape-sandbox"
                 style={{ width: '100%', height: '85vh', border: '1px solid var(--line-soft)', borderRadius: 4 }}
-                title="AI report"
+                title="Saved report"
               />
             ) : (
               <div className="reports-empty">This report&apos;s full content wasn&apos;t saved.</div>

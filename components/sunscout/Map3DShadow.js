@@ -570,6 +570,10 @@ notifyParent('map3d_ready');
 
   useEffect(() => {
     const handler = (e) => {
+      // Only this iframe may drive the map. Without the check, any window
+      // that can post here could move the pin or inject a frame into a
+      // capture -- and a report is meant to be evidence.
+      if (iframeRef.current && e.source !== iframeRef.current.contentWindow) return;
       if(e.data?.type==='map3d_click' && onLocationSelect) onLocationSelect(e.data.lat, e.data.lon);
       if(e.data?.type==='screenshotReady' && onScreenshot) onScreenshot(e.data.label, e.data.data);
       // Real readiness/failure, reported by the iframe document itself
@@ -605,5 +609,8 @@ notifyParent('map3d_ready');
     if(!animating) iframeRef.current?.contentWindow?.postMessage({type:'seekTime',time:simTime},'*');
   }, [simTime, animating]);
 
-  return <iframe ref={iframeRef} srcDoc={html} style={{width:'100%',height:'100%',border:'none',display:'block'}} sandbox="allow-scripts allow-same-origin"/>;
+  // A frame with no title is announced as an unnamed frame containing a
+  // canvas with no text alternative -- the aria-label on the section around
+  // it does not reach in here.
+  return <iframe ref={iframeRef} title="3D map of the buildings around this property, showing the sun's path and the shadows it casts" srcDoc={html} style={{width:'100%',height:'100%',border:'none',display:'block'}} sandbox="allow-scripts allow-same-origin"/>;
 }
