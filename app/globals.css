@@ -1816,26 +1816,23 @@
   .hlm-city-panel{ transition:none; }
 }
 
-/* One integrated glass strip -- facts (real, per-address data) on the
-   left, the actual CTA docked to its right end as a distinct pill within
-   it, so it reads as a single "here's what we found" object rather than
-   a row of separate button-shaped cards (every one of which looked
-   clickable, none of which were). .hlm-panel-cta-only drops the facts
-   side's padding when a searched address has neither a covered
-   Neighbourhood record nor a usable AQI reading -- see
-   HeroLiveMapCanvas.js -- so the strip still reads as one deliberate
-   pill instead of an empty box next to a button. */
+/* Read-only glass strip -- the real neighbourhood score / AQI facts for
+   the address just picked, nothing to click. Used to end in a docked CTA
+   pill ("see the full breakdown") when the report opened on a click; the
+   report opens on its own now (see autoGo/pick() and PinDropTransition's
+   `hidden` prop in HeroLiveMapCanvas.js), so this is just the brief
+   glimpse of what was found before it does -- only rendered at all when
+   there's something real to show. */
 .hlm-panel{
-  pointer-events:auto; display:flex; align-items:center; gap:18px;
+  pointer-events:none; display:flex; align-items:center; gap:18px;
   max-width:680px; width:100%;
   background:rgba(20,18,10,0.58); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
   border:1px solid rgba(255,255,255,0.12); border-radius:var(--radius-pill);
-  padding:7px 7px 7px 22px;
+  padding:14px 22px;
   box-shadow:0 22px 46px -18px rgba(0,0,0,0.6);
   opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease;
 }
 .hlm-panel.is-visible{ opacity:1; transform:translateY(0); }
-.hlm-panel.hlm-panel-cta-only{ padding:7px; justify-content:center; }
 .hlm-panel-facts{
   display:flex; align-items:center; gap:18px; flex:1; min-width:0; flex-wrap:wrap; row-gap:8px;
 }
@@ -1852,18 +1849,9 @@
   text-transform:uppercase; color:rgba(255,253,248,.55); margin-top:2px; white-space:nowrap;
 }
 .hlm-fact-div{ width:1px; height:26px; background:rgba(255,255,255,0.14); flex-shrink:0; }
-.hlm-cta{
-  display:inline-flex; align-items:center; gap:8px; width:fit-content; flex-shrink:0;
-  background:var(--brand); color:#fff; text-decoration:none; font-size:13px; font-weight:600;
-  padding:12px 18px; border-radius:var(--radius-pill); white-space:nowrap;
-  transition:background .15s ease;
-}
-.hlm-cta:hover{ background:#2E310F; }
-.hlm-cta span{ color:var(--ss-sun); }
 @media (max-width:640px){
   .hlm-panel{ flex-direction:column; align-items:stretch; padding:16px; border-radius:20px; gap:14px; }
   .hlm-panel-facts{ padding:0 4px; }
-  .hlm-cta{ justify-content:center; padding:13px 18px; }
 }
 
 .hlm-scroll-cue{

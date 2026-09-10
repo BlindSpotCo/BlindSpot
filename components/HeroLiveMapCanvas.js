@@ -512,41 +512,53 @@ export default function HeroLiveMapCanvas() {
           )}
         </div>
 
-        {pin && (
-          <div className={`hlm-panel${revealed ? ' is-visible' : ''}${hasAnyInsight ? '' : ' hlm-panel-cta-only'}`}>
-            {hasAnyInsight && (
-              <div className="hlm-panel-facts">
-                {nRecord && (
-                  <div className="hlm-fact">
-                    <span className="hlm-fact-dot" style={{ background: scoreColor(nRecord.nqi_composite) }} />
-                    <div>
-                      <span className="hlm-fact-label">{nRecord.area || nRecord.name} &middot; {nVerdict.label}</span>
-                      <span className="hlm-fact-sub">Neighbourhood Score {nRecord.nqi_composite}/100</span>
-                    </div>
+        {/* No button here any more -- picking an address already goes
+            straight to the report on its own (see autoGo/pick() above), so
+            a "see the full breakdown" link that nobody has to click read as
+            a leftover step, not a real one. When there's something real to
+            show (a covered neighbourhood's score and/or live AQI), it gets
+            a brief, read-only glimpse before the report opens; when there
+            isn't, nothing shows here at all -- it still just opens. */}
+        {pin && hasAnyInsight && (
+          <div className={`hlm-panel${revealed ? ' is-visible' : ''}`}>
+            <div className="hlm-panel-facts">
+              {nRecord && (
+                <div className="hlm-fact">
+                  <span className="hlm-fact-dot" style={{ background: scoreColor(nRecord.nqi_composite) }} />
+                  <div>
+                    <span className="hlm-fact-label">{nRecord.area || nRecord.name} &middot; {nVerdict.label}</span>
+                    <span className="hlm-fact-sub">Neighbourhood Score {nRecord.nqi_composite}/100</span>
                   </div>
-                )}
-                {nRecord && aqiValue != null && <span className="hlm-fact-div" aria-hidden="true" />}
-                {aqiValue != null && (
-                  <div className="hlm-fact">
-                    <span className="hlm-fact-dot" style={{ background: aqiAccent(aqiValue) === 'sun' ? 'var(--ss)' : aqiAccent(aqiValue) === 'plum' ? 'var(--plum)' : 'var(--brand-yellow)' }} />
-                    <div>
-                      <span className="hlm-fact-label">{aqiLabel} air quality</span>
-                      <span className="hlm-fact-sub">Live AQI {aqiValue} right now</span>
-                    </div>
+                </div>
+              )}
+              {nRecord && aqiValue != null && <span className="hlm-fact-div" aria-hidden="true" />}
+              {aqiValue != null && (
+                <div className="hlm-fact">
+                  <span className="hlm-fact-dot" style={{ background: aqiAccent(aqiValue) === 'sun' ? 'var(--ss)' : aqiAccent(aqiValue) === 'plum' ? 'var(--plum)' : 'var(--brand-yellow)' }} />
+                  <div>
+                    <span className="hlm-fact-label">{aqiLabel} air quality</span>
+                    <span className="hlm-fact-sub">Live AQI {aqiValue} right now</span>
                   </div>
-                )}
-              </div>
-            )}
-            <PinDropTransition
-              href={`/report?lat=${pin.lat}&lon=${pin.lon}` +
-                    `&pin_code=${encodeURIComponent(pin.postcode || '')}` +
-                    `&address=${encodeURIComponent(pin.label || query || '')}`}
-              className="hlm-cta"
-              autoStart={autoGo}
-            >
-              {hasAnyInsight ? 'See sunlight, safety & more' : 'See the full breakdown'} <span>→</span>
-            </PinDropTransition>
+                </div>
+              )}
+            </div>
           </div>
+        )}
+
+        {/* The actual navigation, invisible -- see PinDropTransition's own
+            `hidden` prop. Rendered whenever there's a pin at all (not just
+            when hasAnyInsight), so an uncovered address still opens its
+            report the same way, just with nothing visible above it. */}
+        {pin && (
+          <PinDropTransition
+            href={`/report?lat=${pin.lat}&lon=${pin.lon}` +
+                  `&pin_code=${encodeURIComponent(pin.postcode || '')}` +
+                  `&address=${encodeURIComponent(pin.label || query || '')}`}
+            autoStart={autoGo}
+            hidden
+          >
+            Open report
+          </PinDropTransition>
         )}
       </div>
 

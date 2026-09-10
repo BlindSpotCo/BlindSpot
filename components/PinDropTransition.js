@@ -44,7 +44,7 @@ const TOTAL_MS = 1560;
 const NAV_AT_MS = 1560;  // ~1400ms of animation + ~160ms hold on the resolved frame
 const REDUCED_MS = 320;  // reduced-motion: brief fade, then go
 
-export default function PinDropTransition({ href = '/#find', className, children, autoStart = false }) {
+export default function PinDropTransition({ href = '/#find', className, children, autoStart = false, hidden = false }) {
   const router = useRouter();
   const [playing, setPlaying] = useState(false);
   const timers = useRef([]);
@@ -113,9 +113,26 @@ export default function PinDropTransition({ href = '/#find', className, children
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoStart]);
 
+  // `hidden`: the hero's address-pick flow now fires this automatically
+  // (autoStart) with nothing left for someone to click -- rendering a
+  // real, invisible <a> here instead of skipping the element entirely
+  // keeps `begin`'s DOM-free logic untouched, but it must be taken out of
+  // the tab order and the accessibility tree, or a screen-reader/keyboard
+  // user would land on a link that looks like it does nothing.
+  const hiddenStyle = hidden
+    ? { position: 'absolute', width: 1, height: 1, padding: 0, margin: -1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }
+    : undefined;
+
   return (
     <>
-      <a href={href} onClick={start} className={className}>{children}</a>
+      <a
+        href={href}
+        onClick={start}
+        className={className}
+        style={hiddenStyle}
+        aria-hidden={hidden || undefined}
+        tabIndex={hidden ? -1 : undefined}
+      >{children}</a>
 
       {playing && typeof document !== 'undefined' && createPortal(
         <div className="pdt" role="presentation" aria-hidden="true">
