@@ -208,7 +208,7 @@ export default function ReportModal({
         captionsOnly: Boolean(galleryOnly),
       }, 'analysis');
 
-      const { analysis, summary, aiUnavailable, captionedCount } = analysed || {};
+      const { analysis, captions, summary, aiUnavailable, captionedCount } = analysed || {};
       if (aiUnavailable) setAiNotice(true);
 
       // Three separate ways a run can come back short of what this modal
@@ -216,9 +216,7 @@ export default function ReportModal({
       // timed out, images the model didn't describe, and a solar
       // computation that failed and took the monthly table with it.
       const missingFrames = SHOTS.length - screenshots.length;
-      const missingCaptions = typeof captionedCount === 'number'
-        ? Math.max(0, screenshots.length - captionedCount)
-        : 0;
+      const missingCaptions = Math.max(0, screenshots.length - (captionedCount || 0));
       const noTable = !summary?.monthlySummary?.length;
       if (missingFrames > 0 || missingCaptions > 0 || noTable) {
         setShortfall({ frames: missingFrames, captions: missingCaptions, table: noTable });
@@ -229,7 +227,7 @@ export default function ReportModal({
 
       const { mainHtml, galleryHtml } = await postJson('/api/sunscout/report/pdf', {
         lat, lon, tzOffset, address: addr, floor, facing, screenshots,
-        analysis: analysis || '', summary,
+        analysis: analysis || '', captions: captions || {}, summary,
         reportLabel: reportLabel || undefined,
         facingAssumptionNote: (!facingTouched && facingSuggestion) ? facingSuggestion.sentence : undefined,
         avRecord: areaRecord || undefined, combinedScore, unitScore, areaWeight, unitWeight,
