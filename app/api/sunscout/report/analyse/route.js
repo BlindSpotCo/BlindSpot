@@ -190,11 +190,17 @@ Be concrete about what you can actually see. Never end mid-sentence. If an image
     return { inlineData: { mimeType: match ? match[1] : 'image/jpeg', data: match ? match[2] : sh.base64 } };
   });
 
+  // One deadline for the whole pass. The gap-filling below can issue up to
+  // a dozen small requests, and without a ceiling a persistent rate limit
+  // would have it retrying long after the rest of the report was ready.
+  const startedAt = Date.now();
+  const timeLeft = () => budgetMs - (Date.now() - startedAt);
+
   // A budget per batch, not one clock shared by all of them: a slow first
   // batch used to leave the second with too little time to even ask.
   const perBatchMs = Math.max(15_000, Math.floor(budgetMs / Math.max(1, batches.length)));
 
-  const runBatch = async ({ offset, shots }) => {
+  const runBatch = async ({ offset, shots, ms }) => {
     const out = new Map(); // global image index (0-based) -> description
     try {
       // thinkingBudget: 0 is the whole fix for the missing descriptions.
@@ -211,7 +217,7 @@ Be concrete about what you can actually see. Never end mid-sentence. If an image
       // Describing what is in a picture needs no reasoning chain, so the
       // budget goes to zero and every token is spent on the answer.
       const { call } = geminiCaller({
-        budgetMs: perBatchMs,
+        budgetMs: ms || perBatchMs,
         maxOutputTokens: 4096,
         generationConfig: {
           responseMimeType: 'application/json',
@@ -262,10 +268,59 @@ Be concrete about what you can actually see. Never end mid-sentence. If an image
     got.forEach((v, k) => described.set(k, v));
   }
 
-  console.log(`[report/analyse] captions: ${described.size}/${screenshots.length} images described.`);
+  // Whatever is still missing, ask for again -- and ask for exactly the
+  // images that are missing, nothing else.
+  //
+  // A batch is all-or-nothing: one rate limit, one truncated JSON body, one
+  // safety filter, and six images come back with nothing while the other six
+  // are fine. That is precisely what shipped -- six descriptions, twelve
+  // images -- and no amount of tuning the batch size fixes a failure mode
+  // that takes the whole batch with it.
+  //
+  // So: don't tune it, close it. Retry the gaps in smaller groups, then one
+  // image at a time. A single-image request is the smallest thing this API
+  // will ever be asked for, and by the time we are down to that we are only
+  // paying for the frames that actually failed.
+  const missingAfter = () => screenshots
+    .map((_, i) => i)
+    .filter((i) => !described.has(i));
+
+  let gaps = missingAfter();
+  // Two passes: threes, then ones. Each pass only sees what the previous
+  // one failed to get.
+  for (const size of [3, 1]) {
+    if (gaps.length === 0 || timeLeft() < 8_000) break;
+    console.warn(`[report/analyse] ${gaps.length} image(s) still undescribed; retrying in groups of ${size}.`);
+    for (let i = 0; i < gaps.length; i += size) {
+      if (timeLeft() < 8_000) break;
+      const idxs = gaps.slice(i, i + size);
+      // A short breath between requests. The failures this is recovering
+      // from are most often a per-minute limit, and hammering it is how the
+      // retry becomes part of the problem.
+      await new Promise((r) => setTimeout(r, 700));
+      const got = await runBatch({
+        offset: 0,
+        shots: idxs.map((n) => screenshots[n]),
+        // A small group needs far less room than a full batch, and a tight
+        // ceiling here keeps the whole pass inside its deadline.
+        ms: Math.min(14_000, Math.max(8_000, timeLeft() - 2_000)),
+      });
+      got.forEach((v, k) => {
+        const real = idxs[k];
+        if (real != null) described.set(real, v);
+      });
+    }
+    gaps = missingAfter();
+  }
+
+  const n = described.size;
+  if (n < screenshots.length) {
+    console.error(`[report/analyse] gave up with ${n}/${screenshots.length} images described; missing indices: ${gaps.join(', ')}`);
+  }
+  console.log(`[report/analyse] captions: ${n}/${screenshots.length} images described.`);
   return {
     captions: Object.fromEntries(described),
-    count: described.size,
+    count: n,
   };
 }
 

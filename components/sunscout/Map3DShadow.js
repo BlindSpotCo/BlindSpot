@@ -208,10 +208,50 @@ window.addEventListener('message',function(e){
     if(!allPts||allPts.length===0){console.warn('[Map3DShadow iframe] allPts empty, sending null screenshot');window.parent.postMessage({type:'screenshotReady',label:lbl,data:null},'*');return;}
     ai=best2;updateView(allPts[best2]);drawArc();
 
-    // Wait for tiles/shadows to render, then composite into a FIXED output size
-    // so every screenshot in the report is identical dimensions regardless of
+    // Wait for the tiles and shadows to settle, then composite into a FIXED
+    // output size so every screenshot is identical dimensions regardless of
     // the live iframe's viewport at capture time.
-    setTimeout(function(){
+    //
+    // This used to be a flat 4.2 second wait per frame, which is where the
+    // minute went: twelve frames could not finish in less than fifty
+    // seconds however fast the tiles actually arrived. Now it watches the
+    // canvas instead of the clock -- it samples a 32x32 thumbnail of the
+    // GL canvas, and once two consecutive samples are identical the scene
+    // has stopped changing and there is nothing left to wait for. On a
+    // quick connection that is around 1.5s a frame rather than 4.2.
+    //
+    // The 4.2s cap is still there as the ceiling, so the slowest case is
+    // exactly what it was before and no frame can be taken early on a
+    // connection that genuinely needs the time.
+    function whenSettled(done){
+      var CAP_MS=4200, MIN_MS=900, STEP=250;
+      var t0=Date.now(), last=null, stable=0;
+      var probe=document.createElement('canvas'); probe.width=32; probe.height=32;
+      var pctx=probe.getContext('2d', { willReadFrequently:true });
+      function sample(){
+        try{
+          var gl=document.querySelector('#map canvas');
+          if(!gl) return null;
+          pctx.drawImage(gl,0,0,32,32);
+          return pctx.getImageData(0,0,32,32).data.join(',');
+        }catch(e){ return null; }
+      }
+      function tick(){
+        var waited=Date.now()-t0;
+        if(waited>=CAP_MS){ done(); return; }
+        var now=sample();
+        // A tainted or missing canvas means we cannot tell -- fall back to
+        // the old behaviour rather than guessing.
+        if(now===null){ setTimeout(done, Math.max(0, CAP_MS-waited)); return; }
+        if(now===last) stable++; else stable=0;
+        last=now;
+        if(waited>=MIN_MS && stable>=1){ done(); return; }
+        setTimeout(tick, STEP);
+      }
+      setTimeout(tick, MIN_MS);
+    }
+
+    whenSettled(function(){
       try{
         var liveW=window.innerWidth, liveH=window.innerHeight;
         var CAP_W=960, CAP_H=640;
@@ -291,7 +331,7 @@ window.addEventListener('message',function(e){
         console.error('[Map3DShadow iframe] captureScreenshot outer catch for "'+lbl+'":', err);
         window.parent.postMessage({type:'screenshotReady',label:lbl,data:null},'*');
       }
-    },4200);
+    });
   }
 });
 setTimeout(function(){

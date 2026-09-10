@@ -413,8 +413,8 @@ export async function POST(req) {
 
 
   const monthlyTableSection = summary?.monthlySummary ? `
-    <h2 style="font-size:16px;font-weight:800;color:${INK};margin:0 0 14px;font-family:${DISPLAY};">Monthly Sunlight Data</h2>
-    <table style="width:100%;border-collapse:collapse;font-size:12px;font-family:Arial,sans-serif;margin-bottom:12px;">
+    <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:12.5px;font-family:Arial,sans-serif;margin-bottom:12px;min-width:600px;">
       <thead>
         <tr style="background:${CARD};">
           ${['Month','Sunrise','Sunset','Noon Elevation','Usable Sun','Peak Window',`Floor ${safeFloor} Clearance`]
@@ -435,6 +435,7 @@ export async function POST(req) {
         `).join('')}
       </tbody>
     </table>
+    </div>
 
     <!-- Honesty line: real OSM data-completeness check, not a canned disclaimer -->
     ${summary.buildingHeightNote ? `
@@ -961,14 +962,21 @@ export async function POST(req) {
       </div>` : ''}
     </div>
 
+    ${monthlyTableSection ? `
+    <div style="margin-bottom:36px;">
+      <div style="font-size:11.5px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px;">Sunlight, month by month</div>
+      <p style="font-size:13px;color:${DIM};line-height:1.7;margin-bottom:16px;max-width:64ch;">
+        Floor ${safeFloor}, facing ${safeFacing}. Sunrise and sunset are true for this location; usable hours and
+        floor clearance are calculated from the sun's angle against a general estimate of the buildings around it.
+      </p>
+      ${monthlyTableSection}
+    </div>
+    <div style="border-top:2px solid ${INK};padding-top:30px;margin-bottom:30px;">
+      <div style="font-size:11.5px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.12em;">What that looks like on the ground</div>
+    </div>` : ''}
+
     ${screenshotPages}
 
-    ${monthlyTableSection ? `
-    <div style="padding:34px 0 0;border-top:2px solid ${INK};margin-top:14px;">
-      <div style="font-size:11.5px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px;">The numbers behind the pictures</div>
-      <p style="font-size:13px;color:${DIM};line-height:1.7;margin-bottom:18px;max-width:64ch;">Month by month for floor ${safeFloor}. Sunrise and sunset are true for this location; usable hours and floor clearance are calculated from the sun's angle against a general estimate of the buildings around it.</p>
-      ${monthlyTableSection}
-    </div>` : ''}
 
     <div style="margin-top:38px;padding-top:17px;border-top:1px solid ${LINE};display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
       <div style="display:flex;align-items:center;gap:7px;">
