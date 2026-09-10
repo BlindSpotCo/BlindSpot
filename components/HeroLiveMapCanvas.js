@@ -13,24 +13,14 @@
 // normal flow, so nothing can overlap regardless of how tall the
 // headline wraps on a given screen.
 //
-// The insight strip below the search box used to be three static,
-// invented lines ("Bright most of the year" etc.) that never changed no
-// matter what you searched -- looked like decoration, not product, and
-// didn't describe anything BlindSpot actually does per-address without a
-// floor/facing. It's real now, sourced from the same two things the rest
-// of the app already treats as ground truth for a picked address:
-//   - /api/av-localities/lookup -- the real scored Neighbourhood record
-//     for this exact PIN code, when BlindSpot has one (five cities,
-//     309 pincodes right now -- see lib/aslivastu). Reuses verdictFor()/
-//     scoreColor() from AVDetailedReadout.js so the phrasing/colour
-//     matches the real report, not a homepage-only invention.
-//   - /api/aqi -- live modelled air quality for the exact coordinate,
-//     works for effectively any point in India, not just covered pins
-//     (see that route's own header comment). aqiCategory() is the same
-//     CPCB-band function the real scoring pipeline uses.
-// A floor/facing-based Home Comfort number genuinely can't be shown here
-// -- the hero only has a pin, not a unit -- so rather than fake one, the
-// CTA copy says plainly what the next step actually adds.
+// Picking an address doesn't show an intermediate insight strip any
+// more -- it used to flash the neighbourhood score / live AQI for a
+// beat before the report opened, but that read as one more thing in the
+// way of a "straight to the report" flow. Picking a result just flies
+// the map to it and opens the report; scoreColor() from
+// AVDetailedReadout.js is still used for the city panel's neighbourhood
+// list below, which is a real, standing list rather than a one-off
+// glimpse.
 
 import { useRouter } from 'next/navigation';
 import { useState, useRef, useCallback, useEffect } from 'react';
@@ -38,8 +28,7 @@ import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import PinDropTransition from '@/components/PinDropTransition';
-import { verdictFor, scoreColor } from '@/components/property-score/AVDetailedReadout';
-import { aqiCategory } from '@/lib/aslivastu/aqi';
+import { scoreColor } from '@/components/property-score/AVDetailedReadout';
 import TypewriterCycle from '@/components/TypewriterCycle';
 
 // Same default coordinates as the homepage's original rotating
@@ -48,11 +37,12 @@ const DEFAULT_CENTER = { lat: 12.9716, lon: 77.5946 };
 const DEFAULT_ZOOM = 12.4;
 const FLY_ZOOM = 15;
 
-// How long the insight chips get to sit on screen, once they're ready,
-// before the report opens on its own. Selecting an address used to need
-// a second, separate click on a "see the report" button below this --
-// now that click is gone: picking an address is enough, this is just a
-// short beat so the neighbourhood/AQI facts aren't yanked away unread.
+// How long the map sits on the picked pin -- fly-to still playing,
+// pin-drop still registering -- before the report opens on its own.
+// Selecting an address used to need a second, separate click on a
+// "see the report" button; now that click is gone, this is just enough
+// of a beat that the pin doesn't get covered by the transition the
+// instant it lands.
 const AUTO_REPORT_HOLD_MS = 300;
 
 // Real categories BlindSpot actually scores -- not invented copy.
@@ -126,16 +116,6 @@ function IntroFly({ lat, lon, zoom }) {
   return null;
 }
 
-// AQI's 0-500 scale runs the opposite direction of a 0-100 "score" --
-// low AQI is good. This only decides the chip's accent colour, same
-// bands aqiCategory() already uses.
-function aqiAccent(aqi) {
-  if (aqi == null) return 'warn';
-  if (aqi <= 100) return 'sun';
-  if (aqi <= 200) return 'warn';
-  return 'plum';
-}
-
 export default function HeroLiveMapCanvas() {
   const router = useRouter();
   const [query, setQuery] = useState('');
@@ -144,10 +124,7 @@ export default function HeroLiveMapCanvas() {
   const [loading, setLoading] = useState(false);
   const [pin, setPin] = useState(null);
   const [flyKey, setFlyKey] = useState(0);
-  const [revealed, setRevealed] = useState(false);
   const [autoGo, setAutoGo] = useState(false);
-  const [neighbourhood, setNeighbourhood] = useState(null); // null | {found, record?}
-  const [aqi, setAqi] = useState(null); // null | {aqi,...} | 'unavailable'
   const debounceRef = useRef(null);
   const boxRef = useRef(null);
   const requestIdRef = useRef(0);
@@ -197,7 +174,6 @@ export default function HeroLiveMapCanvas() {
     const v = e.target.value;
     setQuery(v);
     setOpen(true);
-    setRevealed(false);
     // Typing again backs out of a just-opened city panel -- the box goes
     // back to being a plain search the moment someone edits the query,
     // rather than leaving a stale neighbourhood list sitting there under
@@ -279,10 +255,7 @@ export default function HeroLiveMapCanvas() {
     setOpen(false);
     setResults([]);
     setFlyKey((k) => k + 1);
-    setRevealed(false);
     setAutoGo(false);
-    setNeighbourhood(null);
-    setAqi(null);
 
     router.prefetch?.(
       `/report?lat=${r.lat}&lon=${r.lon}` +
@@ -295,33 +268,12 @@ export default function HeroLiveMapCanvas() {
     // already uses for exactly this race.
     const reqId = ++requestIdRef.current;
 
-    const neighbourhoodPromise = r.postcode
-      ? fetch(`/api/av-localities/lookup?pin=${encodeURIComponent(r.postcode)}`)
-          .then((res) => res.json())
-          .catch(() => ({ found: false }))
-      : Promise.resolve({ found: false });
-
-    const aqiPromise = fetch(`/api/aqi?lat=${r.lat}&lon=${r.lon}`)
-      .then((res) => res.json())
-      .catch(() => ({ aqi: null }));
-
-    Promise.allSettled([neighbourhoodPromise, aqiPromise]).then(([nRes, aRes]) => {
-      if (reqId !== requestIdRef.current) return;
-      const nData = nRes.status === 'fulfilled' ? nRes.value : { found: false };
-      const aData = aRes.status === 'fulfilled' ? aRes.value : { aqi: null };
-      setNeighbourhood(nData);
-      setAqi(aData?.aqi != null ? aData : 'unavailable');
-      // Small deliberate floor so the pin-drop + fly animation always
-      // gets to register before the strip pops in, even when both
-      // fetches resolve near-instantly from a warm cache.
-      setTimeout(() => {
-        if (reqId !== requestIdRef.current) return;
-        setRevealed(true);
-        // Straight to the report from here -- no extra click. The CTA
-        // link below still works if someone taps it before this fires.
-        setTimeout(() => { if (reqId === requestIdRef.current) setAutoGo(true); }, AUTO_REPORT_HOLD_MS);
-      }, 450);
-    });
+    // Straight to the report from here -- no extra click, no strip to
+    // read first. Just enough of a hold that the pin-drop + fly-to have
+    // time to register before the full-screen transition covers them.
+    setTimeout(() => {
+      if (reqId === requestIdRef.current) setAutoGo(true);
+    }, AUTO_REPORT_HOLD_MS);
   };
 
   useEffect(() => {
@@ -343,12 +295,6 @@ export default function HeroLiveMapCanvas() {
     const raf = requestAnimationFrame(() => setCityPanelOpen(true));
     return () => cancelAnimationFrame(raf);
   }, [cityPanel]);
-
-  const nRecord = neighbourhood?.found ? neighbourhood.record : null;
-  const nVerdict = nRecord ? verdictFor(nRecord.nqi_composite) : null;
-  const aqiValue = aqi && aqi !== 'unavailable' ? aqi.aqi : null;
-  const aqiLabel = aqiValue != null ? aqiCategory(aqiValue) : null;
-  const hasAnyInsight = !!nRecord || aqiValue != null;
 
   const filteredCityNeighbourhoods = (() => {
     if (!cityPanel?.neighbourhoods) return [];
@@ -541,43 +487,10 @@ export default function HeroLiveMapCanvas() {
           )}
         </div>
 
-        {/* No button here any more -- picking an address already goes
-            straight to the report on its own (see autoGo/pick() above), so
-            a "see the full breakdown" link that nobody has to click read as
-            a leftover step, not a real one. When there's something real to
-            show (a covered neighbourhood's score and/or live AQI), it gets
-            a brief, read-only glimpse before the report opens; when there
-            isn't, nothing shows here at all -- it still just opens. */}
-        {pin && hasAnyInsight && (
-          <div className={`hlm-panel${revealed ? ' is-visible' : ''}`}>
-            <div className="hlm-panel-facts">
-              {nRecord && (
-                <div className="hlm-fact">
-                  <span className="hlm-fact-dot" style={{ background: scoreColor(nRecord.nqi_composite) }} />
-                  <div>
-                    <span className="hlm-fact-label">{nRecord.area || nRecord.name} &middot; {nVerdict.label}</span>
-                    <span className="hlm-fact-sub">Neighbourhood Score {nRecord.nqi_composite}/100</span>
-                  </div>
-                </div>
-              )}
-              {nRecord && aqiValue != null && <span className="hlm-fact-div" aria-hidden="true" />}
-              {aqiValue != null && (
-                <div className="hlm-fact">
-                  <span className="hlm-fact-dot" style={{ background: aqiAccent(aqiValue) === 'sun' ? 'var(--ss)' : aqiAccent(aqiValue) === 'plum' ? 'var(--plum)' : 'var(--brand-yellow)' }} />
-                  <div>
-                    <span className="hlm-fact-label">{aqiLabel} air quality</span>
-                    <span className="hlm-fact-sub">Live AQI {aqiValue} right now</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
         {/* The actual navigation, invisible -- see PinDropTransition's own
-            `hidden` prop. Rendered whenever there's a pin at all (not just
-            when hasAnyInsight), so an uncovered address still opens its
-            report the same way, just with nothing visible above it. */}
+            `hidden` prop. Picking an address no longer shows anything on
+            screen before the report opens -- it just flies to the pin
+            and opens. */}
         {pin && (
           <PinDropTransition
             href={`/report?lat=${pin.lat}&lon=${pin.lon}` +
