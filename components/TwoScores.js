@@ -110,7 +110,7 @@ export default function TwoScores() {
         <div className="section-head">
           <div>
             <span className="eyebrow">02 - The Two Scores</span>
-            <h2>The area, and the exact flat. Rated separately, then <span className="gold-word">combined</span>.</h2>
+            <h2>What the neighbourhood does to a home, and what the home does to you. One <span className="gold-word">verdict</span>.</h2>
           </div>
         </div>
 
