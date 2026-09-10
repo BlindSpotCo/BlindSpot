@@ -2230,9 +2230,13 @@ header.header-on-dark .brand-word-img{
   font-family:'Geist Mono',monospace; font-size:12px; letter-spacing:.08em; text-transform:uppercase;
   color:rgba(255,253,248,0.62); padding-left:16px; border-left:1px solid rgba(255,255,255,0.15);
 }
+/* Two columns, not three -- the old third ("Explore") just repeated the
+   header nav's own links, so this already reads fine as the same
+   2-column shape the ≤900px layout below used to fall back to. */
 .footer-row2{
   position:relative; z-index:1;
-  display:grid; grid-template-columns:repeat(3, 1fr); gap:var(--space-6);
+  display:grid; grid-template-columns:repeat(2, 1fr); gap:var(--space-6);
+  max-width:520px; margin:0 auto;
   padding:var(--space-6) 0;
 }
 .footer-col{ display:flex; flex-direction:column; gap:12px; align-items:center; text-align:center }
@@ -2342,9 +2346,6 @@ header.header-on-dark .brand-word-img{
 }
 .footer-fine{ font-family:'Geist Mono',monospace; font-size:12.5px; letter-spacing:.03em; color:rgba(255,253,248,0.62) }
 .footer-copyright{ font-size:12.5px; color:rgba(255,253,248,0.62) }
-@media (max-width:900px){
-  .footer-row2{ grid-template-columns:1fr 1fr; }
-}
 @media (max-width:640px){
   .section-closing2{ padding:var(--space-7) 0 0 }
   .closing2-inner{ padding-bottom:var(--space-7) }

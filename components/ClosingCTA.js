@@ -12,15 +12,18 @@
 // that, not the cursor-spotlight glow tried first:
 // - Small brand lockup as its own top strip (was mixed in as a 3rd
 //   column before).
-// - Three real link columns instead of two. The third is now the
-//   team itself, moved here from the old standalone TeamSection --
+// - Real link columns, not the old two static ones. The team itself
+//   is one of them, moved here from the old standalone TeamSection --
 //   that section left a large stacked-padding gap after How It Works
 //   (its own 88px top padding on top of How It Works' 88px bottom
 //   padding + the step rail's CTA margin) with barely any content to
 //   justify a full section, so the two founder cards (same real
 //   names/roles/LinkedIn links TeamSection used) live here instead.
 //   id="team" carries over so the nav's existing #team links still
-//   land in the right place.
+//   land in the right place. Originally shipped with a third "Explore"
+//   column (How It Works / Tools / The Team) repeating the header
+//   nav's own links verbatim -- dropped later since the header sits
+//   right above this on every page and the repeat added nothing.
 // - The wordmark is its own full-width statement row. Two stacked
 //   layers occupy the same box: BLINDSPOT on top, and the same real
 //   tagline already used above (.footer-tagline's "Property
@@ -82,12 +85,13 @@ export default function ClosingCTA() {
           </div>
 
           <div className="footer-row2">
-            <div className="footer-col">
-              <span className="footer-col-title">Explore</span>
-              <a href="/#how-it-works">How It Works</a>
-              <a href="/#products">Tools</a>
-              <a href="/#team">The Team</a>
-            </div>
+            {/* Used to also have an "Explore" column repeating the header
+                nav's own How It Works / Tools / The Team links verbatim --
+                the header is right above this on every page, so this was
+                the exact same three links twice on screen with nothing new
+                in the second copy. Down to the two columns that actually
+                add something the nav doesn't: account actions, and the
+                team itself. */}
             <div className="footer-col">
               <span className="footer-col-title">Get Started</span>
               <a href="/#find" onClick={goToSearch}>Uncover Your BlindSpot</a>
