@@ -4,7 +4,7 @@
 // BlindSpot has no data for. "404" tells a home buyer nothing; say which
 // thing is missing and where to go instead.
 
-export const metadata = { title: 'Not found — BlindSpot' };
+export const metadata = { title: 'Not found' };
 
 export default function NotFound() {
   return (

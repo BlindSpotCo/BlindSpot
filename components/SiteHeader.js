@@ -25,6 +25,7 @@
 // buttons on screen at once. Removed; the nav CTA (and, on the homepage,
 // the closing section's CTA) already covers it.
 
+import { goToSearch } from '@/components/goToSearch';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -187,7 +188,7 @@ export default function SiteHeader({ homeHref = '/' }) {
             </div>
             <div className="nav-cta">
               {!onFlow && (
-                <Link href="/#find" className="btn-cta-sm">
+                <Link href="/#find" className="btn-cta-sm" onClick={goToSearch}>
                   <span className="btn-cta-full">Uncover Your BlindSpot</span>
                   <span className="btn-cta-short">Start</span>
                 </Link>
@@ -231,7 +232,7 @@ export default function SiteHeader({ homeHref = '/' }) {
             <Link href="/#how-it-works" onClick={closeMobile}>How It Works</Link>
             <Link href="/#products" onClick={closeMobile}>Tools</Link>
             <Link href="/#team" onClick={closeMobile}>The Team</Link>
-            {!onFlow && <Link href="/#find" onClick={closeMobile}>Uncover Your BlindSpot</Link>}
+            {!onFlow && <Link href="/#find" onClick={(e) => { closeMobile(); goToSearch(e); }}>Uncover Your BlindSpot</Link>}
             {checkedAuth && (
               user ? (
                 <>

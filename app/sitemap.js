@@ -22,7 +22,10 @@ export default function sitemap() {
     const scores = JSON.parse(raw);
     localityRoutes = scores.map((r) => ({
       url: `${SITE_URL}/neighbourhood-report/${r.pin_code}`,
-      lastModified: new Date(),
+      // Each record carries when it was actually scored. Stamping every URL
+      // with the build time told crawlers all 309 localities changed on
+      // every deploy, which gets the signal discounted.
+      lastModified: r.scored_at ? new Date(r.scored_at) : new Date(),
       changeFrequency: 'monthly',
       priority: 0.6,
     }));

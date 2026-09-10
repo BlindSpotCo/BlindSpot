@@ -23,22 +23,29 @@ export default function Home() {
       return;
     }
     const seenByParent = {};
+    const revealTimers = [];
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
           const el = entry.target;
-          const parentKey = el.parentElement ? el.parentElement.className : '';
+          // Every top-level .reveal section is a direct child of body, so keying
+      // on the parent's className gave them all the same key and one shared
+      // counter -- the last section, and the whole footer with it, sat at
+      // opacity:0 for 450ms after coming into view. Stagger within a group,
+      // not across the page.
+      const parent = el.parentElement;
+      const parentKey = parent && parent !== document.body ? (parent.className || 'g') : `top:${el.className}`;
           const delayIndex = seenByParent[parentKey] || 0;
           seenByParent[parentKey] = delayIndex + 1;
-          setTimeout(() => el.classList.add('in-view'), delayIndex * 90);
+          revealTimers.push(setTimeout(() => el.classList.add('in-view'), delayIndex * 90));
           io.unobserve(el);
         });
       },
       { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
     );
     revealEls.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    return () => { io.disconnect(); revealTimers.forEach(clearTimeout); };
   }, []);
 
   return (

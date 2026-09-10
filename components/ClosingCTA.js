@@ -39,6 +39,7 @@
 //   "Uncover Your BlindSpot" entry point (this one, the nav, the
 //   footer link) now just scrolls straight to the hero's address box.
 
+import { goToSearch } from '@/components/goToSearch';
 import Link from 'next/link';
 
 const TEAM = [
@@ -64,7 +65,7 @@ export default function ClosingCTA() {
         <span className="eyebrow">05 - One Pin Away</span>
         <h2>Because every property has a blindspot, and we&apos;re making it <span className="gold-word">visible</span>.</h2>
         <div className="closing2-ctas">
-          <Link href="/#find" className="btn btn-lg btn-cta">
+          <Link href="/#find" className="btn btn-lg btn-cta" onClick={goToSearch}>
             Uncover Your BlindSpot <span className="btn-cta-arrow">→</span>
           </Link>
         </div>
@@ -89,7 +90,7 @@ export default function ClosingCTA() {
             </div>
             <div className="footer-col">
               <span className="footer-col-title">Get Started</span>
-              <a href="/#find">Uncover Your BlindSpot</a>
+              <a href="/#find" onClick={goToSearch}>Uncover Your BlindSpot</a>
               <a href="/signup">Create an account</a>
               <a href="/login">Sign in</a>
             </div>

@@ -49,6 +49,18 @@ export default function PinDropTransition({ href = '/#find', className, children
   const [playing, setPlaying] = useState(false);
   const timers = useRef([]);
 
+  // The readout printed Bangalore's coordinates over every address in the
+  // country. The real ones are already in the href this link carries.
+  const coords = (() => {
+    try {
+      const u = new URL(href, typeof window === 'undefined' ? 'https://x' : window.location.href);
+      const la = parseFloat(u.searchParams.get('lat'));
+      const lo = parseFloat(u.searchParams.get('lon'));
+      if (!Number.isFinite(la) || !Number.isFinite(lo)) return '';
+      return `${Math.abs(la).toFixed(4)}\u00B0 ${la >= 0 ? 'N' : 'S'} \u00B7 ${Math.abs(lo).toFixed(4)}\u00B0 ${lo >= 0 ? 'E' : 'W'}`;
+    } catch { return ''; }
+  })();
+
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
   const start = useCallback((e) => {
@@ -133,7 +145,7 @@ export default function PinDropTransition({ href = '/#find', className, children
 
           <div className="pdt-readout mono">
             <span className="pdt-readout-line">ACQUIRING SITE</span>
-            <span className="pdt-readout-sub">12.9716° N · 77.5946° E</span>
+            <span className="pdt-readout-sub">{coords || 'Locating'}</span>
           </div>
         </div>,
         document.body

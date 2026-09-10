@@ -12,6 +12,13 @@ import { Suspense } from 'react';
 import ReportScreen from '@/components/report/ReportScreen';
 
 export const metadata = {
+  // The root layout sets canonical:'/' and any route that doesn't override
+  // it inherits that, so every /report?lat=..&lon=.. page was telling Google
+  // it was a duplicate of the homepage. It is per-address and has nothing
+  // useful to crawl without its params, so it opts out rather than claiming
+  // to be somewhere else.
+  robots: { index: false, follow: true },
+  alternates: { canonical: null },
   title: 'Your BlindSpot report',
   description: 'The neighbourhood, the flat, and one honest verdict for the two together.',
 };

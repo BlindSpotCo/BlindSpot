@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 
 const HeroLiveMapCanvas = dynamic(() => import('./HeroLiveMapCanvas'), {
   ssr: false,
-  loading: () => <div className="hlm-root hlm-loading" aria-hidden="true" />,
+  loading: () => <div id="find" className="hlm-root hlm-loading" aria-hidden="true" />,
 });
 
 export default function HeroLiveMap() {
