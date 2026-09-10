@@ -44,7 +44,7 @@ const TOTAL_MS = 1560;
 const NAV_AT_MS = 1560;  // ~1400ms of animation + ~160ms hold on the resolved frame
 const REDUCED_MS = 320;  // reduced-motion: brief fade, then go
 
-export default function PinDropTransition({ href = '/#find', className, children }) {
+export default function PinDropTransition({ href = '/#find', className, children, autoStart = false }) {
   const router = useRouter();
   const [playing, setPlaying] = useState(false);
   const timers = useRef([]);
@@ -63,11 +63,12 @@ export default function PinDropTransition({ href = '/#find', className, children
 
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
-  const start = useCallback((e) => {
-    // Let modifier-clicks / middle-clicks behave like a normal link so we
-    // don't break "open in new tab".
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-    e.preventDefault();
+  // Core sequence, split out from the click handler below so it can also
+  // fire on its own -- see `autoStart`, used by the hero's address-pick
+  // flow to play this same "acquiring site" transition automatically
+  // once an address is chosen, instead of making someone click a second
+  // "see the report" button after already clicking the address.
+  const begin = useCallback(() => {
     if (playing) return;
 
     const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -94,6 +95,23 @@ export default function PinDropTransition({ href = '/#find', className, children
       timers.current.push(setTimeout(() => setPlaying(false), 400));
     }, navAt));
   }, [playing, router, href]);
+
+  const start = useCallback((e) => {
+    // Let modifier-clicks / middle-clicks behave like a normal link so we
+    // don't break "open in new tab".
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    begin();
+  }, [begin]);
+
+  // autoStart flips false -> true once the caller decides it's time to
+  // go (e.g. the hero's own short "here's what we found" beat) -- no
+  // click required. The visible link still works too, for anyone who
+  // taps it first.
+  useEffect(() => {
+    if (autoStart) begin();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoStart]);
 
   return (
     <>

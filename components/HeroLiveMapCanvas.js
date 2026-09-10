@@ -32,6 +32,7 @@
 // -- the hero only has a pin, not a unit -- so rather than fake one, the
 // CTA copy says plainly what the next step actually adds.
 
+import { useRouter } from 'next/navigation';
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
@@ -46,6 +47,13 @@ import TypewriterCycle from '@/components/TypewriterCycle';
 const DEFAULT_CENTER = { lat: 12.9716, lon: 77.5946 };
 const DEFAULT_ZOOM = 12.4;
 const FLY_ZOOM = 15;
+
+// How long the insight chips get to sit on screen, once they're ready,
+// before the report opens on its own. Selecting an address used to need
+// a second, separate click on a "see the report" button below this --
+// now that click is gone: picking an address is enough, this is just a
+// short beat so the neighbourhood/AQI facts aren't yanked away unread.
+const AUTO_REPORT_HOLD_MS = 650;
 
 // Real categories BlindSpot actually scores -- not invented copy.
 // Sunlight/obstruction/shadow come from the Sunscout floor+facing engine
@@ -129,6 +137,7 @@ function aqiAccent(aqi) {
 }
 
 export default function HeroLiveMapCanvas() {
+  const router = useRouter();
   const [query, setQuery] = useState('');
   const [searchMode, setSearchMode] = useState('address');
   const [results, setResults] = useState([]);
@@ -137,6 +146,7 @@ export default function HeroLiveMapCanvas() {
   const [pin, setPin] = useState(null);
   const [flyKey, setFlyKey] = useState(0);
   const [revealed, setRevealed] = useState(false);
+  const [autoGo, setAutoGo] = useState(false);
   const [neighbourhood, setNeighbourhood] = useState(null); // null | {found, record?}
   const [aqi, setAqi] = useState(null); // null | {aqi,...} | 'unavailable'
   const debounceRef = useRef(null);
@@ -224,8 +234,15 @@ export default function HeroLiveMapCanvas() {
     setResults([]);
     setFlyKey((k) => k + 1);
     setRevealed(false);
+    setAutoGo(false);
     setNeighbourhood(null);
     setAqi(null);
+
+    router.prefetch?.(
+      `/report?lat=${r.lat}&lon=${r.lon}` +
+      `&pin_code=${encodeURIComponent(r.postcode || '')}` +
+      `&address=${encodeURIComponent(r.displayName || '')}`
+    );
 
     // Guards against a fast second pick's response landing after an
     // even-faster third pick -- same idiom lib/aslivastu/useLiveAqi.js
@@ -251,7 +268,13 @@ export default function HeroLiveMapCanvas() {
       // Small deliberate floor so the pin-drop + fly animation always
       // gets to register before the strip pops in, even when both
       // fetches resolve near-instantly from a warm cache.
-      setTimeout(() => { if (reqId === requestIdRef.current) setRevealed(true); }, 450);
+      setTimeout(() => {
+        if (reqId !== requestIdRef.current) return;
+        setRevealed(true);
+        // Straight to the report from here -- no extra click. The CTA
+        // link below still works if someone taps it before this fires.
+        setTimeout(() => { if (reqId === requestIdRef.current) setAutoGo(true); }, AUTO_REPORT_HOLD_MS);
+      }, 450);
     });
   };
 
@@ -408,6 +431,7 @@ export default function HeroLiveMapCanvas() {
                     `&pin_code=${encodeURIComponent(pin.postcode || '')}` +
                     `&address=${encodeURIComponent(pin.label || query || '')}`}
               className="hlm-cta"
+              autoStart={autoGo}
             >
               {hasAnyInsight ? 'See sunlight, safety & more' : 'See the full breakdown'} <span>→</span>
             </PinDropTransition>
