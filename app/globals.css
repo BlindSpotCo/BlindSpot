@@ -1706,14 +1706,25 @@
 /* The City/Neighbourhood/Address tabs that used to sit here are gone --
    one box now searches all three (see HeroLiveMapCanvas.js), so there's
    no mode to switch between any more. */
-.hlm-search{
-  display:flex; align-items:center; gap:12px;
+/* The one shape a city pick grows into a neighbourhood list -- see the
+   comment in HeroLiveMapCanvas.js's JSX. Chrome (background/border/
+   shadow/radius) lives here, on the shell; .hlm-search below is just the
+   icon+input row, unstyled, sitting inside it. overflow:hidden clips the
+   city panel's own max-height transition so corners stay clean mid-grow;
+   it does NOT clip this element's own box-shadow (that's drawn outside
+   the border-box, unaffected by an element's own overflow). */
+.hlm-search-shell{
+  position:relative; overflow:hidden;
   background:rgba(255,253,248,0.98); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
   border:1px solid rgba(255,255,255,0.55); border-radius:var(--radius-pill);
-  padding:16px 22px; box-shadow:0 24px 48px -16px rgba(0,0,0,0.6), 0 2px 10px rgba(0,0,0,0.2);
-  transition:box-shadow .2s ease, transform .2s ease;
+  box-shadow:0 24px 48px -16px rgba(0,0,0,0.6), 0 2px 10px rgba(0,0,0,0.2);
+  transition:border-radius .45s cubic-bezier(.16,1,.3,1), box-shadow .2s ease;
 }
-.hlm-search:focus-within{ box-shadow:0 28px 54px -16px rgba(0,0,0,0.65), 0 0 0 3px rgba(245,195,67,0.35); }
+.hlm-search-shell:focus-within{ box-shadow:0 28px 54px -16px rgba(0,0,0,0.65), 0 0 0 3px rgba(245,195,67,0.35); }
+.hlm-search-shell.hlm-shell-city-open{ border-radius:var(--radius-lg); }
+.hlm-search{
+  display:flex; align-items:center; gap:12px; padding:16px 22px;
+}
 .hlm-search svg{ color:var(--text-mute); flex-shrink:0; }
 .hlm-search-input{
   flex:1; min-width:0; border:none; outline:none; background:transparent;
@@ -1753,24 +1764,23 @@
 .hlm-suggest-kind-city{ background:rgba(245,195,67,0.18); color:#8A6A12; }
 .hlm-suggest-kind-neighbourhood{ background:rgba(58,107,80,0.14); color:#2E6349; }
 
-/* The "dynamic island" panel a city-level pick expands into, in place of
-   the plain suggestions dropdown above -- same slot, same paper surface,
-   just taller and with its own head/filter/list instead of one flat set
-   of rows. Starts collapsed+faded and grows in on the next frame (see
-   cityPanelOpen in HeroLiveMapCanvas.js) rather than just appearing, so
-   picking a city reads as the search box itself opening up, not a
-   different UI replacing it. */
-.hlm-city-panel{
-  position:absolute; top:calc(100% + 10px); left:0; right:0; z-index:5;
-  background:var(--paper); border:1px solid var(--line-soft); border-radius:var(--radius-lg);
-  box-shadow:0 24px 48px -16px rgba(0,0,0,0.4);
-  padding:16px 16px 10px;
-  max-height:70px; opacity:0; transform:translateY(-6px) scale(0.98);
+/* The city panel is no longer its own floating card -- it's the bottom
+   section of .hlm-search-shell, revealed by growing its own max-height
+   open (0 -> real height) while the shell's border-radius eases from a
+   full pill to a rounded rect at the same time. Same shell, same paper
+   surface the whole way through: the search bar dissolves into this,
+   nothing new appears next to it. Padding and the divider grow in with
+   it (0 at rest) so there's no seam while it's collapsed. */
+.hlm-city-panel-inner{
+  padding:0 16px; max-height:0; opacity:0;
+  border-top:1px solid transparent;
   overflow:hidden;
-  transition:max-height .42s cubic-bezier(.16,1,.3,1), opacity .28s ease, transform .32s cubic-bezier(.16,1,.3,1);
+  transition:max-height .45s cubic-bezier(.16,1,.3,1), opacity .3s ease,
+             padding .45s cubic-bezier(.16,1,.3,1), border-color .3s ease;
 }
-.hlm-city-panel.is-open{
-  max-height:420px; opacity:1; transform:translateY(0) scale(1);
+.hlm-city-panel-inner.is-open{
+  max-height:460px; opacity:1; padding:14px 16px 10px;
+  border-top-color:var(--line-soft);
 }
 .hlm-city-panel-head{
   display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
@@ -1813,7 +1823,7 @@
 }
 .hlm-city-row-score span{ font-weight:400; color:var(--text-mute); }
 @media (prefers-reduced-motion: reduce){
-  .hlm-city-panel{ transition:none; }
+  .hlm-search-shell, .hlm-city-panel-inner{ transition:none; }
 }
 
 /* Read-only glass strip -- the real neighbourhood score / AQI facts for
