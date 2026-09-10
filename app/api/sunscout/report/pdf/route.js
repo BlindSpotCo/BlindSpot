@@ -276,9 +276,15 @@ export async function POST(req) {
   // against each other. Pulled out to sit directly under the verdict, where
   // the question "so is this a good area with a dark flat, or the reverse?"
   // is the one actually being asked.
+  // What it is like to live here -- the section that turns figures into a
+  // life, and the reason anyone reads past the verdict.
+  const { body: livingBody, rest: afterLiving } = extractSection(afterVerdict, /living here|what it.s like/i);
+  // Who it suits, and who it doesn't. Rendered as its own block because a
+  // buyer's first real question is "is this for someone like me".
+  const { body: suitsBody, rest: afterSuits } = extractSection(afterLiving, /who this is for|who it.s for/i);
   const { body: togetherBody, rest: afterTogether } = hasNeighbourhood
-    ? extractSection(afterVerdict, /read\s*together|area and the flat/i)
-    : { body: '', rest: afterVerdict };
+    ? extractSection(afterSuits, /read\s*together|area and the flat/i)
+    : { body: '', rest: afterSuits };
   const { body: neighbourhoodBody, rest: afterNeighbourhood } = hasNeighbourhood
     ? extractSection(afterTogether, /neighbourhood full analysis/i)
     : { body: '', rest: afterTogether };
@@ -303,6 +309,7 @@ export async function POST(req) {
   const formattedVerdictBody = verdictBodyMinusIdeal ? formatNarrative(verdictBodyMinusIdeal) : '';
   const formattedNeighbourhoodBody = neighbourhoodBody ? formatNarrative(neighbourhoodBody) : '';
   const formattedTogetherBody = togetherBody ? formatNarrative(togetherBody) : '';
+  const formattedLivingBody = livingBody ? formatNarrative(livingBody) : '';
   const formattedAnalysis = formatNarrative(rawAnalysis, { dropLeadingHeader: true });
 
   // ---- Deterministic Consumer Scorecard + Pros/Cons -------------------
@@ -548,9 +555,75 @@ export async function POST(req) {
       ${formattedVerdictBody ? `<div style="${LEAD}">${formattedVerdictBody.replace(new RegExp(`color:${MUTE}`, 'g'), `color:${INK}`).replace(/font-size:14.5px/g, 'font-size:15.5px')}</div>` : ''}
       ${idealForText ? `
       <div style="margin-top:18px;padding:13px 16px;background:${CARD};font-size:14px;color:${INK};line-height:1.7;">
-        <span style="font-weight:700;">Best suited to:</span> ${escapeHtml(idealForText)}
+        <span style="font-weight:700;">Best suited to:</span> ${idealForText}
       </div>` : ''}
     </div>`;
+
+  // Set larger than the rest and given its own rule: this is the part a
+  // person reads twice, and it was previously buried mid-paragraph in a
+  // section about scoring.
+  const livingSection = formattedLivingBody ? `
+    <div style="${RULE}"></div>
+    <div style="margin-bottom:26px;">
+      <div style="${H2}">What living here is actually like</div>
+      <div style="font-size:16.5px;line-height:1.85;color:${INK};">
+        ${formattedLivingBody
+          .replace(new RegExp(`color:${MUTE}`, 'g'), `color:${INK}`)
+          .replace(/font-size:14.5px/g, 'font-size:16.5px')}
+      </div>
+    </div>` : '';
+
+  // Who it suits. The model returns one "- Type: verdict + reasoning" line
+  // per buyer type, plus a closing "- Not for: ...". Split so each reads as
+  // a row with its own answer, rather than a wall of bullets.
+  const suitRows = (suitsBody || '')
+    .split('\n')
+    .map((l) => l.trim())
+    .filter((l) => l.startsWith('- '))
+    .map((l) => {
+      const line = l.slice(2).trim();
+      const i = line.indexOf(':');
+      if (i < 0) return null;
+      const who = line.slice(0, i).trim();
+      const rest = line.slice(i + 1).trim();
+      const m = rest.match(/^(Yes(?:\s*[,-]?\s*(?:but|with|if)[^.]*)?|No|Probably not|Not really|Not for)\b[.,]?\s*/i);
+      return {
+        who,
+        call: m ? m[1].trim() : '',
+        why: m ? rest.slice(m[0].length).trim() : rest,
+        negative: /^not for\b/i.test(who),
+      };
+    })
+    .filter(Boolean);
+
+  const callColor = (c) => {
+    const t = (c || '').toLowerCase();
+    if (t.startsWith('yes') && !t.includes('caveat')) return GOOD;
+    if (t.startsWith('yes')) return OK;
+    return POOR;
+  };
+
+  const suitsSection = suitRows.length ? `
+    <div style="${RULE}"></div>
+    <div style="margin-bottom:26px;">
+      <div style="${H2}">Who this one is for</div>
+      <p style="font-size:13px;color:${DIM};margin-bottom:18px;">The same flat is a good buy for one person and the wrong buy for another. This is our honest read of which is which.</p>
+      <div style="display:flex;flex-direction:column;">
+        ${suitRows.filter(r => !r.negative).map((r) => `
+          <div style="display:flex;gap:16px;padding:14px 0;border-top:1px solid ${LINE_SOFT};align-items:baseline;flex-wrap:wrap;">
+            <div style="flex:0 0 190px;min-width:150px;">
+              <div style="font-size:15px;font-weight:700;color:${INK};line-height:1.4;">${r.who}</div>
+              ${r.call ? `<div style="font-size:12.5px;font-weight:700;color:${callColor(r.call)};margin-top:3px;">${r.call}</div>` : ''}
+            </div>
+            <div style="flex:1;min-width:240px;font-size:14.5px;color:${MUTE};line-height:1.75;">${r.why}</div>
+          </div>`).join('')}
+      </div>
+      ${suitRows.filter(r => r.negative).map((r) => `
+        <div style="margin-top:18px;padding:14px 17px;background:${CARD};border-left:3px solid ${POOR};">
+          <div style="font-size:12px;font-weight:700;color:${POOR};text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px;">Not for</div>
+          <div style="font-size:14.5px;color:${INK};line-height:1.75;">${r.why || r.who}</div>
+        </div>`).join('')}
+    </div>` : '';
 
   // The two halves read against each other -- the one thing a combined
   // report can say that neither half can. Two bars, one headline, the model's
@@ -706,6 +779,8 @@ export async function POST(req) {
 
       ${aiUnavailable ? aiNote : ''}
       ${openingSection}
+      ${livingSection}
+      ${suitsSection}
       ${togetherSection}
       ${areaSection}
       ${flatSection}
@@ -791,9 +866,6 @@ export async function POST(req) {
           var heightLeft = imgHeight;
           var position = 0;
           pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-
-          }
-
           heightLeft -= pageHeight;
           while (heightLeft > 0) {
             position = heightLeft - imgHeight;

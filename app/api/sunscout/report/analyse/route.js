@@ -349,32 +349,58 @@ COMBINED BLINDSPOT SCORE: ${combinedScore ?? 'not computed'}/100 — built from 
   // only place they met was one clause of the verdict paragraph. A buyer
   // deciding between a good area with a dark flat and a bright flat in a
   // weaker area got no help with exactly that question.
-  const togetherSectionNumber = 2;
-  const neighbourhoodSectionNumber = 3;
-  // Floor and facing were two sections that repeated each other -- both
-  // walked through the same monthly numbers, one keyed on height and one on
-  // orientation. One section, and the output is shorter as well as clearer.
-  const flatSectionNumber = hasNeighbourhood ? 4 : 1;
+  // Section numbers. The order is the order someone actually asks their
+  // questions in: is this a good buy, what would living here be like, is it
+  // for someone like me, and then the two halves in detail.
+  const livingSectionNumber = 2;
+  const suitsSectionNumber = 3;
+  const neighbourhoodSectionNumber = 4;
+  const flatSectionNumber = hasNeighbourhood ? 5 : 2;
 
   const verdictInstruction = hasNeighbourhood
     ? `1. HOME BUYER VERDICT
-This is the single most important section — many buyers will read only this. Write it as a short paragraph (NOT bullets, NOT a list of numbers).
-The FIRST paragraph specifically must be written in simple, everyday words — the way you'd explain it out loud to a friend who has no real-estate or technical background. No jargon, no acronyms, no dense stat-dumping. In 3-5 short sentences, tell them plainly: what kind of area this is to live in, what this specific flat is like for sunlight and comfort, and what your overall take is — good pick, okay with caveats, or better to look elsewhere. You may name the combined score and Home Comfort Score once, briefly, but the paragraph should read naturally even to someone who ignores the numbers entirely.
-After that opening paragraph, add 2-4 more sentences going one level deeper: any real trade-offs (e.g. strong area but a shaded unit, or a bright unit in a weaker area), and a concrete recommendation — buy/consider/reconsider, and what floor or facing would improve things if relevant.
-Close this section with one short line starting exactly "- Best fit for: " naming the 1-2 buyer types (from: families with young kids, young professionals/singles, remote workers, retirees, investors, renters) this specific property suits best given everything above — one clause of reasoning per type, not a restated summary.
+Write this to the person, not about the property. Use "you". No bullets, no lists of numbers, no headings inside it.
 
-${togetherSectionNumber}. THE AREA AND THE FLAT, READ TOGETHER
-This is the section that only a combined report can write, so do not let it become a summary of the two that follow.
-Answer one question: do these two halves point the same way, or do they pull against each other? Name it in the first sentence. There are only three honest answers and you must commit to one — both strong, both weak, or split (a good area with a compromised flat, or a comfortable flat in a weaker area).
-Then, in 3-5 sentences of plain everyday English, say what that combination means in practice for someone living here. Be concrete about the trade: an area scoring ${hasNeighbourhood ? avRecord.nqi_composite : 'X'}/100 with a flat at ${unitScore ?? 'Y'}/100 is a different proposition from the reverse, and the reader wants to know which one they are being offered and whether the weaker half is fixable. Say plainly which of the two halves is doing the work in the combined score of ${combinedScore ?? '-'}/100, given the area is weighted ${Math.round((areaWeight ?? 0.5) * 100)}% and the flat ${Math.round((unitWeight ?? 0.5) * 100)}%.
-Then say which half is fixable and which is not, because this is the practical difference: a dark flat can often be answered by a higher floor, a different unit in the same tower, or a different facing — the neighbourhood cannot be changed at all. If a specific floor or facing in this same building would fix a weak flat score, say which and roughly what it would gain. If the weakness is the area, say plainly that no unit in this building escapes it.
-Finish with one sentence naming the single biggest risk in this pairing and the one thing that would most change your mind about it.
-Do not use bullets in this section. Do not repeat the verdict's wording.
+Four to six sentences, in the plainest English you have — the way you'd answer a friend who asked "should I buy this?" over the phone. Cover, in this order: what kind of place this is to live in, what this particular flat is like day to day, the one thing that would most worry you about it, and your actual call — worth pursuing, worth pursuing once one thing checks out, or better to keep looking. Commit to one of those three; a verdict that refuses to land is not a verdict.
+
+Name at most two numbers in the whole paragraph, and only where a number says something a word can't. Never open with a score. Never write "the composite", "the index", "NQI", "the dataset" or "our analysis" — they are buying a home, not reading a spreadsheet.
+Close with one line starting exactly "- Best fit for: " naming the one or two buyer types this suits best, each with a clause of reasoning.
+
+${livingSectionNumber}. WHAT LIVING HERE IS ACTUALLY LIKE
+This is the section that makes the report worth reading, so give it real space — four to six substantial sentences, in flowing prose, second person.
+
+Turn the figures into a life. Walk through a day: when light first reaches the windows, what the flat is like at midday and at four in the afternoon, whether lights go on early, whether the west side gets uncomfortable in May. Then walk through the year: what changes between the best months and the worst, and how big that swing actually feels — an hour a day is barely noticeable, three hours is a different flat in December than in April.
+
+Then the area, the same way: what the school situation means for a morning routine, what the crime tier means for coming home late, what the water score means for a summer week. Ground every claim in a figure from the ground truth above, but write the consequence, not the figure — "supply runs short enough in summer that most societies here bring in tankers" rather than "water scores 45/100".
+
+Do not repeat the verdict's wording. Do not use bullets.
+
+${suitsSectionNumber}. WHO THIS IS FOR
+Be useful and be honest — this section is worthless if every type gets a yes.
+
+Take each of these four in turn, as its own "- " line beginning with the type in plain text followed by a colon: Families with school-age kids; Young professionals and couples; People working from home; Older buyers and retirees.
+
+For each, open with a plain verdict — "Yes", "Yes, with one caveat", "Probably not" or "No" — then one or two sentences of why, tied to specific figures from the ground truth. A flat with poor afternoon light and a weak lift story is not for a retiree; say so. A quiet area with thin nightlife is not for someone in their twenties; say so.
+
+Then one final "- " line beginning "Not for: " naming the buyer this property would genuinely disappoint and the reason. Every property is wrong for somebody; if you can't name who, you haven't read the numbers properly.
 
 ${neighbourhoodSectionNumber}. NEIGHBOURHOOD FULL ANALYSIS
-Do NOT simply restate the ground-truth numbers one by one — that data is already shown in a table alongside this section, so repeating it here adds nothing. Instead, ANALYSE it: which 1-2 factors are this area's clear strength, which 1-2 are its clear weakness, and what does that combination actually mean for someone living here day to day. Weave in the specific numbers naturally as evidence for your points, not as a checklist. Cover infrastructure/roads, schools, crime/safety, water/power, air quality where available, and what the price context implies — but organised around the 2-3 things that matter most here, not a uniform tour through every field. This section is about the AREA ONLY — do not discuss sunlight, shadows, or the specific unit here; that comes later.
-Then make it personal and sell the area to different kinds of buyers, each grounded in the real numbers above (never invent a number that isn't in the ground truth). End the section with exactly 3 bullet lines, each starting with "- " and a buyer type, addressing a DIFFERENT type in each line from this set: families with school-age kids, young professionals/singles, and investors/renters. Each line should read like real advice, not a label — e.g. "- Families: the schools score of X and low crime tier make this a strong pick if school runs and safety matter most to you." / "- Young professionals: with Y for infrastructure/connectivity, this suits someone who prioritises commute and convenience over quiet." / "- Investors: price band is Z per sqft against a composite score of W, which reads as [undervalued for the fundamentals / priced in line with the area's strengths / a premium for the location] — say which, honestly, based on the actual numbers." Do not force a positive spin for a buyer type the area genuinely doesn't suit — say so plainly if that's the honest read.`
-    : '';
+Do NOT restate the ground-truth numbers one by one — they are already shown as bars beside this section, so repeating them adds nothing.
+
+Analyse instead: which one or two factors are this area's real strength, which one or two are its real weakness, and what that combination means for someone living here. Weave the specific numbers in as evidence for a point, never as a checklist. Organise around the two or three things that actually matter here rather than touring every field. Cover the price context honestly — whether the band reads as good value for these fundamentals, priced in line, or a premium for the location, and say which.
+
+This section is about the AREA ONLY — no sunlight, no shadows, no talk of this specific unit.`
+    : `1. HOME BUYER VERDICT
+Write this to the person, not about the property. Use "you", plain English, no bullets.
+
+Four to six sentences: what this flat is like to live in for light and comfort day to day, what changes across the year, the one thing that would most worry you, and your actual call — worth pursuing, worth pursuing once one thing checks out, or keep looking. Commit to one.
+Close with one line starting exactly "- Best fit for: " naming the one or two buyer types this suits best.
+
+${livingSectionNumber}. WHAT LIVING HERE IS ACTUALLY LIKE
+Four to six sentences of flowing prose, second person. Turn the figures into a life: when light first reaches the windows, what the flat is like at midday and at four, whether lights go on early, whether it gets uncomfortable in May, and how different December feels from April. Ground every claim in the figures above but write the consequence, not the figure.
+
+${suitsSectionNumber}. WHO THIS IS FOR
+Take each of these four in turn as its own "- " line, type then colon: Families with school-age kids; Young professionals and couples; People working from home; Older buyers and retirees. Open each with "Yes", "Yes, with one caveat", "Probably not" or "No", then a sentence of why tied to the real figures. Finish with a "- Not for: " line naming the buyer this would genuinely disappoint, and why.`;
 
   // Persona overlay. Appended AFTER the full section list so it wins on any
   // conflict of emphasis, and resolves to '' when no persona is selected --
@@ -383,7 +409,7 @@ Then make it personal and sell the area to different kinds of buyers, each groun
   // of the sections above; it only re-slants them and appends ONE extra
   // trailing section, which the generic `N. TITLE` parser in the PDF route
   // picks up as bottom narrative without any change there.
-  const personaSectionNumber = hasNeighbourhood ? 5 : 3;
+  const personaSectionNumber = hasNeighbourhood ? 6 : 4;
   const ov = persona?.reportOverlay || null;
   const personaOverlay = ov ? `
 
@@ -408,7 +434,7 @@ ${ov.sectionBody}` : '';
   // Appended after everything else (including persona overlay, if any) so
   // it always lands as the actual last section regardless of which of the
   // 4 numbering combinations above are in play this time.
-  const checklistSectionNumber = (hasNeighbourhood ? 5 : 3) + (ov ? 1 : 0);
+  const checklistSectionNumber = (hasNeighbourhood ? 6 : 4) + (ov ? 1 : 0);
   const checklistSection = safeActionItems.length > 0 ? `
 
 ${checklistSectionNumber}. WHAT TO CHECK WHEN YOU VISIT
@@ -448,11 +474,7 @@ Height and orientation are one story, not two — write them as one. Cover, in p
 - Whether ${safeFacingInput}-facing is a good or bad orientation at this latitude and on this floor, with the reasoning spelled out in ordinary words — no azimuth or elevation figures unless you immediately explain what they mean.
 - Heat as well as light. A facing that is generous with winter sun may be punishing in May; say which side of that this flat falls on.
 - What practically follows: whether this flat needs lights on during the day, whether the afternoon side will need blinds or heavy curtains, and whether a different floor in this same building would meaningfully change the answer.
-Write it as flowing paragraphs, not as the bulleted list above — those bullets are your coverage checklist, not the shape of the section.${hasNeighbourhood ? '' : `
-
-2. HOME BUYER VERDICT
-A full, honest verdict, several sentences to a short paragraph: is the sunlight situation good, acceptable, or poor, and why specifically. What floor would you recommend as a minimum, and why. Any specific concerns visible in the shadow patterns across the screenshots. Do not just restate the overall feasibility label — explain what it means for someone actually living there.
-The opening 2-3 sentences of this section must be plain, everyday words — the way you'd say it out loud to a friend with no real-estate or technical background, no jargon or acronyms — before going into any deeper detail.`}${personaOverlay}${checklistSection}`;
+Write it as flowing paragraphs, not as the bulleted list above — those bullets are your coverage checklist, not the shape of the section.${personaOverlay}${checklistSection}`;
 
   if (!process.env.GEMINI_API_KEY) {
     return NextResponse.json(
