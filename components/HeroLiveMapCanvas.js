@@ -413,10 +413,13 @@ export default function HeroLiveMapCanvas() {
               under it -- the pill IS the panel, it just grows into it.
               hlm-shell-city-open only relaxes the corner radius from a
               full pill to a rounded rect; the actual grow/reveal motion
-              is the max-height transition on hlm-city-panel-inner below,
-              clipped by this shell's own overflow:hidden so the corners
-              stay clean at every size in between. */}
-          <div className={`hlm-search-shell${cityPanel ? ' hlm-shell-city-open' : ''}`}>
+              is hlm-city-panel-inner's grid-row transition below (see
+              its own comment there for why it's a grid row and not
+              max-height). Both are gated on the same cityPanelOpen flag
+              so the radius and the grow move on the same frame, and this
+              shell's overflow:hidden keeps the corners clean at every
+              size in between. */}
+          <div className={`hlm-search-shell${cityPanelOpen ? ' hlm-shell-city-open' : ''}`}>
             <div className="hlm-search">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
               {/* A placeholder is not an accessible name -- it disappears
@@ -446,57 +449,72 @@ export default function HeroLiveMapCanvas() {
             </div>
 
             {cityPanel && (
+              // Grid-row collapse (grid-template-rows: 0fr -> 1fr), not
+              // max-height. A max-height transition to a fixed cap looked
+              // fine in theory but was actually the bug: with real content
+              // much shorter than the cap, an ease-out curve covers that
+              // (short) real distance in the first sliver of its duration,
+              // so it LOOKED like an instant snap with the rest of the
+              // "transition" invisible -- confirmed frame-by-frame from a
+              // recording. grid-template-rows interpolates against the
+              // content's actual size every frame, so the eased curve is
+              // visible across its full duration regardless of how tall
+              // the content is. The inner .hlm-city-panel-body is what
+              // clips (overflow+min-height:0 -- required for a grid row to
+              // collapse below its content's natural height).
               <div
                 id="hlm-city-panel"
                 className={`hlm-city-panel-inner${cityPanelOpen ? ' is-open' : ''}`}
                 role="region"
                 aria-label={`Neighbourhoods in ${cityPanel.city}`}
               >
-                <div className="hlm-city-panel-head">
-                  <div>
-                    <span className="hlm-city-panel-eyebrow">Neighbourhoods in</span>
-                    <h3 className="hlm-city-panel-title">{cityPanel.city}</h3>
+                <div className="hlm-city-panel-body">
+                  <div className="hlm-city-panel-head">
+                    <div>
+                      <span className="hlm-city-panel-eyebrow">Neighbourhoods in</span>
+                      <h3 className="hlm-city-panel-title">{cityPanel.city}</h3>
+                    </div>
+                    <button type="button" className="hlm-city-panel-close" onClick={closeCityPanel} aria-label="Close neighbourhood list">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                    </button>
                   </div>
-                  <button type="button" className="hlm-city-panel-close" onClick={closeCityPanel} aria-label="Close neighbourhood list">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-                  </button>
-                </div>
 
-                {!cityPanel.covered ? (
-                  <p className="hlm-city-panel-empty">BlindSpot doesn&apos;t score neighbourhoods here yet &mdash; currently live in {COVERED_CITY_NAMES}.</p>
-                ) : cityPanel.loading ? (
-                  <p className="hlm-city-panel-empty">Loading neighbourhoods&hellip;</p>
-                ) : cityPanel.error ? (
-                  <p className="hlm-city-panel-empty">Couldn&apos;t load neighbourhoods just now &mdash; try again in a moment.</p>
-                ) : (
-                  <>
-                    <input
-                      type="search"
-                      value={cityFilter}
-                      onChange={(e) => setCityFilter(e.target.value)}
-                      placeholder={`Filter ${cityPanel.neighbourhoods.length} neighbourhoods…`}
-                      className="hlm-city-panel-filter"
-                      aria-label={`Filter neighbourhoods in ${cityPanel.city}`}
-                    />
-                    {filteredCityNeighbourhoods.length === 0 ? (
-                      <p className="hlm-city-panel-empty">No neighbourhoods match &ldquo;{cityFilter}&rdquo;.</p>
-                    ) : (
-                      <ul className="hlm-city-panel-list">
-                        {filteredCityNeighbourhoods.map((n) => (
-                          <li key={`${n.pin_code}-${n.sectorNum ?? ''}`}>
-                            <button type="button" onClick={() => pickCityNeighbourhood(n)}>
-                              <span className="hlm-city-row-dot" style={{ background: scoreColor(n.nqi_composite) }} aria-hidden="true" />
-                              <span className="hlm-city-row-name">
-                                {n.name}{n.area && n.area !== n.name ? ` · ${n.area}` : ''}
-                              </span>
-                              <span className="hlm-city-row-score">{n.nqi_composite}<span>/100</span></span>
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </>
-                )}
+                  {!cityPanel.covered ? (
+                    <p className="hlm-city-panel-empty">BlindSpot doesn&apos;t score neighbourhoods here yet &mdash; currently live in {COVERED_CITY_NAMES}.</p>
+                  ) : cityPanel.loading ? (
+                    <p className="hlm-city-panel-empty">Loading neighbourhoods&hellip;</p>
+                  ) : cityPanel.error ? (
+                    <p className="hlm-city-panel-empty">Couldn&apos;t load neighbourhoods just now &mdash; try again in a moment.</p>
+                  ) : (
+                    <>
+                      <input
+                        type="search"
+                        value={cityFilter}
+                        onChange={(e) => setCityFilter(e.target.value)}
+                        placeholder={`Filter ${cityPanel.neighbourhoods.length} neighbourhoods…`}
+                        className="hlm-city-panel-filter"
+                        aria-label={`Filter neighbourhoods in ${cityPanel.city}`}
+                      />
+                      {filteredCityNeighbourhoods.length === 0 ? (
+                        <p className="hlm-city-panel-empty">No neighbourhoods match &ldquo;{cityFilter}&rdquo;.</p>
+                      ) : (
+                        <ul className="hlm-city-panel-list">
+                          {filteredCityNeighbourhoods.map((n) => (
+                            <li key={`${n.pin_code}-${n.sectorNum ?? ''}`}>
+                              <button type="button" onClick={() => pickCityNeighbourhood(n)}>
+                                <span className="hlm-city-row-dot" style={{ background: scoreColor(n.nqi_composite) }} aria-hidden="true" />
+                                <span className="hlm-city-row-name">
+                                  {n.name}{n.area && n.area !== n.name ? ` · ${n.area}` : ''}
+                                </span>
+                                <span className="hlm-city-row-score">{n.nqi_composite}<span>/100</span></span>
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
             )}
           </div>
