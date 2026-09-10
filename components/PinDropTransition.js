@@ -48,7 +48,35 @@ export default function PinDropTransition({ href = '/#find', className, children
   const [playing, setPlaying] = useState(false);
   const timers = useRef([]);
 
+  // The readout used to print Bangalore's coordinates over every address in
+  // the country. The real ones are already in the href this link carries.
+  const coords = (() => {
+    try {
+      const u = new URL(href, typeof window === 'undefined' ? 'https://x' : window.location.href);
+      const la = parseFloat(u.searchParams.get('lat'));
+      const lo = parseFloat(u.searchParams.get('lon'));
+      if (!Number.isFinite(la) || !Number.isFinite(lo)) return '';
+      return `${Math.abs(la).toFixed(4)}\u00B0 ${la >= 0 ? 'N' : 'S'} \u00B7 ${Math.abs(lo).toFixed(4)}\u00B0 ${lo >= 0 ? 'E' : 'W'}`;
+    } catch { return ''; }
+  })();
+
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
+
+  // Where this link lands, if it lands on this same page. A hash-only jump
+  // (/#find from /) does not remount anything, which is what made this
+  // component fatal: nothing ever set playing back to false, the overlay
+  // has animation-fill-mode:forwards and pointer-events:all, and the page
+  // was covered permanently until a reload. The component only ever got
+  // away with it because a real route change unmounted it.
+  const sameRouteTarget = useCallback(() => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const url = new URL(href, window.location.href);
+      if (url.origin !== window.location.origin) return null;
+      if (url.pathname !== window.location.pathname) return null;
+      return url.hash ? url.hash.slice(1) : '';
+    } catch { return null; }
+  }, [href]);
 
   const start = useCallback((e) => {
     // Let modifier-clicks / middle-clicks behave like a normal link so we
@@ -58,12 +86,37 @@ export default function PinDropTransition({ href = '/#find', className, children
     if (playing) return;
 
     const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const hereId = sameRouteTarget();
+
+    // Already on this page: there is nothing to navigate to, and the survey
+    // animation in front of a page the visitor can already see is only in
+    // the way. Take them to the search box and put the cursor in it --
+    // which is what the button was promising anyway. Scrolling them to the
+    // top of a page they had scrolled down, with no focus placed and
+    // nothing to do next, was the whole of what "Uncover Your BlindSpot"
+    // did.
+    if (hereId !== null) {
+      const target = hereId ? document.getElementById(hereId) : null;
+      if (target) {
+        target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+        const field = target.querySelector('input, [contenteditable="true"]');
+        if (field) window.setTimeout(() => field.focus({ preventScroll: true }), reduced ? 0 : 420);
+      } else {
+        window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+      }
+      return;
+    }
+
     setPlaying(true);
     router.prefetch?.(href);
 
     const navAt = reduced ? REDUCED_MS : NAV_AT_MS;
     timers.current.push(setTimeout(() => router.push(href), navAt));
-  }, [playing, router, href]);
+    // A belt-and-braces reset: if the push somehow doesn't unmount this
+    // (a failed navigation, a route that resolves to where we already are),
+    // the overlay comes down instead of staying over the page for good.
+    timers.current.push(setTimeout(() => setPlaying(false), navAt + 2500));
+  }, [playing, router, href, sameRouteTarget]);
 
   return (
     <>
@@ -115,7 +168,7 @@ export default function PinDropTransition({ href = '/#find', className, children
 
           <div className="pdt-readout mono">
             <span className="pdt-readout-line">ACQUIRING SITE</span>
-            <span className="pdt-readout-sub">12.9716° N · 77.5946° E</span>
+            <span className="pdt-readout-sub">{coords || 'Locating'}</span>
           </div>
         </div>,
         document.body

@@ -104,16 +104,29 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
   // (CSS keeps detail always visible on desktop).
   const [expandedRows, setExpandedRows] = useState(new Set());
 
-  const { nqi, grade, rows } = useMemo(() => {
+  const { nqi, grade, rows, coverage, missing } = useMemo(() => {
     const w = WEIGHT_PRESETS.Default;
     const scores = record.scores || {};
-    const keys = Object.keys(scores);
+    const keys = Object.keys(scores).filter(k => scores[k] != null);
     const totalW = keys.reduce((sum, k) => sum + (w[k] || 0), 0) || 1;
     const composite = Math.round(keys.reduce((sum, k) => sum + scores[k] * (w[k] || 0), 0) / totalW);
     const rws = keys
       .map(k => ({ k, score: scores[k], weight: Math.round((w[k] || 0) / totalW * 100) }))
       .sort((a, b) => b.weight - a.weight || b.score - a.score);
-    return { nqi: composite, grade: gradeFor(composite), rows: rws };
+    // The composite renormalises over whatever factors this pincode has, so
+    // a record holding only two of the eight still produces a confident
+    // number. 42 of the 309 localities are scored on an incomplete set, and
+    // one of them -- Dharuhera, 123106 -- has no crime data at all, which
+    // is the heaviest weight in the model, and still reads 76 / B+. A score
+    // standing on a quarter of the model has to say so.
+    const missingKeys = Object.keys(w).filter(k => scores[k] == null);
+    return {
+      nqi: composite,
+      grade: gradeFor(composite),
+      rows: rws,
+      coverage: Math.round(totalW),
+      missing: missingKeys,
+    };
   }, [record]);
 
   const verdict = verdictFor(nqi);
@@ -175,7 +188,16 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
               <span className="avsheet-score">{nqi}</span>
               <span className="avsheet-grade">{grade}</span>
             </div>
-            <p className="avsheet-cap">NQI · weighted mean of {rows.length} dimensions.</p>
+            <p className="avsheet-cap">
+              NQI · weighted mean of {rows.length} of 8 dimensions
+              {coverage < 100 ? ` · ${coverage}% of the model` : ''}.
+            </p>
+            {coverage < 100 && (
+              <p className="avsheet-note" style={{ color: '#F0C77A' }}>
+                We have no records for {missing.map(k => (FACTOR_LABELS[k] || k).toLowerCase()).join(', ')} in
+                this pincode, so this score is worked out from the {`${coverage}%`} of the model we do have{coverage < 60 ? ' — treat it as indicative rather than settled' : ''}.
+              </p>
+            )}
             {/* Present on AsliVastu's own live report card, missing here --
                 a real, load-bearing caveat (this is a PIN-level assessment,
                 not building-specific), not just decoration. */}

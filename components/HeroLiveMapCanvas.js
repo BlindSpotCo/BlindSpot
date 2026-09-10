@@ -118,6 +118,7 @@ export default function HeroLiveMapCanvas() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(-1);
   const [loading, setLoading] = useState(false);
   const [pin, setPin] = useState(null);
   const [flyKey, setFlyKey] = useState(0);
@@ -140,6 +141,7 @@ export default function HeroLiveMapCanvas() {
         const res = await fetch(`/api/sunscout/geocode-suggest?${params.toString()}`);
         const data = await res.json();
         setResults(Array.isArray(data?.results) ? data.results : []);
+        setActive(-1);
       } catch {
         setResults([]);
       } finally {
@@ -155,6 +157,21 @@ export default function HeroLiveMapCanvas() {
     setOpen(true);
     setRevealed(false);
     runSearch(v);
+  };
+
+  // Arrow keys, Enter and Escape. The dropdown was a plain list of buttons
+  // with no combobox semantics and no key handling at all, so a keyboard
+  // user could tab into the suggestions but nothing announced them and
+  // nothing dismissed them.
+  const onSearchKeyDown = (e) => {
+    if (!open || results.length === 0) {
+      if (e.key === 'Escape') { setOpen(false); setActive(-1); }
+      return;
+    }
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActive((i) => (i + 1) % results.length); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setActive((i) => (i <= 0 ? results.length : i) - 1); }
+    else if (e.key === 'Enter' && active >= 0) { e.preventDefault(); pick(results[active]); }
+    else if (e.key === 'Escape') { setOpen(false); setActive(-1); }
   };
 
   const pick = (r) => {
@@ -196,9 +213,17 @@ export default function HeroLiveMapCanvas() {
   };
 
   useEffect(() => {
-    const onDoc = (e) => { if (boxRef.current && !boxRef.current.contains(e.target)) setOpen(false); };
+    const onDoc = (e) => { if (boxRef.current && !boxRef.current.contains(e.target)) { setOpen(false); setActive(-1); } };
     document.addEventListener('mousedown', onDoc);
     return () => document.removeEventListener('mousedown', onDoc);
+  }, []);
+
+  // The search debounce and the reveal timer were never cleared. Navigate
+  // away mid-search and a fetch plus two setState calls fire against a
+  // component that is gone.
+  useEffect(() => () => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    requestIdRef.current += 1; // disown any reply still in flight
   }, []);
 
   const nRecord = neighbourhood?.found ? neighbourhood.record : null;
@@ -251,7 +276,7 @@ export default function HeroLiveMapCanvas() {
               cursorClassName="hlm-typed-cursor"
             />
             <span className="sr-only">
-              We catch things like hidden water damage, poor natural light, high pollution, extra noise, and safety risks the listing photos won&apos;t show you.
+              We measure what a listing leaves out: how much real sunlight this flat gets through the year, how much of it sits in shade, and what government records say about safety, water, power, schools, roads and air in the area around it.
             </span>
           </p>
           <p className="hlm-resolve">Search your address to find yours.</p>

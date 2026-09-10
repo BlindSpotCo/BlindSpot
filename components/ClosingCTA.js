@@ -22,6 +22,7 @@
 //   clip-path-wipes the top layer away while the tagline wipes in,
 //   pure CSS, no JS needed.
 
+import { goToSearch } from '@/components/goToSearch';
 import PinDropTransition from '@/components/PinDropTransition';
 
 export default function ClosingCTA() {
@@ -58,7 +59,7 @@ export default function ClosingCTA() {
             </div>
             <div className="footer-col">
               <span className="footer-col-title">Get Started</span>
-              <a href="/#find">Uncover Your BlindSpot</a>
+              <a href="/#find" onClick={goToSearch}>Uncover Your BlindSpot</a>
               <a href="/signup">Create an account</a>
               <a href="/login">Sign in</a>
             </div>

@@ -77,55 +77,6 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
-/** Pulls the "@N@ description" lines Gemini emits for the shadow-analysis
- *  section and returns { perImage: {index -> text}, rest: analysis text
- *  with that section stripped }. */
-function splitPerImageAnalysis(analysis, shotCount) {
-  const perImage = {};
-  const lineRegex = /^@(\d+)@\s*(.+)$/gm;
-  let m;
-  while ((m = lineRegex.exec(analysis))) {
-    const idx = parseInt(m[1], 10) - 1;
-    if (idx >= 0 && idx < shotCount) perImage[idx] = m[2].trim();
-  }
-
-  // Strip the shadow-analysis header line (whatever number Gemini gave it)
-  // and every @N@ line so the bottom narrative doesn't repeat what's now
-  // shown under each screenshot. If Gemini didn't follow the @N@ format
-  // (imperfect compliance), nothing matches above and nothing is stripped
-  // here — the full text just falls through to the bottom narrative as a
-  // safe fallback.
-  const rest = analysis
-    .replace(/^\d+\.\s*SHADOW ANALYSIS[^\n]*\n?/im, '')
-    .replace(/^@\d+@.*$/gm, '')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
-
-  return { perImage, rest };
-}
-
-// Pulls one named section (matched by title regex, e.g. /home\s*buyer\s*verdict/i)
-// out of the numbered-section text Gemini returns, and hands back both that
-// section's body and the remaining text with it removed -- so the caller can
-// render that section as its own styled block instead of folding it into the
-// generic bottom narrative.
-function extractSection(text, titleRegex) {
-  const headerRegex = /^(\d+)\.\s+(.+)$/gm;
-  const matches = [];
-  let hm;
-  while ((hm = headerRegex.exec(text))) matches.push(hm);
-  if (matches.length === 0) return { body: '', rest: text };
-
-  const idx = matches.findIndex(m => titleRegex.test(m[2]));
-  if (idx === -1) return { body: '', rest: text };
-
-  const start = matches[idx].index + matches[idx][0].length;
-  const end = idx + 1 < matches.length ? matches[idx + 1].index : text.length;
-  const body = text.slice(start, end).trim();
-  const rest = (text.slice(0, matches[idx].index) + text.slice(end)).replace(/\n{3,}/g, '\n\n').trim();
-  return { body, rest };
-}
-
 // Pure reordering, not a rewrite: moves the "Home Buyer Verdict" section to
 // the front, without touching a single word of what Gemini actually wrote.
 // (No longer renumbers -- formatNarrative strips numbers from headers
