@@ -53,7 +53,7 @@ const FLY_ZOOM = 15;
 // a second, separate click on a "see the report" button below this --
 // now that click is gone: picking an address is enough, this is just a
 // short beat so the neighbourhood/AQI facts aren't yanked away unread.
-const AUTO_REPORT_HOLD_MS = 650;
+const AUTO_REPORT_HOLD_MS = 300;
 
 // Real categories BlindSpot actually scores -- not invented copy.
 // Sunlight/obstruction/shadow come from the Sunscout floor+facing engine
