@@ -14,13 +14,23 @@ import { SHOTS } from '@/lib/sunscout/useMapCapture';
 
 const FACING = ['North','South','East','West','North-East','South-East','North-West','South-West'];
 
-const ORG = '#E07B00';
-const INK = '#1A0A00';
-const SUB = '#8A8A8A';
-const LINE = 'rgba(26,10,0,0.15)';
-const MONO = "'Geist Mono', monospace";
-const SANS = "'Plus Jakarta Sans', sans-serif";
-const DISPLAY = "'Space Grotesk', sans-serif";
+// These are the page's own tokens, not a second palette.
+//
+// This modal opens from a page set in Geist, in warm browns, and rendered
+// itself in Arial in a brighter, yellower orange with cold grey body text:
+// it asked for 'Plus Jakarta Sans' and 'Space Grotesk', neither of which
+// this site ever loads (app/layout.js fetches Geist, Geist Mono and
+// Playfair), and hardcoded #E07B00 / #1A0A00 / #8A8A8A instead of --ss /
+// --ink / --text-mute. You click an orange link and a different-looking
+// dialog opens.
+const ORG = 'var(--ss, #AF5F30)';
+const INK = 'var(--ink, #1C1812)';
+const SUB = 'var(--text-mute, #5A5140)';
+const LINE = 'var(--line, rgba(28,24,18,0.14))';
+const PAPER = 'var(--paper, #FFFDF8)';
+const MONO = "'Geist Mono', ui-monospace, monospace";
+const SANS = "'Geist', system-ui, sans-serif";
+const DISPLAY = "'Geist', system-ui, sans-serif";
 
 export default function ReportModal({
   lat, lon, tzOffset, address, onClose, captureScreenshots, onFloorFacingSubmit,
@@ -85,7 +95,7 @@ export default function ReportModal({
   // Floor + facing were already picked one step earlier, in UnitVerdict's
   // own combined-score card (the button that opens this modal always
   // passes both -- see SunScoutPanel's single openReport() call site).
-  // Re-asking for them here, behind a "Generate AI Report" button of its
+  // Re-asking for them here, behind a "Generate the report" button of its
   // own, was a second menu at the step that matters most: one more click
   // to confirm values the person had already committed to a moment ago.
   // When both arrive prefilled, skip straight to generating -- the form
@@ -371,8 +381,8 @@ export default function ReportModal({
     : { position:'fixed', bottom:20, right:20, zIndex:1000, width:360, maxWidth:'calc(100vw - 40px)', pointerEvents:'none' };
 
   const cardStyle = isFormStep
-    ? { background:'#FFFBF5', border:`1px solid ${LINE}`, padding:0, width:'100%', maxWidth:480, maxHeight:'90vh', overflowY:'auto', boxShadow:'0 30px 90px rgba(0,0,0,0.35)', fontFamily:SANS }
-    : { background:'#FFFBF5', border:`1px solid ${LINE}`, padding:0, width:'100%', maxHeight:'70vh', overflowY:'auto', boxShadow:'0 16px 48px rgba(0,0,0,0.28)', borderRadius:8, fontFamily:SANS, pointerEvents:'auto' };
+    ? { background:PAPER, border:`1px solid ${LINE}`, borderRadius:8, padding:0, width:'100%', maxWidth:480, maxHeight:'90vh', overflowY:'auto', boxShadow:'0 30px 90px rgba(0,0,0,0.35)', fontFamily:SANS }
+    : { background:PAPER, border:`1px solid ${LINE}`, padding:0, width:'100%', maxHeight:'70vh', overflowY:'auto', boxShadow:'0 16px 48px rgba(0,0,0,0.28)', borderRadius:8, fontFamily:SANS, pointerEvents:'auto' };
 
   if (typeof document === 'undefined') return null;
 
@@ -383,7 +393,7 @@ export default function ReportModal({
 
         {!isFormStep && !reportUrl && (
           <div className="mono" style={{ fontSize:10, fontWeight:600, color:ORG, letterSpacing:'.1em', textTransform:'uppercase', marginBottom:10 }}>
-            {galleryOnly ? 'Sun & shadow report' : 'Full AI report'} generating - feel free to keep browsing
+            {galleryOnly ? 'Sun & shadow report' : 'Full AI report'} generating — feel free to keep browsing
           </div>
         )}
 
@@ -423,7 +433,7 @@ export default function ReportModal({
             <div style={{ display:'flex', flexDirection:'column', gap:9 }}>
               <button
                 onClick={() => window.open(reportUrl, '_blank')}
-                style={{ background:INK, color:'#fff', border:'none', borderRadius:3, padding:'14px', fontSize:14, fontWeight:700, cursor:'pointer', letterSpacing:'.01em' }}
+                style={{ background:INK, color:'#fff', border:'none', borderRadius:4, padding:'14px', fontSize:14, fontWeight:700, cursor:'pointer', letterSpacing:'.01em', minHeight:46 }}
               >
                 Open the report
               </button>
@@ -441,7 +451,7 @@ export default function ReportModal({
                 )}
                 <button
                   onClick={onClose}
-                  style={{ flex:savableData ? '0 0 auto' : 1, background:'transparent', color:SUB, border:`1px solid ${LINE}`, borderRadius:3, padding:'9px 18px', fontSize:12.5, fontWeight:600, cursor:'pointer' }}
+                  style={{ flex:savableData ? '0 0 auto' : 1, background:'transparent', color:SUB, border:`1px solid ${LINE}`, borderRadius:4, padding:'13px 18px', fontSize:13, fontWeight:600, cursor:'pointer', minHeight:46 }}
                 >
                   Close
                 </button>
@@ -453,7 +463,7 @@ export default function ReportModal({
           <>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
               <div>
-                <div style={{ fontFamily:MONO, fontSize:10, fontWeight:500, color:ORG, letterSpacing:'.14em', marginBottom:6 }}>{areaRecord ? 'AI COMBINED REPORT' : 'AI SOLAR REPORT'}</div>
+                <div style={{ fontFamily:MONO, fontSize:10, fontWeight:500, color:ORG, letterSpacing:'.14em', marginBottom:6 }}>{areaRecord ? 'Combined report' : 'Sun & shadow report'}</div>
                 <h2 className="modal-title" style={{ fontFamily:DISPLAY, fontSize:21, fontWeight:800, color:INK, margin:0 }}>Home Buyer Analysis</h2>
               </div>
               <button onClick={onClose} style={{ background:'none', border:'none', fontSize:18, cursor:'pointer', color:SUB, lineHeight:1, padding:4 }}>✕</button>
@@ -468,10 +478,10 @@ export default function ReportModal({
             <div style={{ marginBottom:22 }}>
               <label style={{ fontFamily:MONO, fontSize:10.5, fontWeight:500, color:INK, letterSpacing:'.08em', display:'block', marginBottom:10, textTransform:'uppercase' }}>Floor number</label>
               <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-                <input type="range" min="0" max="30" value={floor} onChange={e => setFloor(e.target.value)} style={{ flex:1, accentColor:ORG }} />
+                <input type="range" min="1" max="60" value={floor} onChange={e => setFloor(e.target.value)} style={{ flex:1, accentColor:ORG }} />
                 <div style={{ background:INK, color:'#fff', fontFamily:MONO, fontSize:13, fontWeight:500, padding:'4px 12px', minWidth:40, textAlign:'center' }}>{floor}</div>
               </div>
-              <div style={{ fontFamily:MONO, fontSize:10.5, color:SUB, marginTop:6 }}>Floor {floor} ≈ {parseInt(floor)*3}m above ground</div>
+              <div style={{ fontFamily:MONO, fontSize:10.5, color:SUB, marginTop:6 }}>Floor {floor} ≈ {parseInt(floor, 10) * 3}m above ground</div>
             </div>
 
             <div style={{ marginBottom:22 }}>
@@ -542,12 +552,12 @@ export default function ReportModal({
             )}
 
             <div style={{ display:'flex', gap:0 }}>
-              <button onClick={generate} style={{ flex:1, background:ORG, color:'#fff', border:'none', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
-                Generate AI Report
+              <button onClick={generate} style={{ flex:1, background:ORG, color:'#fff', border:'1px solid transparent', boxSizing:'border-box', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
+                Generate the report
               </button>
-              <button onClick={onClose} style={{ background:'transparent', color:SUB, border:`1px solid ${LINE}`, borderLeft:'none', padding:'14px 20px', fontSize:13, cursor:'pointer' }}>Cancel</button>
+              <button onClick={onClose} style={{ background:'transparent', color:SUB, border:`1px solid ${LINE}`, borderLeft:'none', boxSizing:'border-box', padding:'14px 20px', fontSize:13, cursor:'pointer' }}>Cancel</button>
             </div>
-            <div style={{ fontFamily:MONO, fontSize:10.5, color:SUB, textAlign:'center', marginTop:12, letterSpacing:'.03em' }}>ABOUT TWO MINUTES · PHOTOGRAPHS THE MAP, THEN WRITES IT UP</div>
+            <div style={{ fontFamily:MONO, fontSize:10.5, color:SUB, textAlign:'center', marginTop:12, letterSpacing:'.03em' }}>About two minutes · photographs the map, then writes it up</div>
           </>
         ) : error ? (
           // Only reachable via the autoGenerate path -- the manual form
@@ -558,10 +568,10 @@ export default function ReportModal({
           <div style={{ textAlign:'center', padding:'30px 0' }}>
             <div style={{ border:'1px solid #dc2626', padding:'10px 14px', fontSize:12, color:'#dc2626', marginBottom:20, fontFamily:MONO, textAlign:'left' }}>ERROR: {error}</div>
             <div style={{ display:'flex', gap:0 }}>
-              <button onClick={generate} style={{ flex:1, background:ORG, color:'#fff', border:'none', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
+              <button onClick={generate} style={{ flex:1, background:ORG, color:'#fff', border:'1px solid transparent', boxSizing:'border-box', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
                 Try Again
               </button>
-              <button onClick={onClose} style={{ background:'transparent', color:SUB, border:`1px solid ${LINE}`, borderLeft:'none', padding:'14px 20px', fontSize:13, cursor:'pointer' }}>Cancel</button>
+              <button onClick={onClose} style={{ background:'transparent', color:SUB, border:`1px solid ${LINE}`, borderLeft:'none', boxSizing:'border-box', padding:'14px 20px', fontSize:13, cursor:'pointer' }}>Cancel</button>
             </div>
           </div>
         ) : (

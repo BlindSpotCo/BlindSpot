@@ -55,7 +55,7 @@ const CSS = `
   .nr-2col { grid-template-columns: 1fr !important; }
 }
 @media (max-width: 640px) {
-  .nr-wrap { padding: 0 18px 48px !important; }
+  .nr-wrap { padding: 28px 18px 48px !important; }
   .nr-table-scroll table th:nth-child(5), .nr-table-scroll table td:nth-child(5),
   .nr-table-scroll table th:nth-child(6), .nr-table-scroll table td:nth-child(6) { display: none; }
 }

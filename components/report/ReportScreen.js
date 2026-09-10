@@ -39,13 +39,8 @@ const FACTOR_MEANS = {
 };
 
 // North at the top, the way a compass is read. null is the middle cell.
-const COMPASS = ['North-West', 'North', 'North-East', 'West', null, 'East', 'South-West', 'South', 'South-East'];
-const SHORT = {
-  'North': 'N', 'North-East': 'NE', 'East': 'E', 'South-East': 'SE',
-  'South': 'S', 'South-West': 'SW', 'West': 'W', 'North-West': 'NW',
-};
 
-const FLOORS = Array.from({ length: 60 }, (_, i) => i + 1);
+const MAX_FLOOR = 60;
 
 const TZ = 330;
 const DEFAULT_FLOOR = 5;
@@ -120,6 +115,9 @@ export default function ReportScreen() {
   const hasPlace = Number.isFinite(lat) && Number.isFinite(lon);
 
   const [floor, setFloor] = useState(parseInt(params.get('floor'), 10) || DEFAULT_FLOOR);
+  // What is actually in the box while you type. Kept separate from `floor`
+  // so a half-typed "1" on the way to "12" isn't clamped out from under you.
+  const [floorText, setFloorText] = useState(String(parseInt(params.get('floor'), 10) || DEFAULT_FLOOR));
   const [facing, setFacing] = useState(params.get('facing') || DEFAULT_FACING);
   const [areaWeight, setAreaWeight] = useState(0.5);
   // A listing gives you the tower, not the unit -- so these two arrive
@@ -414,6 +412,8 @@ export default function ReportScreen() {
       { timeout: 10000 }
     );
   }, [moveTo, reportRunning]);
+
+  useEffect(() => { setFloorText(String(floor)); }, [floor]);
 
   // Anchor for the flat half, still used by the in-page "the flat" link.
   const unitRef = useRef(null);
@@ -767,17 +767,36 @@ export default function ReportScreen() {
 
           {/* Two inputs, said the way a form says them, directly under the
               title they change and directly above the score they move. */}
+          {/* Floor was a dropdown of sixty options. Nobody scrolls to 43 --
+              they know their floor and want to type it. The arrows still
+              work for nudging, and the value is only clamped when you leave
+              the field, so typing "1" on the way to "12" isn't fought. */}
           <p className="bsr-set">
-            <label>
+            <label className="bsr-set-field">
               <span>Floor</span>
-              <select
-                value={floor}
-                onChange={(e) => { setAssumed(false); setFloor(Number(e.target.value)); }}
-              >
-                {FLOORS.map((f) => <option key={f} value={f}>{f}</option>)}
-              </select>
+              <input
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={MAX_FLOOR}
+                step={1}
+                value={floorText}
+                onChange={(e) => {
+                  const raw = e.target.value.replace(/[^\d]/g, '').slice(0, 2);
+                  setFloorText(raw);
+                  const n = parseInt(raw, 10);
+                  if (Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR) { setAssumed(false); setFloor(n); }
+                }}
+                onBlur={() => {
+                  const n = parseInt(floorText, 10);
+                  const clamped = Number.isFinite(n) ? Math.min(MAX_FLOOR, Math.max(1, n)) : floor;
+                  setFloor(clamped);
+                  setFloorText(String(clamped));
+                }}
+                aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
+              />
             </label>
-            <label>
+            <label className="bsr-set-field">
               <span>Faces</span>
               <select
                 value={facing}
@@ -820,12 +839,14 @@ export default function ReportScreen() {
               type="button"
               className="bsr-genlink"
               disabled={!solar?.pathData}
-              title={!solar?.pathData ? 'The 3D map has to load first — there is nothing to photograph without it.' : undefined}
               onClick={() => setReportOpen('gallery')}
             >
               See the sun and shadow through the year →
             </button>
             <span className="bsr-more-note">
+              {!solar?.pathData
+                ? 'Waiting for the 3D map — this is built from photographs of it, so there is nothing to make until it loads. '
+                : ''}
               The evidence behind the five scores above: this block photographed at 12 points through
               the year, 3 per season at 9am / noon / 3pm, each described, with the month-by-month
               sunlight figures for this floor. About a minute, and the full report below then builds
@@ -852,10 +873,10 @@ export default function ReportScreen() {
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Move to another address, or paste lat, lon"
-            aria-label="Move to another address"
+            placeholder="Another address, or coordinates like 12.9716, 77.5946"
+            aria-label="Move the pin to another address or coordinates"
           />
-          <button type="submit" disabled={locBusy}>{locBusy ? 'Finding…' : 'Go'}</button>
+          <button type="submit" disabled={locBusy}>{locBusy ? 'Finding…' : 'Move the pin'}</button>
           <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
             Use my location
           </button>
@@ -922,14 +943,14 @@ export default function ReportScreen() {
       <section className="bsr-visit">
         <h2>What to check before you decide</h2>
         <p className="bsr-visit-lede">
-          These come from the weakest scores on this page. Tick them off as you go — the list doesn&apos;t
-          change with the area-or-flat choice above, and your ticks are remembered on this device.
+          Everything that scored under 60. Tick them off as you go — your ticks are remembered on this
+          device. Changing the floor or facing rebuilds the list.
         </p>
         <ul className="bsr-todo">
           {actions.length === 0 ? (
             <li className="bsr-todo-plain">
               <span className="bsr-todo-body">
-                <strong className="bsr-todo-title">Nothing scored poorly.</strong>
+                <strong className="bsr-todo-title">Nothing scored under 60.</strong>
                 <span className="bsr-todo-text">Still worth one visit at rush hour and one after dark before you commit.</span>
               </span>
             </li>

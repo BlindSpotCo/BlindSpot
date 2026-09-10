@@ -1073,8 +1073,12 @@
     .avsheet-row--open .avsheet-row-detail{ display:block; }
     .avsheet-row-toggle{
       display:inline-flex; align-items:center; justify-content:center;
-      width:22px; height:22px; border:1px solid color-mix(in srgb, var(--slate) 45%, transparent);
-      background:transparent; color:var(--slate); font-size:10px; border-radius:4px; padding:0; cursor:pointer;
+      width:44px; height:44px; margin:-11px; border:1px solid transparent;
+      background:transparent; color:var(--slate); font-size:12px; border-radius:4px; padding:0; cursor:pointer;
+    }
+    .avsheet-row-toggle::before{
+      content:""; position:absolute; width:22px; height:22px; border-radius:4px;
+      border:1px solid color-mix(in srgb, var(--slate) 45%, transparent);
     }
   }
   @media (max-width:820px){}
