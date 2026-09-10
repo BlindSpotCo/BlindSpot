@@ -168,7 +168,8 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
   };
 
   const btnBase = {
-    fontSize: 12.5, fontWeight: 600, borderRadius: 3, padding: '9px 16px', cursor: 'pointer',
+    fontSize: 12.5, fontWeight: 600, borderRadius: 3, padding: '9px 18px', cursor: 'pointer',
+    justifyContent: 'center',
     border: dark ? '1px solid rgba(255,253,248,0.35)' : '1px solid var(--line)',
     color: dark ? '#FFFDF8' : 'var(--text-mute)',
     background: 'transparent',
@@ -176,7 +177,7 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
 
   return (
     <div style={{ position: 'relative', display: 'inline-block', ...style }} ref={panelRef}>
-      <button onClick={handleOpen} disabled={checkingAuth || signingIn} style={btnBase}>
+      <button onClick={handleOpen} disabled={checkingAuth || signingIn} style={{ ...btnBase, flex: style?.flex ? 1 : undefined }}>
         {signingIn ? 'Signing in…' : 'Save report'}
       </button>
 

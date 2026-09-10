@@ -89,7 +89,20 @@ function geminiCaller({ budgetMs = 48_000, maxOutputTokens = 6144, generationCon
           if (attempt === 0 && left() > 12_000) { await new Promise(r => setTimeout(r, 800)); continue; }
           break; // exhausted retries for this model, fall through to the next one
         }
-        if (res.ok) return res.json();
+        if (res.ok) {
+          const json = await res.json();
+          // A candidate can come back with a finishReason and no content at
+          // all. Reading that silently as an empty string is how a whole
+          // feature disappeared with nothing in the logs to say why.
+          const cand = json?.candidates?.[0];
+          if (cand && !cand?.content?.parts?.[0]?.text) {
+            console.warn(
+              `[gemini] ${model} returned no text. finishReason=${cand.finishReason}`,
+              'usage=', JSON.stringify(json?.usageMetadata || {}),
+            );
+          }
+          return json;
+        }
         const errText = await res.text();
         console.error(`Gemini Vision request failed (${model}, attempt ${attempt + 1}):`, res.status, errText.slice(0, 500));
         // 429 is a rate limit, and on a free-tier key it is usually a
@@ -184,14 +197,35 @@ Be concrete about what you can actually see. Never end mid-sentence. If an image
   const runBatch = async ({ offset, shots }) => {
     const out = new Map(); // global image index (0-based) -> description
     try {
+      // thinkingBudget: 0 is the whole fix for the missing descriptions.
+      //
+      // Gemini 2.5 Flash reasons before it answers, by default, with a
+      // dynamic budget -- and those thinking tokens are deducted from
+      // maxOutputTokens. At 2048 the model could spend the entire allowance
+      // thinking and return a candidate carrying a finishReason and no
+      // content at all, which this code read as "no captions". The
+      // narrative call never hit it because 6144 leaves room to think AND
+      // write; the caption call did. It is also what truncated the
+      // descriptions mid-sentence back when all twelve went in one request.
+      //
+      // Describing what is in a picture needs no reasoning chain, so the
+      // budget goes to zero and every token is spent on the answer.
       const { call } = geminiCaller({
         budgetMs: perBatchMs,
-        maxOutputTokens: 2048,
-        generationConfig: { responseMimeType: 'application/json', responseSchema: SCHEMA },
+        maxOutputTokens: 4096,
+        generationConfig: {
+          responseMimeType: 'application/json',
+          responseSchema: SCHEMA,
+          thinkingConfig: { thinkingBudget: 0 },
+        },
       });
       const d = await call([{ role: 'user', parts: [{ text: promptFor(shots) }, ...partsFor(shots)] }]);
-      const raw = d?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      if (!raw) { console.warn(`[report/analyse] caption batch at ${offset} came back empty.`); return out; }
+      const cand = d?.candidates?.[0];
+      const raw = cand?.content?.parts?.[0]?.text || '';
+      if (!raw) {
+        console.warn(`[report/analyse] caption batch at ${offset} came back empty (finishReason=${cand?.finishReason || 'none'}).`);
+        return out;
+      }
 
       let rows;
       try {

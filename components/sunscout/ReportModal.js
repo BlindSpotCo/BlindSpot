@@ -389,63 +389,65 @@ export default function ReportModal({
 
         {reportUrl ? (
           <div style={{ textAlign:'center', padding:'20px 0' }}>
-            <div style={{ fontFamily:MONO, fontSize:11, fontWeight:500, color:(shortfall || aiNotice) ? '#B45309' : '#16a34a', letterSpacing:'.1em', textTransform:'uppercase', marginBottom:14, border:`1px solid ${(shortfall || aiNotice) ? '#B45309' : '#16a34a'}`, display:'inline-block', padding:'5px 14px' }}>{(shortfall || aiNotice) ? 'Ready, with gaps' : 'Report Ready'}</div>
-            <h3 style={{ fontFamily:DISPLAY, fontSize:18, fontWeight:800, color:INK, marginBottom:8 }}>{galleryOnly ? 'Your sun & shadow report is ready' : 'Your report is ready'}</h3>
-            <p style={{ fontSize:13, color:SUB, lineHeight:1.6, marginBottom:(aiNotice || shortfall) ? 12 : 20 }}>
+            {/* One quiet line, not a warning panel. What came back short is
+                worth saying, but it is a footnote to a finished report --
+                a bulleted box in amber read as though something had failed. */}
+            <h3 style={{ fontFamily:DISPLAY, fontSize:20, fontWeight:800, color:INK, marginBottom:7, letterSpacing:'-.01em' }}>
+              {galleryOnly ? 'Your sun & shadow report is ready' : 'Your report is ready'}
+            </h3>
+            <p style={{ fontSize:13.5, color:SUB, lineHeight:1.65, marginBottom:22, maxWidth:'30ch', marginLeft:'auto', marginRight:'auto' }}>
               {galleryOnly
-                ? `${SHOTS.length - (shortfall?.frames || 0)} map images through the year${shortfall?.table ? '' : ', with the monthly sunlight table'}. Opens in a new tab.`
-                : 'The full write-up, with the neighbourhood and the flat together. Opens in a new tab.'}
+                ? `${SHOTS.length - (shortfall?.frames || 0)} map images through the year${shortfall?.table ? '' : ', with the monthly sunlight table'}.`
+                : 'The neighbourhood, the flat, and who this one suits.'}
             </p>
 
-            {/* Said here because it is the last moment anyone will look. A
-                run that came back short used to reach this card announcing
-                "Report Ready" and twelve of everything. */}
-            {shortfall && (
-              <ul style={{ fontSize:12.5, color:INK, lineHeight:1.65, marginBottom:20, textAlign:'left', border:`1px solid ${LINE}`, background:'#FFF6E8', padding:'11px 14px 11px 30px' }}>
-                {shortfall.frames > 0 && (
-                  <li style={{ marginBottom:4 }}>
-                    {SHOTS.length - shortfall.frames} of {SHOTS.length} map frames came back — the map was slow or
-                    a few tiles never arrived. What&apos;s here is real; there is just less of it.
-                  </li>
-                )}
-                {shortfall.captions > 0 && (
-                  <li style={{ marginBottom:4 }}>
-                    {shortfall.captions} {shortfall.captions === 1 ? 'image has' : 'images have'} no written description.
-                    The images and the sunlight figures are unaffected.
-                  </li>
-                )}
-                {shortfall.table && (
-                  <li>
-                    The monthly sunlight table couldn&apos;t be computed for this pin, so it isn&apos;t in the document.
-                  </li>
-                )}
-                <li style={{ marginTop:6, color:SUB }}>Generating again usually fills these in.</li>
-              </ul>
-            )}
-            {aiNotice && (
-              <p style={{ fontSize:12.5, color:INK, lineHeight:1.6, marginBottom:20, textAlign:'left', border:`1px solid ${LINE}`, background:'#FFF6E8', padding:'10px 13px' }}>
-                {galleryOnly
-                  ? 'The descriptions under each image didn\u2019t come back this time, so this one has the 12 images and the sunlight table without them. Both are measured, not written, so nothing here is affected. Generating again usually brings the descriptions back.'
-                  : 'The written commentary didn\u2019t come back this time, so this report has the measurements without the narration — the scorecard, the sunlight table and all 12 images are there and are unaffected. Generating again usually brings the writing back.'}
+            {(shortfall || aiNotice) && (
+              <p style={{
+                fontSize:12.5, color:SUB, lineHeight:1.7, marginBottom:22, textAlign:'left',
+                borderTop:`1px solid ${LINE}`, borderBottom:`1px solid ${LINE}`, padding:'11px 2px',
+              }}>
+                {[
+                  shortfall?.frames > 0
+                    ? `${SHOTS.length - shortfall.frames} of ${SHOTS.length} map frames came back.`
+                    : null,
+                  shortfall?.captions > 0
+                    ? `${shortfall.captions} ${shortfall.captions === 1 ? 'image has' : 'images have'} no written description.`
+                    : null,
+                  shortfall?.table ? 'The monthly sunlight table couldn’t be worked out for this pin.' : null,
+                  aiNotice && !shortfall?.captions ? 'The written sections didn’t come back this time.' : null,
+                ].filter(Boolean).join(' ')}
+                {' '}Everything else is measured and unaffected — generating again usually fills the rest in.
               </p>
             )}
-            {savableData && (
-              <div style={{ display:'flex', justifyContent:'center', marginBottom:20 }}>
-                <SaveReportButton
-                  source="ai-report"
-                  data={savableData}
-                  defaultTitle={galleryOnly ? `${savableData.address} · sun & shadow` : savableData.address}
-                />
+
+            <div style={{ display:'flex', flexDirection:'column', gap:9 }}>
+              <button
+                onClick={() => window.open(reportUrl, '_blank')}
+                style={{ background:INK, color:'#fff', border:'none', borderRadius:3, padding:'14px', fontSize:14, fontWeight:700, cursor:'pointer', letterSpacing:'.01em' }}
+              >
+                Open the report
+              </button>
+
+              <div style={{ display:'flex', gap:9 }}>
+                {savableData && (
+                  <div style={{ flex:1, display:'flex' }}>
+                    <SaveReportButton
+                      source="ai-report"
+                      data={savableData}
+                      style={{ flex:1, display:'flex' }}
+                      defaultTitle={galleryOnly ? `${savableData.address} · sun & shadow` : savableData.address}
+                    />
+                  </div>
+                )}
+                <button
+                  onClick={onClose}
+                  style={{ flex:savableData ? '0 0 auto' : 1, background:'transparent', color:SUB, border:`1px solid ${LINE}`, borderRadius:3, padding:'9px 18px', fontSize:12.5, fontWeight:600, cursor:'pointer' }}
+                >
+                  Close
+                </button>
               </div>
-            )}
-            <div style={{ display:'flex', flexDirection:'column', gap:0 }}>
-              <button onClick={() => window.open(reportUrl, '_blank')} style={{ background:INK, color:'#fff', border:'none', padding:'13px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
-                {galleryOnly ? 'Open Sun & Shadow Report' : 'Open Report'}
-              </button>
-              <button onClick={onClose} style={{ background:'none', color:SUB, border:`1px solid ${LINE}`, borderTop:'none', padding:'12px', fontSize:12, cursor:'pointer', fontFamily:MONO, letterSpacing:'.05em', textTransform:'uppercase' }}>
-                Close
-              </button>
             </div>
+            <p style={{ fontSize:11.5, color:SUB, marginTop:14 }}>Opens in a new tab.</p>
           </div>
         ) : !loading && !autoGenerate ? (
           <>
