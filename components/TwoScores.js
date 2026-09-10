@@ -138,7 +138,7 @@ export default function TwoScores() {
         </div>
 
         <p className="ts3-combine">
-          Combined 50/50 into one <strong>BlindSpot Score</strong> — drag the slider to change the balance.
+          Combined 50/50 into one <strong>BlindSpot Score</strong> — pick whether the area or the flat matters more to you.
         </p>
       </div>
     </section>
