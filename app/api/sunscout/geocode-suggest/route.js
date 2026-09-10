@@ -23,6 +23,7 @@
 // Mapbox, LocationIQ) that most apps use for exactly this reason.
 import { NextResponse } from 'next/server';
 import { PIN_META } from '@/lib/aslivastu/pinMeta';
+import { resolveCoveredCity } from '@/lib/aslivastu/cityAliases';
 
 // Photon has no strict country-code filter param on the public instance;
 // `lat`/`lon` only bias ranking, they don't exclude anything. Post-filter
@@ -96,24 +97,28 @@ function cacheSet(key, results) {
   cache.set(key, { at: Date.now(), results });
 }
 
-// City/neighbourhood mode restricts Photon's own OSM place tags via its
-// osm_tag param (repeatable) so "Search a city" doesn't come back with
-// individual buildings/streets mixed in, and vice versa -- Photon
-// indexes OSM's place=* hierarchy directly, so this maps onto real OSM
-// place types rather than anything BlindSpot invented. Nominatim has no
-// equivalent single-param type filter, so it's skipped entirely for
-// these two modes (see the GET handler) rather than returning
-// unfiltered address-level noise alongside the filtered Photon results.
-const OSM_TAGS_BY_TYPE = {
-  city: ['place:city', 'place:town', 'place:village'],
-  neighbourhood: ['place:suburb', 'place:neighbourhood', 'place:quarter', 'place:hamlet', 'place:borough'],
-};
+// The hero search box no longer has separate City/Neighbourhood/Address
+// modes -- one box, every query hits both providers unfiltered, and each
+// result is tagged with which of the three it actually is so the client
+// can render/route it accordingly. Both providers expose this as a real
+// OSM place tag (Photon: osm_key/osm_value: Nominatim: class/type) rather
+// than anything BlindSpot invented, so this just reads what's already
+// there instead of re-deriving it.
+const CITY_PLACE_VALUES = new Set(['city', 'town', 'village']);
+const NEIGHBOURHOOD_PLACE_VALUES = new Set(['suburb', 'neighbourhood', 'quarter', 'hamlet', 'borough']);
 
-async function fetchPhoton(q, bias, osmTags) {
+function classifyKind(osmKey, osmValue) {
+  if (osmKey === 'place') {
+    if (CITY_PLACE_VALUES.has(osmValue)) return 'city';
+    if (NEIGHBOURHOOD_PLACE_VALUES.has(osmValue)) return 'neighbourhood';
+  }
+  return 'address';
+}
+
+async function fetchPhoton(q, bias) {
   try {
-    const tagParams = (osmTags || []).map(t => `&osm_tag=${encodeURIComponent(t)}`).join('');
     const r = await fetch(
-      `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=8&lang=en&lat=${bias.lat}&lon=${bias.lon}${tagParams}`,
+      `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=8&lang=en&lat=${bias.lat}&lon=${bias.lon}`,
       { signal: AbortSignal.timeout(5000) }
     );
     if (!r.ok) {
@@ -126,6 +131,7 @@ async function fetchPhoton(q, bias, osmTags) {
       .filter(f => f?.geometry?.coordinates?.length === 2)
       .map(f => {
         const props = f.properties || {};
+        const kind = classifyKind(props.osm_key, props.osm_value);
         return {
           lat: f.geometry.coordinates[1],
           lon: f.geometry.coordinates[0],
@@ -133,6 +139,8 @@ async function fetchPhoton(q, bias, osmTags) {
           postcode: props.postcode || null,
           city: props.city || props.district || props.county || props.state || null,
           countrycode: props.countrycode || null,
+          kind,
+          coveredCity: kind === 'city' ? resolveCoveredCity(props.name || props.city) : null,
         };
       });
   } catch (e) {
@@ -153,14 +161,19 @@ async function fetchNominatim(q) {
     }
     const data = await r.json();
     if (!Array.isArray(data)) return [];
-    return data.map(d => ({
-      lat: parseFloat(d.lat),
-      lon: parseFloat(d.lon),
-      displayName: d.display_name,
-      postcode: d.address?.postcode || null,
-      city: d.address?.city || d.address?.state_district || d.address?.state || null,
-      countrycode: 'IN', // already restricted via countrycodes=in
-    }));
+    return data.map(d => {
+      const kind = classifyKind(d.class, d.type);
+      return {
+        lat: parseFloat(d.lat),
+        lon: parseFloat(d.lon),
+        displayName: d.display_name,
+        postcode: d.address?.postcode || null,
+        city: d.address?.city || d.address?.town || d.address?.village || d.address?.state_district || d.address?.state || null,
+        countrycode: 'IN', // already restricted via countrycodes=in
+        kind,
+        coveredCity: kind === 'city' ? resolveCoveredCity(d.address?.city || d.address?.town || d.address?.village || d.display_name?.split(',')[0]) : null,
+      };
+    });
   } catch (e) {
     console.error('[geocode-suggest] Nominatim fetch threw', e?.message);
     return [];
@@ -185,27 +198,20 @@ export async function GET(req) {
   const hasRealBias = Number.isFinite(latParam) && Number.isFinite(lonParam);
   const bias = hasRealBias ? { lat: latParam, lon: lonParam } : INDIA_BIAS;
 
-  // `type` is the hero search box's City/Neighbourhood/Address mode --
-  // anything other than a recognised city/neighbourhood value (including
-  // no param at all, every existing caller) behaves exactly as before:
-  // both providers, no place-type filter.
-  const type = searchParams.get('type');
-  const osmTags = OSM_TAGS_BY_TYPE[type] || null;
-
-  const cacheKey = `${q.trim().toLowerCase()}|${hasRealBias ? `${bias.lat.toFixed(2)},${bias.lon.toFixed(2)}` : 'in'}|${type || 'address'}`;
+  const cacheKey = `${q.trim().toLowerCase()}|${hasRealBias ? `${bias.lat.toFixed(2)},${bias.lon.toFixed(2)}` : 'in'}`;
   const cached = cacheGet(cacheKey);
   if (cached) return NextResponse.json({ results: cached });
 
-  // Run both providers in parallel -- this doubles the outbound requests
-  // per keystroke-pause, but the client-side debounce+cache already
-  // collapse most of that, and one slow/failed provider (allSettled)
-  // never blocks the other from returning. City/neighbourhood mode skips
-  // Nominatim outright (see OSM_TAGS_BY_TYPE's own comment) rather than
-  // filtering its results after the fact -- it has no per-request place
-  // type param, so nothing here can ask it for "cities only".
+  // Run both providers in parallel, always -- there's no more City/
+  // Neighbourhood/Address mode to restrict either one by (see classifyKind
+  // above), so every query gets the full mixed set and the client sorts
+  // suggestions by `kind` instead. This doubles the outbound requests per
+  // keystroke-pause, but the client-side debounce+cache already collapse
+  // most of that, and one slow/failed provider (allSettled) never blocks
+  // the other from returning.
   const [photonOutcome, nominatimOutcome] = await Promise.allSettled([
-    fetchPhoton(q, bias, osmTags),
-    osmTags ? Promise.resolve([]) : fetchNominatim(q),
+    fetchPhoton(q, bias),
+    fetchNominatim(q),
   ]);
   const photonResults = photonOutcome.status === 'fulfilled' ? photonOutcome.value : [];
   const nominatimResults = nominatimOutcome.status === 'fulfilled' ? nominatimOutcome.value : [];
@@ -250,9 +256,15 @@ export async function GET(req) {
     // that's the part that untangles same-named streets in different
     // cities. With no real bias point yet, this falls back to the merged
     // (Photon-first) order above.
+    // A city/neighbourhood BlindSpot actually has scored data for counts
+    // as "covered" here too, same as a covered pincode -- a Bangalore
+    // match is more useful than a same-named place somewhere BlindSpot
+    // has nothing to show, so it should win the tie the same way.
+    const isCovered = (m) =>
+      (m.postcode && COVERED_PREFIXES.has(m.postcode.slice(0, 3))) || !!m.coveredCity;
     results.sort((a, b) => {
-      const aCovered = a.postcode && COVERED_PREFIXES.has(a.postcode.slice(0, 3)) ? 0 : 1;
-      const bCovered = b.postcode && COVERED_PREFIXES.has(b.postcode.slice(0, 3)) ? 0 : 1;
+      const aCovered = isCovered(a) ? 0 : 1;
+      const bCovered = isCovered(b) ? 0 : 1;
       if (aCovered !== bCovered) return aCovered - bCovered;
       if (hasRealBias) {
         return haversineKm(bias.lat, bias.lon, a.lat, a.lon) - haversineKm(bias.lat, bias.lon, b.lat, b.lon);

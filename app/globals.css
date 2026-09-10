@@ -1703,24 +1703,9 @@
    which already fades/rises the whole search block in as one unit; a
    second independent fade here would just be masked by the parent's
    own opacity until that one catches up, doing nothing useful. */
-.hlm-search-modes{
-  display:flex; gap:6px; margin-bottom:10px; justify-content:center;
-}
-.hlm-search-mode{
-  font-family:'Geist Mono',monospace; font-size:12px; letter-spacing:.03em;
-  padding:7px 15px; border-radius:var(--radius-pill); cursor:pointer;
-  background:rgba(255,255,255,0.08); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-  border:1px solid rgba(255,255,255,0.18); color:rgba(255,253,248,0.62);
-  transition:background .2s ease, border-color .2s ease, color .2s ease;
-}
-.hlm-search-mode:hover{ background:rgba(255,255,255,0.14); color:#fff; }
-.hlm-search-mode.is-active{
-  background:var(--brand-yellow); border-color:var(--brand-yellow);
-  color:var(--ink); font-weight:600;
-}
-@media (max-width:480px){
-  .hlm-search-mode{ padding:6px 12px; font-size:11px }
-}
+/* The City/Neighbourhood/Address tabs that used to sit here are gone --
+   one box now searches all three (see HeroLiveMapCanvas.js), so there's
+   no mode to switch between any more. */
 .hlm-search{
   display:flex; align-items:center; gap:12px;
   background:rgba(255,253,248,0.98); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
@@ -1750,11 +1735,86 @@
 }
 .hlm-suggestions li{ margin:0; }
 .hlm-suggestions button{
-  display:block; width:100%; text-align:left; background:none; border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  width:100%; text-align:left; background:none; border:none; cursor:pointer;
   padding:11px 14px; border-radius:var(--radius-md); font-family:'Geist',sans-serif;
   font-size:14px; color:var(--text); line-height:1.4;
 }
-.hlm-suggestions button:hover{ background:var(--bg-2); }
+.hlm-suggestions button:hover, .hlm-suggestions button.is-active{ background:var(--bg-2); }
+.hlm-suggest-name{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+/* One box, three kinds of result -- this is the only thing that still
+   tells them apart now the separate mode tabs are gone. Colour, not just
+   text, so it reads at a glance while scanning the list. */
+.hlm-suggest-kind{
+  flex-shrink:0; font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:.05em;
+  text-transform:uppercase; padding:3px 8px; border-radius:var(--radius-pill);
+  background:var(--bg-2); color:var(--text-mute);
+}
+.hlm-suggest-kind-city{ background:rgba(245,195,67,0.18); color:#8A6A12; }
+.hlm-suggest-kind-neighbourhood{ background:rgba(58,107,80,0.14); color:#2E6349; }
+
+/* The "dynamic island" panel a city-level pick expands into, in place of
+   the plain suggestions dropdown above -- same slot, same paper surface,
+   just taller and with its own head/filter/list instead of one flat set
+   of rows. Starts collapsed+faded and grows in on the next frame (see
+   cityPanelOpen in HeroLiveMapCanvas.js) rather than just appearing, so
+   picking a city reads as the search box itself opening up, not a
+   different UI replacing it. */
+.hlm-city-panel{
+  position:absolute; top:calc(100% + 10px); left:0; right:0; z-index:5;
+  background:var(--paper); border:1px solid var(--line-soft); border-radius:var(--radius-lg);
+  box-shadow:0 24px 48px -16px rgba(0,0,0,0.4);
+  padding:16px 16px 10px;
+  max-height:70px; opacity:0; transform:translateY(-6px) scale(0.98);
+  overflow:hidden;
+  transition:max-height .42s cubic-bezier(.16,1,.3,1), opacity .28s ease, transform .32s cubic-bezier(.16,1,.3,1);
+}
+.hlm-city-panel.is-open{
+  max-height:420px; opacity:1; transform:translateY(0) scale(1);
+}
+.hlm-city-panel-head{
+  display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+  padding-bottom:10px; margin-bottom:10px; border-bottom:1px solid var(--line-soft);
+}
+.hlm-city-panel-eyebrow{
+  display:block; font-family:'Geist Mono',monospace; font-size:10.5px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--text-mute);
+}
+.hlm-city-panel-title{ margin:2px 0 0; font-size:19px; font-weight:700; color:var(--ink); }
+.hlm-city-panel-close{
+  flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  width:30px; height:30px; border-radius:50%; border:none; cursor:pointer;
+  background:var(--bg-2); color:var(--text-mute); transition:background .15s ease, color .15s ease;
+}
+.hlm-city-panel-close:hover{ background:var(--line-soft); color:var(--ink); }
+.hlm-city-panel-empty{
+  margin:4px 0 10px; font-size:13.5px; line-height:1.55; color:var(--text-mute);
+}
+.hlm-city-panel-filter{
+  width:100%; border:1px solid var(--line-soft); border-radius:var(--radius-md);
+  background:var(--bg-2); padding:9px 12px; margin-bottom:8px;
+  font-family:'Geist',sans-serif; font-size:13.5px; color:var(--text); outline:none;
+}
+.hlm-city-panel-filter:focus{ border-color:var(--brand-yellow); }
+.hlm-city-panel-list{
+  list-style:none; margin:0; padding:0; max-height:290px; overflow-y:auto;
+}
+.hlm-city-panel-list li{ margin:0; }
+.hlm-city-panel-list button{
+  display:flex; align-items:center; gap:10px; width:100%; text-align:left;
+  background:none; border:none; cursor:pointer; padding:9px 8px; border-radius:var(--radius-md);
+  font-family:'Geist',sans-serif; font-size:13.5px; color:var(--text);
+}
+.hlm-city-panel-list button:hover{ background:var(--bg-2); }
+.hlm-city-row-dot{ width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.hlm-city-row-name{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.hlm-city-row-score{
+  flex-shrink:0; font-family:'Geist Mono',monospace; font-size:12.5px; font-weight:600; color:var(--ink);
+}
+.hlm-city-row-score span{ font-weight:400; color:var(--text-mute); }
+@media (prefers-reduced-motion: reduce){
+  .hlm-city-panel{ transition:none; }
+}
 
 /* One integrated glass strip -- facts (real, per-address data) on the
    left, the actual CTA docked to its right end as a distinct pill within

@@ -75,17 +75,17 @@ const BLINDSPOT_EXAMPLES = [
 
 // The search box used to only make sense as an address search --
 // placeholder said so outright, and nothing signalled that typing just
-// "Koramangala" or "Bengaluru" also works (Photon/Nominatim both handle
-// place-level queries fine, the box just never said so). These three
-// modes bias the geocode-suggest request to the matching OSM place tier
-// (see that route's OSM_TAGS_BY_TYPE) and swap the placeholder to match,
-// so someone who only knows the neighbourhood, not a street address,
-// has an explicit way to say that instead of getting an empty dropdown.
-const SEARCH_MODES = [
-  { value: 'city', label: 'City', placeholder: 'Search a city, e.g. Bengaluru.' },
-  { value: 'neighbourhood', label: 'Neighbourhood', placeholder: 'Search a neighbourhood or locality.' },
-  { value: 'address', label: 'Address', placeholder: 'Search your address to find yours.' },
-];
+// "Koramangala" or "Bengaluru" also works too. It's genuinely one box
+// now: no mode to pick first, every keystroke searches city, neighbourhood
+// AND address results together (see geocode-suggest's own `kind` field),
+// and this is just the label each suggestion in the dropdown wears so
+// it's clear what you're about to pick.
+const SEARCH_PLACEHOLDER = 'Search a city, neighbourhood or address.';
+const KIND_LABELS = { city: 'City', neighbourhood: 'Neighbourhood', address: 'Address' };
+// The 5 cities BlindSpot actually has neighbourhood-score coverage for --
+// named here once, for the "not covered yet" message the city panel
+// shows when someone searches a city outside that set.
+const COVERED_CITY_NAMES = 'Bangalore, Delhi NCR, Mumbai, Hyderabad and Chandigarh';
 
 const pinIcon = L.divIcon({
   className: 'hlm-pin-icon',
@@ -139,7 +139,6 @@ function aqiAccent(aqi) {
 export default function HeroLiveMapCanvas() {
   const router = useRouter();
   const [query, setQuery] = useState('');
-  const [searchMode, setSearchMode] = useState('address');
   const [results, setResults] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -156,10 +155,19 @@ export default function HeroLiveMapCanvas() {
   // all: you could tab into it, but nothing announced it and nothing
   // dismissed it.
   const [active, setActive] = useState(-1);
+  // Picking a city-level result doesn't drop a pin or go anywhere -- it
+  // expands the search box itself into a panel listing that city's
+  // covered neighbourhoods (null when no city is picked; `covered: false`
+  // when it's a real city outside BlindSpot's 5). cityPanelOpen is the
+  // separate flag that actually drives the CSS grow-in transition -- see
+  // the effect below for why it's not just "cityPanel != null".
+  const [cityPanel, setCityPanel] = useState(null);
+  const [cityPanelOpen, setCityPanelOpen] = useState(false);
+  const [cityFilter, setCityFilter] = useState('');
 
   const center = pin || DEFAULT_CENTER;
 
-  const runSearch = useCallback((q, mode) => {
+  const runSearch = useCallback((q) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (q.trim().length < 2) { setResults([]); setLoading(false); return; }
     setLoading(true);
@@ -171,12 +179,6 @@ export default function HeroLiveMapCanvas() {
       const reqId = ++requestIdRef.current;
       try {
         const params = new URLSearchParams({ q, lat: String(center.lat), lon: String(center.lon) });
-        // 'address' is the same unfiltered query every existing call made
-        // before search modes existed -- only send `type` for the two
-        // that actually restrict the geocoder (see that route's own
-        // OSM_TAGS_BY_TYPE), so a stray/older client-side cache entry
-        // never behaves differently just because this param exists now.
-        if (mode && mode !== 'address') params.set('type', mode);
         const res = await fetch(`/api/sunscout/geocode-suggest?${params.toString()}`);
         const data = await res.json();
         if (reqId !== requestIdRef.current) return;
@@ -196,28 +198,21 @@ export default function HeroLiveMapCanvas() {
     setQuery(v);
     setOpen(true);
     setRevealed(false);
-    runSearch(v, searchMode);
-  };
-
-  // Switching mode with an existing query re-runs the search under the
-  // new place-type filter rather than leaving stale address-mode results
-  // sitting in a now-mismatched "Search a city" box.
-  const handleModeChange = (mode) => {
-    if (mode === searchMode) return;
-    setSearchMode(mode);
-    if (query.trim().length >= 2) { setOpen(true); runSearch(query, mode); }
+    // Typing again backs out of a just-opened city panel -- the box goes
+    // back to being a plain search the moment someone edits the query,
+    // rather than leaving a stale neighbourhood list sitting there under
+    // new, unrelated suggestions.
+    setCityPanel(null);
+    runSearch(v);
   };
 
   // Arrow keys, Enter and Escape on the suggestions.
   const onSearchKeyDown = (e) => {
-    if (!open || results.length === 0) {
-      if (e.key === 'Escape') { setOpen(false); setActive(-1); }
-      return;
-    }
+    if (e.key === 'Escape') { setOpen(false); setActive(-1); setCityPanel(null); return; }
+    if (!open || results.length === 0) return;
     if (e.key === 'ArrowDown') { e.preventDefault(); setActive((i) => (i + 1) % results.length); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setActive((i) => (i <= 0 ? results.length : i) - 1); }
     else if (e.key === 'Enter' && active >= 0) { e.preventDefault(); pick(results[active]); }
-    else if (e.key === 'Escape') { setOpen(false); setActive(-1); }
   };
 
   // The debounce was never cleared: navigate away mid-search and a fetch
@@ -227,7 +222,58 @@ export default function HeroLiveMapCanvas() {
     requestIdRef.current += 1;
   }, []);
 
+  // A city-level pick doesn't have a unit or even a neighbourhood to
+  // score yet -- it opens the search box itself into a panel listing
+  // every neighbourhood BlindSpot covers in that city (fetched from
+  // /api/av-localities/by-city), rather than dropping a pin nowhere in
+  // particular. `city` here is already whichever of the 5 covered city
+  // keys geocode-suggest resolved it to (see cityAliases.js); null means
+  // it's a real city, just not one of the 5 with scored data yet.
+  const pickCity = (r) => {
+    setOpen(false);
+    setResults([]);
+    setQuery(r.displayName);
+    setCityFilter('');
+
+    if (!r.coveredCity) {
+      setCityPanel({ city: r.displayName, covered: false, loading: false, error: null, neighbourhoods: [] });
+      return;
+    }
+
+    const city = r.coveredCity;
+    setCityPanel({ city, covered: true, loading: true, error: null, neighbourhoods: [] });
+    fetch(`/api/av-localities/by-city?city=${encodeURIComponent(city)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        // A later pick may have already replaced this panel by the time
+        // this resolves -- only apply it if we're still showing this city.
+        setCityPanel((prev) => (prev && prev.city === city
+          ? { ...prev, loading: false, neighbourhoods: data?.neighbourhoods || [], error: data?.found ? null : 'load-failed' }
+          : prev));
+      })
+      .catch(() => {
+        setCityPanel((prev) => (prev && prev.city === city ? { ...prev, loading: false, error: 'load-failed' } : prev));
+      });
+  };
+
+  // Clicking a neighbourhood inside the city panel goes to its existing
+  // per-neighbourhood report (same page a covered postcode already links
+  // to elsewhere in the app) -- BlindSpot has real NQI data for it, just
+  // not a specific flat, so this is the honest landing spot rather than
+  // routing it through the address flow below with no address.
+  const pickCityNeighbourhood = (row) => {
+    setCityPanel(null);
+    setQuery('');
+    const href = `/neighbourhood-report/${row.pin_code}${row.sectorNum != null ? `?sector=${row.sectorNum}` : ''}`;
+    router.push(href);
+  };
+
+  const closeCityPanel = () => { setCityPanel(null); setCityFilter(''); };
+
   const pick = (r) => {
+    if (r.kind === 'city') { pickCity(r); return; }
+
+    setCityPanel(null);
     setPin({ lat: r.lat, lon: r.lon, postcode: r.postcode || '', label: r.displayName || '' });
     setQuery(r.displayName);
     setOpen(false);
@@ -279,16 +325,39 @@ export default function HeroLiveMapCanvas() {
   };
 
   useEffect(() => {
-    const onDoc = (e) => { if (boxRef.current && !boxRef.current.contains(e.target)) setOpen(false); };
+    const onDoc = (e) => {
+      if (boxRef.current && !boxRef.current.contains(e.target)) { setOpen(false); setCityPanel(null); }
+    };
     document.addEventListener('mousedown', onDoc);
     return () => document.removeEventListener('mousedown', onDoc);
   }, []);
+
+  // Drives the city panel's grow-in transition. It's a second flag
+  // instead of just styling off `cityPanel` directly because the panel
+  // has to render once in its collapsed state and THEN pick up the
+  // `.is-open` class on the next frame for the CSS transition between
+  // those two states to actually animate -- setting both at once (as
+  // pickCity does) would just paint it already open.
+  useEffect(() => {
+    if (!cityPanel) { setCityPanelOpen(false); return; }
+    const raf = requestAnimationFrame(() => setCityPanelOpen(true));
+    return () => cancelAnimationFrame(raf);
+  }, [cityPanel]);
 
   const nRecord = neighbourhood?.found ? neighbourhood.record : null;
   const nVerdict = nRecord ? verdictFor(nRecord.nqi_composite) : null;
   const aqiValue = aqi && aqi !== 'unavailable' ? aqi.aqi : null;
   const aqiLabel = aqiValue != null ? aqiCategory(aqiValue) : null;
   const hasAnyInsight = !!nRecord || aqiValue != null;
+
+  const filteredCityNeighbourhoods = (() => {
+    if (!cityPanel?.neighbourhoods) return [];
+    const q = cityFilter.trim().toLowerCase();
+    if (!q) return cityPanel.neighbourhoods;
+    return cityPanel.neighbourhoods.filter(
+      (n) => n.name.toLowerCase().includes(q) || (n.area || '').toLowerCase().includes(q)
+    );
+  })();
 
   return (
     <div className="hlm-root" id="find">
@@ -340,20 +409,6 @@ export default function HeroLiveMapCanvas() {
         </div>
 
         <div className="hlm-searchwrap" ref={boxRef}>
-          <div className="hlm-search-modes" role="tablist" aria-label="Search by">
-            {SEARCH_MODES.map((m) => (
-              <button
-                key={m.value}
-                type="button"
-                role="tab"
-                aria-selected={searchMode === m.value}
-                className={`hlm-search-mode${searchMode === m.value ? ' is-active' : ''}`}
-                onClick={() => handleModeChange(m.value)}
-              >
-                {m.label}
-              </button>
-            ))}
-          </div>
           <div className="hlm-search">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
             {/* A placeholder is not an accessible name -- it disappears the
@@ -361,7 +416,7 @@ export default function HeroLiveMapCanvas() {
                 label, the only interactive control on the homepage read as
                 "edit, blank" to a screen reader. */}
             <label htmlFor="hlm-address" className="sr-only">
-              Search for {SEARCH_MODES.find((m) => m.value === searchMode)?.label || 'an address'}
+              Search for a city, neighbourhood or address
             </label>
             <input
               id="hlm-address"
@@ -370,11 +425,11 @@ export default function HeroLiveMapCanvas() {
               onChange={handleChange}
               onFocus={() => setOpen(true)}
               onKeyDown={onSearchKeyDown}
-              placeholder={SEARCH_MODES.find((m) => m.value === searchMode)?.placeholder}
+              placeholder={SEARCH_PLACEHOLDER}
               className="hlm-search-input"
               role="combobox"
-              aria-expanded={open && results.length > 0}
-              aria-controls="hlm-suggestions"
+              aria-expanded={(open && results.length > 0) || !!cityPanel}
+              aria-controls={cityPanel ? 'hlm-city-panel' : 'hlm-suggestions'}
               aria-autocomplete="list"
               aria-activedescendant={active >= 0 ? `hlm-opt-${active}` : undefined}
               autoComplete="off"
@@ -382,8 +437,61 @@ export default function HeroLiveMapCanvas() {
             {loading && <span className="hlm-search-spinner" aria-hidden="true" />}
           </div>
 
-          {open && results.length > 0 && (
-            <ul className="hlm-suggestions" id="hlm-suggestions" role="listbox" aria-label="Address suggestions">
+          {cityPanel ? (
+            <div
+              id="hlm-city-panel"
+              className={`hlm-city-panel${cityPanelOpen ? ' is-open' : ''}`}
+              role="region"
+              aria-label={`Neighbourhoods in ${cityPanel.city}`}
+            >
+              <div className="hlm-city-panel-head">
+                <div>
+                  <span className="hlm-city-panel-eyebrow">Neighbourhoods in</span>
+                  <h3 className="hlm-city-panel-title">{cityPanel.city}</h3>
+                </div>
+                <button type="button" className="hlm-city-panel-close" onClick={closeCityPanel} aria-label="Close neighbourhood list">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                </button>
+              </div>
+
+              {!cityPanel.covered ? (
+                <p className="hlm-city-panel-empty">BlindSpot doesn&apos;t score neighbourhoods here yet &mdash; currently live in {COVERED_CITY_NAMES}.</p>
+              ) : cityPanel.loading ? (
+                <p className="hlm-city-panel-empty">Loading neighbourhoods&hellip;</p>
+              ) : cityPanel.error ? (
+                <p className="hlm-city-panel-empty">Couldn&apos;t load neighbourhoods just now &mdash; try again in a moment.</p>
+              ) : (
+                <>
+                  <input
+                    type="search"
+                    value={cityFilter}
+                    onChange={(e) => setCityFilter(e.target.value)}
+                    placeholder={`Filter ${cityPanel.neighbourhoods.length} neighbourhoods…`}
+                    className="hlm-city-panel-filter"
+                    aria-label={`Filter neighbourhoods in ${cityPanel.city}`}
+                  />
+                  {filteredCityNeighbourhoods.length === 0 ? (
+                    <p className="hlm-city-panel-empty">No neighbourhoods match &ldquo;{cityFilter}&rdquo;.</p>
+                  ) : (
+                    <ul className="hlm-city-panel-list">
+                      {filteredCityNeighbourhoods.map((n) => (
+                        <li key={`${n.pin_code}-${n.sectorNum ?? ''}`}>
+                          <button type="button" onClick={() => pickCityNeighbourhood(n)}>
+                            <span className="hlm-city-row-dot" style={{ background: scoreColor(n.nqi_composite) }} aria-hidden="true" />
+                            <span className="hlm-city-row-name">
+                              {n.name}{n.area && n.area !== n.name ? ` · ${n.area}` : ''}
+                            </span>
+                            <span className="hlm-city-row-score">{n.nqi_composite}<span>/100</span></span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </>
+              )}
+            </div>
+          ) : open && results.length > 0 && (
+            <ul className="hlm-suggestions" id="hlm-suggestions" role="listbox" aria-label="City, neighbourhood and address suggestions">
               {results.map((r, i) => (
                 <li key={`${r.lat},${r.lon},${i}`} role="presentation">
                   <button
@@ -394,7 +502,10 @@ export default function HeroLiveMapCanvas() {
                     className={i === active ? 'is-active' : undefined}
                     onMouseEnter={() => setActive(i)}
                     onClick={() => pick(r)}
-                  >{r.displayName}</button>
+                  >
+                    <span className="hlm-suggest-name">{r.displayName}</span>
+                    <span className={`hlm-suggest-kind hlm-suggest-kind-${r.kind || 'address'}`}>{KIND_LABELS[r.kind] || 'Address'}</span>
+                  </button>
                 </li>
               ))}
             </ul>
