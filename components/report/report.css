@@ -258,24 +258,21 @@
 /* One control, two elements. They sat at different heights because the
    select carried min-height and nothing else did. */
 .bsr-set select,
-.bsr-set input[type="number"]{
+.bsr-set input[type="text"]{
   font-family:inherit;font-size:15px;font-weight:600;color:var(--text,#1C1812);
   padding:7px 10px;border-radius:4px;min-height:46px;
   background:var(--paper,#FFFDF8);
   border:1px solid var(--line,rgba(28,24,18,.14));
 }
 .bsr-set select{cursor:pointer;padding-right:8px}
-.bsr-set input[type="number"]{width:5.2em;text-align:center}
+.bsr-set input[type="text"]{width:3.6em;text-align:center;font-variant-numeric:tabular-nums}
 .bsr-set select:hover,
-.bsr-set input[type="number"]:hover{border-color:var(--ss,#AF5F30)}
+.bsr-set input[type="text"]:hover{border-color:var(--ss,#AF5F30)}
 .bsr-set select:focus-visible,
-.bsr-set input[type="number"]:focus-visible{
+.bsr-set input[type="text"]:focus-visible{
   outline:2px solid var(--ss,#AF5F30);outline-offset:1px;border-color:var(--ss,#AF5F30);
 }
-/* Chrome hides the spinners until hover, which makes the field look like
-   plain text; show them so it reads as a number you can nudge. */
-.bsr-set input[type="number"]::-webkit-outer-spin-button,
-.bsr-set input[type="number"]::-webkit-inner-spin-button{opacity:1;height:26px}
+
 .bsr-assumed{
   font-size:14px;font-weight:600;align-self:center;
   color:var(--text-mute,#5A5140);

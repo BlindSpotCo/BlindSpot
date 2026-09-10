@@ -775,11 +775,10 @@ export default function ReportScreen() {
             <label className="bsr-set-field">
               <span>Floor</span>
               <input
-                type="number"
+                type="text"
                 inputMode="numeric"
-                min={1}
-                max={MAX_FLOOR}
-                step={1}
+                pattern="[0-9]*"
+                maxLength={2}
                 value={floorText}
                 onChange={(e) => {
                   const raw = e.target.value.replace(/[^\d]/g, '').slice(0, 2);
@@ -794,6 +793,7 @@ export default function ReportScreen() {
                   setFloorText(String(clamped));
                 }}
                 aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
+                placeholder="5"
               />
             </label>
             <label className="bsr-set-field">
