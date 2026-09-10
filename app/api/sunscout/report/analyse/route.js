@@ -61,7 +61,7 @@ Note: the neighbourhood score is the same for every unit in this pincode — it 
 // summary, no table, no reason. Every attempt below is bounded, and the loop
 // stops trying once there isn't time left for another one, so this route
 // always returns its own answer rather than being cut off mid-flight.
-function geminiCaller({ budgetMs = 48_000, maxOutputTokens = 6144 } = {}) {
+function geminiCaller({ budgetMs = 48_000, maxOutputTokens = 6144, generationConfig = null } = {}) {
   const startedAt = Date.now();
   const left = () => budgetMs - (Date.now() - startedAt);
 
@@ -80,7 +80,7 @@ function geminiCaller({ budgetMs = 48_000, maxOutputTokens = 6144 } = {}) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               contents: msgContents,
-              generationConfig: { maxOutputTokens, temperature: 0.2 },
+              generationConfig: { maxOutputTokens, temperature: 0.2, ...(generationConfig || {}) },
             }),
             signal: AbortSignal.timeout(Math.min(remaining, 40_000)),
           });
@@ -126,114 +126,113 @@ function geminiCaller({ budgetMs = 48_000, maxOutputTokens = 6144 } = {}) {
 // which is how a long shadow section could eat the token budget the rest of
 // the report needed -- and why the same truncation showed up there too.
 async function describeImages({ screenshots, groundTruthText, floorN, facing, budgetMs = 38_000 }) {
-  // Six per batch, not four: two requests instead of three, which matters
-  // more than batch size does. Six descriptions of 2-4 sentences is around
-  // 600 output tokens, comfortably inside the 2048 ceiling below.
+  // Six per batch, not twelve: one request for all of them overruns the
+  // output ceiling partway down the list and every image after the cut gets
+  // nothing. Two batches of six sit well inside it.
   const BATCH = 6;
   const batches = [];
   for (let i = 0; i < screenshots.length; i += BATCH) {
     batches.push({ offset: i, shots: screenshots.slice(i, i + BATCH) });
   }
 
-  // Every batch numbers its own images from 1. Telling batch two that its
-  // images are "5 to 8" and trusting the answer to come back that way is a
-  // bet on the model's arithmetic, and when it loses, batch two's lines are
-  // numbered 1-4, overwrite batch one, and eight images end up with no
-  // description at all. The offset is applied here instead, in code.
+  // Ask for JSON, not for a line format.
+  //
+  // This used to request "@N@ <description>" lines and parse them with a
+  // regex. Every part of that was a guess about how the model would format
+  // its answer -- a leading bullet, a bold marker, a blank line between
+  // entries, a header sentence before the first one, or the description
+  // wrapped onto its own line, and the regex matched nothing and the gallery
+  // came back with no descriptions at all. Which is what happened.
+  //
+  // A response schema removes the guess: the model must return an array of
+  // objects, and the array's own order carries the image numbering, so
+  // nothing depends on the model counting correctly either.
+  const SCHEMA = {
+    type: 'ARRAY',
+    items: {
+      type: 'OBJECT',
+      properties: {
+        image: { type: 'INTEGER', description: 'the 1-based position of this image in the list given' },
+        description: { type: 'STRING', description: '2 to 4 complete sentences of plain English' },
+      },
+      required: ['image', 'description'],
+    },
+  };
+
   const promptFor = (shots) => `You are a solar analyst describing map screenshots for a home buyer in India.
 
 ${groundTruthText}
 
 These are screenshots of a 3D map of one location. The orange circle marks the exact property; darker areas are shadows cast by real OpenStreetMap building data. The unit in question is on floor ${floorN}, facing ${facing}.
 
-You are being given ${shots.length} images. Write ONE line per image and nothing else -- ${shots.length} lines, no more, no fewer. Each line must be exactly this form, no bullet, no heading, no blank line between them:
-@N@ <description>
-numbered @1@ to @${shots.length}@, in the order the images are listed below.
+You are given ${shots.length} images, in this order:
+${shots.map((sh, i) => `${i + 1}. ${sh.label}`).join('\n')}
 
-Each description is 2-4 sentences of plain, everyday English, and must end as a complete sentence -- never stop mid-sentence. Say what is casting the shadow near the marker (a taller building, a row of low-rise structures, nothing nearby), which way the shadow falls, roughly how much of the area around the marker is in shade versus sun at that moment, and what that means for this floor and facing at that time of year. Be concrete about what you can actually see. If an image looks blank, black or unreadable, say so on its line instead of guessing. Never use emoji.
+Return one entry per image, ${shots.length} in total, in that same order. For each, "image" is its position in the list above and "description" is 2 to 4 complete sentences of plain, everyday English covering: what is casting the shadow near the marker (a taller building, a row of low-rise structures, nothing nearby), which way the shadow falls, roughly how much of the area around the marker is in shade versus sun at that moment, and what that means for this floor and facing at that time of year.
 
-Image order:
-${shots.map((sh, i) => `Image ${i + 1}: ${sh.label}`).join('\n')}`;
-
-  // Local 1..N back to this batch's real position in the twelve.
-  const renumber = (text, offset, shotCount) => text
-    .split('\n')
-    .map((line) => {
-      const m = line.match(/^@(\d+)@\s*(.+)$/);
-      if (!m) return null;
-      const local = parseInt(m[1], 10);
-      if (!(local >= 1 && local <= shotCount)) return null;
-      return `@${offset + local}@ ${m[2].trim()}`;
-    })
-    .filter(Boolean)
-    .join('\n');
+Be concrete about what you can actually see. Never end mid-sentence. If an image looks blank, black or unreadable, say so in its description rather than guessing. Never use emoji.`;
 
   const partsFor = (shots) => shots.map((sh) => {
     const match = sh.base64.match(/^data:(image\/\w+);base64,(.+)$/);
     return { inlineData: { mimeType: match ? match[1] : 'image/jpeg', data: match ? match[2] : sh.base64 } };
   });
 
-  // A budget per batch, not one clock shared by all of them. With a single
-  // caller created up front, a slow first batch could eat 33 of the 38
-  // seconds and the second would find too little left to even ask -- so six
-  // images came back described and six came back blank, with nothing
-  // anywhere reporting that as a failure.
+  // A budget per batch, not one clock shared by all of them: a slow first
+  // batch used to leave the second with too little time to even ask.
   const perBatchMs = Math.max(15_000, Math.floor(budgetMs / Math.max(1, batches.length)));
 
   const runBatch = async ({ offset, shots }) => {
+    const out = new Map(); // global image index (0-based) -> description
     try {
-      const { call } = geminiCaller({ budgetMs: perBatchMs, maxOutputTokens: 2048 });
+      const { call } = geminiCaller({
+        budgetMs: perBatchMs,
+        maxOutputTokens: 2048,
+        generationConfig: { responseMimeType: 'application/json', responseSchema: SCHEMA },
+      });
       const d = await call([{ role: 'user', parts: [{ text: promptFor(shots) }, ...partsFor(shots)] }]);
-      const cand = d?.candidates?.[0];
-      let text = cand?.content?.parts?.[0]?.text || '';
-      // If a batch was cut off anyway, drop the unfinished last line rather
-      // than showing half a sentence under an image.
-      if (cand?.finishReason === 'MAX_TOKENS') {
-        const lines = text.split('\n');
-        lines.pop();
-        text = lines.join('\n');
-        console.warn(`[report/analyse] caption batch at ${offset} hit MAX_TOKENS; dropped its last line.`);
+      const raw = d?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      if (!raw) { console.warn(`[report/analyse] caption batch at ${offset} came back empty.`); return out; }
+
+      let rows;
+      try {
+        rows = JSON.parse(raw);
+      } catch {
+        console.warn(`[report/analyse] caption batch at ${offset} was not valid JSON; first 200 chars: ${raw.slice(0, 200)}`);
+        return out;
       }
-      const numbered = renumber(text, offset, shots.length);
-      if (!numbered) console.warn(`[report/analyse] caption batch at ${offset} came back with no usable lines.`);
-      return numbered;
+      if (!Array.isArray(rows)) return out;
+
+      rows.forEach((row, i) => {
+        const text = typeof row?.description === 'string' ? row.description.trim() : '';
+        if (!text) return;
+        // Trust the array's order over the model's own numbering, and fall
+        // back to it only when the number is plainly sane. Getting this
+        // wrong is how six descriptions landed on the wrong six images.
+        const n = Number.isInteger(row.image) && row.image >= 1 && row.image <= shots.length
+          ? row.image - 1
+          : i;
+        if (n < shots.length) out.set(offset + n, text);
+      });
     } catch (err) {
       console.error(`[report/analyse] caption batch at ${offset} failed:`, err?.message || err);
-      return '';
     }
+    return out;
   };
 
   // One at a time. Firing every batch at once tripled the request rate at
   // the same instant, and on a free-tier key that reads as a rate limit and
-  // comes back as nothing -- which is worse than the truncation it was
-  // meant to fix. Sequential costs a few seconds and asks for one thing at
-  // a time, which is what the quota is counting.
-  const texts = [];
-  for (const b of batches) texts.push(await runBatch(b));
-
-  let text = texts.filter(Boolean).join('\n');
-  let count = (text.match(/^@\d+@/gm) || []).length;
-
-  // Last resort: one call for the lot, the shape this used to be. Slower
-  // and it can truncate, but a truncated set of descriptions beats none,
-  // and this only runs when the batches have already come back empty.
-  if (count === 0 && batches.length > 1) {
-    console.warn('[report/analyse] all caption batches came back empty; retrying as a single request.');
-    const { call: oneCall } = geminiCaller({ budgetMs: 30_000, maxOutputTokens: 4096 });
-    try {
-      const d = await oneCall([{ role: 'user', parts: [{ text: promptFor(screenshots) }, ...partsFor(screenshots)] }]);
-      const whole = renumber(d?.candidates?.[0]?.content?.parts?.[0]?.text || '', 0, screenshots.length);
-      if (/^@\d+@/m.test(whole)) {
-        text = whole;
-        count = (whole.match(/^@\d+@/gm) || []).length;
-      }
-    } catch (err) {
-      console.error('[report/analyse] single-request caption fallback failed:', err?.message || err);
-    }
+  // comes back as nothing.
+  const described = new Map();
+  for (const b of batches) {
+    const got = await runBatch(b);
+    got.forEach((v, k) => described.set(k, v));
   }
 
-  console.log(`[report/analyse] captions: ${count}/${screenshots.length} images described.`);
-  return { text, count };
+  console.log(`[report/analyse] captions: ${described.size}/${screenshots.length} images described.`);
+  return {
+    captions: Object.fromEntries(described),
+    count: described.size,
+  };
 }
 
 export async function POST(req) {
@@ -309,21 +308,21 @@ Note: floor clearance is an estimate based on typical urban obstruction heights,
       return NextResponse.json({ analysis: '', summary: reportSummary, aiUnavailable: true, aiReason: 'not-configured' });
     }
 
-    const { text: capText, count: captioned } = await describeImages({
+    const { captions, count } = await describeImages({
       screenshots, groundTruthText, floorN, facing: safeFacingInput,
     });
 
-    // One usable @N@ line is the bar. Anything less and the gallery is
-    // better off saying nothing than showing a stray sentence under one
-    // image and nothing under the other eleven.
-    if (captioned === 0) {
-      console.warn('[report/analyse] caption pass came back without @N@ lines; shipping the gallery without descriptions.');
-      return NextResponse.json({ analysis: '', summary: reportSummary, aiUnavailable: true, aiReason: 'captions-empty' });
+    if (count === 0) {
+      console.warn('[report/analyse] no image descriptions came back; shipping the gallery without them.');
+      return NextResponse.json({
+        analysis: '', captions: {}, summary: reportSummary,
+        aiUnavailable: true, aiReason: 'captions-empty',
+      });
     }
 
     return NextResponse.json({
-      analysis: capText, summary: reportSummary, captions: true,
-      captionedCount: captioned, imageCount: screenshots.length,
+      analysis: '', captions, summary: reportSummary,
+      captionedCount: count, imageCount: screenshots.length,
     });
   }
 
@@ -499,7 +498,7 @@ The opening 2-3 sentences of this section must be plain, everyday words — the 
       }))
       .catch((err) => {
         console.error('[report/analyse] image descriptions failed:', err?.message || err);
-        return { text: '', count: 0 };
+        return { captions: {}, count: 0 };
       });
 
     let data = await callGemini(contents);
@@ -508,7 +507,7 @@ The opening 2-3 sentences of this section must be plain, everyday words — the 
       // have -- they are a different, smaller job. Ship what landed.
       const caps = await captionsPromise;
       return NextResponse.json({
-        analysis: caps.text || '',
+        analysis: '', captions: caps.captions || {}, captionedCount: caps.count,
         summary: reportSummary,
         avRecord: avRecord || null,
         combinedScore: combinedScore ?? null,
@@ -555,7 +554,7 @@ The opening 2-3 sentences of this section must be plain, everyday words — the 
       );
       const capsOnly = await captionsPromise;
       return NextResponse.json({
-        analysis: capsOnly.text || '',
+        analysis: '', captions: capsOnly.captions || {}, captionedCount: capsOnly.count,
         summary: reportSummary,
         avRecord: avRecord || null,
         combinedScore: combinedScore ?? null,
@@ -570,10 +569,9 @@ The opening 2-3 sentences of this section must be plain, everyday words — the 
     }
 
     const caps = await captionsPromise;
-    const withImages = caps.text ? `${analysis}\n\n${caps.text}` : analysis;
 
     return NextResponse.json({
-      analysis: withImages, summary: reportSummary,
+      analysis, captions: caps.captions || {}, summary: reportSummary,
       avRecord: avRecord || null, combinedScore: combinedScore ?? null,
       captionedCount: caps.count, imageCount: screenshots.length,
     });

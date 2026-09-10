@@ -174,8 +174,14 @@ const PROPERTY_MARKER_HTML = `
 // whatever's left starts mid-sequence ("4. FLOOR...", "5. ...FACING...")
 // which reads as a numbering bug -- each section already has its own card
 // and icon, so the number added nothing but confusion.
-function formatNarrative(rawAnalysis) {
-  return rawAnalysis
+function formatNarrative(rawAnalysis, { dropLeadingHeader = false } = {}) {
+  // Each section already has its own heading in the document, so the model's
+  // own restatement of it ("THE FLAT ITSELF, FLOOR 7 FACING SOUTH-EAST")
+  // reads as a duplicate heading two lines under the real one.
+  const src = dropLeadingHeader
+    ? rawAnalysis.replace(/^\s*(?:\d+\.\s*)?[A-Z][A-Z0-9 ,&'\/-]{6,}\s*$/m, '').trim()
+    : rawAnalysis;
+  return src
     .replace(/^\d+\.\s*(.+)$/gm, `<h3 style="font-size:16px;font-weight:700;color:${INK};margin:24px 0 10px;font-family:${DISPLAY};">$1</h3>`)
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/^[-•] (.+)$/gm, `<li style="margin-bottom:8px;color:${MUTE};line-height:1.75;font-size:14.5px;">$1</li>`)
@@ -189,6 +195,11 @@ function formatNarrative(rawAnalysis) {
 export async function POST(req) {
   const {
     lat, lon, address, floor, facing, screenshots, analysis, summary,
+    // Per-image descriptions, keyed by the image's index. They used to be
+    // smuggled through `analysis` as "@N@ ..." lines and pulled back out
+    // with a regex here -- a guess about the model's formatting that, when
+    // it was wrong, silently produced a gallery with no descriptions at all.
+    captions,
     reportLabel,
     facingAssumptionNote,
     avRecord, combinedScore, unitScore, areaWeight, unitWeight,
@@ -228,7 +239,18 @@ export async function POST(req) {
   const date = new Date().toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' });
   const shotCount = screenshots?.length || 0;
 
-  const { perImage, rest: rawRest } = splitPerImageAnalysis(safeAnalysis, shotCount);
+  const perImage = {};
+  if (captions && typeof captions === 'object') {
+    for (const [k, v] of Object.entries(captions)) {
+      const i = parseInt(k, 10);
+      if (Number.isInteger(i) && i >= 0 && i < shotCount && typeof v === 'string' && v.trim()) {
+        perImage[i] = stripEmoji(escapeHtml(v.trim()));
+      }
+    }
+  }
+  // Any stray marker lines from an older response shape are stripped rather
+  // than left to show up mid-paragraph.
+  const rawRest = safeAnalysis.replace(/^@\d+@.*$/gm, '').replace(/\n{3,}/g, '\n\n').trim();
   // Strip markdown header wrapping (## headers, **N. TITLE** bold headers)
   // BEFORE trying to detect section boundaries below -- moveVerdictFirst /
   // extractSection look for plain "N. TITLE" lines, and a header Gemini
@@ -261,7 +283,12 @@ export async function POST(req) {
     ? extractSection(afterTogether, /neighbourhood full analysis/i)
     : { body: '', rest: afterTogether };
 
-  const rawAnalysis = afterNeighbourhood;
+  // The model's closing "what to check when you visit" section, lifted out
+  // so it reads as a checklist under its own heading instead of trailing off
+  // the end of the sun & shadow paragraphs.
+  const { body: checkBody, rest: afterCheck } = extractSection(afterNeighbourhood, /what to check|before you visit|before you decide/i);
+
+  const rawAnalysis = afterCheck;
 
   // The AI verdict ends with one "- Best fit for: ..." line (per the prompt
   // in analyse/route.js) -- pull it out to show as its own "Ideal For" strip
@@ -276,7 +303,7 @@ export async function POST(req) {
   const formattedVerdictBody = verdictBodyMinusIdeal ? formatNarrative(verdictBodyMinusIdeal) : '';
   const formattedNeighbourhoodBody = neighbourhoodBody ? formatNarrative(neighbourhoodBody) : '';
   const formattedTogetherBody = togetherBody ? formatNarrative(togetherBody) : '';
-  const formattedAnalysis = formatNarrative(rawAnalysis);
+  const formattedAnalysis = formatNarrative(rawAnalysis, { dropLeadingHeader: true });
 
   // ---- Deterministic Consumer Scorecard + Pros/Cons -------------------
   // Everything below is computed straight from real numbers already in
@@ -291,125 +318,22 @@ export async function POST(req) {
     return score >= 70 ? GOOD : score >= 40 ? OK : POOR;
   }
 
-  const scorecardCards = [];
-  if (summary?.solarFeasibility) {
-    scorecardCards.push({
-      label: 'Sunlight', value: summary.solarFeasibility.verdict,
-      detail: `${summary.solarFeasibility.avgUsableHours}h/day avg`, color: SUN,
-    });
-  }
-  if (shadeHeatSub) {
-    scorecardCards.push({
-      label: 'Energy / Cooling',
-      value: shadeHeatSub.score >= 70 ? 'Low risk' : shadeHeatSub.score >= 40 ? 'Fair' : 'High risk',
-      detail: shadeHeatSub.summary, color: gradeColor(shadeHeatSub.score),
-    });
-  }
-  if (hasNeighbourhood && (avRecord.scores?.schools != null || avRecord.scores?.crime != null)) {
-    const schools = avRecord.scores?.schools, crime = avRecord.scores?.crime;
-    const avg = ((schools ?? 55) + (crime ?? 55)) / 2;
-    scorecardCards.push({
-      label: 'Family Friendliness',
-      value: avg >= 75 ? 'Strong' : avg >= 55 ? 'Moderate' : 'Limited',
-      detail: `Schools ${schools ?? '-'}, crime ${crime ?? '-'}`, color: gradeColor(avg),
-    });
-  }
-  // Elderly Suitability -- derived from floor (lift dependency risk on
-  // higher floors), roads score (walkability proxy), and crime score
-  // (safety). No medical-facility-proximity data exists in AsliVastu yet,
-  // so that gap is named honestly in the detail line rather than implied.
-  if (hasNeighbourhood && (avRecord.scores?.roads != null || avRecord.scores?.crime != null)) {
-    const roadsScore = avRecord.scores?.roads, crimeScoreForElderly = avRecord.scores?.crime;
-    const floorN2 = parseInt(floor) || 0;
-    const floorPenalty = floorN2 <= 2 ? 0 : floorN2 <= 6 ? 10 : 20;
-    const elderlyBase = ((roadsScore ?? 55) + (crimeScoreForElderly ?? 55)) / 2;
-    const elderlyScore = Math.max(0, elderlyBase - floorPenalty);
-    scorecardCards.push({
-      label: 'Elderly Suitability',
-      value: elderlyScore >= 70 ? 'Good' : elderlyScore >= 45 ? 'Fair' : 'Limited',
-      detail: `Floor ${floorN2}${roadsScore != null ? `, roads ${roadsScore}` : ''}${crimeScoreForElderly != null ? `, crime ${crimeScoreForElderly}` : ''}, medical proximity not yet mapped`,
-      color: gradeColor(elderlyScore),
-    });
-  }
-  // Indoor Plants -- most houseplants want consistent moderate light, not
-  // extremes; too little usable sun struggles to sustain them, too much
-  // (especially on hot-facing units) risks scorching/drying. Air quality
-  // factors in where available since it affects plant health too.
-  if (summary?.solarFeasibility) {
-    const avgH = summary.solarFeasibility.avgUsableHours;
-    const airScoreForPlants = avRecord?.scores?.air;
-    let plantsValue, plantsColor;
-    if (avgH >= 2 && avgH <= 8) { plantsValue = 'Good'; plantsColor = GOOD; }
-    else if (avgH > 8) { plantsValue = 'Fair, may need shading'; plantsColor = OK; }
-    else { plantsValue = 'Limited, low light'; plantsColor = OK; }
-    if (airScoreForPlants != null && airScoreForPlants < 50 && plantsColor === GOOD) { plantsValue = 'Fair'; plantsColor = OK; }
-    const plantsDetailParts = [`${avgH}h/day avg light`];
-    if (airScoreForPlants != null) plantsDetailParts.push(`air quality ${airScoreForPlants}`);
-    scorecardCards.push({ label: 'Indoor Plants', value: plantsValue, detail: plantsDetailParts.join(' · '), color: plantsColor });
-  }
-  if (summary?.monthlySummary) {
-    const hours = summary.monthlySummary.map(m => m.usableHours);
-    const zeroMonths = summary.monthlySummary.filter(m => m.usableHours === 0);
-    const max = Math.max(...hours), min = Math.min(...hours);
-    if (zeroMonths.length >= 2) {
-      scorecardCards.push({
-        label: 'Work-From-Home Fit', value: 'Inconsistent',
-        detail: `No light ${zeroMonths[0].month.slice(0,3)}–${zeroMonths[zeroMonths.length-1].month.slice(0,3)}`, color: OK,
-      });
-    } else if (max - min > 6) {
-      scorecardCards.push({
-        label: 'Work-From-Home Fit', value: 'Seasonal',
-        detail: `${min.toFixed(1)}–${max.toFixed(1)}h swing across the year`, color: OK,
-      });
-    } else {
-      scorecardCards.push({
-        label: 'Work-From-Home Fit', value: 'Consistent',
-        detail: `${min.toFixed(1)}–${max.toFixed(1)}h year-round`, color: GOOD,
-      });
-    }
-  }
-  if (hasNeighbourhood && avRecord.price_context?.rate_sqft) {
-    scorecardCards.push({
-      label: 'Investment Band', value: avRecord.price_context.label || 'Priced',
-      detail: `₹${Math.round(avRecord.price_context.rate_sqft[0]).toLocaleString('en-IN')}–₹${Math.round(avRecord.price_context.rate_sqft[1]).toLocaleString('en-IN')}/sqft`,
-      color: WINE,
-    });
-  }
-  // Rental Appeal card removed -- nothing in BlindSpot actually computes
-  // rental data yet, and a permanent "Needs data" placeholder wasn't wanted
-  // in the scorecard.
-  if (windSub) {
-    scorecardCards.push({
-      label: 'Ventilation',
-      value: windSub.score >= 70 ? 'Good' : windSub.score >= 40 ? 'Moderate' : 'Limited',
-      detail: windSub.summary, color: gradeColor(windSub.score),
-    });
-  } else {
-    scorecardCards.push({ label: 'Ventilation', value: 'Needs data', detail: 'Not yet computed', color: DIM });
-  }
+  // The nine-tile "consumer scorecard" that used to sit here has gone. It
+  // restated the same numbers the area and flat sections carry, in derived
+  // labels a reader had no way to check ("Indoor Plants: Good"), and it was
+  // the single most cluttered thing in the report.
 
-  const scorecardSection = `
-    <div style="border:1px solid ${LINE};padding:24px 28px;margin-bottom:28px;">
-      <div style="font-size:11px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px;">Consumer Scorecard</div>
-      <div style="display:flex;flex-wrap:wrap;gap:1px;background:${LINE};">
-        ${scorecardCards.map(c => `
-          <div style="background:#fff;flex:1;min-width:150px;padding:14px 16px;">
-            <div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;">${escapeHtml(c.label)}</div>
-            <div style="font-size:16px;font-weight:800;color:${c.color};font-family:${DISPLAY};margin-bottom:3px;">${escapeHtml(String(c.value))}</div>
-            <div style="font-size:10.5px;color:${DIM};line-height:1.5;">${escapeHtml(c.detail)}</div>
-          </div>`).join('')}
-      </div>
-    </div>`;
-
-  // Pros / Cons -- same threshold logic across whatever data is available
-  // (works for both the combined report and the unit-only fallback).
   const pros = [], cons = [];
   if (hasNeighbourhood && avRecord.scores) {
     for (const [key, label] of Object.entries(FACTOR_LABELS)) {
       const v = avRecord.scores[key];
       if (v == null) continue;
-      if (v >= 80) pros.push(`${label} is excellent (${v}/100)`);
-      else if (v < 50) cons.push(`${label} is weak (${v}/100)`);
+      // "Schools is excellent" -- half these labels are plural, so the verb
+      // has to come off the label rather than being assumed singular.
+      const PLURAL = new Set(['schools', 'roads']);
+      const verb = PLURAL.has(key) ? 'are' : 'is';
+      if (v >= 80) pros.push(`${label} ${verb} excellent (${v}/100)`);
+      else if (v < 50) cons.push(`${label} ${verb} weak (${v}/100)`);
     }
   }
   if (summary?.solarFeasibility) {
@@ -435,25 +359,6 @@ export async function POST(req) {
   };
   const badge = verdictLabel ? (VERDICT_BADGE[verdictLabel] || { text: escapeHtml(verdictLabel).toUpperCase(), color: SUN }) : null;
 
-  const prosConsSection = (pros.length || cons.length || idealForText) ? `
-    <div style="border:1px solid ${LINE};padding:24px 28px;margin-bottom:28px;">
-      <div style="display:flex;gap:28px;flex-wrap:wrap;${idealForText ? `margin-bottom:18px;` : ''}">
-        <div style="flex:1;min-width:220px;">
-          <div style="font-size:11px;font-weight:700;color:${GOOD};text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">Pros</div>
-          ${pros.map(p => `<div style="display:flex;gap:8px;margin-bottom:8px;font-size:13px;color:${INK};line-height:1.5;"><span style="color:${GOOD};font-weight:800;">+</span>${escapeHtml(p)}</div>`).join('') || `<div style="font-size:12.5px;color:${DIM};">Nothing stands out strongly either way.</div>`}
-        </div>
-        <div style="flex:1;min-width:220px;">
-          <div style="font-size:11px;font-weight:700;color:${POOR};text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">Cons</div>
-          ${cons.map(c => `<div style="display:flex;gap:8px;margin-bottom:8px;font-size:13px;color:${INK};line-height:1.5;"><span style="color:${POOR};font-weight:800;">−</span>${escapeHtml(c)}</div>`).join('') || `<div style="font-size:12.5px;color:${DIM};">No major red flags in the data.</div>`}
-        </div>
-      </div>
-      ${idealForText ? `
-      <div style="border-top:1px solid ${LINE_SOFT};padding-top:16px;">
-        <div style="font-size:11px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;">Ideal For</div>
-        <div style="font-size:13.5px;color:${INK};line-height:1.6;">${escapeHtml(idealForText)}</div>
-      </div>` : ''}
-    </div>` : '';
-
   const seasons = ['Summer', 'Winter', 'Spring', 'Autumn'];
   const shotsWithIndex = screenshots.map((s, i) => ({ ...s, idx: i }));
   const grouped = seasons.map(s => ({
@@ -461,26 +366,33 @@ export async function POST(req) {
     shots: shotsWithIndex.filter(sc => sc.label.startsWith(s)),
   })).filter(g => g.shots.length > 0);
 
-  // Each season is its own `.pdf-page` — kept as separate, moderately-sized
+  // Each season is its own `.pdf-page` -- kept as separate, moderately-sized
   // canvases when exporting (see the script at the bottom).
+  //
+  // The description is the point of this document, not a caption under a
+  // picture, so it is set as body text at reading size and given the room
+  // to be read. The time of day belongs on the image; the season belongs to
+  // the group; neither needs repeating in the text.
   const screenshotPages = grouped.map((g) => `
-    <div class="pdf-page" style="padding:40px 32px;background:#fff;">
-      <h3 style="font-size:22px;font-weight:800;color:${INK};margin-bottom:18px;font-family:${DISPLAY};letter-spacing:-.01em;padding-bottom:10px;border-bottom:2px solid ${LINE_SOFT};display:flex;align-items:center;gap:10px;">
-        <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${SUN};"></span>${g.season}
-      </h3>
-      <div style="display:flex;flex-direction:column;gap:22px;">
+    <div class="pdf-page" style="padding:38px 32px 30px;background:#fff;">
+      <div style="display:flex;align-items:baseline;gap:12px;padding-bottom:11px;border-bottom:2px solid ${INK};margin-bottom:24px;">
+        <h3 style="font-family:${DISPLAY};font-size:24px;font-weight:800;color:${INK};letter-spacing:-.01em;">${g.season}</h3>
+        <span style="font-size:12.5px;color:${DIM};">${g.shots.map(sc => sc.label.split(' · ')[1] || sc.label).join(' · ')}</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:34px;">
         ${g.shots.map((shot) => `
-          <div class="shot-card" style="border:1px solid ${LINE}; overflow:hidden;box-shadow:0 3px 14px rgba(28,24,18,0.06);">
-            <div style="width:100%;aspect-ratio:16/9;overflow:hidden;background:#0A0C10;position:relative;">
-              <img src="${shot.base64}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="${shot.label}"/>
+          <div class="shot-card">
+            <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px;">
+              <span style="font-family:${DISPLAY};font-size:17px;font-weight:800;color:${SUN};">${shot.label.split(' · ')[1] || shot.label}</span>
+              <span style="font-size:12px;color:${DIM};">${g.season} · floor ${safeFloor}, facing ${safeFacing}</span>
+            </div>
+            <div style="width:100%;aspect-ratio:16/9;overflow:hidden;background:#0A0C10;position:relative;border:1px solid ${LINE};">
+              <img src="${shot.base64}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="The block at ${shot.label}"/>
               ${PROPERTY_MARKER_HTML}
-              <div style="position:absolute;top:12px;left:12px;background:rgba(201,129,46,0.95);color:#fff;font-size:16px;font-weight:800;padding:5px 14px;letter-spacing:.02em;box-shadow:0 3px 10px rgba(0,0,0,0.25);">${shot.label.split(' · ')[1] || shot.label}</div>
             </div>
-            <div style="padding:16px 20px;background:#fff;border-top:1px solid ${LINE_SOFT};">
-              ${perImage[shot.idx]
-                ? `<div style="font-size:14.5px;color:${MUTE};line-height:1.8;">${perImage[shot.idx]}</div>`
-                : `<div style="font-size:13px;color:${DIM};line-height:1.7;font-style:italic;">No description came back for this frame. The image itself and the sunlight figures for this month are unaffected.</div>`}
-            </div>
+            ${perImage[shot.idx]
+              ? `<p style="font-size:15px;color:${INK};line-height:1.85;margin-top:13px;max-width:70ch;">${perImage[shot.idx]}</p>`
+              : `<p style="font-size:13.5px;color:${DIM};line-height:1.75;margin-top:13px;">No description came back for this frame this time. The image and the sunlight figures for this month are unaffected — generating the report again usually fills it in.</p>`}
           </div>
         `).join('')}
       </div>
@@ -557,223 +469,190 @@ export async function POST(req) {
       ${PIN_SVG} ${safeReportLabel}
     </div>` : '';
 
-  // Combined BlindSpot score / area / unit stat row -- only shown when this
-  // report was generated from the Property Score flow (avRecord present).
-  // Uses the same sun→wine gradient as the site's own buttons/CTAs instead
-  // of a flat black card, so it reads as "BlindSpot" rather than generic.
-  const combinedScoreSection = hasNeighbourhood ? `
-    <div style="display:flex;gap:14px;margin-bottom:28px;flex-wrap:wrap;">
-      <div style="background:${GRADIENT};padding:16px 20px;flex:1.3;min-width:160px;">
-        <div style="font-size:9.5px;color:rgba(255,255,255,0.75);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">BlindSpot Combined Score</div>
-        <div style="font-size:32px;font-weight:800;color:#fff;font-family:${DISPLAY};line-height:1;">${combinedScore ?? '-'}<span style="font-size:14px;color:rgba(255,255,255,0.75);">/100</span></div>
-      </div>
-      <div style="background:${CARD};border:1px solid ${LINE};padding:16px 20px;flex:1;min-width:140px;">
-        <div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Neighbourhood, ${safeAreaName}</div>
-        <div style="font-size:24px;font-weight:800;color:${WINE};font-family:${DISPLAY};">${avRecord.nqi_composite}<span style="font-size:12px;color:${DIM};">/100</span></div>
-        <div style="font-size:10px;color:${DIM};margin-top:2px;">${Math.round((areaWeight ?? 0.5) * 100)}% weight · Grade ${escapeHtml(avRecord.grade ?? '-')}</div>
-      </div>
-      <div style="background:${CARD};border:1px solid ${LINE};padding:16px 20px;flex:1;min-width:140px;">
-        <div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Home Comfort, this unit</div>
-        <div style="font-size:24px;font-weight:800;color:${SUN};font-family:${DISPLAY};">${unitScore ?? '-'}<span style="font-size:12px;color:${DIM};">/100</span></div>
-        <div style="font-size:10px;color:${DIM};margin-top:2px;">${Math.round((unitWeight ?? 0.5) * 100)}% weight · Floor ${safeFloor}, ${safeFacing}</div>
-      </div>
-    </div>` : '';
-
-  // Home Buyer Verdict -- the report's opening statement, pulled out of the
-  // AI text and given its own prominent block so it reads first, on its own,
-  // ahead of every other section (per-image detail, floor/facing reasoning,
-  // neighbourhood breakdown). Light card, NOT a dark hero block -- this is
-  // a paragraph of body text meant to be read comfortably, so it uses the
-  // same warm cream card treatment as the rest of the report with a wine
-  // accent border, rather than reversed-out white-on-dark.
-  const verdictBoxSection = formattedVerdictBody ? `
-    <div style="background:${CARD};border:1px solid ${LINE};border-left:5px solid ${WINE};padding:26px 28px;margin-bottom:28px;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${WINE}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-        <h2 style="font-size:12.5px;font-weight:800;color:${WINE};text-transform:uppercase;letter-spacing:.1em;font-family:${DISPLAY};">Home Buyer Verdict</h2>
-      </div>
-      <div style="font-size:15px;line-height:1.85;color:${INK};">
-        ${formattedVerdictBody.replace(new RegExp(`color:${MUTE}`, 'g'), `color:${INK}`)}
-      </div>
-    </div>` : '';
-
-  // Said once, plainly, in the place the writing would have been. The
-  // numbers around it were computed here and are not affected.
+  // Said once, plainly, where the writing would have been. The numbers
+  // around it were computed here and are not affected.
   const aiNote = `
-    <div style="border-left:3px solid ${DIM};background:${CARD};padding:14px 18px;margin-bottom:18px;">
-      <div style="font-size:13.5px;color:${INK};line-height:1.7;">
-        The written sections could not be generated this time, so this report has the measurements without the narration.
-        Everything computed is still here and is unaffected: both scores and how they combine, the scorecard, the
-        strengths and concerns, the monthly sunlight table and the ${shotCount || 12} map images.
-        Generating the report again usually brings the written part back.
+    <div style="border-left:3px solid ${DIM};background:${CARD};padding:14px 18px;margin-bottom:22px;">
+      <div style="font-size:14px;color:${INK};line-height:1.75;">
+        The written sections could not be generated this time, so this report has the measurements without the
+        narration. Everything computed is still here and unaffected: both scores and how they combine, the
+        strengths and concerns, the sunlight figures and the ${shotCount || 12} map images.
+        Generating it again usually brings the writing back.
       </div>
     </div>`;
 
-  // ---- The way to the twelve images -----------------------------------
-  // This card went missing at some point and nothing noticed, because the
-  // failure is silent: mainHtml carried no anchor at all, so ReportModal's
-  // replaceAll('__GALLERY_URL__', ...) matched nothing and the methodology
-  // section went on telling the reader the images were "linked near the top
-  // of this report". They weren't linked anywhere. The twelve frames the
-  // person waited two minutes for were unreachable from the document.
-  const galleryLinkSection = (!galleryOnly && shotCount > 0) ? `
-    <a href="__GALLERY_URL__" target="_blank" style="display:block;text-decoration:none;border:1px solid ${LINE};border-left:4px solid ${SUN};background:${CARD};padding:20px 24px;margin-bottom:28px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
-        <div>
-          <div style="font-size:11px;font-weight:700;color:${SUN};text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;">See the evidence</div>
-          <div style="font-size:16px;font-weight:800;color:${INK};font-family:${DISPLAY};margin-bottom:4px;">The ${shotCount} map images this report is read from</div>
-          <div style="font-size:12.5px;color:${DIM};line-height:1.6;">This block photographed through the year, ${Object.keys(perImage).length ? 'each frame described, ' : ''}with the full monthly sunlight table. Opens in a new tab.</div>
-        </div>
-        <div style="font-size:13px;font-weight:700;color:${SUN};white-space:nowrap;">Open the images &rarr;</div>
-      </div>
-    </a>` : '';
-
-  // ---- The two halves, read against each other ------------------------
-  // The reason a combined report exists. Before this the area and the flat
-  // were analysed in separate cards that never mentioned one another, so a
-  // buyer choosing between a good area with a dark flat and a bright flat in
-  // a weaker area got two write-ups and no answer.
-  //
-  // The headline is computed here, not written by the model, so it is always
-  // present and always consistent with the numbers -- including on a run
-  // where the narrative didn't come back at all.
+  // How the two halves relate, computed here rather than written, so it is
+  // present and consistent with the numbers even when the narrative isn't.
   const togetherRead = (() => {
     if (!hasNeighbourhood || typeof unitScore !== 'number') return null;
     const a = avRecord.nqi_composite;
     const u = unitScore;
     const gap = a - u;
-    const strong = (n) => n >= 65;
-    const weak = (n) => n < 50;
-
     if (gap >= 15) return {
-      kind: 'split',
       headline: 'A stronger area than flat',
-      line: `The neighbourhood scores ${a} and this flat ${u} — the area is carrying this one. That gap is the thing to look at, and it is the half you can still do something about: a different floor or facing in this same building changes the flat, nothing changes the area.`,
+      line: `The neighbourhood scores ${a} and this flat ${u} — the area is carrying this one. That gap is the half you can still do something about: a different floor or facing in this same building changes the flat, nothing changes the area.`,
     };
     if (gap <= -15) return {
-      kind: 'split',
       headline: 'A better flat than area',
-      line: `This flat scores ${u} against a neighbourhood of ${a} — you are buying a comfortable home in a weaker locality. The flat is the good news here, and it is the half that stays good; the area is the half no unit in this building escapes.`,
+      line: `This flat scores ${u} against a neighbourhood of ${a} — a comfortable home in a weaker locality. The flat is the good news, and it is the half that stays good; the area is the half no unit in this building escapes.`,
     };
-    if (strong(a) && strong(u)) return {
-      kind: 'agree-good',
+    if (a >= 65 && u >= 65) return {
       headline: 'Both halves agree, and both are strong',
-      line: `Area ${a}, flat ${u}. Nothing here is being propped up by the other half — this is the uncomplicated case, and the checks below are ordinary diligence rather than doubts.`,
+      line: `Area ${a}, flat ${u}. Neither is being propped up by the other — this is the uncomplicated case, and the checks below are ordinary diligence rather than doubts.`,
     };
-    if (weak(a) && weak(u)) return {
-      kind: 'agree-bad',
+    if (a < 50 && u < 50) return {
       headline: 'Both halves agree, and both are weak',
-      line: `Area ${a}, flat ${u}. Neither side rescues the other, so a better floor or facing in this building would not be enough on its own — the locality would still be what it is.`,
+      line: `Area ${a}, flat ${u}. Neither side rescues the other, so a better floor or facing here would not be enough on its own.`,
     };
     return {
-      kind: 'middle',
       headline: 'Both halves land in the middle',
-      line: `Area ${a}, flat ${u}. Close enough that neither is clearly the problem — which usually means the decision comes down to the specific things in the checklist below rather than to either score.`,
+      line: `Area ${a}, flat ${u}. Close enough that neither is clearly the problem, which usually means the decision comes down to the specific things in the checklist below.`,
     };
   })();
 
-  const togetherBar = (label, value, color) => `
-    <div style="flex:1;min-width:150px;">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:11px;color:${DIM};margin-bottom:5px;">
-        <span style="text-transform:uppercase;letter-spacing:.07em;">${label}</span>
-        <span style="font-size:15px;font-weight:800;color:${INK};font-family:${DISPLAY};">${value}</span>
+  // ---- One report, laid out as a document ------------------------------
+  //
+  // What this replaced: a stack of nine bordered cards -- a combined-score
+  // strip, a verdict box, a nine-tile "consumer scorecard", a pros/cons/ideal
+  // grid, a neighbourhood card, a sun card, each with its own border, icon
+  // and heading weight. Everything looked equally important, which is the
+  // same as nothing looking important, and the reader had to work out the
+  // order themselves.
+  //
+  // Now: one column, one type scale, and borders spent only where something
+  // genuinely is a separate object. The verdict leads because it is what
+  // people read; the numbers behind it follow in the order someone would
+  // ask for them.
+
+  const H2 = `font-family:${DISPLAY};font-size:13px;font-weight:800;color:${WINE};text-transform:uppercase;letter-spacing:.11em;margin-bottom:14px;`;
+  const RULE = `border-top:1px solid ${LINE};margin:34px 0 26px;`;
+  const LEAD = `font-size:15.5px;line-height:1.8;color:${INK};`;
+
+  const scoreWord = (n) => n >= 80 ? 'Excellent' : n >= 60 ? 'Good' : n >= 40 ? 'Fair' : 'Poor';
+
+  // The opening. One number, one word, and the written verdict under it --
+  // not a strip of three stat cards competing with a box.
+  const topScore = hasNeighbourhood ? combinedScore : unitScore;
+  const openingSection = `
+    <div style="margin-bottom:30px;">
+      <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px;">
+        <span style="font-family:${DISPLAY};font-size:64px;font-weight:800;line-height:1;color:${INK};">${topScore ?? '-'}</span>
+        <span style="font-family:${DISPLAY};font-size:26px;font-weight:800;color:${gradeColor(topScore ?? 0)};">${topScore != null ? scoreWord(topScore) : ''}</span>
+        <span style="font-size:12.5px;color:${DIM};">out of 100 &middot; ${hasNeighbourhood ? 'the area and the flat together' : 'this flat'}</span>
       </div>
-      <div style="background:${LINE_SOFT};height:8px;"><div style="width:${Math.max(2, Math.min(100, value))}%;height:100%;background:${color};"></div></div>
+      ${hasNeighbourhood ? `
+      <div style="font-size:12.5px;color:${DIM};margin-bottom:${formattedVerdictBody ? '20px' : '0'};">
+        ${escapeHtml(avRecord.name || avRecord.pin_code)} scores ${avRecord.nqi_composite} and weighs ${Math.round((areaWeight ?? 0.5) * 100)}%;
+        this flat scores ${unitScore ?? '-'} and weighs ${Math.round((unitWeight ?? 0.5) * 100)}%.
+      </div>` : ''}
+      ${formattedVerdictBody ? `<div style="${LEAD}">${formattedVerdictBody.replace(new RegExp(`color:${MUTE}`, 'g'), `color:${INK}`).replace(/font-size:14.5px/g, 'font-size:15.5px')}</div>` : ''}
+      ${idealForText ? `
+      <div style="margin-top:18px;padding:13px 16px;background:${CARD};font-size:14px;color:${INK};line-height:1.7;">
+        <span style="font-weight:700;">Best suited to:</span> ${escapeHtml(idealForText)}
+      </div>` : ''}
+    </div>`;
+
+  // The two halves read against each other -- the one thing a combined
+  // report can say that neither half can. Two bars, one headline, the model's
+  // reading underneath.
+  const bar = (label, value, color) => `
+    <div style="flex:1;min-width:170px;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:11.5px;color:${DIM};margin-bottom:5px;">
+        <span>${label}</span>
+        <span style="font-family:${DISPLAY};font-size:15px;font-weight:800;color:${INK};">${value}</span>
+      </div>
+      <div style="background:${LINE_SOFT};height:7px;"><div style="width:${Math.max(2, Math.min(100, value))}%;height:100%;background:${color};"></div></div>
     </div>`;
 
   const togetherSection = togetherRead ? `
-    <div style="border:1px solid ${LINE};border-top:4px solid ${WINE};padding:26px 28px;margin-bottom:28px;">
-      <div style="font-size:11px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">The area and the flat, together</div>
-      <h2 style="font-size:20px;font-weight:800;color:${INK};font-family:${DISPLAY};margin-bottom:14px;letter-spacing:-.01em;">${togetherRead.headline}</h2>
-
-      <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px;">
-        ${togetherBar(`The area, ${safeAreaName}`, avRecord.nqi_composite, WINE)}
-        ${togetherBar(`This flat, floor ${safeFloor} ${safeFacing}`, unitScore, SUN)}
+    <div style="${RULE}"></div>
+    <div style="margin-bottom:26px;">
+      <div style="${H2}">The area and the flat, together</div>
+      <div style="font-family:${DISPLAY};font-size:21px;font-weight:800;color:${INK};margin-bottom:16px;letter-spacing:-.01em;">${togetherRead.headline}</div>
+      <div style="display:flex;gap:22px;flex-wrap:wrap;margin-bottom:18px;">
+        ${bar(`The area, ${safeAreaName}`, avRecord.nqi_composite, WINE)}
+        ${bar(`This flat, floor ${safeFloor} ${safeFacing}`, unitScore, SUN)}
       </div>
-
       ${formattedTogetherBody
-        ? `<div style="font-size:14.5px;line-height:1.8;color:${INK};">${formattedTogetherBody.replace(new RegExp(`color:${MUTE}`, 'g'), `color:${INK}`)}</div>`
-        : `<p style="font-size:14.5px;line-height:1.8;color:${INK};margin:0;font-family:Arial,sans-serif;">${togetherRead.line}</p>`}
+        ? `<div style="${LEAD}">${formattedTogetherBody.replace(new RegExp(`color:${MUTE}`, 'g'), `color:${INK}`).replace(/font-size:14.5px/g, 'font-size:15.5px')}</div>`
+        : `<p style="${LEAD}margin:0;">${togetherRead.line}</p>`}
     </div>` : '';
 
-  // Neighbourhood Full Analysis -- AI narrative grounded in AsliVastu's real
-  // factor scores, crime detail, schools, and price context. Styled with
-  // the exact same card treatment (border, padding, icon size, heading
-  // style) as the Sun & Shadow section below it, so neither side reads as
-  // the "main" report with the other as an appendix -- both get equal
-  // visual weight, just a different accent colour (wine for neighbourhood,
-  // sun for the unit/solar side).
-  const neighbourhoodFactorRows = hasNeighbourhood ? Object.entries(avRecord.scores || {}).map(([k, v]) => {
-    const label = ({ crime:'Crime', infrastructure:'Infrastructure', air:'Air Quality', power:'Power', schools:'Schools', water:'Water', roads:'Roads', sewerage:'Sewerage' })[k] || k;
-    const color = v >= 75 ? GOOD : v >= 50 ? OK : POOR;
-    return `
-      <div style="flex:1;min-width:110px;">
-        <div style="display:flex;justify-content:space-between;font-size:11px;color:${DIM};margin-bottom:4px;"><span>${escapeHtml(label)}</span><span style="font-weight:700;color:${INK};">${v}</span></div>
-        <div style="background:${LINE_SOFT};height:5px;"><div style="width:${v}%;height:100%;background:${color};"></div></div>
-      </div>`;
-  }).join('') : '';
+  // The area. Factor bars in one grid, the real counts as a plain line under
+  // them, then the narrative. No nested cards.
+  const factorRow = hasNeighbourhood ? Object.entries(avRecord.scores || {}).map(([k, v]) => `
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:11.5px;color:${DIM};margin-bottom:4px;">
+          <span>${escapeHtml(FACTOR_LABELS[k] || k)}</span><span style="font-weight:700;color:${INK};">${v}</span>
+        </div>
+        <div style="background:${LINE_SOFT};height:6px;"><div style="width:${v}%;height:100%;background:${gradeColor(v)};"></div></div>
+      </div>`).join('') : '';
 
-  const neighbourhoodSection = hasNeighbourhood ? `
-    <div style="border:1px solid ${LINE};padding:28px;margin-bottom:28px;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${WINE}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-        <h2 style="font-size:16px;font-weight:800;color:${INK};font-family:${DISPLAY};">Neighbourhood Analysis, ${safeAreaName}</h2>
+  const areaFacts = hasNeighbourhood ? [
+    avRecord.total_cognizable_crimes != null
+      ? `${avRecord.total_cognizable_crimes.toLocaleString('en-IN')} recorded crimes a year, safer than ${avRecord.crime_percentile ?? '-'}% of comparable areas`
+      : null,
+    avRecord.schools_count != null ? `${avRecord.schools_count} schools mapped nearby` : null,
+    avRecord.price_context?.rate_sqft
+      ? `Guidance value &#8377;${Math.round(avRecord.price_context.rate_sqft[0]).toLocaleString('en-IN')}&ndash;&#8377;${Math.round(avRecord.price_context.rate_sqft[1]).toLocaleString('en-IN')} per sq ft`
+      : null,
+  ].filter(Boolean) : [];
+
+  const areaSection = hasNeighbourhood ? `
+    <div style="${RULE}"></div>
+    <div style="margin-bottom:26px;">
+      <div style="${H2}">The area &middot; ${safeAreaName}, pin ${escapeHtml(avRecord.pin_code)}</div>
+      <p style="font-size:13px;color:${DIM};margin-bottom:18px;">Government records. The same for every flat in this pincode &mdash; they don't change with floor or facing.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px 26px;margin-bottom:${areaFacts.length ? '16px' : '20px'};">
+        ${factorRow}
       </div>
-      <div style="font-size:11px;color:${DIM};margin-bottom:18px;">Area-level, the same for every unit in this pincode. Source: Neighbourhood Score.</div>
-      <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:20px;">
-        ${neighbourhoodFactorRows}
-      </div>
-      ${avRecord.total_cognizable_crimes != null || avRecord.schools_count != null ? `
-      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:20px;">
-        ${avRecord.total_cognizable_crimes != null ? `
-        <div style="background:${CARD};border:1px solid ${LINE};padding:12px 16px;flex:1;min-width:130px;">
-          <div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;">Crime</div>
-          <div style="font-size:13px;color:${INK};">${avRecord.total_cognizable_crimes}/yr · safer than ${avRecord.crime_percentile ?? '-'}% of areas</div>
-        </div>` : ''}
-        ${avRecord.schools_count != null ? `
-        <div style="background:${CARD};border:1px solid ${LINE};padding:12px 16px;flex:1;min-width:130px;">
-          <div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;">Schools mapped</div>
-          <div style="font-size:13px;color:${INK};">${avRecord.schools_count}${(avRecord.schools_list?.length) ? `, incl. ${escapeHtml(avRecord.schools_list.slice(0,3).map(s=>s.name).join(', '))}` : ''}</div>
-        </div>` : ''}
-        ${avRecord.price_context?.rate_sqft ? `
-        <div style="background:${CARD};border:1px solid ${LINE};padding:12px 16px;flex:1;min-width:130px;">
-          <div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;">Price context</div>
-          <div style="font-size:13px;color:${INK};">₹${Math.round(avRecord.price_context.rate_sqft[0]).toLocaleString('en-IN')}–₹${Math.round(avRecord.price_context.rate_sqft[1]).toLocaleString('en-IN')}/sqft</div>
-        </div>` : ''}
-      </div>` : ''}
-      ${formattedNeighbourhoodBody}
+      ${areaFacts.length ? `<p style="font-size:13px;color:${MUTE};line-height:1.75;margin-bottom:18px;">${areaFacts.join(' &middot; ')}</p>` : ''}
+      ${formattedNeighbourhoodBody || ''}
     </div>` : '';
 
-  // Written narrative for the sun/shadow side (floor + facing reasoning).
-  // In the unit-only report this doubles as the overall summary; in the
-  // combined report the Verdict + Neighbourhood boxes above already cover
-  // the overall picture, so this is scoped explicitly to sun & shadow --
-  // and matches the neighbourhood card's exact styling for visual parity.
-  const fullAnalysisSection = `
-    <div style="border:1px solid ${LINE};padding:28px;margin-bottom:28px;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${SUN}" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4.5"/><line x1="12" y1="19.5" x2="12" y2="22"/><line x1="2" y1="12" x2="4.5" y2="12"/><line x1="19.5" y1="12" x2="22" y2="12"/></svg>
-        <h2 style="font-size:16px;font-weight:800;color:${INK};font-family:${DISPLAY};">${hasNeighbourhood ? 'Sun &amp; Shadow Analysis' : 'Summary'}, Floor ${safeFloor}, ${safeFacing}-facing</h2>
-      </div>
+  // The flat. The year in one chart, then the narrative.
+  const flatSection = `
+    <div style="${RULE}"></div>
+    <div style="margin-bottom:26px;">
+      <div style="${H2}">The flat &middot; floor ${safeFloor}, facing ${safeFacing}</div>
+      <p style="font-size:13px;color:${DIM};margin-bottom:18px;">
+        Worked out from the sun's real path over the buildings on this block${facingAssumptionNote ? ', with the facing assumed rather than confirmed' : ''}.
+      </p>
       ${summary?.solarFeasibility ? `
-      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:20px;">
-        <div style="background:${CARD};border:1px solid ${LINE};padding:12px 16px;flex:1;min-width:130px;display:flex;align-items:center;gap:10px;">
-          <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${GOOD};flex-shrink:0;"></span>
-          <div><div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.06em;">Best Months</div><div style="font-size:12.5px;font-weight:700;color:${INK};">${summary.solarFeasibility.bestMonths.join(', ')}</div></div>
-        </div>
-        <div style="background:${CARD};border:1px solid ${LINE};padding:12px 16px;flex:1;min-width:130px;display:flex;align-items:center;gap:10px;">
-          <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${POOR};flex-shrink:0;"></span>
-          <div><div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.06em;">Worst Months</div><div style="font-size:12.5px;font-weight:700;color:${INK};">${summary.solarFeasibility.worstMonths.join(', ')}</div></div>
-        </div>
-        <div style="background:${CARD};border:1px solid ${LINE};padding:12px 16px;flex:1;min-width:130px;display:flex;align-items:center;gap:10px;">
-          <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${SUN};flex-shrink:0;"></span>
-          <div><div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.06em;">Daily Average</div><div style="font-size:12.5px;font-weight:700;color:${INK};">${summary.solarFeasibility.avgUsableHours}h usable sun</div></div>
-        </div>
-      </div>` : ''}
-      ${formattedAnalysis}
+      <p style="font-size:14px;color:${MUTE};line-height:1.75;margin-bottom:4px;">
+        <strong style="color:${INK};">${summary.solarFeasibility.avgUsableHours}h of usable sun a day</strong> on average.
+        Best in ${summary.solarFeasibility.bestMonths.join(' and ')}; worst in ${summary.solarFeasibility.worstMonths.join(' and ')}.
+      </p>` : ''}
       ${sunBarChart}
-      ${summary?.solarFeasibility ? `<div style="font-size:11px;color:${DIM};">Best months: ${summary.solarFeasibility.bestMonths.join(', ')} · Worst months: ${summary.solarFeasibility.worstMonths.join(', ')}</div>` : ''}
+      ${formattedAnalysis || (aiUnavailable ? aiNote : '')}
+      ${summary?.buildingHeightNote ? `<p style="font-size:12.5px;color:${DIM};line-height:1.7;margin-top:14px;">${summary.buildingHeightNote.sentence}</p>` : ''}
     </div>`;
+
+  // Strengths and watch-outs, computed from the real numbers. Two plain
+  // lists, not two bordered cards inside a bordered grid.
+  const listBlock = (title, items, color) => items.length ? `
+    <div style="flex:1;min-width:230px;">
+      <div style="font-size:12px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:.09em;margin-bottom:10px;">${title}</div>
+      <ul style="margin:0;padding-left:17px;">
+        ${items.map(t => `<li style="font-size:14px;color:${MUTE};line-height:1.7;margin-bottom:7px;">${t}</li>`).join('')}
+      </ul>
+    </div>` : '';
+
+  const strengthsSection = (pros.length || cons.length) ? `
+    <div style="${RULE}"></div>
+    <div style="display:flex;gap:34px;flex-wrap:wrap;margin-bottom:26px;">
+      ${listBlock('What is good here', pros.map(p => escapeHtml(String(p).replace(/^\+\s*/, ''))), GOOD)}
+      ${listBlock('What to watch', cons.map(c => escapeHtml(String(c).replace(/^[-\u2212]\s*/, ''))), POOR)}
+    </div>` : '';
+
+  // Whatever the model wrote as its closing "what to check" section, pulled
+  // out so it reads as a checklist rather than the tail of a paragraph.
+  const checkSection = checkBody ? `
+    <div style="${RULE}"></div>
+    <div style="margin-bottom:26px;">
+      <div style="${H2}">Before you decide</div>
+      ${formatNarrative(checkBody)}
+    </div>` : '';
 
   const mainHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -818,49 +697,20 @@ export async function POST(req) {
         </div>
         <div style="font-size:11px;color:${DIM};display:flex;align-items:center;gap:5px;"><span style="color:${DIM};">${PIN_SVG}</span>${parseFloat(lat).toFixed(5)}°N, ${parseFloat(lon).toFixed(5)}°E · ${date}</div>
 
-        <p style="font-size:14px;line-height:1.75;color:${MUTE};margin-top:16px;max-width:62ch;font-family:Arial,sans-serif;">
+        <p style="font-size:14px;line-height:1.8;color:${MUTE};margin-top:16px;max-width:64ch;font-family:Arial,sans-serif;">
           ${hasNeighbourhood
-            ? `Two things decide whether you'll be happy here, and a listing tells you neither: what the area around this building is actually like, and what this particular flat is like to live in. This report measures both and then reads them against each other. Everything in it is either a government record or a calculation from the sun's real path over the real buildings on this block — where a figure is an estimate, it says so.`
-            : `A listing tells you the floor and the direction the windows face. It doesn't tell you what that means for light through the year. This report works it out from the sun's real path over the real buildings on this block — where a figure is an estimate, it says so.`}
+            ? `Two things decide whether you'll be happy here, and a listing tells you neither: what the area around this building is like, and what this particular flat is like to live in. Every figure below is either a government record or a calculation from the sun's real path over the real buildings on this block. Where something is an estimate, it says so.`
+            : `A listing tells you the floor and which way the windows face. It doesn't tell you what that means for light through the year. Everything below is calculated from the sun's real path over the real buildings on this block. Where something is an estimate, it says so.`}
         </p>
-
-        <div style="display:flex;gap:0;flex-wrap:wrap;margin-top:18px;border:1px solid ${LINE_SOFT};">
-          ${[
-            hasNeighbourhood ? 'The verdict' : null,
-            hasNeighbourhood ? 'How the two halves add up' : null,
-            hasNeighbourhood ? `The area, ${safeAreaName}` : null,
-            `The flat, floor ${safeFloor} ${safeFacing}`,
-            'Sunlight month by month',
-            `${shotCount || 12} map images`,
-            'What to check on the visit',
-          ].filter(Boolean).map((t, i) => `
-            <span style="font-size:11px;color:${MUTE};padding:8px 13px;${i ? `border-left:1px solid ${LINE_SOFT};` : ''}">${t}</span>
-          `).join('')}
-        </div>
       </div>
 
-      <div style="display:flex;gap:14px;margin-bottom:28px;flex-wrap:wrap;">
-        <div style="background:${CARD};border:1px solid ${LINE};padding:14px 18px;flex:1;min-width:120px;">
-          <div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;">Floor</div>
-          <div style="font-size:30px;font-weight:800;color:${SUN};line-height:1;font-family:${DISPLAY};">${safeFloor}</div>
-          <div style="font-size:10px;color:${DIM};margin-top:2px;">≈${(parseInt(floor)||0)*3}m height</div>
-        </div>
-        <div style="background:${CARD};border:1px solid ${LINE};padding:14px 18px;flex:1;min-width:120px;">
-          <div style="font-size:9.5px;color:${DIM};text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;">Facing</div>
-          <div style="font-size:30px;font-weight:800;color:${SUN};line-height:1;font-family:${DISPLAY};">${safeFacing}</div>
-          <div style="font-size:10px;color:${DIM};margin-top:2px;">${facingAssumptionNote ? 'window orientation · assumed, unconfirmed' : 'window orientation'}</div>
-        </div>
-      </div>
-
-      ${combinedScoreSection}
       ${aiUnavailable ? aiNote : ''}
-      ${verdictBoxSection}
+      ${openingSection}
       ${togetherSection}
-      ${galleryLinkSection}
-      ${scorecardSection}
-      ${prosConsSection}
-      ${neighbourhoodSection}
-      ${fullAnalysisSection}
+      ${areaSection}
+      ${flatSection}
+      ${strengthsSection}
+      ${checkSection}
     </div>
 
     <!-- Final page: methodology + footer -->
@@ -874,8 +724,8 @@ export async function POST(req) {
           <li>Floor clearance uses a generic urban-obstruction estimate, not a measurement of this property's specific neighboring buildings.</li>
           ${summary?.buildingHeightNote ? `<li>${summary.buildingHeightNote.sentence}</li>` : ''}
           ${safeFacingAssumptionNote ? `<li>${safeFacingAssumptionNote}</li>` : ''}
-          <li>The narrative sections use AI to interpret the real numbers above and describe the screenshots, it is instructed to treat the figures as fact, not to estimate its own.</li>
-          ${galleryOnly ? '' : `<li>The ${shotCount || 12} sun/shadow map screenshots and their descriptions are in a separate gallery, linked from the "See the evidence" card above. That link works for as long as the browser tab this report was generated in stays open; it won't work if the report is reopened later in a new session, since the gallery isn't hosted on a server yet.</li>`}
+          <li>The written sections use AI to interpret the numbers above. It is given them as fact and told not to estimate its own.</li>
+          <li>The ${shotCount || 12} map images this is read from, and the description of each, are in the separate Sun &amp; Shadow report you can generate from the same page.</li>
         </ul>
       </div>
 
@@ -967,51 +817,94 @@ export async function POST(req) {
 </body>
 </html>`;
 
-  // Standalone gallery document -- the 12 real map screenshots + their
-  // per-image AI analysis, which used to be embedded straight into the main
-  // report and made it very long to scroll through. Now it's its own page,
-  // linked from the "See the evidence" card near the top of the main
-  // report. Kept deliberately simple (no jsPDF download, no page-splitting
-  // machinery) since it's a reference/evidence view, not the artifact
-  // someone downloads and shares.
+  // The sun & shadow document.
+  //
+  // Its job is one thing: show what the sun does to this block across a
+  // year, and say what each picture shows. So the pictures and their
+  // descriptions lead, at reading size, and the monthly table follows as
+  // the appendix it is -- it used to sit above all twelve images, which put
+  // a technical table between the reader and the only reason they opened
+  // this.
+  const describedCount = Object.keys(perImage).length;
   const galleryHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <title>${galleryOnly ? 'Sun &amp; Shadow Report' : 'Sun &amp; Shadow Images'} - ${safeAddress}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Sun &amp; Shadow - ${safeAddress}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:Arial,sans-serif;background:${BG};color:${INK}}
-    @media print{ .no-print{display:none!important} body{background:#fff;} img{max-width:100%;} }
+    body{font-family:Arial,Helvetica,sans-serif;background:${BG};color:${INK};-webkit-font-smoothing:antialiased}
+    img{max-width:100%}
+    @media print{
+      .no-print{display:none!important}
+      body{background:#fff}
+      .pdf-page{page-break-inside:avoid}
+      .shot-card{page-break-inside:avoid}
+    }
   </style>
 </head>
 <body>
-  <div class="no-print" style="position:sticky;top:0;z-index:100;background:${BG};border-bottom:1px solid ${LINE};padding:14px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
-    <div style="display:flex;align-items:center;gap:9px;">
-      ${markDataUri ? `<img src="${markDataUri}" alt="BlindSpot" style="width:16px;height:18px;object-fit:contain;"/>` : ''}
-      <span style="font-size:12px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.1em;">${galleryOnly ? 'Sun &amp; Shadow Report' : 'Sun &amp; Shadow Evidence'}</span>
-      <span style="font-size:11px;color:${DIM};">${safeAddress} · Floor ${safeFloor}, ${safeFacing}-facing</span>
+  <div class="no-print" style="position:sticky;top:0;z-index:100;background:${BG};border-bottom:1px solid ${LINE};padding:13px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+    <div style="display:flex;align-items:center;gap:9px;min-width:0;">
+      ${markDataUri ? `<img src="${markDataUri}" alt="" style="width:16px;height:18px;object-fit:contain;"/>` : ''}
+      <span style="font-size:12px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.1em;">Sun &amp; Shadow</span>
+      <span style="font-size:11.5px;color:${DIM};">${safeAddress}</span>
     </div>
     <div style="display:flex;gap:8px;">
-      <button onclick="window.print()" style="background:${WINE};color:#fff;border:1px solid ${WINE};padding:9px 16px;font-size:12.5px;font-weight:700;cursor:pointer;">Save as PDF</button>
-      <button onclick="if(window.opener&&!window.opener.closed){window.opener.focus();window.close();}else{window.close();}" style="background:#fff;color:${WINE};border:1px solid ${WINE};padding:9px 16px;font-size:12.5px;font-weight:700;cursor:pointer;">${galleryOnly ? 'Close' : '\u2190 Back to report'}</button>
+      <button onclick="window.print()" style="background:${WINE};color:#fff;border:1px solid ${WINE};padding:9px 17px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;">Save as PDF</button>
+      <button onclick="if(window.opener&&!window.opener.closed){window.opener.focus();window.close();}else{window.close();}" style="background:transparent;color:${WINE};border:1px solid ${WINE};padding:9px 17px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;">Close</button>
     </div>
   </div>
 
-  <div style="max-width:900px;margin:0 auto;padding:28px 32px 56px;background:#fff;">
-    <p style="font-size:13px;color:${DIM};line-height:1.7;margin-bottom:8px;">
-      ${shotCount >= 12
-        ? `12 real screenshots of the 3D map at this exact pin, 3 per season, at 9am / noon / 3pm, showing what is casting shade and how much of the unit is in sun at each of those moments.`
-        : `${shotCount} real screenshots of the 3D map at this exact pin, showing what is casting shade and how much of the unit is in sun at each of those moments. This is fewer than the 12 we aim for &mdash; the rest didn't come back from the map in time, so those points in the year aren't shown here. Generating the report again usually gets the full set.`}${Object.keys(perImage).length ? ' Each one carries its own written description.' : ''}
-    </p>
+  <div style="max-width:880px;margin:0 auto;padding:0 32px 60px;background:#fff;">
+
+    <div style="padding:44px 0 30px;border-bottom:2px solid ${INK};margin-bottom:34px;">
+      <div style="font-size:11.5px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.12em;margin-bottom:11px;">A year of sun over this block</div>
+      <h1 style="font-family:${DISPLAY};font-size:29px;font-weight:800;color:${INK};letter-spacing:-.015em;line-height:1.15;margin-bottom:9px;">${safeAddress}</h1>
+      <div style="font-size:13px;color:${DIM};margin-bottom:18px;">Floor ${safeFloor}, facing ${safeFacing} &middot; ${parseFloat(lat).toFixed(5)}&deg;N, ${parseFloat(lon).toFixed(5)}&deg;E &middot; ${date}</div>
+      <p style="font-size:14.5px;color:${MUTE};line-height:1.8;max-width:64ch;">
+        ${shotCount >= 12
+          ? `The 3D map at this exact pin, photographed twelve times: three points in each season, at 9am, noon and 3pm. The dark areas are real shadows, cast by the real buildings around this one. The orange dot is the property.`
+          : `The 3D map at this exact pin, photographed ${shotCount} times through the year. The dark areas are real shadows, cast by the real buildings around this one. The orange dot is the property. This is fewer than the twelve we aim for &mdash; the rest didn't come back from the map in time, so those points in the year aren't shown. Generating it again usually gets the full set.`}
+        ${describedCount ? `` : ` The written descriptions didn't come back this time; the images and the figures below are unaffected.`}
+      </p>
+      ${summary?.solarFeasibility ? `
+      <div style="display:flex;gap:0;flex-wrap:wrap;margin-top:22px;border:1px solid ${LINE};">
+        <div style="flex:1;min-width:150px;padding:13px 17px;">
+          <div style="font-size:10px;color:${DIM};text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px;">Usable sun</div>
+          <div style="font-family:${DISPLAY};font-size:20px;font-weight:800;color:${INK};">${summary.solarFeasibility.avgUsableHours}h<span style="font-size:12px;color:${DIM};font-weight:400;"> a day, average</span></div>
+        </div>
+        <div style="flex:1;min-width:150px;padding:13px 17px;border-left:1px solid ${LINE};">
+          <div style="font-size:10px;color:${DIM};text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px;">Best months</div>
+          <div style="font-family:${DISPLAY};font-size:20px;font-weight:800;color:${GOOD};">${summary.solarFeasibility.bestMonths.join(', ')}</div>
+        </div>
+        <div style="flex:1;min-width:150px;padding:13px 17px;border-left:1px solid ${LINE};">
+          <div style="font-size:10px;color:${DIM};text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px;">Worst months</div>
+          <div style="font-family:${DISPLAY};font-size:20px;font-weight:800;color:${POOR};">${summary.solarFeasibility.worstMonths.join(', ')}</div>
+        </div>
+      </div>` : ''}
+    </div>
+
+    ${screenshotPages}
+
     ${monthlyTableSection ? `
-    <div style="padding:24px 0 40px;">
-      <div style="font-size:11px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;">Appendix, Full Technical Data</div>
+    <div style="padding:34px 0 0;border-top:2px solid ${INK};margin-top:14px;">
+      <div style="font-size:11.5px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px;">The numbers behind the pictures</div>
+      <p style="font-size:13px;color:${DIM};line-height:1.7;margin-bottom:18px;max-width:64ch;">Month by month for floor ${safeFloor}. Sunrise and sunset are true for this location; usable hours and floor clearance are calculated from the sun's angle against a general estimate of the buildings around it.</p>
       ${monthlyTableSection}
     </div>` : ''}
-    ${screenshotPages}
+
+    <div style="margin-top:38px;padding-top:17px;border-top:1px solid ${LINE};display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+      <div style="display:flex;align-items:center;gap:7px;">
+        ${markDataUri ? `<img src="${markDataUri}" alt="" style="width:12px;height:13px;object-fit:contain;opacity:.5;"/>` : ''}
+        <span style="font-size:10.5px;color:${DIM};">Sun &amp; Shadow &middot; BlindSpot</span>
+      </div>
+      <span style="font-size:10.5px;color:${DIM};">3D map: OSMBuildings &middot; Solar geometry: NOAA algorithm</span>
+    </div>
   </div>
 </body>
 </html>`;
