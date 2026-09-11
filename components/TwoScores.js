@@ -1,103 +1,68 @@
 'use client';
 // components/TwoScores.js
-// V4 -- the score used to be a bare number (".ts4-score"), which read
-// as more of the same text-heavy page. Replaced it with an animated SVG
-// ring that fills to the real score and a count-up from 0, so the two
-// numbers that matter most on the page (82, 50) are the one genuinely
-// visual, animated moment in this section instead of another line of
-// text. Same real numbers as v3 -- nothing invented, just presented
-// as a chart instead of a label.
+// V6 -- the per-dimension chips used to be undecorated labels with no
+// per-factor status, and the top readout was an animated ring + grade
+// pill -- neither matched how the real report actually presents this
+// (components/report/ReportScreen.js): a coloured rating WORD + "X out
+// of 100 [· grade Y]" line, then each factor as its own row with a
+// coloured Excellent/Good/Fair/Poor tag, not a plain chip. Rebuilt to
+// match that shape using the SAME real records the 82/50 example has
+// always used (see the V3 comment history): PIN 110001's raw factor
+// scores from data/aslivastu/nqi_scores.json (crime 90, schools 100,
+// air 75, water 100, power 94, roads 100, infrastructure 45, sewerage
+// 100), and the real sun/shade/view/privacy sub-scores computeSolarSummary()
+// produces for floor 5, South, at that same location (100 / 0 / 41 / 44) --
+// from lib/sunscout/scoring/*.js, run directly against those real inputs,
+// not invented. Each raw number is turned into a word/tone with the
+// report's own thresholds (>=80 Excellent/good, >=60 Good/good, >=40
+// Fair/avg, else Poor/poor). One exception: Wind needs a live Open-Meteo
+// reading that can't be replayed after the fact, so its tag uses
+// windScore.js's own documented "live data unavailable" fallback (score
+// 50, Fair) -- real code, not a guess -- which is also exactly what
+// makes the four known real sub-scores land on the same 50/Fair combined
+// example already used elsewhere on this page. Dropped the ring: a plain
+// word + number reads faster and is one less thing that doesn't exist
+// in the real report.
 
-import { useEffect, useRef, useState } from 'react';
+const NEIGHBOURHOOD_DIMS = [
+  { label: 'Safety', word: 'Excellent', tone: 'good' },
+  { label: 'Infrastructure', word: 'Fair', tone: 'avg' },
+  { label: 'Air Quality', word: 'Good', tone: 'good' },
+  { label: 'Schools', word: 'Excellent', tone: 'good' },
+  { label: 'Power', word: 'Excellent', tone: 'good' },
+  { label: 'Water', word: 'Excellent', tone: 'good' },
+  { label: 'Roads', word: 'Excellent', tone: 'good' },
+  { label: 'Drainage', word: 'Excellent', tone: 'good' },
+];
+const COMFORT_DIMS = [
+  { label: 'Sun', word: 'Excellent', tone: 'good' },
+  { label: 'Shade & Heat', word: 'Poor', tone: 'poor' },
+  { label: 'View', word: 'Fair', tone: 'avg' },
+  { label: 'Privacy', word: 'Fair', tone: 'avg' },
+  { label: 'Wind', word: 'Fair', tone: 'avg' },
+];
 
-const NEIGHBOURHOOD_DIMS = ['Safety', 'Infrastructure', 'Air Quality', 'Schools', 'Power', 'Water', 'Roads', 'Drainage'];
-const COMFORT_DIMS = ['Sun', 'Shade & Heat', 'View', 'Privacy', 'Wind'];
-
-const RING_R = 42;
-const RING_C = 2 * Math.PI * RING_R;
-
-function ScoreRing({ score }) {
-  const ref = useRef(null);
-  const [inView, setInView] = useState(false);
-  const [count, setCount] = useState(0);
-
-  // Own IntersectionObserver rather than reusing the page-level .reveal
-  // one below -- this needs to *know* when it's visible (to start the
-  // count-up loop and flip the ring's real dashoffset), not just get a
-  // class added to it.
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return undefined;
-    if (!('IntersectionObserver' in window)) { setInView(true); return undefined; }
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) { setInView(true); io.unobserve(el); }
-        });
-      },
-      { threshold: 0.4 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!inView) return undefined;
-    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setCount(score);
-      return undefined;
-    }
-    const duration = 1200;
-    const start = performance.now();
-    let raf;
-    const tick = (now) => {
-      const t = Math.min(1, (now - start) / duration);
-      const eased = 1 - (1 - t) ** 3;
-      setCount(Math.round(eased * score));
-      if (t < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [inView, score]);
-
-  const offset = RING_C * (1 - (inView ? score : 0) / 100);
-
-  return (
-    <div className="ts4-ring-wrap" ref={ref}>
-      <svg className="ts4-ring" viewBox="0 0 96 96" width="96" height="96" aria-hidden="true">
-        <circle className="ts4-ring-track" cx="48" cy="48" r={RING_R} />
-        <circle
-          className="ts4-ring-fill"
-          cx="48" cy="48" r={RING_R}
-          style={{ strokeDasharray: RING_C, strokeDashoffset: offset }}
-        />
-      </svg>
-      <div className="ts4-ring-center">
-        <span className="ts4-ring-num">{count}</span>
-        <span className="ts4-ring-max">/100</span>
-      </div>
-    </div>
-  );
-}
-
-function ScoreCard({ accentVar, tag, name, blurb, score, grade, example, dims }) {
+function ScoreCard({ accentVar, tag, name, blurb, score, grade, word, tone, example, dims }) {
   return (
     <div className="ts4-card reveal" style={{ '--ts4-accent': `var(${accentVar})` }}>
       <span className="mono ts4-tag">{tag}</span>
       <h3 className="ts4-name">{name}</h3>
       <p className="ts4-blurb">{blurb}</p>
 
-      <div className="ts4-readout">
-        <ScoreRing score={score} />
-        <span className="ts4-grade">{grade}</span>
+      <div className="ts4-rating">
+        <span className={`ts4-word is-${tone}`}>{word}</span>
+        <span className="ts4-outof">{score} out of 100{grade ? ` · grade ${grade}` : ''}</span>
       </div>
       <p className="ts4-example">{example}</p>
 
-      <div className="ts4-dims">
+      <ul className="ts4-rows">
         {dims.map((d) => (
-          <span key={d} className="ts4-dim">{d}</span>
+          <li key={d.label} className="ts4-row">
+            <span className="ts4-row-label">{d.label}</span>
+            <span className={`ts4-row-tag is-${d.tone}`}>{d.word}</span>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }
@@ -142,7 +107,9 @@ export default function TwoScores() {
             name="Neighbourhood Score"
             blurb="Rates the area: crime, air, power, water, schools, roads — pulled from government records, not a broker's word for it."
             score={82}
-            grade="Grade A"
+            grade="A"
+            word="Excellent"
+            tone="good"
             example="Connaught Place, Central Delhi — real report"
             dims={NEIGHBOURHOOD_DIMS}
           />
@@ -152,7 +119,9 @@ export default function TwoScores() {
             name="Home Comfort Score"
             blurb="Rates the exact unit: sun, shade & heat, view, privacy, wind — modelled from the floor and facing you pick."
             score={50}
-            grade="Fair"
+            grade={null}
+            word="Fair"
+            tone="avg"
             example="Floor 5, South-facing — real report"
             dims={COMFORT_DIMS}
           />

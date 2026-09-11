@@ -2010,39 +2010,30 @@ header.header-on-dark .brand-word-img{
 .ts4-tag{ display:block; font-size:11px; letter-spacing:.1em; color:var(--ts4-accent); margin-bottom:var(--space-3) }
 .ts4-name{ font-size:23px; margin-bottom:10px }
 .ts4-blurb{ font-size:14.5px; line-height:1.6; color:var(--text-mute); margin-bottom:var(--space-5) }
-.ts4-readout{ display:flex; align-items:center; gap:18px; margin-bottom:var(--space-4) }
-/* Animated score ring (ScoreRing in TwoScores.js) -- replaces the old
-   plain ".ts4-score" number. The circle is drawn pointing up (rotate
-   -90deg puts the SVG's 0deg/3-o'clock start at 12 o'clock) and its
-   stroke-dashoffset is set from React state, so the arc genuinely
-   fills in rather than just being a static ring with a number next to
-   it -- the one moment on this page that's a chart, not a label. */
-.ts4-ring-wrap{ position:relative; width:96px; height:96px; flex-shrink:0 }
-.ts4-ring{ transform:rotate(-90deg) }
-.ts4-ring-track{ fill:none; stroke:var(--line-soft); stroke-width:7 }
-.ts4-ring-fill{
-  fill:none; stroke:var(--ts4-accent); stroke-width:7; stroke-linecap:round;
-  transition:stroke-dashoffset 1.2s cubic-bezier(.16,1,.3,1);
-}
-.ts4-ring-center{
-  position:absolute; inset:0; display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-}
-.ts4-ring-num{ font-family:'Geist',sans-serif; font-weight:600; font-size:27px; color:var(--ink); line-height:1 }
-.ts4-ring-max{ font-size:10px; color:var(--text-dim); margin-top:2px }
-.ts4-grade{
-  font-size:12.5px; font-weight:600; color:var(--ts4-accent);
-  background:color-mix(in srgb, var(--ts4-accent) 12%, transparent);
-  border-radius:var(--radius-sm); padding:4px 10px;
-}
+/* V6 -- rating word + row-tags replace the old animated ring + plain
+   chips, matching how components/report/ReportScreen.js actually shows
+   these same numbers (.bsr-word / .bsr-tag in report.css) -- same
+   good/avg/poor tone colours as .ts4-verdict above, reused here rather
+   than re-derived for the same reason (--bsr-good etc. are scoped to
+   .bsr and don't reach this page). */
+.ts4-rating{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:6px }
+.ts4-word{ font-size:22px; font-weight:700; letter-spacing:-.01em }
+.ts4-word.is-good{ color:#3C7A50 }
+.ts4-word.is-avg{ color:#6B5C43 }
+.ts4-word.is-poor{ color:#A2483C }
+.ts4-outof{ font-size:13.5px; color:var(--text-mute); font-variant-numeric:tabular-nums }
 .ts4-example{ font-size:12.5px; color:var(--text-dim); margin-bottom:var(--space-5) }
-.ts4-dims{ display:flex; flex-wrap:wrap; gap:8px; border-top:1px solid var(--line-soft); padding-top:var(--space-4) }
-.ts4-dim{
-  font-size:12px; font-weight:500; color:var(--text-mute);
-  background:var(--bg-2); border-radius:var(--radius-sm); padding:5px 10px;
-  transition:background .25s ease, color .25s ease;
+.ts4-rows{ list-style:none; margin:0; padding-top:var(--space-4); border-top:1px solid var(--line-soft) }
+.ts4-row{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:8px 0; border-bottom:1px solid var(--line-soft); font-size:13.5px;
 }
-.ts4-card:hover .ts4-dim{ background:color-mix(in srgb, var(--ts4-accent) 10%, var(--bg-2)); color:var(--ink) }
+.ts4-row:last-child{ border-bottom:0 }
+.ts4-row-label{ color:var(--ink) }
+.ts4-row-tag{ flex:none; font-size:11.5px; font-weight:600; padding:3px 9px; border-radius:var(--radius-sm) }
+.ts4-row-tag.is-good{ background:#E8F0E9; color:#3C7A50 }
+.ts4-row-tag.is-avg{ background:#F2EDE3; color:#6B5C43 }
+.ts4-row-tag.is-poor{ background:#F8E9E5; color:#A2483C }
 .ts3-combine{
   margin-top:var(--space-6); font-size:15px; color:var(--text-mute); text-align:center;
 }
@@ -2078,8 +2069,6 @@ header.header-on-dark .brand-word-img{
   .ts4-grid{ grid-template-columns:1fr }
 }
 @media (max-width:480px){
-  .ts4-ring-wrap{ width:80px; height:80px }
-  .ts4-ring-num{ font-size:22px }
   .ts4-verdict{ padding:20px 20px; gap:18px }
   .ts4-verdict-n{ font-size:42px }
   .ts4-verdict-head{ font-size:18px }
