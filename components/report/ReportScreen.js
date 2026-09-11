@@ -724,6 +724,10 @@ export default function ReportScreen() {
                   Every figure behind these, the schools by name and board, price band, and nearby localities compared.
                 </span>
               </p>
+
+              <p className="bsr-methodology-note">
+                Neighbourhood scores combine cited public-record data with a zone-level model, so nearby pincodes in the same zone can land close together or identical. Named school detail in the full report is the one part sourced locality by locality.
+              </p>
             </>
           ) : (
             <div className="bsr-nocover">

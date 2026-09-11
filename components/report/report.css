@@ -17,9 +17,13 @@
   --bsr-poor-bg:#F8E9E5;
   --bsr-none-bg:#EEEAE1;
 
-  max-width:1120px;
+  /* No card anywhere on this page any more, and the page fills the
+     screen instead of sitting in a boxed 1120px column -- 1800px is a
+     ceiling for ultrawide monitors, not a target width; on every normal
+     screen this is just "the viewport, minus breathing room". */
+  max-width:1800px;
   margin:0 auto;
-  padding:0 20px 64px;
+  padding:0 clamp(20px, 4vw, 72px) 96px;
   color:var(--text,#1C1812);
   font-size:17px;
   line-height:1.6;
@@ -66,13 +70,8 @@
 /* ---------------- the answer ---------------- */
 .bsr-answer{
   display:flex;align-items:center;gap:32px;flex-wrap:wrap;
-  background:var(--paper,#FFFDF8);
-  border:1px solid var(--line,rgba(28,24,18,.14));
-  border-top:4px solid var(--bsr-good);
-  border-radius:5px;padding:30px 32px;margin-top:24px;
+  padding:32px 0 0;
 }
-.bsr-answer.is-avg{border-top-color:var(--bsr-avg)}
-.bsr-answer.is-poor{border-top-color:var(--bsr-poor)}
 
 .bsr-big{display:flex;flex-direction:column;flex:none}
 .bsr-big-n{
@@ -88,18 +87,20 @@
 .bsr-answer-say p{font-size:17px;color:var(--text-mute,#5A5140);max-width:62ch}
 
 /* ---------------- the two halves ---------------- */
-.bsr-halves{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px;align-items:stretch}
-.bsr-half{
-  background:var(--paper,#FFFDF8);
-  border:1px solid var(--line,rgba(28,24,18,.14));
-  border-radius:5px;padding:24px 26px 26px;min-width:0;
-  display:flex;flex-direction:column;
+.bsr-halves{
+  display:grid;grid-template-columns:1fr 1fr;
+  margin-top:32px;padding-top:32px;align-items:stretch;
+  border-top:1px solid var(--line-soft,rgba(28,24,18,.1));
 }
-.bsr-area{border-top:3px solid var(--av,#7A2E43)}
-.bsr-unit{border-top:3px solid var(--ss,#AF5F30)}
+.bsr-half{
+  min-width:0;display:flex;flex-direction:column;
+}
+.bsr-area{padding-right:28px}
+.bsr-unit{padding-left:28px;border-left:1px solid var(--line-soft,rgba(28,24,18,.1))}
 
 .bsr-kicker{
-  font-size:13.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  font-family:'Geist Mono',monospace;font-weight:600;
+  font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;
   margin-bottom:6px;
 }
 .bsr-area .bsr-kicker{color:var(--av,#7A2E43)}
@@ -140,8 +141,8 @@
 
 /* ---------------- not covered ---------------- */
 .bsr-nocover{
-  margin-top:18px;padding:18px 20px;border-radius:4px;
-  background:var(--bg-2,#F1E9DA);color:var(--text-mute,#5A5140);font-size:16.5px;
+  margin-top:18px;padding-left:16px;border-left:2px solid var(--line,rgba(28,24,18,.14));
+  color:var(--text-mute,#5A5140);font-size:16.5px;
 }
 .bsr-nocover-aqi{margin-top:10px;color:var(--text,#1C1812)}
 
@@ -212,16 +213,20 @@
 
 .bsr-more-note{font-size:13.5px;color:var(--text-mute,#5A5140);max-width:52ch}
 
+.bsr-methodology-note{
+  margin-top:14px;padding-top:14px;border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
+  font-size:12px;line-height:1.55;color:var(--text-mute,#5A5140);max-width:52ch;opacity:.85;
+}
+
 /* ---------------- the map, its own full-width band ----------------
    Wide on purpose: Map3DShadow hides its own view-angle pad below 768px,
-   so a half-width card left half the map unreachable. */
+   so a boxed card left half the map unreachable -- now nothing on this
+   page is boxed, so it's just the next flat section, marked off with the
+   same hairline every other section break uses. */
 .bsr-mapzone{
-  margin-top:22px;padding:24px 26px 26px;border-radius:5px;
-  background:var(--paper,#FFFDF8);
-  border:1px solid var(--line,rgba(28,24,18,.14));
-  border-top:3px solid var(--ss,#AF5F30);
+  margin-top:36px;padding-top:32px;
+  border-top:1px solid var(--line-soft,rgba(28,24,18,.1));
 }
-.bsr-mapzone .bsr-kicker{color:var(--ss,#AF5F30)}
 /* A real `height`, not min-height: Map3DShadow's iframe carries an inline
    height:100%, which beats any class rule and resolves against nothing
    when the parent's height is auto -- that's what collapsed the map to a
@@ -279,12 +284,9 @@
   background:var(--bg-2,#F1E9DA);
   padding:4px 9px;border-radius:3px;
 }
-.bsr-q{font-size:17px;font-weight:600;margin-bottom:10px}
 .bsr-visit{
-  margin-top:22px;padding:24px 26px;border-radius:5px;
-  background:var(--paper,#FFFDF8);
-  border:1px solid var(--line,rgba(28,24,18,.14));
-  border-left:4px solid var(--brand,#7A2E43);
+  margin-top:36px;padding-top:32px;
+  border-top:1px solid var(--line-soft,rgba(28,24,18,.1));
 }
 .bsr-visit h2{font-size:24px;font-weight:700}
 .bsr-visit-lede{margin-top:8px;color:var(--text-mute,#5A5140);max-width:68ch;font-size:17px}
@@ -337,32 +339,40 @@
   .bsr-box,.bsr-box::after{transition:none}
 }
 
-/* ---------------- weighting, inside the answer card ---------------- */
+/* ---------------- weighting ----------------
+   Plain mono text, the way the deck's own "WEIGHTED BY" caption read --
+   three words with the active one bold and coloured, not three buttons
+   in boxes. Still real <button>s (still a 44px tap target each), just
+   with no visible chrome except the state change. */
 .bsr-matters{
-  flex-basis:100%;margin-top:0;
-  padding-top:20px;
+  flex-basis:100%;margin-top:20px;padding-top:20px;
   border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
-  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
 }
-.bsr-matters .bsr-q{margin-bottom:0;font-size:18px;flex:none}
-.bsr-opts{display:flex;gap:10px;flex-wrap:wrap}
-/* 46px, like every other control on this page */
-.bsr-opts button{
-  font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;
-  min-height:46px;padding:11px 18px;border-radius:4px;
-  background:var(--bg,#FAF6EE);border:1px solid var(--line,rgba(28,24,18,.14));
+.bsr-matters .bsr-q{
+  margin-bottom:0;flex:none;
+  font-family:'Geist Mono',monospace;font-weight:600;
+  font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;
   color:var(--text-mute,#5A5140);
 }
-.bsr-opts button:hover{border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
-.bsr-opts button[aria-pressed="true"]{
-  background:rgba(175,95,48,.09);border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30);
+.bsr-opts{
+  display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+  font-family:'Geist Mono',monospace;font-size:14px;letter-spacing:.02em;
 }
+.bsr-opts button{
+  font:inherit;cursor:pointer;
+  min-height:44px;padding:0;border:0;background:none;
+  color:var(--text-mute,#5A5140);font-weight:500;
+}
+.bsr-opts button:not(:last-child)::after{content:'·';margin-left:10px;color:var(--line,rgba(28,24,18,.3))}
+.bsr-opts button:hover{color:var(--ss,#AF5F30)}
+.bsr-opts button[aria-pressed="true"]{color:var(--ss,#AF5F30);font-weight:700}
 .bsr-matters-note{font-size:13.5px;color:var(--text-mute,#5A5140);flex:1;min-width:190px}
 
 /* ---------------- close ---------------- */
 .bsr-close{
-  margin-top:22px;padding:32px 26px;text-align:center;border-radius:5px;
-  background:var(--paper,#FFFDF8);border:1px solid var(--line,rgba(28,24,18,.14));
+  margin-top:36px;padding-top:40px;text-align:center;
+  border-top:1px solid var(--line-soft,rgba(28,24,18,.1));
 }
 .bsr-close h2{font-size:24px;font-weight:700}
 .bsr-close h2 em{font-style:italic;color:var(--ss,#AF5F30)}
@@ -407,9 +417,13 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   .bsr-map{height:62vh}
 }
 @media (max-width:900px){
-  .bsr-halves{grid-template-columns:1fr}
+  /* stacked, the column rule becomes a row rule -- same divider,
+     the other axis */
+  .bsr-halves{grid-template-columns:1fr;row-gap:32px}
+  .bsr-area{padding-right:0}
+  .bsr-unit{padding-left:0;border-left:0;border-top:1px solid var(--line-soft,rgba(28,24,18,.1));padding-top:32px}
   .bsr-big-n{font-size:64px}
-  .bsr-answer{gap:22px;padding:24px}
+  .bsr-answer{gap:22px}
   .bsr-answer-say h1{font-size:25px}
   .bsr-head-links{width:100%}
 }
@@ -455,15 +469,8 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
    rule here changed scrolling for every other route in the session. */
 @media (prefers-reduced-motion:no-preference){.bsr{scroll-behavior:smooth}}
 
-/* ---------------- phones ----------------
-   None of the cards reduced their padding below 900px, so at 360px the
-   checklist's text column came out at about 222px: 20px of page padding
-   plus 30px of card padding on each side, then the checkbox and its gap. */
+/* ---------------- phones ---------------- */
 @media (max-width:600px){
   .bsr{padding-left:14px;padding-right:14px}
-  .bsr-half,.bsr-mapzone{padding:20px 16px}
-  .bsr-visit{padding:22px 16px}
-  .bsr-close{padding:26px 18px}
-  .bsr-answer{padding:20px 16px}
   .bsr-sub,.bsr-set{min-height:0}
 }

@@ -368,6 +368,9 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
           <p style={{ fontSize: 11.5, color: 'var(--text-dim)', lineHeight: 1.6, maxWidth: 720 }}>
             Data aggregations for informational and research purposes only, not real-estate, legal or financial advice. Most figures are estimated from government reports last verified 2023–24. Do not rely solely on these scores for a purchase decision.
           </p>
+          <p style={{ fontSize: 11.5, color: 'var(--text-dim)', lineHeight: 1.6, maxWidth: 720, marginTop: 10 }}>
+            <strong style={{ color: 'var(--text)' }}>How this is built</strong>, scores combine the cited public-record data above with a zone-level model — pincodes in the same zone often share a baseline with only a small adjustment between them, so two nearby addresses can land close together or identical on most dimensions. Named school detail, where listed above, is the one part sourced locality by locality rather than by zone.
+          </p>
         </div>
 
       </div>
