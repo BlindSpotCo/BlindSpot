@@ -59,6 +59,7 @@ GROUNDING (each cited at point of use below)
 """
 
 import json
+import math
 from mumbai_areas import MUMBAI, ZONE_OF, DISCOM_OF, DISCOM_CONF, TIER_LABEL, landmarks_of
 
 SCORED_AT = "2026-08-17T00:00:00"
@@ -92,6 +93,55 @@ ZONE_BASELINE = {
 # Pincodes with their OWN documented fact overriding the zone baseline.
 AIR_WORST = {"400073", "400074", "400085", "400088", "400043", "400071", "400089", "400094"}  # Trombay/Mahul/Deonar/Govandi/Chembur belt — WRI Mumbai CAP (400094 Anushakti Nagar sits inside this belt, borders Mankhurd/Govandi)
 WATER_247 = {"400077", "400086", "400078", "400080", "400081", "400082", "400083", "400087", "400042"}  # Ghatkopar / Bhandup (both East 400042 and West 400078) / Mulund + immediate Vikhroli neighbours on the same 24x7 DMA
+
+# ── Real ward-level water supply hours, from BMC's own published timing
+# circular (14101549_WaterSupplyTiming.pdf) ─────────────────────────────
+# Each value is the mean daily supply duration across every zone the
+# circular lists a start/end time for in that ward -- a real, cited
+# figure per ward, not a zone-baseline-plus-jitter estimate. Two wards
+# (A, D) had too few usable rows in the source to average honestly --
+# A's 11 listed zones carried no time at all, D had exactly one ("24
+# hrs", too thin to generalise from) -- those two fall back to the old
+# zone-level estimate in water_supply_hours() below, same as before.
+# "M" (400074, RCF Chembur/Mahul) is BMC's own "M/East-West Ward" label
+# for a pincode straddling both M/East and M/West -- given the mean of
+# the two rather than inventing a third figure.
+WARD_WATER_HOURS = {
+    "B": 1.2, "C": 1.0, "E": 1.7,
+    "F/N": 2.7, "F/S": 2.8, "G/N": 2.5, "G/S": 2.4,
+    "H/E": 3.0, "H/W": 2.9, "K/E": 3.1, "K/W": 2.0,
+    "L": 7.0, "M/E": 4.4, "M/W": 3.3, "M": 3.8,
+    "N": 9.5, "P/N": 1.5, "R/C": 1.8, "R/N": 4.8, "R/S": 4.3,
+    "S": 6.0, "T": 11.0,
+}
+# BEST-era Island City wards (A-E) run famously short supply WINDOWS but
+# at materially higher pressure and reliability than the newer suburban
+# network -- the file's own original South Mumbai water baseline already
+# credited this ("older but higher-pressure Island City network"). A
+# pure hours-to-score mapping would silently discard that real,
+# documented fact and unfairly tank these wards next to a longer but
+# lower-pressure suburban window. Kept here as an explicit, disclosed
+# pressure credit rather than dropped when the score moved onto real
+# hours data.
+ISLAND_CITY_HIGH_PRESSURE_WARDS = {"A", "B", "C", "D", "E"}
+
+def water_score_from_hours(ward, hours):
+    """0-100 water score derived from real daily supply hours, not an
+    independent zone-baseline-plus-jitter roll. Logarithmic because the
+    jump from 1h/day to 4h/day matters far more to someone living there
+    than the jump from 12h to 15h does -- a linear hours-to-score mapping
+    would understate how much the first few hours matter. Coefficients
+    are a disclosed, reasonable-looking curve fitted to the ends BMC's
+    own zone-level reporting already implied (a ~4h/day citywide average
+    landing in the "Fair" range, the 24x7 DMA pilot zones landing near
+    the top) -- not validated against real complaint/satisfaction data,
+    which doesn't exist at this granularity. Explicit about being a
+    model on top of real input data, same honesty level as this file's
+    other derived stats."""
+    raw = 30 + 20 * math.log2(max(hours, 0.5))
+    if ward in ISLAND_CITY_HIGH_PRESSURE_WARDS:
+        raw += 12
+    return max(5, min(98, round(raw)))
 
 # ── Air: AQI is the source of truth, score is derived from it ───────────
 # First pass here picked a 0-100 "air" baseline per zone independently,
@@ -191,9 +241,15 @@ def sqm_to_sqft(v):
 
 # Water supply hours: BMC's own reporting = ~4h/day citywide average;
 # 24x7 DMA pilot zones (Ghatkopar/Bhandup/Mulund) get the real exception.
-def water_supply_hours(pin, zone):
+# Wards with real data from BMC's timing circular (WARD_WATER_HOURS
+# above) use that directly -- everything else (WATER_247's exception, and
+# the two wards with too little source data) keeps the old zone-level
+# estimate, same as before.
+def water_supply_hours(pin, zone, ward):
     if pin in WATER_247:
         return 20 + abs(jitter(pin, 4, salt=3))
+    if ward in WARD_WATER_HOURS:
+        return WARD_WATER_HOURS[ward]
     base = 4
     if zone == "South Mumbai": base = 5       # older but higher-pressure Island City network
     return max(3, base + (jitter(pin, 2, salt=4)))
@@ -219,13 +275,14 @@ def build():
         name, ward_area, lat, lon, ward, tier, land = entry
         zone = ZONE_OF[pin]
         aqi_val = aqi_for(pin, zone)
+        supply = water_supply_hours(pin, zone, ward)
         scores = {
             "crime": crime_scores[pin],
             "infrastructure": infra_score(pin, zone),
             "air": air_score_from_aqi(aqi_val),
             "power": score_for(pin, "power", zone),
             "schools": score_for(pin, "schools", zone),
-            "water": score_for(pin, "water", zone),
+            "water": water_score_from_hours(ward, supply),
             "roads": score_for(pin, "roads", zone),
             "sewerage": score_for(pin, "sewerage", zone),
         }
@@ -264,7 +321,6 @@ def build():
         outage = round(max(0.8, 5.5 - scores["power"] / 22 + jitter(pin, 1, salt=8) * 0.3), 1)
         rel_idx = 4 if scores["power"] >= 78 else 3 if scores["power"] >= 60 else 2 if scores["power"] >= 45 else 1
 
-        supply = water_supply_hours(pin, zone)
         tds = "Low" if scores["water"] >= 65 else "Medium" if scores["water"] >= 45 else "High"
         wcov = max(70, min(99, round(scores["water"] * 0.95 + 15)))
 
