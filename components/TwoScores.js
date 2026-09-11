@@ -114,6 +114,27 @@ export default function TwoScores() {
           </div>
         </div>
 
+        {/* V5 -- added to close the gap between this section and the real
+            report: this box is a faithful miniature of the actual opening
+            moment on /report (see .bsr-answer in components/report/
+            report.css) -- big number + "out of 100", a plain headline and
+            a line of context, top-bordered by the same good/avg/poor tone
+            colours the real page uses. The number and both lines of copy
+            are not invented: 66 is the real 50/50 average of the two
+            scores below it, and the headline + sub-line are exactly what
+            ReportScreen.js's own headlineFor()/verdictSay() would print
+            for an area score of 82 and a unit score of 50. */}
+        <div className="ts4-verdict reveal">
+          <div className="ts4-verdict-big">
+            <span className="ts4-verdict-n">66</span>
+            <span className="ts4-verdict-of">out of 100</span>
+          </div>
+          <div className="ts4-verdict-say">
+            <p className="ts4-verdict-head">Worth a look, but go in with your eyes open.</p>
+            <p className="ts4-verdict-sub">Good locality, but this specific flat is the weak half — light, outlook or airflow. Ask to see a higher floor or a different facing in the same tower before deciding.</p>
+          </div>
+        </div>
+
         <div className="ts4-grid">
           <ScoreCard
             accentVar="--av"
@@ -138,7 +159,7 @@ export default function TwoScores() {
         </div>
 
         <p className="ts3-combine">
-          Combined 50/50 into one <strong>BlindSpot Score</strong> — pick whether the area or the flat matters more to you.
+          That verdict up top is these two, weighted 50/50 by default — pick whether the area or the flat matters more to you.
         </p>
       </div>
     </section>

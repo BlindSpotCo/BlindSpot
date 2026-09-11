@@ -2047,12 +2047,42 @@ header.header-on-dark .brand-word-img{
   margin-top:var(--space-6); font-size:15px; color:var(--text-mute); text-align:center;
 }
 .ts3-combine strong{ color:var(--ink) }
+/* Miniature of the real report's opening moment (.bsr-answer in
+   components/report/report.css) -- same shape, same tone colours
+   (#3C7A50 good / #6B5C43 avg / #A2483C poor, copied from that file
+   rather than re-derived, since --bsr-good etc. are scoped to .bsr and
+   don't reach this page). Sits above the two engine cards so the
+   section reads in the same order a real report does: the one verdict
+   first, then what it's made of. */
+.ts4-verdict{
+  display:flex; align-items:center; gap:28px; flex-wrap:wrap;
+  background:var(--paper); border:1px solid var(--line);
+  border-top:4px solid #3C7A50;
+  border-radius:var(--radius-lg); padding:26px 28px;
+  margin-bottom:var(--space-6);
+}
+.ts4-verdict.is-avg{ border-top-color:#6B5C43 }
+.ts4-verdict.is-poor{ border-top-color:#A2483C }
+.ts4-verdict-big{ display:flex; flex-direction:column; flex:none }
+.ts4-verdict-n{
+  font-size:52px; line-height:.88; font-weight:800; letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums; color:#3C7A50;
+}
+.ts4-verdict.is-avg .ts4-verdict-n{ color:#6B5C43 }
+.ts4-verdict.is-poor .ts4-verdict-n{ color:#A2483C }
+.ts4-verdict-of{ font-size:13px; font-weight:500; color:var(--text-mute); margin-top:6px }
+.ts4-verdict-say{ flex:1; min-width:min(280px,100%) }
+.ts4-verdict-head{ font-size:20px; font-weight:700; line-height:1.3; margin-bottom:6px }
+.ts4-verdict-sub{ font-size:14.5px; color:var(--text-mute); line-height:1.55; max-width:56ch }
 @media (max-width:900px){
   .ts4-grid{ grid-template-columns:1fr }
 }
 @media (max-width:480px){
   .ts4-ring-wrap{ width:80px; height:80px }
   .ts4-ring-num{ font-size:22px }
+  .ts4-verdict{ padding:20px 20px; gap:18px }
+  .ts4-verdict-n{ font-size:42px }
+  .ts4-verdict-head{ font-size:18px }
 }
 
 /* ---------- 03 — How It Works (icon rail) ---------- */
