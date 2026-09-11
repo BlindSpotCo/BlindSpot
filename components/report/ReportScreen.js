@@ -157,6 +157,13 @@ export default function ReportScreen() {
   // SunScoutPanel starts it playing, and the shadows moving is the whole
   // reason the map is here. Passing false was switching it off.
   const [animating, setAnimating] = useState(true);
+  // The 3D map's own wheel handling (zoom) and drag handling (rotate/tilt)
+  // live inside an iframe -- a separate document the page's own scroll
+  // listeners can never see. Left unguarded, hovering the map while
+  // scrolling the page silently eats the scroll instead of moving the
+  // page. Armed by default: a click disarms it so the map can be used,
+  // leaving the map re-arms it so the page scrolls normally again.
+  const [mapArmed, setMapArmed] = useState(true);
 
   // Moving the pin: typed address, browser location, or a click on the map.
   const [locBusy, setLocBusy] = useState(false);
@@ -887,7 +894,7 @@ export default function ReportScreen() {
         </form>
         {locError ? <p className="bsr-locerror">{locError}</p> : null}
 
-        <div className="bsr-map">
+        <div className="bsr-map" onMouseLeave={() => setMapArmed(true)}>
           {solar?.pathData ? (
             <Map3DShadow
               lat={lat}
@@ -907,6 +914,16 @@ export default function ReportScreen() {
             <p className="bsr-map-wait">
               {solarFailed ? 'The 3D view couldn’t load. The scores below are unaffected.' : 'Building the 3D view…'}
             </p>
+          )}
+          {solar?.pathData && mapArmed && (
+            <button
+              type="button"
+              className="bsr-map-guard"
+              onClick={() => setMapArmed(false)}
+              aria-label="Click to interact with the 3D map"
+            >
+              Click to interact with the map
+            </button>
           )}
         </div>
 
@@ -940,7 +957,7 @@ export default function ReportScreen() {
         <p className="bsr-maphint">
           {reportRunning
             ? 'The pin is locked while the report is built from this spot — moving it now would mix two blocks into one report.'
-            : 'Click anywhere on the map to move the pin to another building.'}
+            : 'Click the map to interact with it, then click again to move the pin to another building.'}
         </p>
       </section>
 

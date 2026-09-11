@@ -17,13 +17,15 @@
   --bsr-poor-bg:#F8E9E5;
   --bsr-none-bg:#EEEAE1;
 
-  /* No card anywhere on this page any more, and the page fills the
-     screen instead of sitting in a boxed 1120px column -- 1800px is a
-     ceiling for ultrawide monitors, not a target width; on every normal
-     screen this is just "the viewport, minus breathing room". */
-  max-width:1800px;
+  /* No card anywhere on this page any more, but a full 1800px ceiling
+     read as too sprawling on a large monitor -- everything sat at its
+     fixed size while the surrounding whitespace just grew, so the page
+     felt oversized and harder to take in at a glance. 1320px keeps that
+     boxless, breathing-room feel without stretching content edge to edge
+     on a wide screen; still wider than the old boxed 1120px column. */
+  max-width:1320px;
   margin:0 auto;
-  padding:0 clamp(20px, 4vw, 72px) 96px;
+  padding:0 clamp(20px, 4vw, 56px) 96px;
   color:var(--text,#1C1812);
   font-size:17px;
   line-height:1.6;
@@ -242,6 +244,21 @@
   display:flex;align-items:center;justify-content:center;text-align:center;
   height:100%;padding:0 24px;color:var(--text-mute,#5A5140);font-size:16px;
 }
+/* Sits over the map iframe until clicked. The iframe is a separate
+   document -- the page's own scroll listeners can never see a wheel event
+   fired while the cursor is over it, so left unguarded, scrolling the
+   page stalls dead the moment it crosses the map. This catches that wheel
+   (and every other pointer event) instead, so the page keeps scrolling
+   normally; a click removes it and hands the map its own interactions
+   back, and leaving the map re-arms it via the wrapper's onMouseLeave. */
+.bsr-map-guard{
+  position:absolute;inset:0;z-index:2;width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  font:inherit;font-size:14px;font-weight:600;letter-spacing:.02em;
+  color:var(--paper,#F7F2E7);background:rgba(28,24,18,.32);
+  border:0;cursor:pointer;
+}
+.bsr-map-guard:hover{background:rgba(28,24,18,.4)}
 
 .bsr-timerow{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px}
 .bsr-timerow input[type=range]{flex:1;min-width:150px;height:44px;accent-color:var(--ss,#AF5F30)}
