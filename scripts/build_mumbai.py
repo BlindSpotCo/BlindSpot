@@ -45,6 +45,16 @@ GROUNDING (each cited at point of use below)
   western-suburb households -- the only Indian city with two competing
   networks on one street -- both market >99% reliability. MSEDCL is
   described only as covering "the periphery" with no pincode-level source.
+  Confirmed with real numbers (Ministry of Power's 14th Annual Integrated
+  Rating and Ranking of Power Distribution Utilities, FY2024-25): BEST,
+  Tata Power (Mumbai license) and Adani Electricity Mumbai Limited (AEML)
+  all carry the A+ grade -- AEML ranked #1 of 63 rated utilities
+  nationally. MSEDCL, by contrast, scored an Integrated Rating of just
+  1.5/100 in the prior (13th) report -- one of the weakest state
+  utilities rated. power_score_from_discom() below replaces the old
+  zone-baseline-plus-jitter power score with this real per-DISCOM split,
+  already-computed DISCOM_OF/DISCOM_CONF (previously only used for the
+  display field, never for the score itself).
 - Ready Reckoner Rate: Maharashtra's real circle-rate equivalent,
   published annually by IGR Maharashtra (Dept. of Registration & Stamps),
   quoted per sq METRE (a third unit convention after Delhi's per-sq-ft
@@ -212,6 +222,26 @@ def score_for(pin, dim, zone):
     base += jitter(pin, 6, salt=hash(dim) % 97)
     return max(5, min(98, round(base)))
 
+# Real per-DISCOM power score, no jitter -- see the module docstring's
+# "Power" paragraph for the source (MoP's 14th Integrated Rating, FY24-25).
+# 'zone'-confidence areas (BEST / Tata Power+Adani / Tata Power alone) all
+# carry the A+ grade for their licensee, so they get the same anchor --
+# that IS the real signal, not a modelling shortcut. 'edge'-confidence
+# areas (DISCOM_OF == "Tata Power / MSEDCL") get a hedged middle score:
+# MSEDCL's confirmed rating is far worse (IR score 1.5/100) but the
+# MSEDCL attribution itself is only "plausible," not pincode-sourced
+# (DISCOM_CONF == "edge"), so scoring them at MSEDCL's full severity would
+# overstate confidence the source doesn't have.
+DISCOM_POWER_SCORE = {
+    "BEST": 92,
+    "Tata Power + Adani Electricity": 92,
+    "Tata Power": 92,
+    "Tata Power / MSEDCL": 55,
+}
+
+def power_score_from_discom(pin):
+    return DISCOM_POWER_SCORE[DISCOM_OF[pin]]
+
 WEIGHTS_BASE = {
     "crime": 0.25, "infrastructure": 0.20, "air": 0.15, "power": 0.10,
     "schools": 0.10, "water": 0.08, "roads": 0.07, "sewerage": 0.05,
@@ -280,7 +310,7 @@ def build():
             "crime": crime_scores[pin],
             "infrastructure": infra_score(pin, zone),
             "air": air_score_from_aqi(aqi_val),
-            "power": score_for(pin, "power", zone),
+            "power": power_score_from_discom(pin),
             "schools": score_for(pin, "schools", zone),
             "water": water_score_from_hours(ward, supply),
             "roads": score_for(pin, "roads", zone),
@@ -318,7 +348,11 @@ def build():
         icse_n = max(0, round(schools_n * icse_share))
         cbse_n = max(0, schools_n - icse_n)
 
-        outage = round(max(0.8, 5.5 - scores["power"] / 22 + jitter(pin, 1, salt=8) * 0.3), 1)
+        # No per-pincode jitter here -- the power score itself is now a
+        # flat per-DISCOM anchor (power_score_from_discom), so a jittered
+        # outage figure on top of an unjittered score would just
+        # reintroduce fake per-pincode noise this fix is meant to remove.
+        outage = round(max(0.8, 5.5 - scores["power"] / 22), 1)
         rel_idx = 4 if scores["power"] >= 78 else 3 if scores["power"] >= 60 else 2 if scores["power"] >= 45 else 1
 
         tds = "Low" if scores["water"] >= 65 else "Medium" if scores["water"] >= 45 else "High"

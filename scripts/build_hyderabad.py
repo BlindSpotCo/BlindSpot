@@ -126,12 +126,19 @@ def jitter(pin, spread=6, salt=0):
 #   established policing areas with denser station coverage -- this is a
 #   qualitative distinction from real commissionerate structure, not a
 #   claimed crime-rate fact (see module docstring's NCRB flag).
-# power: FLAT across every zone, deliberately. Unlike Mumbai (real 3-way
-#   DISCOM split) or Chandigarh (real Feb-2025 operator transfer with
-#   reported degradation), Hyderabad has ONE confirmed DISCOM (TSSPDCL)
-#   city-wide with no sourced zone-level reliability difference -- so no
-#   zone gradient is modelled here, only per-pincode jitter. This is a
-#   documented choice, not an oversight.
+# power: FLAT across every zone AND across every pincode, deliberately.
+#   Unlike Mumbai (real 3-way DISCOM split, now driving a real
+#   power_score_from_discom()) or Chandigarh (real Feb-2025 operator
+#   transfer), Hyderabad has ONE confirmed DISCOM (TSSPDCL) city-wide with
+#   no sourced zone-level reliability difference -- so no zone gradient,
+#   and (as of this pass) no per-pincode jitter either: the Ministry of
+#   Power's 13th/14th Annual Integrated Rating and Ranking of Power
+#   Distribution Utilities gives TSSPDCL a real, specific grade -- 'C',
+#   ranked 52nd of ~63 rated utilities nationally (its sister utility
+#   TSNPDCL, which doesn't serve Hyderabad, ranked 54th/last). That's a
+#   single real number for the whole city, so it becomes a single flat
+#   score (see TSSPDCL_POWER_SCORE below) rather than a zone baseline with
+#   invented per-pincode noise on top of it.
 # schools/water/roads/sewerage: qualitative real differences --
 #   Old City's narrow lane grid and Musi River flood exposure (The
 #   Federal, "Hyderabad floods: Old City, IT hubs inundated") pull
@@ -219,6 +226,16 @@ def score_for(pin, dim, zone):
     base = ZONE_BASELINE[zone][dim]
     base += jitter(pin, 6, salt=hash(dim) % 97)
     return max(5, min(98, round(base)))
+
+# TSSPDCL's real Ministry of Power Integrated Rating grade ('C') mapped to
+# this project's 0-100 scale -- one flat number, city-wide, no jitter (see
+# the ZONE_BASELINE comment above for why). Grade-to-score anchors used
+# consistently across every city this pass touches: A+=92, A=85, B+=76,
+# B=68, B-=60, C+=52, C=44, C-=36.
+TSSPDCL_POWER_SCORE = 44
+
+def power_score_flat():
+    return TSSPDCL_POWER_SCORE
 
 WEIGHTS_BASE = {
     "crime": 0.25, "infrastructure": 0.20, "air": 0.15, "power": 0.10,
@@ -350,7 +367,7 @@ def build():
             "crime": crime_scores[pin],
             "infrastructure": infra_score(pin, zone),
             "air": air_score_from_aqi(aqi_val),
-            "power": score_for(pin, "power", zone),
+            "power": power_score_flat(),
             "schools": score_for(pin, "schools", zone),
             "water": score_for(pin, "water", zone),
             "roads": score_for(pin, "roads", zone),
@@ -393,7 +410,10 @@ def build():
             schools_names = []
             schools_sourced = False
 
-        outage = round(max(0.8, 5.0 - scores["power"] / 22 + jitter(pin, 1, salt=8) * 0.3), 1)
+        # power is now a flat, real, un-jittered score -- no jitter on the
+        # derived outage figure either, for the same reason build_mumbai.py's
+        # power_score_from_discom() dropped it.
+        outage = round(max(0.8, 5.0 - scores["power"] / 22), 1)
         rel_idx = 4 if scores["power"] >= 78 else 3 if scores["power"] >= 60 else 2 if scores["power"] >= 45 else 1
 
         supply = water_supply_hours(pin, zone)
