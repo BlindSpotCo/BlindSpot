@@ -2094,8 +2094,16 @@ header.header-on-dark .brand-word-img{
 .faq2-list{ max-width:760px }
 .faq2-item{
   border-bottom:1px solid var(--line);
+  border-radius:14px;
+  padding:0 16px; margin:0 -16px;
+  transition:background .3s ease;
   opacity:0; /* pre-reveal state -- see the cascade rule below */
 }
+/* Closed rows stay exactly as plain as the rest of the list -- this is
+   only ever visible once a row opens, so the list doesn't read as busy
+   until someone actually asks a question. */
+.faq2-item.accent-av.is-open{ background:color-mix(in srgb, var(--av) 6%, transparent); }
+.faq2-item.accent-ss.is-open{ background:color-mix(in srgb, var(--ss) 6%, transparent); }
 /* Cascades the list in on scroll via a plain CSS animation keyed off
    the ANCESTOR section's .in-view (added once, to the <section> itself,
    by page.js's IntersectionObserver -- see the FAQSection.js comment
@@ -2144,7 +2152,12 @@ header.header-on-dark .brand-word-img{
 .faq2-item.is-open .faq2-q{ color:var(--brand) }
 .faq2-a-wrap{
   display:grid; grid-template-rows:0fr; overflow:hidden;
-  transition:grid-template-rows .3s cubic-bezier(.16,1,.3,1);
+  /* Same grid-row-collapse technique as the homepage search's city
+     panel, same fix applied to the same too-fast curve -- see that
+     section's own comment (.hlm-city-panel-inner) for the full story:
+     cubic-bezier(.16,1,.3,1) covers most of its motion in the first
+     sliver of its duration, so it read as a snap either way. */
+  transition:grid-template-rows .3s cubic-bezier(.22,.61,.36,1);
 }
 .faq2-item.is-open .faq2-a-wrap{ grid-template-rows:1fr }
 .faq2-a-wrap > .faq2-a{ overflow:hidden; min-height:0 }
@@ -2154,6 +2167,17 @@ header.header-on-dark .brand-word-img{
   transition:opacity .3s ease .05s, transform .3s ease .05s;
 }
 .faq2-item.is-open .faq2-a{ opacity:1; transform:translateY(0) }
+/* Real covered cities as chips (the "which cities" answer), not one
+   more sentence to read -- av-tinted since city coverage is the
+   Neighbourhood Score engine's own data, same pairing .hlm-suggest-kind
+   uses in the homepage search suggestions. */
+.faq2-chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.faq2-chip{
+  font-family:'Geist Mono',monospace; font-size:12px; font-weight:600; letter-spacing:.02em;
+  padding:5px 11px; border-radius:var(--radius-pill);
+  background:color-mix(in srgb, var(--av) 12%, transparent);
+  color:var(--av);
+}
 
 /* ---------- 06 — Closing CTA + footer ----------
    Was flat: solid --brand field, a faint grid-line pattern, centred

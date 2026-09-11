@@ -24,9 +24,25 @@
 // 2. Added a small numbered badge per row (alternating the same --av/
 //    --ss accents as every other section) that lights up on open --
 //    was just a plain text list before.
+//
+// v3 -- the section as a whole read as flat (grey text, hairline rules,
+// no colour or texture until you actually click something), and
+// coverageLabel() -- Currently Bangalore, Chandigarh... with more cities
+// coming -- doubled as data (the "which cities" question) and, unused
+// everywhere else, string formatting that had nothing else to do here.
+// 1. The header now fills the second half of .section-head's own
+//    flex row (every section has this space; nothing on the page
+//    actually used it before) with a short line previewing what's
+//    below -- real content, not spacing.
+// 2. "Which cities are covered" now renders KNOWN_CITIES as chips
+//    instead of a joined sentence -- an honest, glance-able answer
+//    instead of one more paragraph to read.
+// 3. The open row gets a faint accent-tinted background (its own
+//    accent-av/accent-ss, same pair as the number badge) so opening a
+//    question gives it some visual weight, not just more grey text.
 
 import { useState } from 'react';
-import { coverageLabel } from '@/lib/aslivastu/cityMeta';
+import { KNOWN_CITIES } from '@/lib/aslivastu/cityMeta';
 
 function useFaqItems() {
   return [
@@ -40,7 +56,8 @@ function useFaqItems() {
     },
     {
       q: 'Which cities are covered?',
-      a: `Currently ${coverageLabel()}, with more cities coming.`,
+      a: 'Real Neighbourhood Score coverage right now, more on the way.',
+      cities: KNOWN_CITIES,
     },
     {
       q: 'How is this different from asking a broker?',
@@ -48,7 +65,7 @@ function useFaqItems() {
     },
     {
       q: 'Can I change how much the area matters vs. the unit itself?',
-      a: 'Yes. The two scores start weighted 50/50 into your BlindSpot Score, and you can drag that balance yourself if the neighbourhood matters more to you than the sunlight, or the other way round.',
+      a: 'Yes. The two scores start weighted 50/50 into your BlindSpot Score, and you can shift that balance yourself if the neighbourhood matters more to you than the sunlight, or the other way round.',
     },
   ];
 }
@@ -66,6 +83,7 @@ export default function FAQSection() {
             <span className="eyebrow">04 - Questions</span>
             <h2>Before you <span className="gold-word">ask</span>.</h2>
           </div>
+          <p>What the data covers, what it costs, and how much say you get over the number.</p>
         </div>
 
         <div className="faq2-list">
@@ -87,7 +105,16 @@ export default function FAQSection() {
                   <span className="faq2-plus" aria-hidden="true" />
                 </button>
                 <div className="faq2-a-wrap">
-                  <p className="faq2-a">{item.a}</p>
+                  <div className="faq2-a">
+                    <p>{item.a}</p>
+                    {item.cities && (
+                      <div className="faq2-chips">
+                        {item.cities.map((c) => (
+                          <span key={c} className="faq2-chip">{c}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             );
