@@ -34,7 +34,10 @@ import TypewriterCycle from '@/components/TypewriterCycle';
 // Same default coordinates as the homepage's original rotating
 // coordinate readout -- opens on the same place that readout used to cite.
 const DEFAULT_CENTER = { lat: 12.9716, lon: 77.5946 };
-const DEFAULT_ZOOM = 12.4;
+const DEFAULT_ZOOM = 13; // whole zoom level -- a fractional resting zoom (was 12.4) forces
+// Leaflet to permanently CSS-scale the nearest integer-zoom tiles to hit it,
+// which is what was reading as "blurry" on the resting map, independent of
+// the .hlm-tiles filter's own blur below.
 const FLY_ZOOM = 15;
 
 // How long the map sits on the picked pin -- fly-to still playing,
@@ -100,7 +103,8 @@ function FlyTo({ lat, lon, zoom, flyKey }) {
 // rather than the whole page just appearing already-arrived. Fires once
 // per mount, never again -- this is an entrance, not something that
 // should replay on every re-render.
-const INTRO_ZOOM_OFFSET = 2.4;
+const INTRO_ZOOM_OFFSET = 3; // whole number -- keeps the pre-intro mount frame
+// (DEFAULT_ZOOM - INTRO_ZOOM_OFFSET) on a native tile zoom too, same reason.
 function IntroFly({ lat, lon, zoom }) {
   const map = useMap();
   const fired = useRef(false);
@@ -328,6 +332,11 @@ export default function HeroLiveMapCanvas() {
           className="hlm-tiles"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          // Requests one zoom level higher and stitches 4 tiles per slot on a
+          // HiDPI/retina screen instead of stretching the standard 256px tile --
+          // this is the other real source of softness on a Mac's retina display,
+          // separate from the fractional-zoom issue above.
+          detectRetina
         />
         {pin && <Marker position={[pin.lat, pin.lon]} icon={pinIcon} />}
         <FlyTo lat={center.lat} lon={center.lon} zoom={pin ? FLY_ZOOM : DEFAULT_ZOOM} flyKey={flyKey} />
