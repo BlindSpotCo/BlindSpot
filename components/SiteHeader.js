@@ -184,6 +184,9 @@ export default function SiteHeader({ homeHref = '/' }) {
             <div className="nav-links">
               <Link href="/#how-it-works">How It Works</Link>
               <Link href="/#products">Tools</Link>
+              {/* A real page, not an anchor on the homepage -- it is
+                  something people come back to and send to each other. */}
+              <Link href="/compare">Compare</Link>
               <Link href="/#team">The Team</Link>
             </div>
             <div className="nav-cta">
@@ -231,6 +234,7 @@ export default function SiteHeader({ homeHref = '/' }) {
           <div className="wrap" style={{ display: 'flex', flexDirection: 'column' }}>
             <Link href="/#how-it-works" onClick={closeMobile}>How It Works</Link>
             <Link href="/#products" onClick={closeMobile}>Tools</Link>
+            <Link href="/compare" onClick={closeMobile}>Compare</Link>
             <Link href="/#team" onClick={closeMobile}>The Team</Link>
             {!onFlow && <Link href="/#find" onClick={(e) => { closeMobile(); goToSearch(e); }}>Uncover Your BlindSpot</Link>}
             {checkedAuth && (

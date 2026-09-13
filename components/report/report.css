@@ -491,3 +491,75 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   .bsr{padding-left:14px;padding-right:14px}
   .bsr-sub,.bsr-set{min-height:0}
 }
+
+/* ── Which day the shadow map is simulating ─────────────────────────────
+   This lives ON the map, not under it, and that placement is the fix for a
+   real annoyance rather than a decorative choice. .bsr-map re-arms its
+   scroll guard on mouseleave, so a control sitting below the map could not
+   be reached without greying the map out on the way to it -- pick a season,
+   and you had to click the map again to see the result. Inside the wrapper
+   the pointer never crosses that boundary.
+
+   It sits above the guard (z-index 3 against its 2) so the dates stay
+   usable while the map is still parked, which is exactly when someone is
+   deciding what to look at. */
+/* .bsr-map > * forces width:100%;height:100% so the iframe fills the box.
+   That selector catches this overlay too, and a full-height flex row with
+   align-items:center parks the pills halfway down the map instead of at the
+   top of it. Same specificity, so ordering would not have saved it --
+   height and width have to be said out loud here. */
+.bsr-map > .bsr-dates{
+  position:absolute;z-index:3;top:10px;left:10px;right:10px;
+  width:auto;height:auto;
+  display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+  padding:8px;border-radius:10px;
+  background:rgba(255,253,248,.93);
+  border:1px solid rgba(28,24,18,.12);
+  box-shadow:0 4px 18px rgba(28,24,18,.13);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.bsr-date{
+  display:inline-flex;align-items:baseline;gap:6px;background:var(--paper,#FFFDF8);
+  border:1px solid var(--line,rgba(28,24,18,.14));border-radius:999px;
+  padding:6px 12px;font:inherit;font-size:12px;font-weight:600;
+  color:var(--text-mute,#5A5140);cursor:pointer;white-space:nowrap;
+  transition:background .15s ease,border-color .15s ease,color .15s ease;
+}
+.bsr-date i{font-style:normal;font-size:10.5px;opacity:.7;font-variant-numeric:tabular-nums}
+.bsr-date:hover{border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
+.bsr-date.is-on{background:var(--ss,#AF5F30);border-color:var(--ss,#AF5F30);color:#FFFDF8}
+.bsr-date.is-on i{opacity:.85}
+.bsr-datein{
+  border:1px solid var(--line,rgba(28,24,18,.14));border-radius:999px;
+  padding:5px 11px;font:inherit;font-size:12px;background:var(--paper,#FFFDF8);
+  color:var(--ink,#1C1812);
+}
+.bsr-datein:focus{outline:none;border-color:var(--ss,#AF5F30)}
+/* The note rides along on the same row, and drops out first when the bar
+   runs out of width -- it explains the choice, it does not make it. */
+.bsr-datenote{
+  font-size:11.5px;color:var(--text-dim,#5B5443);line-height:1.4;
+  margin:0 0 0 2px;flex:1 1 120px;min-width:0;
+}
+@media (max-width:640px){
+  .bsr-map > .bsr-dates{top:8px;left:8px;right:8px;padding:7px;gap:5px}
+  .bsr-date{padding:6px 10px;font-size:11.5px}
+  .bsr-date i{display:none}
+  .bsr-datenote{display:none}
+}
+/* A map parked behind its guard is dimmed; the controls on top should not
+   be, or they read as disabled at the moment they are most useful. */
+@media (prefers-reduced-motion: reduce){
+  .bsr-date{transition:none}
+}
+
+/* The report answers "is this flat any good". The next question is almost
+   always "better than the other one?", so the way there belongs here, at
+   the moment it gets asked -- not only in the nav. */
+.bsr-compare-cue{
+  margin:14px 0 0;padding:12px 14px;border-radius:8px;
+  background:var(--bg-2,#F1E9DA);border:1px solid var(--line-soft,rgba(28,24,18,.08));
+  font-size:13.5px;line-height:1.6;color:var(--text-mute,#5A5140);
+}
+.bsr-compare-cue a{color:var(--ss,#AF5F30);font-weight:700;text-decoration:none}
+.bsr-compare-cue a:hover{text-decoration:underline}

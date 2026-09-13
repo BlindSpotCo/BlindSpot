@@ -89,6 +89,42 @@ function clock(mins) {
   const m = mins % 60;
   return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h >= 12 ? 'pm' : 'am'}`;
 }
+// The four dates the shadow map is worth looking at, plus today.
+//
+// Solstices and equinoxes are the year's extremes and midpoints: the winter
+// solstice is the worst light this flat will ever get and the summer
+// solstice the best, so a flat that holds up on 21 December holds up all
+// year. Picking a date is the whole point of a shadow map -- "is it sunny
+// right now" is a question you can answer by looking out of a window.
+//
+// Month/day only; the year is filled in at render so these never go stale.
+const SEASONS = [
+  { key: 'today',  label: 'Today',          md: null,      note: 'The sun where it is right now' },
+  { key: 'spring', label: 'Spring equinox', md: '03-20',   note: 'Day and night equal' },
+  { key: 'summer', label: 'Summer solstice',md: '06-21',   note: 'The most sun this flat ever gets' },
+  { key: 'autumn', label: 'Autumn equinox', md: '09-23',   note: 'Day and night equal again' },
+  { key: 'winter', label: 'Winter solstice',md: '12-21',   note: 'The least sun this flat ever gets' },
+];
+
+function todayStr() {
+  // Local date, not UTC -- toISOString() on an IST evening returns
+  // yesterday, which quietly shifts the whole sun path by a day.
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function seasonDate(key) {
+  const s = SEASONS.find((x) => x.key === key);
+  if (!s || !s.md) return todayStr();
+  return `${new Date().getFullYear()}-${s.md}`;
+}
+
+function prettyDate(iso) {
+  const [y, m, d] = (iso || '').split('-').map(Number);
+  if (!y || !m || !d) return iso || '';
+  return new Date(y, m - 1, d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+}
+
 function simTimeOf(mins) {
   return `${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`;
 }
@@ -157,6 +193,12 @@ export default function ReportScreen() {
   // SunScoutPanel starts it playing, and the shadows moving is the whole
   // reason the map is here. Passing false was switching it off.
   const [animating, setAnimating] = useState(true);
+  // Which date the map is simulating. 'today' by default -- someone who has
+  // just dropped a pin wants to recognise what they are looking at before
+  // they start asking about December.
+  const [seasonKey, setSeasonKey] = useState('today');
+  const [customDate, setCustomDate] = useState('');
+  const simDate = seasonKey === 'custom' ? (customDate || todayStr()) : seasonDate(seasonKey);
   // The 3D map's own wheel handling (zoom) and drag handling (rotate/tilt)
   // live inside an iframe -- a separate document the page's own scroll
   // listeners can never see. Left unguarded, hovering the map while
@@ -251,7 +293,7 @@ export default function ReportScreen() {
   useEffect(() => {
     if (!hasPlace) return;
     const id = ++solarReq.current;
-    const date = new Date().toISOString().slice(0, 10);
+    const date = simDate;
     const t = setTimeout(() => {
       fetch(`/api/sunscout/solar?lat=${lat}&lon=${lon}&date=${date}&tzOffset=${TZ}&simTime=${simTimeOf(minutes)}`)
         .then((r) => r.json())
@@ -266,7 +308,7 @@ export default function ReportScreen() {
     // `minutes` re-runs this only while paused: with the animation on, the
     // iframe drives its own clock and a per-minute refetch would fight it.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasPlace, lat, lon, animating, animating ? null : minutes]);
+  }, [hasPlace, lat, lon, simDate, animating, animating ? null : minutes]);
 
   /* ---------------- the raw locality record, for the report ---------------- */
   useEffect(() => {
@@ -915,6 +957,49 @@ export default function ReportScreen() {
               {solarFailed ? 'The 3D view couldn’t load. The scores below are unaffected.' : 'Building the 3D view…'}
             </p>
           )}
+          {solar?.pathData && (
+            <div className="bsr-dates" role="group" aria-label="Which day to simulate">
+              {SEASONS.map((sn) => {
+                const on = seasonKey === sn.key;
+                return (
+                  <button
+                    key={sn.key}
+                    type="button"
+                    className={`bsr-date${on ? ' is-on' : ''}`}
+                    aria-pressed={on}
+                    title={sn.note}
+                    onClick={() => setSeasonKey(sn.key)}
+                  >
+                    {sn.label}
+                    {sn.md && <i>{prettyDate(seasonDate(sn.key))}</i>}
+                  </button>
+                );
+              })}
+              <button
+                type="button"
+                className={`bsr-date${seasonKey === 'custom' ? ' is-on' : ''}`}
+                aria-pressed={seasonKey === 'custom'}
+                title="Any other day of the year"
+                onClick={() => setSeasonKey('custom')}
+              >
+                Pick a date
+              </button>
+              {seasonKey === 'custom' && (
+                <input
+                  type="date"
+                  className="bsr-datein"
+                  value={customDate || todayStr()}
+                  onChange={(e) => setCustomDate(e.target.value)}
+                  aria-label="Date to simulate"
+                />
+              )}
+              <span className="bsr-datenote">
+                {seasonKey === 'custom'
+                  ? `Showing ${prettyDate(simDate)}`
+                  : SEASONS.find((x) => x.key === seasonKey)?.note}
+              </span>
+            </div>
+          )}
           {solar?.pathData && mapArmed && (
             <button
               type="button"
@@ -953,6 +1038,11 @@ export default function ReportScreen() {
               <span className="bsr-clock">{clock(minutes)}</span>
             </>
           )}
+        </p>
+        <p className="bsr-compare-cue">
+          Weighing this against another flat?{' '}
+          <a href="/compare">Put them side by side</a> — the sun each one gets, and what the
+          price difference actually buys.
         </p>
         <p className="bsr-maphint">
           {reportRunning

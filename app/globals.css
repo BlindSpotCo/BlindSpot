@@ -2410,3 +2410,228 @@ header.header-on-dark .brand-word-img{
 @media (prefers-reduced-motion: reduce){
   .cc-foot-wordmark-main, .cc-foot-wordmark-alt{ transition:none }
 }
+
+/* ══ Compare flats ══════════════════════════════════════════════════════
+   A standalone tool with its own voice: Playfair italic for the display
+   line (already loaded, unused anywhere else), Geist for text, Geist Mono
+   for labels and figures. Deliberately not the .reports-page shell -- this
+   is a front door, not a folder listing. */
+.bx-page{ min-height:100vh; background:var(--bg); padding:96px 32px 72px }
+.bx-wrap{ max-width:1080px; margin:0 auto }
+
+.bx-hero{ max-width:60ch; margin-bottom:44px }
+.bx-eyebrow{
+  font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:11px; font-weight:600;
+  text-transform:uppercase; letter-spacing:.16em; color:var(--ss); margin:0 0 14px;
+}
+.bx-hero h1{
+  font-size:clamp(30px, 4.6vw, 46px); line-height:1.16; font-weight:700; color:var(--ink);
+  margin:0 0 18px; letter-spacing:-.015em; text-wrap:balance;
+}
+.bx-hero h1 em{ font-family:'Playfair Display',Georgia,serif; font-style:italic; font-weight:600; color:var(--ss) }
+.bx-sub{ font-size:15.5px; line-height:1.7; color:var(--text-mute); margin:0; max-width:56ch }
+.bx-empty{ font-size:14.5px; line-height:1.75; color:var(--text-dim); max-width:52ch; margin:4px 0 0 }
+
+/* ── Property cards ───────────────────────────────────────────────────── */
+.bx-cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(252px,1fr)); gap:16px; margin-bottom:34px; align-items:start }
+.bx-card{
+  background:var(--paper); border:1px solid var(--line); border-radius:14px;
+  padding:15px 16px 17px; display:flex; flex-direction:column; gap:13px; position:relative; overflow:hidden;
+}
+/* The property's own hue as a top rule -- identity, not decoration. */
+.bx-card::before{
+  content:''; position:absolute; inset:0 0 auto 0; height:3px; background:var(--hue); opacity:0; transition:opacity .2s ease;
+}
+.bx-card.on::before{ opacity:1 }
+.bx-card.on{ border-color:rgba(28,24,18,.2) }
+.bx-card-h{ display:flex; align-items:center; justify-content:space-between; min-height:22px }
+.bx-tag{
+  font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:11px; font-weight:700; letter-spacing:.08em;
+  width:22px; height:22px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center;
+  color:#FFFDF8; background:var(--hue,var(--brand));
+}
+.bx-x{ background:none; border:none; cursor:pointer; color:var(--text-dim); font-size:20px; line-height:1; padding:0 2px }
+.bx-x:hover{ color:var(--danger) }
+
+.bx-addcard{
+  border:1px dashed var(--line); border-radius:14px; background:transparent; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+  padding:40px 16px; min-height:160px; color:var(--text-dim); font:inherit;
+  transition:border-color .2s ease, color .2s ease;
+}
+.bx-addcard:hover{ border-color:var(--brand); color:var(--brand) }
+.bx-addcard-plus{ font-size:24px; line-height:1 }
+.bx-addcard-text{ font-size:13px; font-weight:600 }
+
+/* Address */
+.bx-addr{ position:relative }
+.bx-addr-in{
+  width:100%; box-sizing:border-box; padding:10px 26px 10px 12px; font:inherit; font-size:13.5px;
+  border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink);
+}
+.bx-addr-in:focus{ outline:none; border-color:var(--hue,var(--brand)); box-shadow:0 0 0 3px rgba(28,24,18,.07) }
+.bx-addr-x{ position:absolute; right:7px; top:8px; background:none; border:none; cursor:pointer; color:var(--text-dim); font-size:17px; line-height:1 }
+.bx-menu{
+  position:absolute; z-index:40; top:calc(100% + 5px); left:0; right:0; max-height:262px; overflow-y:auto;
+  background:var(--paper); border:1px solid var(--line); border-radius:8px; box-shadow:0 14px 38px rgba(28,24,18,.17);
+}
+.bx-menu-note{ padding:11px 12px; font-size:12.5px; color:var(--text-dim); margin:0; line-height:1.5 }
+.bx-menu-note.err{ color:var(--danger) }
+.bx-menu-it{
+  display:flex; flex-direction:column; gap:2px; width:100%; text-align:left; background:none; border:none;
+  border-bottom:1px solid var(--line-soft); padding:9px 12px; cursor:pointer; font:inherit;
+}
+.bx-menu-it:last-child{ border-bottom:none }
+.bx-menu-it:hover{ background:rgba(28,24,18,.04) }
+.bx-menu-it span{ font-size:13px; color:var(--ink); line-height:1.45 }
+.bx-menu-it i{ font-family:var(--font-geist-mono),ui-monospace,monospace; font-style:normal; font-size:11px; color:var(--text-dim) }
+
+/* Floor + facing */
+.bx-unit{ display:flex; align-items:center; gap:14px }
+.bx-unit-f{ display:flex; flex-direction:column; gap:5px }
+.bx-unit-f span{
+  font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:10px; font-weight:600;
+  text-transform:uppercase; letter-spacing:.11em; color:var(--text-dim);
+}
+.bx-unit-f input{
+  width:60px; padding:7px 9px; font:inherit; font-size:15px; font-variant-numeric:tabular-nums;
+  border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink);
+}
+.bx-unit-f input:focus{ outline:none; border-color:var(--hue,var(--brand)) }
+.bx-dial{ display:flex; align-items:center; gap:9px; color:var(--line) }
+.bx-dial-pt{ cursor:pointer }
+.bx-dial-pt circle{ transition:r .14s ease }
+.bx-dial-pt:hover circle:last-child{ fill:var(--text-dim) }
+.bx-dial-pt:focus-visible circle:first-child{ fill:rgba(28,24,18,.08) }
+.bx-dial-ring{ fill:var(--bg); stroke:var(--line); stroke-width:1 }
+.bx-dial-n{ font-size:12.5px; color:var(--text-mute) }
+
+.bx-state{ font-size:12.5px; color:var(--text-dim); margin:0 }
+.bx-state.err{ color:var(--danger); line-height:1.5 }
+
+/* Two figures, large -- these are what the card is for */
+.bx-scores{ display:flex; gap:22px; padding-top:2px }
+.bx-stat{ display:flex; flex-direction:column; gap:1px }
+.bx-stat b{ font-size:27px; font-weight:700; line-height:1; font-variant-numeric:tabular-nums }
+.bx-stat span{
+  font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:9.5px; font-weight:600;
+  text-transform:uppercase; letter-spacing:.12em; color:var(--text-dim); margin-top:4px;
+}
+.bx-stat i{ font-style:normal; font-size:11px; color:var(--text-dim); max-width:15ch; line-height:1.35 }
+
+/* ── The year of sun ──────────────────────────────────────────────────── */
+.sun-strip{ display:flex; flex-direction:column; gap:4px }
+.sun-strip-track{ fill:rgba(28,24,18,.05) }
+.sun-strip-tick{
+  font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:6.4px; fill:var(--text-dim); letter-spacing:.02em;
+}
+.sun-strip-key{ font-size:10.5px; color:var(--text-dim) }
+
+.sun-lines{
+  margin:0 0 34px; background:var(--paper); border:1px solid var(--line);
+  border-radius:14px; padding:18px 20px 10px;
+}
+.sun-lines figcaption{ margin-bottom:10px }
+.sun-lines figcaption strong{ display:block; font-size:15px; font-weight:700; color:var(--ink) }
+.sun-lines figcaption span{ display:block; font-size:12.5px; color:var(--text-dim); margin-top:2px }
+/* The plot is 620 wide in its own units; letting it stretch to 1080px of
+   page turns a year of data into a flat smear with the months too far
+   apart to read as a shape. Capped, and centred in the card. */
+.sun-lines-scroll{ overflow-x:auto; max-width:680px; margin:0 auto }
+.sl-grid{ stroke:rgba(28,24,18,.1); stroke-width:1 }
+.sl-axis{ font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:9px; fill:var(--text-dim) }
+.sl-lab{ font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:11px; font-weight:700 }
+.sl-end{ stroke:var(--paper); stroke-width:2 }
+
+/* ── Verdict ──────────────────────────────────────────────────────────── */
+.bx-verdict{
+  background:var(--plum); color:#F6EFE4; border-radius:14px; padding:24px 26px; margin-bottom:34px;
+}
+.bx-verdict-lead{ font-size:19px; line-height:1.5; margin:0 0 13px; color:#FFFDF8 }
+.bx-verdict-lead em{
+  font-family:'Playfair Display',Georgia,serif; font-style:italic; font-weight:600; color:var(--ss-sun);
+}
+.bx-verdict-lead b{ font-weight:700 }
+.bx-verdict-l{ font-size:14px; line-height:1.75; margin:0 0 7px; color:rgba(246,239,228,.86) }
+.bx-verdict-l:last-child{ margin-bottom:0 }
+.bx-verdict-l.thin{ color:rgba(246,239,228,.6); font-style:italic }
+.bx-chip{
+  font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:10px; font-weight:700;
+  text-transform:uppercase; letter-spacing:.1em; padding:3px 8px; border-radius:4px; margin-right:10px; white-space:nowrap;
+}
+.bx-chip.buys{ background:rgba(233,169,74,.2); color:var(--ss-sun) }
+.bx-chip.gives{ background:rgba(246,239,228,.13); color:rgba(246,239,228,.8) }
+
+/* ── Rows ─────────────────────────────────────────────────────────────── */
+.bx-block{ margin-bottom:34px }
+.bx-block-h{ display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 14px; margin-bottom:14px }
+.bx-block-h h2{
+  font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:11.5px; font-weight:700;
+  text-transform:uppercase; letter-spacing:.12em; color:var(--brand); margin:0;
+}
+.bx-block-h p{ font-size:12.5px; color:var(--text-dim); margin:0 }
+.bx-toggle{
+  margin-left:auto; background:none; border:1px solid var(--line); border-radius:999px;
+  padding:6px 14px; font:inherit; font-size:12.5px; font-weight:600; color:var(--text-mute); cursor:pointer;
+}
+.bx-toggle:hover{ border-color:var(--brand); color:var(--brand) }
+
+.bx-rows{ background:var(--paper); border:1px solid var(--line); border-radius:14px; overflow:hidden }
+.bx-row{ display:grid; grid-template-columns:minmax(150px,1fr) minmax(0,2.1fr); gap:18px; align-items:center; padding:12px 18px; border-bottom:1px solid var(--line-soft) }
+.bx-row:last-child{ border-bottom:none }
+.bx-row.hero{ background:var(--bg-2) }
+.bx-row-l{ display:flex; flex-direction:column; gap:2px }
+.bx-row-l span{ font-size:13.5px; color:var(--text-mute) }
+.bx-row.hero .bx-row-l span{ font-size:14.5px; font-weight:700; color:var(--ink) }
+.bx-row-l i{ font-style:normal; font-size:11.5px; color:var(--text-dim); line-height:1.45; max-width:30ch }
+.bx-row-v{ display:grid; grid-auto-flow:column; grid-auto-columns:1fr; gap:16px; align-items:center }
+
+.bx-v{ display:flex; align-items:center; gap:7px; font-variant-numeric:tabular-nums }
+.bx-v b{ font-size:14px; font-weight:600; color:var(--text-mute) }
+.bx-row.hero .bx-v b{ font-size:16px; font-weight:700; color:var(--ink) }
+.bx-v.win b{ color:var(--ink); font-weight:700 }
+.bx-dot{ width:7px; height:7px; border-radius:50%; flex:0 0 auto; display:inline-block }
+
+.bx-bar{ display:flex; align-items:center; gap:9px }
+.bx-bar-track{ flex:1; height:7px; border-radius:4px; background:rgba(28,24,18,.07); overflow:hidden; min-width:34px }
+.bx-bar-fill{ display:block; height:100%; border-radius:4px }
+.bx-bar b{ font-size:14px; font-weight:700; font-variant-numeric:tabular-nums; min-width:26px; text-align:right }
+.bx-bar.win b{ text-shadow:0 0 0 currentColor }
+
+/* Money form */
+.bx-form{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:0 }
+.bx-formcol{ display:flex; flex-direction:column; gap:9px; padding:16px 18px; border-right:1px solid var(--line-soft) }
+.bx-formcol:last-child{ border-right:none }
+.bx-formcol-h{ display:flex; align-items:center; gap:7px; font-size:13px; font-weight:700; color:var(--ink); margin-bottom:3px }
+.bx-field{ display:flex; align-items:center; justify-content:space-between; gap:12px }
+.bx-field-l{ display:flex; flex-direction:column; font-size:12.5px; color:var(--text-mute) }
+.bx-field-l i{ font-style:normal; font-size:10.5px; color:var(--text-dim); line-height:1.35; max-width:18ch }
+.bx-field-in{
+  display:inline-flex; align-items:center; gap:4px; background:var(--bg); border:1px solid var(--line);
+  border-radius:7px; padding:5px 8px; flex:0 0 auto;
+}
+.bx-field-in:focus-within{ border-color:var(--brand) }
+.bx-field-in em{ font-style:normal; font-size:11px; color:var(--text-dim) }
+.bx-field-in input{ border:none; outline:none; background:transparent; font:inherit; font-size:13px; color:var(--ink); width:76px; font-variant-numeric:tabular-nums; padding:0 }
+
+.bx-foot{ display:flex; flex-direction:column; gap:12px; align-items:flex-start; border-top:1px solid var(--line-soft); padding-top:20px }
+.bx-copy{
+  background:var(--brand); color:#FFFDF8; border:none; border-radius:8px; padding:11px 20px;
+  font:inherit; font-size:13.5px; font-weight:700; cursor:pointer;
+}
+.bx-copy:hover{ background:#2F3211 }
+.bx-foot p{ font-size:12.5px; color:var(--text-dim); line-height:1.75; max-width:70ch; margin:0 }
+
+@media (max-width:760px){
+  .bx-page{ padding:80px 18px 52px }
+  .bx-cards{ grid-template-columns:1fr }
+  .bx-row{ grid-template-columns:1fr; gap:9px; padding:13px 15px }
+  .bx-row-v{ grid-auto-flow:row; grid-auto-columns:auto; gap:8px }
+  .bx-verdict{ padding:19px 18px }
+  .bx-verdict-lead{ font-size:17px }
+  .bx-chip{ display:inline-block; margin-bottom:4px }
+  .bx-formcol{ border-right:none; border-bottom:1px solid var(--line-soft) }
+}
+@media (prefers-reduced-motion: reduce){
+  .bx-card::before, .bx-dial-pt circle{ transition:none }
+}
