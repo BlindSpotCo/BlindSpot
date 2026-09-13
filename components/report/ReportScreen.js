@@ -658,6 +658,10 @@ export default function ReportScreen() {
           <span className="bsr-addr-text">{address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}</span>
         </p>
         <span className="bsr-head-links">
+          {/* First, not last. Someone reading a verdict on one flat is most
+              likely to want the other two beside it -- that is a more common
+              next step here than either of the other two links. */}
+          <a href="/compare" className="is-primary">Compare flats</a>
           <a href="/my-reports">My reports</a>
           <a href="/">Change address</a>
         </span>

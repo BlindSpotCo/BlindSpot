@@ -58,11 +58,33 @@ export default function CompareStudio({ initial }) {
   // Measure whenever address / floor / facing settle. Keyed on exactly those
   // four values so retyping a price never refetches, and a stale reply from
   // a previous address can never land on a newer one.
+  // A geocoder suggestion often carries no postcode -- Photon returns plenty
+  // of Indian buildings without one. The neighbourhood half is looked up BY
+  // postcode, so those addresses were silently getting no area score at all:
+  // not "we don't cover this pincode" but "we never asked". Ask, the same
+  // way the report screen does when a pin arrives with only coordinates.
+  const pinAsked = useRef({});
+  useEffect(() => {
+    for (const s of slots) {
+      if (s.lat == null || s.lon == null || s.pin) continue;
+      const at = `${s.lat},${s.lon}`;
+      if (pinAsked.current[s.key] === at) continue;
+      pinAsked.current[s.key] = at;
+      fetch(`/api/sunscout/reverse-geocode?lat=${s.lat}&lon=${s.lon}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((j) => {
+          const pin = j?.result?.postcode;
+          if (pin && pinAsked.current[s.key] === at) patch(s.key, { pin });
+        })
+        .catch(() => {});
+    }
+  }, [slots, patch]);
+
   const sig = useRef({});
   useEffect(() => {
     for (const s of slots) {
       if (s.lat == null || s.lon == null) continue;
-      const now = `${s.lat},${s.lon},${s.floor === '' ? 0 : s.floor},${s.facing}`;
+      const now = `${s.lat},${s.lon},${s.floor === '' ? 0 : s.floor},${s.facing},${s.pin || ''}`;
       if (sig.current[s.key] === now) continue;
       sig.current[s.key] = now;
       patch(s.key, { loading: true, error: null });
@@ -143,7 +165,7 @@ export default function CompareStudio({ initial }) {
             <BarRow label="Unit score" cols={cols} pick={(c) => c.measured?.unit?.score} max={100} best="high" lead />
             <BarRow label="Neighbourhood" cols={cols} best="high" max={100}
                     pick={(c) => (c.measured?.areaCovered ? c.measured.area.score : null)}
-                    blank={(c) => (c.measured && !c.measured.areaCovered ? 'outside our coverage' : null)} lead />
+                    blank={areaBlank} lead />
             <PlainRow label="Winter sun · Nov–Jan" cols={cols} best="high"
                       pick={(c) => winterSun(c.measured?.solar?.monthlySummary)} fmt={(v) => `${v.toFixed(1)} h/day`} />
             <PlainRow label="Summer sun · Apr–Jun" cols={cols} best="low" hint="More is not better"
@@ -260,7 +282,9 @@ function PropertyCard({ slot, tag, hue, bias, onPatch, onRemove }) {
               <div className="bx-scores">
                 <Stat n={m.unit.score} k="unit" hue={hue} />
                 <Stat n={m.areaCovered ? m.area.score : null} k="area" hue={hue}
-                      sub={m.areaCovered ? m.area.name : 'not covered'} />
+                      sub={m.areaCovered ? m.area.name
+                        : slot.pin ? `${slot.pin} — outside our 5 cities`
+                        : 'no pincode found here'} />
               </div>
               <SunStrip monthly={m.solar?.monthlySummary} color={hue} />
             </>
@@ -430,6 +454,18 @@ function RowShell({ label, hint, hero, children }) {
       <div className="bx-row-v">{children}</div>
     </div>
   );
+}
+
+// Three different reasons a neighbourhood score can be missing, and the
+// buyer deserves to know which: we have no pincode for this spot, we have
+// one but it is outside the five cities we score, or we have not answered
+// yet. One "outside our coverage" covering all three was wrong two times in
+// three -- and the first case is our gap, not the city's.
+function areaBlank(c) {
+  if (c.loading) return 'measuring…';
+  if (!c.measured) return null;
+  if (c.measured.areaCovered) return null;
+  return c.pin ? `${c.pin} — outside our 5 cities` : 'no pincode found here';
 }
 
 function PlainRow({ label, hint, hero, cols, pick, fmt, best }) {

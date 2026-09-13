@@ -184,12 +184,19 @@ export default function SiteHeader({ homeHref = '/' }) {
             <div className="nav-links">
               <Link href="/#how-it-works">How It Works</Link>
               <Link href="/#products">Tools</Link>
-              {/* A real page, not an anchor on the homepage -- it is
-                  something people come back to and send to each other. */}
-              <Link href="/compare">Compare</Link>
               <Link href="/#team">The Team</Link>
             </div>
             <div className="nav-cta">
+              {/* Compare sits with the buttons, not among the nav links.
+                  .nav-links is display:none below 860px, so as a link it
+                  vanished on every laptop-width window and tablet -- and a
+                  tool you use does not belong in a row of page anchors
+                  anyway. Outlined so it reads as a second action without
+                  competing with the primary one. */}
+              <Link href="/compare" className="btn-compare">
+                <span className="btn-compare-full">Compare flats</span>
+                <span className="btn-compare-short">Compare</span>
+              </Link>
               {!onFlow && (
                 <Link href="/#find" className="btn-cta-sm" onClick={goToSearch}>
                   <span className="btn-cta-full">Uncover Your BlindSpot</span>

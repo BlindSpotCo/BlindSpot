@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import SiteHeader from '@/components/SiteHeader';
 import CompareStudio from '@/components/compare/CompareStudio';
 import { decodeSlots } from '@/lib/compare/derive';
 
@@ -15,7 +16,12 @@ export default async function ComparePage({ searchParams }) {
   const initial = decodeSlots(typeof sp?.c === 'string' ? sp.c : null) || [];
 
   return (
-    <main className="bx-page">
+    <>
+      {/* The header, like every other page. Without it this page had no
+          logo, no navigation, no sign-in state and no way back to the rest
+          of the site -- the same gap floor-plan-analysis had. */}
+      <SiteHeader />
+      <main className="bx-page">
       <div className="bx-wrap">
         <header className="bx-hero">
           <p className="bx-eyebrow">Side by side</p>
@@ -29,7 +35,8 @@ export default async function ComparePage({ searchParams }) {
         <Suspense fallback={<p className="bx-empty">Loading…</p>}>
           <CompareStudio initial={initial} />
         </Suspense>
-      </div>
-    </main>
+        </div>
+      </main>
+    </>
   );
 }

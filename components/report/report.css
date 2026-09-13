@@ -68,6 +68,21 @@
   color:var(--ss,#AF5F30);font-size:15px;font-weight:600;
   text-decoration:underline;text-underline-offset:3px;white-space:nowrap;
 }
+/* Three underlined links of equal weight is a list to read rather than a
+   thing to click. The one people most often want next gets a border and
+   loses the underline, so it reads as the action and the other two stay
+   the utilities they are. */
+.bsr-head-links a.is-primary{
+  text-decoration:none;border:1.5px solid var(--ss,#AF5F30);
+  border-radius:999px;padding:5px 14px;font-size:14px;
+  transition:background .15s ease,color .15s ease;
+}
+.bsr-head-links a.is-primary:hover{background:var(--ss,#AF5F30);color:#FFFDF8}
+@media (max-width:560px){
+  .bsr-head-links{gap:12px;flex-wrap:wrap}
+  .bsr-head-links a{font-size:14px}
+  .bsr-head-links a.is-primary{font-size:13px;padding:5px 12px}
+}
 
 /* ---------------- the answer ---------------- */
 .bsr-answer{
