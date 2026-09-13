@@ -104,6 +104,7 @@ from hyderabad_areas import (
     HYDERABAD, ZONE_OF, DISCOM_OF, DISCOM_CONF, GOVERNANCE_CONF,
     COMMISSIONERATE_OF, TIER_LABEL, landmarks_of, CANTONMENT_AMBIGUOUS,
 )
+from cpcb_stations import HYDERABAD_STATIONS, idw_aqi, aqi_to_score, aqi_category
 
 SCORED_AT = "2026-09-06T00:00:00"
 
@@ -165,34 +166,30 @@ ZONE_BASELINE = {
 #   Kokapet's worst tier has no confirmed pincode of its own; applied to
 #     its real, immediate geographic neighbours instead of invented for a
 #     pincode that isn't verified -> 500089, 500008, 500106
-AIR_WORST = {"500064", "500089", "500008", "500106"}
-#   Central University/Gachibowli station -> elevated (not worst) tier -> 500032
-#   Somajiguda station -> elevated tier -> 500082
-#   Nacharam station -> elevated tier; nearest verified pincode is ECIL,
-#     its immediate neighbour, not Nacharam itself -> 500062
-AIR_ELEVATED = {"500032", "500082", "500062"}
+# Previously: named-station-linked AIR_WORST/AIR_ELEVATED tier sets (Zoo
+# Park/Bahadurpura, Central University/Gachibowli, Somajiguda, Nacharam)
+# each still spread by jitter() within their tier, plus a zone baseline
+# jitter() for everything else -- real station names attached to a fake
+# per-pincode spread, same underlying issue as every other city in this
+# pass. Now: each pincode's AQI is the inverse-distance-weighted mean of
+# its 3 nearest REAL TSPCB stations (see cpcb_stations.py's
+# HYDERABAD_STATIONS -- 13 real stations including all four named above,
+# now used directly as interpolation anchors instead of tier lookups).
+# Zoo Park/Bahadurpura + its immediate neighbours -- an industrial-
+# adjacent classification for the zone_type display field, independent
+# of the air-quality modelling above (previously this reused the same
+# AIR_WORST set that also drove AQI; decoupled now that AQI comes from
+# real station interpolation instead of a tier lookup).
+INDUSTRIAL_LINKED_PINS = {"500064", "500089", "500008", "500106"}
 
-AQI_ZONE_BASELINE = {  # zone-level annual-average AQI, real-world plausible bands
-    "Old City": 105,
-    "Central Hyderabad": 95,
-    "Cyberabad IT Corridor": 90,
-    "Secunderabad/Cantonment": 100,
-    "Malkajgiri/Eastern": 95,
-    "North Hyderabad": 90,
-}
+def aqi_for(pin, lat, lon):
+    aqi, _station, _km = idw_aqi(lat, lon, HYDERABAD_STATIONS)
+    return round(aqi)
 
-def aqi_for(pin, zone):
-    if pin in AIR_WORST:
-        return round(max(150, 220 + jitter(pin, 25, salt=2)))  # Poor/Very Poor CPCB band
-    if pin in AIR_ELEVATED:
-        return round(max(110, 150 + jitter(pin, 15, salt=2)))  # Moderate-high, not worst tier
-    return round(max(35, AQI_ZONE_BASELINE[zone] + jitter(pin, 8, salt=2)))
-
-# Reuses lib/aslivastu/aqi.js's CURRENT live formula verbatim -- see
-# module docstring for why this deliberately differs from
-# build_mumbai.py's older baked-in curve.
-def air_score_from_aqi(aqi):
-    return max(0, min(100, round(100 - aqi / 4.3)))
+# aqi_to_score/aqi_category now imported from cpcb_stations.py, which is
+# lib/aslivastu/aqi.js's exact formula ported to Python -- see that
+# module's docstring; this file's own former inline copy of the same
+# formula is retired in favour of the single shared copy every city uses.
 
 # Real, currently-operational metro stations (Red / Blue / Green Line) --
 # conservative, only where a station is genuinely in that pincode's named
@@ -362,11 +359,11 @@ def build():
     for pin, entry in HYDERABAD.items():
         name, area_label, lat, lon, tier, land = entry
         zone = ZONE_OF[pin]
-        aqi_val = aqi_for(pin, zone)
+        aqi_val = aqi_for(pin, lat, lon)
         scores = {
             "crime": crime_scores[pin],
             "infrastructure": infra_score(pin, zone),
-            "air": air_score_from_aqi(aqi_val),
+            "air": aqi_to_score(aqi_val),
             "power": power_score_flat(),
             "schools": score_for(pin, "schools", zone),
             "water": score_for(pin, "water", zone),
@@ -470,12 +467,7 @@ def build():
         })
 
         aqi_avg = round(aqi_val, 1)
-        if aqi_avg <= 50: aqi_cat = "Good"
-        elif aqi_avg <= 100: aqi_cat = "Satisfactory"
-        elif aqi_avg <= 200: aqi_cat = "Moderate"
-        elif aqi_avg <= 300: aqi_cat = "Poor"
-        elif aqi_avg <= 400: aqi_cat = "Very Poor"
-        else: aqi_cat = "Severe"
+        aqi_cat = aqi_category(aqi_avg)  # shared CPCB bands, cpcb_stations.py
 
         master_rows.append({
             "pin_code": pin,
@@ -487,7 +479,7 @@ def build():
             "total_cognizable_crimes": crimes,
             "crime_commissionerate": COMMISSIONERATE_OF[zone],
             "zone_type": "Institutional" if zone == "Central Hyderabad" and tier == 1 else
-                         "Industrial" if pin in AIR_WORST else
+                         "Industrial" if pin in INDUSTRIAL_LINKED_PINS else
                          "Commercial" if tier <= 2 else "Residential",
             "metro_stations_nearby": METRO_STATIONS.get(pin, 0),
             "metro_planned_stations": 0,

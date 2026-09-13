@@ -89,6 +89,7 @@ def land_sqft(sqyd):
 # tier: 1 Premium, 2 Upper, 3 Mid, 4 Modest, 5 Value -- driven by the
 # official land band the sectors fall into.
 from chandigarh_sectors import CHANDIGARH, sectors_of, landmarks_of, audit as sector_audit
+from cpcb_stations import CHANDIGARH_STATIONS, idw_aqi, aqi_to_score, aqi_category
 
 # PINS is now derived from scripts/chandigarh_sectors.py, which carries the
 # complete sector/village -> pincode map with a confidence flag on every
@@ -208,6 +209,28 @@ PROFILE = {
                    wcov=84, road="Average", pot=3.7, resurf=2018, wlog=2, flood=6, zone="Mixed",
                    hwy="Medium", planned=2, schools_n=3),
 }
+
+# ── Air quality: real distance-weighted CPCB-station interpolation ─────
+# Every PROFILE entry above was hand-typed with an aqi=NN / air=NN value
+# that, on audit, tracks each sector's own `crimes` figure rather than
+# any real air-quality source -- exactly the kind of invented per-pincode
+# precision this whole methodology pass exists to remove. Overridden here
+# (rather than hand-edited above, which risked the same copy-paste defect
+# already caught twice in this project) using the real interpolation
+# every other city in this pass now uses: each pincode's AQI is the
+# inverse-distance-weighted mean of its nearest real stations (see
+# cpcb_stations.py's CHANDIGARH_STATIONS). Chandigarh's own pollution
+# control committee has confirmed the network is capped at just 3
+# continuous stations city-wide with no plan to expand -- so unlike
+# Delhi's 47 or Mumbai's 18 real anchors, this interpolation is
+# necessarily coarse; disclosed in cpcb_stations.py rather than hidden
+# behind the old table's false precision.
+for _pin, _name, _area, _lat, _lon, _tier, _land_yd, _sectors in PINS:
+    _aqi, _station, _km = idw_aqi(_lat, _lon, CHANDIGARH_STATIONS, k=3)
+    _aqi = round(_aqi)
+    PROFILE[_pin]["aqi"] = _aqi
+    PROFILE[_pin]["air"] = aqi_to_score(_aqi)
+    PROFILE[_pin]["aqi_cat"] = aqi_category(_aqi)
 
 HWY_BONUS  = {"High": 18, "Medium": 11, "Low": 5}
 ZONE_BONUS = {"Institutional": 10, "Commercial": 9, "Residential": 8, "Mixed": 6, "Industrial": 2}

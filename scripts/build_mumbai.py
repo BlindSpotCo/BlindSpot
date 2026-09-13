@@ -71,6 +71,7 @@ GROUNDING (each cited at point of use below)
 import json
 import math
 from mumbai_areas import MUMBAI, ZONE_OF, DISCOM_OF, DISCOM_CONF, TIER_LABEL, landmarks_of
+from cpcb_stations import MUMBAI_STATIONS, idw_aqi, aqi_to_score, aqi_category
 
 SCORED_AT = "2026-08-17T00:00:00"
 
@@ -153,37 +154,28 @@ def water_score_from_hours(ward, hours):
         raw += 12
     return max(5, min(98, round(raw)))
 
-# ── Air: AQI is the source of truth, score is derived from it ───────────
-# First pass here picked a 0-100 "air" baseline per zone independently,
-# then back-derived aqi_avg algebraically from that score
-# (aqi_avg = 180 - score*1.4). That made Mumbai's air score internally
-# consistent with its own aqi_avg, but on a DIFFERENT scale than Delhi's
-# and Bangalore's real (pre-existing, independently authored) data --
-# found by cross-city comparison: a Mumbai pincode at aqi_avg=93 scored
-# 62, while a Delhi pincode at the same aqi_avg would have scored ~80 on
-# Delhi's curve. Same real air quality, wildly different score depending
-# only on which city dataset it happened to land in -- exactly the kind
-# of thing that breaks credibility for anyone who actually knows both
-# cities. Fixed by fitting the AQI->score curve Delhi's and Bangalore's
-# 125 real (aqi_avg, air score) pairs already imply (linear regression:
-# score = 101.4 - 0.2316*aqi, residuals mostly <2 points) and using that
-# SAME formula here, so identical AQI produces identical score everywhere.
-AQI_ZONE_BASELINE = {  # zone-level annual-average AQI, real-world plausible bands
-    "South Mumbai": 85,             # coastal, sea-breeze advantage
-    "Western Suburbs": 95,
-    "Extended Western Suburbs": 100,
-    "Eastern Suburbs": 115,
-}
-
-def aqi_for(pin, zone):
-    if pin in AIR_WORST:
-        # WRI's Mumbai CAP names this belt "consistently the worst" —
-        # Poor/Very Poor band (CPCB 201-400), not just a worse Moderate.
-        return round(max(150, 230 + jitter(pin, 25, salt=2)))
-    return round(max(35, AQI_ZONE_BASELINE[zone] + jitter(pin, 8, salt=2)))
+# ── Air: real distance-weighted CPCB-station interpolation ──────────────
+# Previously: a hand-picked AQI_ZONE_BASELINE per zone (South Mumbai 85,
+# Western Suburbs 95, etc.) plus jitter(pin, 8) -- and a separate hand-
+# picked AIR_WORST override set for the Trombay/Mahul/Deonar/Govandi
+# belt at 230+jitter(25). No real per-pincode source behind either the
+# zone numbers or the jitter spread -- exactly the "Hard to Copy"
+# critique this whole methodology pass exists to fix.
+#
+# Now: each pincode's AQI is the inverse-distance-weighted mean of its 3
+# nearest REAL, named MPCB/SAFAR/BMC monitoring stations (see
+# cpcb_stations.py's MUMBAI_STATIONS for the 18 real stations, their
+# coordinates and their sourced readings). The Trombay/Mahul/Deonar/
+# Govandi belt no longer needs a hand-typed override -- it comes out
+# correctly worse on its own merits, because it is genuinely closest to
+# the real Chembur and Deonar stations, which are genuinely its worst
+# real readings.
+def aqi_for(pin, lat, lon):
+    aqi, _station, _km = idw_aqi(lat, lon, MUMBAI_STATIONS)
+    return round(aqi)
 
 def air_score_from_aqi(aqi):
-    return max(5, min(98, round(101.4 - 0.2316 * aqi)))
+    return aqi_to_score(aqi)
 
 # Real, currently-operational metro stations near each pincode (Line 1
 # Blue / Line 2A+2B Yellow / Line 3 Aqua / Line 7 Red). Conservative --
@@ -304,7 +296,7 @@ def build():
     for pin, entry in MUMBAI.items():
         name, ward_area, lat, lon, ward, tier, land = entry
         zone = ZONE_OF[pin]
-        aqi_val = aqi_for(pin, zone)
+        aqi_val = aqi_for(pin, lat, lon)
         supply = water_supply_hours(pin, zone, ward)
         scores = {
             "crime": crime_scores[pin],
@@ -399,12 +391,7 @@ def build():
         # pincodes reading 95-99 AQI labelled "Moderate" instead of
         # "Satisfactory") -- caught here by the same audit before it ever
         # reached the data files.
-        if aqi_avg <= 50: aqi_cat = "Good"
-        elif aqi_avg <= 100: aqi_cat = "Satisfactory"
-        elif aqi_avg <= 200: aqi_cat = "Moderate"
-        elif aqi_avg <= 300: aqi_cat = "Poor"
-        elif aqi_avg <= 400: aqi_cat = "Very Poor"
-        else: aqi_cat = "Severe"
+        aqi_cat = aqi_category(aqi_avg)  # shared CPCB bands, cpcb_stations.py
 
         master_rows.append({
             "pin_code": pin,
