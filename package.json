@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "validate:data": "python3 scripts/validate_data_integrity.py"
   },
   "dependencies": {
     "@napi-rs/canvas": "^1.0.5",

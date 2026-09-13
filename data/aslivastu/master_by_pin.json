@@ -14,7 +14,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 310,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -45,7 +45,17 @@
     "flooding_incidents_annual": 6,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674068",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 4,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110094",
@@ -93,7 +103,17 @@
     "flooding_incidents_annual": 16,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674077",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110016",
@@ -110,7 +130,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 310,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -141,7 +161,17 @@
     "flooding_incidents_annual": 1,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674081",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 4,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110001",
@@ -158,7 +188,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 290,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 8,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": true,
@@ -189,7 +219,17 @@
     "flooding_incidents_annual": 0,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674083",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 8,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110095",
@@ -206,7 +246,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 388,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -237,7 +277,17 @@
     "flooding_incidents_annual": 10,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674085",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110070",
@@ -285,7 +335,17 @@
     "flooding_incidents_annual": 1,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674087",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110077",
@@ -302,7 +362,7 @@
     "aqi_category": "Poor",
     "total_cognizable_crimes": 275,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -333,7 +393,17 @@
     "flooding_incidents_annual": 1,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674089",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110037",
@@ -350,7 +420,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 180,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -381,7 +451,17 @@
     "flooding_incidents_annual": 0,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674091",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110068",
@@ -398,7 +478,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 198,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -429,7 +509,17 @@
     "flooding_incidents_annual": 2,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674093",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110002",
@@ -446,7 +536,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 280,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 5,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": true,
@@ -477,7 +567,17 @@
     "flooding_incidents_annual": 0,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674095",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 5,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110067",
@@ -525,7 +625,17 @@
     "flooding_incidents_annual": 1,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674097",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110033",
@@ -542,7 +652,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 610,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -573,7 +683,17 @@
     "flooding_incidents_annual": 22,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674098",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110073",
@@ -621,7 +741,17 @@
     "flooding_incidents_annual": 10,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674100",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110040",
@@ -669,7 +799,17 @@
     "flooding_incidents_annual": 16,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674102",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110065",
@@ -686,7 +826,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 342,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -717,7 +857,17 @@
     "flooding_incidents_annual": 12,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674104",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 4,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110021",
@@ -734,7 +884,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 210,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -765,7 +915,17 @@
     "flooding_incidents_annual": 1,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674105",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110025",
@@ -782,7 +942,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 265,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -813,7 +973,17 @@
     "flooding_incidents_annual": 4,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674107",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110010",
@@ -830,7 +1000,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 95,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -861,7 +1031,17 @@
     "flooding_incidents_annual": 0,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674109",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110092",
@@ -878,7 +1058,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 358,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -909,7 +1089,17 @@
     "flooding_incidents_annual": 7,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674111",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110012",
@@ -926,7 +1116,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 180,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -957,7 +1147,17 @@
     "flooding_incidents_annual": 1,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674113",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110022",
@@ -974,7 +1174,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 285,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -1005,7 +1205,17 @@
     "flooding_incidents_annual": 1,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674114",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110085",
@@ -1053,7 +1263,17 @@
     "flooding_incidents_annual": 6,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674116",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110020",
@@ -1070,7 +1290,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 425,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -1101,7 +1321,17 @@
     "flooding_incidents_annual": 15,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674118",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110041",
@@ -1118,7 +1348,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 490,
     "zone_type": "Industrial",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -1149,7 +1379,17 @@
     "flooding_incidents_annual": 24,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674120",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110052",
@@ -1166,7 +1406,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 389,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -1197,7 +1437,17 @@
     "flooding_incidents_annual": 4,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674122",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110036",
@@ -1245,7 +1495,17 @@
     "flooding_incidents_annual": 14,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674123",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110049",
@@ -1262,7 +1522,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 225,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -1293,7 +1553,17 @@
     "flooding_incidents_annual": 1,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674125",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110039",
@@ -1341,7 +1611,17 @@
     "flooding_incidents_annual": 20,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674127",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110084",
@@ -1389,7 +1669,17 @@
     "flooding_incidents_annual": 14,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674129",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110003",
@@ -1406,7 +1696,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 220,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": true,
@@ -1437,7 +1727,17 @@
     "flooding_incidents_annual": 1,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674130",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 4,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110042",
@@ -1485,7 +1785,17 @@
     "flooding_incidents_annual": 5,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674132",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110026",
@@ -1502,7 +1812,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 340,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -1533,7 +1843,17 @@
     "flooding_incidents_annual": 2,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674134",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 4,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110043",
@@ -1550,7 +1870,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 368,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -1581,7 +1901,17 @@
     "flooding_incidents_annual": 10,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674136",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110007",
@@ -1598,7 +1928,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 195,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -1629,7 +1959,17 @@
     "flooding_incidents_annual": 4,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674137",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110032",
@@ -1646,7 +1986,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 412,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -1677,7 +2017,17 @@
     "flooding_incidents_annual": 18,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674139",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 4,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110006",
@@ -1694,7 +2044,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 380,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 6,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -1725,7 +2075,17 @@
     "flooding_incidents_annual": 12,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674141",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 6,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110078",
@@ -1742,7 +2102,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 520,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -1773,7 +2133,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674143",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "122051",
@@ -1821,7 +2191,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674144",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "121102",
@@ -1838,7 +2218,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 320,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -1869,7 +2249,17 @@
     "flooding_incidents_annual": 9,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674146",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "122413",
@@ -1917,7 +2307,17 @@
     "flooding_incidents_annual": 5,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674148",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "121001",
@@ -1934,7 +2334,7 @@
     "aqi_category": "Poor",
     "total_cognizable_crimes": 512,
     "zone_type": "Industrial",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -1965,7 +2365,17 @@
     "flooding_incidents_annual": 8,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674150",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "125050",
@@ -2013,7 +2423,17 @@
     "flooding_incidents_annual": 14,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674151",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "122001",
@@ -2030,7 +2450,7 @@
     "aqi_category": "Poor",
     "total_cognizable_crimes": 290,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": true,
@@ -2061,7 +2481,17 @@
     "flooding_incidents_annual": 5,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674153",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "132103",
@@ -2109,7 +2539,17 @@
     "flooding_incidents_annual": 8,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674155",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "124001",
@@ -2157,7 +2597,17 @@
     "flooding_incidents_annual": 9,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674157",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "123106",
@@ -2172,7 +2622,18 @@
     "discom": "DHBVN",
     "outage_frequency": 2,
     "avg_outage_hours": 1.9,
-    "reliability": "Excellent"
+    "reliability": "Excellent",
+    "metro_stations_nearby": 0,
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "124507",
@@ -2189,7 +2650,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 398,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -2220,7 +2681,17 @@
     "flooding_incidents_annual": 10,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674160",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "135001",
@@ -2268,7 +2739,17 @@
     "flooding_incidents_annual": 10,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674162",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "125055",
@@ -2316,7 +2797,17 @@
     "flooding_incidents_annual": 15,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674164",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "131001",
@@ -2364,7 +2855,17 @@
     "flooding_incidents_annual": 9,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674166",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "122101",
@@ -2412,7 +2913,17 @@
     "flooding_incidents_annual": 10,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674167",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "122108",
@@ -2460,7 +2971,17 @@
     "flooding_incidents_annual": 16,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674169",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "122103",
@@ -2508,7 +3029,17 @@
     "flooding_incidents_annual": 5,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674171",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "122505",
@@ -2556,7 +3087,17 @@
     "flooding_incidents_annual": 18,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674173",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "123001",
@@ -2604,7 +3145,17 @@
     "flooding_incidents_annual": 12,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674175",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "123401",
@@ -2652,7 +3203,17 @@
     "flooding_incidents_annual": 13,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674176",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "131029",
@@ -2700,7 +3261,17 @@
     "flooding_incidents_annual": 8,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674178",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "131027",
@@ -2748,7 +3319,17 @@
     "flooding_incidents_annual": 10,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674180",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "122502",
@@ -2796,7 +3377,17 @@
     "flooding_incidents_annual": 12,
     "data_completeness": 7,
     "merged_at": "2026-07-28T13:54:49.674182",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110005",
@@ -2810,7 +3401,7 @@
     ],
     "total_cognizable_crimes": 445,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": true,
@@ -2841,7 +3432,17 @@
     "flooding_incidents_annual": 5,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674184",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110024",
@@ -2855,7 +3456,7 @@
     ],
     "total_cognizable_crimes": 350,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -2886,7 +3487,17 @@
     "flooding_incidents_annual": 4,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674185",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 4,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110017",
@@ -2900,7 +3511,7 @@
     ],
     "total_cognizable_crimes": 290,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -2931,7 +3542,17 @@
     "flooding_incidents_annual": 1,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674187",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "122002",
@@ -2945,7 +3566,7 @@
     ],
     "total_cognizable_crimes": 310,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 11,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": true,
@@ -2976,7 +3597,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674189",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 11,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "201301",
@@ -2990,7 +3621,7 @@
     ],
     "total_cognizable_crimes": 380,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": true,
@@ -3021,7 +3652,17 @@
     "flooding_incidents_annual": 2,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674191",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110009",
@@ -3035,7 +3676,7 @@
     ],
     "total_cognizable_crimes": 240,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -3066,7 +3707,17 @@
     "flooding_incidents_annual": 1,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674193",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110018",
@@ -3080,7 +3731,7 @@
     ],
     "total_cognizable_crimes": 355,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -3111,7 +3762,17 @@
     "flooding_incidents_annual": 7,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674195",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110019",
@@ -3125,7 +3786,7 @@
     ],
     "total_cognizable_crimes": 320,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -3156,7 +3817,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674197",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 4,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110044",
@@ -3201,7 +3872,17 @@
     "flooding_incidents_annual": 10,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674198",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110053",
@@ -3246,7 +3927,17 @@
     "flooding_incidents_annual": 10,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674200",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110058",
@@ -3260,7 +3951,7 @@
     ],
     "total_cognizable_crimes": 318,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 1,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -3291,7 +3982,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674202",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "110063",
@@ -3305,7 +4006,7 @@
     ],
     "total_cognizable_crimes": 305,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -3336,7 +4037,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674203",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "122003",
@@ -3381,7 +4092,17 @@
     "flooding_incidents_annual": 4,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674205",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "122107",
@@ -3426,7 +4147,17 @@
     "flooding_incidents_annual": 18,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674207",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "201001",
@@ -3471,7 +4202,17 @@
     "flooding_incidents_annual": 7,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674208",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "201304",
@@ -3516,7 +4257,17 @@
     "flooding_incidents_annual": 2,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674210",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "201309",
@@ -3561,7 +4312,17 @@
     "flooding_incidents_annual": 4,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674212",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "121002",
@@ -3575,7 +4336,7 @@
     ],
     "total_cognizable_crimes": 465,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -3606,7 +4367,17 @@
     "flooding_incidents_annual": 10,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674214",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "201102",
@@ -3651,7 +4422,17 @@
     "flooding_incidents_annual": 16,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674215",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "201014",
@@ -3665,7 +4446,7 @@
     ],
     "total_cognizable_crimes": 312,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -3696,7 +4477,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674217",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "201012",
@@ -3710,7 +4501,7 @@
     ],
     "total_cognizable_crimes": 295,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -3741,7 +4532,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674219",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "201016",
@@ -3786,7 +4587,17 @@
     "flooding_incidents_annual": 4,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674221",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "201002",
@@ -3831,7 +4642,17 @@
     "flooding_incidents_annual": 7,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674222",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "201010",
@@ -3845,7 +4666,7 @@
     ],
     "total_cognizable_crimes": 342,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -3876,7 +4697,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674224",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "201206",
@@ -3921,7 +4752,17 @@
     "flooding_incidents_annual": 10,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674226",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "245101",
@@ -3966,7 +4807,17 @@
     "flooding_incidents_annual": 13,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674227",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "203001",
@@ -4011,7 +4862,17 @@
     "flooding_incidents_annual": 14,
     "data_completeness": 6,
     "merged_at": "2026-07-28T13:54:49.674229",
-    "city": "Delhi NCR"
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560001",
@@ -4023,7 +4884,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 470,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -4055,7 +4916,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674231",
     "ward": "Shantala Nagar",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560025",
@@ -4067,7 +4938,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 320,
     "zone_type": "Residential",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -4099,7 +4970,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674233",
     "ward": "Shantala Nagar",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560051",
@@ -4111,7 +4992,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 320,
     "zone_type": "Residential",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -4143,7 +5024,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674234",
     "ward": "Sampangiram Nagar",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560052",
@@ -4155,7 +5046,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 360,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -4187,7 +5078,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674236",
     "ward": "Vasanth Nagar",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560042",
@@ -4199,7 +5100,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 520,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -4231,7 +5132,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674237",
     "ward": "Jayamahal",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560002",
@@ -4243,7 +5154,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 540,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 1,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -4275,7 +5186,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674239",
     "ward": "Chickpete",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 4,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560023",
@@ -4287,7 +5208,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 560,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 5,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -4319,7 +5240,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674241",
     "ward": "Gandhinagar",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 5,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560003",
@@ -4363,7 +5294,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674242",
     "ward": "Kadu Malleshwara",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560010",
@@ -4375,7 +5316,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 360,
     "zone_type": "Residential",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -4407,7 +5348,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674244",
     "ward": "Shivanagara",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560020",
@@ -4451,7 +5402,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674245",
     "ward": "Gandhinagar",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560021",
@@ -4463,7 +5424,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 410,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 1,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -4495,7 +5456,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674247",
     "ward": "Shivanagara",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560022",
@@ -4507,7 +5478,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 360,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -4539,7 +5510,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674248",
     "ward": "Chatrapati Shivaji",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560024",
@@ -4583,7 +5564,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674250",
     "ward": "Hebbala",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560032",
@@ -4627,7 +5618,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674251",
     "ward": "Jayachamarajendra  Nagar",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560045",
@@ -4639,7 +5640,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 360,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -4671,7 +5672,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674253",
     "ward": "Jakkuru",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560092",
@@ -4715,7 +5726,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674254",
     "ward": "Vidyaranyapura",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560094",
@@ -4727,7 +5748,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 360,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -4759,7 +5780,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674256",
     "ward": "Radhakrishna Temple Ward",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560097",
@@ -4803,7 +5834,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674257",
     "ward": "Byatarayanapura",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560063",
@@ -4847,7 +5888,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674259",
     "ward": "Kempegowda Ward",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560064",
@@ -4891,7 +5942,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674261",
     "ward": "Yelahanka Satellite Town",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560065",
@@ -4935,7 +5996,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674262",
     "ward": "Jakkuru",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560008",
@@ -4979,7 +6050,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674264",
     "ward": "Ulsoor",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560038",
@@ -4991,7 +6072,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 320,
     "zone_type": "Residential",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -5023,7 +6104,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674265",
     "ward": "Domlur",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560046",
@@ -5035,7 +6126,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 360,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -5067,7 +6158,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674267",
     "ward": "Ramaswamy Palya",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560005",
@@ -5079,7 +6180,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 360,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -5111,7 +6212,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674268",
     "ward": "New Bayappanahalli",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560017",
@@ -5123,7 +6234,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 360,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -5155,7 +6266,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674270",
     "ward": "Jeevanbhima Nagar",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560075",
@@ -5167,7 +6288,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 360,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -5199,7 +6320,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674272",
     "ward": "HAL Airport",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560093",
@@ -5211,7 +6342,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 410,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 1,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -5243,7 +6374,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674273",
     "ward": "New Thippasandra",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560016",
@@ -5287,7 +6428,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674275",
     "ward": "Ramamurthy Nagara",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560036",
@@ -5299,7 +6450,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 460,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 1,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -5331,7 +6482,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674276",
     "ward": "K R Puram",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560037",
@@ -5343,7 +6504,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 360,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -5375,7 +6536,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674278",
     "ward": "Marathahalli",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560048",
@@ -5419,7 +6590,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674279",
     "ward": "Mahadevapura",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560066",
@@ -5431,7 +6612,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 360,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -5463,7 +6644,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674281",
     "ward": "Whitefield",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560067",
@@ -5475,7 +6666,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 410,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 1,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -5507,7 +6698,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674282",
     "ward": "Belathur",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560103",
@@ -5519,7 +6720,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 360,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -5551,7 +6752,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674284",
     "ward": "Doddakanahalli",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560035",
@@ -5563,7 +6774,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 360,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -5595,7 +6806,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674285",
     "ward": "Doddakanahalli",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560087",
@@ -5639,7 +6860,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674287",
     "ward": "Varthuru",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560034",
@@ -5651,7 +6882,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 320,
     "zone_type": "Residential",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -5683,7 +6914,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674288",
     "ward": "Koramangala",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560095",
@@ -5695,7 +6936,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 320,
     "zone_type": "Residential",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -5727,7 +6968,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674290",
     "ward": "Adugodi",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560102",
@@ -5739,7 +6990,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 320,
     "zone_type": "Residential",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -5771,7 +7022,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674291",
     "ward": "Agara",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560029",
@@ -5783,7 +7044,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 360,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -5815,7 +7076,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674293",
     "ward": "Lakkasandra",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560027",
@@ -5859,7 +7130,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674295",
     "ward": "Shanthi Nagar",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560030",
@@ -5903,7 +7184,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674296",
     "ward": "Hombegowda Nagara",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560068",
@@ -5915,7 +7206,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 410,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 1,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -5947,7 +7238,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674298",
     "ward": "Bommanahalli",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560004",
@@ -5959,7 +7260,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 320,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -5991,7 +7292,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674299",
     "ward": "Basavanagudi",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 4,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560011",
@@ -6003,7 +7314,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 320,
     "zone_type": "Residential",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -6035,7 +7346,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674301",
     "ward": "Byrasandra",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560041",
@@ -6047,7 +7368,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 320,
     "zone_type": "Residential",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -6079,7 +7400,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674302",
     "ward": "Shakambari Nagar",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 4,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560019",
@@ -6123,7 +7454,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674304",
     "ward": "Srinagar",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560028",
@@ -6167,7 +7508,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674305",
     "ward": "Ganesh Mandir ward",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560050",
@@ -6179,7 +7530,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 360,
     "zone_type": "Residential",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -6211,7 +7562,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674307",
     "ward": "Deen Dayalu Ward",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560070",
@@ -6255,7 +7616,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674308",
     "ward": "Padmanabha Nagar",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560085",
@@ -6299,7 +7670,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674310",
     "ward": "Uttarahalli",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560078",
@@ -6311,7 +7692,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 360,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -6343,7 +7724,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674311",
     "ward": "Sarakki",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560076",
@@ -6355,7 +7746,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 360,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -6387,7 +7778,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674313",
     "ward": "N S Palya",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560061",
@@ -6431,7 +7832,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674315",
     "ward": "Uttarahalli",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560062",
@@ -6443,7 +7854,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 410,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -6475,7 +7886,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674316",
     "ward": "Konanakunte",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560083",
@@ -6519,7 +7940,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674318",
     "ward": "Arakere",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560040",
@@ -6531,7 +7962,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 360,
     "zone_type": "Residential",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -6563,7 +7994,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674319",
     "ward": "Marenahalli",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560079",
@@ -6607,7 +8048,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674321",
     "ward": "Shakthi Ganapathi Nagar",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560072",
@@ -6651,7 +8102,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674322",
     "ward": "Jnana Bharathi",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560018",
@@ -6663,7 +8124,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 410,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 1,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -6695,7 +8156,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674324",
     "ward": "Chamrajapet",
-    "water_tier": "core"
+    "water_tier": "core",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560091",
@@ -6739,7 +8210,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674325",
     "ward": "Herohalli",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560056",
@@ -6751,7 +8232,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 460,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 1,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -6783,7 +8264,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674327",
     "ward": "Jnana Bharathi",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560100",
@@ -6795,7 +8286,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 410,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 1,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -6827,7 +8318,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674328",
     "ward": "Begur (nearest, not contained)",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560099",
@@ -6839,7 +8340,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 460,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 1,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -6871,7 +8372,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674330",
     "ward": "Naganathapura",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "560105",
@@ -6915,7 +8426,17 @@
     "data_completeness": 1,
     "merged_at": "2026-07-28T13:54:49.674331",
     "ward": "Anekal (outside BBMP limits)",
-    "water_tier": "periphery"
+    "water_tier": "periphery",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "bmrcl_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-09-13",
+        "confidence": "high",
+        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      }
+    }
   },
   {
     "pin_code": "400001",

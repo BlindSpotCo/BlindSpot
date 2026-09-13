@@ -1,0 +1,438 @@
+#!/usr/bin/env python3
+"""
+scripts/metro_stations.py
+
+Real, named metro-station registries for BlindSpot's L1 "derive, don't
+store" fix (see docs/data-integrity-architecture.md section 3, "L1 -
+Derive, don't store"), replacing the hand-maintained metro_stations_nearby
+scalar that the architecture doc's audit found was wrong for 91% of Delhi
+pins, 61% of Mumbai, 44% of Bangalore -- the flagship example being PIN
+110001 / Connaught Place showing 0 metro stations while sitting on top of
+Rajiv Chowk, the busiest interchange on the whole Delhi Metro network.
+
+SOURCES (real, verifiable, checked against known geography before use)
+- DELHI_STATIONS (262 stations): DelhiMetroNetwork.csv, a Delhi Metro
+  Network Analysis dataset built from DMRC's public route/station data
+  (github.com/Vinith-J/Delhi-Metro-Network-Analysis, mirrors the widely-
+  used "Delhi Metro Dataset" also published on Kaggle by arunjangir245).
+  Deduplicated from 285 rows (one row per station-per-line, so interchange
+  stations like "Welcome [Conn: Red]" appear twice) down to 262 unique
+  physical stations by name, keeping first-seen coordinates. Spot-checked
+  against the architecture doc's own Connaught Place narrative before
+  trusting the file: Rajiv Chowk lands at (28.63282, 77.21826), ~30m from
+  PIN 110001's own AREA_COORDS centroid (28.633, 77.219); Barakhamba,
+  Janpath and Patel Chowk are all present and all within the ~1km the doc
+  describes. Covers the core DMRC network + the Rapid Metro (Gurugram)
+  and Aqua Line (Noida) lines the dataset includes under the same system.
+
+- BANGALORE_STATIONS (83 stations): bengaluru_metro_network.csv from
+  github.com/Vinayak-Chinchakhandi/Bengaluru-Metro-Network-Dataset, a
+  graph-format Namma Metro dataset (Purple/Green/Yellow lines) with a
+  latitude/longitude column. Deduplicated from 85 rows to 83 unique
+  stations by name.
+
+- MUMBAI_STATIONS / HYDERABAD_STATIONS: intentionally NOT populated in
+  this pass. No structured, sourced lat/lon dataset for Mumbai Metro or
+  Hyderabad Metro was found (checked: Wikipedia's "List of Mumbai Metro
+  stations" table has no coordinates column at all; no equivalent GitHub/
+  Kaggle dataset turned up the way it did for Delhi and Bangalore).
+  Assembling either list by hand from ~100+ individual Wikipedia station
+  pages would mean transcribing coordinates one at a time with no
+  independent check -- exactly the kind of unverified-scalar risk this
+  file exists to remove. Left as None so callers fail loudly instead of
+  silently scoring against an empty list; metro_stations_nearby for these
+  two cities is UNCHANGED by this pass and still carries the old,
+  known-broken zone/jitter-derived value (Mumbai 61% zero, Hyderabad 83%
+  zero across 41 pins -- this file's own audit, extending the
+  architecture doc's finding to a city it didn't originally cover).
+  Follow-up: source a real station list for these two before touching
+  their metro field.
+
+METHOD
+haversine() gives great-circle distance in km between two (lat, lon)
+points. stations_within_radius() counts real stations within a radius of
+a pin's own centroid (lib/aslivastu/areaCoords.js) -- the architecture
+doc's own default of 1500m for a "count within radius of pin centroid"
+L1 derivation. This is deliberately the doc's declared interim method,
+not its ideal one: the doc itself flags (section "L1 - Derive, don't
+store", design note) that a pincode is an area and a single centroid
+point will systematically undercount elongated pincodes -- the correct
+fix is a buffered pincode boundary polygon, which needs pincode boundary
+geodata this pass doesn't have. Centroid-radius is still a large,
+verifiable improvement over a hand-typed scalar with no source at all.
+"""
+import math
+
+def haversine_km(lat1, lon1, lat2, lon2):
+    r = 6371.0088
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlambda = math.radians(lon2 - lon1)
+    a = math.sin(dphi / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dlambda / 2) ** 2
+    return 2 * r * math.asin(math.sqrt(a))
+
+def stations_within_radius(lat, lon, stations, radius_km=1.5):
+    """stations: list of (name, lat, lon) tuples. Returns (count, [names])."""
+    hits = [name for name, slat, slon in stations
+            if haversine_km(lat, lon, slat, slon) <= radius_km]
+    return len(hits), hits
+
+# name, lat, lon
+DELHI_STATIONS = [
+    ("AIIMS", 28.568920, 77.207710),
+    ("Adarsh Nagar", 28.716420, 77.170460),
+    ("Akshardham", 28.618060, 77.278690),
+    ("Alpha 1 Greater Noida", 28.470900, 77.512700),
+    ("Anand Vihar", 28.646950, 77.316030),
+    ("Arjan Garh", 28.480760, 77.125830),
+    ("Arthala", 28.676999, 77.391892),
+    ("Ashok Park Main", 28.671530, 77.155270),
+    ("Ashram", 28.572423, 77.258598),
+    ("Azadpur", 28.707657, 77.175547),
+    ("Badarpur Border", 28.493340, 77.303070),
+    ("Badkal Mor", 28.422814, 77.310278),
+    ("Bahdurgarh City", 28.690785, 76.935485),
+    ("Barakhamba", 28.630030, 77.224360),
+    ("Bata Chowk", 28.385836, 77.313462),
+    ("Belvedere Towers", 28.493600, 77.093500),
+    ("Bhikaji Cama Place", 28.567900, 77.187016),
+    ("Botanical Garden", 28.563896, 77.334332),
+    ("Brigadier Hoshiar Singh", 28.697460, 76.919203),
+    ("Central Secretariat", 28.614740, 77.211910),
+    ("Chandni Chowk", 28.657850, 77.230140),
+    ("Chawri Bazar", 28.649310, 77.226370),
+    ("Chhattarpur", 28.506710, 77.174840),
+    ("Chirag Delhi", 28.538141, 77.228069),
+    ("Civil Lines", 28.676851, 77.225030),
+    ("Cyber City", 28.493600, 77.093500),
+    ("DLF Phase 1", 28.493600, 77.093500),
+    ("DLF Phase 2", 28.493600, 77.093500),
+    ("DLF Phase 3", 28.493600, 77.093500),
+    ("Dabri Mor - Janakpuri South", 28.615755, 77.085178),
+    ("Dashrath Puri", 28.601875, 77.082356),
+    ("Delhi Aerocity", 28.548810, 77.120920),
+    ("Delhi Cantt", 28.593833, 77.134979),
+    ("Delhi Gate", 28.639204, 77.240782),
+    ("Delta 1 Greater Noida", 28.474388, 77.503990),
+    ("Depot Greater Noida", 28.474388, 77.503990),
+    ("Dhaula Kuan", 28.591780, 77.161550),
+    ("Dilli Haat INA", 28.574408, 77.210241),
+    ("Dilshad Garden", 28.675920, 77.321420),
+    ("Durgabai Deshmukh South Campus", 28.589438, 77.169082),
+    ("Dwarka", 28.577192, 77.044293),
+    ("Dwarka Mor", 28.619320, 77.033260),
+    ("Dwarka Sector 10", 28.580680, 77.056820),
+    ("Dwarka Sector 11", 28.586570, 77.049290),
+    ("Dwarka Sector 12", 28.592320, 77.040510),
+    ("Dwarka Sector 13", 28.597220, 77.033260),
+    ("Dwarka Sector 14", 28.602230, 77.025880),
+    ("Dwarka Sector 21", 28.552260, 77.058280),
+    ("Dwarka Sector 21(First station)", 28.552260, 77.058280),
+    ("Dwarka Sector 8", 28.565830, 77.067060),
+    ("Dwarka Sector 9", 28.574870, 77.064540),
+    ("ESI BASAI DARAPUR", 28.658074, 77.127268),
+    ("East Azad Nagar", 28.664696, 77.284881),
+    ("Escorts Mujesar", 28.370234, 77.314920),
+    ("GNIDA Office", 28.474388, 77.503990),
+    ("Ghevra Metro station", 28.685238, 76.996159),
+    ("Ghitorni", 28.493830, 77.149220),
+    ("Gokulpuri", 28.702475, 77.286125),
+    ("Golf Course", 28.567140, 77.345980),
+    ("Govind Puri", 28.544510, 77.264010),
+    ("Greater Kailash", 28.541878, 77.238455),
+    ("Green Park", 28.559790, 77.206820),
+    ("Guru Dronacharya", 28.482030, 77.102320),
+    ("Guru Tegh Bahadur Nagar", 28.697850, 77.207220),
+    ("Haiderpur Badli Mor", 28.730121, 77.149403),
+    ("Hauz Khas", 28.544256, 77.206707),
+    ("Hindon River", 28.878965, 77.415483),
+    ("Huda City Centre", 28.459270, 77.072680),
+    ("IFFCO Chowk", 28.472090, 77.071750),
+    ("IGI Airport", 28.556930, 77.086690),
+    ("IIT Delhi", 28.544788, 77.189870),
+    ("IP Extension", 28.628899, 77.310198),
+    ("ITO", 28.630509, 77.241436),
+    ("Inderlok", 28.673190, 77.169940),
+    ("Inderlok Conn:Red", 28.673190, 77.169940),
+    ("Indraprastha", 28.620510, 77.249930),
+    ("JAMIA MILLIA ISLAMIA", 28.558490, 77.281165),
+    ("Jaffrabad", 28.682682, 77.274805),
+    ("Jahangirpuri", 28.725920, 77.162670),
+    ("Jama Masjid", 28.650010, 77.237676),
+    ("Janak Puri East", 28.633050, 77.086690),
+    ("Janak Puri West", 28.629430, 77.077670),
+    ("Jangpura", 28.584300, 77.237660),
+    ("Janpath", 28.608860, 77.218165),
+    ("Jasola", 28.538240, 77.283190),
+    ("Jasola Vihar Shaheen Bagh", 28.545828, 77.296658),
+    ("Jawaharlal Nehru Stadium", 28.590400, 77.233260),
+    ("Jhandewalan", 28.644270, 77.199880),
+    ("Jhil Mil", 28.675790, 77.312390),
+    ("Johri Enclave", 28.712880, 77.286125),
+    ("Jor Bagh", 28.587080, 77.212090),
+    ("Kailash Colony", 28.555270, 77.242050),
+    ("Kalindi Kunj", 28.545219, 77.305989),
+    ("Kalkaji Mandir", 28.549775, 77.260667),
+    ("Kanhaiya Nagar", 28.682540, 77.164590),
+    ("Karkar Duma", 28.648490, 77.305580),
+    ("Karkarduma Court", 28.653600, 77.295788),
+    ("Karol Bagh", 28.644000, 77.188550),
+    ("Kashmere Gate", 28.667500, 77.228170),
+    ("Kaushambi", 28.645440, 77.324320),
+    ("Keshav Puram", 28.688940, 77.161600),
+    ("Khan Market", 28.602760, 77.228290),
+    ("Kirti Nagar", 28.655750, 77.150570),
+    ("Knowledge Park II", 28.456867, 77.500054),
+    ("Kohat Enclave", 28.698100, 77.140240),
+    ("Krishna Nagar", 28.657846, 77.290185),
+    ("Lajpat Nagar", 28.570790, 77.236530),
+    ("Lal Quila", 27.920862, 77.528502),
+    ("Laxmi Nagar", 28.630640, 77.277490),
+    ("Lok Kalyan Marg", 28.597260, 77.210880),
+    ("MG Road", 28.479570, 77.080060),
+    ("Madipur", 28.677340, 77.119650),
+    ("Maharaja Surajmal Stadium", 28.681800, 77.073850),
+    ("Majlis Park", 28.724431, 77.181964),
+    ("Major Mohit Sharma", 28.677611, 77.358143),
+    ("Malviya Nagar", 28.527980, 77.205650),
+    ("Mandawali - West Vinod Nagar", 28.624971, 77.304491),
+    ("Mandi House", 28.625880, 77.234100),
+    ("Mansarovar Park", 28.675440, 77.300950),
+    ("Maujpur", 28.691978, 77.279624),
+    ("Maya Puri", 28.637179, 77.129733),
+    ("Mayur Vihar Extention", 28.594158, 77.294589),
+    ("Mayur Vihar Phase-1", 28.604420, 77.294550),
+    ("Mayur Vihar Pocket I", 28.605862, 77.298702),
+    ("Mewala Maharajpur", 28.441875, 77.302300),
+    ("Model Town", 28.702780, 77.193630),
+    ("Mohan Estate", 28.519380, 77.293880),
+    ("Mohan Nagar", 28.606319, 77.106082),
+    ("Moolchand", 28.564170, 77.234230),
+    ("Moti Nagar", 28.657840, 77.142480),
+    ("Moulsari Avenue", 28.493600, 77.093500),
+    ("Mundka", 28.683210, 77.031330),
+    ("Mundka Industrial Area (MIA)", 28.683449, 77.017133),
+    ("Munirka", 28.554886, 77.171084),
+    ("N.H.P.C. Chowk", 28.457690, 77.221939),
+    ("NSEZ Noida", 28.535517, 77.391029),
+    ("Najafgarh", 28.612304, 76.982391),
+    ("Nangli", 28.617300, 77.010437),
+    ("Nangloi", 28.682310, 77.064710),
+    ("Nangloi Railway Station", 28.682080, 77.055960),
+    ("Naraina Vihar", 28.627337, 77.140317),
+    ("Nawada", 28.620250, 77.045140),
+    ("Neelam Chowk Ajronda", 28.397482, 77.312360),
+    ("Nehru Enclave", 28.546058, 77.251506),
+    ("Nehru Place", 28.551480, 77.251540),
+    ("Netaji Subash Place", 28.696052, 77.152640),
+    ("New Ashok Nagar", 28.589160, 77.302040),
+    ("New Delhi", 28.643070, 77.221440),
+    ("New Delhi-Airport Express", 28.643070, 77.221440),
+    ("Nirman Vihar", 28.636630, 77.286830),
+    ("Noida City Center", 28.574660, 77.356080),
+    ("Noida Sector 101", 28.556402, 77.384798),
+    ("Noida Sector 137", 28.509079, 77.409015),
+    ("Noida Sector 142", 28.475835, 77.554479),
+    ("Noida Sector 143", 28.502663, 77.426256),
+    ("Noida Sector 144", 28.408905, 76.915523),
+    ("Noida Sector 145", 28.408905, 76.915523),
+    ("Noida Sector 146", 28.408229, 76.963024),
+    ("Noida Sector 147", 28.408905, 76.915523),
+    ("Noida Sector 148", 28.475835, 77.554479),
+    ("Noida Sector 15", 28.585120, 77.311390),
+    ("Noida Sector 16", 28.578190, 77.317570),
+    ("Noida Sector 18", 28.570810, 77.326120),
+    ("Noida Sector 34", 28.480863, 77.084888),
+    ("Noida Sector 50", 28.535517, 77.391029),
+    ("Noida Sector 51", 28.585700, 77.375300),
+    ("Noida Sector 52", 28.480863, 77.084888),
+    ("Noida Sector 59", 28.480863, 77.084888),
+    ("Noida Sector 61", 28.480863, 77.084888),
+    ("Noida Sector 62", 28.480863, 77.084888),
+    ("Noida Sector 76", 28.568746, 77.382685),
+    ("Noida Sector 81", 28.622575, 77.374315),
+    ("Noida Sector 83", 28.524115, 77.397244),
+    ("Okhla", 28.542920, 77.275040),
+    ("Okhla Bird Sanctuary", 28.552942, 77.321595),
+    ("Okhla NSIC", 28.554483, 77.264849),
+    ("Okhla Vihar", 28.561300, 77.291930),
+    ("Old Faridabad", 28.480863, 77.084888),
+    ("Palam", 28.591893, 77.082824),
+    ("Panchsheel Park", 28.543353, 77.214076),
+    ("Pandit Shree Ram Sharma", 28.689281, 76.951199),
+    ("Pari Chowk Greater Noida", 28.463128, 77.508099),
+    ("Paschim Vihar (East)", 28.677300, 77.112280),
+    ("Paschim Vihar (West)", 28.678550, 77.102270),
+    ("Patel Chowk", 28.622950, 77.213890),
+    ("Patel Nagar", 28.644980, 77.169290),
+    ("Peera Garhi", 28.679590, 77.092610),
+    ("Pitam Pura", 28.703170, 77.132230),
+    ("Pratap Nagar", 28.666620, 77.198820),
+    ("Preet Vihar", 28.641710, 77.295430),
+    ("Pul Bangash", 28.666360, 77.207270),
+    ("Punjabi Bagh", 28.672890, 77.146140),
+    ("Punjabi Bagh West", 28.670320, 77.142088),
+    ("Qutab Minar", 28.513020, 77.186480),
+    ("R K Ashram Marg", 28.639230, 77.208400),
+    ("RK Puram", 28.551426, 77.184701),
+    ("Raj Bagh", 28.640860, 77.209500),
+    ("Raja Nahar Singh", 28.340019, 77.316428),
+    ("Rajdhani Park", 28.682210, 77.043810),
+    ("Rajendra Place", 28.642500, 77.178150),
+    ("Rajiv Chowk", 28.632820, 77.218260),
+    ("Rajouri Garden", 28.642152, 77.116060),
+    ("Ramesh Nagar", 28.652740, 77.131640),
+    ("Rithala(last station)", 28.720720, 77.107130),
+    ("Rohini East", 28.707600, 77.125910),
+    ("Rohini Sector 18-19", 28.738348, 77.139832),
+    ("Rohini West", 28.714830, 77.114670),
+    ("Sadar Bazaar Cantonment", 28.577151, 77.111153),
+    ("Saket", 28.520600, 77.201380),
+    ("Samaypur Badli(First Station)", 28.744616, 77.138265),
+    ("Sant Surdas - Sihi", 28.354651, 77.316226),
+    ("Sarai", 28.651718, 77.221939),
+    ("Sarai Kale Khan Hazrat Nizamuddin", 28.588749, 77.257249),
+    ("Sarita Vihar", 28.528780, 77.288260),
+    ("Sarojini Nagar", 28.574157, 77.195370),
+    ("Satguru Ram Singh Marg", 28.661990, 77.157480),
+    ("Sector 28 Faridabad", 28.545257, 77.032576),
+    ("Sector 42-43", 28.493600, 77.093500),
+    ("Sector 53-54", 28.493600, 77.093500),
+    ("Sector 54 Chowk", 28.493600, 77.093500),
+    ("Sector 55-66", 28.493600, 77.093500),
+    ("Seelampur", 28.669890, 77.266700),
+    ("Shadipur", 28.651600, 77.158240),
+    ("Shahdara", 28.673450, 77.289620),
+    ("Shaheed Nagar", 28.530780, 77.212057),
+    ("Shaheed Sthal(First Station)", 28.670611, 77.415582),
+    ("Shakurpur", 28.685767, 77.149609),
+    ("Shalimar Bagh", 28.717453, 77.150867),
+    ("Shankar Vihar", 28.557439, 77.139665),
+    ("Shastri Nagar", 28.669990, 77.181690),
+    ("Shastri Park", 28.668000, 77.249940),
+    ("Shiv Vihar", 28.617538, 77.035430),
+    ("Shivaji Park", 28.674900, 77.130560),
+    ("Shivaji Stadium", 28.629010, 77.211900),
+    ("Shyam park", 28.698807, 28.698807),
+    ("Sikandarpur", 28.493600, 77.093500),
+    ("Sir Vishweshwaraiah Moti Bagh", 28.578533, 77.175741),
+    ("South Extension", 28.651718, 77.221939),
+    ("Subhash Nagar", 28.640390, 77.104950),
+    ("Sukhdev Vihar", 28.559748, 77.274900),
+    ("Sultanpur", 28.499270, 77.161530),
+    ("Supreme Court (Pragati Maidan)", 28.623420, 77.242500),
+    ("Tagore Garden", 28.643790, 77.112840),
+    ("Terminal 1 IGI Airport", 28.577151, 77.111153),
+    ("Tikri Border", 28.688025, 76.964083),
+    ("Tikri Kalan", 28.686866, 76.977207),
+    ("Tilak Nagar", 28.636570, 77.096480),
+    ("Tis Hazari", 28.667110, 77.216530),
+    ("Trilokpuri Sanjay Lake", 28.613453, 77.308855),
+    ("Tughlakabad", 28.502540, 77.299300),
+    ("Udyog Bhawan", 28.611660, 77.211980),
+    ("Udyog Nagar", 28.680900, 77.080770),
+    ("Uttam Nagar East", 28.621770, 77.055850),
+    ("Uttam Nagar West", 28.624810, 77.065300),
+    ("Vaishali", 28.649970, 77.339740),
+    ("Vasant Vihar", 28.560691, 77.160791),
+    ("Vidhan Sabha", 28.688020, 77.221400),
+    ("Vinobapuri", 28.566976, 77.249191),
+    ("Vinod Nagar East", 28.620044, 77.305407),
+    ("Vishwavidyalaya", 28.694800, 77.214830),
+    ("Welcome", 28.671800, 77.277560),
+    ("Yamuna Bank", 28.623310, 77.267920),
+]
+
+BANGALORE_STATIONS = [
+    ("Attiguppe", 12.961915, 77.533948),
+    ("BTM Layout", 12.916393, 77.608113),
+    ("Baiyappanahalli", 12.990554, 77.652859),
+    ("Banashankari", 12.915614, 77.573507),
+    ("Benniganahalli", 12.996388, 77.668180),
+    ("Beratena Agrahara", 12.856277, 77.663327),
+    ("Biocon Hebbagodi", 12.828711, 77.681240),
+    ("Bommanahalli", 12.910788, 77.626395),
+    ("Central Silk Board", 12.916310, 77.620409),
+    ("Challaghatta", 12.897430, 77.461109),
+    ("Chickpete", 12.967492, 77.574630),
+    ("Chikkabidarakallu", 13.052349, 77.487821),
+    ("Cubbon Park", 12.980973, 77.597315),
+    ("Dasarahalli", 13.043630, 77.512324),
+    ("Deepanjali Nagar", 12.952086, 77.536823),
+    ("Delta Electronics Bommasandra", 12.819555, 77.688743),
+    ("Doddakallasandra", 12.884672, 77.552838),
+    ("Dr B R Ambedkar Station Vidhana Soudha", 12.979865, 77.592723),
+    ("Electronic City", 12.856540, 77.663284),
+    ("Garudacharapalya", 12.993565, 77.703542),
+    ("Goraguntepalya", 13.028302, 77.540833),
+    ("Halasuru", 12.976462, 77.625994),
+    ("Hongasandra", 12.901564, 77.632017),
+    ("Hoodi", 12.988861, 77.711246),
+    ("Hopefarm Channasandra", 12.987288, 77.753629),
+    ("Hosa Road", 12.870955, 77.652406),
+    ("Huskur Road", 12.838802, 77.677447),
+    ("Indiranagar", 12.978176, 77.638332),
+    ("Infosys Foundation Konappana Agrahara", 12.846265, 77.671118),
+    ("Jalahalli", 13.039833, 77.519939),
+    ("Jayadeva Hospital", 12.916581, 77.599809),
+    ("Jayanagar", 12.929841, 77.579886),
+    ("Jayaprakash Nagar", 12.907755, 77.572945),
+    ("Jnanabharathi", 12.935315, 77.510945),
+    ("Kadugodi Tree Park", 12.985649, 77.746494),
+    ("Kengeri", 12.908001, 77.476355),
+    ("Kengeri Bus Terminal", 12.914693, 77.487642),
+    ("Konanakunte Cross", 12.888801, 77.562534),
+    ("Krantivira Sangolli Rayanna Railway Station", 12.976008, 77.565834),
+    ("Krishna Rajendra Market", 12.959932, 77.574476),
+    ("Krishnarajapura", 13.000109, 77.677621),
+    ("Kudlu Gate", 12.889960, 77.639392),
+    ("Kundalahalli", 12.977654, 77.715580),
+    ("Lalbagh", 12.946255, 77.579784),
+    ("Madavara", 13.057306, 77.472845),
+    ("Magadi Road", 12.975506, 77.555448),
+    ("Mahakavi Kuvempu Road", 12.998415, 77.556784),
+    ("Mahalakshmi", 13.008261, 77.549025),
+    ("Mahatma Gandhi Road", 12.975662, 77.606757),
+    ("Manjunath Nagar", 13.050310, 77.494353),
+    ("Mantri Square Sampige Road", 12.990328, 77.570641),
+    ("Mysuru Road", 12.946858, 77.529828),
+    ("Nadaprabhu Kempegowda Station Majestic", 12.975590, 77.573129),
+    ("Nagasandra", 13.048236, 77.500163),
+    ("Nallurhalli", 12.976590, 77.724661),
+    ("National College", 12.950632, 77.573609),
+    ("Pantharapalya Nayandahalli", 12.941798, 77.523476),
+    ("Pattanagere", 12.924230, 77.498242),
+    ("Pattandur Agrahara", 12.987593, 77.737740),
+    ("Peenya", 13.033118, 77.533327),
+    ("Peenya Industry", 13.036458, 77.525279),
+    ("Ragigudda", 12.916937, 77.588115),
+    ("Rajajinagar", 13.000384, 77.549783),
+    ("Rajarajeshwari Nagar", 12.936695, 77.519185),
+    ("Rashtreeya Vidyalaya Road", 12.921683, 77.580346),
+    ("Sandal Soap Factory", 13.014730, 77.553933),
+    ("Seetharampalya", 12.981166, 77.708692),
+    ("Silk Institute", 12.861885, 77.529923),
+    ("Singasandra", 12.880606, 77.644597),
+    ("Singayyanapalya", 12.996618, 77.692363),
+    ("Sir M Visvesvaraya Central College", 12.974168, 77.584287),
+    ("South End Circle", 12.938446, 77.579988),
+    ("Sri Balagangadharanatha Swamiji Hosahalli", 12.974126, 77.545192),
+    ("Sri Sathya Sai Hospital", 12.981164, 77.727343),
+    ("Srirampura", 12.996622, 77.563424),
+    ("Swami Vivekananda Road", 12.986017, 77.644813),
+    ("Thalaghattapura", 12.871288, 77.538292),
+    ("Trinity", 12.972944, 77.616713),
+    ("Vajarahalli", 12.877209, 77.544621),
+    ("Vijayanagar", 12.970906, 77.537209),
+    ("Whitefield (Kadugodi)", 12.995699, 77.757730),
+    ("Yelachenahalli", 12.896263, 77.569985),
+    ("Yeshwanthpur", 13.023274, 77.549783),
+]
+
+# Not sourced this pass -- see module docstring. Kept as None (not []) so
+# any caller trying to use these fails with a clear AttributeError/TypeError
+# rather than silently scoring every Mumbai/Hyderabad pin as "0 stations
+# within radius of an empty list", which would be a new fabricated 0, not
+# an honest gap.
+MUMBAI_STATIONS = None
+HYDERABAD_STATIONS = None

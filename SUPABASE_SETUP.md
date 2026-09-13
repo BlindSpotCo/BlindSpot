@@ -105,3 +105,51 @@ That's it — both tables now exist and are locked down so a user can only ever 
 - `reports.data` — the actual report content as JSON, however each source shapes it (see `app/api/reports/route.js` for what each one saves).
 
 Wired up: `components/reports/SaveReportButton.js` is used from the neighbourhood report, the AI report modal, and the furnishing advisor. `/my-reports` groups everything by folder first, then by report type within a folder.
+
+
+## 5. Create the `field_reports` table (data-quality feedback)
+
+This is the L5 "local-expert feedback" loop from `docs/data-integrity-architecture.md` — the "report this" button next to individual stats in the detailed readout (`components/shared/FieldFeedback.js`, posting to `app/api/field-feedback/route.js`). Not created yet? The API route returns a `save-failed` error until you run this.
+
+Go to **SQL Editor** in the Supabase dashboard, paste this in, and run it:
+
+```sql
+create table field_reports (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete set null,
+  pin_code text not null,
+  city text,
+  field_name text not null,
+  field_label text,
+  reported_value text,
+  claimed_value text,
+  note text,
+  page_url text,
+  status text not null default 'open' check (status in ('open', 'triaged', 'corrected', 'dismissed')),
+  created_at timestamptz default now()
+);
+
+alter table field_reports enable row level security;
+
+-- Anyone can file a report, signed in or not -- the whole point is to
+-- catch the person who spots a wrong number in the moment, without a
+-- sign-in wall in the way. See the API route's own comment for why.
+create policy "Anyone can submit a field report"
+  on field_reports for insert
+  with check (true);
+
+-- No public select/update/delete policy is created here on purpose --
+-- reports are for internal triage only (read them in the Supabase table
+-- editor, or from a service-role script), not surfaced back to users.
+-- Add a policy later if you build an admin triage view that should read
+-- through the anon/user client instead.
+```
+
+### What it's for
+
+- `pin_code` / `city` / `field_name` / `field_label` — which stat, on which pin, someone flagged. `field_name` is the raw data key (e.g. `metro_stations_nearby`); `field_label` is the human label shown on screen (e.g. "Metro nearby") at the time of the report.
+- `reported_value` — what BlindSpot was showing when they reported it (a snapshot, so a later data fix doesn't retroactively change what the report was about).
+- `claimed_value` / `note` — their correction and any free-text context (source, link, local knowledge).
+- `status` — for manual triage: `open` (new) → `triaged` (looked at) → `corrected` (data was fixed because of it) or `dismissed`. Per the architecture doc: "Corrections weighted by corroboration (n independent reports on the same field → auto-flag → L2 gate)" — for now that corroboration check is a manual query (`group by pin_code, field_name having count(*) > 1`), not yet automated.
+
+Nothing here auto-applies a correction to `data/aslivastu/master_by_pin.json` — every report is a claim to review, not a write. That review step is what keeps this loop from becoming a new way to introduce bad data instead of catching it.

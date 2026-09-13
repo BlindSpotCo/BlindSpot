@@ -22,6 +22,7 @@
 
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
 import { sourceFor } from '@/lib/aslivastu/cityMeta';
+import FieldFeedback from '@/components/shared/FieldFeedback';
 
 // `dark` flips a box to the near-black ink card used for the Sheet
 // identity / Composite Index / Dimension readout boxes -- requested
@@ -61,15 +62,20 @@ export function Info({ text }) {
 
 // One box per category — title + a grid of label/value pairs, each with its
 // own hover tooltip. Matches AV's own StatCard exactly (label, value, tip).
-function CategoryCard({ title, tip, stats }) {
+function CategoryCard({ title, tip, stats, pinCode, city }) {
   return (
     <BPF style={{ padding: '18px 20px' }}>
       <p style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', margin: '0 0 14px', display: 'flex', alignItems: 'center' }}>{title}<Info text={tip} /></p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '14px 20px' }}>
-        {stats.filter(Boolean).map(([label, val, itemTip]) => (
+        {stats.filter(Boolean).map(([label, val, itemTip, fieldKey]) => (
           <div key={label}>
             <div style={{ fontSize: 11.5, textTransform: 'uppercase', letterSpacing: '.05em', color: 'var(--text-dim)', display: 'flex', alignItems: 'center' }}>{label}<Info text={itemTip} /></div>
-            <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 15.5, fontWeight: 400, marginTop: 3, color: 'var(--text)' }}>{val ?? '-'}</div>
+            <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 15.5, fontWeight: 400, marginTop: 3, color: 'var(--text)', display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+              {val ?? '-'}
+              {fieldKey && pinCode && (
+                <FieldFeedback pinCode={pinCode} city={city} fieldName={fieldKey} fieldLabel={label} currentValue={val} />
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -231,37 +237,37 @@ export default function AVDetailedReadout({ record }) {
       </p>
       <div style={{ display: 'grid', gap: 20, marginBottom: 28 }}>
 
-        <CategoryCard title="Safety" tip={source('crime', record.city)} stats={[
-          ['Total crimes', record.total_cognizable_crimes, "Total cognizable crimes reported annually for this pin's police-station catchment, which can span a wider area than any one colony."],
+        <CategoryCard title="Safety" tip={source('crime', record.city)} pinCode={record.pin_code} city={record.city} stats={[
+          ['Total crimes', record.total_cognizable_crimes, "Total cognizable crimes reported annually for this pin's police-station catchment, which can span a wider area than any one colony.", 'total_cognizable_crimes'],
           ['Safety score', s.crime != null ? `${s.crime}/100` : '-', 'Inverse-normalized against total crimes: 250 or fewer scores 100, 650 or more scores 0, linear in between.'],
           ['Safer than', record.crime_percentile != null ? `${record.crime_percentile}%` : '-', "Percentile rank of this pin's crime count against other tracked areas in the same city (cities ranked separately)."],
           ['Crime tier', record.crime_tier, 'Very Low / Low / Moderate / High / Very High, based on the percentile rank.'],
           ['Source year', '2022–23', 'Reporting year of the source crime data.'],
         ]} />
 
-        <CategoryCard title="Air Quality" tip={source('air', record.city)} stats={[
-          ['AQI', record.aqi_avg != null ? Math.round(record.aqi_avg) : '-', 'Air Quality Index, CPCB/KSPCB daily average.'],
+        <CategoryCard title="Air Quality" tip={source('air', record.city)} pinCode={record.pin_code} city={record.city} stats={[
+          ['AQI', record.aqi_avg != null ? Math.round(record.aqi_avg) : '-', 'Air Quality Index, CPCB/KSPCB daily average.', 'aqi_avg'],
           ['Category', record.aqi_category, record.aqi_category ? (AQI_PLAIN[record.aqi_category] || '') : 'Good / Satisfactory / Moderate / Poor / Very Poor / Severe, per CPCB bands.'],
           ['Score', s.air != null ? `${s.air}/100` : '-', 'Normalized against the CPCB AQI band for this reading.'],
         ]} />
 
-        <CategoryCard title="Power Supply" tip={source('power', record.city)} stats={[
-          ['Discom', record.discom, 'The electricity distribution company serving this area.'],
+        <CategoryCard title="Power Supply" tip={source('power', record.city)} pinCode={record.pin_code} city={record.city} stats={[
+          ['Discom', record.discom, 'The electricity distribution company serving this area.', 'discom'],
           ['Reliability', record.reliability, 'Qualitative reliability rating derived from outage frequency and consumer complaint data.'],
           ['Avg cut hrs', record.avg_outage_hours != null ? `${record.avg_outage_hours} /mo` : '-', 'Average monthly power-outage hours from DISCOM reports, not live-metered.'],
           ['Score', s.power != null ? `${s.power}/100` : '-', 'Weighted blend of outage frequency (60%) and average outage duration (40%).'],
         ]} />
 
-        <CategoryCard title="Connectivity & Infrastructure" tip={source('infrastructure', record.city)} stats={[
-          ['Zone', record.zone_type, 'Land-use zone type, residential, mixed, commercial or industrial.'],
-          ['Metro nearby', record.metro_stations_nearby, 'Number of operational metro stations near this pin.'],
-          ['Metro planned', record.metro_planned_stations, 'Approved but not-yet-open metro stations nearby.'],
-          ['Highway', record.highway_proximity, 'Proximity to major highways / arterial roads.'],
-          ['Smart city', record.smart_city_project ? 'Yes' : 'No', 'Whether the area falls under the Smart Cities Mission.'],
-          ['Infra score', (record.infra_score_raw ?? s.infrastructure) != null ? `${record.infra_score_raw ?? s.infrastructure}/100` : '-', 'Composite of metro access, highway proximity, zone type and smart-city status.'],
+        <CategoryCard title="Connectivity & Infrastructure" tip={source('infrastructure', record.city)} pinCode={record.pin_code} city={record.city} stats={[
+          ['Zone', record.zone_type, 'Land-use zone type, residential, mixed, commercial or industrial.', 'zone_type'],
+          ['Metro nearby', record.metro_stations_nearby, 'Number of operational metro stations near this pin.', 'metro_stations_nearby'],
+          ['Metro planned', record.metro_planned_stations, 'Approved but not-yet-open metro stations nearby.', 'metro_planned_stations'],
+          ['Highway', record.highway_proximity, 'Proximity to major highways / arterial roads.', 'highway_proximity'],
+          ['Smart city', record.smart_city_project ? 'Yes' : 'No', 'Whether the area falls under the Smart Cities Mission.', 'smart_city_project'],
+          ['Infra score', (record.infra_score_raw ?? s.infrastructure) != null ? `${record.infra_score_raw ?? s.infrastructure}/100` : '-', 'Composite of metro access, highway proximity, zone type and smart-city status.', 'infra_score_raw'],
         ]} />
 
-        <CategoryCard title="Water Supply" tip={source('water', record.city)} stats={[
+        <CategoryCard title="Water Supply" tip={source('water', record.city)} pinCode={record.pin_code} city={record.city} stats={[
           ['Daily supply', record.supply_hours != null ? `${record.supply_hours} hrs` : '-', 'Average hours of piped water supply available per day.'],
           ['Quality', record.tds_level ? `${record.tds_level} TDS` : '-', 'TDS = Total Dissolved Solids. Low = ideal drinking water; High = hard water needing filtration.'],
           ['Coverage', (record.water_coverage ?? record.coverage_pct) != null ? `${record.water_coverage ?? record.coverage_pct}%` : '-', '% of households with a piped municipal water connection. Below 80% means heavy tanker/borewell reliance.'],
@@ -269,7 +275,7 @@ export default function AVDetailedReadout({ record }) {
           ['Quality score', (record.water_quality ?? record.quality_score) != null ? `${record.water_quality ?? record.quality_score}/5` : '-', 'Composite 1–5 water-quality rating from TDS, complaints and supply hours.'],
         ]} />
 
-        <CategoryCard title="Roads" tip={source('roads', record.city)} stats={[
+        <CategoryCard title="Roads" tip={source('roads', record.city)} pinCode={record.pin_code} city={record.city} stats={[
           ['Condition', record.road_condition, 'Overall road-surface condition rating (Excellent → Very Poor).'],
           ['Potholes/km', record.pothole_density, 'Estimated potholes per km. Below 2 = good; above 5 = poor; above 10 = dangerous.'],
           ['Connectivity', record.connectivity, 'How well the area connects to arterial roads and highways.'],
@@ -278,7 +284,7 @@ export default function AVDetailedReadout({ record }) {
           ['Quality score', (record.road_quality ?? record.quality_score) != null ? `${record.road_quality ?? record.quality_score}/5` : '-', 'Composite 1–5 road-quality rating from condition and pothole density.'],
         ]} />
 
-        <CategoryCard title="Drainage & Sewerage" tip={source('sewerage', record.city)} stats={[
+        <CategoryCard title="Drainage & Sewerage" tip={source('sewerage', record.city)} pinCode={record.pin_code} city={record.city} stats={[
           ['Sewer coverage', (record.sewerage_coverage ?? record.coverage_pct) != null ? `${record.sewerage_coverage ?? record.coverage_pct}%` : '-', '% of households connected to the underground sewerage network.'],
           ['Treatment', record.treatment, 'Whether sewage reaches a treatment plant, Adequate / Partial / Inadequate.'],
           ['Waterlogging', waterloggingLabel(record.waterlogging_risk), 'Monsoon waterlogging risk from drainage capacity, elevation and flooding history.'],
