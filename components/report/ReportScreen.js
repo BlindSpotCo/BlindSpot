@@ -697,118 +697,39 @@ export default function ReportScreen() {
           the verdict headline further down is demoted to <h2> so there's
           exactly one top-level heading on the page, not two competing
           ones. */}
-      {/* One sticky bar for both the title/address and the map's own
-          controls -- .bsr-head is already `position:sticky` site-wide (see
-          globals.css's bare `header{}` rule), but that only kept the title
-          pinned; the toolbar below it used to be a normal-flow strip that
-          scrolled out of reach the moment you scrolled into the (tall,
-          near-full-screen) map below it, so changing floor/facing/date
-          meant scrolling back up and losing the map entirely. Wrapping
-          both in one sticky container keeps the controls in reach for as
-          long as the map is on screen. */}
-      <div className="bsr-topbar">
-        <header className="bsr-head">
-          <div className="bsr-head-top">
-            <h1 className="bsr-title">Your BlindSpot report</h1>
-            <span className="bsr-head-links">
-              {/* First, not last. Someone reading a verdict on one flat is most
-                  likely to want the other two beside it -- that is a more common
-                  next step here than either of the other two links. */}
-              <a href="/compare" className="is-primary">Compare flats</a>
-              <a href="/my-reports">My reports</a>
-              <a href="/">Change address</a>
-            </span>
-          </div>
-          <p className="bsr-addr">
-            <span className="bsr-pin" aria-hidden="true" />
-            <span className="bsr-addr-text">{address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}</span>
-          </p>
-        </header>
-
-        <div className="bsr-mapbar">
-          <form className="bsr-locbar" onSubmit={onSearchSubmit}>
-            <input
-              type="search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Another address, or coordinates like 12.9716, 77.5946"
-              aria-label="Move the pin to another address or coordinates"
-            />
-            <button type="submit" disabled={locBusy}>{locBusy ? 'Finding…' : 'Move pin'}</button>
-            <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
-              My location
-            </button>
-          </form>
-
-          <p className="bsr-set">
-            <label className="bsr-set-field">
-              <span>Floor</span>
-              <input
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                maxLength={2}
-                value={floorText}
-                onChange={(e) => {
-                  const raw = e.target.value.replace(/[^\d]/g, '').slice(0, 2);
-                  setFloorText(raw);
-                  const n = parseInt(raw, 10);
-                  if (Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR) { setAssumed(false); setFloor(n); }
-                }}
-                onBlur={() => {
-                  const n = parseInt(floorText, 10);
-                  const clamped = Number.isFinite(n) ? Math.min(MAX_FLOOR, Math.max(1, n)) : floor;
-                  setFloor(clamped);
-                  setFloorText(String(clamped));
-                }}
-                aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
-                placeholder="5"
-              />
-            </label>
-            <label className="bsr-set-field">
-              <span>Faces</span>
-              <select
-                value={facing}
-                onChange={(e) => { setAssumed(false); setFacing(e.target.value); }}
-              >
-                {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
-              </select>
-            </label>
-            <label className="bsr-set-field">
-              <span>Date</span>
-              <select
-                value={seasonKey}
-                onChange={(e) => setSeasonKey(e.target.value)}
-                aria-label="Which day to simulate"
-              >
-                {SEASONS.map((sn) => (
-                  <option key={sn.key} value={sn.key}>
-                    {sn.label}{sn.md ? ` — ${prettyDate(seasonDate(sn.key))}` : ''}
-                  </option>
-                ))}
-                <option value="custom">Pick a date…</option>
-              </select>
-            </label>
-            {seasonKey === 'custom' && (
-              <input
-                type="date"
-                className="bsr-datein"
-                value={customDate || todayStr()}
-                onChange={(e) => setCustomDate(e.target.value)}
-                aria-label="Date to simulate"
-              />
-            )}
-            {assumed ? <span className="bsr-assumed">assumed</span> : null}
-          </p>
+      <header className="bsr-head">
+        <div className="bsr-head-top">
+          <h1 className="bsr-title">Your BlindSpot report</h1>
+          <span className="bsr-head-links">
+            {/* First, not last. Someone reading a verdict on one flat is most
+                likely to want the other two beside it -- that is a more common
+                next step here than either of the other two links. */}
+            <a href="/compare" className="is-primary">Compare flats</a>
+            <a href="/my-reports">My reports</a>
+            <a href="/">Change address</a>
+          </span>
         </div>
-        {locError ? <p className="bsr-locerror">{locError}</p> : null}
-      </div>
+        <p className="bsr-addr">
+          <span className="bsr-pin" aria-hidden="true" />
+          <span className="bsr-addr-text">{address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}</span>
+        </p>
+      </header>
 
       {/* ---------- the map, full width ----------
           It lived inside the flat's card until the card's ~500px made
           Map3DShadow hide its own view-angle pad (its stylesheet drops
           .view-controls under 768px), so half the map was unreachable.
-          Full width gives the controls back and gives the shadows room. */}
+          Full width gives the controls back and gives the shadows room.
+          The toolbar (search, floor, facing, date) sits ON the map itself
+          now, not in a bar above it -- a floating card over the top-left
+          corner, so it's always physically part of the map you're looking
+          at rather than something that scrolls away from it. It has its
+          own z-index above .bsr-map-guard's dimming layer, so it stays
+          usable whether the map is armed for interaction or not. On
+          768px+, where Map3DShadow's own "set view angle" pad occupies
+          the top-right corner, the toolbar is kept clear of it (see
+          .bsr-mapbar's right clearance in report.css) rather than
+          overlapping it the way the old pill row once did. */}
       <section className="bsr-mapzone" id="the-block" aria-label="The block in 3D" ref={mapZoneRef}>
         <div className="bsr-map" onMouseLeave={() => setMapArmed(true)}>
           {solar?.pathData ? (
@@ -841,6 +762,84 @@ export default function ReportScreen() {
               Click to interact with the map
             </button>
           )}
+
+          <div className="bsr-mapbar">
+            <form className="bsr-locbar" onSubmit={onSearchSubmit}>
+              <input
+                type="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Another address, or coordinates like 12.9716, 77.5946"
+                aria-label="Move the pin to another address or coordinates"
+              />
+              <button type="submit" disabled={locBusy}>{locBusy ? 'Finding…' : 'Move pin'}</button>
+              <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
+                My location
+              </button>
+            </form>
+
+            <p className="bsr-set">
+              <label className="bsr-set-field">
+                <span>Floor</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={2}
+                  value={floorText}
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/[^\d]/g, '').slice(0, 2);
+                    setFloorText(raw);
+                    const n = parseInt(raw, 10);
+                    if (Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR) { setAssumed(false); setFloor(n); }
+                  }}
+                  onBlur={() => {
+                    const n = parseInt(floorText, 10);
+                    const clamped = Number.isFinite(n) ? Math.min(MAX_FLOOR, Math.max(1, n)) : floor;
+                    setFloor(clamped);
+                    setFloorText(String(clamped));
+                  }}
+                  aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
+                  placeholder="5"
+                />
+              </label>
+              <label className="bsr-set-field">
+                <span>Faces</span>
+                <select
+                  value={facing}
+                  onChange={(e) => { setAssumed(false); setFacing(e.target.value); }}
+                >
+                  {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
+                </select>
+              </label>
+              <label className="bsr-set-field">
+                <span>Date</span>
+                <select
+                  value={seasonKey}
+                  onChange={(e) => setSeasonKey(e.target.value)}
+                  aria-label="Which day to simulate"
+                >
+                  {SEASONS.map((sn) => (
+                    <option key={sn.key} value={sn.key}>
+                      {sn.label}{sn.md ? ` — ${prettyDate(seasonDate(sn.key))}` : ''}
+                    </option>
+                  ))}
+                  <option value="custom">Pick a date…</option>
+                </select>
+              </label>
+              {seasonKey === 'custom' && (
+                <input
+                  type="date"
+                  className="bsr-datein"
+                  value={customDate || todayStr()}
+                  onChange={(e) => setCustomDate(e.target.value)}
+                  aria-label="Date to simulate"
+                />
+              )}
+              {assumed ? <span className="bsr-assumed">assumed</span> : null}
+            </p>
+            {locError ? <p className="bsr-locerror">{locError}</p> : null}
+          </div>
         </div>
 
         <p className="bsr-timerow">
