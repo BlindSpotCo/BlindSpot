@@ -492,6 +492,20 @@ export default function ReportScreen() {
   // Anchor for the flat half, still used by the in-page "the flat" link.
   const unitRef = useRef(null);
 
+  // The floating "see your score" button: visible only while some part of
+  // the map section is actually on screen, so it offers a way down while
+  // you're looking at the map and gets out of the way once you've already
+  // scrolled past it into the score itself.
+  const mapZoneRef = useRef(null);
+  const [showScoreCue, setShowScoreCue] = useState(false);
+  useEffect(() => {
+    const el = mapZoneRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(([entry]) => setShowScoreCue(entry.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   /* ---------------- the twelve map frames, captured once ----------------
      Photographing the map is the slow half of both reports -- twelve frames,
      about a minute -- and the frames depend only on where the pin is, not on
@@ -683,41 +697,34 @@ export default function ReportScreen() {
           the verdict headline further down is demoted to <h2> so there's
           exactly one top-level heading on the page, not two competing
           ones. */}
-      <header className="bsr-head">
-        <div className="bsr-head-top">
-          <h1 className="bsr-title">Your BlindSpot report</h1>
-          <span className="bsr-head-links">
-            {/* First, not last. Someone reading a verdict on one flat is most
-                likely to want the other two beside it -- that is a more common
-                next step here than either of the other two links. */}
-            <a href="/compare" className="is-primary">Compare flats</a>
-            <a href="/my-reports">My reports</a>
-            <a href="/">Change address</a>
-          </span>
-        </div>
-        <p className="bsr-addr">
-          <span className="bsr-pin" aria-hidden="true" />
-          <span className="bsr-addr-text">{address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}</span>
-        </p>
-      </header>
+      {/* One sticky bar for both the title/address and the map's own
+          controls -- .bsr-head is already `position:sticky` site-wide (see
+          globals.css's bare `header{}` rule), but that only kept the title
+          pinned; the toolbar below it used to be a normal-flow strip that
+          scrolled out of reach the moment you scrolled into the (tall,
+          near-full-screen) map below it, so changing floor/facing/date
+          meant scrolling back up and losing the map entirely. Wrapping
+          both in one sticky container keeps the controls in reach for as
+          long as the map is on screen. */}
+      <div className="bsr-topbar">
+        <header className="bsr-head">
+          <div className="bsr-head-top">
+            <h1 className="bsr-title">Your BlindSpot report</h1>
+            <span className="bsr-head-links">
+              {/* First, not last. Someone reading a verdict on one flat is most
+                  likely to want the other two beside it -- that is a more common
+                  next step here than either of the other two links. */}
+              <a href="/compare" className="is-primary">Compare flats</a>
+              <a href="/my-reports">My reports</a>
+              <a href="/">Change address</a>
+            </span>
+          </div>
+          <p className="bsr-addr">
+            <span className="bsr-pin" aria-hidden="true" />
+            <span className="bsr-addr-text">{address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}</span>
+          </p>
+        </header>
 
-      {/* ---------- the map, full width ----------
-          It lived inside the flat's card until the card's ~500px made
-          Map3DShadow hide its own view-angle pad (its stylesheet drops
-          .view-controls under 768px), so half the map was unreachable.
-          Full width gives the controls back and gives the shadows room. */}
-      <section className="bsr-mapzone" id="the-block" aria-label="The block in 3D">
-        {/* Everything that changes what the map shows lives in one compact
-            toolbar attached to the top of it -- address, floor, facing and
-            the day to simulate, all in normal document flow instead of a
-            row of pill buttons pinned OVER the map's own top-left corner
-            (.bsr-dates, position:absolute), which is what was colliding
-            with Map3DShadow's own "set view angle" pad in its top-right
-            corner. .bsr-mapcard is what makes this read as one thing --
-            toolbar and viewport sharing a single frame with no gap between
-            them -- rather than a stray form floating above an unrelated
-            map. */}
-        <div className="bsr-mapcard">
         <div className="bsr-mapbar">
           <form className="bsr-locbar" onSubmit={onSearchSubmit}>
             <input
@@ -727,9 +734,9 @@ export default function ReportScreen() {
               placeholder="Another address, or coordinates like 12.9716, 77.5946"
               aria-label="Move the pin to another address or coordinates"
             />
-            <button type="submit" disabled={locBusy}>{locBusy ? 'Finding…' : 'Move the pin'}</button>
+            <button type="submit" disabled={locBusy}>{locBusy ? 'Finding…' : 'Move pin'}</button>
             <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
-              Use my location
+              My location
             </button>
           </form>
 
@@ -791,11 +798,18 @@ export default function ReportScreen() {
                 aria-label="Date to simulate"
               />
             )}
-            {assumed ? <span className="bsr-assumed">assumed — set yours</span> : null}
+            {assumed ? <span className="bsr-assumed">assumed</span> : null}
           </p>
         </div>
         {locError ? <p className="bsr-locerror">{locError}</p> : null}
+      </div>
 
+      {/* ---------- the map, full width ----------
+          It lived inside the flat's card until the card's ~500px made
+          Map3DShadow hide its own view-angle pad (its stylesheet drops
+          .view-controls under 768px), so half the map was unreachable.
+          Full width gives the controls back and gives the shadows room. */}
+      <section className="bsr-mapzone" id="the-block" aria-label="The block in 3D" ref={mapZoneRef}>
         <div className="bsr-map" onMouseLeave={() => setMapArmed(true)}>
           {solar?.pathData ? (
             <Map3DShadow
@@ -827,7 +841,6 @@ export default function ReportScreen() {
               Click to interact with the map
             </button>
           )}
-        </div>
         </div>
 
         <p className="bsr-timerow">
@@ -869,8 +882,12 @@ export default function ReportScreen() {
         </p>
       </section>
 
+      {showScoreCue && (
+        <a href="#the-score" className="bsr-score-cue">See your score ↓</a>
+      )}
+
       {/* ---------- the answer, before anything else ---------- */}
-      <section className={`bsr-answer is-${topTone}`} aria-live="polite">
+      <section className={`bsr-answer is-${topTone}`} id="the-score" aria-live="polite">
         <p className="bsr-big">
           {/* Names what the number actually is before you see the number
               itself -- a bare "72 out of 100" with no label doesn't say

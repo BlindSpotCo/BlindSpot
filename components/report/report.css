@@ -16,6 +16,7 @@
   --bsr-poor:#A2483C;
   --bsr-poor-bg:#F8E9E5;
   --bsr-none-bg:#EEEAE1;
+  --bsr-topbar-h:172px;
 
   /* No card anywhere on this page any more, but a full 1800px ceiling
      read as too sprawling on a large monitor -- everything sat at its
@@ -49,8 +50,19 @@
 .bsr-empty h1{font-size:30px;margin-bottom:10px}
 .bsr-empty p{max-width:46ch;margin:0 auto 22px;font-size:17px}
 
-/* ---------------- title + address bar ---------------- */
+/* ---------------- the sticky bar: title + the map's own toolbar ----------------
+   .bsr-head is a <header>, and globals.css makes every <header> on the
+   site `position:sticky` -- overridden back to static here because it's
+   now nested inside .bsr-topbar (below), which is the thing that's
+   actually sticky, wrapping the title AND the map toolbar together so
+   both stay in reach while the map -- tall, near-full-screen -- is
+   anywhere on screen, instead of the toolbar scrolling out of reach the
+   moment you scroll past the title. */
+.bsr-topbar{
+  position:sticky;top:0;z-index:60;
+}
 .bsr-head{
+  position:static;
   padding:22px 0 15px;border-bottom:1px solid var(--line,rgba(28,24,18,.14));
 }
 .bsr-head-top{
@@ -105,6 +117,7 @@
      height instead of its line-box top, which sits a little higher. */
   display:flex;align-items:flex-start;gap:32px;flex-wrap:wrap;
   padding:32px 0 0;
+  scroll-margin-top:var(--bsr-topbar-h);
 }
 
 .bsr-big{display:flex;flex-direction:column;flex:none;margin-top:3px}
@@ -146,7 +159,7 @@
   min-width:0;display:flex;flex-direction:column;
 }
 .bsr-area{padding-right:28px}
-.bsr-unit{padding-left:28px;border-left:1px solid var(--line-soft,rgba(28,24,18,.1))}
+.bsr-unit{padding-left:28px;border-left:1px solid var(--line-soft,rgba(28,24,18,.1));scroll-margin-top:var(--bsr-topbar-h)}
 
 .bsr-kicker{
   font-family:'Geist Mono',monospace;font-weight:600;
@@ -291,28 +304,28 @@
    Wide on purpose: Map3DShadow hides its own view-angle pad below 768px,
    so a boxed card left half the map unreachable -- now nothing on this
    page is boxed, so it's just the next flat section, marked off with the
-   same hairline every other section break uses. This is also now the
-   first thing on the report page (see ReportScreen.js) -- everything
-   below exists to set up a number; this sets up a place, before there
-   is one. */
+   same hairline every other section break uses. scroll-margin-top clears
+   the sticky .bsr-topbar above it, so jumping here via #the-block never
+   tucks the top of the map behind the toolbar. */
 .bsr-mapzone{
   margin-top:22px;padding-top:20px;
   border-top:1px solid var(--line-soft,rgba(28,24,18,.1));
+  scroll-margin-top:var(--bsr-topbar-h);
 }
-/* .bsr-mapcard is the one frame (border + radius) shared by the toolbar
-   above and the map below -- moved here from .bsr-map itself, so the two
-   read as one unit with no seam between them. */
-.bsr-mapcard{
-  margin-top:16px;border:1px solid var(--line,rgba(28,24,18,.14));
-  border-radius:10px;overflow:hidden;background:var(--paper,#FFFDF8);
-}
-/* A real `height`, not min-height: Map3DShadow's iframe carries an inline
-   height:100%, which beats any class rule and resolves against nothing
-   when the parent's height is auto -- that's what collapsed the map to a
-   strip with dead space under it. Sized close to the viewport itself
-   ("full screen") rather than the old fixed 620px card. */
+/* Border + radius live on the map itself again. They briefly lived on a
+   .bsr-mapcard wrapper around this AND the toolbar, to fuse the two into
+   one frame -- but the toolbar has since moved up into the sticky
+   .bsr-topbar (see ReportScreen.js), so there's nothing left to fuse with
+   and this is just the map's own frame once more. */
 .bsr-map{
-  overflow:hidden;position:relative;
+  margin-top:16px;overflow:hidden;position:relative;
+  border:1px solid var(--line,rgba(28,24,18,.14));
+  border-radius:10px;
+  /* A real `height`, not min-height: Map3DShadow's iframe carries an
+     inline height:100%, which beats any class rule and resolves against
+     nothing when the parent's height is auto -- that's what collapsed the
+     map to a strip with dead space under it. Sized close to the viewport
+     itself ("full screen") rather than a fixed card height. */
   height:clamp(460px, 84vh, 920px);
   background:var(--bg-2,#F1E9DA);
 }
@@ -488,34 +501,67 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   .bsr-head-links{width:100%}
 }
 
-/* ---------------- moving the pin: the map's own toolbar ----------------
-   Lives inside .bsr-mapcard, flush against the map below it -- one framed
-   unit instead of a form floating above an unrelated viewport. Every
-   control here is deliberately smaller than its counterpart elsewhere on
-   the page (compare 34px against .bsr-set's usual 46px in "the flat"
-   below): this bar's job is to be glanced at and adjusted in passing,
-   not read. */
+/* ---------------- the map's own toolbar ----------------
+   Lives inside the sticky .bsr-topbar now (see ReportScreen.js), above
+   the map rather than fused to it -- mobile-first: two short rows
+   (search, then floor/facing/date) that always fit without wrapping a
+   third time. overflow-x:auto on each row is only a safety net for a
+   phone narrower than an iPhone SE; it should never actually need to
+   scroll on anything in normal use. At 640px+ there's comfortably enough
+   width for the two rows to sit side by side as one line instead -- which
+   is what this looked like on a wide monitor before, just without the
+   search box stretching into a mostly-empty box the way flex:1 with no
+   cap used to do. Every control here is deliberately smaller than its
+   counterpart elsewhere on the page (compare against .bsr-set's usual
+   46px in "the flat" below): this bar's job is to be glanced at and
+   adjusted in passing, not read. */
 .bsr-mapbar{
-  display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;
-  padding:10px 14px;
+  display:flex;flex-direction:column;gap:6px;
+  padding:8px 10px;
   background:var(--bg-2,#F1E9DA);
   border-bottom:1px solid var(--line,rgba(28,24,18,.14));
 }
-.bsr-mapbar .bsr-locbar{ margin-top:0; flex:1 1 240px; }
-.bsr-mapbar .bsr-set{ margin-top:0; flex:0 1 auto; gap:10px; }
-.bsr-mapbar .bsr-set-field span{ font-size:11.5px; }
+.bsr-mapbar .bsr-locbar{
+  width:100%;margin-top:0;flex-wrap:nowrap;gap:6px;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+}
+.bsr-mapbar .bsr-locbar input[type=search]{ min-width:0; flex:1 1 auto; }
+.bsr-mapbar .bsr-locbar button{ flex:none; white-space:nowrap; }
+.bsr-mapbar .bsr-set{
+  width:100%;margin-top:0;flex-wrap:nowrap;gap:8px;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+}
+.bsr-mapbar .bsr-set-field{ flex:none; }
+.bsr-mapbar .bsr-set-field span{ font-size:10.5px; }
 .bsr-mapbar .bsr-set select,
 .bsr-mapbar .bsr-set input[type="text"]{
-  font-size:13px; min-height:34px; padding:5px 8px;
+  font-size:12px; min-height:30px; padding:4px 6px;
 }
-.bsr-mapbar .bsr-set input[type="text"]{ width:2.6em; }
-.bsr-mapbar .bsr-datein{ min-height:34px; font-size:13px; padding:5px 8px; }
-.bsr-mapbar .bsr-assumed{ font-size:11.5px; padding:3px 7px; }
+.bsr-mapbar .bsr-set input[type="text"]{ width:2.2em; flex:none; }
+.bsr-mapbar .bsr-set select{ max-width:104px; flex:none; }
+.bsr-mapbar .bsr-datein{ min-height:30px; font-size:12px; padding:4px 6px; flex:none; }
+.bsr-mapbar .bsr-assumed{ font-size:10.5px; padding:2px 6px; white-space:nowrap; flex:none; }
+@media (min-width:640px){
+  .bsr-mapbar{
+    flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px 16px;
+    padding:8px 14px;
+  }
+  .bsr-mapbar .bsr-locbar{ width:auto;flex:0 1 300px;overflow:visible; }
+  .bsr-mapbar .bsr-locbar input[type=search]{ max-width:210px; }
+  .bsr-mapbar .bsr-set{ width:auto;flex:0 1 auto;overflow:visible; }
+  .bsr-mapbar .bsr-set-field span{ font-size:11.5px; }
+  .bsr-mapbar .bsr-set select,
+  .bsr-mapbar .bsr-set input[type="text"]{ font-size:13px; min-height:34px; padding:5px 8px; }
+  .bsr-mapbar .bsr-set input[type="text"]{ width:2.6em; }
+  .bsr-mapbar .bsr-set select{ max-width:160px; }
+  .bsr-mapbar .bsr-datein{ min-height:34px; font-size:13px; padding:5px 8px; }
+  .bsr-mapbar .bsr-assumed{ font-size:11.5px; padding:3px 7px; }
+}
 .bsr-locbar{
   display:flex;gap:6px;flex-wrap:wrap;align-items:center;
 }
 .bsr-locbar input[type=search]{
-  flex:1;min-width:150px;font:inherit;font-size:13.5px;
+  flex:1;min-width:0;font:inherit;font-size:13.5px;
   padding:6px 10px;border-radius:4px;min-height:34px;
   border:1px solid var(--line,rgba(28,24,18,.14));
   background:var(--paper,#FFFDF8);color:inherit;
@@ -529,8 +575,24 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 .bsr-locbar button:hover:not(:disabled){border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
 .bsr-locbar button:disabled{opacity:.55;cursor:default}
 .bsr-locerror{
-  margin:0 14px 0;padding:8px 14px;font-size:13.5px;color:var(--poor,#A2483C);
+  margin:6px 14px 0;padding:8px 14px;font-size:13.5px;color:var(--poor,#A2483C);
 }
+/* The button that jumps down to the score -- visible only while the map
+   itself is on screen (ReportScreen.js toggles this with an
+   IntersectionObserver on .bsr-mapzone): a way down while you're looking
+   at the map, gone once you've already scrolled past it. */
+.bsr-score-cue{
+  position:fixed;left:50%;bottom:20px;transform:translateX(-50%);
+  z-index:55;
+  font:inherit;font-weight:700;font-size:14px;
+  padding:11px 22px;border-radius:999px;
+  background:var(--ss,#AF5F30);color:#FFFDF8;
+  text-decoration:none;white-space:nowrap;
+  box-shadow:0 6px 20px rgba(28,24,18,.28);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.bsr-score-cue:hover{ transform:translateX(-50%) translateY(-2px); box-shadow:0 10px 26px rgba(28,24,18,.32); }
+@media (prefers-reduced-motion:reduce){ .bsr-score-cue{ transition:none; } }
 .bsr-maphint{
   margin-top:8px;font-size:13.5px;color:var(--text-mute,#5A5140);
 }
@@ -555,6 +617,11 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 @media (max-width:600px){
   .bsr{padding-left:14px;padding-right:14px}
   .bsr-sub,.bsr-set{min-height:0}
+  .bsr-answer{padding-top:24px;gap:20px}
+  .bsr-big-label{font-size:10px}
+  .bsr-big-n{font-size:56px}
+  .bsr-answer-say h2{font-size:22px}
+  .bsr-answer-say p{font-size:15.5px}
 }
 
 /* The date select sits inside .bsr-set (.bsr-set select already styles
