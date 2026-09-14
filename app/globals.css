@@ -117,6 +117,27 @@
     --space-8:64px;
     --space-9:96px;
 
+    /* ===== BREAKPOINTS ===== Two standardized, mobile-first breakpoints.
+       Base rules throughout this file (below this point, migrated
+       incrementally -- see the note over each converted section) are
+       written for a phone first; @media (min-width:...) layers on
+       tablet/desktop from there. This replaces the old pattern of ~20
+       different one-off @media (max-width:X) thresholds (900/860/820/
+       760/720/640/600/560/520/480/1180/1000...), each tuned in isolation
+       to fix one specific overflow at the time -- which is exactly how
+       this file ended up with THREE separate, same-specificity
+       `@media (max-width:640px)` passes fighting over nav.wrap's height
+       (see the nav section below), two of which were silently dead code:
+       later-in-source-order rules for the same width range always win,
+       whether or not that's what the comment above them says. A single
+       min-width breakpoint per selector can't shadow itself this way.
+       Can't reference these as `var()` inside an @media feature --
+       media queries don't accept custom properties -- so 768 / 1024 are
+       the two literal numbers every new min-width query should reach
+       for, not custom one-offs.
+       --bp-tablet equivalent: 768px
+       --bp-desktop equivalent: 1024px */
+
     /* ===== LEADING FORMULA ===== Swiggy's rule: display = size × 1.1,
        body = size × 1.4 (unitless line-height IS that multiplier, so this
        is applied directly as a default, not as a literal formula). Set at
@@ -175,9 +196,14 @@
   .mono{font-family:'Geist Mono',monospace; font-weight:500}
   a{color:inherit}
   img{max-width:100%;display:block}
-  .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
-  @media (max-width:640px){.wrap{padding:0 20px}}
-  @media (max-width:640px){}
+  /* Mobile-first: side padding starts at --space-4 (16px) and steps up
+     to --space-6 (32px) once there's room, instead of the old 3-value
+     ladder (32 / 20 / 16px, two different breakpoints, one of them an
+     orphan number not on the spacing scale at all). Collapses the old
+     481-767px range onto the mobile value rather than the old
+     in-between 20px -- a deliberate simplification, not an oversight. */
+  .wrap{max-width:1180px;margin:0 auto;padding:0 var(--space-4)}
+  @media (min-width:768px){ .wrap{ padding:0 var(--space-6) } }
 
   /* Starts fully transparent with no border — at rest, the header is
      nothing but the centered logo floating over the hero. Once `scrolled`
@@ -199,11 +225,24 @@
      above everything, that puts the heading and first line of whichever
      section you tapped right underneath it, hidden. scroll-margin-top
      reserves that much space above the target when the browser scrolls to
-     it, matching nav.wrap's own height at each breakpoint (66/52px) plus
-     a little breathing room so the heading isn't flush against the bar. */
-  #how-it-works, #products, #team{ scroll-margin-top:90px }
-  @media (max-width:640px){ #how-it-works, #products, #team{ scroll-margin-top:72px } }
-  nav.wrap{display:flex; align-items:center; justify-content:space-between; height:66px}
+     it, matching nav.wrap's own height at each breakpoint (52px mobile /
+     66px desktop, mobile-first below) plus a little breathing room so
+     the heading isn't flush against the bar. */
+  #how-it-works, #products, #team{ scroll-margin-top:72px }
+  @media (min-width:768px){ #how-it-works, #products, #team{ scroll-margin-top:90px } }
+  /* Mobile-first nav shell. height/logo sizes/padding below are the
+     values that actually reach a phone today -- reconstructed from what
+     WON the cascade across three formerly-separate override passes
+     further down this file, not the numbers their own comments claimed
+     (two of the three were dead code; see the BREAKPOINTS note above).
+     min-width:0 is unconditional here rather than gated to one
+     breakpoint -- it's what actually stops the CTA pill's nowrap text
+     from forcing horizontal scroll (see the old "NAV OVERFLOW FIX"
+     section this replaces), and there's no width at which allowing this
+     flex row to shrink is wrong, so it no longer needs its own
+     breakpoint to remember to apply. */
+  nav.wrap{display:flex; align-items:center; justify-content:space-between; height:52px; min-width:0}
+  @media (min-width:768px){ nav.wrap{ height:66px } }
   /* Single child (just .brand) at rest — centers it in the bar instead of
      letting it sit flush left with nothing to balance it. */
   nav.wrap.nav-centered{justify-content:center}
@@ -213,13 +252,18 @@
      (since white-space:nowrap text can't wrap to relieve the pressure),
      and the CTA pill's text was rendering on top of the wordmark instead
      of pushing past it. */
-  .brand{display:flex; align-items:center; gap:11px; text-decoration:none; flex-shrink:0}
-  .brand-mark-img{height:24px; width:auto; flex-shrink:0; transition:transform .3s ease}
+  .brand{display:flex; align-items:center; gap:11px; text-decoration:none; flex-shrink:0; min-width:0}
+  .brand-mark-img{height:18px; width:auto; flex-shrink:0; transition:transform .3s ease}
+  @media (min-width:768px){ .brand-mark-img{ height:24px } }
   .brand:hover .brand-mark-img{transform:rotate(8deg)}
-  .brand-word-img{height:12px; width:auto; flex-shrink:0; filter:invert(1) brightness(0.15)}
+  .brand-word-img{height:9px; width:auto; flex-shrink:0; filter:invert(1) brightness(0.15)}
+  @media (min-width:768px){ .brand-word-img{ height:12px } }
   /* Mounts (not just unhides) when scrolling starts, so it gets a real
-     entrance instead of popping in instantly. */
-  .nav-links{display:flex; align-items:center; gap:32px; animation:navReveal .4s ease both}
+     entrance instead of popping in instantly. Hidden below 768px --
+     .nav-burger + .nav-mobile-panel carry these links on phone/small
+     tablet instead (see below). */
+  .nav-links{display:none; align-items:center; gap:32px; animation:navReveal .4s ease both}
+  @media (min-width:768px){ .nav-links{ display:flex } }
   @keyframes navReveal{ from{opacity:0; transform:translateY(-6px)} to{opacity:1; transform:translateY(0)} }
   @media (prefers-reduced-motion: reduce){ .nav-links, .nav-cta{ animation:none !important } }
   .nav-links a{position:relative; font-size:14px; color:var(--text-mute); text-decoration:none; font-weight:500; transition:color .15s; padding-bottom:3px}
@@ -229,7 +273,8 @@
   }
   .nav-links a:hover{color:var(--text)}
   .nav-links a:hover::after{right:0}
-  .nav-cta{display:flex; align-items:center; gap:10px; animation:navReveal .4s ease .05s both}
+  .nav-cta{display:flex; align-items:center; gap:8px; animation:navReveal .4s ease .05s both; min-width:0}
+  @media (min-width:768px){ .nav-cta{ gap:10px } }
   .btn{
     display:inline-flex; align-items:center; gap:8px;
     padding:9px 17px; border-radius:var(--radius); font-size:14px; font-weight:500;
@@ -288,13 +333,20 @@
   @media (max-width:520px){ .btn-compare{ display:none } }
 
   .btn-cta-sm{
-    display:inline-flex; align-items:center;
+    display:inline-flex; align-items:center; min-width:0; flex-shrink:1;
     padding:8px 16px; border-radius:var(--radius); font-size:14px; font-weight:600;
     background:var(--brand);
     color:#fff; text-decoration:none;
     white-space:nowrap; box-shadow:0 8px 18px -8px rgba(61,65,22,0.55);
     transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
   }
+  /* Mobile-first pill size -- was scattered across 3 breakpoints (2 of
+     them !important, fighting each other; see the "THIRD PASS" comment
+     near the bottom of the mobile-override zone) landing on font-size
+     13px / padding 9-11px 12-16px depending on exact width. Consolidated
+     to one phone value below 768px. */
+  .btn-cta-sm{ font-size:13px; padding:10px 14px }
+  @media (min-width:768px){ .btn-cta-sm{ font-size:14px; padding:8px 16px } }
   .btn-cta-sm:hover{ transform:translateY(-1px); box-shadow:0 10px 22px -8px rgba(61,65,22,0.65); background:#2E310F }
   .btn-cta-sm:active{ transform:translateY(0); box-shadow:0 5px 12px -6px rgba(61,65,22,0.55) }
   /* The one deliberate accent on an otherwise flat button -- the arrow
@@ -315,13 +367,18 @@
   }
   .btn-dot.d-sun{background:var(--sun)}
   .btn-dot.d-slate{background:var(--slate)}
-  @media (max-width:860px){ .nav-links{display:none} }
-
-  /* SS/AV buttons crowd the top bar once .nav-links collapses -- they move
-     into the mobile dropdown panel instead (see .nav-mobile-panel below). */
-  @media (max-width:860px){
+  /* .nav-links' own display:none/flex switch above (768px) now owns
+     this -- this duplicate max-width:860px rule is gone.
+     SS/AV buttons crowd the top bar once .nav-links collapses -- they
+     move into the mobile dropdown panel instead (see .nav-mobile-panel
+     below). Left as a max-width override rather than fully inverted:
+     .nav-tool-btn's true desktop default is declared with the rest of
+     the auth/reports UI further down this file, not migrated to
+     mobile-first yet, so flipping this to min-width without seeing that
+     rule risked guessing its display value wrong. Renumbered from 860
+     to the new standard 768 only. */
+  @media (max-width:767px){
     .nav-tool-btn{ display:none; }
-    .nav-cta{ gap:8px; }
   }
 
   /* Below 640px the row is brand + CTA pill + burger, full stop -- "My
@@ -336,16 +393,25 @@
      same-specificity override up here regardless of the media query. The
      extra `.nav-cta` ancestor bumps specificity so this one always wins,
      no matter what order the rules end up in. */
-  @media (max-width:640px){
+  /* Renumbered from 640 to the standard 767 -- left as a max-width
+     override for the same reason as .nav-tool-btn just above: its true
+     desktop default lives in the not-yet-migrated AUTH section. */
+  @media (max-width:767px){
     .nav-cta .nav-user, .nav-cta .btn-auth{ display:none; }
   }
 
-  /* Mobile nav toggle — hidden on desktop, shown alongside nav-cta below
-     the 860px breakpoint where .nav-links disappears. */
+  /* Mobile nav toggle -- mobile-first now: the base rule below IS the
+     phone state (visible, 44px -- a real thumb target, not the old 38px
+     desktop-derived default that a separate ≤640px rule had to bump up
+     every time). Desktop hides it once .nav-links takes over at 768px,
+     merging what used to be three separate touch points (a display:none
+     default, a ≤640px size bump, a ≤860px visibility toggle) into one
+     mobile-first rule plus one override. */
   .nav-burger{
-    display:none; background:none; border:1px solid var(--line); border-radius:6px;
-    width:38px; height:38px; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;
+    display:flex; background:none; border:1px solid var(--line); border-radius:6px;
+    width:44px; height:44px; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;
   }
+  @media (min-width:768px){ .nav-burger{ display:none; } }
   .nav-burger span, .nav-burger span::before, .nav-burger span::after{
     content:''; display:block; width:18px; height:1.5px; background:var(--text); position:relative; transition:transform .2s ease, opacity .2s ease;
   }
@@ -354,7 +420,6 @@
   .nav-burger.is-open span{ background:transparent; }
   .nav-burger.is-open span::before{ top:0; transform:rotate(45deg); }
   .nav-burger.is-open span::after{ top:0; transform:rotate(-45deg); }
-  @media (max-width:860px){ .nav-burger{ display:flex; } }
 
   .nav-mobile-panel{
     display:none; flex-direction:column; gap:2px;
@@ -368,7 +433,7 @@
   }
   .nav-mobile-panel a:last-child{ border-bottom:none; }
 
-  @media (min-width:861px){ .nav-mobile-panel{ display:none !important; } }
+  @media (min-width:768px){ .nav-mobile-panel{ display:none !important; } }
 
   /* Completely new hero: no illustration. Warm paper background with a
      faint dot-grid texture, headline/CTAs on the left, a live-styled
@@ -1245,11 +1310,12 @@
   .team-card{ padding:26px }
   .team-desc{ font-size:14px }
 
-  /* Tap targets -- 38px is under the ~44px comfortable minimum, and the
-     nav CTA pill's desktop padding runs a little tight for a thumb once
-     it's the only thing left in the row besides the burger. */
-  .nav-burger{ width:44px; height:44px }
-  .nav-cta .btn-cta-sm{ padding:11px 16px }
+  /* nav-burger's tap-target size and the nav CTA pill's mobile padding
+     both moved up to the nav section (mobile-first, near nav.wrap) --
+     this rule was never actually winning the cascade for the pill (a
+     later !important rule always beat it) and nav-burger now carries
+     its 44px size in its own base/mobile rule instead of a bolt-on
+     override here. */
 
   /* Auth/reports pages: same story as the hero -- desktop padding numbers
      that were never revisited for a narrow screen, not anything wrong
@@ -1276,11 +1342,11 @@
    wins on source order, and only ever makes things smaller, never
    touches anything above 480px. */
 @media (max-width:480px){
-  nav.wrap{ height:56px }
-  .brand-mark-img{ height:20px }
-  .brand-word-img{ height:10px }
-  .wrap{ padding:0 16px }
-
+  /* nav.wrap / .brand-mark-img / .brand-word-img / .wrap all had lines
+     here that were dead code -- a later same-specificity rule in the
+     old "THIRD PASS" block below always won instead (see the
+     BREAKPOINTS note near the top of this file). All four now live in
+     their real base/mobile rule up in the nav section instead. */
   .hero{ padding:40px 0 44px }
   .hero-eyebrow{ font-size:12px; margin-bottom:16px }
   .hero-sub{ font-size:14px; margin-top:12px }
@@ -1411,15 +1477,15 @@
    outright over both earlier passes for anything it touches. This is the
    actual "make it noticeably smaller" cut -- not another trim. */
 @media (max-width:640px){
-  nav.wrap{ height:52px }
-  .brand-mark-img{ height:18px }
-  .brand-word-img{ height:9px }
-  /* NOT re-shrinking .nav-burger back to 38px here -- the ≤480px pass
-     above deliberately bumps it to 44px for a real thumb-sized tap
-     target, and this block's own "wins by source order" note meant that
-     bump was silently getting undone on every phone ≤640px, including
-     the ones it was written for. Left at 44px on purpose. */
-  .btn-cta-sm{ font-size:13px !important; padding:9px 12px !important; }
+  /* nav.wrap / .brand-mark-img / .brand-word-img all moved to their
+     real base/mobile rule in the nav section -- this was the pass that
+     had been silently winning for all of them (see the BREAKPOINTS
+     note). .btn-cta-sm's mobile size now lives right after its base
+     rule instead of three breakpoints away from it -- was font-size:13px,
+     padding:9px 12px here down to 480px, then padding:11px 14px below
+     480px (see the deleted "NAV OVERFLOW FIX" section); consolidated to
+     one mobile value, padding:10px 14px, rather than carry a second
+     phone-only tier forward for a ~2px difference nobody could see. */
 
   .hero{ padding:32px 0 36px }
   .hero-eyebrow{ font-size:11.5px !important }
@@ -1455,27 +1521,21 @@
   .ls-score-number{ font-size:20px !important }
 }
 
-/* ---------- NAV OVERFLOW FIX ----------
-   Root cause of the horizontal scroll: .btn-cta-sm has white-space:nowrap
-   (needed on desktop so the pill never wraps awkwardly), and flex items
-   default to min-width:auto, which for nowrap text means "at least as wide
-   as the full unwrapped text" -- so the CTA pill physically could not
-   shrink below ~187px no matter how narrow the screen got, and the nav
-   row (brand + pill + burger) forced the whole page wider than the
-   viewport. Fixed at the source: swap to a short label on phone (so
-   there's no long nowrap text to be rigid about), and let the flex chain
-   actually shrink instead of using its content's natural width as a
-   floor. */
+/* ---------- NAV OVERFLOW FIX (now folded into the mobile-first nav
+   rules above + .btn-cta-sm's own mobile rule below) ----------
+   Root cause of the horizontal scroll this used to patch: .btn-cta-sm
+   has white-space:nowrap (needed on desktop so the pill never wraps
+   awkwardly), and flex items default to min-width:auto, which for
+   nowrap text means "at least as wide as the full unwrapped text" -- so
+   the CTA pill physically could not shrink below ~187px no matter how
+   narrow the screen got, and the nav row (brand + pill + burger) forced
+   the whole page wider than the viewport. Still fixed at the source
+   (short label on phone, min-width:0 down the flex chain) -- just no
+   longer needs its own breakpoint-gated section since nav.wrap/.brand/
+   .nav-cta/.btn-cta-sm carry min-width:0 unconditionally now, and the
+   label swap lives with .btn-cta-sm itself, below. */
 .btn-cta-short{ display:none }
-@media (max-width:640px){
-  nav.wrap, .nav-cta, .brand{ min-width:0 }
-  .btn-cta-sm{ min-width:0; flex-shrink:1 }
-}
-@media (max-width:480px){
-  .btn-cta-full{ display:none }
-  .btn-cta-short{ display:inline }
-  .btn-cta-sm{ padding:11px 14px !important; }
-}
+@media (max-width:768px){ .btn-cta-full{ display:none } .btn-cta-short{ display:inline } }
 
 /* ========================================================================
    HERO LIVE MAP v2 -- components/HeroLiveMap.js / HeroLiveMapCanvas.js
