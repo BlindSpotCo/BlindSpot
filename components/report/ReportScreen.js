@@ -61,23 +61,25 @@ function toneOf(score) {
 }
 function headlineFor(score, hasArea) {
   if (!hasArea) {
-    if (score >= 75) return 'The flat itself looks good.';
-    if (score >= 50) return 'The flat is workable, with things to check.';
-    return 'This flat has real problems.';
+    if (score >= 75) return 'This flat holds up well on its own.';
+    if (score >= 50) return 'This flat is workable — a few things worth checking in person.';
+    return 'Several things on this flat are worth a closer look before you commit.';
   }
   if (score >= 75) return 'Worth going ahead — with a few things to check.';
   if (score >= 58) return 'Worth a look, but go in with your eyes open.';
-  return 'We would think hard about this one.';
+  return 'Worth a very close look before you commit to this one.';
 }
 // The API's quadrant copy is written for us, not for a buyer ("Location
-// Play", "worth comparing other floors/facings"). Same logic, said plainly.
+// Play", "worth comparing other floors/facings"). Same logic, said
+// plainly -- and naming the actual factor (light, outlook, airflow, the
+// streets around it) rather than just judging "the flat" as a whole.
 function verdictSay(areaScore, unitScore) {
   const areaOk = areaScore >= 60;
   const unitOk = unitScore >= 60;
   if (areaOk && unitOk) return 'The locality holds up and so does this particular flat — the combination is what people are actually looking for.';
-  if (!areaOk && unitOk) return 'The flat itself is good. It is the streets around it that have real weaknesses, and those are the ones you cannot change later.';
-  if (areaOk && !unitOk) return 'Good locality, but this specific flat is the weak half — light, outlook or airflow. Ask to see a higher floor or a different facing in the same tower before deciding.';
-  return 'Both the locality and this flat score below average. Worth a very close look before you put money down.';
+  if (!areaOk && unitOk) return 'The flat itself holds up well. It is the streets around it that need scrutiny, and that is the half you cannot change later.';
+  if (areaOk && !unitOk) return 'Good locality — but light, outlook or airflow on this exact floor and facing pull the score down. Ask to see a higher floor or a different facing in the same tower before deciding.';
+  return 'Both halves are worth verifying in person — the locality and this specific floor and facing. Worth a close look before you put money down.';
 }
 function ord(n) {
   const s = ['th', 'st', 'nd', 'rd'];
@@ -161,6 +163,25 @@ export default function ReportScreen() {
   const [assumed, setAssumed] = useState(
     () => params.get('assumed') === '1' || !params.get('floor') || !params.get('facing')
   );
+
+  // "The area" and "the flat" each carry a full breakdown (every factor
+  // row, the sub-scores, the links out) underneath a short summary
+  // (name/floor, rating word, score). On a phone that's two long lists to
+  // scroll past before reaching the map below -- collapsed to the summary
+  // by default there, full breakdown one tap away. Both start OPEN (matches
+  // desktop, where they always stay open) so server and client render the
+  // same markup on first paint; the effect below then collapses them, but
+  // only once, and only if the viewport actually is a phone -- doing this
+  // in state's lazy initializer instead would read `window` during
+  // hydration and mismatch against the server's render every time.
+  const [halfOpen, setHalfOpen] = useState({ area: true, unit: true });
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    if (window.matchMedia('(max-width:767px)').matches) {
+      setHalfOpen({ area: false, unit: false });
+    }
+  }, []);
+  const toggleHalf = (key) => setHalfOpen((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const [scores, setScores] = useState(null);   // { area|null, unit, combined|null }
   const [state, setState] = useState('loading'); // loading | ready | error
@@ -670,6 +691,12 @@ export default function ReportScreen() {
       {/* ---------- the answer, before anything else ---------- */}
       <section className={`bsr-answer is-${topTone}`} aria-live="polite">
         <p className="bsr-big">
+          {/* Names what the number actually is before you see the number
+              itself -- a bare "72 out of 100" with no label doesn't say
+              what it's scoring or for what. */}
+          <span className="bsr-big-label">
+            {hasArea ? 'Neighbourhood + this flat, combined' : 'This flat, on its own'}
+          </span>
           <span className="bsr-big-n">{topScore}</span>
           <span className="bsr-big-of">out of 100</span>
         </p>
@@ -680,6 +707,18 @@ export default function ReportScreen() {
               ? verdictSay(area.score, unit.score)
               : 'We don’t have neighbourhood records for this pin code yet, so this score is the flat on its own — sun, shade, view, privacy and airflow.'}
           </p>
+          {/* This score's flat-half is only ever real once floor + facing
+              are set below -- until then it's scored for a typical mid
+              floor, South-East facing, and presenting it with no caveat
+              read as if it were already this exact unit's verdict. Says
+              so up here, where the number actually is, not only next to
+              the inputs further down the page. */}
+          {assumed && (
+            <p className="bsr-assumed-note">
+              Scored for a typical {ord(DEFAULT_FLOOR)} floor, {DEFAULT_FACING.toLowerCase()}-facing
+              unit — <a href="#the-flat">set the actual floor and facing</a> to score this specific flat.
+            </p>
+          )}
         </div>
 
         {/* Sits with the number it changes -- nobody should have to scroll
@@ -736,6 +775,22 @@ export default function ReportScreen() {
                 <span className="bsr-outof">{area.score} out of 100 · grade {area.grade}</span>
               </p>
 
+              {/* Collapsed to the rating above by default on phone -- the
+                  factor-by-factor breakdown, the link out, and the
+                  methodology note are one tap away instead of forced
+                  scrolling. Always open on tablet/desktop regardless of
+                  halfOpen, via the min-width override in report.css. */}
+              <button
+                type="button"
+                className="bsr-half-toggle"
+                aria-expanded={halfOpen.area}
+                onClick={() => toggleHalf('area')}
+              >
+                <span className={`bsr-half-toggle-chevron${halfOpen.area ? ' is-open' : ''}`} aria-hidden="true">▾</span>
+                {halfOpen.area ? 'Show less' : 'Show the full breakdown'}
+              </button>
+
+              <div className={`bsr-half-detail${halfOpen.area ? '' : ' is-collapsed'}`}>
               <ul className="bsr-rows">
                 {factorKeys.map((k) => (
                   <li key={k}>
@@ -781,6 +836,7 @@ export default function ReportScreen() {
               <p className="bsr-methodology-note">
                 Neighbourhood scores combine cited public-record data with a zone-level model, so nearby pincodes in the same zone can land close together or identical. Named school detail in the full report is the one part sourced locality by locality.
               </p>
+              </div>
             </>
           ) : (
             <div className="bsr-nocover">
@@ -870,6 +926,23 @@ export default function ReportScreen() {
             <span className="bsr-outof">{unit.score} out of 100</span>
             {busy ? <span className="bsr-busy">recalculating…</span> : null}
           </p>
+
+          {/* Same collapse-on-phone pattern as "the area" above -- the
+              sub-score breakdown and the sun/shadow link are one tap away
+              instead of forced scrolling. Floor/facing inputs and the
+              rating stay outside this, above -- they're the actionable
+              part, not detail to hide. */}
+          <button
+            type="button"
+            className="bsr-half-toggle"
+            aria-expanded={halfOpen.unit}
+            onClick={() => toggleHalf('unit')}
+          >
+            <span className={`bsr-half-toggle-chevron${halfOpen.unit ? ' is-open' : ''}`} aria-hidden="true">▾</span>
+            {halfOpen.unit ? 'Show less' : 'Show the full breakdown'}
+          </button>
+
+          <div className={`bsr-half-detail${halfOpen.unit ? '' : ' is-collapsed'}`}>
           {/* The five scores below are computed off the 3D model further
               down the page. Without saying so they read as five numbers
               from nowhere. */}
@@ -910,6 +983,7 @@ export default function ReportScreen() {
               on the same photographs instead of taking them again.
             </span>
           </p>
+          </div>
         </section>
       </div>
 

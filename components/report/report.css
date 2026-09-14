@@ -91,6 +91,14 @@
 }
 
 .bsr-big{display:flex;flex-direction:column;flex:none}
+/* Same mono-eyebrow idiom as .bsr-kicker below, sized down slightly so it
+   doesn't compete with the 78px number underneath it -- says what the
+   number is scoring before you read the number itself. */
+.bsr-big-label{
+  font-family:'Geist Mono',monospace;font-weight:600;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-mute,#5A5140);margin-bottom:7px;
+}
 .bsr-big-n{
   font-size:78px;line-height:.88;font-weight:800;letter-spacing:-.04em;
   font-variant-numeric:tabular-nums;color:var(--bsr-good);
@@ -102,6 +110,14 @@
 .bsr-answer-say{flex:1;min-width:min(290px,100%)}
 .bsr-answer-say h1{font-size:30px;line-height:1.24;font-weight:700;margin-bottom:10px}
 .bsr-answer-say p{font-size:17px;color:var(--text-mute,#5A5140);max-width:62ch}
+/* Calls out that the flat-half of the score above is a placeholder floor
+   and facing, not yet this exact unit -- sits right under the verdict
+   text so it's seen before, not after, the number is taken at face value. */
+.bsr-assumed-note{
+  margin-top:14px;font-size:14.5px;line-height:1.5;color:var(--text-mute,#5A5140);
+  background:var(--bg-2,#F1E9DA);border-radius:8px;padding:10px 14px;max-width:56ch;
+}
+.bsr-assumed-note a{color:var(--ss,#AF5F30);font-weight:600;text-decoration:underline;text-underline-offset:2px}
 
 /* ---------------- the two halves ---------------- */
 .bsr-halves{
@@ -233,6 +249,28 @@
 .bsr-methodology-note{
   margin-top:14px;padding-top:14px;border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
   font-size:12px;line-height:1.55;color:var(--text-mute,#5A5140);max-width:52ch;opacity:.85;
+}
+
+/* ---------------- collapse-on-phone for "the area" / "the flat" ----
+   Mobile-first: hidden below 768px when collapsed (the common case,
+   since the mount effect in ReportScreen.js closes both by default on
+   phone), forced back to visible at 768px+ regardless of the collapsed
+   class -- desktop never shows a toggle and never actually collapses,
+   whatever React's state says. */
+.bsr-half-toggle{
+  display:flex;align-items:center;gap:6px;margin-top:14px;
+  background:none;border:none;padding:0;cursor:pointer;
+  font-family:'Geist Mono',monospace;font-weight:600;font-size:12.5px;
+  letter-spacing:.04em;color:var(--text-mute,#5A5140);
+}
+.bsr-area .bsr-half-toggle:hover{color:var(--av,#7A2E43)}
+.bsr-unit .bsr-half-toggle:hover{color:var(--ss,#AF5F30)}
+.bsr-half-toggle-chevron{display:inline-block;transition:transform .18s ease}
+.bsr-half-toggle-chevron.is-open{transform:rotate(180deg)}
+.bsr-half-detail.is-collapsed{display:none}
+@media (min-width:768px){
+  .bsr-half-toggle{display:none}
+  .bsr-half-detail.is-collapsed{display:block}
 }
 
 /* ---------------- the map, its own full-width band ----------------
