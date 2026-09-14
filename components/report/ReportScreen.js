@@ -14,7 +14,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import dynamic from 'next/dynamic';
 import Map3DShadow from '@/components/sunscout/Map3DShadow';
 import ReportModal from '@/components/sunscout/ReportModal';
 import useMapCapture, { SHOTS } from '@/lib/sunscout/useMapCapture';
@@ -22,12 +21,6 @@ import { FACTOR_LABELS, FACING_OPTS } from '@/lib/property-score/ui';
 import { getActionItems } from '@/lib/property-score/actionItems';
 import './report.css';
 
-// Leaflet touches `window` at import time, which breaks this page's static
-// prerender if it's imported directly here -- ssr:false + its own file is
-// the same fix HeroLiveMap.js already uses for the homepage's map. The
-// fixed-height card around it (.bsr-map-intro) stays in this file and
-// always renders, so nothing jumps once this chunk pops in client-side.
-const ReportMapIntro = dynamic(() => import('./ReportMapIntro'), { ssr: false });
 
 // Order the area rows the way a buyer reads them: what they asked about
 // first, the plumbing of daily life after.
@@ -699,12 +692,147 @@ export default function ReportScreen() {
         </span>
       </header>
 
-      {/* ---------- the map, before the number ---------- */}
-      {hasPlace && (
-        <div className="bsr-map-intro">
-          <ReportMapIntro lat={lat} lon={lon} />
+      {/* ---------- the map, full width ----------
+          It lived inside the flat's card until the card's ~500px made
+          Map3DShadow hide its own view-angle pad (its stylesheet drops
+          .view-controls under 768px), so half the map was unreachable.
+          Full width gives the controls back and gives the shadows room. */}
+      <section className="bsr-mapzone" id="the-block" aria-label="The block in 3D">
+        <p className="bsr-kicker">Where the flat&apos;s score comes from</p>
+        <p className="bsr-mapzone-lede">
+          The sun&apos;s path across this block today, over the real buildings around it. Sun, Shade &amp; Heat and
+          Wind for the {ord(floor)} floor facing {facing.toLowerCase()} are read off this.{' '}
+          <a href="#the-flat">Back to the flat&apos;s scores ↓</a>
+        </p>
+        <form className="bsr-locbar" onSubmit={onSearchSubmit}>
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Another address, or coordinates like 12.9716, 77.5946"
+            aria-label="Move the pin to another address or coordinates"
+          />
+          <button type="submit" disabled={locBusy}>{locBusy ? 'Finding…' : 'Move the pin'}</button>
+          <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
+            Use my location
+          </button>
+        </form>
+        {locError ? <p className="bsr-locerror">{locError}</p> : null}
+
+        <div className="bsr-map" onMouseLeave={() => setMapArmed(true)}>
+          {solar?.pathData ? (
+            <Map3DShadow
+              lat={lat}
+              lon={lon}
+              pathData={solar.pathData}
+              simTime={simTimeOf(minutes)}
+              simPos={solar.simPos}
+              sunTimes={solar.sunTimes}
+              animating={animating}
+              onLocationSelect={onMapClick}
+              onReady={capture.onReady}
+              onScreenshot={capture.onScreenshot}
+              onStatus={capture.onStatus}
+              debug={debug}
+            />
+          ) : (
+            <p className="bsr-map-wait">
+              {solarFailed ? 'The 3D view couldn’t load. The scores below are unaffected.' : 'Building the 3D view…'}
+            </p>
+          )}
+          {solar?.pathData && (
+            <div className="bsr-dates" role="group" aria-label="Which day to simulate">
+              {SEASONS.map((sn) => {
+                const on = seasonKey === sn.key;
+                return (
+                  <button
+                    key={sn.key}
+                    type="button"
+                    className={`bsr-date${on ? ' is-on' : ''}`}
+                    aria-pressed={on}
+                    title={sn.note}
+                    onClick={() => setSeasonKey(sn.key)}
+                  >
+                    {sn.label}
+                    {sn.md && <i>{prettyDate(seasonDate(sn.key))}</i>}
+                  </button>
+                );
+              })}
+              <button
+                type="button"
+                className={`bsr-date${seasonKey === 'custom' ? ' is-on' : ''}`}
+                aria-pressed={seasonKey === 'custom'}
+                title="Any other day of the year"
+                onClick={() => setSeasonKey('custom')}
+              >
+                Pick a date
+              </button>
+              {seasonKey === 'custom' && (
+                <input
+                  type="date"
+                  className="bsr-datein"
+                  value={customDate || todayStr()}
+                  onChange={(e) => setCustomDate(e.target.value)}
+                  aria-label="Date to simulate"
+                />
+              )}
+              <span className="bsr-datenote">
+                {seasonKey === 'custom'
+                  ? `Showing ${prettyDate(simDate)}`
+                  : SEASONS.find((x) => x.key === seasonKey)?.note}
+              </span>
+            </div>
+          )}
+          {solar?.pathData && mapArmed && (
+            <button
+              type="button"
+              className="bsr-map-guard"
+              onClick={() => setMapArmed(false)}
+              aria-label="Click to interact with the 3D map"
+            >
+              Click to interact with the map
+            </button>
+          )}
         </div>
-      )}
+
+        <p className="bsr-timerow">
+          <button
+            type="button"
+            className={`bsr-play${animating ? ' is-on' : ''}`}
+            onClick={() => setAnimating((a) => !a)}
+            aria-pressed={animating}
+          >
+            {animating ? '\u2759\u2759  Pause' : '\u25B6  Watch the day'}
+          </button>
+          {animating ? (
+            <span className="bsr-sunhint">Sunrise to sunset, shadows falling where they really fall.</span>
+          ) : (
+            <>
+              <input
+                id="bsr-time"
+                type="range"
+                min="330"
+                max="1140"
+                step="10"
+                value={minutes}
+                onChange={(e) => setMinutes(Number(e.target.value))}
+                aria-label="Time of day"
+              />
+              <span className="bsr-clock">{clock(minutes)}</span>
+            </>
+          )}
+        </p>
+        <p className="bsr-compare-cue">
+          Weighing this against another flat?{' '}
+          <a href="/compare">Put them side by side</a> — the sun each one gets, and what the
+          price difference actually buys.
+        </p>
+        <p className="bsr-maphint">
+          {reportRunning
+            ? 'The pin is locked while the report is built from this spot — moving it now would mix two blocks into one report.'
+            : 'Click the map to interact with it, then click again to move the pin to another building.'}
+        </p>
+      </section>
 
       {/* ---------- the answer, before anything else ---------- */}
       <section className={`bsr-answer is-${topTone}`} aria-live="polite">
@@ -951,7 +1079,7 @@ export default function ReportScreen() {
               from nowhere. */}
           <p className="bsr-source">
             Worked out from the sun&apos;s real path over the buildings around this one.{' '}
-            <a href="#the-block">See the block in 3D ↓</a>
+            <a href="#the-block">See the block in 3D ↑</a>
           </p>
 
 
@@ -989,148 +1117,6 @@ export default function ReportScreen() {
           </div>
         </section>
       </div>
-
-      {/* ---------- the map, full width ----------
-          It lived inside the flat's card until the card's ~500px made
-          Map3DShadow hide its own view-angle pad (its stylesheet drops
-          .view-controls under 768px), so half the map was unreachable.
-          Full width gives the controls back and gives the shadows room. */}
-      <section className="bsr-mapzone" id="the-block" aria-label="The block in 3D">
-        <p className="bsr-kicker">Where the flat&apos;s score comes from</p>
-        <p className="bsr-mapzone-lede">
-          The sun&apos;s path across this block today, over the real buildings around it. Sun, Shade &amp; Heat and
-          Wind for the {ord(floor)} floor facing {facing.toLowerCase()} are read off this.{' '}
-          <a href="#the-flat">Back to the flat&apos;s scores ↑</a>
-        </p>
-        <form className="bsr-locbar" onSubmit={onSearchSubmit}>
-          <input
-            type="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Another address, or coordinates like 12.9716, 77.5946"
-            aria-label="Move the pin to another address or coordinates"
-          />
-          <button type="submit" disabled={locBusy}>{locBusy ? 'Finding…' : 'Move the pin'}</button>
-          <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
-            Use my location
-          </button>
-        </form>
-        {locError ? <p className="bsr-locerror">{locError}</p> : null}
-
-        <div className="bsr-map" onMouseLeave={() => setMapArmed(true)}>
-          {solar?.pathData ? (
-            <Map3DShadow
-              lat={lat}
-              lon={lon}
-              pathData={solar.pathData}
-              simTime={simTimeOf(minutes)}
-              simPos={solar.simPos}
-              sunTimes={solar.sunTimes}
-              animating={animating}
-              onLocationSelect={onMapClick}
-              onReady={capture.onReady}
-              onScreenshot={capture.onScreenshot}
-              onStatus={capture.onStatus}
-              debug={debug}
-            />
-          ) : (
-            <p className="bsr-map-wait">
-              {solarFailed ? 'The 3D view couldn’t load. The scores below are unaffected.' : 'Building the 3D view…'}
-            </p>
-          )}
-          {solar?.pathData && (
-            <div className="bsr-dates" role="group" aria-label="Which day to simulate">
-              {SEASONS.map((sn) => {
-                const on = seasonKey === sn.key;
-                return (
-                  <button
-                    key={sn.key}
-                    type="button"
-                    className={`bsr-date${on ? ' is-on' : ''}`}
-                    aria-pressed={on}
-                    title={sn.note}
-                    onClick={() => setSeasonKey(sn.key)}
-                  >
-                    {sn.label}
-                    {sn.md && <i>{prettyDate(seasonDate(sn.key))}</i>}
-                  </button>
-                );
-              })}
-              <button
-                type="button"
-                className={`bsr-date${seasonKey === 'custom' ? ' is-on' : ''}`}
-                aria-pressed={seasonKey === 'custom'}
-                title="Any other day of the year"
-                onClick={() => setSeasonKey('custom')}
-              >
-                Pick a date
-              </button>
-              {seasonKey === 'custom' && (
-                <input
-                  type="date"
-                  className="bsr-datein"
-                  value={customDate || todayStr()}
-                  onChange={(e) => setCustomDate(e.target.value)}
-                  aria-label="Date to simulate"
-                />
-              )}
-              <span className="bsr-datenote">
-                {seasonKey === 'custom'
-                  ? `Showing ${prettyDate(simDate)}`
-                  : SEASONS.find((x) => x.key === seasonKey)?.note}
-              </span>
-            </div>
-          )}
-          {solar?.pathData && mapArmed && (
-            <button
-              type="button"
-              className="bsr-map-guard"
-              onClick={() => setMapArmed(false)}
-              aria-label="Click to interact with the 3D map"
-            >
-              Click to interact with the map
-            </button>
-          )}
-        </div>
-
-        <p className="bsr-timerow">
-          <button
-            type="button"
-            className={`bsr-play${animating ? ' is-on' : ''}`}
-            onClick={() => setAnimating((a) => !a)}
-            aria-pressed={animating}
-          >
-            {animating ? '\u2759\u2759  Pause' : '\u25B6  Watch the day'}
-          </button>
-          {animating ? (
-            <span className="bsr-sunhint">Sunrise to sunset, shadows falling where they really fall.</span>
-          ) : (
-            <>
-              <input
-                id="bsr-time"
-                type="range"
-                min="330"
-                max="1140"
-                step="10"
-                value={minutes}
-                onChange={(e) => setMinutes(Number(e.target.value))}
-                aria-label="Time of day"
-              />
-              <span className="bsr-clock">{clock(minutes)}</span>
-            </>
-          )}
-        </p>
-        <p className="bsr-compare-cue">
-          Weighing this against another flat?{' '}
-          <a href="/compare">Put them side by side</a> — the sun each one gets, and what the
-          price difference actually buys.
-        </p>
-        <p className="bsr-maphint">
-          {reportRunning
-            ? 'The pin is locked while the report is built from this spot — moving it now would mix two blocks into one report.'
-            : 'Click the map to interact with it, then click again to move the pin to another building.'}
-        </p>
-      </section>
 
       <section className="bsr-visit">
         <h2>What to check before you decide</h2>
