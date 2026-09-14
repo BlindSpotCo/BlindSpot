@@ -292,7 +292,10 @@ export default function ReportScreen() {
 
         setScores({
           area: null,
-          unit: { score: unitScore, grade: json.grade, floor, facing, subScores: json.subScores || [] },
+          unit: {
+            score: unitScore, grade: json.grade, floor, facing,
+            subScores: json.subScores || [], thermalCost: json.thermalCost,
+          },
           combined: null,
           notes: json.dataNotes,
         });

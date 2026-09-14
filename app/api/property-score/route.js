@@ -77,6 +77,7 @@ export async function GET(req) {
     const tzNum = Number.isFinite(parseInt(tzOffset, 10)) ? parseInt(tzOffset, 10) : 330;
     const ssResult = await computeLiveScore({
       lat, lon, floor: floorNum, facing, tzOffsetMinutes: tzNum,
+      city: avRecord.city,
     });
 
     const areaScore = persona
@@ -111,6 +112,7 @@ export async function GET(req) {
         grade: ssResult.grade,
         weight: Math.round((weightUnit / totalWeight) * 100),
         subScores: ssResult.subScores,
+        thermalCost: ssResult.thermalCost,
       },
       formula: `(${areaScore} × ${Math.round((weightArea/totalWeight)*100)}%) + (${unitScore} × ${Math.round((weightUnit/totalWeight)*100)}%) = ${combinedScore}`,
       dataNotes: [
