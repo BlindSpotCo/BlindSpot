@@ -698,25 +698,93 @@ export default function ReportScreen() {
           .view-controls under 768px), so half the map was unreachable.
           Full width gives the controls back and gives the shadows room. */}
       <section className="bsr-mapzone" id="the-block" aria-label="The block in 3D">
-        <p className="bsr-kicker">Where the flat&apos;s score comes from</p>
-        <p className="bsr-mapzone-lede">
-          The sun&apos;s path across this block today, over the real buildings around it. Sun, Shade &amp; Heat and
-          Wind for the {ord(floor)} floor facing {facing.toLowerCase()} are read off this.{' '}
-          <a href="#the-flat">Back to the flat&apos;s scores ↓</a>
-        </p>
-        <form className="bsr-locbar" onSubmit={onSearchSubmit}>
-          <input
-            type="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Another address, or coordinates like 12.9716, 77.5946"
-            aria-label="Move the pin to another address or coordinates"
-          />
-          <button type="submit" disabled={locBusy}>{locBusy ? 'Finding…' : 'Move the pin'}</button>
-          <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
-            Use my location
-          </button>
-        </form>
+        {/* Everything that changes what the map shows lives in one bar
+            above it now -- address, floor, facing and the day to
+            simulate, all in normal document flow. This used to be a
+            paragraph of explanation plus a row of pill buttons pinned
+            OVER the top-left corner of the map itself (.bsr-dates,
+            position:absolute), which is what was colliding with
+            Map3DShadow's own "set view angle" pad in its top-right
+            corner -- two absolutely-positioned panels sharing the same
+            strip of the map with nothing keeping them apart. Moving the
+            controls off the map entirely removes the collision instead
+            of just nudging it. */}
+        <div className="bsr-mapbar">
+          <form className="bsr-locbar" onSubmit={onSearchSubmit}>
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Another address, or coordinates like 12.9716, 77.5946"
+              aria-label="Move the pin to another address or coordinates"
+            />
+            <button type="submit" disabled={locBusy}>{locBusy ? 'Finding…' : 'Move the pin'}</button>
+            <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
+              Use my location
+            </button>
+          </form>
+
+          <p className="bsr-set">
+            <label className="bsr-set-field">
+              <span>Floor</span>
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={2}
+                value={floorText}
+                onChange={(e) => {
+                  const raw = e.target.value.replace(/[^\d]/g, '').slice(0, 2);
+                  setFloorText(raw);
+                  const n = parseInt(raw, 10);
+                  if (Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR) { setAssumed(false); setFloor(n); }
+                }}
+                onBlur={() => {
+                  const n = parseInt(floorText, 10);
+                  const clamped = Number.isFinite(n) ? Math.min(MAX_FLOOR, Math.max(1, n)) : floor;
+                  setFloor(clamped);
+                  setFloorText(String(clamped));
+                }}
+                aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
+                placeholder="5"
+              />
+            </label>
+            <label className="bsr-set-field">
+              <span>Faces</span>
+              <select
+                value={facing}
+                onChange={(e) => { setAssumed(false); setFacing(e.target.value); }}
+              >
+                {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
+              </select>
+            </label>
+            <label className="bsr-set-field">
+              <span>Date</span>
+              <select
+                value={seasonKey}
+                onChange={(e) => setSeasonKey(e.target.value)}
+                aria-label="Which day to simulate"
+              >
+                {SEASONS.map((sn) => (
+                  <option key={sn.key} value={sn.key}>
+                    {sn.label}{sn.md ? ` — ${prettyDate(seasonDate(sn.key))}` : ''}
+                  </option>
+                ))}
+                <option value="custom">Pick a date…</option>
+              </select>
+            </label>
+            {seasonKey === 'custom' && (
+              <input
+                type="date"
+                className="bsr-datein"
+                value={customDate || todayStr()}
+                onChange={(e) => setCustomDate(e.target.value)}
+                aria-label="Date to simulate"
+              />
+            )}
+            {assumed ? <span className="bsr-assumed">assumed — set yours</span> : null}
+          </p>
+        </div>
         {locError ? <p className="bsr-locerror">{locError}</p> : null}
 
         <div className="bsr-map" onMouseLeave={() => setMapArmed(true)}>
@@ -739,49 +807,6 @@ export default function ReportScreen() {
             <p className="bsr-map-wait">
               {solarFailed ? 'The 3D view couldn’t load. The scores below are unaffected.' : 'Building the 3D view…'}
             </p>
-          )}
-          {solar?.pathData && (
-            <div className="bsr-dates" role="group" aria-label="Which day to simulate">
-              {SEASONS.map((sn) => {
-                const on = seasonKey === sn.key;
-                return (
-                  <button
-                    key={sn.key}
-                    type="button"
-                    className={`bsr-date${on ? ' is-on' : ''}`}
-                    aria-pressed={on}
-                    title={sn.note}
-                    onClick={() => setSeasonKey(sn.key)}
-                  >
-                    {sn.label}
-                    {sn.md && <i>{prettyDate(seasonDate(sn.key))}</i>}
-                  </button>
-                );
-              })}
-              <button
-                type="button"
-                className={`bsr-date${seasonKey === 'custom' ? ' is-on' : ''}`}
-                aria-pressed={seasonKey === 'custom'}
-                title="Any other day of the year"
-                onClick={() => setSeasonKey('custom')}
-              >
-                Pick a date
-              </button>
-              {seasonKey === 'custom' && (
-                <input
-                  type="date"
-                  className="bsr-datein"
-                  value={customDate || todayStr()}
-                  onChange={(e) => setCustomDate(e.target.value)}
-                  aria-label="Date to simulate"
-                />
-              )}
-              <span className="bsr-datenote">
-                {seasonKey === 'custom'
-                  ? `Showing ${prettyDate(simDate)}`
-                  : SEASONS.find((x) => x.key === seasonKey)?.note}
-              </span>
-            </div>
           )}
           {solar?.pathData && mapArmed && (
             <button
