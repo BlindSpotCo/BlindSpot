@@ -86,11 +86,17 @@
 
 /* ---------------- the answer ---------------- */
 .bsr-answer{
-  display:flex;align-items:center;gap:32px;flex-wrap:wrap;
+  /* align-items:flex-start, not center -- the assumed-note callout can
+     make .bsr-answer-say noticeably taller than .bsr-big, and centering
+     two columns of different height floats the number block away from
+     the headline instead of lining their tops up. A small nudge on
+     .bsr-big brings the eyebrow label level with the headline's cap
+     height instead of its line-box top, which sits a little higher. */
+  display:flex;align-items:flex-start;gap:32px;flex-wrap:wrap;
   padding:32px 0 0;
 }
 
-.bsr-big{display:flex;flex-direction:column;flex:none}
+.bsr-big{display:flex;flex-direction:column;flex:none;margin-top:3px}
 /* Same mono-eyebrow idiom as .bsr-kicker below, sized down slightly so it
    doesn't compete with the 78px number underneath it -- says what the
    number is scoring before you read the number itself. */
