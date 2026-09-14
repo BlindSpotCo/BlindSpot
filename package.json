@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "validate:data": "python3 scripts/validate_data_integrity.py"
+    "validate:data": "python3 scripts/validate_data_integrity.py",
+    "validate:quality": "python3 scripts/quality_metrics.py",
+    "validate:benchmark": "python3 scripts/benchmark_price_correlation.py",
+    "validate:checklist": "python3 scripts/city_launch_checklist.py"
   },
   "dependencies": {
     "@napi-rs/canvas": "^1.0.5",

@@ -62,24 +62,59 @@ export function Info({ text }) {
 
 // One box per category — title + a grid of label/value pairs, each with its
 // own hover tooltip. Matches AV's own StatCard exactly (label, value, tip).
-function CategoryCard({ title, tip, stats, pinCode, city }) {
+function CategoryCard({ title, tip, stats, pinCode, city, provenance }) {
   return (
     <BPF style={{ padding: '18px 20px' }}>
       <p style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', margin: '0 0 14px', display: 'flex', alignItems: 'center' }}>{title}<Info text={tip} /></p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '14px 20px' }}>
-        {stats.filter(Boolean).map(([label, val, itemTip, fieldKey]) => (
+        {stats.filter(Boolean).map(([label, val, itemTip, fieldKey]) => {
+          const prov = fieldKey ? provenance?.[fieldKey] : null;
+          return (
           <div key={label}>
             <div style={{ fontSize: 11.5, textTransform: 'uppercase', letterSpacing: '.05em', color: 'var(--text-dim)', display: 'flex', alignItems: 'center' }}>{label}<Info text={itemTip} /></div>
             <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 15.5, fontWeight: 400, marginTop: 3, color: 'var(--text)', display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
               {val ?? '-'}
+              {prov && <ConfidenceBadge provenance={prov} />}
               {fieldKey && pinCode && (
                 <FieldFeedback pinCode={pinCode} city={city} fieldName={fieldKey} fieldLabel={label} currentValue={val} />
               )}
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </BPF>
+  );
+}
+
+// L0 provenance -> L6 calibrated-display badge (docs/data-integrity-architecture.md,
+// items 6/L0). Only renders for a field that actually carries a _provenance entry --
+// most fields don't yet, so most rows show nothing here until they do (see this
+// file's own comment above CategoryCard's `provenance` prop).
+const CONFIDENCE_STYLE = {
+  high:   { label: 'verified', color: '#1a7a3c' },
+  medium: { label: 'estimated', color: '#9a6b00' },
+  low:    { label: 'unverified', color: '#a33' },
+  none:   { label: 'no data', color: '#a33' },
+};
+function ConfidenceBadge({ provenance }) {
+  const style = CONFIDENCE_STYLE[provenance.confidence] || CONFIDENCE_STYLE.medium;
+  const title = [
+    provenance.source_id && `Source: ${provenance.source_id}`,
+    provenance.method && `Method: ${provenance.method}`,
+    provenance.as_of && `As of: ${provenance.as_of}`,
+  ].filter(Boolean).join(' \u00b7 ');
+  return (
+    <span
+      title={title}
+      style={{
+        fontSize: 9.5, fontWeight: 700, letterSpacing: '.03em', textTransform: 'uppercase',
+        color: style.color, border: `1px solid ${style.color}`, borderRadius: 999,
+        padding: '1px 6px', marginLeft: 6, lineHeight: 1.5, cursor: 'help',
+      }}
+    >
+      {style.label}
+    </span>
   );
 }
 
@@ -258,7 +293,7 @@ export default function AVDetailedReadout({ record }) {
           ['Score', s.power != null ? `${s.power}/100` : '-', 'Weighted blend of outage frequency (60%) and average outage duration (40%).'],
         ]} />
 
-        <CategoryCard title="Connectivity & Infrastructure" tip={source('infrastructure', record.city)} pinCode={record.pin_code} city={record.city} stats={[
+        <CategoryCard title="Connectivity & Infrastructure" tip={source('infrastructure', record.city)} pinCode={record.pin_code} city={record.city} provenance={record._provenance} stats={[
           ['Zone', record.zone_type, 'Land-use zone type, residential, mixed, commercial or industrial.', 'zone_type'],
           ['Metro nearby', record.metro_stations_nearby, 'Number of operational metro stations near this pin.', 'metro_stations_nearby'],
           ['Metro planned', record.metro_planned_stations, 'Approved but not-yet-open metro stations nearby.', 'metro_planned_stations'],
