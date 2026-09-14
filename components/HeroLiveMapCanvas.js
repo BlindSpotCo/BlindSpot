@@ -40,13 +40,18 @@ const DEFAULT_ZOOM = 13; // whole zoom level -- a fractional resting zoom (was 1
 // the .hlm-tiles filter's own blur below.
 const FLY_ZOOM = 15;
 
-// How long the map sits on the picked pin -- fly-to still playing,
-// pin-drop still registering -- before the report opens on its own.
-// Selecting an address used to need a second, separate click on a
-// "see the report" button; now that click is gone, this is just enough
-// of a beat that the pin doesn't get covered by the transition the
-// instant it lands.
-const AUTO_REPORT_HOLD_MS = 300;
+// How long the map sits on the picked pin before the "acquiring site"
+// transition takes over and the report opens. This has to be at least
+// as long as FlyTo's own animation (1.1s) -- PinDropTransition's field
+// starts wiping the instant this timer fires and fully covers the
+// screen ~580ms later (see .pdt-field in globals.css), so a shorter
+// hold was cutting the fly-to off before the map ever reached the
+// picked location, let alone sat there long enough to read street
+// names at the zoomed-in level. This used to be tuned to 300ms for an
+// insight strip that showed neighbourhood/AQI facts under the pin --
+// that strip is gone (see the file header comment), so nothing left
+// needs it shorter than the animation it's covering.
+const AUTO_REPORT_HOLD_MS = 1250;
 
 // Real categories BlindSpot actually scores -- not invented copy.
 // Sunlight/obstruction/shadow come from the Sunscout floor+facing engine
