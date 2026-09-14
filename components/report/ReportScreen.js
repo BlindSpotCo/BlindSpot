@@ -1152,6 +1152,24 @@ export default function ReportScreen() {
                 <span className={`bsr-tag is-${toneOf(s.score)}`}>{word(s.score)}</span>
               </li>
             ))}
+            {/* A ₹ figure, not a Good/Fair/Poor judgement -- riding on the
+                same Shade & Heat exposure data, but shown as its own row
+                with a neutral tag rather than a sixth graded score. The
+                full formula sits in the title attribute for anyone who
+                hovers; the visible note stays a one-line caveat. */}
+            {unit.thermalCost && (
+              <li>
+                <span className="bsr-row-what">
+                  Est. summer AC cost
+                  <span className="bsr-row-note" title={unit.thermalCost.methodology}>
+                    Standard 1.5-ton AC, typical summer use — an estimate to compare units, not a bill.
+                  </span>
+                </span>
+                <span className="bsr-tag is-none">
+                  ₹{unit.thermalCost.estCostRange[0].toLocaleString('en-IN')}–{unit.thermalCost.estCostRange[1].toLocaleString('en-IN')}/mo
+                </span>
+              </li>
+            )}
           </ul>
           </div>
 
