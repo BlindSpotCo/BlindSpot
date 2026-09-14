@@ -49,12 +49,23 @@
 .bsr-empty h1{font-size:30px;margin-bottom:10px}
 .bsr-empty p{max-width:46ch;margin:0 auto 22px;font-size:17px}
 
-/* ---------------- address bar ---------------- */
+/* ---------------- title + address bar ---------------- */
 .bsr-head{
-  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
-  padding:18px 0 15px;border-bottom:1px solid var(--line,rgba(28,24,18,.14));
+  padding:22px 0 15px;border-bottom:1px solid var(--line,rgba(28,24,18,.14));
 }
-.bsr-addr{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.bsr-head-top{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
+}
+/* One real heading before anything else on the page -- small and quiet
+   (this is a caption for what follows, not the verdict itself), but it's
+   what used to be missing: the page opened straight on the address pill
+   with nothing saying what the screen even was. */
+.bsr-title{
+  font-family:'Geist Mono',monospace;font-weight:600;
+  font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-mute,#5A5140);
+}
+.bsr-addr{display:flex;align-items:center;gap:10px;min-width:0;flex:1;margin-top:10px}
 .bsr-pin{
   width:11px;height:11px;border-radius:50%;flex:none;
   background:var(--ss,#AF5F30);box-shadow:0 0 0 4px rgba(175,95,48,.15);
@@ -114,7 +125,7 @@
 .bsr-big-of{font-size:15px;font-weight:500;color:var(--text-mute,#5A5140);margin-top:9px}
 
 .bsr-answer-say{flex:1;min-width:min(290px,100%)}
-.bsr-answer-say h1{font-size:30px;line-height:1.24;font-weight:700;margin-bottom:10px}
+.bsr-answer-say h2{font-size:30px;line-height:1.24;font-weight:700;margin-bottom:10px}
 .bsr-answer-say p{font-size:17px;color:var(--text-mute,#5A5140);max-width:62ch}
 /* Calls out that the flat-half of the score above is a placeholder floor
    and facing, not yet this exact unit -- sits right under the verdict
@@ -288,15 +299,20 @@
   margin-top:22px;padding-top:20px;
   border-top:1px solid var(--line-soft,rgba(28,24,18,.1));
 }
+/* .bsr-mapcard is the one frame (border + radius) shared by the toolbar
+   above and the map below -- moved here from .bsr-map itself, so the two
+   read as one unit with no seam between them. */
+.bsr-mapcard{
+  margin-top:16px;border:1px solid var(--line,rgba(28,24,18,.14));
+  border-radius:10px;overflow:hidden;background:var(--paper,#FFFDF8);
+}
 /* A real `height`, not min-height: Map3DShadow's iframe carries an inline
    height:100%, which beats any class rule and resolves against nothing
    when the parent's height is auto -- that's what collapsed the map to a
    strip with dead space under it. Sized close to the viewport itself
-   ("full screen") rather than the old fixed 620px card -- no border/
-   radius any more either, so it reads as one continuous view instead of
-   a boxed thumbnail. */
+   ("full screen") rather than the old fixed 620px card. */
 .bsr-map{
-  margin-top:14px;overflow:hidden;position:relative;
+  overflow:hidden;position:relative;
   height:clamp(460px, 84vh, 920px);
   background:var(--bg-2,#F1E9DA);
 }
@@ -460,11 +476,6 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   outline:2px solid var(--ss,#AF5F30);outline-offset:3px;border-radius:3px;
 }
 
-@media (max-width:1000px){
-  /* below this the iframe is under 768px and hides its own controls;
-     let it be tall instead so panning is still workable */
-  .bsr-map{height:62vh}
-}
 @media (max-width:900px){
   /* stacked, the column rule becomes a row rule -- same divider,
      the other axis */
@@ -473,36 +484,52 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   .bsr-unit{padding-left:0;border-left:0;border-top:1px solid var(--line-soft,rgba(28,24,18,.1));padding-top:32px}
   .bsr-big-n{font-size:64px}
   .bsr-answer{gap:22px}
-  .bsr-answer-say h1{font-size:25px}
+  .bsr-answer-say h2{font-size:25px}
   .bsr-head-links{width:100%}
 }
 
-/* ---------------- moving the pin ---------------- */
+/* ---------------- moving the pin: the map's own toolbar ----------------
+   Lives inside .bsr-mapcard, flush against the map below it -- one framed
+   unit instead of a form floating above an unrelated viewport. Every
+   control here is deliberately smaller than its counterpart elsewhere on
+   the page (compare 34px against .bsr-set's usual 46px in "the flat"
+   below): this bar's job is to be glanced at and adjusted in passing,
+   not read. */
 .bsr-mapbar{
-  display:flex;flex-wrap:wrap;align-items:center;gap:10px 24px;
-  margin-top:18px;
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;
+  padding:10px 14px;
+  background:var(--bg-2,#F1E9DA);
+  border-bottom:1px solid var(--line,rgba(28,24,18,.14));
 }
-.bsr-mapbar .bsr-locbar{ margin-top:0; flex:1 1 320px; }
-.bsr-mapbar .bsr-set{ margin-top:0; flex:0 1 auto; }
+.bsr-mapbar .bsr-locbar{ margin-top:0; flex:1 1 240px; }
+.bsr-mapbar .bsr-set{ margin-top:0; flex:0 1 auto; gap:10px; }
+.bsr-mapbar .bsr-set-field span{ font-size:11.5px; }
+.bsr-mapbar .bsr-set select,
+.bsr-mapbar .bsr-set input[type="text"]{
+  font-size:13px; min-height:34px; padding:5px 8px;
+}
+.bsr-mapbar .bsr-set input[type="text"]{ width:2.6em; }
+.bsr-mapbar .bsr-datein{ min-height:34px; font-size:13px; padding:5px 8px; }
+.bsr-mapbar .bsr-assumed{ font-size:11.5px; padding:3px 7px; }
 .bsr-locbar{
-  display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:18px;
+  display:flex;gap:6px;flex-wrap:wrap;align-items:center;
 }
 .bsr-locbar input[type=search]{
-  flex:1;min-width:170px;font:inherit;font-size:16px;
-  padding:11px 14px;border-radius:4px;min-height:46px;
+  flex:1;min-width:150px;font:inherit;font-size:13.5px;
+  padding:6px 10px;border-radius:4px;min-height:34px;
   border:1px solid var(--line,rgba(28,24,18,.14));
   background:var(--paper,#FFFDF8);color:inherit;
 }
 .bsr-locbar button{
-  font:inherit;font-size:15px;font-weight:600;cursor:pointer;
-  min-height:46px;padding:0 16px;border-radius:4px;
+  font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;
+  min-height:34px;padding:0 12px;border-radius:4px;
   border:1px solid var(--line,rgba(28,24,18,.14));
   background:var(--paper,#FFFDF8);color:var(--text-mute,#5A5140);
 }
 .bsr-locbar button:hover:not(:disabled){border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
 .bsr-locbar button:disabled{opacity:.55;cursor:default}
 .bsr-locerror{
-  margin-top:9px;font-size:15px;color:var(--poor,#A2483C);
+  margin:0 14px 0;padding:8px 14px;font-size:13.5px;color:var(--poor,#A2483C);
 }
 .bsr-maphint{
   margin-top:8px;font-size:13.5px;color:var(--text-mute,#5A5140);
@@ -530,26 +557,10 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   .bsr-sub,.bsr-set{min-height:0}
 }
 
-/* ── Which day the shadow map is simulating ─────────────────────────────
-   This lives ON the map, not under it, and that placement is the fix for a
-   real annoyance rather than a decorative choice. .bsr-map re-arms its
-   scroll guard on mouseleave, so a control sitting below the map could not
-   be reached without greying the map out on the way to it -- pick a season,
-   and you had to click the map again to see the result. Inside the wrapper
-   the pointer never crosses that boundary.
-
-   It sits above the guard (z-index 3 against its 2) so the dates stay
-   usable while the map is still parked, which is exactly when someone is
-   deciding what to look at. */
-/* .bsr-map > * forces width:100%;height:100% so the iframe fills the box.
-   That selector catches this overlay too, and a full-height flex row with
-   align-items:center parks the pills halfway down the map instead of at the
-   top of it. Same specificity, so ordering would not have saved it --
-   height and width have to be said out loud here. */
 /* The date select sits inside .bsr-set (.bsr-set select already styles
-   it); this is just its "pick a date" companion, reused from the old
-   pill bar since a native date input needs its own small style either
-   way. */
+   it); .bsr-datein is just its "pick a date" companion -- a native date
+   input needs its own small style either way. Shrunk to match the rest
+   of the map toolbar via .bsr-mapbar .bsr-datein above. */
 .bsr-datein{
   font-family:inherit;font-size:15px;font-weight:600;color:var(--text,#1C1812);
   padding:7px 10px;border-radius:4px;min-height:46px;

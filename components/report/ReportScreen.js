@@ -676,20 +676,29 @@ export default function ReportScreen() {
   return (
     <div className="bsr">
 
-      {/* ---------- which address this is ---------- */}
+      {/* ---------- the page's own title, then which address this is ----------
+          The page used to open directly on the address pill -- nothing said
+          what this screen even was before the eye landed on a number a
+          moment later. One real <h1> line first, the same on every report;
+          the verdict headline further down is demoted to <h2> so there's
+          exactly one top-level heading on the page, not two competing
+          ones. */}
       <header className="bsr-head">
+        <div className="bsr-head-top">
+          <h1 className="bsr-title">Your BlindSpot report</h1>
+          <span className="bsr-head-links">
+            {/* First, not last. Someone reading a verdict on one flat is most
+                likely to want the other two beside it -- that is a more common
+                next step here than either of the other two links. */}
+            <a href="/compare" className="is-primary">Compare flats</a>
+            <a href="/my-reports">My reports</a>
+            <a href="/">Change address</a>
+          </span>
+        </div>
         <p className="bsr-addr">
           <span className="bsr-pin" aria-hidden="true" />
           <span className="bsr-addr-text">{address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}</span>
         </p>
-        <span className="bsr-head-links">
-          {/* First, not last. Someone reading a verdict on one flat is most
-              likely to want the other two beside it -- that is a more common
-              next step here than either of the other two links. */}
-          <a href="/compare" className="is-primary">Compare flats</a>
-          <a href="/my-reports">My reports</a>
-          <a href="/">Change address</a>
-        </span>
       </header>
 
       {/* ---------- the map, full width ----------
@@ -698,17 +707,17 @@ export default function ReportScreen() {
           .view-controls under 768px), so half the map was unreachable.
           Full width gives the controls back and gives the shadows room. */}
       <section className="bsr-mapzone" id="the-block" aria-label="The block in 3D">
-        {/* Everything that changes what the map shows lives in one bar
-            above it now -- address, floor, facing and the day to
-            simulate, all in normal document flow. This used to be a
-            paragraph of explanation plus a row of pill buttons pinned
-            OVER the top-left corner of the map itself (.bsr-dates,
-            position:absolute), which is what was colliding with
-            Map3DShadow's own "set view angle" pad in its top-right
-            corner -- two absolutely-positioned panels sharing the same
-            strip of the map with nothing keeping them apart. Moving the
-            controls off the map entirely removes the collision instead
-            of just nudging it. */}
+        {/* Everything that changes what the map shows lives in one compact
+            toolbar attached to the top of it -- address, floor, facing and
+            the day to simulate, all in normal document flow instead of a
+            row of pill buttons pinned OVER the map's own top-left corner
+            (.bsr-dates, position:absolute), which is what was colliding
+            with Map3DShadow's own "set view angle" pad in its top-right
+            corner. .bsr-mapcard is what makes this read as one thing --
+            toolbar and viewport sharing a single frame with no gap between
+            them -- rather than a stray form floating above an unrelated
+            map. */}
+        <div className="bsr-mapcard">
         <div className="bsr-mapbar">
           <form className="bsr-locbar" onSubmit={onSearchSubmit}>
             <input
@@ -819,6 +828,7 @@ export default function ReportScreen() {
             </button>
           )}
         </div>
+        </div>
 
         <p className="bsr-timerow">
           <button
@@ -872,7 +882,7 @@ export default function ReportScreen() {
           <span className="bsr-big-of">out of 100</span>
         </p>
         <div className="bsr-answer-say">
-          <h1>{headlineFor(topScore, hasArea)}</h1>
+          <h2>{headlineFor(topScore, hasArea)}</h2>
           <p>
             {hasArea
               ? verdictSay(area.score, unit.score)
