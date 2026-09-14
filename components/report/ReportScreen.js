@@ -14,12 +14,20 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import Map3DShadow from '@/components/sunscout/Map3DShadow';
 import ReportModal from '@/components/sunscout/ReportModal';
 import useMapCapture, { SHOTS } from '@/lib/sunscout/useMapCapture';
 import { FACTOR_LABELS, FACING_OPTS } from '@/lib/property-score/ui';
 import { getActionItems } from '@/lib/property-score/actionItems';
 import './report.css';
+
+// Leaflet touches `window` at import time, which breaks this page's static
+// prerender if it's imported directly here -- ssr:false + its own file is
+// the same fix HeroLiveMap.js already uses for the homepage's map. The
+// fixed-height card around it (.bsr-map-intro) stays in this file and
+// always renders, so nothing jumps once this chunk pops in client-side.
+const ReportMapIntro = dynamic(() => import('./ReportMapIntro'), { ssr: false });
 
 // Order the area rows the way a buyer reads them: what they asked about
 // first, the plumbing of daily life after.
@@ -157,7 +165,10 @@ export default function ReportScreen() {
   // so a half-typed "1" on the way to "12" isn't clamped out from under you.
   const [floorText, setFloorText] = useState(String(parseInt(params.get('floor'), 10) || DEFAULT_FLOOR));
   const [facing, setFacing] = useState(params.get('facing') || DEFAULT_FACING);
-  const [areaWeight, setAreaWeight] = useState(0.5);
+  // No longer user-adjustable (the "what matters more to you" toggle
+  // was removed) -- kept as a plain constant so the score fetch and the
+  // full report below, which both still read `areaWeight`, don't change.
+  const areaWeight = 0.5;
   // A listing gives you the tower, not the unit -- so these two arrive
   // as defaults far more often than not. Say so until they're set.
   const [assumed, setAssumed] = useState(
@@ -688,6 +699,13 @@ export default function ReportScreen() {
         </span>
       </header>
 
+      {/* ---------- the map, before the number ---------- */}
+      {hasPlace && (
+        <div className="bsr-map-intro">
+          <ReportMapIntro lat={lat} lon={lon} />
+        </div>
+      )}
+
       {/* ---------- the answer, before anything else ---------- */}
       <section className={`bsr-answer is-${topTone}`} aria-live="polite">
         <p className="bsr-big">
@@ -721,21 +739,6 @@ export default function ReportScreen() {
           )}
         </div>
 
-        {/* Sits with the number it changes -- nobody should have to scroll
-            down, choose, and scroll back up to see what it did. */}
-        {hasArea && (
-          <div className="bsr-matters">
-            <p className="bsr-q">What matters more to you?</p>
-            <span className="bsr-opts">
-              {[['The area', 0.7], ['Both equally', 0.5], ['The flat', 0.3]].map(([label, w]) => (
-                <button key={label} type="button" aria-pressed={areaWeight === w} onClick={() => setAreaWeight(w)}>
-                  {label}
-                </button>
-              ))}
-            </span>
-            <span className="bsr-matters-note">Changes this score only. The checklist below stays as it is.</span>
-          </div>
-        )}
       </section>
 
       <div className="bsr-halves">

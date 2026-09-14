@@ -84,6 +84,27 @@
   .bsr-head-links a.is-primary{font-size:13px;padding:5px 12px}
 }
 
+/* ---------------- the map, before the number ----------------
+   Non-interactive (dragging/scroll/zoom controls are all off in the
+   component itself) -- this is "here's the spot", not a second
+   address-picker; .bsr-head above still owns "wrong address? change
+   it". Fixed height via clamp rather than an aspect-ratio box, so it
+   reads as a deliberate strip at every width instead of ballooning tall
+   on a narrow phone. */
+.bsr-map-intro{
+  position:relative;overflow:hidden;
+  height:clamp(170px,34vw,280px);
+  border-radius:14px;border:1px solid var(--line-soft,rgba(28,24,18,.08));
+  margin:18px 0 28px;
+  opacity:0;animation:bsrMapIn .5s ease forwards;
+}
+@keyframes bsrMapIn{ to{ opacity:1; } }
+.bsr-map-intro-map{ height:100%;width:100%; background:var(--bg-2,#F1E9DA); }
+.bsr-map-intro .leaflet-container{ font-family:inherit; background:var(--bg-2,#F1E9DA); }
+@media (prefers-reduced-motion:reduce){
+  .bsr-map-intro{ animation:none;opacity:1; }
+}
+
 /* ---------------- the answer ---------------- */
 .bsr-answer{
   /* align-items:flex-start, not center -- the assumed-note callout can
@@ -415,35 +436,6 @@
   .bsr-box,.bsr-box::after{transition:none}
 }
 
-/* ---------------- weighting ----------------
-   Plain mono text, the way the deck's own "WEIGHTED BY" caption read --
-   three words with the active one bold and coloured, not three buttons
-   in boxes. Still real <button>s (still a 44px tap target each), just
-   with no visible chrome except the state change. */
-.bsr-matters{
-  flex-basis:100%;margin-top:20px;padding-top:20px;
-  border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
-  display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
-}
-.bsr-matters .bsr-q{
-  margin-bottom:0;flex:none;
-  font-family:'Geist Mono',monospace;font-weight:600;
-  font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--text-mute,#5A5140);
-}
-.bsr-opts{
-  display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
-  font-family:'Geist Mono',monospace;font-size:14px;letter-spacing:.02em;
-}
-.bsr-opts button{
-  font:inherit;cursor:pointer;
-  min-height:44px;padding:0;border:0;background:none;
-  color:var(--text-mute,#5A5140);font-weight:500;
-}
-.bsr-opts button:not(:last-child)::after{content:'·';margin-left:10px;color:var(--line,rgba(28,24,18,.3))}
-.bsr-opts button:hover{color:var(--ss,#AF5F30)}
-.bsr-opts button[aria-pressed="true"]{color:var(--ss,#AF5F30);font-weight:700}
-.bsr-matters-note{font-size:13.5px;color:var(--text-mute,#5A5140);flex:1;min-width:190px}
 
 /* ---------------- close ---------------- */
 .bsr-close{
