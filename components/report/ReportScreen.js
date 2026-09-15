@@ -1260,27 +1260,31 @@ export default function ReportScreen() {
           ) : (
             actions.map((a) => (
               <li key={a.key} className={ticked.has(a.key) ? 'is-done' : undefined}>
-                <label className="bsr-todo-row">
-                  <input
-                    type="checkbox"
-                    className="bsr-box"
-                    checked={ticked.has(a.key)}
-                    onChange={() => toggleTick(a.key)}
+                {/* Two columns on wider screens (check on the left, findings
+                    on the right), stacked on phones -- see .bsr-todo-split.
+                    The textarea sits outside the <label> on purpose: typing
+                    in it must never toggle the checkbox beside it. */}
+                <div className="bsr-todo-split">
+                  <label className="bsr-todo-row">
+                    <input
+                      type="checkbox"
+                      className="bsr-box"
+                      checked={ticked.has(a.key)}
+                      onChange={() => toggleTick(a.key)}
+                    />
+                    <span className="bsr-todo-body">
+                      <strong className="bsr-todo-title">{a.label} — {String(word(a.score)).toLowerCase()} ({a.score})</strong>
+                      <span className="bsr-todo-text">{a.action}</span>
+                    </span>
+                  </label>
+                  <textarea
+                    className="bsr-todo-note"
+                    placeholder="What did you find? (optional — carries into the report you save)"
+                    value={notes[a.key] || ''}
+                    onChange={(e) => updateNote(a.key, e.target.value)}
+                    rows={2}
                   />
-                  <span className="bsr-todo-body">
-                    <strong className="bsr-todo-title">{a.label} — {String(word(a.score)).toLowerCase()} ({a.score})</strong>
-                    <span className="bsr-todo-text">{a.action}</span>
-                  </span>
-                </label>
-                {/* Outside the <label> on purpose -- typing in here must
-                    never toggle the checkbox above it. */}
-                <textarea
-                  className="bsr-todo-note"
-                  placeholder="What did you find? (optional — carries into the report you save)"
-                  value={notes[a.key] || ''}
-                  onChange={(e) => updateNote(a.key, e.target.value)}
-                  rows={2}
-                />
+                </div>
               </li>
             ))
           )}
