@@ -429,11 +429,17 @@
   margin-top:16px;padding-top:14px;
   border-top:1px solid var(--line-soft,rgba(28,24,18,.1));
 }
-.bsr-visit h2{font-size:20px;font-weight:700}
-.bsr-visit-lede{margin-top:2px;color:var(--text-mute,#5A5140);max-width:72ch;font-size:13px}
-.bsr-todo{list-style:none;margin:6px 0 0;padding:0}
-.bsr-todo li{border-top:1px solid var(--line-soft,rgba(28,24,18,.08))}
-.bsr-todo-plain{display:flex;gap:12px;padding:7px 0}
+.bsr-visit h2{font-size:24px;font-weight:700}
+.bsr-visit-lede{margin-top:8px;color:var(--text-mute,#5A5140);max-width:68ch;font-size:17px}
+.bsr-todo{
+  list-style:none;margin:22px 0 0;padding:0;
+  columns:2;column-gap:48px;
+}
+.bsr-todo li{
+  border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
+  break-inside:avoid;-webkit-column-break-inside:avoid;
+}
+.bsr-todo-plain{display:flex;gap:16px;padding:16px 0}
 
 /* The whole row is the target, not the 20px square -- this list gets used
    one-handed while walking around a flat. Padding thinned to match the
@@ -580,7 +586,8 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 @media (max-width:900px){
   /* stacked, the column rule becomes a row rule -- same divider,
      the other axis */
-  .bsr-halves{grid-template-columns:1fr;row-gap:18px}
+  .bsr-halves{grid-template-columns:1fr;row-gap:32px}
+  .bsr-todo{columns:1}
   .bsr-area{padding-right:0}
   .bsr-unit{padding-left:0;border-left:0;border-top:1px solid var(--line-soft,rgba(28,24,18,.1));padding-top:18px}
   .bsr-big-n{font-size:52px}
