@@ -781,16 +781,6 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   outline:2px solid var(--ss,#AF5F30);outline-offset:1px;border-color:var(--ss,#AF5F30);
 }
 
-/* The report answers "is this flat any good". The next question is almost
-   always "better than the other one?", so the way there belongs here, at
-   the moment it gets asked -- not only in the nav. */
-.bsr-compare-cue{
-  margin:8px 0 0;padding:7px 11px;border-radius:6px;
-  background:var(--bg-2,#F1E9DA);border:1px solid var(--line-soft,rgba(28,24,18,.08));
-  font-size:13.5px;line-height:1.6;color:var(--text-mute,#5A5140);
-}
-.bsr-compare-cue a{color:var(--ss,#AF5F30);font-weight:700;text-decoration:none}
-.bsr-compare-cue a:hover{text-decoration:underline}
 
 /* ---------------- the "which floor, which way does it face"
    popup, shown before anything is scored on a genuinely fresh visit

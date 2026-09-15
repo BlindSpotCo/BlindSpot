@@ -1445,13 +1445,10 @@ export default function ReportScreen() {
             {locError ? <p className="bsr-locerror">{locError}</p> : null}
           </div>
         </div>
-        <p className="bsr-compare-cue">
-          Weighing this against another flat? <a href="/compare">Compare them side by side</a>.
-        </p>
         <p className="bsr-maphint">
           {reportRunning
             ? 'The pin is locked while the report is built from this spot - moving it now would mix two blocks into one report.'
-            : 'Click the map to use it, then click a building to move the pin.'}
+            : 'Click again to move the pin to another building.'}
         </p>
       </section>
 
