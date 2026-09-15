@@ -30,6 +30,7 @@ import 'leaflet/dist/leaflet.css';
 import PinDropTransition from '@/components/PinDropTransition';
 import { scoreColor } from '@/components/property-score/AVDetailedReadout';
 import TypewriterCycle from '@/components/TypewriterCycle';
+import { FACING_OPTS } from '@/lib/property-score/ui';
 
 // Same default coordinates as the homepage's original rotating
 // coordinate readout -- opens on the same place that readout used to cite.
@@ -52,6 +53,14 @@ const FLY_ZOOM = 15;
 // that strip is gone (see the file header comment), so nothing left
 // needs it shorter than the animation it's covering.
 const AUTO_REPORT_HOLD_MS = 1250;
+
+// Compact labels for the facing chips -- the full FACING_OPTS strings
+// ('South-East') are what the report and API actually use; these are
+// just what fits on a small chip.
+const FACING_SHORT = {
+  North: 'N', 'North-East': 'NE', East: 'E', 'South-East': 'SE',
+  South: 'S', 'South-West': 'SW', West: 'W', 'North-West': 'NW',
+};
 
 // Real categories BlindSpot actually scores -- not invented copy.
 // Sunlight/obstruction/shadow come from the Sunscout floor+facing engine
@@ -134,6 +143,12 @@ export default function HeroLiveMapCanvas() {
   const [pin, setPin] = useState(null);
   const [flyKey, setFlyKey] = useState(0);
   const [autoGo, setAutoGo] = useState(false);
+  // Set once the fly-to has landed on a picked address -- swaps the
+  // search box for a floor+facing panel so the score that follows is
+  // for the actual flat, not a silent default. See pick() below.
+  const [unitStep, setUnitStep] = useState(false);
+  const [uFloor, setUFloor] = useState('');
+  const [uFacing, setUFacing] = useState('');
   const debounceRef = useRef(null);
   const boxRef = useRef(null);
   const requestIdRef = useRef(0);
@@ -255,6 +270,18 @@ export default function HeroLiveMapCanvas() {
 
   const closeCityPanel = () => { setCityPanel(null); setCityFilter(''); };
 
+  // Picked the wrong address, or just want to search again -- back out
+  // of the unit panel entirely rather than leaving someone stuck once
+  // the search box is gone.
+  const backToSearch = () => {
+    setUnitStep(false);
+    setPin(null);
+    setAutoGo(false);
+    setUFloor('');
+    setUFacing('');
+    setQuery('');
+  };
+
   const pick = (r) => {
     if (r.kind === 'city') { pickCity(r); return; }
 
@@ -265,6 +292,9 @@ export default function HeroLiveMapCanvas() {
     setResults([]);
     setFlyKey((k) => k + 1);
     setAutoGo(false);
+    setUnitStep(false);
+    setUFloor('');
+    setUFacing('');
 
     router.prefetch?.(
       `/report?lat=${r.lat}&lon=${r.lon}` +
@@ -277,11 +307,12 @@ export default function HeroLiveMapCanvas() {
     // already uses for exactly this race.
     const reqId = ++requestIdRef.current;
 
-    // Straight to the report from here -- no extra click, no strip to
-    // read first. Just enough of a hold that the pin-drop + fly-to have
-    // time to register before the full-screen transition covers them.
+    // Not straight to the report any more -- once the pin-drop + fly-to
+    // have had time to register, open the floor/facing panel in place
+    // of the search box instead of auto-navigating. autoGo now only
+    // fires from that panel's own buttons, below.
     setTimeout(() => {
-      if (reqId === requestIdRef.current) setAutoGo(true);
+      if (reqId === requestIdRef.current) setUnitStep(true);
     }, AUTO_REPORT_HOLD_MS);
   };
 
@@ -369,6 +400,12 @@ export default function HeroLiveMapCanvas() {
         </div>
 
         <div className="hlm-searchwrap" ref={boxRef}>
+          {/* Search box + suggestions/city-panel, unless the fly-to has
+              landed on a pick and it's time to ask for floor/facing
+              instead -- see the {unitStep && (...)} panel below, and
+              pick()'s own comment for why this swaps rather than stacks. */}
+          {!unitStep && (
+          <>
           {/* One shape, not a search bar with a separate card floating
               under it -- the pill IS the panel, it just grows into it.
               hlm-shell-city-open only relaxes the corner radius from a
@@ -499,6 +536,71 @@ export default function HeroLiveMapCanvas() {
               ))}
             </ul>
           )}
+          </>
+          )}
+
+          {unitStep && (
+            <div className="hlm-unit-panel" role="region" aria-label="Set floor and facing">
+              <div className="hlm-unit-head">
+                <div>
+                  <span className="hlm-unit-eyebrow">One more thing</span>
+                  <h3 className="hlm-unit-title">Which floor, which way does it face?</h3>
+                </div>
+                <button type="button" className="hlm-unit-close" onClick={backToSearch} aria-label="Search a different address">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                </button>
+              </div>
+
+              <div className="hlm-unit-row">
+                <label className="hlm-unit-floor">
+                  <span>Floor</span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={2}
+                    value={uFloor}
+                    onChange={(e) => setUFloor(e.target.value.replace(/[^\d]/g, '').slice(0, 2))}
+                    placeholder="5"
+                    aria-label="Floor number"
+                  />
+                </label>
+
+                <div className="hlm-unit-facing" role="radiogroup" aria-label="Which way the flat faces">
+                  {FACING_OPTS.map((f) => (
+                    <button
+                      key={f}
+                      type="button"
+                      role="radio"
+                      aria-checked={f === uFacing}
+                      className={`hlm-facing-chip${f === uFacing ? ' on' : ''}`}
+                      onClick={() => setUFacing(f)}
+                    >
+                      {FACING_SHORT[f]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="hlm-unit-actions">
+                <button
+                  type="button"
+                  className="hlm-unit-go"
+                  disabled={!uFloor || !uFacing}
+                  onClick={() => setAutoGo(true)}
+                >
+                  See my score
+                </button>
+                <button
+                  type="button"
+                  className="hlm-unit-skip"
+                  onClick={() => { setUFloor(''); setUFacing(''); setAutoGo(true); }}
+                >
+                  I don&rsquo;t have a specific flat in mind &mdash; let me just browse
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* The actual navigation, invisible -- see PinDropTransition's own
@@ -509,7 +611,8 @@ export default function HeroLiveMapCanvas() {
           <PinDropTransition
             href={`/report?lat=${pin.lat}&lon=${pin.lon}` +
                   `&pin_code=${encodeURIComponent(pin.postcode || '')}` +
-                  `&address=${encodeURIComponent(pin.label || query || '')}`}
+                  `&address=${encodeURIComponent(pin.label || query || '')}` +
+                  (uFloor && uFacing ? `&floor=${uFloor}&facing=${encodeURIComponent(uFacing)}` : '')}
             autoStart={autoGo}
             hidden
           >
