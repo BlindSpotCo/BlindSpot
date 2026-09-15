@@ -250,14 +250,27 @@ export default function ReportScreen() {
 
     const common = `lat=${lat}&lon=${lon}&floor=${floor}&facing=${encodeURIComponent(facing)}&tzOffset=${TZ}`;
 
+    // The Noise Risk sub-score is the one live external lookup slow
+    // enough (a cold Overpass/OSM map patch) to have been making the
+    // WHOLE report wait on it. Both fetches below ask for the fast pass
+    // first (skipLiveNoise=1 -- everything else, noise shown as
+    // "checking..."), so the report renders as soon as that's back, then
+    // fire the exact same request again without that flag once the
+    // pending row shows up, letting the noise score patch itself into
+    // the already-visible report in place, rather than being capped and
+    // discarded the way the old soft-deadline version did.
+    function noiseIsPending(subScores) {
+      return Boolean((subScores || []).find((s) => s.key === 'noise')?.pending);
+    }
+
     async function run() {
       try {
         // With a pin we can ask for both halves at once.
         if (pinCode) {
-          const res = await fetch(
+          const propertyScoreUrl =
             `/api/property-score?pin_code=${encodeURIComponent(pinCode)}&${common}` +
-            `&weightArea=${areaWeight}&weightUnit=${1 - areaWeight}`
-          );
+            `&weightArea=${areaWeight}&weightUnit=${1 - areaWeight}`;
+          const res = await fetch(`${propertyScoreUrl}&skipLiveNoise=1`);
           const json = await res.json();
           if (cancelled || id !== scoreReq.current) return;
 
@@ -265,6 +278,15 @@ export default function ReportScreen() {
             setScores({ area: json.area, unit: json.unit, combined: json.combinedScore, notes: json.dataNotes });
             setFailure('');
             setState('ready');
+            if (noiseIsPending(json.unit?.subScores)) {
+              fetch(propertyScoreUrl)
+                .then((r) => r.json())
+                .then((full) => {
+                  if (cancelled || id !== scoreReq.current || full.error) return;
+                  setScores({ area: full.area, unit: full.unit, combined: full.combinedScore, notes: full.dataNotes });
+                })
+                .catch(() => {}); // best-effort patch -- the fast-pass report already stands on its own
+            }
             return;
           }
           // ONLY a 404 means "we don't have this locality". Every other
@@ -283,7 +305,8 @@ export default function ReportScreen() {
           setAreaFailed(false);
         }
 
-        const res = await fetch(`/api/sunscout/score?${common}`);
+        const sunscoutScoreUrl = `/api/sunscout/score?${common}`;
+        const res = await fetch(`${sunscoutScoreUrl}&skipLiveNoise=1`);
         const json = await res.json();
         if (cancelled || id !== scoreReq.current) return;
 
@@ -300,6 +323,25 @@ export default function ReportScreen() {
           notes: json.dataNotes,
         });
         setState('ready');
+        if (noiseIsPending(json.subScores)) {
+          fetch(sunscoutScoreUrl)
+            .then((r) => r.json())
+            .then((full) => {
+              if (cancelled || id !== scoreReq.current) return;
+              const fullUnitScore = full.liveScore ?? full.score;
+              if (typeof fullUnitScore !== 'number') return;
+              setScores({
+                area: null,
+                unit: {
+                  score: fullUnitScore, grade: full.grade, floor, facing,
+                  subScores: full.subScores || [], thermalCost: full.thermalCost,
+                },
+                combined: null,
+                notes: full.dataNotes,
+              });
+            })
+            .catch(() => {}); // best-effort patch -- the fast-pass report already stands on its own
+        }
       } catch {
         if (cancelled || id !== scoreReq.current) return;
         setState('error');
@@ -1203,7 +1245,19 @@ export default function ReportScreen() {
                   {s.label}
                   {s.summary ? <span className="bsr-row-note">{s.summary}</span> : null}
                 </span>
-                <span className={`bsr-tag is-${toneOf(s.score)}`}>{word(s.score)}</span>
+                {/* `pending` (currently only Noise Risk, on its very
+                    first live view of an address) means this row's
+                    score/tone below isn't a real judgement yet, just a
+                    neutral placeholder -- tagging it "Fair" would read
+                    as a finished answer instead of one still loading, so
+                    it gets its own quiet in-progress pill instead. It
+                    swaps for the real tag in place once the background
+                    fetch resolves (see the scores effect above). */}
+                {s.pending ? (
+                  <span className="bsr-tag is-pending">Checking…</span>
+                ) : (
+                  <span className={`bsr-tag is-${toneOf(s.score)}`}>{word(s.score)}</span>
+                )}
               </li>
             ))}
             {/* A ₹ figure, not a Good/Fair/Poor judgement -- riding on the

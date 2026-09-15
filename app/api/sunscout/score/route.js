@@ -30,12 +30,18 @@ export async function GET(req) {
       if (!Number.isNaN(val)) weights[key] = val;
     }
   }
+  // See the matching comment in scoreAggregator.js -- ReportScreen.js
+  // calls this route twice: once with skipLiveNoise=1 to render the
+  // report immediately, then again without it in the background so the
+  // real noise score can be patched in once Overpass actually answers.
+  const skipLiveNoise = searchParams.get('skipLiveNoise') === '1';
 
   try {
     const result = await computeLiveScore({
       lat, lon, floor, facing,
       tzOffsetMinutes: tzOffset,
       weights,
+      skipLiveNoise,
     });
 
     return NextResponse.json(result);

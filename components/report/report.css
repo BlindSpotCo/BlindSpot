@@ -201,6 +201,18 @@
 .bsr-tag.is-avg{background:var(--bsr-avg-bg);color:var(--bsr-avg)}
 .bsr-tag.is-poor{background:var(--bsr-poor-bg);color:var(--bsr-poor)}
 .bsr-tag.is-none{background:var(--bsr-none-bg);color:var(--text-mute,#5A5140)}
+/* A row still loading in the background (currently just Noise Risk on
+   first view) -- deliberately not one of the graded good/avg/poor tones
+   above, so it reads as "not answered yet" rather than a finished
+   neutral judgement. Gentle pulse matches it being transient. */
+.bsr-tag.is-pending{
+  background:var(--bsr-none-bg);color:var(--text-mute,#5A5140);
+  animation:bsr-tag-pulse 1.6s ease-in-out infinite;
+}
+@keyframes bsr-tag-pulse{0%,100%{opacity:1}50%{opacity:.55}}
+@media (prefers-reduced-motion: reduce){
+  .bsr-tag.is-pending{animation:none}
+}
 
 /* ---------------- not covered ---------------- */
 .bsr-nocover{

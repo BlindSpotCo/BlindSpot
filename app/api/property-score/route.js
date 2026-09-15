@@ -85,9 +85,13 @@ export async function GET(req) {
     // routes instead of quietly reaching the scorer as NaN.
     const floorNum = Number.isFinite(parseInt(floor, 10)) ? parseInt(floor, 10) : 5;
     const tzNum = Number.isFinite(parseInt(tzOffset, 10)) ? parseInt(tzOffset, 10) : 330;
+    // Same fast-pass/background-pass split as /api/sunscout/score --
+    // see the comment there and in scoreAggregator.js.
+    const skipLiveNoise = searchParams.get('skipLiveNoise') === '1';
     const ssResult = await computeLiveScore({
       lat, lon, floor: floorNum, facing, tzOffsetMinutes: tzNum,
       city: avRecord.city,
+      skipLiveNoise,
     });
 
     const areaScore = persona
