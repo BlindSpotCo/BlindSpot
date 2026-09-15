@@ -530,20 +530,6 @@ export default function ReportScreen() {
   // Anchor for the flat half, still used by the in-page "the flat" link.
   const unitRef = useRef(null);
 
-  // The floating "see your score" button: visible only while some part of
-  // the map section is actually on screen, so it offers a way down while
-  // you're looking at the map and gets out of the way once you've already
-  // scrolled past it into the score itself.
-  const mapZoneRef = useRef(null);
-  const [showScoreCue, setShowScoreCue] = useState(false);
-  useEffect(() => {
-    const el = mapZoneRef.current;
-    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
-    const io = new IntersectionObserver(([entry]) => setShowScoreCue(entry.isIntersecting));
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
   /* ---------------- the twelve map frames, captured once ----------------
      Photographing the map is the slow half of both reports -- twelve frames,
      about a minute -- and the frames depend only on where the pin is, not on
@@ -805,182 +791,6 @@ export default function ReportScreen() {
         </p>
       </header>
 
-      {/* ---------- the map, full width ----------
-          It lived inside the flat's card until the card's ~500px made
-          Map3DShadow hide its own view-angle pad (its stylesheet drops
-          .view-controls under 768px), so half the map was unreachable.
-          Full width gives the controls back and gives the shadows room.
-          The toolbar (search, floor, facing, date) sits ON the map itself
-          now, not in a bar above it -- a floating card over the top-left
-          corner, so it's always physically part of the map you're looking
-          at rather than something that scrolls away from it. It has its
-          own z-index above .bsr-map-guard's dimming layer, so it stays
-          usable whether the map is armed for interaction or not. On
-          768px+, where Map3DShadow's own "set view angle" pad occupies
-          the top-right corner, the toolbar is kept clear of it (see
-          .bsr-mapbar's right clearance in report.css) rather than
-          overlapping it the way the old pill row once did. */}
-      <section className="bsr-mapzone" id="the-block" aria-label="The block in 3D" ref={mapZoneRef}>
-        <div className="bsr-map" onMouseLeave={() => setMapArmed(true)}>
-          {solar?.pathData ? (
-            <Map3DShadow
-              lat={lat}
-              lon={lon}
-              pathData={solar.pathData}
-              simTime={simTimeOf(minutes)}
-              simPos={solar.simPos}
-              sunTimes={solar.sunTimes}
-              animating={animating}
-              onLocationSelect={onMapClick}
-              onReady={capture.onReady}
-              onScreenshot={capture.onScreenshot}
-              onStatus={capture.onStatus}
-              debug={debug}
-            />
-          ) : (
-            <p className="bsr-map-wait">
-              {solarFailed ? 'The 3D view couldn’t load. The scores below are unaffected.' : 'Building the 3D view…'}
-            </p>
-          )}
-          {solar?.pathData && mapArmed && (
-            <button
-              type="button"
-              className="bsr-map-guard"
-              onClick={() => setMapArmed(false)}
-              aria-label="Click to interact with the 3D map"
-            >
-              Click to interact with the map
-            </button>
-          )}
-
-          <div className="bsr-mapbar">
-            <form className="bsr-locbar" onSubmit={onSearchSubmit}>
-              <input
-                type="search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Another address, or coordinates like 12.9716, 77.5946"
-                aria-label="Move the pin to another address or coordinates"
-              />
-              <button type="submit" disabled={locBusy}>{locBusy ? 'Finding…' : 'Move pin'}</button>
-              <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
-                My location
-              </button>
-            </form>
-
-            <p className="bsr-set">
-              <label className="bsr-set-field">
-                <span>Floor</span>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={2}
-                  value={floorText}
-                  onChange={(e) => {
-                    const raw = e.target.value.replace(/[^\d]/g, '').slice(0, 2);
-                    setFloorText(raw);
-                    const n = parseInt(raw, 10);
-                    if (Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR) { setAssumed(false); setFloor(n); }
-                  }}
-                  onBlur={() => {
-                    const n = parseInt(floorText, 10);
-                    const clamped = Number.isFinite(n) ? Math.min(MAX_FLOOR, Math.max(1, n)) : floor;
-                    setFloor(clamped);
-                    setFloorText(String(clamped));
-                  }}
-                  aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
-                  placeholder="5"
-                />
-              </label>
-              <label className="bsr-set-field">
-                <span>Faces</span>
-                <select
-                  value={facing}
-                  onChange={(e) => { setAssumed(false); setFacing(e.target.value); }}
-                >
-                  {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
-                </select>
-              </label>
-              <label className="bsr-set-field">
-                <span>Date</span>
-                <select
-                  value={seasonKey}
-                  onChange={(e) => setSeasonKey(e.target.value)}
-                  aria-label="Which day to simulate"
-                >
-                  {SEASONS.map((sn) => (
-                    <option key={sn.key} value={sn.key}>
-                      {sn.label}{sn.md ? ` — ${prettyDate(seasonDate(sn.key))}` : ''}
-                    </option>
-                  ))}
-                  <option value="custom">Pick a date…</option>
-                </select>
-              </label>
-              {seasonKey === 'custom' && (
-                <input
-                  type="date"
-                  className="bsr-datein"
-                  value={customDate || todayStr()}
-                  onChange={(e) => setCustomDate(e.target.value)}
-                  aria-label="Date to simulate"
-                />
-              )}
-              {assumed ? <span className="bsr-assumed">assumed</span> : null}
-            </p>
-
-            {/* The play/pause control used to sit in its own row below the
-                map (.bsr-timerow) -- a second bar under the one already
-                floating on the map, adding height for one button. It is a
-                map control like floor/faces/date above it, so it lives in
-                the same floating toolbar now. Pressing play hides the
-                slider again rather than leaving an empty row behind,
-                which is what keeps this bar thin while playing (the
-                common state -- animating starts true). */}
-            <p className="bsr-mapbar-time">
-              <button
-                type="button"
-                className={`bsr-play${animating ? ' is-on' : ''}`}
-                onClick={() => setAnimating((a) => !a)}
-                aria-pressed={animating}
-              >
-                {animating ? '\u2759\u2759 Pause' : '\u25B6 Watch the day'}
-              </button>
-              {!animating && (
-                <>
-                  <input
-                    id="bsr-time"
-                    type="range"
-                    min="330"
-                    max="1140"
-                    step="10"
-                    value={minutes}
-                    onChange={(e) => setMinutes(Number(e.target.value))}
-                    aria-label="Time of day"
-                  />
-                  <span className="bsr-clock">{clock(minutes)}</span>
-                </>
-              )}
-            </p>
-            {locError ? <p className="bsr-locerror">{locError}</p> : null}
-          </div>
-        </div>
-        <p className="bsr-compare-cue">
-          Weighing this against another flat?{' '}
-          <a href="/compare">Put them side by side</a> — the sun each one gets, and what the
-          price difference actually buys.
-        </p>
-        <p className="bsr-maphint">
-          {reportRunning
-            ? 'The pin is locked while the report is built from this spot — moving it now would mix two blocks into one report.'
-            : 'Click the map to interact with it, then click again to move the pin to another building.'}
-        </p>
-      </section>
-
-      {showScoreCue && (
-        <a href="#the-score" className="bsr-score-cue">See your score ↓</a>
-      )}
-
       {/* ---------- the answer, before anything else ---------- */}
       <section className={`bsr-answer is-${topTone}`} id="the-score" aria-live="polite">
         <p className="bsr-big">
@@ -1234,7 +1044,7 @@ export default function ReportScreen() {
               they read as seven numbers from nowhere. */}
           <p className="bsr-source">
             Worked out from the sun&apos;s real path over the buildings around this one.{' '}
-            <a href="#the-block">See the block in 3D ↑</a>
+            <a href="#the-block">See the block in 3D ↓</a>
           </p>
 
 
@@ -1305,6 +1115,178 @@ export default function ReportScreen() {
           </p>
         </section>
       </div>
+
+      {/* ---------- the map, full width ----------
+          It lived inside the flat's card until the card's ~500px made
+          Map3DShadow hide its own view-angle pad (its stylesheet drops
+          .view-controls under 768px), so half the map was unreachable.
+          Full width gives the controls back and gives the shadows room.
+          The toolbar (search, floor, facing, date) sits ON the map itself
+          now, not in a bar above it -- a floating card over the top-left
+          corner, so it's always physically part of the map you're looking
+          at rather than something that scrolls away from it. It has its
+          own z-index above .bsr-map-guard's dimming layer, so it stays
+          usable whether the map is armed for interaction or not. On
+          768px+, where Map3DShadow's own "set view angle" pad occupies
+          the top-right corner, the toolbar is kept clear of it (see
+          .bsr-mapbar's right clearance in report.css) rather than
+          overlapping it the way the old pill row once did. */}
+      <section className="bsr-mapzone" id="the-block" aria-label="The block in 3D">
+        <div className="bsr-map" onMouseLeave={() => setMapArmed(true)}>
+          {solar?.pathData ? (
+            <Map3DShadow
+              lat={lat}
+              lon={lon}
+              pathData={solar.pathData}
+              simTime={simTimeOf(minutes)}
+              simPos={solar.simPos}
+              sunTimes={solar.sunTimes}
+              animating={animating}
+              onLocationSelect={onMapClick}
+              onReady={capture.onReady}
+              onScreenshot={capture.onScreenshot}
+              onStatus={capture.onStatus}
+              debug={debug}
+            />
+          ) : (
+            <p className="bsr-map-wait">
+              {solarFailed ? 'The 3D view couldn’t load. The scores below are unaffected.' : 'Building the 3D view…'}
+            </p>
+          )}
+          {solar?.pathData && mapArmed && (
+            <button
+              type="button"
+              className="bsr-map-guard"
+              onClick={() => setMapArmed(false)}
+              aria-label="Click to interact with the 3D map"
+            >
+              Click to interact with the map
+            </button>
+          )}
+
+          <div className="bsr-mapbar">
+            <form className="bsr-locbar" onSubmit={onSearchSubmit}>
+              <input
+                type="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Another address, or coordinates like 12.9716, 77.5946"
+                aria-label="Move the pin to another address or coordinates"
+              />
+              <button type="submit" disabled={locBusy}>{locBusy ? 'Finding…' : 'Move pin'}</button>
+              <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
+                My location
+              </button>
+            </form>
+
+            <p className="bsr-set">
+              <label className="bsr-set-field">
+                <span>Floor</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={2}
+                  value={floorText}
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/[^\d]/g, '').slice(0, 2);
+                    setFloorText(raw);
+                    const n = parseInt(raw, 10);
+                    if (Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR) { setAssumed(false); setFloor(n); }
+                  }}
+                  onBlur={() => {
+                    const n = parseInt(floorText, 10);
+                    const clamped = Number.isFinite(n) ? Math.min(MAX_FLOOR, Math.max(1, n)) : floor;
+                    setFloor(clamped);
+                    setFloorText(String(clamped));
+                  }}
+                  aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
+                  placeholder="5"
+                />
+              </label>
+              <label className="bsr-set-field">
+                <span>Faces</span>
+                <select
+                  value={facing}
+                  onChange={(e) => { setAssumed(false); setFacing(e.target.value); }}
+                >
+                  {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
+                </select>
+              </label>
+              <label className="bsr-set-field">
+                <span>Date</span>
+                <select
+                  value={seasonKey}
+                  onChange={(e) => setSeasonKey(e.target.value)}
+                  aria-label="Which day to simulate"
+                >
+                  {SEASONS.map((sn) => (
+                    <option key={sn.key} value={sn.key}>
+                      {sn.label}{sn.md ? ` — ${prettyDate(seasonDate(sn.key))}` : ''}
+                    </option>
+                  ))}
+                  <option value="custom">Pick a date…</option>
+                </select>
+              </label>
+              {seasonKey === 'custom' && (
+                <input
+                  type="date"
+                  className="bsr-datein"
+                  value={customDate || todayStr()}
+                  onChange={(e) => setCustomDate(e.target.value)}
+                  aria-label="Date to simulate"
+                />
+              )}
+              {assumed ? <span className="bsr-assumed">assumed</span> : null}
+            </p>
+
+            {/* The play/pause control used to sit in its own row below the
+                map (.bsr-timerow) -- a second bar under the one already
+                floating on the map, adding height for one button. It is a
+                map control like floor/faces/date above it, so it lives in
+                the same floating toolbar now. Pressing play hides the
+                slider again rather than leaving an empty row behind,
+                which is what keeps this bar thin while playing (the
+                common state -- animating starts true). */}
+            <p className="bsr-mapbar-time">
+              <button
+                type="button"
+                className={`bsr-play${animating ? ' is-on' : ''}`}
+                onClick={() => setAnimating((a) => !a)}
+                aria-pressed={animating}
+              >
+                {animating ? '\u2759\u2759 Pause' : '\u25B6 Watch the day'}
+              </button>
+              {!animating && (
+                <>
+                  <input
+                    id="bsr-time"
+                    type="range"
+                    min="330"
+                    max="1140"
+                    step="10"
+                    value={minutes}
+                    onChange={(e) => setMinutes(Number(e.target.value))}
+                    aria-label="Time of day"
+                  />
+                  <span className="bsr-clock">{clock(minutes)}</span>
+                </>
+              )}
+            </p>
+            {locError ? <p className="bsr-locerror">{locError}</p> : null}
+          </div>
+        </div>
+        <p className="bsr-compare-cue">
+          Weighing this against another flat?{' '}
+          <a href="/compare">Put them side by side</a> — the sun each one gets, and what the
+          price difference actually buys.
+        </p>
+        <p className="bsr-maphint">
+          {reportRunning
+            ? 'The pin is locked while the report is built from this spot — moving it now would mix two blocks into one report.'
+            : 'Click the map to interact with it, then click again to move the pin to another building.'}
+        </p>
+      </section>
 
       <section className="bsr-visit">
         <h2>What to check before you decide</h2>
