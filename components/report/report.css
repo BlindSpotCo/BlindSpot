@@ -703,3 +703,88 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 }
 .bsr-compare-cue a{color:var(--ss,#AF5F30);font-weight:700;text-decoration:none}
 .bsr-compare-cue a:hover{text-decoration:underline}
+
+/* ---------------- the "which floor, which way does it face"
+   popup, shown before anything is scored on a genuinely fresh visit
+   (no floor/facing in the URL -- see unitChosen in ReportScreen.js).
+   Sits below the address header, centred in the remaining space rather
+   than as a fixed full-screen overlay -- there's nothing behind it yet
+   worth dimming, since the scores effect hasn't even run. */
+.bsr-unitgate{
+  display:flex;justify-content:center;
+  padding:10vh 0 12vh;
+}
+.bsr-unitgate-panel{
+  width:100%;max-width:480px;
+  background:var(--paper,#FFFDF8);
+  border:1px solid var(--line,rgba(28,24,18,.14));
+  border-radius:12px;
+  box-shadow:0 18px 44px rgba(28,24,18,.14);
+  padding:28px 26px;
+}
+.bsr-unitgate-eyebrow{
+  display:block;font-family:'Geist Mono',monospace;font-weight:600;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ss,#AF5F30);margin-bottom:6px;
+}
+.bsr-unitgate-title{
+  margin:0;font-size:22px;font-weight:800;line-height:1.25;
+  color:var(--text,#1C1812);
+}
+.bsr-unitgate-lede{
+  margin:10px 0 0;font-size:14.5px;line-height:1.6;
+  color:var(--text-mute,#5A5140);
+}
+.bsr-unitgate-row{
+  display:flex;flex-direction:column;gap:16px;
+  margin-top:22px;
+}
+.bsr-unitgate-floor{
+  display:flex;flex-direction:column;gap:6px;
+}
+.bsr-unitgate-floor span{
+  font-family:'Geist Mono',monospace;font-weight:600;font-size:11.5px;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--text-mute,#5A5140);
+}
+.bsr-unitgate-floor input{
+  width:88px;font:inherit;font-size:17px;font-weight:700;text-align:center;
+  padding:9px 10px;border-radius:6px;min-height:42px;
+  border:1px solid var(--line,rgba(28,24,18,.2));
+  background:var(--bg,#FAF6EE);color:var(--text,#1C1812);
+}
+.bsr-unitgate-floor input:focus-visible{
+  outline:2px solid var(--ss,#AF5F30);outline-offset:1px;border-color:var(--ss,#AF5F30);
+}
+.bsr-unitgate-facing{
+  display:grid;grid-template-columns:repeat(4, 1fr);gap:8px;
+}
+.bsr-unitgate-chip{
+  border:1px solid var(--line-soft,rgba(28,24,18,.14));border-radius:8px;
+  background:var(--bg,#FAF6EE);padding:10px 4px;
+  font-family:'Geist Mono',monospace;font-size:13px;font-weight:600;
+  color:var(--text-mute,#5A5140);cursor:pointer;
+  transition:background .15s ease, color .15s ease, border-color .15s ease;
+}
+.bsr-unitgate-chip:hover{border-color:var(--line,rgba(28,24,18,.3));color:var(--text,#1C1812)}
+.bsr-unitgate-chip.on{background:var(--ss,#AF5F30);border-color:var(--ss,#AF5F30);color:#FFFDF8}
+.bsr-unitgate-actions{
+  display:flex;flex-direction:column;align-items:stretch;gap:12px;
+  margin-top:24px;
+}
+.bsr-unitgate-go{
+  border:none;border-radius:999px;background:var(--ss,#AF5F30);color:#FFFDF8;
+  font:inherit;font-size:15px;font-weight:700;padding:13px 20px;cursor:pointer;
+  transition:opacity .15s ease, transform .15s ease;
+}
+.bsr-unitgate-go:disabled{opacity:.4;cursor:not-allowed}
+.bsr-unitgate-go:not(:disabled):hover{transform:translateY(-1px)}
+.bsr-unitgate-skip{
+  border:none;background:none;color:var(--text-mute,#5A5140);text-decoration:underline;
+  text-underline-offset:2px;font:inherit;font-size:13.5px;cursor:pointer;padding:4px;
+  text-align:center;
+}
+.bsr-unitgate-skip:hover{color:var(--text,#1C1812)}
+@media (min-width:560px){
+  .bsr-unitgate-actions{flex-direction:row-reverse;align-items:center;justify-content:flex-start}
+  .bsr-unitgate-go{flex-shrink:0}
+}

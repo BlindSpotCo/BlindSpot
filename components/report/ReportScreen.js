@@ -47,6 +47,14 @@ const TZ = 330;
 const DEFAULT_FLOOR = 5;
 const DEFAULT_FACING = 'South-East';
 
+// Compact labels for the unitgate popup's 8-chip compass grid -- same
+// FACING_OPTS values everywhere else on this page use in full ("South-
+// East"), just abbreviated for a grid of buttons rather than a sentence.
+const FACING_SHORT = {
+  North: 'N', 'North-East': 'NE', East: 'E', 'South-East': 'SE',
+  South: 'S', 'South-West': 'SW', West: 'W', 'North-West': 'NW',
+};
+
 function word(score) {
   if (typeof score !== 'number' || Number.isNaN(score)) return null;
   if (score >= 80) return 'Excellent';
@@ -168,6 +176,36 @@ export default function ReportScreen() {
     () => params.get('assumed') === '1' || !params.get('floor') || !params.get('facing')
   );
 
+  // A listing gives you the tower, not the unit -- so on a genuinely
+  // fresh visit (no floor/facing in the URL: not a bookmarked link, not
+  // a "change address" round trip) nobody has said which flat this even
+  // is yet. Gate the actual scoring on answering that, rather than
+  // silently running the numbers for floor 5/South-East and hoping the
+  // "assumed" note further down gets noticed -- see the unitgate modal
+  // in the return below, and the early-out at the top of the scores
+  // effect. Once true for this mount, it stays true (changing floor or
+  // facing later, from within the report, is its own separate flow and
+  // doesn't need to re-ask).
+  const [unitChosen, setUnitChosen] = useState(
+    () => Boolean(params.get('floor') && params.get('facing'))
+  );
+  const [gFloor, setGFloor] = useState('');
+  const [gFacing, setGFacing] = useState('');
+
+  const confirmUnit = useCallback(() => {
+    const f = parseInt(gFloor, 10);
+    if (Number.isFinite(f)) { setFloor(f); setFloorText(String(f)); }
+    if (gFacing) setFacing(gFacing);
+    setAssumed(false);
+    setUnitChosen(true);
+  }, [gFloor, gFacing]);
+
+  // The floor/facing state already defaults to DEFAULT_FLOOR/
+  // DEFAULT_FACING (see their useState initialisers above), and `assumed`
+  // is already true whenever the URL arrived with no floor/facing -- so
+  // skipping the popup needs nothing but letting the scores effect run.
+  const skipUnit = useCallback(() => setUnitChosen(true), []);
+
   // "The area" and "the flat" each carry a full breakdown (every factor
   // row, the sub-scores) underneath a short summary (name/floor, rating
   // word, score) -- one tap away behind "Show the full breakdown" rather
@@ -242,6 +280,10 @@ export default function ReportScreen() {
   /* ---------------- scores ---------------- */
   useEffect(() => {
     if (!hasPlace) { setState('error'); setFailure('no-place'); return; }
+    // Waiting on the "which floor, which way does it face" popup -- see
+    // unitChosen above. Nothing fetches, nothing scores, until it's
+    // answered (explicitly, or via its "just browse" skip).
+    if (!unitChosen) return;
 
     const id = ++scoreReq.current;
     let cancelled = false;
@@ -350,7 +392,7 @@ export default function ReportScreen() {
     }
     run().finally(() => { if (!cancelled && id === scoreReq.current) setBusy(false); });
     return () => { cancelled = true; };
-  }, [hasPlace, lat, lon, pinCode, floor, facing, areaWeight, scoreNonce]);
+  }, [hasPlace, lat, lon, pinCode, floor, facing, areaWeight, scoreNonce, unitChosen]);
 
   /* ---------------- sun path for the map ---------------- */
   useEffect(() => {
@@ -680,6 +722,90 @@ export default function ReportScreen() {
           <h1>We need an address first.</h1>
           <p>Search one on the home page and this opens straight onto it.</p>
           <a className="bsr-cta" href="/">Search an address</a>
+        </div>
+      </div>
+    );
+  }
+
+  // Before anything gets scored: which flat is this actually for? Sun,
+  // shade, view, privacy, airflow, dampness and noise all depend on the
+  // real unit, not just the building -- so this blocks the scores effect
+  // above (see unitChosen) rather than running the numbers for floor 5/
+  // South-East and hoping the "assumed" note further down gets noticed.
+  // The address header still shows above it, so the popup reads as "one
+  // more thing about this address" rather than a blank interstitial.
+  if (!unitChosen) {
+    return (
+      <div className="bsr">
+        <header className="bsr-head">
+          <div className="bsr-head-top">
+            <h1 className="bsr-title">Your BlindSpot report</h1>
+            <span className="bsr-head-links">
+              <a href="/compare" className="is-primary">Compare flats</a>
+              <a href="/my-reports">My reports</a>
+              <a href="/">Change address</a>
+            </span>
+          </div>
+          <p className="bsr-addr">
+            <span className="bsr-pin" aria-hidden="true" />
+            <span className="bsr-addr-text">{address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}</span>
+          </p>
+        </header>
+
+        <div className="bsr-unitgate">
+          <div className="bsr-unitgate-panel" role="dialog" aria-modal="true" aria-label="Set the floor and facing before scoring">
+            <span className="bsr-unitgate-eyebrow">Before your score</span>
+            <h2 className="bsr-unitgate-title">Which floor, which way does it face?</h2>
+            <p className="bsr-unitgate-lede">
+              Sun, shade, view, privacy, airflow, dampness and noise all depend on the actual unit, not
+              just the address -- say which one and the score below is scored for it specifically.
+            </p>
+
+            <div className="bsr-unitgate-row">
+              <label className="bsr-unitgate-floor">
+                <span>Floor</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={2}
+                  value={gFloor}
+                  onChange={(e) => setGFloor(e.target.value.replace(/[^\d]/g, '').slice(0, 2))}
+                  placeholder={String(DEFAULT_FLOOR)}
+                  aria-label="Floor number"
+                />
+              </label>
+
+              <div className="bsr-unitgate-facing" role="radiogroup" aria-label="Which way the flat faces">
+                {FACING_OPTS.map((f) => (
+                  <button
+                    key={f}
+                    type="button"
+                    role="radio"
+                    aria-checked={f === gFacing}
+                    className={`bsr-unitgate-chip${f === gFacing ? ' on' : ''}`}
+                    onClick={() => setGFacing(f)}
+                  >
+                    {FACING_SHORT[f]}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="bsr-unitgate-actions">
+              <button
+                type="button"
+                className="bsr-unitgate-go"
+                disabled={!gFloor || !gFacing}
+                onClick={confirmUnit}
+              >
+                See my score
+              </button>
+              <button type="button" className="bsr-unitgate-skip" onClick={skipUnit}>
+                I don&rsquo;t have a specific flat in mind &mdash; let me just browse
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );
