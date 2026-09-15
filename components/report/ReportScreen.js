@@ -591,6 +591,15 @@ export default function ReportScreen() {
     });
   }, [persistChecklist, ticked]);
 
+  // Purely a this-render UI toggle, not persisted -- "show me the note
+  // field" for an item you haven't ticked (or that already has a note
+  // written) doesn't need to survive a reload the way the ticks/notes
+  // themselves do.
+  const [expandedNotes, setExpandedNotes] = useState(() => new Set());
+  const revealNote = useCallback((key) => {
+    setExpandedNotes((prev) => new Set(prev).add(key));
+  }, []);
+
   // Only count ticks against items actually on the list. The ticks are
   // stored per address, but the list is derived from the floor and facing --
   // change the floor and items drop off it, which used to leave the counter
@@ -1250,12 +1259,6 @@ export default function ReportScreen() {
           to each one — both are remembered on this device, and any notes carry into the report you
           save. Changing the floor or facing rebuilds the list.
         </p>
-        {actions.length > 0 && (
-          <div className="bsr-todo-head" aria-hidden="true">
-            <span>To check</span>
-            <span>What you found</span>
-          </div>
-        )}
         <ul className="bsr-todo">
           {actions.length === 0 ? (
             <li className="bsr-todo-plain">
@@ -1265,18 +1268,24 @@ export default function ReportScreen() {
               </span>
             </li>
           ) : (
-            actions.map((a) => (
-              <li key={a.key} className={ticked.has(a.key) ? 'is-done' : undefined}>
-                {/* Two columns on wider screens (check on the left, findings
-                    on the right), stacked on phones -- see .bsr-todo-split.
-                    The textarea sits outside the <label> on purpose: typing
-                    in it must never toggle the checkbox beside it. */}
-                <div className="bsr-todo-split">
+            actions.map((a) => {
+              const isTicked = ticked.has(a.key);
+              const hasNote = Boolean((notes[a.key] || '').trim());
+              // A box for every item, all empty, read as one repeated wall
+              // regardless of how short the placeholder was -- so nothing
+              // renders here at all until it's actually relevant: ticking
+              // an item (you've been and checked it -- the natural moment
+              // to say what you found) reveals its note field, a written
+              // note keeps it visible even if you later untick, and "+ Add
+              // a note" covers writing one without ticking.
+              const showNote = isTicked || hasNote || expandedNotes.has(a.key);
+              return (
+                <li key={a.key} className={isTicked ? 'is-done' : undefined}>
                   <label className="bsr-todo-row">
                     <input
                       type="checkbox"
                       className="bsr-box"
-                      checked={ticked.has(a.key)}
+                      checked={isTicked}
                       onChange={() => toggleTick(a.key)}
                     />
                     <span className="bsr-todo-body">
@@ -1284,17 +1293,26 @@ export default function ReportScreen() {
                       <span className="bsr-todo-text">{a.action}</span>
                     </span>
                   </label>
-                  <textarea
-                    className="bsr-todo-note"
-                    placeholder="Notes (optional)"
-                    aria-label={`What did you find — ${a.label}`}
-                    value={notes[a.key] || ''}
-                    onChange={(e) => updateNote(a.key, e.target.value)}
-                    rows={2}
-                  />
-                </div>
-              </li>
-            ))
+                  {/* Both sit outside the <label> on purpose -- clicking
+                      either must never toggle the checkbox above it. */}
+                  {showNote ? (
+                    <textarea
+                      className="bsr-todo-note"
+                      placeholder="Notes (optional)"
+                      aria-label={`What did you find — ${a.label}`}
+                      value={notes[a.key] || ''}
+                      onChange={(e) => updateNote(a.key, e.target.value)}
+                      rows={2}
+                      autoFocus={isTicked && !hasNote}
+                    />
+                  ) : (
+                    <button type="button" className="bsr-todo-addnote" onClick={() => revealNote(a.key)}>
+                      + Add a note
+                    </button>
+                  )}
+                </li>
+              );
+            })
           )}
         </ul>
         {actions.length > 0 && tickedHere > 0 && (

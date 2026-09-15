@@ -402,30 +402,6 @@
 .bsr-todo li{border-top:1px solid var(--line-soft,rgba(28,24,18,.08))}
 .bsr-todo-plain{display:flex;gap:16px;padding:16px 0}
 
-/* Said once, above the list, instead of inside every row's placeholder --
-   six identical "what did you find? (optional -- carries into the report
-   you save)" strings in a row was the actual repetition, not the boxes
-   themselves. Hidden on the stacked mobile layout, where each row already
-   sits directly under its own check with no second column to label. */
-.bsr-todo-head{
-  display:flex;gap:20px;padding:0 0 6px;margin-top:18px;
-  font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
-  color:var(--text-dim,#847C70);
-}
-.bsr-todo-head span{flex:1 1 0}
-@media (max-width:720px){.bsr-todo-head{display:none}}
-
-/* Check on the left, findings on the right -- stacked below 720px, this
-   list gets used one-handed on a phone while walking around a flat, and a
-   forced second column there would squeeze both into unreadable slivers. */
-.bsr-todo-split{display:flex;gap:20px;align-items:flex-start;padding:2px 0}
-.bsr-todo-split .bsr-todo-row{flex:1 1 0;min-width:0}
-.bsr-todo-split .bsr-todo-note{flex:1 1 0;min-width:0;margin:0}
-@media (max-width:720px){
-  .bsr-todo-split{flex-direction:column;gap:0}
-  .bsr-todo-split .bsr-todo-note{margin:2px 0 14px}
-}
-
 /* The whole row is the target, not the 22px square -- this list gets used
    one-handed while walking around a flat. */
 .bsr-todo-row{
@@ -454,19 +430,32 @@
 .bsr-todo-title{display:block;font-size:17px;font-weight:700;margin-bottom:3px}
 .bsr-todo-text{display:block;font-size:16.5px;color:var(--text-mute,#5A5140)}
 
+/* Indented to sit under the label text, not the checkbox (22px box + 16px
+   gap = 38px) -- both are outside the <label> (see the JSX comment), and
+   both are collapsed by default: a box for every item, all empty, is what
+   read as a repeated wall in the first place. Only a ticked item, one
+   already holding a note, or "+ Add a note" itself shows the textarea. */
+.bsr-todo-addnote{
+  display:block;margin:2px 0 14px 38px;padding:0;
+  font:inherit;font-size:14px;font-weight:600;color:var(--text-dim,#847C70);
+  background:none;border:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px;
+  text-decoration-style:dotted;
+}
+.bsr-todo-addnote:hover{color:var(--brand,#7A2E43)}
+
 /* Ticked rows recede rather than disappear -- you still need to be able to
    read what you already checked. */
 .bsr-todo li.is-done .bsr-todo-title{text-decoration:line-through;color:var(--text-mute,#5A5140)}
 .bsr-todo li.is-done .bsr-todo-text{color:var(--text-dim,#847C70)}
 
 /* Sits below the label, deliberately outside it -- see the JSX comment.
-   Empty, this is a dashed outline, not a filled card -- six solid grey
-   boxes stacked in a column was what read as repetitive, more than the
-   (now much shorter) placeholder text inside them. It only picks up a
-   solid fill once it actually holds a note, so a scanned page shows real
-   content, not a wall of identical empty fields. */
+   Only rendered once relevant (see showNote above), indented to the same
+   38px as .bsr-todo-addnote so the two read as one slot that's either a
+   quiet link or an open field, never both at once. Still a dashed outline
+   until it actually holds text, same reasoning as before -- it just no
+   longer has five empty siblings doing the same thing at once. */
 .bsr-todo-note{
-  display:block;width:100%;box-sizing:border-box;resize:vertical;
+  display:block;width:calc(100% - 38px);margin:2px 0 14px 38px;box-sizing:border-box;resize:vertical;
   padding:8px 10px;
   font:inherit;font-size:14.5px;line-height:1.5;color:var(--text,#1C1812);
   background:transparent;
