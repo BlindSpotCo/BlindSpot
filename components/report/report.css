@@ -435,6 +435,23 @@
 .bsr-todo li.is-done .bsr-todo-title{text-decoration:line-through;color:var(--text-mute,#5A5140)}
 .bsr-todo li.is-done .bsr-todo-text{color:var(--text-dim,#847C70)}
 
+/* Sits below the label, deliberately outside it -- see the JSX comment.
+   Quiet by default (no border) so an empty list of checkboxes doesn't read
+   as a form; a focus/content ring is what says "you can write here". */
+.bsr-todo-note{
+  display:block;width:100%;box-sizing:border-box;resize:vertical;
+  margin:2px 0 14px;padding:8px 10px;
+  font:inherit;font-size:14.5px;line-height:1.5;color:var(--text,#1C1812);
+  background:color-mix(in srgb, var(--brand,#3D4116) 4%, transparent);
+  border:1px solid transparent;border-radius:4px;
+  transition:background .12s ease,border-color .12s ease;
+}
+.bsr-todo-note::placeholder{color:var(--text-dim,#847C70)}
+.bsr-todo-note:hover{background:color-mix(in srgb, var(--brand,#3D4116) 7%, transparent)}
+.bsr-todo-note:focus{
+  outline:none;background:#FFFDF8;border-color:var(--brand,#7A2E43);
+}
+
 .bsr-todo-count{
   margin-top:14px;font-size:15px;color:var(--text-mute,#5A5140);
 }

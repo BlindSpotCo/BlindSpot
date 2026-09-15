@@ -341,7 +341,17 @@ export async function POST(req) {
   // passed straight through rather than recomputed here -- one source of
   // truth for which dimensions actually flagged as weak enough to act on.
   const safeActionItems = Array.isArray(actionItems)
-    ? actionItems.filter(i => i && typeof i.label === 'string' && typeof i.action === 'string').slice(0, 10)
+    ? actionItems.filter(i => i && typeof i.label === 'string' && typeof i.action === 'string').slice(0, 10).map(i => ({
+        ...i,
+        // What the buyer actually typed after visiting, e.g. "checked at
+        // 6pm, hallway is fine but the corner bedroom gets loud". Same cap
+        // + sanitizing as customNote above -- free text from the reader,
+        // stripped of prompt syntax so it can't smuggle in formatting or
+        // section instructions of its own.
+        userFinding: typeof i.userFinding === 'string'
+          ? i.userFinding.trim().slice(0, 300).replace(/[`*_#]/g, '')
+          : '',
+      }))
     : [];
 
   if (!screenshots || screenshots.length === 0) {
@@ -527,8 +537,11 @@ ${ov.sectionBody}` : '';
   const checklistSection = safeActionItems.length > 0 ? `
 
 ${checklistSectionNumber}. WHAT TO CHECK WHEN YOU VISIT
-These are already-written, plain-language action lines for the specific dimensions that scored weak enough to be worth a second look in person — reuse them close to as-is (light rewording for flow is fine, don't invent new ones or drop any) as a short "- " bulleted list, one line per item, each starting with the dimension name in bold-equivalent plain text then a colon. One short sentence before the list is enough context; no restating of scores or numbers already covered elsewhere in this report.
-${safeActionItems.map(i => `- ${i.label} (${i.score}): ${i.action}`).join('\n')}` : '';
+These are already-written, plain-language action lines for the specific dimensions that scored weak enough to be worth a second look in person. For any item WITHOUT a finding below, reuse its action line close to as-is (light rewording for flow is fine, don't invent new ones or drop any) -- it's still a thing to go check. For any item WITH a finding, the reader has already visited and is telling you what they found: write that up as a confirmed observation in their own words (light cleanup for flow is fine, don't soften, contradict, or second-guess it), NOT as a thing still to check -- don't tell the reader to go verify something they just told you they already verified. Render the whole section as a short "- " bulleted list, one line per item, each starting with the dimension name in bold-equivalent plain text then a colon. One short sentence before the list is enough context; no restating of scores or numbers already covered elsewhere in this report.
+${safeActionItems.map(i => i.userFinding
+  ? `- ${i.label} (${i.score}): confirmed on a visit -- "${i.userFinding}"`
+  : `- ${i.label} (${i.score}): ${i.action}`
+).join('\n')}` : '';
 
   const prompt = `You are a solar and neighbourhood intelligence analyst helping a home buyer in India, writing a single combined report for BlindSpot.
 

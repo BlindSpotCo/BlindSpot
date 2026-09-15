@@ -535,30 +535,61 @@ export default function ReportScreen() {
      nothing when you pressed them -- the one thing on this page that
      invites a click and then ignores it. They are real now, and they
      remember what you ticked for this address, because the whole point of
-     the list is that you carry it around a flat and tick things off. */
+     the list is that you carry it around a flat and tick things off.
+
+     `notes` sits alongside `ticked` in the same storage entry -- free text
+     per item, "what did you actually find", not just whether you looked.
+     On its own that would only ever live on this one device/browser, same
+     as the ticks always have -- the part that makes it worth writing is
+     feeding it to the AI report below (see actionsForAI / prefillActionItems)
+     so a finding written here becomes part of the report you actually save,
+     not a note that evaporates the moment you close the tab. */
   const [ticked, setTicked] = useState(() => new Set());
+  const [notes, setNotes] = useState(() => ({}));
   const tickKey = hasPlace ? `bs-checklist:${lat.toFixed(5)},${lon.toFixed(5)}` : '';
 
   useEffect(() => {
     if (!tickKey) return;
     try {
       const raw = window.localStorage.getItem(tickKey);
-      setTicked(new Set(raw ? JSON.parse(raw) : []));
-    } catch { setTicked(new Set()); }
+      const parsed = raw ? JSON.parse(raw) : null;
+      // Old entries are a bare array of ticked keys, written before notes
+      // existed -- still read those as ticks-only rather than losing them.
+      if (Array.isArray(parsed)) {
+        setTicked(new Set(parsed));
+        setNotes({});
+      } else {
+        setTicked(new Set(Array.isArray(parsed?.ticked) ? parsed.ticked : []));
+        setNotes(parsed?.notes && typeof parsed.notes === 'object' ? parsed.notes : {});
+      }
+    } catch { setTicked(new Set()); setNotes({}); }
+  }, [tickKey]);
+
+  const persistChecklist = useCallback((nextTicked, nextNotes) => {
+    if (!tickKey) return;
+    try {
+      // Private browsing and blocked site data both throw here. Ticking/
+      // noting still works for this visit; it just won't be remembered.
+      window.localStorage.setItem(tickKey, JSON.stringify({ ticked: [...nextTicked], notes: nextNotes }));
+    } catch {}
   }, [tickKey]);
 
   const toggleTick = useCallback((key) => {
     setTicked((prev) => {
       const next = new Set(prev);
       if (next.has(key)) next.delete(key); else next.add(key);
-      if (tickKey) {
-        // Private browsing and blocked site data both throw here. Ticking
-        // still works for this visit; it just won't be remembered.
-        try { window.localStorage.setItem(tickKey, JSON.stringify([...next])); } catch {}
-      }
+      persistChecklist(next, notes);
       return next;
     });
-  }, [tickKey]);
+  }, [persistChecklist, notes]);
+
+  const updateNote = useCallback((key, text) => {
+    setNotes((prev) => {
+      const next = { ...prev, [key]: text };
+      persistChecklist(ticked, next);
+      return next;
+    });
+  }, [persistChecklist, ticked]);
 
   // Only count ticks against items actually on the list. The ticks are
   // stored per address, but the list is derived from the floor and facing --
@@ -567,6 +598,18 @@ export default function ReportScreen() {
   const tickedHere = useMemo(
     () => actions.filter((a) => ticked.has(a.key)).length,
     [actions, ticked]
+  );
+
+  // Fed to ReportModal as prefillActionItems -- a finding typed above is
+  // what actually turns "noted on this device" into "in the report you
+  // save": app/api/sunscout/report/analyse/route.js writes a userFinding
+  // into the report as something you confirmed, not a thing still to check.
+  const actionsForAI = useMemo(
+    () => actions.map((a) => ({
+      key: a.key, label: a.label, score: a.score, action: a.action,
+      userFinding: (notes[a.key] || '').trim(),
+    })),
+    [actions, notes]
   );
 
 
@@ -1229,6 +1272,15 @@ export default function ReportScreen() {
                     <span className="bsr-todo-text">{a.action}</span>
                   </span>
                 </label>
+                {/* Outside the <label> on purpose -- typing in here must
+                    never toggle the checkbox above it. */}
+                <textarea
+                  className="bsr-todo-note"
+                  placeholder="What did you find? (optional — carries into the report you save)"
+                  value={notes[a.key] || ''}
+                  onChange={(e) => updateNote(a.key, e.target.value)}
+                  rows={2}
+                />
               </li>
             ))
           )}
@@ -1292,6 +1344,7 @@ export default function ReportScreen() {
           galleryOnly={reportOpen === 'gallery'}
           prefillFloor={floor}
           prefillFacing={facing}
+          prefillActionItems={actionsForAI.length ? actionsForAI : undefined}
           unitScore={unit.score}
           unitSubScores={unit.subScores}
           areaRecord={reportOpen === 'full' ? avRecord : undefined}
