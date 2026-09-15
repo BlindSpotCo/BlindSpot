@@ -961,6 +961,7 @@ export default function ReportScreen() {
 
       {/* ---------- the answer, before anything else ---------- */}
       <section className={`bsr-answer is-${topTone}`} id="the-score" aria-live="polite">
+        <a href="#the-visit" className="bsr-card-zoom" aria-label="Jump to what to check before you decide">🔍</a>
         <p className="bsr-big">
           {/* Names what the number actually is before you see the number
               itself -- a bare "72 out of 100" with no label doesn't say
@@ -994,10 +995,17 @@ export default function ReportScreen() {
 
       </section>
 
-      <div className="bsr-halves">
-
         {/* ================= THE AREA ================= */}
         <section className="bsr-half bsr-area">
+          <button
+            type="button"
+            className="bsr-card-zoom"
+            aria-label={halfOpen.area ? 'Collapse the area breakdown' : 'Expand the area breakdown'}
+            aria-expanded={halfOpen.area}
+            onClick={() => toggleHalf('area')}
+          >
+            🔍
+          </button>
           <p className="bsr-kicker">The area around it</p>
           <h2>{hasArea ? area.name : 'This locality'}</h2>
           <p className="bsr-sub">
@@ -1132,6 +1140,15 @@ export default function ReportScreen() {
 
         {/* ================= THE FLAT ================= */}
         <section className="bsr-half bsr-unit" id="the-flat" ref={unitRef}>
+          <button
+            type="button"
+            className="bsr-card-zoom"
+            aria-label={halfOpen.unit ? 'Collapse the flat breakdown' : 'Expand the flat breakdown'}
+            aria-expanded={halfOpen.unit}
+            onClick={() => toggleHalf('unit')}
+          >
+            🔍
+          </button>
           <p className="bsr-kicker">The flat itself</p>
 
           {/* Used to be an h2 ("34th floor, faces east") sitting directly
@@ -1452,7 +1469,7 @@ export default function ReportScreen() {
         </p>
       </section>
 
-      <section className="bsr-visit">
+      <section className="bsr-visit" id="the-visit">
         <h2>What to check before you decide</h2>
 
         <ul className="bsr-todo">
