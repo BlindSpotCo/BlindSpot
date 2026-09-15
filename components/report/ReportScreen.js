@@ -644,14 +644,27 @@ export default function ReportScreen() {
     } catch {}
   }, [tickKey]);
 
+  // Ticking an item is the natural moment to reveal its note field --
+  // but re-ticking one whose note field was explicitly closed (see
+  // collapseNote below) should reopen it too, not leave it stuck hidden
+  // just because it was closed once before.
   const toggleTick = useCallback((key) => {
+    const willTick = !ticked.has(key);
     setTicked((prev) => {
       const next = new Set(prev);
       if (next.has(key)) next.delete(key); else next.add(key);
       persistChecklist(next, notes);
       return next;
     });
-  }, [persistChecklist, notes]);
+    if (willTick) {
+      setCollapsedNotes((prev) => {
+        if (!prev.has(key)) return prev;
+        const next = new Set(prev);
+        next.delete(key);
+        return next;
+      });
+    }
+  }, [persistChecklist, notes, ticked]);
 
   const updateNote = useCallback((key, text) => {
     setNotes((prev) => {
@@ -661,13 +674,33 @@ export default function ReportScreen() {
     });
   }, [persistChecklist, ticked]);
 
-  // Purely a this-render UI toggle, not persisted -- "show me the note
-  // field" for an item you haven't ticked (or that already has a note
-  // written) doesn't need to survive a reload the way the ticks/notes
-  // themselves do.
+  // Purely this-render UI toggles, not persisted -- whether a note field
+  // is showing doesn't need to survive a reload the way the ticks/notes
+  // themselves do. Two sets, not one: expandedNotes is "opened on
+  // request" (the "+ Add a note" link, for an item you haven't ticked
+  // and that has no note yet); collapsedNotes is "closed on request" and
+  // overrides EVERY reason a field would otherwise show (ticked, has a
+  // saved note, or expanded) -- without it there was no way to hide a
+  // note field again once it opened, which is exactly what it's for.
   const [expandedNotes, setExpandedNotes] = useState(() => new Set());
+  const [collapsedNotes, setCollapsedNotes] = useState(() => new Set());
   const revealNote = useCallback((key) => {
     setExpandedNotes((prev) => new Set(prev).add(key));
+    setCollapsedNotes((prev) => {
+      if (!prev.has(key)) return prev;
+      const next = new Set(prev);
+      next.delete(key);
+      return next;
+    });
+  }, []);
+  const collapseNote = useCallback((key) => {
+    setCollapsedNotes((prev) => new Set(prev).add(key));
+    setExpandedNotes((prev) => {
+      if (!prev.has(key)) return prev;
+      const next = new Set(prev);
+      next.delete(key);
+      return next;
+    });
   }, []);
 
   // Only count ticks against items actually on the list. The ticks are
@@ -1439,8 +1472,10 @@ export default function ReportScreen() {
               // an item (you've been and checked it -- the natural moment
               // to say what you found) reveals its note field, a written
               // note keeps it visible even if you later untick, and "+ Add
-              // a note" covers writing one without ticking.
-              const showNote = isTicked || hasNote || expandedNotes.has(a.key);
+              // a note" covers writing one without ticking. collapsedNotes
+              // overrides all three -- otherwise a field, once opened, had
+              // no way back to "+ Add a note" at all.
+              const showNote = !collapsedNotes.has(a.key) && (isTicked || hasNote || expandedNotes.has(a.key));
               return (
                 <li key={a.key} className={isTicked ? 'is-done' : undefined}>
                   <label className="bsr-todo-row">
@@ -1458,15 +1493,30 @@ export default function ReportScreen() {
                   {/* Both sit outside the <label> on purpose -- clicking
                       either must never toggle the checkbox above it. */}
                   {showNote ? (
-                    <textarea
-                      className="bsr-todo-note"
-                      placeholder="Notes (optional)"
-                      aria-label={`What did you find — ${a.label}`}
-                      value={notes[a.key] || ''}
-                      onChange={(e) => updateNote(a.key, e.target.value)}
-                      rows={2}
-                      autoFocus={isTicked && !hasNote}
-                    />
+                    <span className="bsr-todo-notewrap">
+                      <textarea
+                        className="bsr-todo-note"
+                        placeholder="Notes (optional)"
+                        aria-label={`What did you find — ${a.label}`}
+                        value={notes[a.key] || ''}
+                        onChange={(e) => updateNote(a.key, e.target.value)}
+                        rows={2}
+                        autoFocus={isTicked && !hasNote}
+                      />
+                      {/* Closing keeps whatever's already typed -- this
+                          only hides the field, ticking it again (or "+ Add
+                          a note") brings it right back with the text
+                          still there. */}
+                      <button
+                        type="button"
+                        className="bsr-todo-notehide"
+                        onClick={() => collapseNote(a.key)}
+                        aria-label={`Hide the note field for ${a.label}`}
+                        title="Hide this note field"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                      </button>
+                    </span>
                   ) : (
                     <button type="button" className="bsr-todo-addnote" onClick={() => revealNote(a.key)}>
                       + Add a note

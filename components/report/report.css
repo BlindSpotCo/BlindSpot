@@ -466,9 +466,12 @@
    quiet link or an open field, never both at once. Still a dashed outline
    until it actually holds text, same reasoning as before -- it just no
    longer has five empty siblings doing the same thing at once. */
+.bsr-todo-notewrap{
+  display:block;position:relative;width:calc(100% - 38px);margin:2px 0 14px 38px;
+}
 .bsr-todo-note{
-  display:block;width:calc(100% - 38px);margin:2px 0 14px 38px;box-sizing:border-box;resize:vertical;
-  padding:8px 10px;
+  display:block;width:100%;box-sizing:border-box;resize:vertical;
+  padding:8px 30px 8px 10px;
   font:inherit;font-size:14.5px;line-height:1.5;color:var(--text,#1C1812);
   background:transparent;
   border:1px dashed var(--line-soft,rgba(28,24,18,.18));border-radius:4px;
@@ -482,6 +485,19 @@
 .bsr-todo-note:not(:placeholder-shown){
   border-style:solid;background:color-mix(in srgb, var(--brand,#3D4116) 5%, transparent);
 }
+/* The close control the note field was missing entirely -- once opened
+   (by ticking, or by "+ Add a note"), there was no way back to the quiet
+   collapsed state. Sits inside the textarea's own top-right corner so it
+   reads as part of the field, not a separate row; text already typed is
+   kept (see collapseNote in ReportScreen.js), only the field's visibility
+   changes. */
+.bsr-todo-notehide{
+  position:absolute;top:6px;right:6px;z-index:1;
+  width:20px;height:20px;display:flex;align-items:center;justify-content:center;
+  padding:0;border:0;border-radius:50%;cursor:pointer;
+  background:var(--bg-2,#F1E9DA);color:var(--text-mute,#5A5140);
+}
+.bsr-todo-notehide:hover{background:var(--line-soft,rgba(28,24,18,.14));color:var(--text,#1C1812)}
 
 .bsr-todo-count{
   margin-top:14px;font-size:15px;color:var(--text-mute,#5A5140);
