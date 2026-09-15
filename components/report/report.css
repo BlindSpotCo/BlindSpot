@@ -402,6 +402,19 @@
 .bsr-todo li{border-top:1px solid var(--line-soft,rgba(28,24,18,.08))}
 .bsr-todo-plain{display:flex;gap:16px;padding:16px 0}
 
+/* Said once, above the list, instead of inside every row's placeholder --
+   six identical "what did you find? (optional -- carries into the report
+   you save)" strings in a row was the actual repetition, not the boxes
+   themselves. Hidden on the stacked mobile layout, where each row already
+   sits directly under its own check with no second column to label. */
+.bsr-todo-head{
+  display:flex;gap:20px;padding:0 0 6px;margin-top:18px;
+  font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--text-dim,#847C70);
+}
+.bsr-todo-head span{flex:1 1 0}
+@media (max-width:720px){.bsr-todo-head{display:none}}
+
 /* Check on the left, findings on the right -- stacked below 720px, this
    list gets used one-handed on a phone while walking around a flat, and a
    forced second column there would squeeze both into unreadable slivers. */
@@ -447,20 +460,26 @@
 .bsr-todo li.is-done .bsr-todo-text{color:var(--text-dim,#847C70)}
 
 /* Sits below the label, deliberately outside it -- see the JSX comment.
-   Quiet by default (no border) so an empty list of checkboxes doesn't read
-   as a form; a focus/content ring is what says "you can write here". */
+   Empty, this is a dashed outline, not a filled card -- six solid grey
+   boxes stacked in a column was what read as repetitive, more than the
+   (now much shorter) placeholder text inside them. It only picks up a
+   solid fill once it actually holds a note, so a scanned page shows real
+   content, not a wall of identical empty fields. */
 .bsr-todo-note{
   display:block;width:100%;box-sizing:border-box;resize:vertical;
   padding:8px 10px;
   font:inherit;font-size:14.5px;line-height:1.5;color:var(--text,#1C1812);
-  background:color-mix(in srgb, var(--brand,#3D4116) 4%, transparent);
-  border:1px solid transparent;border-radius:4px;
+  background:transparent;
+  border:1px dashed var(--line-soft,rgba(28,24,18,.18));border-radius:4px;
   transition:background .12s ease,border-color .12s ease;
 }
 .bsr-todo-note::placeholder{color:var(--text-dim,#847C70)}
-.bsr-todo-note:hover{background:color-mix(in srgb, var(--brand,#3D4116) 7%, transparent)}
+.bsr-todo-note:hover{border-color:var(--line,rgba(28,24,18,.3))}
 .bsr-todo-note:focus{
-  outline:none;background:#FFFDF8;border-color:var(--brand,#7A2E43);
+  outline:none;background:#FFFDF8;border-style:solid;border-color:var(--brand,#7A2E43);
+}
+.bsr-todo-note:not(:placeholder-shown){
+  border-style:solid;background:color-mix(in srgb, var(--brand,#3D4116) 5%, transparent);
 }
 
 .bsr-todo-count{

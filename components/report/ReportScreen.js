@@ -1246,9 +1246,16 @@ export default function ReportScreen() {
       <section className="bsr-visit">
         <h2>What to check before you decide</h2>
         <p className="bsr-visit-lede">
-          Everything that scored under 60. Tick them off as you go — your ticks are remembered on this
-          device. Changing the floor or facing rebuilds the list.
+          Everything that scored under 60. Tick them off as you go and jot what you actually find next
+          to each one — both are remembered on this device, and any notes carry into the report you
+          save. Changing the floor or facing rebuilds the list.
         </p>
+        {actions.length > 0 && (
+          <div className="bsr-todo-head" aria-hidden="true">
+            <span>To check</span>
+            <span>What you found</span>
+          </div>
+        )}
         <ul className="bsr-todo">
           {actions.length === 0 ? (
             <li className="bsr-todo-plain">
@@ -1279,7 +1286,8 @@ export default function ReportScreen() {
                   </label>
                   <textarea
                     className="bsr-todo-note"
-                    placeholder="What did you find? (optional — carries into the report you save)"
+                    placeholder="Notes (optional)"
+                    aria-label={`What did you find — ${a.label}`}
                     value={notes[a.key] || ''}
                     onChange={(e) => updateNote(a.key, e.target.value)}
                     rows={2}
