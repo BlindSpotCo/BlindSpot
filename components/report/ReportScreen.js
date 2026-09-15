@@ -169,22 +169,15 @@ export default function ReportScreen() {
   );
 
   // "The area" and "the flat" each carry a full breakdown (every factor
-  // row, the sub-scores, the links out) underneath a short summary
-  // (name/floor, rating word, score). On a phone that's two long lists to
-  // scroll past before reaching the map below -- collapsed to the summary
-  // by default there, full breakdown one tap away. Both start OPEN (matches
-  // desktop, where they always stay open) so server and client render the
-  // same markup on first paint; the effect below then collapses them, but
-  // only once, and only if the viewport actually is a phone -- doing this
-  // in state's lazy initializer instead would read `window` during
-  // hydration and mismatch against the server's render every time.
-  const [halfOpen, setHalfOpen] = useState({ area: true, unit: true });
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return;
-    if (window.matchMedia('(max-width:767px)').matches) {
-      setHalfOpen({ area: false, unit: false });
-    }
-  }, []);
+  // row, the sub-scores) underneath a short summary (name/floor, rating
+  // word, score) -- one tap away behind "Show the full breakdown" rather
+  // than forced scrolling. Used to force this open on tablet/desktop via
+  // a min-width override in report.css (a phone-only collapse); that read
+  // as two long walls of rows on a laptop too, so it now collapses the
+  // same way at every width. The "see the detailed report" links for each
+  // half live outside this toggle in the JSX below (not inside
+  // bsr-half-detail) so collapsing the breakdown never hides them.
+  const [halfOpen, setHalfOpen] = useState({ area: false, unit: false });
   const toggleHalf = (key) => setHalfOpen((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const [scores, setScores] = useState(null);   // { area|null, unit, combined|null }
@@ -838,37 +831,43 @@ export default function ReportScreen() {
               )}
               {assumed ? <span className="bsr-assumed">assumed</span> : null}
             </p>
+
+            {/* The play/pause control used to sit in its own row below the
+                map (.bsr-timerow) -- a second bar under the one already
+                floating on the map, adding height for one button. It is a
+                map control like floor/faces/date above it, so it lives in
+                the same floating toolbar now. Pressing play hides the
+                slider again rather than leaving an empty row behind,
+                which is what keeps this bar thin while playing (the
+                common state -- animating starts true). */}
+            <p className="bsr-mapbar-time">
+              <button
+                type="button"
+                className={`bsr-play${animating ? ' is-on' : ''}`}
+                onClick={() => setAnimating((a) => !a)}
+                aria-pressed={animating}
+              >
+                {animating ? '\u2759\u2759 Pause' : '\u25B6 Watch the day'}
+              </button>
+              {!animating && (
+                <>
+                  <input
+                    id="bsr-time"
+                    type="range"
+                    min="330"
+                    max="1140"
+                    step="10"
+                    value={minutes}
+                    onChange={(e) => setMinutes(Number(e.target.value))}
+                    aria-label="Time of day"
+                  />
+                  <span className="bsr-clock">{clock(minutes)}</span>
+                </>
+              )}
+            </p>
             {locError ? <p className="bsr-locerror">{locError}</p> : null}
           </div>
         </div>
-
-        <p className="bsr-timerow">
-          <button
-            type="button"
-            className={`bsr-play${animating ? ' is-on' : ''}`}
-            onClick={() => setAnimating((a) => !a)}
-            aria-pressed={animating}
-          >
-            {animating ? '\u2759\u2759  Pause' : '\u25B6  Watch the day'}
-          </button>
-          {animating ? (
-            <span className="bsr-sunhint">Sunrise to sunset, shadows falling where they really fall.</span>
-          ) : (
-            <>
-              <input
-                id="bsr-time"
-                type="range"
-                min="330"
-                max="1140"
-                step="10"
-                value={minutes}
-                onChange={(e) => setMinutes(Number(e.target.value))}
-                aria-label="Time of day"
-              />
-              <span className="bsr-clock">{clock(minutes)}</span>
-            </>
-          )}
-        </p>
         <p className="bsr-compare-cue">
           Weighing this against another flat?{' '}
           <a href="/compare">Put them side by side</a> — the sun each one gets, and what the
@@ -957,11 +956,12 @@ export default function ReportScreen() {
                 <span className="bsr-outof">{area.score} out of 100 · grade {area.grade}</span>
               </p>
 
-              {/* Collapsed to the rating above by default on phone -- the
-                  factor-by-factor breakdown, the link out, and the
-                  methodology note are one tap away instead of forced
-                  scrolling. Always open on tablet/desktop regardless of
-                  halfOpen, via the min-width override in report.css. */}
+              {/* Collapsed to the rating above by default at every width --
+                  the factor-by-factor breakdown and the methodology note
+                  are one tap away instead of a wall of rows nobody reads
+                  top to bottom. The "see detailed report" link just below
+                  stays outside this toggle (see bsr-more after the closing
+                  div) so it's never hidden by a collapsed state. */}
               <button
                 type="button"
                 className="bsr-half-toggle"
@@ -1005,20 +1005,24 @@ export default function ReportScreen() {
                 ))}
               </ul>
 
+              <p className="bsr-methodology-note">
+                Neighbourhood scores combine cited public-record data with a zone-level model, so nearby pincodes in the same zone can land close together or identical. Named school detail in the full report is the one part sourced locality by locality.
+              </p>
+              </div>
+
+              {/* Outside bsr-half-detail on purpose -- "see the detailed
+                  report" stays visible whether the breakdown above is
+                  open or collapsed. margin-top:auto in report.css lines
+                  this up with the flat's own link opposite it. No
+                  rel="noopener" on purpose: that report's own Close button
+                  is window.close(), which the browser refuses without an
+                  opener. Same call AVAreaCard's link makes. */}
               <p className="bsr-more">
-                {/* No rel="noopener" on purpose: that report's own Close
-                    button is window.close(), which the browser refuses
-                    without an opener. Same call AVAreaCard's link makes. */}
                 <a href={`/neighbourhood-report/${area.pinCode}`} target="_blank">See the detailed area report →</a>
                 <span className="bsr-more-note">
                   Every figure behind these, the schools by name and board, price band, and nearby localities compared.
                 </span>
               </p>
-
-              <p className="bsr-methodology-note">
-                Neighbourhood scores combine cited public-record data with a zone-level model, so nearby pincodes in the same zone can land close together or identical. Named school detail in the full report is the one part sourced locality by locality.
-              </p>
-              </div>
             </>
           ) : (
             <div className="bsr-nocover">
@@ -1109,11 +1113,12 @@ export default function ReportScreen() {
             {busy ? <span className="bsr-busy">recalculating…</span> : null}
           </p>
 
-          {/* Same collapse-on-phone pattern as "the area" above -- the
-              sub-score breakdown and the sun/shadow link are one tap away
-              instead of forced scrolling. Floor/facing inputs and the
-              rating stay outside this, above -- they're the actionable
-              part, not detail to hide. */}
+          {/* Same collapse-at-every-width pattern as "the area" above --
+              the sub-score breakdown is one tap away. Floor/facing inputs
+              and the rating stay outside this, above -- they're the
+              actionable part, not detail to hide. The "see the sun and
+              shadow" link stays outside the toggle too (below the closing
+              div) so collapsing this never hides it. */}
           <button
             type="button"
             className="bsr-half-toggle"
@@ -1145,7 +1150,11 @@ export default function ReportScreen() {
               </li>
             ))}
           </ul>
+          </div>
 
+          {/* Outside bsr-half-detail on purpose -- stays visible whether
+              the breakdown above is open or collapsed, same as the area
+              half's report link opposite it. */}
           <p className="bsr-more">
             <button
               type="button"
@@ -1165,7 +1174,6 @@ export default function ReportScreen() {
               on the same photographs instead of taking them again.
             </span>
           </p>
-          </div>
         </section>
       </div>
 

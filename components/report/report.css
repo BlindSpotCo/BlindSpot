@@ -271,12 +271,14 @@
   font-size:12px;line-height:1.55;color:var(--text-mute,#5A5140);max-width:52ch;opacity:.85;
 }
 
-/* ---------------- collapse-on-phone for "the area" / "the flat" ----
-   Mobile-first: hidden below 768px when collapsed (the common case,
-   since the mount effect in ReportScreen.js closes both by default on
-   phone), forced back to visible at 768px+ regardless of the collapsed
-   class -- desktop never shows a toggle and never actually collapses,
-   whatever React's state says. */
+/* ---------------- collapse for "the area" / "the flat" ----
+   Both halves default closed (ReportScreen.js: halfOpen starts
+   {area:false, unit:false}) and stay collapsible at every width now --
+   this used to force back open at 768px+ regardless of React's state,
+   which read as two long walls of rows on a laptop, not just a phone.
+   The "see the detailed report" link for each half sits outside this
+   toggle in the JSX (after bsr-half-detail's closing tag), so it's never
+   hidden by a collapsed state. */
 .bsr-half-toggle{
   display:flex;align-items:center;gap:6px;margin-top:14px;
   background:none;border:none;padding:0;cursor:pointer;
@@ -288,10 +290,6 @@
 .bsr-half-toggle-chevron{display:inline-block;transition:transform .18s ease}
 .bsr-half-toggle-chevron.is-open{transform:rotate(180deg)}
 .bsr-half-detail.is-collapsed{display:none}
-@media (min-width:768px){
-  .bsr-half-toggle{display:none}
-  .bsr-half-detail.is-collapsed{display:block}
-}
 
 /* ---------------- the map, its own full-width band ----------------
    Wide on purpose: Map3DShadow hides its own view-angle pad below 768px,
@@ -301,12 +299,16 @@
    the sticky .bsr-head above it, so jumping here via #the-block never
    tucks the top of the map behind the title bar. */
 .bsr-mapzone{
-  margin-top:22px;padding-top:20px;
-  border-top:1px solid var(--line-soft,rgba(28,24,18,.1));
+  /* Used to carry its own top border + 20px padding on top of a 22px
+     margin -- double separation, since .bsr-head right above it already
+     has a border-bottom. That was ~60px of dead space before the map
+     itself (the main feature of this screen) even started. Down to one
+     thin margin. */
+  margin-top:12px;
   scroll-margin-top:var(--bsr-head-h);
 }
 .bsr-map{
-  margin-top:16px;overflow:hidden;position:relative;
+  margin-top:8px;overflow:hidden;position:relative;
   border:1px solid var(--line,rgba(28,24,18,.14));
   border-radius:10px;
   /* A real `height`, not min-height: Map3DShadow's iframe carries an
@@ -341,8 +343,9 @@
 }
 .bsr-map-guard:hover{background:rgba(28,24,18,.4)}
 
-.bsr-timerow{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px}
-.bsr-timerow input[type=range]{flex:1;min-width:150px;height:44px;accent-color:var(--ss,#AF5F30)}
+/* Play/pause + the time-of-day slider now live inside .bsr-mapbar (see
+   below) instead of a second row under the map -- .bsr-clock is still
+   used there, just sized down to match the rest of the toolbar. */
 .bsr-clock{
   font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;
   min-width:92px;text-align:right;flex:none;
@@ -533,6 +536,15 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 .bsr-mapbar .bsr-set select{ max-width:96px; flex:none; }
 .bsr-mapbar .bsr-datein{ min-height:30px; font-size:12px; padding:4px 6px; flex:none; }
 .bsr-mapbar .bsr-assumed{ font-size:10.5px; padding:2px 6px; white-space:nowrap; flex:none; }
+/* The play/pause row -- moved in from the old standalone .bsr-timerow
+   below the map. Sized down like every other mapbar control so adding a
+   third row doesn't make the floating card any less "thin"; the slider
+   only appears while paused; playing (the default) it's a single small
+   button. */
+.bsr-mapbar .bsr-mapbar-time{ margin-top:0;display:flex;align-items:center;flex-wrap:nowrap;gap:6px; }
+.bsr-mapbar .bsr-play{ font-size:10.5px;min-height:28px;padding:0 8px;flex:none; }
+.bsr-mapbar .bsr-mapbar-time input[type=range]{ flex:none;width:90px;min-width:70px;height:28px;accent-color:var(--ss,#AF5F30); }
+.bsr-mapbar .bsr-clock{ font-size:11px;min-width:52px;flex:none; }
 @media (min-width:768px){
   .bsr-mapbar{
     flex-direction:row;align-items:center;gap:10px 16px;
@@ -548,6 +560,9 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   .bsr-mapbar .bsr-set select{ max-width:150px; }
   .bsr-mapbar .bsr-datein{ min-height:33px; font-size:13px; padding:5px 8px; }
   .bsr-mapbar .bsr-assumed{ font-size:11.5px; padding:3px 7px; }
+  .bsr-mapbar .bsr-play{ font-size:12px;min-height:33px;padding:0 12px; }
+  .bsr-mapbar .bsr-mapbar-time input[type=range]{ width:120px;min-width:100px;height:33px; }
+  .bsr-mapbar .bsr-clock{ font-size:12.5px;min-width:60px; }
 }
 .bsr-locbar{
   display:flex;gap:6px;flex-wrap:wrap;align-items:center;
@@ -589,7 +604,10 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   margin-top:8px;font-size:13.5px;color:var(--text-mute,#5A5140);
 }
 
-/* ---------------- watching the day ---------------- */
+/* ---------------- watching the day ----------------
+   Base size for .bsr-play; it's only ever rendered inside .bsr-mapbar
+   now (see the scoped, smaller rules above), so these are effectively
+   fallback sizes, kept so the class still looks right if used bare. */
 .bsr-play{
   font:inherit;font-size:15px;font-weight:700;cursor:pointer;flex:none;
   min-height:46px;padding:0 18px;border-radius:4px;
@@ -598,7 +616,6 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 }
 .bsr-play.is-on{background:var(--ss,#AF5F30);color:#FFFDF8}
 .bsr-play:hover{filter:brightness(.96)}
-.bsr-sunhint{font-size:15px;color:var(--text-mute,#5A5140);flex:1;min-width:180px}
 
 /* anchor jumps between the flat and the map read better eased */
 /* Scoped: this file is imported by one route, and an unscoped html
