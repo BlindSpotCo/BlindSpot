@@ -2500,7 +2500,14 @@ header.header-on-dark .brand-word-img{
 .bx-page{ min-height:100vh; background:var(--bg); padding:96px 32px 72px }
 .bx-wrap{ max-width:1080px; margin:0 auto }
 
-.bx-hero{ max-width:60ch; margin-bottom:44px }
+/* position:static -- .bx-hero is a plain <header> used for semantic
+   markup, not a nav bar, but the site-wide `header{position:sticky;
+   top:0;z-index:50;background:transparent}` rule (meant only for
+   SiteHeader.js) still matched it. Left alone it would sit pinned to
+   the viewport top with a transparent fill, showing whatever scrolls
+   underneath it right through -- the same bug just fixed on /report's
+   address bar. */
+.bx-hero{ position:static; max-width:60ch; margin-bottom:44px }
 .bx-eyebrow{
   font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:11px; font-weight:600;
   text-transform:uppercase; letter-spacing:.16em; color:var(--ss); margin:0 0 14px;
@@ -2533,7 +2540,11 @@ header.header-on-dark .brand-word-img{
 /* While a card is searching it stacks above its siblings; without this the
    suggestion list renders behind the next card in the grid. */
 .bx-card:focus-within{ z-index:20 }
-.bx-card-h{ display:flex; align-items:center; justify-content:space-between; min-height:22px }
+/* position:static for the same reason as .bx-hero above -- this is a
+   small label row inside each comparison card, not a sticky bar, but it
+   inherited the site-wide header{} rule's sticky/z-index/transparent
+   stack from being a bare <header> element. */
+.bx-card-h{ position:static; display:flex; align-items:center; justify-content:space-between; min-height:22px }
 .bx-tag{
   font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:11px; font-weight:700; letter-spacing:.08em;
   width:22px; height:22px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center;
@@ -2654,7 +2665,9 @@ header.header-on-dark .brand-word-img{
 
 /* ── Rows ─────────────────────────────────────────────────────────────── */
 .bx-block{ margin-bottom:34px }
-.bx-block-h{ display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 14px; margin-bottom:14px }
+/* position:static for the same reason as .bx-hero above -- a row-group
+   label, not a sticky bar. */
+.bx-block-h{ position:static; display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 14px; margin-bottom:14px }
 .bx-block-h h2{
   font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:11.5px; font-weight:700;
   text-transform:uppercase; letter-spacing:.12em; color:var(--brand); margin:0;
