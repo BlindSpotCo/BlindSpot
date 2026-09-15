@@ -9,6 +9,16 @@ import path from 'node:path';
 import { getPersona, recomputeAreaScore, gradeFor } from '@/lib/personas';
 import { computeLiveScore } from '@/lib/sunscout/scoring/scoreAggregator';
 
+// computeLiveScore now includes a live Overpass (OSM) call for the noise
+// score, on top of the existing solar + wind calls -- explicit headroom
+// past whatever the platform's unconfigured default is, same pattern as
+// the other routes in this app that make live calls of their own
+// (app/api/sunscout/report/pdf/route.js, .../analyse/route.js). Without
+// this, a cold (uncached) address whose noise call takes the full
+// timeout could get cut off by the function's own time limit before
+// computeLiveScore ever returns -- not a slow report, a failed one.
+export const maxDuration = 30;
+
 const DEFAULT_WEIGHT_AREA = 0.5;
 const DEFAULT_WEIGHT_UNIT = 0.5;
 

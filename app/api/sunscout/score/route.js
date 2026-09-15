@@ -4,6 +4,11 @@
 import { NextResponse } from 'next/server';
 import { computeLiveScore } from '@/lib/sunscout/scoring/scoreAggregator';
 
+// See the matching comment in app/api/property-score/route.js -- same
+// reasoning, computeLiveScore's live noise call needs headroom past the
+// platform's unconfigured default.
+export const maxDuration = 30;
+
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const lat      = parseFloat(searchParams.get('lat') || '12.97');
@@ -16,7 +21,7 @@ export async function GET(req) {
     return NextResponse.json({ error: 'Invalid lat/lon' }, { status: 400 });
   }
 
-  const weightKeys = ['sun', 'shadeHeat', 'view', 'privacy', 'wind'];
+  const weightKeys = ['sun', 'shadeHeat', 'view', 'privacy', 'wind', 'dampness', 'noise'];
   const weights = {};
   for (const key of weightKeys) {
     const raw = searchParams.get(`${key}Weight`);
