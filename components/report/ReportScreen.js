@@ -217,6 +217,14 @@ export default function ReportScreen() {
   // bsr-half-detail) so collapsing the breakdown never hides them.
   const [halfOpen, setHalfOpen] = useState({ area: false, unit: false });
   const toggleHalf = (key) => setHalfOpen((prev) => ({ ...prev, [key]: !prev[key] }));
+  // One-time default at mount, not a standing CSS override -- a person
+  // who then collapses a half on their own laptop stays collapsed.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia('(min-width: 768px)').matches) {
+      setHalfOpen({ area: true, unit: true });
+    }
+  }, []);
 
   const [scores, setScores] = useState(null);   // { area|null, unit, combined|null }
   const [state, setState] = useState('loading'); // loading | ready | error
@@ -1085,9 +1093,6 @@ export default function ReportScreen() {
                   opener. Same call AVAreaCard's link makes. */}
               <p className="bsr-more">
                 <a href={`/neighbourhood-report/${area.pinCode}`} target="_blank">See the detailed area report →</a>
-                <span className="bsr-more-note">
-                  Every figure behind these, the schools by name and board, price band, and nearby localities compared.
-                </span>
               </p>
             </>
           ) : (
@@ -1262,15 +1267,6 @@ export default function ReportScreen() {
             >
               See the sun and shadow through the year →
             </button>
-            <span className="bsr-more-note">
-              {!solar?.pathData
-                ? 'Waiting for the 3D map - this is built from photographs of it, so there is nothing to make until it loads. '
-                : ''}
-              The evidence behind the five scores above: this block photographed at 12 points through
-              the year, 3 per season at 9am / noon / 3pm, each described, with the month-by-month
-              sunlight figures for this floor. About a minute, and the full report below then builds
-              on the same photographs instead of taking them again.
-            </span>
           </p>
         </section>
       </div>
