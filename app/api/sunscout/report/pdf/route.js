@@ -126,7 +126,7 @@ function extractSection(text, titleRegex) {
   return { body, rest };
 }
 
-// Pure reordering, not a rewrite: moves the "Home Buyer Verdict" section to
+// Pure reordering, not a rewrite: moves the "BlindSpot Verdict" section to
 // the front, without touching a single word of what Gemini actually wrote.
 // (No longer renumbers -- formatNarrative strips numbers from headers
 // entirely now, see below, so reordering doesn't need to keep numbers in
@@ -146,7 +146,7 @@ function moveVerdictFirst(text) {
     sections.push({ title: matches[i][2].trim(), body: text.slice(start, end) });
   }
 
-  const verdictIdx = sections.findIndex(s => /blindspot\s*verdict|home\s*buyer\s*verdict/i.test(s.title));
+  const verdictIdx = sections.findIndex(s => /blindspot\s*verdict/i.test(s.title));
   if (verdictIdx === -1) return text;
 
   const reordered = [sections[verdictIdx], ...sections.filter((_, i) => i !== verdictIdx)];
@@ -169,7 +169,7 @@ const PROPERTY_MARKER_HTML = `
 // (numbered sub-headers, "- " bullets, occasional **bold**) into report
 // HTML. Used for the verdict block, the neighbourhood block, and the
 // remaining floor/facing narrative, so all three read consistently. Numbers
-// are stripped from sub-headers on purpose: once Home Buyer Verdict and
+// are stripped from sub-headers on purpose: once BlindSpot Verdict and
 // Neighbourhood Full Analysis are pulled out into their own cards above,
 // whatever's left starts mid-sequence ("4. FLOOR...", "5. ...FACING...")
 // which reads as a numbering bug -- each section already has its own card
@@ -275,7 +275,7 @@ export async function POST(req) {
   // alongside the monthly table & screenshots, same as the unit-only report
   // always did.
   const { body: verdictBody, rest: afterVerdict } = hasNeighbourhood
-    ? extractSection(cleanedRest, /blindspot\s*verdict|home\s*buyer\s*verdict/i)
+    ? extractSection(cleanedRest, /blindspot\s*verdict/i)
     : { body: '', rest: moveVerdictFirst(cleanedRest) };
   // The section that only a combined report can write -- the two halves read
   // against each other. Pulled out to sit directly under the verdict, where
@@ -310,7 +310,7 @@ export async function POST(req) {
   // The AI verdict ends with one "- Best fit for: ..." line (per the prompt
   // in analyse/route.js) -- pull it out to show as its own "Ideal For" strip
   // next to Pros/Cons, instead of leaving it buried at the end of the
-  // Home Buyer Verdict paragraph where it's easy to miss.
+  // BlindSpot Verdict paragraph where it's easy to miss.
   let idealForText = '';
   const verdictBodyMinusIdeal = verdictBody.replace(/^-\s*Best fit for:\s*(.+)$/im, (_, captured) => {
     idealForText = captured.trim();
@@ -592,12 +592,12 @@ export async function POST(req) {
   // not a strip of three stat cards competing with a box.
   const topScore = hasNeighbourhood ? combinedScore : unitScore;
   const openingSection = `
-    <div style="margin-bottom:18px;">
-      <div style="${H2}">BlindSpot Verdict</div>
-      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:4px;">
-        <span style="font-family:${DISPLAY};font-size:52px;font-weight:800;line-height:1;color:${INK};">${topScore ?? '-'}</span>
-        <span style="font-family:${DISPLAY};font-size:22px;font-weight:800;color:${gradeColor(topScore ?? 0)};">${topScore != null ? scoreWord(topScore) : ''}</span>
-        <span style="font-size:12px;color:${DIM};">out of 100</span>
+    <div style="margin-bottom:30px;">
+      <div style="${H2}margin-bottom:10px;">BlindSpot Verdict</div>
+      <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px;">
+        <span style="font-family:${DISPLAY};font-size:64px;font-weight:800;line-height:1;color:${INK};">${topScore ?? '-'}</span>
+        <span style="font-family:${DISPLAY};font-size:26px;font-weight:800;color:${gradeColor(topScore ?? 0)};">${topScore != null ? scoreWord(topScore) : ''}</span>
+        <span style="font-size:12.5px;color:${DIM};">out of 100 &middot; ${hasNeighbourhood ? 'the area and the flat together' : 'this flat'}</span>
       </div>
       ${hasNeighbourhood ? `
       <div style="font-size:12px;color:${DIM};margin-bottom:${formattedVerdictBody ? '14px' : '0'};">
@@ -623,7 +623,7 @@ export async function POST(req) {
     </div>` : '';
 
   // Who it suits. The model returns one "- Type: verdict + reasoning" line
-  // per buyer type, plus a closing "- Not for: ...". Split so each reads as
+  // per buyer type, plus a closing "- Main Deal-Breaker: ...". Split so each reads as
   // a row with its own answer, rather than a wall of bullets.
   const suitRows = (suitsBody || '')
     .split('\n')
@@ -635,13 +635,12 @@ export async function POST(req) {
       if (i < 0) return null;
       const who = line.slice(0, i).trim();
       const rest = line.slice(i + 1).trim();
-      const negative = /^(not for|main deal-?breaker|deal-?breaker)\b/i.test(who);
-      const m = negative ? null : rest.match(/^(Yes(?:\s*[,-]?\s*(?:but|with|if)[^.]*)?|No|Probably not|Not really)\b[.,]?\s*/i);
+      const m = rest.match(/^(Yes(?:\s*[,-]?\s*(?:but|with|if)[^.]*)?|No|Probably not|Not really)\b[.,]?\s*/i);
       return {
         who,
         call: m ? m[1].trim() : '',
         why: m ? rest.slice(m[0].length).trim() : rest,
-        negative,
+        negative: /^main deal-?breaker\b/i.test(who),
       };
     })
     .filter(Boolean);
@@ -667,9 +666,10 @@ export async function POST(req) {
             <div style="flex:1;min-width:220px;font-size:13.5px;color:${MUTE};line-height:1.6;">${r.why}</div>
           </div>`).join('')}
       </div>
-      ${suitRows.filter(r => r.negative).slice(0, 1).map((r) => `
-        <div style="margin-top:10px;padding:9px 13px;background:${CARD};border-left:3px solid ${POOR};font-size:13.5px;color:${INK};line-height:1.6;">
-          <span style="font-weight:700;color:${POOR};">Main deal-breaker:</span> ${r.why || r.who}
+      ${suitRows.filter(r => r.negative).map((r) => `
+        <div style="margin-top:18px;padding:14px 17px;background:${CARD};border-left:3px solid ${POOR};">
+          <div style="font-size:12px;font-weight:700;color:${POOR};text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px;">${r.who}</div>
+          <div style="font-size:14.5px;color:${INK};line-height:1.75;">${r.why || r.who}</div>
         </div>`).join('')}
     </div>` : '';
 
@@ -776,9 +776,9 @@ export async function POST(req) {
   // out so it reads as a checklist rather than the tail of a paragraph.
   const checkSection = checkBody ? `
     <div style="${RULE}"></div>
-    <div style="margin-bottom:16px;">
+    <div style="margin-bottom:26px;">
       <div style="${H2}">What to verify before you decide</div>
-      ${formatNarrative(boldLabels(checkBody))}
+      ${formatNarrative(checkBody)}
     </div>` : '';
 
   // The first section on a fresh page doesn't need a divider above it.
@@ -874,7 +874,8 @@ export async function POST(req) {
           <li>Floor clearance uses a generic urban-obstruction estimate, not a measurement of this property's specific neighboring buildings.</li>
           ${summary?.buildingHeightNote ? `<li>${summary.buildingHeightNote.sentence}</li>` : ''}
           ${safeFacingAssumptionNote ? `<li>${safeFacingAssumptionNote}</li>` : ''}
-          <li>The written analysis is AI-assisted. The model is given the figures above as fact and is not allowed to estimate its own.</li>
+          <li>The written sections use AI to interpret the numbers above. It is given them as fact and told not to estimate its own.</li>
+          <li>The ${shotCount || 12} map images this is read from, and the description of each, are in the separate Sun &amp; Shadow document.</li>
         </ul>
       </div>
 
