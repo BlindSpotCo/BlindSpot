@@ -7,7 +7,7 @@
     --line:rgba(28,24,18,0.14);
     --line-soft:rgba(28,24,18,0.08);
     --text:#1C1812;
-    /* Darkened from #6E6656 — body paragraphs sitting at 400 weight next
+    /* Darkened from #6E6656 - body paragraphs sitting at 400 weight next
        to bold 700 headings were reading as thin/washed-out by comparison,
        even though the weight bump on headings alone is a big contrast
        jump. Paragraphs get darker + heavier below, not just headings. */
@@ -34,15 +34,15 @@
        below) uses --brand-fill, so its punch will read noticeably
        lighter/softer now, with weaker contrast than before the swap --
        worth a live look, not just trusting this comment. */
-    --brand:#3D4116;   /* BlindSpot (parent) — the judgment. Darkened from #4B4F1A on request; still AAA on paper, even higher contrast than before. */
+    --brand:#3D4116;   /* BlindSpot (parent) - the judgment. Darkened from #4B4F1A on request; still AAA on paper, even higher contrast than before. */
     --brand-fill:#ADA846; /* brighter/lighter parent fill -- decorative/large only, fails text contrast (this was AsliVastu's old --av-fill value) */
     --brand-yellow:#F5C343; /* the brand's yellow accent (matched from the logo/wordmark reference image, previously used for the header CTA pill on an unmerged branch) -- not used in any merged nav/header styling yet, so this is its first call site on main. Dark text/ink reads fine on it as a fill; as a flat text colour on the light --bg paper it's noticeably lower-contrast than --brand, expected for a bold display headline rather than body copy. */
-    --av:#6B2232;       /* AsliVastu — the area. Even higher contrast on paper than the old olive value (~11:1) */
+    --av:#6B2232;       /* AsliVastu - the area. Even higher contrast on paper than the old olive value (~11:1) */
     --av-fill:#7C2839;  /* AsliVastu large-fill variant (this was the parent's old --brand-fill value -- the twice-tightened "brighter wine" from CTA tuning) */
-    --ss:#AF5F30;       /* SunScout — the light. AA-safe for text/icons (4.59:1 on paper) */
+    --ss:#AF5F30;       /* SunScout - the light. AA-safe for text/icons (4.59:1 on paper) */
     --ss-fill:#D1901F;  /* SunScout large-type/fill variant. Shifted more yellow (was #C56B36, a burnt orange that read as "just orange" in the CTA gradient) -- boosted green/reduced red toward gold rather than orange. Contrast against white text drops further as a result (~2.6:1, down from the original 3.74:1) -- still fine as a large decorative fill behind bold button text, but genuinely below AA even at "large text" size now, so don't reuse this token anywhere small text would sit on it directly. */
-    --ss-sun:#E9A94A;   /* illustration fill only — never text or UI. Matches the hero building's own lit-face yellow (components/HeroIllustration.js) so the sun and the building read as one consistent illustration instead of two different yellows -- was a brighter #FFC100 before. */
-    --plum:#451B3B;     /* The pitch deck's "05 — THE VERDICT SYSTEM" slide defines this exact
+    --ss-sun:#E9A94A;   /* illustration fill only - never text or UI. Matches the hero building's own lit-face yellow (components/HeroIllustration.js) so the sun and the building read as one consistent illustration instead of two different yellows -- was a brighter #FFC100 before. */
+    --plum:#451B3B;     /* The pitch deck's "05 - THE VERDICT SYSTEM" slide defines this exact
        hex as the fourth quadrant colour (Weak Area · Weak Unit ->
        "Reconsider"), alongside --brand/--av/--ss for the other three
        quadrants -- a flat 2x2 colour system, one colour per verdict. Also
@@ -70,7 +70,7 @@
     --warning:#7A4E00;  /* Legacy aliases so every existing --sun/--slate usage below keeps
        working during migration, but with the accessible values:
        --slate was already ≈ --brand at the time this alias was written
-       (#6B2430 vs #6B2232 — imperceptible), which is why aliasing it
+       (#6B2430 vs #6B2232 - imperceptible), which is why aliasing it
        straight to --brand was safe. --slate still means "whatever --brand
        currently is" -- since the dominant/AsliVastu swap above, that's
        olive, not wine. Every bare var(--slate) call site below is
@@ -81,7 +81,7 @@
        alias flipping to olive is the intended parent-colour swap, not a
        conflation bug reappearing.
        --sun previously pointed at #C9812E, which fails WCAG AA as text/icon
-       colour (2.92:1 on --bg, needs 4.5:1) — e.g. .hero-tagline .seg.sun
+       colour (2.92:1 on --bg, needs 4.5:1) - e.g. .hero-tagline .seg.sun
        and .hsc-item.sun .hsc-item-icon. Aliasing it to --ss fixes that
        failure everywhere at once instead of hunting down each call site. */
     --slate: var(--brand);
@@ -182,7 +182,7 @@
     line-height:var(--leading-body);
     -webkit-font-smoothing:antialiased;
   }
-  /* Bumped from 600 — this is meant to read as a bold, high-contrast
+  /* Bumped from 600 - this is meant to read as a bold, high-contrast
      "intelligence" system, and 600 at these sizes was reading soft/thin
      next to the reference.
      line-height:var(--leading-display) is likewise a fallback only -- every
@@ -191,7 +191,7 @@
      winning the cascade with its own hand-tuned value untouched. */
   h1,h2,h3,.disp{font-family:'Geist',sans-serif;letter-spacing:-0.01em; font-weight:500; line-height:var(--leading-display)}
   /* IBM Plex Mono defaults to 400 if unset, which looks thin at the small
-     sizes used for eyebrows/labels site-wide — 500 as the baseline for
+     sizes used for eyebrows/labels site-wide - 500 as the baseline for
      every .mono element fixes that in one place. */
   .mono{font-family:'Geist Mono',monospace; font-weight:500}
   a{color:inherit}
@@ -205,7 +205,7 @@
   .wrap{max-width:1180px;margin:0 auto;padding:0 var(--space-4)}
   @media (min-width:768px){ .wrap{ padding:0 var(--space-6) } }
 
-  /* Starts fully transparent with no border — at rest, the header is
+  /* Starts fully transparent with no border - at rest, the header is
      nothing but the centered logo floating over the hero. Once `scrolled`
      is true (see page.js), .scrolled adds the frosted background bar back
      in, at the same time the nav links/CTA mount. */
@@ -243,7 +243,7 @@
      breakpoint to remember to apply. */
   nav.wrap{display:flex; align-items:center; justify-content:space-between; height:52px; min-width:0}
   @media (min-width:768px){ nav.wrap{ height:66px } }
-  /* Single child (just .brand) at rest — centers it in the bar instead of
+  /* Single child (just .brand) at rest - centers it in the bar instead of
      letting it sit flush left with nothing to balance it. */
   nav.wrap.nav-centered{justify-content:center}
   /* flex-shrink:0 so the logo never gets squeezed by its neighbours in the
@@ -286,7 +286,7 @@
   .btn-dot{width:6px; height:6px; border-radius:50%; flex-shrink:0; transition:transform .18s ease}
   .btn:hover .btn-dot{transform:scale(1.5)}
 
-  /* The one unified CTA — replaces the separate "Open SunScout"/"Open
+  /* The one unified CTA - replaces the separate "Open SunScout"/"Open
      AsliVastu" links everywhere on the page now that this landing page's
      job is to funnel into the combined 3-step tool, not two standalone
      products.
@@ -358,7 +358,7 @@
   .btn-cta-arrow{ color:var(--ss); display:inline-block; transition:transform .18s ease }
   .btn-cta:hover .btn-cta-arrow, .btn-cta-sm:hover .btn-cta-arrow{ transform:translateX(3px) }
 
-  /* Scroll-triggered reveal — sections/cards fade and rise into place once,
+  /* Scroll-triggered reveal - sections/cards fade and rise into place once,
      the first time they enter the viewport. Respects reduced motion. */
   .reveal{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease}
   .reveal.in-view{opacity:1; transform:translateY(0)}
@@ -438,10 +438,10 @@
   /* Completely new hero: no illustration. Warm paper background with a
      faint dot-grid texture, headline/CTAs on the left, a live-styled
      "BlindSpot Score" preview card on the right standing in as the visual
-     anchor — a real product artifact instead of an illustrated skyline. */
+     anchor - a real product artifact instead of an illustrated skyline. */
   .hero{
     position:relative;
-    /* Bottom padding bumped up from 90px — the next section's eyebrow
+    /* Bottom padding bumped up from 90px - the next section's eyebrow
        and heading were peeking into the initial viewport on typical
        screen heights, which reads as clutter before you've even started
        scrolling. This gives the hero real breathing room at the bottom
@@ -575,13 +575,13 @@
   .hero-ctas{
     display:flex; align-items:center; gap:14px; margin:30px 0 0; flex-wrap:wrap;
   }
-  /* NOTE: only layout/sizing here (padding, radius) — deliberately no
+  /* NOTE: only layout/sizing here (padding, radius) - deliberately no
      background/color/border, since .btn-cta owns that now. This section
      used to style two differently-styled buttons (a solid one + a
      `:last-child` bordered one); with a single unified CTA button that
      distinction is gone, and re-adding a background here would silently
      outrank `.btn-cta`'s gradient (two classes beats one, same cascade
-     trap as elsewhere in this file) — same bug class, different property. */
+     trap as elsewhere in this file) - same bug class, different property. */
   .hero-ctas .btn{ padding:12px 22px; border-radius:var(--radius) }
   .btn-lg{font-size:13.5px; font-weight:600}
   .coord-readout .blink{width:5px; height:5px; background:var(--slate); animation:blink 1.4s steps(1) infinite}
@@ -652,7 +652,7 @@
   }
   /* This row is genuinely AsliVastu content (neighbourhood/safety), so it
      gets the AsliVastu engine hue (--av, wine as of the dominant/AsliVastu
-     swap) rather than the parent --brand/--slate (olive) — the two were
+     swap) rather than the parent --brand/--slate (olive) - the two were
      previously conflated into one colour here. This is the one-variable-
      hue system actually showing up as three distinct engine colours
      instead of two. */
@@ -1027,7 +1027,7 @@
     }
   }
   /* .first/.last are explicit classes set in HowItWorks.js, not
-     :first-child/:last-child — each block's actual DOM parent is now its
+     :first-child/:last-child - each block's actual DOM parent is now its
      own `display:contents` wrapper (containing just [marker, block]), so
      the block is always that wrapper's last child and never its first;
      :first-child/:last-child would silently match the wrong elements. */
@@ -1333,7 +1333,7 @@
   .hsc-number span{ font-size:15px }
 }
 
-/* ---------- SMALL PHONE — SECOND, HARDER PASS (<=480px) ----------
+/* ---------- SMALL PHONE - SECOND, HARDER PASS (<=480px) ----------
    The 640px pass above only trimmed things -- on an actual ~375-390px
    phone (iPhone SE/12/13/14 width) it was still reading as "desktop,
    slightly smaller" rather than a real phone layout. This block cuts
@@ -1388,7 +1388,7 @@
   @media (prefers-reduced-motion: reduce){
   }
 
-/* ---------- APP SCREENS (Property Score / SunScout) — MOBILE SCALE-DOWN
+/* ---------- APP SCREENS (Property Score / SunScout) - MOBILE SCALE-DOWN
    (<=640px) ----------
    Unlike the landing/auth/reports pages above, these screens are built with
    inline styles (style={{...}}), so a plain selector here can't touch them
@@ -1470,7 +1470,7 @@
   .uv-facing-btn{ font-size:10px !important; }
 }
 
-/* ---------- THIRD PASS — decisive, applies to every phone up to 640px
+/* ---------- THIRD PASS - decisive, applies to every phone up to 640px
    (<=430px, <=640px) ----------
    Placed last on purpose: same media-query specificity as every block
    above, and same-specificity CSS resolves by source order, so this wins
@@ -2023,7 +2023,7 @@ header.header-on-dark .brand-word-img{
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 .section-tint .section-inner{ position:relative; z-index:1 }
-/* ---------- 01 — Problem / Solution (icon grid) ---------- */
+/* ---------- 01 - Problem / Solution (icon grid) ---------- */
 .ps3-grid{
   display:grid; grid-template-columns:repeat(6, 1fr); gap:var(--space-4);
   margin-top:var(--space-2);
@@ -2076,7 +2076,7 @@ header.header-on-dark .brand-word-img{
   .ps3-eq-result{ font-size:15px }
 }
 
-/* ---------- 02 — Two Scores (real example readout, no weights) ---------- */
+/* ---------- 02 - Two Scores (real example readout, no weights) ---------- */
 .ts4-grid{ display:grid; grid-template-columns:1fr 1fr; gap:var(--space-6) }
 .ts4-card{
   position:relative; overflow:hidden;
@@ -2155,7 +2155,7 @@ header.header-on-dark .brand-word-img{
   .ts4-verdict-head{ font-size:18px }
 }
 
-/* ---------- 03 — How It Works (icon rail) ---------- */
+/* ---------- 03 - How It Works (icon rail) ---------- */
 .hiw3-rail{
   position:relative; display:grid; grid-template-columns:repeat(3, 1fr); gap:var(--space-6);
 }
@@ -2196,7 +2196,7 @@ header.header-on-dark .brand-word-img{
   .hiw3-rail::before{ display:none }
 }
 
-/* ---------- 05 — FAQ ---------- */
+/* ---------- 05 - FAQ ---------- */
 .faq2-list{ max-width:760px }
 .faq2-item{
   border-bottom:1px solid var(--line);
@@ -2285,7 +2285,7 @@ header.header-on-dark .brand-word-img{
   color:var(--av);
 }
 
-/* ---------- 06 — Closing CTA + footer ----------
+/* ---------- 06 - Closing CTA + footer ----------
    Was flat: solid --brand field, a faint grid-line pattern, centred
    text and a CTA button that used the exact same --brand fill as the
    section behind it -- background:var(--brand) on both the section

@@ -100,7 +100,7 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
       // a whole category of user hitting a dead end in silence.
       setError(
         String(e?.message || '') === 'popup-blocked'
-          ? 'Your browser blocked the sign-in window. Allow pop-ups for this site and press Save again — or open the report and use your browser’s Save as PDF instead.'
+          ? 'Your browser blocked the sign-in window. Allow pop-ups for this site and press Save again - or open the report and use your browser’s Save as PDF instead.'
           : 'Sign-in didn’t complete, so there’s nothing to save this to yet. Press Save to try again.'
       );
       setOpen(true); // show the panel so the message has somewhere to appear
@@ -223,7 +223,7 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
                   {foldersFailed && (
                     <p style={{ fontSize: 11.5, color: '#8A8A8A', margin: '0 0 8px', lineHeight: 1.5 }}>
                       We couldn&apos;t load your folders just now, so only a new one can be made here.
-                      Saving without a folder still works — you can file it later from My Reports.
+                      Saving without a folder still works - you can file it later from My Reports.
                     </p>
                   )}
                   {folderChoice === '__new' && (
@@ -255,7 +255,7 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
 
               <button
                 onClick={handleSave}
-                title={!signedIn ? 'Sign in first — saved reports live in your account.' : undefined}
+                title={!signedIn ? 'Sign in first - saved reports live in your account.' : undefined}
                 disabled={saving || !signedIn || (folderChoice === '__new' && !newFolderName.trim())}
                 style={{
                   width: '100%', padding: '10px', fontSize: 13, fontWeight: 700, border: 'none', borderRadius: 4,

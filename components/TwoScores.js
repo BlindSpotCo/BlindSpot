@@ -96,7 +96,7 @@ export default function TwoScores() {
           </div>
           <div className="ts4-verdict-say">
             <p className="ts4-verdict-head">Worth a look, but go in with your eyes open.</p>
-            <p className="ts4-verdict-sub">Good locality, but this specific flat is the weak half — light, outlook or airflow. Ask to see a higher floor or a different facing in the same tower before deciding.</p>
+            <p className="ts4-verdict-sub">Good locality, but this specific flat is the weak half - light, outlook or airflow. Ask to see a higher floor or a different facing in the same tower before deciding.</p>
           </div>
         </div>
 
@@ -105,30 +105,30 @@ export default function TwoScores() {
             accentVar="--av"
             tag="ENGINE 1 · GOVERNMENT RECORDS"
             name="Neighbourhood Score"
-            blurb="Rates the area: crime, air, power, water, schools, roads — pulled from government records, not a broker's word for it."
+            blurb="Rates the area: crime, air, power, water, schools, roads - pulled from government records, not a broker's word for it."
             score={82}
             grade="A"
             word="Excellent"
             tone="good"
-            example="Connaught Place, Central Delhi — real report"
+            example="Connaught Place, Central Delhi - real report"
             dims={NEIGHBOURHOOD_DIMS}
           />
           <ScoreCard
             accentVar="--ss"
             tag="ENGINE 2 · REAL SOLAR GEOMETRY"
             name="Home Comfort Score"
-            blurb="Rates the exact unit: sun, shade & heat, view, privacy, wind — modelled from the floor and facing you pick."
+            blurb="Rates the exact unit: sun, shade & heat, view, privacy, wind - modelled from the floor and facing you pick."
             score={50}
             grade={null}
             word="Fair"
             tone="avg"
-            example="Floor 5, South-facing — real report"
+            example="Floor 5, South-facing - real report"
             dims={COMFORT_DIMS}
           />
         </div>
 
         <p className="ts3-combine">
-          That verdict up top is these two, weighted 50/50 by default — pick whether the area or the flat matters more to you.
+          That verdict up top is these two, weighted 50/50 by default - pick whether the area or the flat matters more to you.
         </p>
       </div>
     </section>

@@ -17,7 +17,7 @@
 // canvas, then slices that single image across PDF pages. With 12 large
 // screenshots plus long per-image text, that canvas can exceed the
 // browser's max canvas size (Chrome caps around 16384px in one dimension,
-// or ~268 megapixels total) — past that limit, html2canvas silently
+// or ~268 megapixels total) - past that limit, html2canvas silently
 // produces a blank or corrupted image, so the exported PDF comes out blank
 // even though everything looks fine on screen.
 //
@@ -93,7 +93,7 @@ function splitPerImageAnalysis(analysis, shotCount) {
   // and every @N@ line so the bottom narrative doesn't repeat what's now
   // shown under each screenshot. If Gemini didn't follow the @N@ format
   // (imperfect compliance), nothing matches above and nothing is stripped
-  // here — the full text just falls through to the bottom narrative as a
+  // here - the full text just falls through to the bottom narrative as a
   // safe fallback.
   const rest = analysis
     .replace(/^\d+\.\s*SHADOW ANALYSIS[^\n]*\n?/im, '')
@@ -399,7 +399,7 @@ export async function POST(req) {
             </div>
             ${perImage[shot.idx]
               ? `<p style="font-size:15px;color:${INK};line-height:1.85;margin-top:13px;max-width:70ch;">${perImage[shot.idx]}</p>`
-              : `<p style="font-size:13.5px;color:${DIM};line-height:1.75;margin-top:13px;">No description came back for this frame this time. The image and the sunlight figures for this month are unaffected — generating the report again usually fills it in.</p>`}
+              : `<p style="font-size:13.5px;color:${DIM};line-height:1.75;margin-top:13px;">No description came back for this frame this time. The image and the sunlight figures for this month are unaffected - generating the report again usually fills it in.</p>`}
           </div>
         `).join('')}
       </div>
@@ -498,15 +498,15 @@ export async function POST(req) {
     const gap = a - u;
     if (gap >= 15) return {
       headline: 'A stronger area than flat',
-      line: `The neighbourhood scores ${a} and this flat ${u} — the area is carrying this one. That gap is the half you can still do something about: a different floor or facing in this same building changes the flat, nothing changes the area.`,
+      line: `The neighbourhood scores ${a} and this flat ${u} - the area is carrying this one. That gap is the half you can still do something about: a different floor or facing in this same building changes the flat, nothing changes the area.`,
     };
     if (gap <= -15) return {
       headline: 'A better flat than area',
-      line: `This flat scores ${u} against a neighbourhood of ${a} — a comfortable home in a weaker locality. The flat is the good news, and it is the half that stays good; the area is the half no unit in this building escapes.`,
+      line: `This flat scores ${u} against a neighbourhood of ${a} - a comfortable home in a weaker locality. The flat is the good news, and it is the half that stays good; the area is the half no unit in this building escapes.`,
     };
     if (a >= 65 && u >= 65) return {
       headline: 'Both halves agree, and both are strong',
-      line: `Area ${a}, flat ${u}. Neither is being propped up by the other — this is the uncomplicated case, and the checks below are ordinary diligence rather than doubts.`,
+      line: `Area ${a}, flat ${u}. Neither is being propped up by the other - this is the uncomplicated case, and the checks below are ordinary diligence rather than doubts.`,
     };
     if (a < 50 && u < 50) return {
       headline: 'Both halves agree, and both are weak',
@@ -848,7 +848,7 @@ export async function POST(req) {
           status.textContent = 'Building PDF… page ' + (i + 1) + ' of ' + pages.length;
 
           // One (moderately sized) canvas per logical page, not one giant
-          // canvas for the whole document — this is what avoids the blank-
+          // canvas for the whole document - this is what avoids the blank-
           // PDF failure that happens past the browser's canvas size limit.
           var canvas = await window.html2canvas(pages[i], {
             scale: 2,

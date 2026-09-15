@@ -22,7 +22,7 @@ export default function Error({ error, reset }) {
     <div className="bs-errpage">
       <h1>Something went wrong on our side.</h1>
       <p>
-        This is a fault in BlindSpot, not in the address you searched. Trying again usually works —
+        This is a fault in BlindSpot, not in the address you searched. Trying again usually works - 
         if it doesn&apos;t, start over from the home page and the report will rebuild from scratch.
       </p>
       <p className="bs-errpage-actions">

@@ -47,13 +47,13 @@ function buildNeighbourhoodGroundTruth(avRecord) {
   const schoolNames = (avRecord.schools_list || []).slice(0, 6).map(s => s.name).join('; ');
   const pc = avRecord.price_context;
   return `
-NEIGHBOURHOOD GROUND TRUTH (from Neighbourhood Score, for ${avRecord.name || avRecord.pin_code} — treat every figure below as fact, do NOT re-derive or override it):
+NEIGHBOURHOOD GROUND TRUTH (from Neighbourhood Score, for ${avRecord.name || avRecord.pin_code} - treat every figure below as fact, do NOT re-derive or override it):
 Composite neighbourhood score: ${avRecord.nqi_composite}/100 (Grade ${avRecord.grade})
 Factor breakdown: ${factorLines || 'not available'}
 Crime: ${avRecord.total_cognizable_crimes ?? 'unknown'} recorded cognizable crimes/yr, safer than ${avRecord.crime_percentile ?? 'unknown'}% of comparable areas, tier "${avRecord.crime_tier ?? 'unknown'}"
 Schools: ${avRecord.schools_count ?? (avRecord.schools_list || []).length} mapped nearby${schoolNames ? ` (incl. ${schoolNames})` : ''}
 Price context: ${pc?.rate_sqft ? `₹${Math.round(pc.rate_sqft[0]).toLocaleString('en-IN')}–₹${Math.round(pc.rate_sqft[1]).toLocaleString('en-IN')} per sq ft, "${pc.label}" band (government guidance value, not a market quote)` : 'not available'}
-Note: the neighbourhood score is the same for every unit in this pincode — it does not change with floor or facing.`;
+Note: the neighbourhood score is the same for every unit in this pincode - it does not change with floor or facing.`;
 }
 
 // A budget, not just a retry count. The platform kills this function at its
@@ -370,7 +370,7 @@ export async function POST(req) {
   try {
     solarSummary = await computeSolarSummary(latN, lonN, floorN, safeFacingInput, tz);
     groundTruthText = `
-GROUND TRUTH (computed from precise solar geometry — treat every number below as fact, do NOT re-derive or override it from the images):
+GROUND TRUTH (computed from precise solar geometry - treat every number below as fact, do NOT re-derive or override it from the images):
 ${solarSummary.monthlySummary.map((m) =>
   `${m.month}: Rise ${m.sunrise}, Set ${m.sunset}, Noon elevation ${m.noonElevation}°, Usable sun ${m.usableHours}h, Peak ${m.peakWindow}, Floor ${floorN} ${safeFacingInput}-facing gets sun ${m.floorClearance}`
 ).join('\n')}
@@ -379,7 +379,7 @@ Best months: ${solarSummary.solarFeasibility.bestMonths.join(', ')} · Worst mon
 Note: floor clearance is an estimate based on typical urban obstruction heights, not a measurement of this property's actual neighboring buildings. "Peak Window" reflects sky-wide overhead sun timing, not this specific facing direction.`;
   } catch (err) {
     console.error('Failed to compute ground-truth solar summary:', err);
-    groundTruthText = '\n(Ground-truth solar computation unavailable — rely more cautiously on visual inspection and say so explicitly.)';
+    groundTruthText = '\n(Ground-truth solar computation unavailable - rely more cautiously on visual inspection and say so explicitly.)';
   }
 
   const buildingHeightNote = await checkBuildingHeights(latN, lonN).catch(() => null);
@@ -403,7 +403,7 @@ Note: floor clearance is an estimate based on typical urban obstruction heights,
   // table go out without it rather than the whole document failing.
   if (captionsOnly) {
     if (!process.env.GEMINI_API_KEY) {
-      console.error('[report/analyse] GEMINI_API_KEY is not set — sun & shadow images will have no descriptions.');
+      console.error('[report/analyse] GEMINI_API_KEY is not set - sun & shadow images will have no descriptions.');
       return NextResponse.json({ analysis: '', summary: reportSummary, aiUnavailable: true, aiReason: 'not-configured' });
     }
 
@@ -429,7 +429,7 @@ Note: floor clearance is an estimate based on typical urban obstruction heights,
   // will not fix itself on a retry -- say so once and let the report ship
   // with everything that doesn't depend on it.
   if (!process.env.GEMINI_API_KEY) {
-    console.error('[report/analyse] GEMINI_API_KEY is not set — shipping the report without the written analysis.');
+    console.error('[report/analyse] GEMINI_API_KEY is not set - shipping the report without the written analysis.');
     return NextResponse.json({
       analysis: '', summary: reportSummary, avRecord: avRecord || null,
       combinedScore: combinedScore ?? null, aiUnavailable: true, aiReason: 'not-configured',
@@ -440,7 +440,7 @@ Note: floor clearance is an estimate based on typical urban obstruction heights,
   const hasNeighbourhood = Boolean(avRecord);
 
   const combinedGroundTruth = hasNeighbourhood ? `
-COMBINED BLINDSPOT SCORE: ${combinedScore ?? 'not computed'}/100 — built from the neighbourhood score (${avRecord.nqi_composite}/100, weighted ${Math.round((areaWeight ?? 0.5) * 100)}%) and this unit's Home Comfort Score (${unitScore ?? 'not computed'}/100, weighted ${Math.round((unitWeight ?? 0.5) * 100)}%). Treat both of these figures as fact, do not recompute them.` : '';
+COMBINED BLINDSPOT SCORE: ${combinedScore ?? 'not computed'}/100 - built from the neighbourhood score (${avRecord.nqi_composite}/100, weighted ${Math.round((areaWeight ?? 0.5) * 100)}%) and this unit's Home Comfort Score (${unitScore ?? 'not computed'}/100, weighted ${Math.round((unitWeight ?? 0.5) * 100)}%). Treat both of these figures as fact, do not recompute them.` : '';
 
   // Section 2 is new and it is the point of a *combined* report: the two
   // halves read against each other. Before this, the area and the flat were
@@ -460,39 +460,39 @@ COMBINED BLINDSPOT SCORE: ${combinedScore ?? 'not computed'}/100 — built from 
     ? `1. HOME BUYER VERDICT
 Write this to the person, not about the property. Use "you". No bullets, no lists of numbers, no headings inside it.
 
-Four to six sentences, in the plainest English you have — the way you'd answer a friend who asked "should I buy this?" over the phone. Cover, in this order: what kind of place this is to live in, what this particular flat is like day to day, the one thing that would most worry you about it, and your actual call — worth pursuing, worth pursuing once one thing checks out, or better to keep looking. Commit to one of those three; a verdict that refuses to land is not a verdict.
+Four to six sentences, in the plainest English you have - the way you'd answer a friend who asked "should I buy this?" over the phone. Cover, in this order: what kind of place this is to live in, what this particular flat is like day to day, the one thing that would most worry you about it, and your actual call - worth pursuing, worth pursuing once one thing checks out, or better to keep looking. Commit to one of those three; a verdict that refuses to land is not a verdict.
 
-Name at most two numbers in the whole paragraph, and only where a number says something a word can't. Never open with a score. Never write "the composite", "the index", "NQI", "the dataset" or "our analysis" — they are buying a home, not reading a spreadsheet.
+Name at most two numbers in the whole paragraph, and only where a number says something a word can't. Never open with a score. Never write "the composite", "the index", "NQI", "the dataset" or "our analysis" - they are buying a home, not reading a spreadsheet.
 Close with one line starting exactly "- Best fit for: " naming the one or two buyer types this suits best, each with a clause of reasoning.
 
 ${livingSectionNumber}. WHAT LIVING HERE IS ACTUALLY LIKE
-This is the section that makes the report worth reading, so give it real space — four to six substantial sentences, in flowing prose, second person.
+This is the section that makes the report worth reading, so give it real space - four to six substantial sentences, in flowing prose, second person.
 
-Turn the figures into a life. Walk through a day: when light first reaches the windows, what the flat is like at midday and at four in the afternoon, whether lights go on early, whether the west side gets uncomfortable in May. Then walk through the year: what changes between the best months and the worst, and how big that swing actually feels — an hour a day is barely noticeable, three hours is a different flat in December than in April.
+Turn the figures into a life. Walk through a day: when light first reaches the windows, what the flat is like at midday and at four in the afternoon, whether lights go on early, whether the west side gets uncomfortable in May. Then walk through the year: what changes between the best months and the worst, and how big that swing actually feels - an hour a day is barely noticeable, three hours is a different flat in December than in April.
 
-Then the area, the same way: what the school situation means for a morning routine, what the crime tier means for coming home late, what the water score means for a summer week. Ground every claim in a figure from the ground truth above, but write the consequence, not the figure — "supply runs short enough in summer that most societies here bring in tankers" rather than "water scores 45/100".
+Then the area, the same way: what the school situation means for a morning routine, what the crime tier means for coming home late, what the water score means for a summer week. Ground every claim in a figure from the ground truth above, but write the consequence, not the figure - "supply runs short enough in summer that most societies here bring in tankers" rather than "water scores 45/100".
 
 Do not repeat the verdict's wording. Do not use bullets.
 
 ${suitsSectionNumber}. WHO THIS IS FOR
-Be useful and be honest — this section is worthless if every type gets a yes.
+Be useful and be honest - this section is worthless if every type gets a yes.
 
 Take each of these four in turn, as its own "- " line beginning with the type in plain text followed by a colon: Families with school-age kids; Young professionals and couples; People working from home; Older buyers and retirees.
 
-For each, open with a plain verdict — "Yes", "Yes, with one caveat", "Probably not" or "No" — then one or two sentences of why, tied to specific figures from the ground truth. A flat with poor afternoon light and a weak lift story is not for a retiree; say so. A quiet area with thin nightlife is not for someone in their twenties; say so.
+For each, open with a plain verdict - "Yes", "Yes, with one caveat", "Probably not" or "No" - then one or two sentences of why, tied to specific figures from the ground truth. A flat with poor afternoon light and a weak lift story is not for a retiree; say so. A quiet area with thin nightlife is not for someone in their twenties; say so.
 
 Then one final "- " line beginning "Not for: " naming the buyer this property would genuinely disappoint and the reason. Every property is wrong for somebody; if you can't name who, you haven't read the numbers properly.
 
 ${neighbourhoodSectionNumber}. NEIGHBOURHOOD FULL ANALYSIS
-Do NOT restate the ground-truth numbers one by one — they are already shown as bars beside this section, so repeating them adds nothing.
+Do NOT restate the ground-truth numbers one by one - they are already shown as bars beside this section, so repeating them adds nothing.
 
-Analyse instead: which one or two factors are this area's real strength, which one or two are its real weakness, and what that combination means for someone living here. Weave the specific numbers in as evidence for a point, never as a checklist. Organise around the two or three things that actually matter here rather than touring every field. Cover the price context honestly — whether the band reads as good value for these fundamentals, priced in line, or a premium for the location, and say which.
+Analyse instead: which one or two factors are this area's real strength, which one or two are its real weakness, and what that combination means for someone living here. Weave the specific numbers in as evidence for a point, never as a checklist. Organise around the two or three things that actually matter here rather than touring every field. Cover the price context honestly - whether the band reads as good value for these fundamentals, priced in line, or a premium for the location, and say which.
 
-This section is about the AREA ONLY — no sunlight, no shadows, no talk of this specific unit.`
+This section is about the AREA ONLY - no sunlight, no shadows, no talk of this specific unit.`
     : `1. HOME BUYER VERDICT
 Write this to the person, not about the property. Use "you", plain English, no bullets.
 
-Four to six sentences: what this flat is like to live in for light and comfort day to day, what changes across the year, the one thing that would most worry you, and your actual call — worth pursuing, worth pursuing once one thing checks out, or keep looking. Commit to one.
+Four to six sentences: what this flat is like to live in for light and comfort day to day, what changes across the year, the one thing that would most worry you, and your actual call - worth pursuing, worth pursuing once one thing checks out, or keep looking. Commit to one.
 Close with one line starting exactly "- Best fit for: " naming the one or two buyer types this suits best.
 
 ${livingSectionNumber}. WHAT LIVING HERE IS ACTUALLY LIKE
@@ -512,16 +512,16 @@ Take each of these four in turn as its own "- " line, type then colon: Families 
   const ov = persona?.reportOverlay || null;
   const personaOverlay = ov ? `
 
-READER OVERLAY — this applies on top of everything above and overrides it wherever the two pull in different directions.
+READER OVERLAY - this applies on top of everything above and overrides it wherever the two pull in different directions.
 
 WHO THIS IS FOR: ${ov.readerLine}
 
-Re-slant the whole report for this reader. Keep every numbered section above exactly as specified — same titles, same numbers, same order, same formatting rules. What changes is emphasis, what leads each section, and which findings get a full paragraph versus one clause.
+Re-slant the whole report for this reader. Keep every numbered section above exactly as specified - same titles, same numbers, same order, same formatting rules. What changes is emphasis, what leads each section, and which findings get a full paragraph versus one clause.
 
 GIVE MORE SPACE TO: ${ov.weightUp}
 GIVE LESS SPACE TO: ${ov.weightDown}
 
-Never announce the slant to the reader. Do not write "as a family buyer" or "for investors like you" or name this persona anywhere. The fit should be felt, not stated. Every re-slanted claim still has to trace to a figure in the ground truth — re-weighting emphasis is not permission to assert anything the data does not support.
+Never announce the slant to the reader. Do not write "as a family buyer" or "for investors like you" or name this persona anywhere. The fit should be felt, not stated. Every re-slanted claim still has to trace to a figure in the ground truth - re-weighting emphasis is not permission to assert anything the data does not support.
 
 TONE FOR THIS READER: ${ov.toneNote}
 
@@ -551,15 +551,15 @@ ${groundTruthText}
 ${neighbourhoodGroundTruth}
 ${combinedGroundTruth}
 
-You also have ${screenshots.length} screenshots of the actual 3D map at this location. They are described one by one elsewhere, in a separate gallery -- do NOT write per-image descriptions here. The orange circle/dot marks the exact property location; darker areas are rendered shadows from OpenStreetMap building data. Use these images ONLY for narrative color and visual confirmation (e.g. "as the images show, a taller block sits to the southeast") — do NOT estimate hours of sun, shadow duration, or building heights from the images; use the ground-truth numbers above for all figures. If a screenshot looks blank, black, or unreadable, say so explicitly rather than guessing what it would show.
+You also have ${screenshots.length} screenshots of the actual 3D map at this location. They are described one by one elsewhere, in a separate gallery -- do NOT write per-image descriptions here. The orange circle/dot marks the exact property location; darker areas are rendered shadows from OpenStreetMap building data. Use these images ONLY for narrative color and visual confirmation (e.g. "as the images show, a taller block sits to the southeast") - do NOT estimate hours of sun, shadow duration, or building heights from the images; use the ground-truth numbers above for all figures. If a screenshot looks blank, black, or unreadable, say so explicitly rather than guessing what it would show.
 
-Write personally, not clinically — like a knowledgeable friend giving honest advice, not a data report reciting fields. Address the reader as "you" where it reads naturally. Be thorough and specific, not brief. This report is a defensible artifact a buyer will rely on — do not compress away detail to save space, and do not pad it with generic real-estate filler that could apply to any property.
+Write personally, not clinically - like a knowledgeable friend giving honest advice, not a data report reciting fields. Address the reader as "you" where it reads naturally. Be thorough and specific, not brief. This report is a defensible artifact a buyer will rely on - do not compress away detail to save space, and do not pad it with generic real-estate filler that could apply to any property.
 Plain language throughout, not just the verdict's opening lines: explain any real-estate or technical term the first time it appears (azimuth, NQI, feasibility band, etc.) in a short clause rather than assuming the reader already knows it, and prefer the everyday word over the technical one wherever both say the same thing.
 ${persona ? `\nWHO'S READING THIS: ${persona.reportFocus}\n` : ''}
-${safeCustomNote ? `\nTHE BUYER'S OWN REQUEST — they typed this themselves right before generating this report, so treat it as the single strongest signal of what they actually care about, above persona defaults or generic coverage: "${safeCustomNote}"\nDirectly address this in the Home Buyer Verdict section — do not just mention it in passing, actually answer it using the ground-truth data above. If the data above genuinely doesn't cover what they asked (e.g. they asked about something this report doesn't measure), say so plainly rather than inventing an answer. Never quote their request back verbatim or write "you mentioned" — just make sure the answer is unmistakably there.\n` : ''}
+${safeCustomNote ? `\nTHE BUYER'S OWN REQUEST - they typed this themselves right before generating this report, so treat it as the single strongest signal of what they actually care about, above persona defaults or generic coverage: "${safeCustomNote}"\nDirectly address this in the Home Buyer Verdict section - do not just mention it in passing, actually answer it using the ground-truth data above. If the data above genuinely doesn't cover what they asked (e.g. they asked about something this report doesn't measure), say so plainly rather than inventing an answer. Never quote their request back verbatim or write "you mentioned" - just make sure the answer is unmistakably there.\n` : ''}
 
 FORMATTING RULES (follow exactly, every time, regardless of location):
-- Never use emoji, anywhere, in any section, under any circumstances — not as bullet markers, not as decoration, not inline in a sentence. Plain text only.
+- Never use emoji, anywhere, in any section, under any circumstances - not as bullet markers, not as decoration, not inline in a sentence. Plain text only.
 - Start each section heading on its own line as "N. TITLE" (plain text, no ** bold markers, no # markdown), using the exact section numbers given below.
 - Use plain "- " for bullet points, not "*".
 - Do not use markdown bold (**) anywhere except to emphasize a single key figure inline.
@@ -570,17 +570,17 @@ Provide, in this exact order:
 ${verdictInstruction}
 
 ${flatSectionNumber}. THE FLAT ITSELF, FLOOR ${floorN} FACING ${safeFacingInput.toUpperCase()}
-Height and orientation are one story, not two — write them as one. Cover, in plain everyday English and in this order:
+Height and orientation are one story, not two - write them as one. Cover, in plain everyday English and in this order:
 - What a day in this flat is actually like for light. When the sun first reaches it, when it leaves, and how many usable hours that is, using the ground-truth figures.
 - How that changes across the year. Name the best and worst months by name and say what the difference feels like to live in, not just the hour count.
-- Whether ${safeFacingInput}-facing is a good or bad orientation at this latitude and on this floor, with the reasoning spelled out in ordinary words — no azimuth or elevation figures unless you immediately explain what they mean.
+- Whether ${safeFacingInput}-facing is a good or bad orientation at this latitude and on this floor, with the reasoning spelled out in ordinary words - no azimuth or elevation figures unless you immediately explain what they mean.
 - Heat as well as light. A facing that is generous with winter sun may be punishing in May; say which side of that this flat falls on.
 - What practically follows: whether this flat needs lights on during the day, whether the afternoon side will need blinds or heavy curtains, and whether a different floor in this same building would meaningfully change the answer.
-Write it as flowing paragraphs, not as the bulleted list above — those bullets are your coverage checklist, not the shape of the section.${personaOverlay}${checklistSection}`;
+Write it as flowing paragraphs, not as the bulleted list above - those bullets are your coverage checklist, not the shape of the section.${personaOverlay}${checklistSection}`;
 
   if (!process.env.GEMINI_API_KEY) {
     return NextResponse.json(
-      { analysis: 'Server is missing GEMINI_API_KEY — cannot run AI shadow analysis.' },
+      { analysis: 'Server is missing GEMINI_API_KEY - cannot run AI shadow analysis.' },
       { status: 500 }
     );
   }
@@ -689,7 +689,7 @@ Write it as flowing paragraphs, not as the bulleted list above — those bullets
 
     if (finishReason === 'MAX_TOKENS') {
       console.warn('Analysis still truncated after continuations, shipping partial text with a note.');
-      analysis += '\n\n*(Note: this analysis was cut short by a length limit — the data table above remains fully accurate.)*';
+      analysis += '\n\n*(Note: this analysis was cut short by a length limit - the data table above remains fully accurate.)*';
     }
 
     const caps = await captionsPromise;

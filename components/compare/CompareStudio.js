@@ -161,7 +161,7 @@ export default function CompareStudio({ initial }) {
 
       {cols.length > 0 && (
         <>
-          <Block title="What we measured" note="Computed from the address — not typed in, not modelled">
+          <Block title="What we measured" note="Computed from the address - not typed in, not modelled">
             <BarRow label="Unit score" cols={cols} pick={(c) => c.measured?.unit?.score} max={100} best="high" lead />
             <BarRow label="Neighbourhood" cols={cols} best="high" max={100}
                     pick={(c) => (c.measured?.areaCovered ? c.measured.area.score : null)}
@@ -174,7 +174,7 @@ export default function CompareStudio({ initial }) {
           </Block>
 
           <Block
-            title="What you were quoted" note="Your numbers — nothing here comes from us"
+            title="What you were quoted" note="Your numbers - nothing here comes from us"
             action={<button type="button" className="bx-toggle" onClick={() => setOpenMoney((v) => !v)} aria-expanded={openMoney}>
               {openMoney ? 'Hide the fields' : anyMoney ? 'Edit the figures' : 'Add what you were quoted'}
             </button>}
@@ -193,7 +193,7 @@ export default function CompareStudio({ initial }) {
                     <Field label="Brokerage" v={c.inputs.brokerage} on={(x) => patchInput(c.key, 'brokerage', x)} pre="₹" />
                     <Field label="Maintenance" v={c.inputs.maintenancePsf} on={(x) => patchInput(c.key, 'maintenancePsf', x)} pre="₹" suf="/sqft/mo" />
                     <Field label="Stamp duty" v={c.inputs.stampPct} on={(x) => patchInput(c.key, 'stampPct', x)} suf="%"
-                           hint="Prefilled for the city — rates move, check yours" />
+                           hint="Prefilled for the city - rates move, check yours" />
                   </div>
                 ))}
               </div>
@@ -206,14 +206,14 @@ export default function CompareStudio({ initial }) {
           </Block>
 
           {anyMoney && (
-            <Block title="What that actually works out to" note="Arithmetic on the figures above — check it yourself">
+            <Block title="What that actually works out to" note="Arithmetic on the figures above - check it yourself">
               <PlainRow label="Loading factor" cols={cols} best="low" hint="How much of what you pay for you can't stand in"
                         pick={(c) => c.derived.loadingPct} fmt={(v) => `${v.toFixed(1)}%`} />
               {/* Deliberately unmarked. The quoted per-sqft is the misleading
                   number; a winner's tick on the lower one would endorse
                   exactly the comparison the row beneath exists to correct. */}
-              <PlainRow label="Per sqft — as quoted" cols={cols} pick={(c) => c.derived.psfQuoted} fmt={(v) => inr(v)} />
-              <PlainRow label="Per sqft — of carpet" cols={cols} best="low" hero
+              <PlainRow label="Per sqft - as quoted" cols={cols} pick={(c) => c.derived.psfQuoted} fmt={(v) => inr(v)} />
+              <PlainRow label="Per sqft - of carpet" cols={cols} best="low" hero
                         hint="The only per-sqft number that compares two quotes honestly"
                         pick={(c) => c.derived.psfCarpet} fmt={(v) => inr(v)} />
               <PlainRow label="All-in, to own it" cols={cols} best="low"
@@ -230,7 +230,7 @@ export default function CompareStudio({ initial }) {
               {copied ? 'Link copied' : 'Copy a link to this comparison'}
             </button>
             <p>
-              The whole comparison is in that link. Nothing is stored on our side — not the addresses,
+              The whole comparison is in that link. Nothing is stored on our side - not the addresses,
               not what you were quoted. And we don&apos;t tell you which flat to buy: how you weigh
               money against light is yours to decide.
             </p>
@@ -283,7 +283,7 @@ function PropertyCard({ slot, tag, hue, bias, onPatch, onRemove }) {
                 <Stat n={m.unit.score} k="unit" hue={hue} />
                 <Stat n={m.areaCovered ? m.area.score : null} k="area" hue={hue}
                       sub={m.areaCovered ? m.area.name
-                        : slot.pin ? `${slot.pin} — outside our 5 cities`
+                        : slot.pin ? `${slot.pin} - outside our 5 cities`
                         : 'no pincode found here'} />
               </div>
               <SunStrip monthly={m.solar?.monthlySummary} color={hue} />
@@ -298,7 +298,7 @@ function PropertyCard({ slot, tag, hue, bias, onPatch, onRemove }) {
 function Stat({ n, k, hue, sub }) {
   return (
     <div className="bx-stat">
-      <b style={{ color: n == null ? 'var(--text-dim)' : hue }}>{n == null ? '—' : n}</b>
+      <b style={{ color: n == null ? 'var(--text-dim)' : hue }}>{n == null ? ' - ' : n}</b>
       <span>{k}</span>
       {sub && <i>{sub}</i>}
     </div>
@@ -356,11 +356,11 @@ function AddressField({ value, bias, onPick, onClear }) {
           {busy && !res.length && <p className="bx-menu-note">Searching…</p>}
           {!busy && failed && (
             <p className="bx-menu-note err">
-              The address lookup didn&apos;t answer. That&apos;s the map service, not your search —
+              The address lookup didn&apos;t answer. That&apos;s the map service, not your search - 
               try again in a moment.
             </p>
           )}
-          {!busy && !failed && !res.length && <p className="bx-menu-note">No match for that yet — keep typing.</p>}
+          {!busy && !failed && !res.length && <p className="bx-menu-note">No match for that yet - keep typing.</p>}
           {res.slice(0, 6).map((r, i) => (
             <button key={`${r.lat},${r.lon},${i}`} type="button" className="bx-menu-it" role="option" aria-selected="false"
                     onClick={() => { onPick(r); setQ(r.displayName); setOpen(false); }}>
@@ -465,7 +465,7 @@ function areaBlank(c) {
   if (c.loading) return 'measuring…';
   if (!c.measured) return null;
   if (c.measured.areaCovered) return null;
-  return c.pin ? `${c.pin} — outside our 5 cities` : 'no pincode found here';
+  return c.pin ? `${c.pin} - outside our 5 cities` : 'no pincode found here';
 }
 
 function PlainRow({ label, hint, hero, cols, pick, fmt, best }) {
@@ -479,7 +479,7 @@ function PlainRow({ label, hint, hero, cols, pick, fmt, best }) {
         return (
           <span key={c.key} className={`bx-v${i === bi ? ' win' : ''}`}>
             <i className="bx-dot" style={{ background: c.hue }} aria-hidden="true" />
-            <b>{has ? fmt(v) : '—'}</b>
+            <b>{has ? fmt(v) : ' - '}</b>
           </span>
         );
       })}
@@ -500,7 +500,7 @@ function BarRow({ label, hint, cols, pick, max = 100, best, blank, lead }) {
             <span className="bx-bar-track">
               <span className="bx-bar-fill" style={{ width: has ? `${Math.max(2, (v / max) * 100)}%` : 0, background: c.hue }} />
             </span>
-            <b style={{ color: has ? c.hue : 'var(--text-dim)' }}>{has ? v : (blank?.(c) || '—')}</b>
+            <b style={{ color: has ? c.hue : 'var(--text-dim)' }}>{has ? v : (blank?.(c) || ' - ')}</b>
           </span>
         );
       })}
@@ -527,7 +527,7 @@ function Field({ label, v, on, pre, suf, hint }) {
       <span className="bx-field-l">{label}{hint && <i>{hint}</i>}</span>
       <span className="bx-field-in">
         {pre && <em>{pre}</em>}
-        <input type="text" inputMode="decimal" value={v ?? ''} placeholder="—" onChange={(e) => on(e.target.value)} />
+        <input type="text" inputMode="decimal" value={v ?? ''} placeholder=" - " onChange={(e) => on(e.target.value)} />
         {suf && <em>{suf}</em>}
       </span>
     </label>

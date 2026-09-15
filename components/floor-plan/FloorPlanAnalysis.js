@@ -4,8 +4,8 @@
 // Upload a floor plan (PDF/JPG/PNG) → Gemini Vision reads it → shows a
 // marked-up copy of the plan (numbered pins per room) alongside a
 // furnishing-advice card per room. Same box/kick/BPF visual language as the
-// AsliVastu report, recoloured to var(--sun) — BlindSpot's existing
-// unit-level accent — instead of var(--slate) (which is the AsliVastu/
+// AsliVastu report, recoloured to var(--sun) - BlindSpot's existing
+// unit-level accent - instead of var(--slate) (which is the AsliVastu/
 // neighbourhood-level accent), so the two AI-analysis surfaces read as
 // clearly different parts of the product.
 

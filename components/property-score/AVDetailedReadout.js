@@ -3,7 +3,7 @@
 //
 // The full per-category AsliVastu detail breakdown, ported field-for-field
 // (including AV's own tooltip copy) from aslivastu/web/pages/report/[pin].js
-// — every stat AV's master_by_pin.json carries, laid out as one box per
+// - every stat AV's master_by_pin.json carries, laid out as one box per
 // category (Crime, Air Quality, Power, Connectivity & Infrastructure,
 // Water, Roads, Drainage & Sewerage), plus Schools and Methodology. Only
 // the colours changed: BlindSpot's paper/ink/var(--slate) tokens instead of
@@ -17,7 +17,7 @@
 //
 // Needs a `record` that has BOTH the nqi_scores.json fields AND the
 // master_by_pin.json fields merged in (see /api/av-localities and
-// lib/neighbourhood-report/getReportData.js — both merge master_by_pin.json
+// lib/neighbourhood-report/getReportData.js - both merge master_by_pin.json
 // the same way AV's own /api/report.js does: `{ ...score, ...master }`).
 
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
@@ -60,7 +60,7 @@ export function Info({ text }) {
   );
 }
 
-// One box per category — title + a grid of label/value pairs, each with its
+// One box per category - title + a grid of label/value pairs, each with its
 // own hover tooltip. Matches AV's own StatCard exactly (label, value, tip).
 function CategoryCard({ title, tip, stats, pinCode, city, provenance }) {
   return (
@@ -143,7 +143,7 @@ export function source(dimension, city) {
   return sourceFor(dimension, city);
 }
 // Autumn palette, worst → best: brick red, pumpkin orange, forest green,
-// mid green, light green. Replaces the earlier 4-tier scale on request —
+// mid green, light green. Replaces the earlier 4-tier scale on request - 
 // same idea (weak scores read as hot colours, strong scores read as green,
 // hatch pattern still kicks in below 50), just a warmer 5-step ramp instead
 // of the flatter green/lime/amber/red set.
@@ -151,7 +151,7 @@ export function source(dimension, city) {
 // (strong). Brighter/more saturated than the previous pass, which read as
 // muddy rather than "good" at the green end.
 // User-supplied autumn photo palette: first red, first orange from that
-// swatch set, then olive/deep-olive for the top bands — deepest olive
+// swatch set, then olive/deep-olive for the top bands - deepest olive
 // reserved for the best scores.
 //
 // Collapsed from 5 tiers to 4 (dropped the yellow-green middle tier and
@@ -226,7 +226,7 @@ export function explain(k, r) {
 // Plain-JS date formatting, deliberately NOT toLocaleDateString(): that
 // reads the *runtime's* default locale/ICU data, which can differ between
 // the Node server (SSR) and the browser (CSR) even with an explicit locale
-// argument if the server's Node build only ships small-icu — exactly what
+// argument if the server's Node build only ships small-icu - exactly what
 // caused the earlier hydration mismatch (28/7/2026 vs 28/07/2026). These
 // always produce the same string everywhere, so use them instead of
 // toLocaleDateString/toLocaleString anywhere in the report.

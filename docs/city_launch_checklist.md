@@ -1,6 +1,6 @@
 # City launch checklist
 
-Generated 2026-09-14 by `scripts/city_launch_checklist.py` — item 8 of the trust-framework checklist. Re-run this script after any data or scoring change; don't hand-edit this file.
+Generated 2026-09-14 by `scripts/city_launch_checklist.py` - item 8 of the trust-framework checklist. Re-run this script after any data or scoring change; don't hand-edit this file.
 
 `pass` / `FAIL` / `PARTIAL` / `PENDING` (needs a human step) / `N/A` (not measurable with current data).
 

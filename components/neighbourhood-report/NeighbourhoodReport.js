@@ -3,7 +3,7 @@
 //
 // The full-page AsliVastu neighbourhood report, opened in a new tab from
 // AVAreaCard's "View Full AsliVastu Report" link. This is a faithful port
-// of AsliVastu's own report page (aslivastu/web/pages/report/[pin].js) —
+// of AsliVastu's own report page (aslivastu/web/pages/report/[pin].js) - 
 // same corner-marked "blueprint frame" boxes, same hover "?" info tooltips,
 // same persona/weight re-ranking, same dimension-readout / inspection-notes
 // / price-band / comparison / detailed-readings content. Only the colours
@@ -12,10 +12,10 @@
 //
 // Left out on purpose, because they're tied to AV's own account/backend
 // rather than being report *content*: PDF export, the feedback form, the
-// broker-branding strip, "Save to BlindSpot" (redundant — this already is
+// broker-branding strip, "Save to BlindSpot" (redundant - this already is
 // BlindSpot), the dark/light toggle (BlindSpot only has one theme), the
 // live Leaflet map, and the non-functional "Commute reality check" teaser.
-// Everything else — every score, every stat, every explanatory sentence —
+// Everything else - every score, every stat, every explanatory sentence - 
 // is here.
 
 import { useState, useMemo } from 'react';
@@ -62,7 +62,7 @@ const CSS = `
 `;
 
 // ── ported verbatim from AV's report page (persona weighting, dimension
-// explain text, good/bad highlights) — logic and copy unchanged, only the
+// explain text, good/bad highlights) - logic and copy unchanged, only the
 // colours around it changed. ────────────────────────────────────────────
 const WEIGHT_PRESETS = {
   Default: { crime: 25, infrastructure: 20, air: 15, power: 10, schools: 10, water: 8, roads: 7, sewerage: 5 },
@@ -134,11 +134,11 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
   const pc = record.price_context;
 
   // window.close() only works on a tab the browser considers "opened by
-  // script" (i.e. window.opener is set) — that's why AVAreaCard's link now
+  // script" (i.e. window.opener is set) - that's why AVAreaCard's link now
   // drops rel="noopener". If the tab was still opened some other way (a
   // browser's own "open in new tab" context-menu action, a bookmark, etc.),
   // there's no opener either way and the browser silently refuses to close
-  // it — so fall back to telling the person to close the tab themselves
+  // it - so fall back to telling the person to close the tab themselves
   // instead of a dead button.
   function handleClose() {
     window.close();
@@ -195,7 +195,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
             {coverage < 100 && (
               <p className="avsheet-note" style={{ color: '#F0C77A' }}>
                 We have no records for {missing.map(k => (FACTOR_LABELS[k] || k).toLowerCase()).join(', ')} in
-                this pincode, so this score is worked out from the {`${coverage}%`} of the model we do have{coverage < 60 ? ' — treat it as indicative rather than settled' : ''}.
+                this pincode, so this score is worked out from the {`${coverage}%`} of the model we do have{coverage < 60 ? ' - treat it as indicative rather than settled' : ''}.
               </p>
             )}
             {/* Present on AsliVastu's own live report card, missing here --
@@ -369,7 +369,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
             Data aggregations for informational and research purposes only, not real-estate, legal or financial advice. Most figures are estimated from government reports last verified 2023–24. Do not rely solely on these scores for a purchase decision.
           </p>
           <p style={{ fontSize: 11.5, color: 'var(--text-dim)', lineHeight: 1.6, maxWidth: 720, marginTop: 10 }}>
-            <strong style={{ color: 'var(--text)' }}>How this is built</strong>, scores combine the cited public-record data above with a zone-level model — pincodes in the same zone often share a baseline with only a small adjustment between them, so two nearby addresses can land close together or identical on most dimensions. Named school detail, where listed above, is the one part sourced locality by locality rather than by zone.
+            <strong style={{ color: 'var(--text)' }}>How this is built</strong>, scores combine the cited public-record data above with a zone-level model - pincodes in the same zone often share a baseline with only a small adjustment between them, so two nearby addresses can land close together or identical on most dimensions. Named school detail, where listed above, is the one part sourced locality by locality rather than by zone.
           </p>
         </div>
 

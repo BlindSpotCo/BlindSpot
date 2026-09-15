@@ -28,7 +28,7 @@ export default async function ComparePage({ searchParams }) {
           <h1>You&apos;ve shortlisted three.<br /><em>Only one gets the winter sun.</em></h1>
           <p className="bx-sub">
             Point us at the flats you&apos;re choosing between. We measure the light on each one&apos;s
-            facade, at its floor, and the neighbourhood around it — then show you what the price
+            facade, at its floor, and the neighbourhood around it - then show you what the price
             difference actually buys. No account. Nothing saved.
           </p>
         </header>

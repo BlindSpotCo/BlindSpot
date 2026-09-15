@@ -52,7 +52,7 @@ function useFaqItems() {
     },
     {
       q: 'Where does the data actually come from?',
-      a: 'The Neighbourhood Score comes from government records — police, CPCB live AQI, DISCOM power data, municipal water and road surveys, CBSE school listings. The Home Comfort Score comes from real solar-geometry modelling for the floor and facing you pick — not broker-supplied information either way.',
+      a: 'The Neighbourhood Score comes from government records - police, CPCB live AQI, DISCOM power data, municipal water and road surveys, CBSE school listings. The Home Comfort Score comes from real solar-geometry modelling for the floor and facing you pick - not broker-supplied information either way.',
     },
     {
       q: 'Which cities are covered?',
@@ -61,7 +61,7 @@ function useFaqItems() {
     },
     {
       q: 'How is this different from asking a broker?',
-      a: "BlindSpot has no stake in any specific listing — the score doesn't change based on who's selling, and it's the same number whether you ask about the flat they're pushing or the one next door.",
+      a: "BlindSpot has no stake in any specific listing - the score doesn't change based on who's selling, and it's the same number whether you ask about the flat they're pushing or the one next door.",
     },
     {
       q: 'Can I change how much the area matters vs. the unit itself?',

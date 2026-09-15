@@ -11,10 +11,10 @@ import ClosingCTA from '@/components/ClosingCTA';
 
 export default function Home() {
   // Auth state, scroll-reveal and the mobile menu all now live in
-  // SiteHeader (shared across every page) — this file only needs the
+  // SiteHeader (shared across every page) - this file only needs the
   // hero's own coordinate-readout ref.
 
-  // Reveal-on-scroll for .reveal elements — same behavior as the original.
+  // Reveal-on-scroll for .reveal elements - same behavior as the original.
   useEffect(() => {
     const revealEls = document.querySelectorAll('.reveal');
     if (!revealEls.length) return;

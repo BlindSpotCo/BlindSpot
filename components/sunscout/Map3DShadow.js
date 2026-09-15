@@ -134,7 +134,7 @@ html,body{background:var(--bg-2);overflow:hidden;}
 // Watchdog: if the OSMBuildings CDN script failed to load/execute (blocked
 // network, slow CDN, WebGL unavailable, etc.) everything below throws or
 // simply never runs, and the page was previously left as a silent black
-// screen with no explanation — indistinguishable from "still loading". Catch
+// screen with no explanation - indistinguishable from "still loading". Catch
 // that here and show a retry affordance instead.
 // Tell the parent, too. This iframe is not always on screen -- during
 // report generation it renders parked outside the viewport, where its
@@ -346,7 +346,7 @@ setTimeout(function(){
 
 const D2R=Math.PI/180;
 // NOTE: tile-a/b/c.openstreetmap.fr all resolve to the same single backend
-// service (confirmed on OSM France's own forum) — round-robining across them
+// service (confirmed on OSM France's own forum) - round-robining across them
 // gives no real parallelism, so we stick to the one documented-working host.
 // The real reliability gap is that this is a small community server with
 // occasional 502s; app/api/tile-proxy/route.ts now retries and falls back to
@@ -378,7 +378,7 @@ map.addGeoJSONTiles('https://{s}.data.osmbuildings.org/0.2/59fcc2e8/tile/{z}/{x}
 map.addGeoJSON(${obsGj});
 
 // Always read the map's OWN current tilt/rotation right before saving,
-// rather than trusting curTilt/curRot — those only got updated by the +/-
+// rather than trusting curTilt/curRot - those only got updated by the +/-
 // buttons before, so tilting or rotating by dragging directly on the map
 // (a normal gesture in this library) was invisible to save/restore and
 // silently reverted on the next reinit. Reading live from the map here
@@ -506,7 +506,7 @@ map.on('rotate',function(){try{curRot=((map.getRotation()%360)+360)%360;document
 map.on('tilt',function(){try{var t=map.getTilt();if(t!=null)curTilt=t;drawArc();}catch(e){}});
 
 // The map's own 'resize' event (fired when its container's dimensions
-// change — rotating the phone triggers this) is the officially documented
+// change - rotating the phone triggers this) is the officially documented
 // signal for this. OSMBuildings recalculates its camera projection from
 // scratch on resize and can reset tilt/rotation to 0/0 in the process; the
 // 'rotate'/'tilt' listeners above would otherwise pick up and persist that

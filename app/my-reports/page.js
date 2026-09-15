@@ -88,7 +88,7 @@ export default async function MyReportsPage() {
 
         {fetchFailed && (
           <div className="reports-empty" style={{ marginBottom: 24 }}>
-            We couldn&apos;t load your saved reports just now. This is on our side, not your account —
+            We couldn&apos;t load your saved reports just now. This is on our side, not your account - 
             refresh in a moment and they should be here.
           </div>
         )}

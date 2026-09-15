@@ -393,7 +393,7 @@ export default function ReportModal({
 
         {!isFormStep && !reportUrl && (
           <div className="mono" style={{ fontSize:10, fontWeight:600, color:ORG, letterSpacing:'.1em', textTransform:'uppercase', marginBottom:10 }}>
-            {galleryOnly ? 'Sun & shadow report' : 'Full AI report'} generating — feel free to keep browsing
+            {galleryOnly ? 'Sun & shadow report' : 'Full AI report'} generating - feel free to keep browsing
           </div>
         )}
 
@@ -426,7 +426,7 @@ export default function ReportModal({
                   shortfall?.table ? 'The monthly sunlight table couldn’t be worked out for this pin.' : null,
                   aiNotice && !shortfall?.captions ? 'The written sections didn’t come back this time.' : null,
                 ].filter(Boolean).join(' ')}
-                {' '}Everything else is measured and unaffected — generating again usually fills the rest in.
+                {' '}Everything else is measured and unaffected - generating again usually fills the rest in.
               </p>
             )}
 
@@ -595,7 +595,7 @@ export default function ReportModal({
                 why a working run and a stuck run looked identical. */}
             <p style={{ fontFamily:MONO, fontSize:11.5, color:SUB, lineHeight:1.8, marginBottom:20 }}>
               {step === 'capturing'
-                ? `Photographing the sun and shadow through the year — frame ${Math.min(captured.done + 1, captured.total)} of ${captured.total}.`
+                ? `Photographing the sun and shadow through the year - frame ${Math.min(captured.done + 1, captured.total)} of ${captured.total}.`
                 : step === 'captioning'
                   ? 'Frames captured. Writing what each one shows.'
                   : step === 'analysing'

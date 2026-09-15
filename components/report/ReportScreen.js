@@ -71,10 +71,10 @@ function toneOf(score) {
 function headlineFor(score, hasArea) {
   if (!hasArea) {
     if (score >= 75) return 'This flat holds up well on its own.';
-    if (score >= 50) return 'This flat is workable — a few things worth checking in person.';
+    if (score >= 50) return 'This flat is workable - a few things worth checking in person.';
     return 'Several things on this flat are worth a closer look before you commit.';
   }
-  if (score >= 75) return 'Worth going ahead — with a few things to check.';
+  if (score >= 75) return 'Worth going ahead - with a few things to check.';
   if (score >= 58) return 'Worth a look, but go in with your eyes open.';
   return 'Worth a very close look before you commit to this one.';
 }
@@ -85,10 +85,10 @@ function headlineFor(score, hasArea) {
 function verdictSay(areaScore, unitScore) {
   const areaOk = areaScore >= 60;
   const unitOk = unitScore >= 60;
-  if (areaOk && unitOk) return 'The locality holds up and so does this particular flat — the combination is what people are actually looking for.';
+  if (areaOk && unitOk) return 'The locality holds up and so does this particular flat - the combination is what people are actually looking for.';
   if (!areaOk && unitOk) return 'The flat itself holds up well. It is the streets around it that need scrutiny, and that is the half you cannot change later.';
-  if (areaOk && !unitOk) return 'Good locality — but light, outlook or airflow on this exact floor and facing pull the score down. Ask to see a higher floor or a different facing in the same tower before deciding.';
-  return 'Both halves are worth verifying in person — the locality and this specific floor and facing. Worth a close look before you put money down.';
+  if (areaOk && !unitOk) return 'Good locality - but light, outlook or airflow on this exact floor and facing pull the score down. Ask to see a higher floor or a different facing in the same tower before deciding.';
+  return 'Both halves are worth verifying in person - the locality and this specific floor and facing. Worth a close look before you put money down.';
 }
 function ord(n) {
   const s = ['th', 'st', 'nd', 'rd'];
@@ -510,13 +510,13 @@ export default function ReportScreen() {
   const [reportBusy, setReportBusy] = useState(false);
   const reportRunning = reportOpen !== null && reportBusy;
   const onMapClick = useCallback((clickLat, clickLon) => {
-    if (reportRunning) { setLocError('The report is being built from this spot — let it finish, then move the pin.'); return; }
+    if (reportRunning) { setLocError('The report is being built from this spot - let it finish, then move the pin.'); return; }
     moveTo(clickLat, clickLon, '');
   }, [moveTo, reportRunning]);
 
   const onSearchSubmit = useCallback(async (e) => {
     e.preventDefault();
-    if (reportRunning) { setLocError('The report is being built from this spot — let it finish, then search.'); return; }
+    if (reportRunning) { setLocError('The report is being built from this spot - let it finish, then search.'); return; }
     const q = search.trim();
     if (!q) return;
 
@@ -557,7 +557,7 @@ export default function ReportScreen() {
   }, [search, moveTo, reportRunning]);
 
   const useMyLocation = useCallback(() => {
-    if (reportRunning) { setLocError('The report is being built from this spot — let it finish first.'); return; }
+    if (reportRunning) { setLocError('The report is being built from this spot - let it finish first.'); return; }
     if (!navigator.geolocation) { setLocError('This browser won\u2019t share your location.'); return; }
     setLocBusy(true); setLocError('');
     navigator.geolocation.getCurrentPosition(
@@ -835,7 +835,7 @@ export default function ReportScreen() {
                 See my score
               </button>
               <button type="button" className="bsr-unitgate-skip" onClick={skipUnit}>
-                I don&rsquo;t have a specific flat in mind &mdash; let me just browse
+                I don&rsquo;t have a specific flat in mind - let me just browse
               </button>
             </div>
           </div>
@@ -850,7 +850,7 @@ export default function ReportScreen() {
           <h1>We couldn&apos;t score this address.</h1>
           <p>
             {failure === 'scoring'
-              ? 'The scoring service didn’t answer. This is on us, not the address — try again in a moment.'
+              ? 'The scoring service didn’t answer. This is on us, not the address - try again in a moment.'
               : 'Something went wrong reading this address.'}
           </p>
           {/* This screen returns above the map, the search bar and the
@@ -967,7 +967,7 @@ export default function ReportScreen() {
           <p>
             {hasArea
               ? verdictSay(area.score, unit.score)
-              : 'We don’t have neighbourhood records for this pin code yet, so this score is the flat on its own — sun, shade, view, privacy and airflow.'}
+              : 'We don’t have neighbourhood records for this pin code yet, so this score is the flat on its own - sun, shade, view, privacy and airflow.'}
           </p>
           {/* This score's flat-half is only ever real once floor + facing
               are set below -- until then it's scored for a typical mid
@@ -978,7 +978,7 @@ export default function ReportScreen() {
           {assumed && (
             <p className="bsr-assumed-note">
               Scored for a typical {ord(DEFAULT_FLOOR)} floor, {DEFAULT_FACING.toLowerCase()}-facing
-              unit — <a href="#the-flat">set the actual floor and facing</a> to score this specific flat.
+              unit - <a href="#the-flat">set the actual floor and facing</a> to score this specific flat.
             </p>
           )}
         </div>
@@ -1098,7 +1098,7 @@ export default function ReportScreen() {
                 <>
                   <p>
                     {areaFailed
-                      ? `We couldn't load the neighbourhood records for pin ${pinCode} just now — that's a fault on our side, not a gap in coverage. The flat's own scores below are unaffected.`
+                      ? `We couldn't load the neighbourhood records for pin ${pinCode} just now - that's a fault on our side, not a gap in coverage. The flat's own scores below are unaffected.`
                       : pinCode
                         ? `Pin ${pinCode} isn't in our neighbourhood records yet, so we won't guess at safety, water or schools here.`
                         : "We couldn't work out the pincode for this exact spot, so there's nothing to look the area up by."}
@@ -1170,7 +1170,7 @@ export default function ReportScreen() {
                 {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
               </select>
             </label>
-            {assumed ? <span className="bsr-assumed">assumed — set yours</span> : null}
+            {assumed ? <span className="bsr-assumed">assumed - set yours</span> : null}
           </p>
 
           <p className="bsr-rating" aria-live="polite">
@@ -1239,7 +1239,7 @@ export default function ReportScreen() {
                 <span className="bsr-row-what">
                   Est. summer AC cost
                   <span className="bsr-row-note" title={unit.thermalCost.methodology}>
-                    Standard 1.5-ton AC, typical summer use — an estimate to compare units, not a bill.
+                    Standard 1.5-ton AC, typical summer use - an estimate to compare units, not a bill.
                   </span>
                 </span>
                 <span className="bsr-tag is-none">
@@ -1264,7 +1264,7 @@ export default function ReportScreen() {
             </button>
             <span className="bsr-more-note">
               {!solar?.pathData
-                ? 'Waiting for the 3D map — this is built from photographs of it, so there is nothing to make until it loads. '
+                ? 'Waiting for the 3D map - this is built from photographs of it, so there is nothing to make until it loads. '
                 : ''}
               The evidence behind the five scores above: this block photographed at 12 points through
               the year, 3 per season at 9am / noon / 3pm, each described, with the month-by-month
@@ -1381,7 +1381,7 @@ export default function ReportScreen() {
                 >
                   {SEASONS.map((sn) => (
                     <option key={sn.key} value={sn.key}>
-                      {sn.label}{sn.md ? ` — ${prettyDate(seasonDate(sn.key))}` : ''}
+                      {sn.label}{sn.md ? ` - ${prettyDate(seasonDate(sn.key))}` : ''}
                     </option>
                   ))}
                   <option value="custom">Pick a date…</option>
@@ -1437,12 +1437,12 @@ export default function ReportScreen() {
         </div>
         <p className="bsr-compare-cue">
           Weighing this against another flat?{' '}
-          <a href="/compare">Put them side by side</a> — the sun each one gets, and what the
+          <a href="/compare">Put them side by side</a> - the sun each one gets, and what the
           price difference actually buys.
         </p>
         <p className="bsr-maphint">
           {reportRunning
-            ? 'The pin is locked while the report is built from this spot — moving it now would mix two blocks into one report.'
+            ? 'The pin is locked while the report is built from this spot - moving it now would mix two blocks into one report.'
             : 'Click the map to interact with it, then click again to move the pin to another building.'}
         </p>
       </section>
@@ -1451,7 +1451,7 @@ export default function ReportScreen() {
         <h2>What to check before you decide</h2>
         <p className="bsr-visit-lede">
           Everything that scored under 60. Tick them off as you go and jot what you actually find next
-          to each one — both are remembered on this device, and any notes carry into the report you
+          to each one - both are remembered on this device, and any notes carry into the report you
           save. Changing the floor or facing rebuilds the list.
         </p>
         <ul className="bsr-todo">
@@ -1486,7 +1486,7 @@ export default function ReportScreen() {
                       onChange={() => toggleTick(a.key)}
                     />
                     <span className="bsr-todo-body">
-                      <strong className="bsr-todo-title">{a.label} — {String(word(a.score)).toLowerCase()} ({a.score})</strong>
+                      <strong className="bsr-todo-title">{a.label} - {String(word(a.score)).toLowerCase()} ({a.score})</strong>
                       <span className="bsr-todo-text">{a.action}</span>
                     </span>
                   </label>
@@ -1497,7 +1497,7 @@ export default function ReportScreen() {
                       <textarea
                         className="bsr-todo-note"
                         placeholder="Notes (optional)"
-                        aria-label={`What did you find — ${a.label}`}
+                        aria-label={`What did you find - ${a.label}`}
                         value={notes[a.key] || ''}
                         onChange={(e) => updateNote(a.key, e.target.value)}
                         rows={2}
@@ -1543,8 +1543,8 @@ export default function ReportScreen() {
         <h2>Every property has a <em>blindspot.</em></h2>
         <p>
           {hasArea
-            ? 'One written verdict for this address — the area, the flat, and the two read together, with the questions to put to the seller. Downloadable as a PDF.'
-            : 'One written verdict for this flat — the sun, the shade, the view and the questions to put to the seller. We have no neighbourhood records for this pincode, so this report covers the flat only. Downloadable as a PDF.'}
+            ? 'One written verdict for this address - the area, the flat, and the two read together, with the questions to put to the seller. Downloadable as a PDF.'
+            : 'One written verdict for this flat - the sun, the shade, the view and the questions to put to the seller. We have no neighbourhood records for this pincode, so this report covers the flat only. Downloadable as a PDF.'}
         </p>
         {/* Both reports are built from photographs of the map. With no map
             there is nothing to photograph, and the run used to fail with
@@ -1561,7 +1561,7 @@ export default function ReportScreen() {
         <span className="bsr-free">
           {solar?.pathData
             ? 'Takes about two minutes. It builds here on this page, so you keep your floor and facing, and you open it when it\u2019s ready.'
-            : 'Waiting for the 3D map — both reports are built from photographs of it, so there\u2019s nothing to make until it loads.'}
+            : 'Waiting for the 3D map - both reports are built from photographs of it, so there\u2019s nothing to make until it loads.'}
         </span>
         <span className="bsr-also">
           Already have the floor plan? <a href="/floor-plan-analysis">Get room-by-room furnishing advice →</a>
@@ -1575,7 +1575,7 @@ export default function ReportScreen() {
           /* Without a key React reuses this instance when the type changes,
              so switching from the sun & shadow run to the full report kept
              the finished gallery's state and simply relabelled it: "Your
-             report is ready — the full write-up", opening the gallery blob,
+             report is ready - the full write-up", opening the gallery blob,
              and saving the gallery under the full report's name. */
           key={reportOpen}
           lat={lat}
