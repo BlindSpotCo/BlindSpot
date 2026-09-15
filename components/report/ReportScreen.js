@@ -1454,10 +1454,7 @@ export default function ReportScreen() {
 
       <section className="bsr-visit">
         <h2>What to check before you decide</h2>
-        <p className="bsr-visit-lede">
-          Everything under 60. Tick items off and note what you find - saved on this device and
-          carried into your report.
-        </p>
+
         <ul className="bsr-todo">
           {actions.length === 0 ? (
             <li className="bsr-todo-plain">
