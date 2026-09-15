@@ -1133,10 +1133,11 @@ export default function ReportScreen() {
           </button>
 
           <div className={`bsr-half-detail${halfOpen.unit ? '' : ' is-collapsed'}`}>
-          {/* The six scores below are computed off the 3D model further
+          {/* The seven scores below are computed off the 3D model further
               down the page (five from the solar/floor model, plus
-              dampness from monsoon climate + orientation). Without
-              saying so they read as six numbers from nowhere. */}
+              dampness from monsoon climate + orientation, plus noise
+              from live OSM road/rail proximity). Without saying so
+              they read as seven numbers from nowhere. */}
           <p className="bsr-source">
             Worked out from the sun&apos;s real path over the buildings around this one.{' '}
             <a href="#the-block">See the block in 3D ↑</a>
