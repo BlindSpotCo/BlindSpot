@@ -389,39 +389,34 @@
 /* ---------------- which flat: two slim inputs ----------------
    This is now the ONLY heading-weight thing in "the flat itself" (the
    old "34th floor, faces east" h2 above it was dropped -- see
-   ReportScreen.js). Matching "the area"'s h2 on font-size/weight alone
-   wasn't enough -- boxed in a bordered, filled field they still read as
-   a form control sitting next to plain heading text, not the same kind
-   of thing. Stripped the box entirely: no border, no fill, just the
-   bold text itself with a dashed underline as the only hint it's
-   editable, so it reads as part of the same headline as "Whitefield
-   Hope Farm" opposite it. The Floor/Faces labels stay a muted caption,
-   same relationship as a heading and the line under it. */
+   ReportScreen.js), so the values themselves are sized/weighted to
+   match "the area"'s h2 (.bsr-half h2: 20px/700) rather than reading
+   as a small form control next to that big bold place name. The
+   Floor/Faces labels stay a muted caption, same relationship as a
+   heading and the line under it. */
 .bsr-set{
-  display:flex;align-items:baseline;gap:6px 16px;flex-wrap:wrap;margin-top:8px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px;
 }
-.bsr-set-field{display:inline-flex;align-items:baseline;gap:6px}
+.bsr-set-field{display:flex;align-items:center;gap:8px}
 .bsr-set-field span{
-  font-size:14px;font-weight:600;color:var(--text-mute,#5A5140);
+  font-size:17px;font-weight:600;color:var(--text-mute,#5A5140);
 }
+/* One control, two elements. They sat at different heights because the
+   select carried min-height and nothing else did. */
 .bsr-set select,
 .bsr-set input[type="text"]{
   font-family:inherit;font-size:20px;font-weight:700;color:var(--text,#1C1812);
-  padding:0 2px 2px;border-radius:0;min-height:0;line-height:1.25;
-  background:transparent;
-  border:none;border-bottom:1.5px dashed var(--line,rgba(28,24,18,.3));
+  padding:5px 10px;border-radius:4px;min-height:44px;
+  background:var(--paper,#FFFDF8);
+  border:1px solid var(--line,rgba(28,24,18,.14));
 }
-.bsr-set select{
-  cursor:pointer;appearance:none;-webkit-appearance:none;padding-right:16px;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%235A5140' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right center;
-}
-.bsr-set input[type="text"]{width:1.5em;text-align:left;font-variant-numeric:tabular-nums}
+.bsr-set select{cursor:pointer;padding-right:8px}
+.bsr-set input[type="text"]{width:2.4em;text-align:center;font-variant-numeric:tabular-nums}
 .bsr-set select:hover,
-.bsr-set input[type="text"]:hover{border-bottom-color:var(--ss,#AF5F30)}
+.bsr-set input[type="text"]:hover{border-color:var(--ss,#AF5F30)}
 .bsr-set select:focus-visible,
 .bsr-set input[type="text"]:focus-visible{
-  outline:2px solid var(--ss,#AF5F30);outline-offset:3px;border-bottom-color:var(--ss,#AF5F30);
+  outline:2px solid var(--ss,#AF5F30);outline-offset:1px;border-color:var(--ss,#AF5F30);
 }
 
 .bsr-assumed{
@@ -641,33 +636,10 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 .bsr-mapbar .bsr-set{ margin-top:0;min-height:0;flex-wrap:nowrap;gap:6px; }
 .bsr-mapbar .bsr-set-field{ flex:none; }
 .bsr-mapbar .bsr-set-field span{ font-size:9.5px; }
-/* Unlike the borderless, dashed-underline style .bsr-set now has by
-   default (see the base rule -- it's meant to read as plain headline
-   text next to "the area"'s h2), these sit on a busy 3D map and need
-   real contrast to read at all, so this restores a solid filled box
-   with a real border rather than inheriting the transparent/dashed
-   look. font-weight is reset too -- the base rule's 700 was sized for
-   20px heading text, and at 11px that weight reads as too heavy. */
 .bsr-mapbar .bsr-set select,
 .bsr-mapbar .bsr-set input[type="text"]{
-  font-size:11px; font-weight:600; min-height:24px; padding:2px 5px;
-  background:var(--paper,#FFFDF8); border:1px solid var(--line,rgba(28,24,18,.14));
-  border-radius:4px;
+  font-size:11px; min-height:24px; padding:2px 5px;
 }
-/* `background` above is a shorthand -- it resets background-image to
-   none too, wiping out the base rule's custom chevron svg with nothing
-   in its place. Native chrome is the simpler fix at this size anyway
-   (no room to reserve chevron clearance in an already-tiny box). */
-.bsr-mapbar .bsr-set select{
-  appearance:auto; -webkit-appearance:menulist; padding-right:5px;
-}
-/* The base rule's hover/focus only recolors border-bottom (right for a
-   dashed-underline field) -- these have a real border on all four
-   sides, so that alone would leave three sides unlit. */
-.bsr-mapbar .bsr-set select:hover,
-.bsr-mapbar .bsr-set input[type="text"]:hover{border-color:var(--ss,#AF5F30)}
-.bsr-mapbar .bsr-set select:focus-visible,
-.bsr-mapbar .bsr-set input[type="text"]:focus-visible{border-color:var(--ss,#AF5F30)}
 /* Floor is the one field made BIGGER, not thinner -- it's typed into on
    every visit and the tap target was too small on phone; faces/date are
    picked once and left alone, so they stay compact. */
@@ -766,8 +738,9 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   .bsr-answer-say p{font-size:14.5px}
   .bsr-halves{margin-top:14px;padding-top:14px}
   .bsr-half h2{font-size:18px}
+  .bsr-set-field span{font-size:15px}
   .bsr-set select,
-  .bsr-set input[type="text"]{font-size:18px}
+  .bsr-set input[type="text"]{font-size:18px;min-height:40px}
   .bsr-word{font-size:21px}
   .bsr-rows li{font-size:14.5px}
   .bsr-map{height:clamp(320px, 58vh, 520px)}
