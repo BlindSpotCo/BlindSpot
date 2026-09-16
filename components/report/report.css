@@ -387,10 +387,15 @@
 }
 
 /* ---------------- which flat: two slim inputs ----------------
-   Under the title they change, above the score they move. Small enough
-   to read as a caption, obvious enough to read as a control. */
+   This is now the ONLY heading-weight thing in "the flat itself" (the
+   old "34th floor, faces east" h2 above it was dropped -- see
+   ReportScreen.js), so the values themselves are sized/weighted to
+   match "the area"'s h2 (.bsr-half h2: 20px/700) rather than reading
+   as a small form control next to that big bold place name. The
+   Floor/Faces labels stay a muted caption, same relationship as a
+   heading and the line under it. */
 .bsr-set{
-  display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px;
 }
 .bsr-set-field{display:flex;align-items:center;gap:8px}
 .bsr-set-field span{
@@ -400,13 +405,13 @@
    select carried min-height and nothing else did. */
 .bsr-set select,
 .bsr-set input[type="text"]{
-  font-family:inherit;font-size:14px;font-weight:600;color:var(--text,#1C1812);
-  padding:5px 8px;border-radius:4px;min-height:38px;
+  font-family:inherit;font-size:20px;font-weight:700;color:var(--text,#1C1812);
+  padding:5px 10px;border-radius:4px;min-height:44px;
   background:var(--paper,#FFFDF8);
   border:1px solid var(--line,rgba(28,24,18,.14));
 }
 .bsr-set select{cursor:pointer;padding-right:8px}
-.bsr-set input[type="text"]{width:3.6em;text-align:center;font-variant-numeric:tabular-nums}
+.bsr-set input[type="text"]{width:2.4em;text-align:center;font-variant-numeric:tabular-nums}
 .bsr-set select:hover,
 .bsr-set input[type="text"]:hover{border-color:var(--ss,#AF5F30)}
 .bsr-set select:focus-visible,
@@ -733,6 +738,8 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   .bsr-answer-say p{font-size:14.5px}
   .bsr-halves{margin-top:14px;padding-top:14px}
   .bsr-half h2{font-size:18px}
+  .bsr-set select,
+  .bsr-set input[type="text"]{font-size:18px;min-height:40px}
   .bsr-word{font-size:21px}
   .bsr-rows li{font-size:14.5px}
   .bsr-map{height:clamp(320px, 58vh, 520px)}
