@@ -1133,10 +1133,11 @@ export default function ReportScreen() {
         <section className="bsr-half bsr-unit" id="the-flat" ref={unitRef}>
           <p className="bsr-kicker">The flat itself</p>
 
-          <h2>{ord(floor)} floor, faces {facing.toLowerCase()}</h2>
-
-          {/* Two inputs, said the way a form says them, directly under the
-              title they change and directly above the score they move. */}
+          {/* Used to be an h2 ("34th floor, faces east") sitting directly
+              on top of these same two inputs saying the same thing again
+              right below it -- one fact shown twice a few pixels apart.
+              The inputs ARE the heading now: they're what's actually true
+              (and editable), so there's nothing left to restate in prose. */}
           {/* Floor was a dropdown of sixty options. Nobody scrolls to 43 --
               they know their floor and want to type it. The arrows still
               work for nudging, and the value is only clamped when you leave
