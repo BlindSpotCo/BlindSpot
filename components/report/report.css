@@ -26,10 +26,10 @@
      on a wide screen; still wider than the old boxed 1120px column. */
   max-width:1320px;
   margin:0 auto;
-  padding:0 clamp(20px, 4vw, 56px) 96px;
+  padding:0 clamp(16px, 3vw, 40px) 48px;
   color:var(--text,#1C1812);
-  font-size:17px;
-  line-height:1.6;
+  font-size:15.5px;
+  line-height:1.5;
 }
 .bsr h1,.bsr h2{margin:0;text-wrap:balance;letter-spacing:-.01em}
 .bsr p{margin:0}
@@ -62,7 +62,7 @@
    of being hidden behind it. An explicit opaque fill here fixes that
    for good, independent of the homepage's scroll-driven toggle. */
 .bsr-head{
-  padding:22px 0 15px;border-bottom:1px solid var(--line,rgba(28,24,18,.14));
+  padding:12px 0 10px;border-bottom:1px solid var(--line,rgba(28,24,18,.14));
   background:var(--bg,#FAF6EE);
 }
 .bsr-head-top{
@@ -77,13 +77,13 @@
   font-size:13px;letter-spacing:.1em;text-transform:uppercase;
   color:var(--text-mute,#5A5140);
 }
-.bsr-addr{display:flex;align-items:center;gap:10px;min-width:0;flex:1;margin-top:10px}
+.bsr-addr{display:flex;align-items:center;gap:9px;min-width:0;flex:1;margin-top:4px}
 .bsr-pin{
   width:11px;height:11px;border-radius:50%;flex:none;
   background:var(--ss,#AF5F30);box-shadow:0 0 0 4px rgba(175,95,48,.15);
 }
 .bsr-addr-text{
-  font-size:16.5px;font-weight:600;
+  font-size:15.5px;font-weight:600;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .bsr-head-links{display:flex;gap:18px;flex:none}
@@ -115,8 +115,8 @@
      the headline instead of lining their tops up. A small nudge on
      .bsr-big brings the eyebrow label level with the headline's cap
      height instead of its line-box top, which sits a little higher. */
-  display:flex;align-items:flex-start;gap:32px;flex-wrap:wrap;
-  padding:32px 0 0;
+  display:flex;align-items:flex-start;gap:28px;flex-wrap:wrap;
+  padding:18px 0 0;
   scroll-margin-top:var(--bsr-head-h);
 }
 
@@ -130,72 +130,72 @@
   color:var(--text-mute,#5A5140);margin-bottom:7px;
 }
 .bsr-big-n{
-  font-size:78px;line-height:.88;font-weight:800;letter-spacing:-.04em;
+  font-size:60px;line-height:.9;font-weight:800;letter-spacing:-.04em;
   font-variant-numeric:tabular-nums;color:var(--bsr-good);
 }
 .bsr-answer.is-avg .bsr-big-n{color:var(--bsr-avg)}
 .bsr-answer.is-poor .bsr-big-n{color:var(--bsr-poor)}
-.bsr-big-of{font-size:15px;font-weight:500;color:var(--text-mute,#5A5140);margin-top:9px}
+.bsr-big-of{font-size:13.5px;font-weight:500;color:var(--text-mute,#5A5140);margin-top:5px}
 
 .bsr-answer-say{flex:1;min-width:min(290px,100%)}
-.bsr-answer-say h2{font-size:30px;line-height:1.24;font-weight:700;margin-bottom:10px}
-.bsr-answer-say p{font-size:17px;color:var(--text-mute,#5A5140);max-width:62ch}
+.bsr-answer-say h2{font-size:24px;line-height:1.25;font-weight:700;margin-bottom:6px}
+.bsr-answer-say p{font-size:15.5px;color:var(--text-mute,#5A5140);max-width:62ch}
 /* Calls out that the flat-half of the score above is a placeholder floor
    and facing, not yet this exact unit -- sits right under the verdict
    text so it's seen before, not after, the number is taken at face value. */
 .bsr-assumed-note{
-  margin-top:14px;font-size:14.5px;line-height:1.5;color:var(--text-mute,#5A5140);
-  background:var(--bg-2,#F1E9DA);border-radius:8px;padding:10px 14px;max-width:56ch;
+  margin-top:10px;font-size:13.5px;line-height:1.45;color:var(--text-mute,#5A5140);
+  background:var(--bg-2,#F1E9DA);border-radius:6px;padding:7px 11px;max-width:56ch;
 }
 .bsr-assumed-note a{color:var(--ss,#AF5F30);font-weight:600;text-decoration:underline;text-underline-offset:2px}
 
 /* ---------------- the two halves ---------------- */
 .bsr-halves{
   display:grid;grid-template-columns:1fr 1fr;
-  margin-top:32px;padding-top:32px;align-items:stretch;
+  margin-top:18px;padding-top:18px;align-items:stretch;
   border-top:1px solid var(--line-soft,rgba(28,24,18,.1));
 }
 .bsr-half{
   min-width:0;display:flex;flex-direction:column;
 }
-.bsr-area{padding-right:28px}
-.bsr-unit{padding-left:28px;border-left:1px solid var(--line-soft,rgba(28,24,18,.1));scroll-margin-top:var(--bsr-head-h)}
+.bsr-area{padding-right:24px}
+.bsr-unit{padding-left:24px;border-left:1px solid var(--line-soft,rgba(28,24,18,.1));scroll-margin-top:var(--bsr-head-h)}
 
 .bsr-kicker{
   font-family:'Geist Mono',monospace;font-weight:600;
-  font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;
-  margin-bottom:6px;
+  font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;
+  margin-bottom:2px;
 }
 .bsr-area .bsr-kicker{color:var(--av,#7A2E43)}
 .bsr-unit .bsr-kicker{color:var(--ss,#AF5F30)}
-.bsr-half h2{font-size:24px;font-weight:700;line-height:1.25}
-.bsr-sub,.bsr-set{min-height:52px;display:flex;align-items:center;flex-wrap:wrap}
-.bsr-sub{color:var(--text-mute,#5A5140);font-size:16px;margin-top:3px}
+.bsr-half h2{font-size:20px;font-weight:700;line-height:1.25}
+.bsr-sub,.bsr-set{min-height:40px;display:flex;align-items:center;flex-wrap:wrap;column-gap:6px}
+.bsr-sub{color:var(--text-mute,#5A5140);font-size:14.5px;margin-top:2px}
 
-.bsr-rating{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:18px}
-.bsr-word{font-size:28px;font-weight:700;letter-spacing:-.02em}
+.bsr-rating{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:8px}
+.bsr-word{font-size:23px;font-weight:700;letter-spacing:-.02em}
 .bsr-word.is-good{color:var(--bsr-good)}
 .bsr-word.is-avg{color:var(--bsr-avg)}
 .bsr-word.is-poor{color:var(--bsr-poor)}
 .bsr-word.is-none{color:var(--text-mute,#5A5140)}
-.bsr-outof{font-size:16px;color:var(--text-mute,#5A5140);font-variant-numeric:tabular-nums}
+.bsr-outof{font-size:14.5px;color:var(--text-mute,#5A5140);font-variant-numeric:tabular-nums}
 
 /* ---------------- rows: a word, not a bar ---------------- */
 .bsr-rows{
-  list-style:none;margin:20px 0 0;padding:14px 0 0;
+  list-style:none;margin:10px 0 0;padding:2px 0 0;
   border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
 }
 .bsr-rows li{
-  display:flex;align-items:flex-start;gap:14px;padding:11px 0;
+  display:flex;align-items:flex-start;gap:12px;padding:6px 0;
   border-bottom:1px solid var(--line-soft,rgba(28,24,18,.08));
-  font-size:16.5px;
+  font-size:15px;line-height:1.35;
 }
 .bsr-rows li:last-child{border-bottom:0}
 .bsr-row-what{flex:1;min-width:0}
-.bsr-row-note{display:block;font-size:13.5px;color:var(--text-mute,#5A5140);line-height:1.5}
+.bsr-row-note{display:block;font-size:12.5px;color:var(--text-mute,#5A5140);line-height:1.4;margin-top:1px}
 .bsr-tag{
-  flex:none;font-size:15px;font-weight:600;
-  padding:2px 12px;line-height:1.55;border-radius:3px;white-space:nowrap;
+  flex:none;font-size:12.5px;font-weight:600;
+  padding:1px 8px;line-height:1.55;border-radius:3px;white-space:nowrap;
 }
 .bsr-tag.is-good{background:var(--bsr-good-bg);color:var(--bsr-good)}
 .bsr-tag.is-avg{background:var(--bsr-avg-bg);color:var(--bsr-avg)}
@@ -216,8 +216,8 @@
 
 /* ---------------- not covered ---------------- */
 .bsr-nocover{
-  margin-top:18px;padding-left:16px;border-left:2px solid var(--line,rgba(28,24,18,.14));
-  color:var(--text-mute,#5A5140);font-size:16.5px;
+  margin-top:10px;padding-left:12px;border-left:2px solid var(--line,rgba(28,24,18,.14));
+  color:var(--text-mute,#5A5140);font-size:14.5px;
 }
 .bsr-nocover-aqi{margin-top:10px;color:var(--text,#1C1812)}
 
@@ -246,7 +246,7 @@
 
 /* ---------------- where a score comes from ---------------- */
 .bsr-source{
-  margin-top:10px;font-size:15px;line-height:1.5;
+  margin-top:8px;font-size:13px;line-height:1.45;
   color:var(--text-mute,#5A5140);
 }
 .bsr-source a{
@@ -259,16 +259,16 @@
 
 /* ---------------- report links ---------------- */
 .bsr-more{
-  margin-top:auto;padding-top:22px;
-  display:flex;flex-direction:column;align-items:flex-start;gap:4px;
+  margin-top:auto;padding-top:10px;
+  display:flex;flex-direction:column;align-items:flex-start;gap:2px;
 }
 /* One declaration, and the two halves keep their own accent. This was
    copy-pasted three times; the last copy's `.bsr-more a{color:var(--ss)}`
    won for BOTH halves, so the area's "detailed area report" link rendered
    in the flat's colour and the two-accent scheme quietly stopped working. */
 .bsr-genlink{
-  font-family:inherit;font-size:17px;font-weight:700;cursor:pointer;
-  background:none;border:0;padding:0;min-height:46px;
+  font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;
+  background:none;border:0;padding:0;min-height:36px;
   text-decoration:underline;text-underline-offset:4px;text-align:left;
   color:var(--ss,#AF5F30);
 }
@@ -276,8 +276,8 @@
 .bsr-genlink:disabled,.bsr-cta:disabled{opacity:.55;cursor:not-allowed;text-decoration:none}
 
 .bsr-more a{
-  display:inline-flex;align-items:center;min-height:46px;
-  font-size:17px;font-weight:700;text-decoration:underline;text-underline-offset:4px;
+  display:inline-flex;align-items:center;min-height:36px;
+  font-size:15px;font-weight:700;text-decoration:underline;text-underline-offset:4px;
 }
 /* wine for the area, sun for the flat */
 .bsr-area .bsr-more a,.bsr-area .bsr-genlink{color:var(--av,#7A2E43)}
@@ -285,8 +285,8 @@
 
 
 .bsr-methodology-note{
-  margin-top:14px;padding-top:14px;border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
-  font-size:12px;line-height:1.55;color:var(--text-mute,#5A5140);max-width:52ch;opacity:.85;
+  margin-top:8px;padding-top:8px;border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
+  font-size:11.5px;line-height:1.55;color:var(--text-mute,#5A5140);max-width:52ch;opacity:.85;
 }
 
 /* ---------------- collapse for "the area" / "the flat" ----
@@ -298,9 +298,9 @@
    toggle in the JSX (after bsr-half-detail's closing tag), so it's never
    hidden by a collapsed state. */
 .bsr-half-toggle{
-  display:flex;align-items:center;gap:6px;margin-top:14px;
+  display:flex;align-items:center;gap:6px;margin-top:6px;
   background:none;border:none;padding:0;cursor:pointer;
-  font-family:inherit;font-weight:700;font-size:15px;
+  font-family:inherit;font-weight:700;font-size:14px;
   text-decoration:underline;text-underline-offset:3px;
 }
 .bsr-area .bsr-half-toggle{color:var(--av,#7A2E43)}
@@ -323,7 +323,7 @@
      has a border-bottom. That was ~60px of dead space before the map
      itself (the main feature of this screen) even started. Down to one
      thin margin. */
-  margin-top:12px;
+  margin-top:18px;
   scroll-margin-top:var(--bsr-head-h);
 }
 .bsr-map{
@@ -335,7 +335,7 @@
      nothing when the parent's height is auto -- that's what collapsed the
      map to a strip with dead space under it. Sized close to the viewport
      itself ("full screen") rather than a fixed card height. */
-  height:clamp(460px, 84vh, 920px);
+  height:clamp(380px, 68vh, 760px);
   background:var(--bg-2,#F1E9DA);
 }
 /* :not(.bsr-mapbar) -- the toolbar is the one direct child that must NOT
@@ -374,18 +374,18 @@
    Under the title they change, above the score they move. Small enough
    to read as a caption, obvious enough to read as a control. */
 .bsr-set{
-  display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:10px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px;
 }
 .bsr-set-field{display:flex;align-items:center;gap:8px}
 .bsr-set-field span{
-  font-size:15px;font-weight:600;color:var(--text-mute,#5A5140);
+  font-size:14px;font-weight:600;color:var(--text-mute,#5A5140);
 }
 /* One control, two elements. They sat at different heights because the
    select carried min-height and nothing else did. */
 .bsr-set select,
 .bsr-set input[type="text"]{
-  font-family:inherit;font-size:15px;font-weight:600;color:var(--text,#1C1812);
-  padding:7px 10px;border-radius:4px;min-height:46px;
+  font-family:inherit;font-size:14px;font-weight:600;color:var(--text,#1C1812);
+  padding:5px 8px;border-radius:4px;min-height:38px;
   background:var(--paper,#FFFDF8);
   border:1px solid var(--line,rgba(28,24,18,.14));
 }
@@ -399,25 +399,25 @@
 }
 
 .bsr-assumed{
-  font-size:14px;font-weight:600;align-self:center;
+  font-size:12.5px;font-weight:600;align-self:center;
   color:var(--text-mute,#5A5140);
   background:var(--bg-2,#F1E9DA);
   padding:4px 9px;border-radius:3px;
 }
 .bsr-visit{
-  margin-top:36px;padding-top:32px;
+  margin-top:24px;padding-top:20px;
   border-top:1px solid var(--line-soft,rgba(28,24,18,.1));
 }
-.bsr-visit h2{font-size:24px;font-weight:700}
-.bsr-visit-lede{margin-top:8px;color:var(--text-mute,#5A5140);max-width:68ch;font-size:17px}
-.bsr-todo{list-style:none;margin:22px 0 0;padding:0}
+.bsr-visit h2{font-size:20px;font-weight:700}
+.bsr-visit-lede{margin-top:4px;color:var(--text-mute,#5A5140);max-width:72ch;font-size:14px}
+.bsr-todo{list-style:none;margin:12px 0 0;padding:0}
 .bsr-todo li{border-top:1px solid var(--line-soft,rgba(28,24,18,.08))}
-.bsr-todo-plain{display:flex;gap:16px;padding:16px 0}
+.bsr-todo-plain{display:flex;gap:12px;padding:10px 0}
 
 /* The whole row is the target, not the 22px square -- this list gets used
    one-handed while walking around a flat. */
 .bsr-todo-row{
-  display:flex;gap:16px;padding:16px 8px 16px 0;cursor:pointer;
+  display:flex;gap:12px;padding:9px 8px 6px 0;cursor:pointer;
   border-radius:4px;
 }
 .bsr-todo-row:hover{background:color-mix(in srgb, var(--brand,#3D4116) 5%, transparent)}
@@ -425,7 +425,7 @@
 
 .bsr-box{
   appearance:none;-webkit-appearance:none;
-  flex:none;width:22px;height:22px;margin:4px 0 0;border-radius:4px;
+  flex:none;width:20px;height:20px;margin:2px 0 0;border-radius:4px;
   border:1.5px solid var(--brand,#7A2E43);background:color-mix(in srgb, var(--brand,#3D4116) 8%, transparent);
   cursor:pointer;display:grid;place-content:center;
   transition:background .12s ease,border-color .12s ease;
@@ -439,8 +439,8 @@
 .bsr-box:checked::after{transform:rotate(-45deg) scale(1)}
 
 .bsr-todo-body{min-width:0}
-.bsr-todo-title{display:block;font-size:17px;font-weight:700;margin-bottom:3px}
-.bsr-todo-text{display:block;font-size:16.5px;color:var(--text-mute,#5A5140)}
+.bsr-todo-title{display:block;font-size:15px;font-weight:700;margin-bottom:1px}
+.bsr-todo-text{display:block;font-size:14px;line-height:1.45;color:var(--text-mute,#5A5140)}
 
 /* Indented to sit under the label text, not the checkbox (22px box + 16px
    gap = 38px) -- both are outside the <label> (see the JSX comment), and
@@ -448,8 +448,8 @@
    read as a repeated wall in the first place. Only a ticked item, one
    already holding a note, or "+ Add a note" itself shows the textarea. */
 .bsr-todo-addnote{
-  display:block;margin:2px 0 14px 38px;padding:0;
-  font:inherit;font-size:14px;font-weight:600;color:var(--text-dim,#847C70);
+  display:block;margin:0 0 8px 32px;padding:0;
+  font:inherit;font-size:12.5px;font-weight:600;color:var(--text-dim,#847C70);
   background:none;border:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px;
   text-decoration-style:dotted;
 }
@@ -467,7 +467,7 @@
    until it actually holds text, same reasoning as before -- it just no
    longer has five empty siblings doing the same thing at once. */
 .bsr-todo-notewrap{
-  display:block;position:relative;width:calc(100% - 38px);margin:2px 0 14px 38px;
+  display:block;position:relative;width:calc(100% - 32px);margin:0 0 8px 32px;
 }
 .bsr-todo-note{
   display:block;width:100%;box-sizing:border-box;resize:vertical;
@@ -500,7 +500,7 @@
 .bsr-todo-notehide:hover{background:var(--line-soft,rgba(28,24,18,.14));color:var(--text,#1C1812)}
 
 .bsr-todo-count{
-  margin-top:14px;font-size:15px;color:var(--text-mute,#5A5140);
+  margin-top:8px;font-size:13.5px;color:var(--text-mute,#5A5140);
 }
 .bsr-todo-count button{
   font:inherit;font-weight:600;background:none;border:0;padding:0;cursor:pointer;
@@ -514,15 +514,15 @@
 
 /* ---------------- close ---------------- */
 .bsr-close{
-  margin-top:36px;padding-top:40px;text-align:center;
+  margin-top:24px;padding-top:22px;text-align:center;
   border-top:1px solid var(--line-soft,rgba(28,24,18,.1));
 }
-.bsr-close h2{font-size:24px;font-weight:700}
+.bsr-close h2{font-size:20px;font-weight:700}
 .bsr-close h2 em{font-style:italic;color:var(--ss,#AF5F30)}
-.bsr-close > p{margin:10px auto 22px;max-width:56ch;color:var(--text-mute,#5A5140);font-size:17px}
+.bsr-close > p{margin:4px auto 14px;max-width:60ch;color:var(--text-mute,#5A5140);font-size:14.5px}
 .bsr-cta{
-  display:inline-block;font-size:18px;font-weight:700;text-decoration:none;
-  padding:16px 32px;border-radius:4px;
+  display:inline-block;font-size:16px;font-weight:700;text-decoration:none;
+  padding:12px 26px;border-radius:4px;
   background:var(--ss,#AF5F30);color:#FFFDF8;
 }
 /* .bsr-cta is used as both an <a> and the page's primary <button>. Buttons
@@ -531,9 +531,9 @@
 button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appearance:none;appearance:none}
 
 .bsr-cta:hover:not(:disabled){background:#95502A}
-.bsr-free{display:block;margin-top:12px;font-size:15px;color:var(--text-mute,#5A5140)}
+.bsr-free{display:block;margin-top:8px;font-size:13px;color:var(--text-mute,#5A5140)}
 .bsr-also{
-  display:block;margin-top:24px;padding-top:22px;font-size:16px;
+  display:block;margin-top:14px;padding-top:12px;font-size:14px;
   border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
   color:var(--text-mute,#5A5140);
 }
@@ -543,7 +543,7 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 }
 
 .bsr-foot{
-  margin-top:22px;text-align:center;font-size:13.5px;line-height:1.5;
+  margin-top:14px;text-align:center;font-size:12px;line-height:1.5;
   color:var(--text-mute,#5A5140);
 }
 
@@ -557,12 +557,12 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 @media (max-width:900px){
   /* stacked, the column rule becomes a row rule -- same divider,
      the other axis */
-  .bsr-halves{grid-template-columns:1fr;row-gap:32px}
+  .bsr-halves{grid-template-columns:1fr;row-gap:18px}
   .bsr-area{padding-right:0}
-  .bsr-unit{padding-left:0;border-left:0;border-top:1px solid var(--line-soft,rgba(28,24,18,.1));padding-top:32px}
-  .bsr-big-n{font-size:64px}
-  .bsr-answer{gap:22px}
-  .bsr-answer-say h2{font-size:25px}
+  .bsr-unit{padding-left:0;border-left:0;border-top:1px solid var(--line-soft,rgba(28,24,18,.1));padding-top:18px}
+  .bsr-big-n{font-size:52px}
+  .bsr-answer{gap:18px}
+  .bsr-answer-say h2{font-size:21px}
   .bsr-head-links{width:100%}
 }
 
@@ -662,7 +662,7 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   margin:6px 0 0;padding:6px 10px;font-size:12.5px;color:var(--poor,#A2483C);
 }
 .bsr-maphint{
-  margin-top:8px;font-size:13.5px;color:var(--text-mute,#5A5140);
+  margin-top:4px;font-size:12.5px;color:var(--text-mute,#5A5140);
 }
 
 /* ---------------- watching the day ----------------
@@ -685,13 +685,27 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 
 /* ---------------- phones ---------------- */
 @media (max-width:600px){
-  .bsr{padding-left:14px;padding-right:14px}
+  .bsr{padding-left:16px;padding-right:16px;font-size:15px}
+  .bsr-head{padding:10px 0 8px}
+  .bsr-head-top{gap:6px}
   .bsr-sub,.bsr-set{min-height:0}
-  .bsr-answer{padding-top:24px;gap:20px}
-  .bsr-big-label{font-size:10px}
-  .bsr-big-n{font-size:56px}
-  .bsr-answer-say h2{font-size:22px}
-  .bsr-answer-say p{font-size:15.5px}
+  /* Score sits on one line (label above, number + "out of 100" beside
+     each other) instead of a tall stacked block above the headline. */
+  .bsr-answer{padding-top:14px;gap:8px}
+  .bsr-big{flex-direction:row;flex-wrap:wrap;align-items:baseline;column-gap:8px;margin-top:0}
+  .bsr-big-label{font-size:10px;flex-basis:100%;margin-bottom:4px}
+  .bsr-big-n{font-size:44px}
+  .bsr-big-of{margin-top:0}
+  .bsr-answer-say h2{font-size:19px}
+  .bsr-answer-say p{font-size:14.5px}
+  .bsr-halves{margin-top:14px;padding-top:14px}
+  .bsr-half h2{font-size:18px}
+  .bsr-word{font-size:21px}
+  .bsr-rows li{font-size:14.5px}
+  .bsr-map{height:clamp(320px, 58vh, 520px)}
+  .bsr-visit h2,.bsr-close h2{font-size:18px}
+  .bsr-unitgate{padding:4vh 0 6vh}
+  .bsr-unitgate-panel{padding:20px 18px}
 }
 
 /* The date select sits inside .bsr-set (.bsr-set select already styles
@@ -713,7 +727,7 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
    always "better than the other one?", so the way there belongs here, at
    the moment it gets asked -- not only in the nav. */
 .bsr-compare-cue{
-  margin:14px 0 0;padding:12px 14px;border-radius:8px;
+  margin:8px 0 0;padding:7px 11px;border-radius:6px;
   background:var(--bg-2,#F1E9DA);border:1px solid var(--line-soft,rgba(28,24,18,.08));
   font-size:13.5px;line-height:1.6;color:var(--text-mute,#5A5140);
 }

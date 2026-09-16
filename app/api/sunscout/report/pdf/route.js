@@ -146,7 +146,7 @@ function moveVerdictFirst(text) {
     sections.push({ title: matches[i][2].trim(), body: text.slice(start, end) });
   }
 
-  const verdictIdx = sections.findIndex(s => /home\s*buyer\s*verdict/i.test(s.title));
+  const verdictIdx = sections.findIndex(s => /blindspot\s*verdict|home\s*buyer\s*verdict/i.test(s.title));
   if (verdictIdx === -1) return text;
 
   const reordered = [sections[verdictIdx], ...sections.filter((_, i) => i !== verdictIdx)];
@@ -174,6 +174,11 @@ const PROPERTY_MARKER_HTML = `
 // whatever's left starts mid-sequence ("4. FLOOR...", "5. ...FACING...")
 // which reads as a numbering bug -- each section already has its own card
 // and icon, so the number added nothing but confusion.
+// "- Label: sentence" -> label in bold, so a list of insights scans.
+function boldLabels(text) {
+  return String(text || '').replace(/^[-•] ([^:\n*]{2,48}):\s+/gm, '- **$1:** ');
+}
+
 function formatNarrative(rawAnalysis, { dropLeadingHeader = false } = {}) {
   // Each section already has its own heading in the document, so the model's
   // own restatement of it ("THE FLAT ITSELF, FLOOR 7 FACING SOUTH-EAST")
@@ -182,12 +187,12 @@ function formatNarrative(rawAnalysis, { dropLeadingHeader = false } = {}) {
     ? rawAnalysis.replace(/^\s*(?:\d+\.\s*)?[A-Z][A-Z0-9 ,&'\/-]{6,}\s*$/m, '').trim()
     : rawAnalysis;
   return src
-    .replace(/^\d+\.\s*(.+)$/gm, `<h3 style="font-size:16px;font-weight:700;color:${INK};margin:24px 0 10px;font-family:${DISPLAY};">$1</h3>`)
+    .replace(/^\d+\.\s*(.+)$/gm, `<h3 style="font-size:15px;font-weight:700;color:${INK};margin:18px 0 8px;font-family:${DISPLAY};">$1</h3>`)
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/^[-•] (.+)$/gm, `<li style="margin-bottom:8px;color:${MUTE};line-height:1.75;font-size:14.5px;">$1</li>`)
-    .replace(/(<li[^>]*>[\s\S]*?<\/li>\n?)+/g, (m) => `<ul style="margin:0 0 16px;padding-left:20px;">${m}</ul>`)
-    .replace(/\n\n/g, `</p><p style="margin:0 0 14px;color:${MUTE};line-height:1.85;font-size:14.5px;font-family:Arial,sans-serif;">`)
-    .replace(/^/, `<p style="margin:0 0 14px;color:${MUTE};line-height:1.85;font-size:14.5px;font-family:Arial,sans-serif;">`)
+    .replace(/^[-•] (.+)$/gm, `<li style="margin-bottom:6px;color:${MUTE};line-height:1.65;font-size:14px;">$1</li>`)
+    .replace(/(<li[^>]*>[\s\S]*?<\/li>\n?)+/g, (m) => `<ul style="margin:0 0 12px;padding-left:18px;">${m}</ul>`)
+    .replace(/\n\n/g, `</p><p style="margin:0 0 10px;color:${MUTE};line-height:1.7;font-size:14px;font-family:Arial,sans-serif;">`)
+    .replace(/^/, `<p style="margin:0 0 10px;color:${MUTE};line-height:1.7;font-size:14px;font-family:Arial,sans-serif;">`)
     .replace(/$/, '</p>')
     .replace(/<p[^>]*><\/p>/g, '');
 }
@@ -270,7 +275,7 @@ export async function POST(req) {
   // alongside the monthly table & screenshots, same as the unit-only report
   // always did.
   const { body: verdictBody, rest: afterVerdict } = hasNeighbourhood
-    ? extractSection(cleanedRest, /home\s*buyer\s*verdict/i)
+    ? extractSection(cleanedRest, /blindspot\s*verdict|home\s*buyer\s*verdict/i)
     : { body: '', rest: moveVerdictFirst(cleanedRest) };
   // The section that only a combined report can write -- the two halves read
   // against each other. Pulled out to sit directly under the verdict, where
@@ -286,15 +291,21 @@ export async function POST(req) {
     ? extractSection(afterSuits, /read\s*together|area and the flat/i)
     : { body: '', rest: afterSuits };
   const { body: neighbourhoodBody, rest: afterNeighbourhood } = hasNeighbourhood
-    ? extractSection(afterTogether, /neighbourhood full analysis/i)
+    ? extractSection(afterTogether, /neighbourhood (?:full|score) analysis/i)
     : { body: '', rest: afterTogether };
 
   // The model's closing "what to check when you visit" section, lifted out
   // so it reads as a checklist under its own heading instead of trailing off
   // the end of the sun & shadow paragraphs.
-  const { body: checkBody, rest: afterCheck } = extractSection(afterNeighbourhood, /what to check|before you visit|before you decide/i);
+  const { body: checkBody, rest: afterCheck } = extractSection(afterNeighbourhood, /what to verify|what to check|before you visit|before you decide/i);
 
-  const rawAnalysis = afterCheck;
+  // The persona overlay's closing six-line section (lib/personas.js). It
+  // used to fall through into the flat narrative and render as a stray
+  // sub-heading inside it; now it gets its own block.
+  const { body: personaBody, rest: afterPersona } = extractSection(afterCheck, /your week in this flat|family life here|rental and resale|pitch sheet/i);
+  const personaTitle = (afterCheck.match(/^\d+\.\s+(YOUR WEEK IN THIS FLAT|FAMILY LIFE HERE|RENTAL AND RESALE POSITION|PITCH SHEET)\s*$/im) || [])[1] || '';
+
+  const rawAnalysis = afterPersona;
 
   // The AI verdict ends with one "- Best fit for: ..." line (per the prompt
   // in analyse/route.js) -- pull it out to show as its own "Ideal For" strip
@@ -309,7 +320,7 @@ export async function POST(req) {
   const formattedVerdictBody = verdictBodyMinusIdeal ? formatNarrative(verdictBodyMinusIdeal) : '';
   const formattedNeighbourhoodBody = neighbourhoodBody ? formatNarrative(neighbourhoodBody) : '';
   const formattedTogetherBody = togetherBody ? formatNarrative(togetherBody) : '';
-  const formattedLivingBody = livingBody ? formatNarrative(livingBody) : '';
+  const formattedLivingBody = livingBody ? formatNarrative(boldLabels(livingBody)) : '';
   const formattedAnalysis = formatNarrative(rawAnalysis, { dropLeadingHeader: true });
 
   // ---- Deterministic Consumer Scorecard + Pros/Cons -------------------
@@ -456,15 +467,15 @@ export async function POST(req) {
     const bars = months.map(m => {
       const pct = m.usableHours > 0 ? Math.max(4, Math.round((m.usableHours / max) * 100)) : 2;
       return `
-        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:110px;">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:90px;">
           <div style="font-size:9.5px;color:${DIM};margin-bottom:4px;">${m.usableHours > 0 ? m.usableHours.toFixed(1) + 'h' : ''}</div>
           <div style="width:65%;height:${pct}%;background:${m.usableHours > 0 ? SUN : LINE};min-height:2px;"></div>
         </div>`;
     }).join('');
     const labels = months.map(m => `<div style="flex:1;text-align:center;font-size:9.5px;color:${DIM};">${m.month.slice(0,3)}</div>`).join('');
     return `
-      <div style="margin:14px 0 16px;">
-        <div style="font-size:11.5px;font-weight:700;color:${INK};margin-bottom:10px;">Usable Sun Hours by Month</div>
+      <div style="margin:10px 0 12px;">
+        <div style="font-size:11.5px;font-weight:700;color:${INK};margin-bottom:6px;">Usable sun hours by month</div>
         <div style="display:flex;align-items:flex-end;gap:3px;">${bars}</div>
         <div style="display:flex;gap:3px;border-top:1px solid ${LINE};padding-top:6px;margin-top:4px;">${labels}</div>
       </div>`;
@@ -482,10 +493,9 @@ export async function POST(req) {
   const aiNote = `
     <div style="border-left:3px solid ${DIM};background:${CARD};padding:14px 18px;margin-bottom:22px;">
       <div style="font-size:14px;color:${INK};line-height:1.75;">
-        The written sections could not be generated this time, so this report has the measurements without the
-        narration. Everything computed is still here and unaffected: both scores and how they combine, the
-        strengths and concerns, the sunlight figures and the ${shotCount || 12} map images.
-        Generating it again usually brings the writing back.
+        The written analysis is not included in this report. Everything computed is here and unaffected: the
+        Neighbourhood Score, the Home Comfort Score, how they combine into the BlindSpot Verdict, the
+        strengths and concerns, and the sunlight figures.
       </div>
     </div>`;
 
@@ -498,23 +508,23 @@ export async function POST(req) {
     const gap = a - u;
     if (gap >= 15) return {
       headline: 'A stronger area than flat',
-      line: `The neighbourhood scores ${a} and this flat ${u} - the area is carrying this one. That gap is the half you can still do something about: a different floor or facing in this same building changes the flat, nothing changes the area.`,
+      line: 'The area is carrying this one. The gap is the half you can still change: a different floor or facing in this building changes the flat; nothing changes the area.',
     };
     if (gap <= -15) return {
       headline: 'A better flat than area',
-      line: `This flat scores ${u} against a neighbourhood of ${a} - a comfortable home in a weaker locality. The flat is the good news, and it is the half that stays good; the area is the half no unit in this building escapes.`,
+      line: 'A comfortable home in a weaker locality. The area is the half no unit in this building escapes.',
     };
     if (a >= 65 && u >= 65) return {
       headline: 'Both halves agree, and both are strong',
-      line: `Area ${a}, flat ${u}. Neither is being propped up by the other - this is the uncomplicated case, and the checks below are ordinary diligence rather than doubts.`,
+      line: 'Neither half is propping up the other. The checks below are ordinary diligence, not doubts.',
     };
     if (a < 50 && u < 50) return {
       headline: 'Both halves agree, and both are weak',
-      line: `Area ${a}, flat ${u}. Neither side rescues the other, so a better floor or facing here would not be enough on its own.`,
+      line: 'Neither half rescues the other, so a better floor or facing here would not be enough on its own.',
     };
     return {
       headline: 'Both halves land in the middle',
-      line: `Area ${a}, flat ${u}. Close enough that neither is clearly the problem, which usually means the decision comes down to the specific things in the checklist below.`,
+      line: 'Neither half is clearly the problem, so the decision rests on the checks below.',
     };
   })();
 
@@ -532,9 +542,9 @@ export async function POST(req) {
   // people read; the numbers behind it follow in the order someone would
   // ask for them.
 
-  const H2 = `font-family:${DISPLAY};font-size:13px;font-weight:800;color:${WINE};text-transform:uppercase;letter-spacing:.11em;margin-bottom:14px;`;
-  const RULE = `border-top:1px solid ${LINE};margin:34px 0 26px;`;
-  const LEAD = `font-size:15.5px;line-height:1.8;color:${INK};`;
+  const H2 = `font-family:${DISPLAY};font-size:13px;font-weight:800;color:${WINE};text-transform:uppercase;letter-spacing:.11em;margin-bottom:10px;`;
+  const RULE = `border-top:1px solid ${LINE};margin:22px 0 18px;`;
+  const LEAD = `font-size:14.5px;line-height:1.7;color:${INK};`;
 
   const scoreWord = (n) => n >= 80 ? 'Excellent' : n >= 60 ? 'Good' : n >= 40 ? 'Fair' : 'Poor';
 
@@ -542,20 +552,22 @@ export async function POST(req) {
   // not a strip of three stat cards competing with a box.
   const topScore = hasNeighbourhood ? combinedScore : unitScore;
   const openingSection = `
-    <div style="margin-bottom:30px;">
-      <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px;">
-        <span style="font-family:${DISPLAY};font-size:64px;font-weight:800;line-height:1;color:${INK};">${topScore ?? '-'}</span>
-        <span style="font-family:${DISPLAY};font-size:26px;font-weight:800;color:${gradeColor(topScore ?? 0)};">${topScore != null ? scoreWord(topScore) : ''}</span>
-        <span style="font-size:12.5px;color:${DIM};">out of 100 &middot; ${hasNeighbourhood ? 'the area and the flat together' : 'this flat'}</span>
+    <div style="margin-bottom:18px;">
+      <div style="${H2}">BlindSpot Verdict</div>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:4px;">
+        <span style="font-family:${DISPLAY};font-size:52px;font-weight:800;line-height:1;color:${INK};">${topScore ?? '-'}</span>
+        <span style="font-family:${DISPLAY};font-size:22px;font-weight:800;color:${gradeColor(topScore ?? 0)};">${topScore != null ? scoreWord(topScore) : ''}</span>
+        <span style="font-size:12px;color:${DIM};">out of 100</span>
       </div>
       ${hasNeighbourhood ? `
-      <div style="font-size:12.5px;color:${DIM};margin-bottom:${formattedVerdictBody ? '20px' : '0'};">
-        ${escapeHtml(avRecord.name || avRecord.pin_code)} scores ${avRecord.nqi_composite} and weighs ${Math.round((areaWeight ?? 0.5) * 100)}%;
-        this flat scores ${unitScore ?? '-'} and weighs ${Math.round((unitWeight ?? 0.5) * 100)}%.
-      </div>` : ''}
-      ${formattedVerdictBody ? `<div style="${LEAD}">${formattedVerdictBody.replace(new RegExp(`color:${MUTE}`, 'g'), `color:${INK}`).replace(/font-size:14.5px/g, 'font-size:15.5px')}</div>` : ''}
+      <div style="font-size:12px;color:${DIM};margin-bottom:${formattedVerdictBody ? '14px' : '0'};">
+        Neighbourhood Score ${avRecord.nqi_composite} (${Math.round((areaWeight ?? 0.5) * 100)}%) &middot;
+        Home Comfort Score ${unitScore ?? '-'} (${Math.round((unitWeight ?? 0.5) * 100)}%)
+      </div>` : `
+      <div style="font-size:12px;color:${DIM};margin-bottom:${formattedVerdictBody ? '14px' : '0'};">Home Comfort Score for this flat. No neighbourhood records for this pincode.</div>`}
+      ${formattedVerdictBody ? `<div style="${LEAD}">${formattedVerdictBody.replace(new RegExp(`color:${MUTE}`, 'g'), `color:${INK}`).replace(/font-size:14px/g, 'font-size:14.5px')}</div>` : ''}
       ${idealForText ? `
-      <div style="margin-top:18px;padding:13px 16px;background:${CARD};font-size:14px;color:${INK};line-height:1.7;">
+      <div style="margin-top:12px;padding:9px 13px;background:${CARD};font-size:13px;color:${INK};line-height:1.6;">
         <span style="font-weight:700;">Best suited to:</span> ${idealForText}
       </div>` : ''}
     </div>`;
@@ -565,13 +577,9 @@ export async function POST(req) {
   // section about scoring.
   const livingSection = formattedLivingBody ? `
     <div style="${RULE}"></div>
-    <div style="margin-bottom:26px;">
-      <div style="${H2}">What living here is actually like</div>
-      <div style="font-size:16.5px;line-height:1.85;color:${INK};">
-        ${formattedLivingBody
-          .replace(new RegExp(`color:${MUTE}`, 'g'), `color:${INK}`)
-          .replace(/font-size:14.5px/g, 'font-size:16.5px')}
-      </div>
+    <div style="margin-bottom:16px;">
+      <div style="${H2}">What living here is like</div>
+      ${formattedLivingBody.replace(new RegExp(`color:${MUTE}`, 'g'), `color:${INK}`)}
     </div>` : '';
 
   // Who it suits. The model returns one "- Type: verdict + reasoning" line
@@ -587,12 +595,13 @@ export async function POST(req) {
       if (i < 0) return null;
       const who = line.slice(0, i).trim();
       const rest = line.slice(i + 1).trim();
-      const m = rest.match(/^(Yes(?:\s*[,-]?\s*(?:but|with|if)[^.]*)?|No|Probably not|Not really|Not for)\b[.,]?\s*/i);
+      const negative = /^(not for|main deal-?breaker|deal-?breaker)\b/i.test(who);
+      const m = negative ? null : rest.match(/^(Yes(?:\s*[,-]?\s*(?:but|with|if)[^.]*)?|No|Probably not|Not really)\b[.,]?\s*/i);
       return {
         who,
         call: m ? m[1].trim() : '',
         why: m ? rest.slice(m[0].length).trim() : rest,
-        negative: /^not for\b/i.test(who),
+        negative,
       };
     })
     .filter(Boolean);
@@ -606,23 +615,21 @@ export async function POST(req) {
 
   const suitsSection = suitRows.length ? `
     <div style="${RULE}"></div>
-    <div style="margin-bottom:26px;">
-      <div style="${H2}">Who this one is for</div>
-      <p style="font-size:13px;color:${DIM};margin-bottom:18px;">The same flat is a good buy for one person and the wrong buy for another. This is our honest read of which is which.</p>
+    <div style="margin-bottom:16px;">
+      <div style="${H2}">Who this is for</div>
       <div style="display:flex;flex-direction:column;">
         ${suitRows.filter(r => !r.negative).map((r) => `
-          <div style="display:flex;gap:16px;padding:14px 0;border-top:1px solid ${LINE_SOFT};align-items:baseline;flex-wrap:wrap;">
-            <div style="flex:0 0 190px;min-width:150px;">
-              <div style="font-size:15px;font-weight:700;color:${INK};line-height:1.4;">${r.who}</div>
-              ${r.call ? `<div style="font-size:12.5px;font-weight:700;color:${callColor(r.call)};margin-top:3px;">${r.call}</div>` : ''}
+          <div style="display:flex;gap:14px;padding:8px 0;border-top:1px solid ${LINE_SOFT};align-items:baseline;flex-wrap:wrap;">
+            <div style="flex:0 0 200px;min-width:150px;">
+              <span style="font-size:13.5px;font-weight:700;color:${INK};line-height:1.4;">${r.who}</span>
+              ${r.call ? `<div style="font-size:12px;font-weight:700;color:${callColor(r.call)};margin-top:1px;">${r.call}</div>` : ''}
             </div>
-            <div style="flex:1;min-width:240px;font-size:14.5px;color:${MUTE};line-height:1.75;">${r.why}</div>
+            <div style="flex:1;min-width:220px;font-size:13.5px;color:${MUTE};line-height:1.6;">${r.why}</div>
           </div>`).join('')}
       </div>
-      ${suitRows.filter(r => r.negative).map((r) => `
-        <div style="margin-top:18px;padding:14px 17px;background:${CARD};border-left:3px solid ${POOR};">
-          <div style="font-size:12px;font-weight:700;color:${POOR};text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px;">Not for</div>
-          <div style="font-size:14.5px;color:${INK};line-height:1.75;">${r.why || r.who}</div>
+      ${suitRows.filter(r => r.negative).slice(0, 1).map((r) => `
+        <div style="margin-top:10px;padding:9px 13px;background:${CARD};border-left:3px solid ${POOR};font-size:13.5px;color:${INK};line-height:1.6;">
+          <span style="font-weight:700;color:${POOR};">Main deal-breaker:</span> ${r.why || r.who}
         </div>`).join('')}
     </div>` : '';
 
@@ -640,15 +647,15 @@ export async function POST(req) {
 
   const togetherSection = togetherRead ? `
     <div style="${RULE}"></div>
-    <div style="margin-bottom:26px;">
+    <div style="margin-bottom:16px;">
       <div style="${H2}">The area and the flat, together</div>
-      <div style="font-family:${DISPLAY};font-size:21px;font-weight:800;color:${INK};margin-bottom:16px;letter-spacing:-.01em;">${togetherRead.headline}</div>
-      <div style="display:flex;gap:22px;flex-wrap:wrap;margin-bottom:18px;">
-        ${bar(`The area, ${safeAreaName}`, avRecord.nqi_composite, WINE)}
-        ${bar(`This flat, floor ${safeFloor} ${safeFacing}`, unitScore, SUN)}
+      <div style="font-family:${DISPLAY};font-size:18px;font-weight:800;color:${INK};margin-bottom:10px;letter-spacing:-.01em;">${togetherRead.headline}</div>
+      <div style="display:flex;gap:22px;flex-wrap:wrap;margin-bottom:10px;">
+        ${bar(`Neighbourhood Score &middot; ${safeAreaName}`, avRecord.nqi_composite, WINE)}
+        ${bar(`Home Comfort Score &middot; floor ${safeFloor} ${safeFacing}`, unitScore, SUN)}
       </div>
       ${formattedTogetherBody
-        ? `<div style="${LEAD}">${formattedTogetherBody.replace(new RegExp(`color:${MUTE}`, 'g'), `color:${INK}`).replace(/font-size:14.5px/g, 'font-size:15.5px')}</div>`
+        ? `<div style="${LEAD}">${formattedTogetherBody.replace(new RegExp(`color:${MUTE}`, 'g'), `color:${INK}`).replace(/font-size:14px/g, 'font-size:14.5px')}</div>`
         : `<p style="${LEAD}margin:0;">${togetherRead.line}</p>`}
     </div>` : '';
 
@@ -674,65 +681,74 @@ export async function POST(req) {
 
   const areaSection = hasNeighbourhood ? `
     <div style="${RULE}"></div>
-    <div style="margin-bottom:26px;">
-      <div style="${H2}">The area &middot; ${safeAreaName}, pin ${escapeHtml(avRecord.pin_code)}</div>
-      <p style="font-size:13px;color:${DIM};margin-bottom:18px;">Government records. The same for every flat in this pincode &mdash; they don't change with floor or facing.</p>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px 26px;margin-bottom:${areaFacts.length ? '16px' : '20px'};">
+    <div style="margin-bottom:16px;">
+      <div style="${H2}">Neighbourhood Score &middot; ${safeAreaName}, pin ${escapeHtml(avRecord.pin_code)}</div>
+      <p style="font-size:12px;color:${DIM};margin-bottom:12px;">Government records; the same for every flat in this pincode.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 24px;margin-bottom:12px;">
         ${factorRow}
       </div>
-      ${areaFacts.length ? `<p style="font-size:13px;color:${MUTE};line-height:1.75;margin-bottom:18px;">${areaFacts.join(' &middot; ')}</p>` : ''}
+      ${areaFacts.length ? `<p style="font-size:12.5px;color:${MUTE};line-height:1.6;margin-bottom:12px;">${areaFacts.join(' &middot; ')}</p>` : ''}
       ${formattedNeighbourhoodBody || ''}
     </div>` : '';
 
   // The flat. The year in one chart, then the narrative.
   const flatSection = `
     <div style="${RULE}"></div>
-    <div style="margin-bottom:26px;">
-      <div style="${H2}">The flat &middot; floor ${safeFloor}, facing ${safeFacing}</div>
-      <p style="font-size:13px;color:${DIM};margin-bottom:18px;">
-        Worked out from the sun's real path over the buildings on this block${facingAssumptionNote ? ', with the facing assumed rather than confirmed' : ''}.
+    <div style="margin-bottom:16px;">
+      <div style="${H2}">Home Comfort Score &middot; floor ${safeFloor}, facing ${safeFacing}${typeof unitScore === 'number' ? ` &middot; ${unitScore}/100` : ''}</div>
+      <p style="font-size:12px;color:${DIM};margin-bottom:10px;">
+        From the sun's real path over the buildings on this block${facingAssumptionNote ? '; facing assumed, not confirmed' : ''}.
       </p>
       ${summary?.solarFeasibility ? `
-      <p style="font-size:14px;color:${MUTE};line-height:1.75;margin-bottom:4px;">
+      <p style="font-size:13.5px;color:${MUTE};line-height:1.6;margin-bottom:2px;">
         <strong style="color:${INK};">${summary.solarFeasibility.avgUsableHours}h of usable sun a day</strong> on average.
         Best in ${summary.solarFeasibility.bestMonths.join(' and ')}; worst in ${summary.solarFeasibility.worstMonths.join(' and ')}.
       </p>` : ''}
       ${sunBarChart}
       ${formattedAnalysis || (aiUnavailable ? aiNote : '')}
-      ${summary?.buildingHeightNote ? `<p style="font-size:12.5px;color:${DIM};line-height:1.7;margin-top:14px;">${summary.buildingHeightNote.sentence}</p>` : ''}
     </div>`;
+
+  const personaSection = personaBody ? `
+    <div style="${RULE}"></div>
+    <div style="margin-bottom:16px;">
+      <div style="${H2}">${escapeHtml(personaTitle ? personaTitle.charAt(0) + personaTitle.slice(1).toLowerCase() : 'For you')}</div>
+      ${formatNarrative(boldLabels(personaBody))}
+    </div>` : '';
 
   // Strengths and watch-outs, computed from the real numbers. Two plain
   // lists, not two bordered cards inside a bordered grid.
   const listBlock = (title, items, color) => items.length ? `
     <div style="flex:1;min-width:230px;">
-      <div style="font-size:12px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:.09em;margin-bottom:10px;">${title}</div>
+      <div style="font-size:11.5px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:.09em;margin-bottom:6px;">${title}</div>
       <ul style="margin:0;padding-left:17px;">
-        ${items.map(t => `<li style="font-size:14px;color:${MUTE};line-height:1.7;margin-bottom:7px;">${t}</li>`).join('')}
+        ${items.map(t => `<li style="font-size:13.5px;color:${MUTE};line-height:1.55;margin-bottom:4px;">${t}</li>`).join('')}
       </ul>
     </div>` : '';
 
   const strengthsSection = (pros.length || cons.length) ? `
     <div style="${RULE}"></div>
-    <div style="display:flex;gap:34px;flex-wrap:wrap;margin-bottom:26px;">
-      ${listBlock('What is good here', pros.map(p => escapeHtml(String(p).replace(/^\+\s*/, ''))), GOOD)}
-      ${listBlock('What to watch', cons.map(c => escapeHtml(String(c).replace(/^[-\u2212]\s*/, ''))), POOR)}
+    <div style="display:flex;gap:28px;flex-wrap:wrap;margin-bottom:16px;">
+      ${listBlock('Strengths', pros.map(p => escapeHtml(String(p).replace(/^\+\s*/, ''))), GOOD)}
+      ${listBlock('Watch-outs', cons.map(c => escapeHtml(String(c).replace(/^[-\u2212]\s*/, ''))), POOR)}
     </div>` : '';
 
   // Whatever the model wrote as its closing "what to check" section, pulled
   // out so it reads as a checklist rather than the tail of a paragraph.
   const checkSection = checkBody ? `
     <div style="${RULE}"></div>
-    <div style="margin-bottom:26px;">
-      <div style="${H2}">Before you decide</div>
-      ${formatNarrative(checkBody)}
+    <div style="margin-bottom:16px;">
+      <div style="${H2}">What to verify before you decide</div>
+      ${formatNarrative(boldLabels(checkBody))}
     </div>` : '';
+
+  // The first section on a fresh page doesn't need a divider above it.
+  const stripLeadRule = (html) => (html || '').replace(`<div style="${RULE}"></div>`, '');
 
   const mainHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <title>${hasNeighbourhood ? 'BlindSpot Combined Report' : 'Home Comfort Report'} - ${safeAddress}</title>
+  <title>${hasNeighbourhood ? 'BlindSpot Report' : 'Home Comfort Report'} - ${safeAddress}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
   <style>
@@ -757,58 +773,68 @@ export async function POST(req) {
   <div id="report-root" style="max-width:900px;margin:0 auto;background:#fff;">
 
     <!-- Page 1: cover / verdict / neighbourhood / summary / table -->
-    <div class="pdf-page" style="padding:48px 32px 40px;">
-      <div style="border-bottom:2px solid ${LINE_SOFT};padding-bottom:24px;margin-bottom:28px;">
-        <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px;">
+    <div class="pdf-page" style="padding:36px 32px 28px;">
+      <div style="border-bottom:2px solid ${LINE_SOFT};padding-bottom:16px;margin-bottom:20px;">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px;">
           ${markDataUri ? `<img src="${markDataUri}" alt="BlindSpot" style="width:18px;height:20px;object-fit:contain;display:block;"/>` : ''}
-          <span style="font-size:12px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.12em;">${hasNeighbourhood ? 'BlindSpot Combined Report' : 'BlindSpot Home Comfort'}</span>
-          <span style="font-size:11px;color:${DIM};">${hasNeighbourhood ? 'The area and the flat, in one verdict' : 'One flat, through a year of sun'}</span>
+          <span style="font-size:12px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.12em;">${hasNeighbourhood ? 'BlindSpot Report' : 'BlindSpot Home Comfort'}</span>
         </div>
         ${labelPill}
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px;">
-          <h1 style="font-size:27px;font-weight:800;color:${INK};margin:0;font-family:${DISPLAY};letter-spacing:-.01em;">${safeAddress}</h1>
+          <h1 style="font-size:24px;font-weight:800;color:${INK};margin:0;font-family:${DISPLAY};letter-spacing:-.01em;">${safeAddress}</h1>
           ${badge ? `<span style="background:${badge.color};color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:5px 12px;text-transform:uppercase;">${badge.text}</span>` : ''}
         </div>
         <div style="font-size:11px;color:${DIM};display:flex;align-items:center;gap:5px;"><span style="color:${DIM};">${PIN_SVG}</span>${parseFloat(lat).toFixed(5)}°N, ${parseFloat(lon).toFixed(5)}°E · ${date}</div>
 
-        <p style="font-size:14px;line-height:1.8;color:${MUTE};margin-top:16px;max-width:64ch;font-family:Arial,sans-serif;">
+        <p style="font-size:12.5px;line-height:1.6;color:${MUTE};margin-top:10px;max-width:72ch;font-family:Arial,sans-serif;">
           ${hasNeighbourhood
-            ? `Two things decide whether you'll be happy here, and a listing tells you neither: what the area around this building is like, and what this particular flat is like to live in. Every figure below is either a government record or a calculation from the sun's real path over the real buildings on this block. Where something is an estimate, it says so.`
-            : `A listing tells you the floor and which way the windows face. It doesn't tell you what that means for light through the year. Everything below is calculated from the sun's real path over the real buildings on this block. Where something is an estimate, it says so.`}
+            ? `Every figure is a government record or a calculation from the sun's real path over this block. Estimates are marked as such.`
+            : `Every figure is calculated from the sun's real path over this block. Estimates are marked as such.`}
         </p>
       </div>
 
       ${aiUnavailable ? aiNote : ''}
       ${openingSection}
+      ${strengthsSection}
       ${livingSection}
       ${suitsSection}
-      ${togetherSection}
-      ${areaSection}
-      ${flatSection}
-      ${strengthsSection}
-      ${checkSection}
     </div>
 
-    <!-- Final page: methodology + footer -->
-    <div class="pdf-page" style="padding:40px 32px 48px;">
-      <div style="border:1px solid ${LINE_SOFT};padding:20px 24px;">
+    <!-- One logical page per group. The exporter slices anything taller
+         than A4 at a fixed height, which used to cut lines in half; giving
+         each group its own .pdf-page puts the breaks between sections. -->
+    ${(togetherSection || areaSection) ? `
+    <div class="pdf-page" style="padding:14px 32px 20px;">
+      ${stripLeadRule(togetherSection)}
+      ${togetherSection ? areaSection : stripLeadRule(areaSection)}
+    </div>` : ''}
+
+    <div class="pdf-page" style="padding:14px 32px 20px;">
+      ${stripLeadRule(flatSection)}
+      ${personaSection}
+    </div>
+
+
+    <!-- Final page: what to verify, methodology, footer -->
+    <div class="pdf-page" style="padding:14px 32px 32px;">
+      ${stripLeadRule(checkSection)}
+      <div style="border:1px solid ${LINE_SOFT};padding:14px 20px;margin-top:${checkSection ? '18px' : '0'};">
         <div style="font-size:11px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">How this report was built</div>
-        <ul style="margin:0;padding-left:18px;font-size:11.5px;color:${DIM};line-height:1.7;">
-          ${hasNeighbourhood ? `<li>Neighbourhood factor scores, crime, schools, and price context come from Neighbourhood Score, the same for every unit in this pincode, deterministic, not AI-generated.</li>` : ''}
-          ${hasNeighbourhood ? `<li>The Combined Score is (${avRecord.nqi_composite} × ${Math.round((areaWeight ?? 0.5) * 100)}%) + (${unitScore ?? '-'} × ${Math.round((unitWeight ?? 0.5) * 100)}%) = ${combinedScore ?? '-'}, a weighted average, not AI-generated.</li>` : ''}
-          <li>Sun position and monthly sunlight hours come from a NOAA solar-geometry algorithm, deterministic, not AI-generated.</li>
+        <ul style="margin:0;padding-left:18px;font-size:11px;color:${DIM};line-height:1.6;">
+          ${hasNeighbourhood ? `<li>The Neighbourhood Score, its factor scores, crime, schools and price context come from public records. They are the same for every unit in this pincode and are not AI-generated.</li>` : ''}
+          ${hasNeighbourhood ? `<li>BlindSpot Verdict score = Neighbourhood Score ${avRecord.nqi_composite} × ${Math.round((areaWeight ?? 0.5) * 100)}% + Home Comfort Score ${unitScore ?? '-'} × ${Math.round((unitWeight ?? 0.5) * 100)}% = ${combinedScore ?? '-'}. A weighted average, not AI-generated.</li>` : ''}
+          <li>Sun position and monthly sunlight hours use the NOAA solar-geometry algorithm. Deterministic, not AI-generated.</li>
           <li>Floor clearance uses a generic urban-obstruction estimate, not a measurement of this property's specific neighboring buildings.</li>
           ${summary?.buildingHeightNote ? `<li>${summary.buildingHeightNote.sentence}</li>` : ''}
           ${safeFacingAssumptionNote ? `<li>${safeFacingAssumptionNote}</li>` : ''}
-          <li>The written sections use AI to interpret the numbers above. It is given them as fact and told not to estimate its own.</li>
-          <li>The ${shotCount || 12} map images this is read from, and the description of each, are in the separate Sun &amp; Shadow report you can generate from the same page.</li>
+          <li>The written analysis is AI-assisted. The model is given the figures above as fact and is not allowed to estimate its own.</li>
         </ul>
       </div>
 
-      <div style="border-top:1px solid ${LINE_SOFT};padding-top:18px;margin-top:36px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+      <div style="border-top:1px solid ${LINE_SOFT};padding-top:12px;margin-top:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
         <div style="display:flex;align-items:center;gap:7px;">
           ${markDataUri ? `<img src="${markDataUri}" alt="BlindSpot" style="width:12px;height:13px;object-fit:contain;opacity:.5;"/>` : ''}
-          <div style="font-size:10px;color:${DIM};">${hasNeighbourhood ? 'BlindSpot Combined Report' : 'Home Comfort Report'} · BlindSpot</div>
+          <div style="font-size:10px;color:${DIM};">${hasNeighbourhood ? 'BlindSpot Report' : 'Home Comfort Report'} · BlindSpot</div>
         </div>
         <div style="font-size:10px;color:${DIM};">3D Map: OSMBuildings · AI-assisted narrative · Solar geometry: NOAA algorithm</div>
       </div>

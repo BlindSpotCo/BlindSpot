@@ -1432,23 +1432,20 @@ export default function ReportScreen() {
           </div>
         </div>
         <p className="bsr-compare-cue">
-          Weighing this against another flat?{' '}
-          <a href="/compare">Put them side by side</a> - the sun each one gets, and what the
-          price difference actually buys.
+          Weighing this against another flat? <a href="/compare">Compare them side by side</a>.
         </p>
         <p className="bsr-maphint">
           {reportRunning
             ? 'The pin is locked while the report is built from this spot - moving it now would mix two blocks into one report.'
-            : 'Click the map to interact with it, then click again to move the pin to another building.'}
+            : 'Click the map to use it, then click a building to move the pin.'}
         </p>
       </section>
 
       <section className="bsr-visit">
         <h2>What to check before you decide</h2>
         <p className="bsr-visit-lede">
-          Everything that scored under 60. Tick them off as you go and jot what you actually find next
-          to each one - both are remembered on this device, and any notes carry into the report you
-          save. Changing the floor or facing rebuilds the list.
+          Everything under 60. Tick items off and note what you find - saved on this device and
+          carried into your report.
         </p>
         <ul className="bsr-todo">
           {actions.length === 0 ? (
@@ -1539,8 +1536,8 @@ export default function ReportScreen() {
         <h2>Every property has a <em>blindspot.</em></h2>
         <p>
           {hasArea
-            ? 'One written verdict for this address - the area, the flat, and the two read together, with the questions to put to the seller. Downloadable as a PDF.'
-            : 'One written verdict for this flat - the sun, the shade, the view and the questions to put to the seller. We have no neighbourhood records for this pincode, so this report covers the flat only. Downloadable as a PDF.'}
+            ? 'One written verdict on the area and the flat, with what to verify before you buy. PDF.'
+            : 'One written verdict on this flat - sun, heat, view and what to verify. No neighbourhood records for this pincode, so it covers the flat only. PDF.'}
         </p>
         {/* Both reports are built from photographs of the map. With no map
             there is nothing to photograph, and the run used to fail with
@@ -1556,8 +1553,8 @@ export default function ReportScreen() {
         </button>
         <span className="bsr-free">
           {solar?.pathData
-            ? 'Takes about two minutes. It builds here on this page, so you keep your floor and facing, and you open it when it\u2019s ready.'
-            : 'Waiting for the 3D map - both reports are built from photographs of it, so there\u2019s nothing to make until it loads.'}
+            ? 'About two minutes. Builds on this page - keep browsing.'
+            : 'Waiting for the 3D map to load - the report is built from it.'}
         </span>
         <span className="bsr-also">
           Already have the floor plan? <a href="/floor-plan-analysis">Get room-by-room furnishing advice →</a>

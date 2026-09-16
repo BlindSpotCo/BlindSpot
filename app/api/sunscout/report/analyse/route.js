@@ -8,7 +8,7 @@
 // SunScout-only report. When the caller (the Property Score / combined-
 // score flow) passes `avRecord` (the AsliVastu neighbourhood record) and
 // `combinedScore`, the prompt asks for a unified report that opens with one
-// Home Buyer Verdict paragraph covering BOTH the neighbourhood and the unit,
+// BlindSpot Verdict paragraph covering BOTH the neighbourhood and the unit,
 // then a full neighbourhood breakdown, then the existing SunScout
 // sun/shadow sections. If avRecord is absent (no AsliVastu coverage for
 // this pincode), it falls back to the original unit-only report so the
@@ -47,7 +47,7 @@ function buildNeighbourhoodGroundTruth(avRecord) {
   const schoolNames = (avRecord.schools_list || []).slice(0, 6).map(s => s.name).join('; ');
   const pc = avRecord.price_context;
   return `
-NEIGHBOURHOOD GROUND TRUTH (from Neighbourhood Score, for ${avRecord.name || avRecord.pin_code} - treat every figure below as fact, do NOT re-derive or override it):
+NEIGHBOURHOOD GROUND TRUTH (from the Neighbourhood Score, for ${avRecord.name || avRecord.pin_code} - treat every figure below as fact, do NOT re-derive or override it):
 Composite neighbourhood score: ${avRecord.nqi_composite}/100 (Grade ${avRecord.grade})
 Factor breakdown: ${factorLines || 'not available'}
 Crime: ${avRecord.total_cognizable_crimes ?? 'unknown'} recorded cognizable crimes/yr, safer than ${avRecord.crime_percentile ?? 'unknown'}% of comparable areas, tier "${avRecord.crime_tier ?? 'unknown'}"
@@ -440,66 +440,45 @@ Note: floor clearance is an estimate based on typical urban obstruction heights,
   const hasNeighbourhood = Boolean(avRecord);
 
   const combinedGroundTruth = hasNeighbourhood ? `
-COMBINED BLINDSPOT SCORE: ${combinedScore ?? 'not computed'}/100 - built from the neighbourhood score (${avRecord.nqi_composite}/100, weighted ${Math.round((areaWeight ?? 0.5) * 100)}%) and this unit's Home Comfort Score (${unitScore ?? 'not computed'}/100, weighted ${Math.round((unitWeight ?? 0.5) * 100)}%). Treat both of these figures as fact, do not recompute them.` : '';
+BLINDSPOT VERDICT SCORE: ${combinedScore ?? 'not computed'}/100 - built from the Neighbourhood Score (${avRecord.nqi_composite}/100, weighted ${Math.round((areaWeight ?? 0.5) * 100)}%) and this unit's Home Comfort Score (${unitScore ?? 'not computed'}/100, weighted ${Math.round((unitWeight ?? 0.5) * 100)}%). Treat both of these figures as fact, do not recompute them.` : '';
 
-  // Section 2 is new and it is the point of a *combined* report: the two
-  // halves read against each other. Before this, the area and the flat were
-  // analysed in separate sections that never mentioned one another, and the
-  // only place they met was one clause of the verdict paragraph. A buyer
-  // deciding between a good area with a dark flat and a bright flat in a
-  // weaker area got no help with exactly that question.
   // Section numbers. The order is the order someone actually asks their
   // questions in: is this a good buy, what would living here be like, is it
   // for someone like me, and then the two halves in detail.
   const livingSectionNumber = 2;
   const suitsSectionNumber = 3;
   const neighbourhoodSectionNumber = 4;
-  const flatSectionNumber = hasNeighbourhood ? 5 : 2;
+  // Flat-only reports used to number this 2, colliding with the living
+  // section; the PDF's section extractor then split on the wrong header.
+  const flatSectionNumber = hasNeighbourhood ? 5 : 4;
 
+  // Each section OWNS a set of facts. The previous prompt had the verdict,
+  // "what living here is like", the neighbourhood analysis and the flat
+  // analysis all walking through the same light/heat/area points, so a
+  // reader met the same finding three or four times in different words.
+  // Now every fact has one home; other sections may only point at it.
   const verdictInstruction = hasNeighbourhood
-    ? `1. HOME BUYER VERDICT
-Write this to the person, not about the property. Use "you". No bullets, no lists of numbers, no headings inside it.
+    ? `1. BLINDSPOT VERDICT
+Three or four sentences, second person, plain English, no bullets. Open with your call - worth pursuing, worth pursuing once one thing checks out, or keep looking - and commit to one. Then give the single strongest reason for it and the single biggest risk. At most two numbers. Never open with a score. Never write "the composite", "the index", "NQI", "the dataset" or "our analysis". Do not describe sunlight hours, months or factor scores here - later sections own those.
 
-Four to six sentences, in the plainest English you have - the way you'd answer a friend who asked "should I buy this?" over the phone. Cover, in this order: what kind of place this is to live in, what this particular flat is like day to day, the one thing that would most worry you about it, and your actual call - worth pursuing, worth pursuing once one thing checks out, or better to keep looking. Commit to one of those three; a verdict that refuses to land is not a verdict.
-
-Name at most two numbers in the whole paragraph, and only where a number says something a word can't. Never open with a score. Never write "the composite", "the index", "NQI", "the dataset" or "our analysis" - they are buying a home, not reading a spreadsheet.
-Close with one line starting exactly "- Best fit for: " naming the one or two buyer types this suits best, each with a clause of reasoning.
-
-${livingSectionNumber}. WHAT LIVING HERE IS ACTUALLY LIKE
-This is the section that makes the report worth reading, so give it real space - four to six substantial sentences, in flowing prose, second person.
-
-Turn the figures into a life. Walk through a day: when light first reaches the windows, what the flat is like at midday and at four in the afternoon, whether lights go on early, whether the west side gets uncomfortable in May. Then walk through the year: what changes between the best months and the worst, and how big that swing actually feels - an hour a day is barely noticeable, three hours is a different flat in December than in April.
-
-Then the area, the same way: what the school situation means for a morning routine, what the crime tier means for coming home late, what the water score means for a summer week. Ground every claim in a figure from the ground truth above, but write the consequence, not the figure - "supply runs short enough in summer that most societies here bring in tankers" rather than "water scores 45/100".
-
-Do not repeat the verdict's wording. Do not use bullets.
+${livingSectionNumber}. WHAT LIVING HERE IS LIKE
+Exactly four "- " lines, each "Label: one sentence". Each line is a day-to-day consequence, not a figure: write "most societies here rely on tankers in summer", not "water scores 45/100". Use these labels in this order: Mornings and daylight; Summer comfort; Getting around and safety; Utilities. Each line must say something no other section says. No sun-hour figures or month names - the flat section owns those.
 
 ${suitsSectionNumber}. WHO THIS IS FOR
-Be useful and be honest - this section is worthless if every type gets a yes.
+Four "- " lines, one per type, in this order, type then colon: Families with school-age kids; Young professionals and couples; People working from home; Older buyers and retirees.
+Each: open with "Yes", "Yes, with one caveat", "Probably not" or "No", then ONE sentence of at most 20 words naming the reason. Give each type a different deciding factor - do not reuse the same reason for two types unless the data leaves no alternative. Be honest; this section is worthless if every type gets a yes.
+Then one final line starting exactly "- Main deal-breaker: " - one sentence naming the single issue most likely to rule this property out, and for whom. Do not repeat a reason already given above word for word.
 
-Take each of these four in turn, as its own "- " line beginning with the type in plain text followed by a colon: Families with school-age kids; Young professionals and couples; People working from home; Older buyers and retirees.
+${neighbourhoodSectionNumber}. NEIGHBOURHOOD SCORE ANALYSIS
+At most two short paragraphs, 90 words in total. The factor scores are already shown as bars beside this section - do not list or restate them. Say which factor is the area's real strength and which is its real weakness, and what that combination means. Then one sentence on the price band: good value for these fundamentals, in line, or a premium - say which. Area only: no sunlight, no talk of this unit. Do not repeat points made in the living-here lines.`
+    : `1. BLINDSPOT VERDICT
+Three or four sentences, second person, plain English, no bullets. Open with your call - worth pursuing, worth pursuing once one thing checks out, or keep looking - and commit to one. Then the strongest reason and the biggest risk. At most two numbers. Do not describe sunlight hours or months here - the flat section owns those.
 
-For each, open with a plain verdict - "Yes", "Yes, with one caveat", "Probably not" or "No" - then one or two sentences of why, tied to specific figures from the ground truth. A flat with poor afternoon light and a weak lift story is not for a retiree; say so. A quiet area with thin nightlife is not for someone in their twenties; say so.
-
-Then one final "- " line beginning "Not for: " naming the buyer this property would genuinely disappoint and the reason. Every property is wrong for somebody; if you can't name who, you haven't read the numbers properly.
-
-${neighbourhoodSectionNumber}. NEIGHBOURHOOD FULL ANALYSIS
-Do NOT restate the ground-truth numbers one by one - they are already shown as bars beside this section, so repeating them adds nothing.
-
-Analyse instead: which one or two factors are this area's real strength, which one or two are its real weakness, and what that combination means for someone living here. Weave the specific numbers in as evidence for a point, never as a checklist. Organise around the two or three things that actually matter here rather than touring every field. Cover the price context honestly - whether the band reads as good value for these fundamentals, priced in line, or a premium for the location, and say which.
-
-This section is about the AREA ONLY - no sunlight, no shadows, no talk of this specific unit.`
-    : `1. HOME BUYER VERDICT
-Write this to the person, not about the property. Use "you", plain English, no bullets.
-
-Four to six sentences: what this flat is like to live in for light and comfort day to day, what changes across the year, the one thing that would most worry you, and your actual call - worth pursuing, worth pursuing once one thing checks out, or keep looking. Commit to one.
-Close with one line starting exactly "- Best fit for: " naming the one or two buyer types this suits best.
-
-${livingSectionNumber}. WHAT LIVING HERE IS ACTUALLY LIKE
-Four to six sentences of flowing prose, second person. Turn the figures into a life: when light first reaches the windows, what the flat is like at midday and at four, whether lights go on early, whether it gets uncomfortable in May, and how different December feels from April. Ground every claim in the figures above but write the consequence, not the figure.
+${livingSectionNumber}. WHAT LIVING HERE IS LIKE
+Exactly three "- " lines, each "Label: one sentence" describing a day-to-day consequence, not a figure. Labels, in order: Mornings and daylight; Summer comfort; Evenings. No sun-hour figures or month names.
 
 ${suitsSectionNumber}. WHO THIS IS FOR
-Take each of these four in turn as its own "- " line, type then colon: Families with school-age kids; Young professionals and couples; People working from home; Older buyers and retirees. Open each with "Yes", "Yes, with one caveat", "Probably not" or "No", then a sentence of why tied to the real figures. Finish with a "- Not for: " line naming the buyer this would genuinely disappoint, and why.`;
+Four "- " lines, type then colon: Families with school-age kids; Young professionals and couples; People working from home; Older buyers and retirees. Open each with "Yes", "Yes, with one caveat", "Probably not" or "No", then ONE sentence of at most 20 words, with a different deciding factor for each type. Finish with "- Main deal-breaker: " and one sentence naming the single issue most likely to rule this flat out, and for whom.`;
 
   // Persona overlay. Appended AFTER the full section list so it wins on any
   // conflict of emphasis, and resolves to '' when no persona is selected --
@@ -508,7 +487,7 @@ Take each of these four in turn as its own "- " line, type then colon: Families 
   // of the sections above; it only re-slants them and appends ONE extra
   // trailing section, which the generic `N. TITLE` parser in the PDF route
   // picks up as bottom narrative without any change there.
-  const personaSectionNumber = hasNeighbourhood ? 6 : 4;
+  const personaSectionNumber = hasNeighbourhood ? 6 : 5;
   const ov = persona?.reportOverlay || null;
   const personaOverlay = ov ? `
 
@@ -533,11 +512,11 @@ ${ov.sectionBody}` : '';
   // Appended after everything else (including persona overlay, if any) so
   // it always lands as the actual last section regardless of which of the
   // 4 numbering combinations above are in play this time.
-  const checklistSectionNumber = (hasNeighbourhood ? 6 : 4) + (ov ? 1 : 0);
+  const checklistSectionNumber = (hasNeighbourhood ? 6 : 5) + (ov ? 1 : 0);
   const checklistSection = safeActionItems.length > 0 ? `
 
-${checklistSectionNumber}. WHAT TO CHECK WHEN YOU VISIT
-These are already-written, plain-language action lines for the specific dimensions that scored weak enough to be worth a second look in person. For any item WITHOUT a finding below, reuse its action line close to as-is (light rewording for flow is fine, don't invent new ones or drop any) -- it's still a thing to go check. For any item WITH a finding, the reader has already visited and is telling you what they found: write that up as a confirmed observation in their own words (light cleanup for flow is fine, don't soften, contradict, or second-guess it), NOT as a thing still to check -- don't tell the reader to go verify something they just told you they already verified. Render the whole section as a short "- " bulleted list, one line per item, each starting with the dimension name in bold-equivalent plain text then a colon. One short sentence before the list is enough context; no restating of scores or numbers already covered elsewhere in this report.
+${checklistSectionNumber}. WHAT TO VERIFY BEFORE YOU DECIDE
+One short sentence of context, then a "- " list with one line per item below, each starting with the dimension name, then a colon, then the action. For an item WITHOUT a finding, reuse its action line close to as-is (light rewording is fine; do not invent new items or drop any). For an item WITH a finding, the reader has already visited: write it up as a confirmed observation in their own words (light cleanup only; do not soften, contradict or tell them to re-check it). Do not restate scores.
 ${safeActionItems.map(i => i.userFinding
   ? `- ${i.label} (${i.score}): confirmed on a visit -- "${i.userFinding}"`
   : `- ${i.label} (${i.score}): ${i.action}`
@@ -553,10 +532,12 @@ ${combinedGroundTruth}
 
 You also have ${screenshots.length} screenshots of the actual 3D map at this location. They are described one by one elsewhere, in a separate gallery -- do NOT write per-image descriptions here. The orange circle/dot marks the exact property location; darker areas are rendered shadows from OpenStreetMap building data. Use these images ONLY for narrative color and visual confirmation (e.g. "as the images show, a taller block sits to the southeast") - do NOT estimate hours of sun, shadow duration, or building heights from the images; use the ground-truth numbers above for all figures. If a screenshot looks blank, black, or unreadable, say so explicitly rather than guessing what it would show.
 
-Write personally, not clinically - like a knowledgeable friend giving honest advice, not a data report reciting fields. Address the reader as "you" where it reads naturally. Be thorough and specific, not brief. This report is a defensible artifact a buyer will rely on - do not compress away detail to save space, and do not pad it with generic real-estate filler that could apply to any property.
-Plain language throughout, not just the verdict's opening lines: explain any real-estate or technical term the first time it appears (azimuth, NQI, feasibility band, etc.) in a short clause rather than assuming the reader already knows it, and prefer the everyday word over the technical one wherever both say the same thing.
+Write like a senior property analyst briefing a client: concise, evidence-led, specific to this address. No generic real-estate filler, no throat-clearing, no summaries of what you are about to say.
+NO REPETITION: every fact and every figure appears in exactly one section - the section that owns it. If another section needs it, refer to it in a few words ("the afternoon heat noted above") rather than explaining it again. Cut repetition, not insight.
+Plain language: explain any technical term (azimuth, feasibility band) in a short clause the first time, and prefer the everyday word.
+Use these names exactly when you refer to them: "Neighbourhood Score" (the area), "Home Comfort Score" (this unit), "BlindSpot Verdict" (the combined result).
 ${persona ? `\nWHO'S READING THIS: ${persona.reportFocus}\n` : ''}
-${safeCustomNote ? `\nTHE BUYER'S OWN REQUEST - they typed this themselves right before generating this report, so treat it as the single strongest signal of what they actually care about, above persona defaults or generic coverage: "${safeCustomNote}"\nDirectly address this in the Home Buyer Verdict section - do not just mention it in passing, actually answer it using the ground-truth data above. If the data above genuinely doesn't cover what they asked (e.g. they asked about something this report doesn't measure), say so plainly rather than inventing an answer. Never quote their request back verbatim or write "you mentioned" - just make sure the answer is unmistakably there.\n` : ''}
+${safeCustomNote ? `\nTHE BUYER'S OWN REQUEST - they typed this themselves right before generating this report, so treat it as the single strongest signal of what they actually care about, above persona defaults or generic coverage: "${safeCustomNote}"\nDirectly address this in the BlindSpot Verdict section - do not just mention it in passing, actually answer it using the ground-truth data above. If the data above genuinely doesn't cover what they asked (e.g. they asked about something this report doesn't measure), say so plainly rather than inventing an answer. Never quote their request back verbatim or write "you mentioned" - just make sure the answer is unmistakably there.\n` : ''}
 
 FORMATTING RULES (follow exactly, every time, regardless of location):
 - Never use emoji, anywhere, in any section, under any circumstances - not as bullet markers, not as decoration, not inline in a sentence. Plain text only.
@@ -570,13 +551,10 @@ Provide, in this exact order:
 ${verdictInstruction}
 
 ${flatSectionNumber}. THE FLAT ITSELF, FLOOR ${floorN} FACING ${safeFacingInput.toUpperCase()}
-Height and orientation are one story, not two - write them as one. Cover, in plain everyday English and in this order:
-- What a day in this flat is actually like for light. When the sun first reaches it, when it leaves, and how many usable hours that is, using the ground-truth figures.
-- How that changes across the year. Name the best and worst months by name and say what the difference feels like to live in, not just the hour count.
-- Whether ${safeFacingInput}-facing is a good or bad orientation at this latitude and on this floor, with the reasoning spelled out in ordinary words - no azimuth or elevation figures unless you immediately explain what they mean.
-- Heat as well as light. A facing that is generous with winter sun may be punishing in May; say which side of that this flat falls on.
-- What practically follows: whether this flat needs lights on during the day, whether the afternoon side will need blinds or heavy curtains, and whether a different floor in this same building would meaningfully change the answer.
-Write it as flowing paragraphs, not as the bulleted list above - those bullets are your coverage checklist, not the shape of the section.${personaOverlay}${checklistSection}`;
+The average usable sun hours and the best and worst months are already printed above this section with a monthly chart - do not restate them. Two short paragraphs, 130 words in total, flowing prose:
+- Paragraph one: whether ${safeFacingInput}-facing on floor ${floorN} is a good or bad orientation at this latitude, and why, in ordinary words; then the heat trade-off - is the sun it gets welcome or punishing in the hot months.
+- Paragraph two: what practically follows - daytime lighting, blinds or curtains on the hot side, and whether a different floor or facing in this building would meaningfully change the answer.
+${personaOverlay}${checklistSection}`;
 
   if (!process.env.GEMINI_API_KEY) {
     return NextResponse.json(
