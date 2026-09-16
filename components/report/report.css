@@ -257,7 +257,12 @@
   font-size:14px;color:var(--text-mute,#5A5140);font-style:italic;
 }
 
-/* ---------------- report links ---------------- */
+/* ---------------- report links ----------------
+   Deliberately quieter than .bsr-half-toggle below: the toggle is a
+   control that acts on THIS page (show/hide rows already in front of
+   you); this is a plain link out to a different report. Same weight and
+   size as each other read as two equal buttons -- they're not equal
+   actions, so they shouldn't look like it. */
 .bsr-more{
   margin-top:auto;padding-top:10px;
   display:flex;flex-direction:column;align-items:flex-start;gap:2px;
@@ -267,22 +272,21 @@
    won for BOTH halves, so the area's "detailed area report" link rendered
    in the flat's colour and the two-accent scheme quietly stopped working. */
 .bsr-genlink{
-  font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;
-  background:none;border:0;padding:0;min-height:36px;
-  text-decoration:underline;text-underline-offset:4px;text-align:left;
-  color:var(--ss,#AF5F30);
+  font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;
+  background:none;border:0;padding:0;min-height:32px;
+  text-decoration:underline;text-underline-offset:3px;text-align:left;
+  color:var(--text-mute,#5A5140);
 }
-.bsr-genlink:hover:not(:disabled){filter:brightness(.88)}
+.bsr-genlink:hover:not(:disabled){color:var(--ss,#AF5F30);filter:none}
 .bsr-genlink:disabled,.bsr-cta:disabled{opacity:.55;cursor:not-allowed;text-decoration:none}
 
 .bsr-more a{
-  display:inline-flex;align-items:center;min-height:36px;
-  font-size:15px;font-weight:700;text-decoration:underline;text-underline-offset:4px;
+  display:inline-flex;align-items:center;min-height:32px;
+  font-size:13px;font-weight:600;text-decoration:underline;text-underline-offset:3px;
+  color:var(--text-mute,#5A5140);
 }
-/* wine for the area, sun for the flat */
-.bsr-area .bsr-more a,.bsr-area .bsr-genlink{color:var(--av,#7A2E43)}
-.bsr-unit .bsr-more a,.bsr-unit .bsr-genlink{color:var(--ss,#AF5F30)}
-
+.bsr-more a:hover{color:var(--ss,#AF5F30)}
+.bsr-area .bsr-more a:hover{color:var(--av,#7A2E43)}
 
 .bsr-methodology-note{
   margin-top:8px;padding-top:8px;border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
@@ -290,10 +294,12 @@
 }
 
 /* ---------------- collapse for "the area" / "the flat" ----
-   Both halves default closed (ReportScreen.js: halfOpen starts
-   {area:false, unit:false}) and stay collapsible at every width now --
-   this used to force back open at 768px+ regardless of React's state,
-   which read as two long walls of rows on a laptop, not just a phone.
+   Phone only. ReportScreen.js opens both halves by default at 768px+
+   (its own matchMedia check on mount), so a laptop/desktop view never
+   needs collapsing in the first place -- the toggle button itself is
+   hidden there below, rather than sitting around offering a "Show less"
+   that just re-hides what was never too long to show. Below 768px both
+   halves still default closed and stay collapsible, same as before.
    The "see the detailed report" link for each half sits outside this
    toggle in the JSX (after bsr-half-detail's closing tag), so it's never
    hidden by a collapsed state. */
@@ -309,6 +315,9 @@
 .bsr-half-toggle-chevron{display:inline-block;transition:transform .18s ease}
 .bsr-half-toggle-chevron.is-open{transform:rotate(180deg)}
 .bsr-half-detail.is-collapsed{display:none}
+@media (min-width:768px){
+  .bsr-half-toggle{display:none}
+}
 
 /* ---------------- the map, its own full-width band ----------------
    Wide on purpose: Map3DShadow hides its own view-angle pad below 768px,
