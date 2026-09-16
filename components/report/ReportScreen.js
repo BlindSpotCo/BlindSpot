@@ -1325,17 +1325,46 @@ export default function ReportScreen() {
                 type="search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Another address, or coordinates like 12.9716, 77.5946"
-                aria-label="Move the pin to another address or coordinates"
+                placeholder="Address or coordinates"
+                aria-label="Move the pin to another address or coordinates -- press Enter to search"
               />
-              <button type="submit" disabled={locBusy}>{locBusy ? 'Finding…' : 'Move pin'}</button>
+              {locBusy ? <span className="bsr-loc-busy" aria-live="polite">Finding…</span> : null}
               <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
                 My location
               </button>
             </form>
 
+            {/* Play/pause moved up here, sharing the search row's line on
+                phone, instead of sitting last after floor/faces/date -- it
+                was getting pushed too far down the toolbar to reach. */}
+            <p className="bsr-mapbar-time">
+              <button
+                type="button"
+                className={`bsr-play${animating ? ' is-on' : ''}`}
+                onClick={() => setAnimating((a) => !a)}
+                aria-pressed={animating}
+              >
+                {animating ? '❙❙ Pause' : '▶ Play'}
+              </button>
+              {!animating && (
+                <>
+                  <input
+                    id="bsr-time"
+                    type="range"
+                    min="330"
+                    max="1140"
+                    step="10"
+                    value={minutes}
+                    onChange={(e) => setMinutes(Number(e.target.value))}
+                    aria-label="Time of day"
+                  />
+                  <span className="bsr-clock">{clock(minutes)}</span>
+                </>
+              )}
+            </p>
+
             <p className="bsr-set">
-              <label className="bsr-set-field">
+              <label className="bsr-set-field bsr-set-floor">
                 <span>Floor</span>
                 <input
                   type="text"
@@ -1368,7 +1397,7 @@ export default function ReportScreen() {
                   {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
                 </select>
               </label>
-              <label className="bsr-set-field">
+              <label className="bsr-set-field bsr-set-date">
                 <span>Date</span>
                 <select
                   value={seasonKey}
@@ -1393,40 +1422,6 @@ export default function ReportScreen() {
                 />
               )}
               {assumed ? <span className="bsr-assumed">assumed</span> : null}
-            </p>
-
-            {/* The play/pause control used to sit in its own row below the
-                map (.bsr-timerow) -- a second bar under the one already
-                floating on the map, adding height for one button. It is a
-                map control like floor/faces/date above it, so it lives in
-                the same floating toolbar now. Pressing play hides the
-                slider again rather than leaving an empty row behind,
-                which is what keeps this bar thin while playing (the
-                common state -- animating starts true). */}
-            <p className="bsr-mapbar-time">
-              <button
-                type="button"
-                className={`bsr-play${animating ? ' is-on' : ''}`}
-                onClick={() => setAnimating((a) => !a)}
-                aria-pressed={animating}
-              >
-                {animating ? '\u2759\u2759 Pause' : '\u25B6 Watch the day'}
-              </button>
-              {!animating && (
-                <>
-                  <input
-                    id="bsr-time"
-                    type="range"
-                    min="330"
-                    max="1140"
-                    step="10"
-                    value={minutes}
-                    onChange={(e) => setMinutes(Number(e.target.value))}
-                    aria-label="Time of day"
-                  />
-                  <span className="bsr-clock">{clock(minutes)}</span>
-                </>
-              )}
             </p>
             {locError ? <p className="bsr-locerror">{locError}</p> : null}
           </div>

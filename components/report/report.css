@@ -615,45 +615,64 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   box-shadow:0 4px 14px rgba(28,24,18,.16);
 }
 .bsr-mapbar .bsr-locbar{ margin-top:0;flex-wrap:nowrap;gap:5px; }
-.bsr-mapbar .bsr-locbar input[type=search]{ min-width:0;max-width:150px; }
-.bsr-mapbar .bsr-locbar button{ flex:none;white-space:nowrap; }
+/* Search input: shrunk further (was 34px tall via the base .bsr-locbar
+   rule) -- it's a glance-and-tap control, not the focal point, and the
+   old height was the single biggest thing eating the toolbar's row. */
+.bsr-mapbar .bsr-locbar input[type=search]{
+  min-width:0;max-width:120px;min-height:24px;font-size:11px;padding:3px 6px;
+}
+/* "Move pin" button is gone -- Enter submits the form. What's left here
+   is just the busy label (while a search is in flight) and My location,
+   both small pills instead of one being a full submit button. */
+.bsr-mapbar .bsr-loc-busy{ font-size:9.5px;color:var(--text-mute,#5A5140);white-space:nowrap;flex:none; }
+.bsr-mapbar .bsr-locbar button{
+  flex:none;white-space:nowrap;font-size:10px;min-height:24px;padding:0 7px;
+}
 .bsr-mapbar .bsr-set{ margin-top:0;min-height:0;flex-wrap:nowrap;gap:6px; }
 .bsr-mapbar .bsr-set-field{ flex:none; }
 .bsr-mapbar .bsr-set-field span{ font-size:9.5px; }
 .bsr-mapbar .bsr-set select,
 .bsr-mapbar .bsr-set input[type="text"]{
-  font-size:11px; min-height:26px; padding:3px 5px;
+  font-size:11px; min-height:24px; padding:2px 5px;
 }
-.bsr-mapbar .bsr-set input[type="text"]{ width:2em; flex:none; }
-.bsr-mapbar .bsr-set select{ max-width:88px; flex:none; }
-.bsr-mapbar .bsr-datein{ min-height:26px; font-size:11px; padding:3px 5px; flex:none; }
-.bsr-mapbar .bsr-assumed{ font-size:9.5px; padding:1px 5px; white-space:nowrap; flex:none; }
-/* The play/pause control -- shares whichever row has room (see
-   flex-wrap on .bsr-mapbar) rather than always claiming a full row of
-   its own for one button; the slider only appears while paused, so most
-   of the time this is just a small pill sitting after the date field. */
+/* Floor is the one field made BIGGER, not thinner -- it's typed into on
+   every visit and the tap target was too small on phone; faces/date are
+   picked once and left alone, so they stay compact. */
+.bsr-mapbar .bsr-set-floor input[type="text"]{
+  width:2.4em; flex:none; font-size:14px; font-weight:700; min-height:32px; padding:3px 5px;
+}
+.bsr-mapbar .bsr-set select{ max-width:80px; flex:none; }
+.bsr-mapbar .bsr-set-date select{ max-width:64px; font-size:10px; }
+.bsr-mapbar .bsr-datein{ min-height:24px; font-size:10px; padding:2px 5px; flex:none; }
+.bsr-mapbar .bsr-assumed{ font-size:9px; padding:1px 5px; white-space:nowrap; flex:none; }
+/* The play/pause control now sits right after the search row (moved in
+   the JSX) instead of trailing after floor/faces/date, so it's reachable
+   without scanning across the whole toolbar. It still shares whichever
+   row has room rather than claiming a full row of its own. */
 .bsr-mapbar .bsr-mapbar-time{ margin-top:0;display:flex;align-items:center;flex-wrap:nowrap;gap:5px; }
-.bsr-mapbar .bsr-play{ font-size:9.5px;min-height:26px;padding:0 7px;flex:none; }
-.bsr-mapbar .bsr-mapbar-time input[type=range]{ flex:none;width:70px;min-width:60px;height:26px;accent-color:var(--ss,#AF5F30); }
-.bsr-mapbar .bsr-clock{ font-size:10px;min-width:44px;flex:none; }
+.bsr-mapbar .bsr-play{ font-size:9.5px;min-height:24px;padding:0 7px;flex:none; }
+.bsr-mapbar .bsr-mapbar-time input[type=range]{ flex:none;width:60px;min-width:50px;height:24px;accent-color:var(--ss,#AF5F30); }
+.bsr-mapbar .bsr-clock{ font-size:10px;min-width:40px;flex:none; }
 @media (min-width:768px){
   .bsr-mapbar{
     gap:5px 12px;
     max-width:calc(100% - 230px);
-    padding:7px 11px;
+    padding:6px 10px;
   }
-  .bsr-mapbar .bsr-locbar input[type=search]{ max-width:200px; }
+  .bsr-mapbar .bsr-locbar input[type=search]{ max-width:170px;min-height:27px;font-size:12px; }
+  .bsr-mapbar .bsr-locbar button{ font-size:11px;min-height:27px;padding:0 9px; }
   .bsr-mapbar .bsr-set{ gap:8px; }
   .bsr-mapbar .bsr-set-field span{ font-size:10.5px; }
   .bsr-mapbar .bsr-set select,
-  .bsr-mapbar .bsr-set input[type="text"]{ font-size:12px; min-height:29px; padding:4px 7px; }
-  .bsr-mapbar .bsr-set input[type="text"]{ width:2.4em; }
-  .bsr-mapbar .bsr-set select{ max-width:140px; }
-  .bsr-mapbar .bsr-datein{ min-height:29px; font-size:12px; padding:4px 7px; }
-  .bsr-mapbar .bsr-assumed{ font-size:10.5px; padding:2px 6px; }
-  .bsr-mapbar .bsr-play{ font-size:11px;min-height:29px;padding:0 10px; }
-  .bsr-mapbar .bsr-mapbar-time input[type=range]{ width:100px;min-width:80px;height:29px; }
-  .bsr-mapbar .bsr-clock{ font-size:11.5px;min-width:54px; }
+  .bsr-mapbar .bsr-set input[type="text"]{ font-size:12px; min-height:27px; padding:3px 6px; }
+  .bsr-mapbar .bsr-set-floor input[type="text"]{ width:2.8em; font-size:15px; min-height:34px; }
+  .bsr-mapbar .bsr-set select{ max-width:120px; }
+  .bsr-mapbar .bsr-set-date select{ max-width:96px; font-size:11px; }
+  .bsr-mapbar .bsr-datein{ min-height:27px; font-size:11px; padding:3px 6px; }
+  .bsr-mapbar .bsr-assumed{ font-size:10px; padding:2px 6px; }
+  .bsr-mapbar .bsr-play{ font-size:11px;min-height:27px;padding:0 10px; }
+  .bsr-mapbar .bsr-mapbar-time input[type=range]{ width:90px;min-width:70px;height:27px; }
+  .bsr-mapbar .bsr-clock{ font-size:11px;min-width:50px; }
 }
 .bsr-locbar{
   display:flex;gap:6px;flex-wrap:wrap;align-items:center;
