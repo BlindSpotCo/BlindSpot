@@ -593,62 +593,60 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
    smaller than its counterpart in "the flat" below: this is glanced at
    and adjusted in passing, not read. */
 .bsr-mapbar{
-  position:absolute;top:10px;left:10px;z-index:10;
-  width:auto;height:auto;max-width:calc(100% - 20px);
-  display:flex;flex-direction:column;gap:6px;
-  padding:8px 10px;
+  position:absolute;top:8px;left:8px;z-index:10;
+  width:auto;height:auto;max-width:calc(100% - 16px);
+  /* Row + wrap at every width, not column-on-phone/row-on-desktop --
+     each group (search, floor/faces/date, play/pause) sizes to its own
+     content and wraps onto the next line only when the row actually
+     runs out of room, instead of Pause always getting a full line of
+     its own underneath everything else, even on a wide phone. */
+  display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;gap:4px 8px;
+  padding:6px 8px;
   background:rgba(255,253,248,.97);
   border:1px solid rgba(28,24,18,.14);
-  border-radius:10px;
-  box-shadow:0 6px 18px rgba(28,24,18,.18);
+  border-radius:8px;
+  box-shadow:0 4px 14px rgba(28,24,18,.16);
 }
-.bsr-mapbar .bsr-locbar{ margin-top:0;flex-wrap:nowrap;gap:6px; }
-.bsr-mapbar .bsr-locbar input[type=search]{ min-width:0;max-width:190px; }
+.bsr-mapbar .bsr-locbar{ margin-top:0;flex-wrap:nowrap;gap:5px; }
+.bsr-mapbar .bsr-locbar input[type=search]{ min-width:0;max-width:150px; }
 .bsr-mapbar .bsr-locbar button{ flex:none;white-space:nowrap; }
-.bsr-mapbar .bsr-set{ margin-top:0;flex-wrap:nowrap;gap:8px; }
+.bsr-mapbar .bsr-set{ margin-top:0;min-height:0;flex-wrap:nowrap;gap:6px; }
 .bsr-mapbar .bsr-set-field{ flex:none; }
-.bsr-mapbar .bsr-set-field span{ font-size:10.5px; }
+.bsr-mapbar .bsr-set-field span{ font-size:9.5px; }
 .bsr-mapbar .bsr-set select,
 .bsr-mapbar .bsr-set input[type="text"]{
-  font-size:12px; min-height:30px; padding:4px 6px;
+  font-size:11px; min-height:26px; padding:3px 5px;
 }
-.bsr-mapbar .bsr-set input[type="text"]{ width:2.2em; flex:none; }
-.bsr-mapbar .bsr-set select{ max-width:96px; flex:none; }
-.bsr-mapbar .bsr-datein{ min-height:30px; font-size:12px; padding:4px 6px; flex:none; }
-.bsr-mapbar .bsr-assumed{ font-size:10.5px; padding:2px 6px; white-space:nowrap; flex:none; }
-/* The play/pause row -- moved in from the old standalone .bsr-timerow
-   below the map. Sized down like every other mapbar control so adding a
-   third row doesn't make the floating card any less "thin"; the slider
-   only appears while paused; playing (the default) it's a single small
-   button. */
-.bsr-mapbar .bsr-mapbar-time{ margin-top:0;display:flex;align-items:center;flex-wrap:nowrap;gap:6px; }
-.bsr-mapbar .bsr-play{ font-size:10.5px;min-height:28px;padding:0 8px;flex:none; }
-.bsr-mapbar .bsr-mapbar-time input[type=range]{ flex:none;width:90px;min-width:70px;height:28px;accent-color:var(--ss,#AF5F30); }
-.bsr-mapbar .bsr-clock{ font-size:11px;min-width:52px;flex:none; }
+.bsr-mapbar .bsr-set input[type="text"]{ width:2em; flex:none; }
+.bsr-mapbar .bsr-set select{ max-width:88px; flex:none; }
+.bsr-mapbar .bsr-datein{ min-height:26px; font-size:11px; padding:3px 5px; flex:none; }
+.bsr-mapbar .bsr-assumed{ font-size:9.5px; padding:1px 5px; white-space:nowrap; flex:none; }
+/* The play/pause control -- shares whichever row has room (see
+   flex-wrap on .bsr-mapbar) rather than always claiming a full row of
+   its own for one button; the slider only appears while paused, so most
+   of the time this is just a small pill sitting after the date field. */
+.bsr-mapbar .bsr-mapbar-time{ margin-top:0;display:flex;align-items:center;flex-wrap:nowrap;gap:5px; }
+.bsr-mapbar .bsr-play{ font-size:9.5px;min-height:26px;padding:0 7px;flex:none; }
+.bsr-mapbar .bsr-mapbar-time input[type=range]{ flex:none;width:70px;min-width:60px;height:26px;accent-color:var(--ss,#AF5F30); }
+.bsr-mapbar .bsr-clock{ font-size:10px;min-width:44px;flex:none; }
 @media (min-width:768px){
   .bsr-mapbar{
-    /* flex-wrap:wrap + the time row's flex-basis:100% below puts search
-       and floor/faces/date back on their original single shared row
-       (the layout this max-width and gap were actually tuned for) and
-       drops play/pause + the slider to a second row of their own,
-       instead of all three groups fighting for the same row's width. */
-    flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px 16px;
+    gap:5px 12px;
     max-width:calc(100% - 230px);
-    padding:9px 14px;
+    padding:7px 11px;
   }
-  .bsr-mapbar .bsr-locbar input[type=search]{ max-width:220px; }
-  .bsr-mapbar .bsr-mapbar-time{ flex-basis:100%; }
-  .bsr-mapbar .bsr-set{ gap:10px; }
-  .bsr-mapbar .bsr-set-field span{ font-size:11.5px; }
+  .bsr-mapbar .bsr-locbar input[type=search]{ max-width:200px; }
+  .bsr-mapbar .bsr-set{ gap:8px; }
+  .bsr-mapbar .bsr-set-field span{ font-size:10.5px; }
   .bsr-mapbar .bsr-set select,
-  .bsr-mapbar .bsr-set input[type="text"]{ font-size:13px; min-height:33px; padding:5px 8px; }
-  .bsr-mapbar .bsr-set input[type="text"]{ width:2.6em; }
-  .bsr-mapbar .bsr-set select{ max-width:150px; }
-  .bsr-mapbar .bsr-datein{ min-height:33px; font-size:13px; padding:5px 8px; }
-  .bsr-mapbar .bsr-assumed{ font-size:11.5px; padding:3px 7px; }
-  .bsr-mapbar .bsr-play{ font-size:12px;min-height:33px;padding:0 12px; }
-  .bsr-mapbar .bsr-mapbar-time input[type=range]{ width:120px;min-width:100px;height:33px; }
-  .bsr-mapbar .bsr-clock{ font-size:12.5px;min-width:60px; }
+  .bsr-mapbar .bsr-set input[type="text"]{ font-size:12px; min-height:29px; padding:4px 7px; }
+  .bsr-mapbar .bsr-set input[type="text"]{ width:2.4em; }
+  .bsr-mapbar .bsr-set select{ max-width:140px; }
+  .bsr-mapbar .bsr-datein{ min-height:29px; font-size:12px; padding:4px 7px; }
+  .bsr-mapbar .bsr-assumed{ font-size:10.5px; padding:2px 6px; }
+  .bsr-mapbar .bsr-play{ font-size:11px;min-height:29px;padding:0 10px; }
+  .bsr-mapbar .bsr-mapbar-time input[type=range]{ width:100px;min-width:80px;height:29px; }
+  .bsr-mapbar .bsr-clock{ font-size:11.5px;min-width:54px; }
 }
 .bsr-locbar{
   display:flex;gap:6px;flex-wrap:wrap;align-items:center;
