@@ -64,6 +64,13 @@
 .bsr-head{
   padding:12px 0 10px;border-bottom:1px solid var(--line,rgba(28,24,18,.14));
   background:var(--bg,#FAF6EE);
+  /* Sticky, opaque, sitting above the page -- without some depth cue it
+     just looks like a hard, flat crop through whatever text happens to
+     scroll to exactly this line (a heading sliced clean through the
+     middle of its own glyphs reads as broken, not "behind the header").
+     A soft shadow makes the header read as its own layer floating above
+     the content, so that clip looks intentional. */
+  box-shadow:0 3px 10px rgba(28,24,18,.07);
 }
 .bsr-head-top{
   display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
