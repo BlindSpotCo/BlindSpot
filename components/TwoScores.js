@@ -36,10 +36,10 @@ const NEIGHBOURHOOD_DIMS = [
 ];
 const COMFORT_DIMS = [
   { label: 'Sun', word: 'Excellent', tone: 'good' },
-  { label: 'Shade & Heat', word: 'Poor', tone: 'poor' },
+  { label: 'Heat Risk', word: 'Poor', tone: 'poor' },
   { label: 'View', word: 'Fair', tone: 'avg' },
   { label: 'Privacy', word: 'Fair', tone: 'avg' },
-  { label: 'Wind', word: 'Fair', tone: 'avg' },
+  { label: 'Ventilation', word: 'Fair', tone: 'avg' },
 ];
 
 function ScoreCard({ accentVar, tag, name, blurb, score, grade, word, tone, example, dims }) {
@@ -117,7 +117,7 @@ export default function TwoScores() {
             accentVar="--ss"
             tag="ENGINE 2 · REAL SOLAR GEOMETRY"
             name="Home Comfort Score"
-            blurb="Rates the exact unit: sun, shade & heat, view, privacy, wind - modelled from the floor and facing you pick."
+            blurb="Rates the exact unit: sun, heat risk, view, privacy, ventilation - modelled from the floor and facing you pick."
             score={50}
             grade={null}
             word="Fair"
