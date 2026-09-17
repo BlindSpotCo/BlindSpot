@@ -480,8 +480,9 @@ export default function ReportScreen() {
       areaFactors: scores?.area?.factors,
       factorLabels: FACTOR_LABELS,
       unitSubScores: scores?.unit?.subScores,
+      facing,
     }),
-    [scores]
+    [scores, facing]
   );
 
   // Coordinates land at once so the map and the flat's half react
@@ -1258,16 +1259,17 @@ export default function ReportScreen() {
 
           {/* Outside bsr-half-detail on purpose -- stays visible whether
               the breakdown above is open or collapsed, same as the area
-              half's report link opposite it. */}
+              half's report link opposite it. Used to generate the sun &
+              shadow report directly from here -- before anyone had seen
+              the day animate over the actual block below, or had a chance
+              to nudge the pin/floor/facing first. That's backwards: you'd
+              get a report for whatever the defaults happened to be, not
+              what you'd actually looked at. This is a plain scroll down to
+              the map now (an anchor, not a report trigger -- see .bsr-more
+              a below), and the real "generate" action lives on the map's
+              own toolbar instead, next to the controls it reports on. */}
           <p className="bsr-more">
-            <button
-              type="button"
-              className="bsr-genlink"
-              disabled={!solar?.pathData}
-              onClick={() => setReportOpen('gallery')}
-            >
-              See the sun and shadow through the year →
-            </button>
+            <a href="#the-block">See the sun and shadow on the map ↓</a>
           </p>
         </section>
       </div>
@@ -1424,6 +1426,22 @@ export default function ReportScreen() {
               )}
               {assumed ? <span className="bsr-assumed">assumed</span> : null}
             </p>
+            {/* Generating the sun & shadow report used to be one click from
+                a button up top, before anyone had watched the day animate
+                over this exact block or nudged the pin to the right spot --
+                so the report could be built from a location/floor/facing
+                nobody had actually looked at yet. That link now just
+                scrolls here (see .bsr-genlink below); this is the real
+                "make the report" action, living where the thing it reports
+                on is actually visible. */}
+            <button
+              type="button"
+              className="bsr-mapbar-report"
+              disabled={!solar?.pathData}
+              onClick={() => setReportOpen('gallery')}
+            >
+              Get the sun &amp; shadow report →
+            </button>
             {locError ? <p className="bsr-locerror">{locError}</p> : null}
           </div>
         </div>

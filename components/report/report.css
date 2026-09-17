@@ -658,6 +658,20 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 .bsr-mapbar .bsr-play{ font-size:9.5px;min-height:24px;padding:0 7px;flex:none; }
 .bsr-mapbar .bsr-mapbar-time input[type=range]{ flex:none;width:60px;min-width:50px;height:24px;accent-color:var(--ss,#AF5F30); }
 .bsr-mapbar .bsr-clock{ font-size:10px;min-width:40px;flex:none; }
+/* Generating the report moved here from a link up top (see .bsr-more a
+   in the flat section) -- this is now the actual trigger, so it reads as
+   a real action (solid fill) rather than another quiet field in the row,
+   and sits after floor/faces/date since it reports on whatever those are
+   currently set to. Wraps onto its own line under the row above when the
+   toolbar is too narrow for it (same flex-wrap as everything else here). */
+.bsr-mapbar-report{
+  font-family:inherit;font-size:10px;font-weight:700;cursor:pointer;
+  min-height:26px;padding:0 9px;margin-top:5px;border-radius:4px;flex:none;
+  border:1px solid var(--ss,#AF5F30);
+  background:var(--ss,#AF5F30);color:#FFFDF8;
+}
+.bsr-mapbar-report:hover:not(:disabled){filter:brightness(.94)}
+.bsr-mapbar-report:disabled{opacity:.5;cursor:not-allowed}
 @media (min-width:768px){
   .bsr-mapbar{
     gap:5px 12px;
@@ -678,6 +692,7 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   .bsr-mapbar .bsr-play{ font-size:11px;min-height:27px;padding:0 10px; }
   .bsr-mapbar .bsr-mapbar-time input[type=range]{ width:90px;min-width:70px;height:27px; }
   .bsr-mapbar .bsr-clock{ font-size:11px;min-width:50px; }
+  .bsr-mapbar-report{ font-size:11.5px;min-height:29px;padding:0 12px; }
 }
 .bsr-locbar{
   display:flex;gap:6px;flex-wrap:wrap;align-items:center;
