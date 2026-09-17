@@ -1047,9 +1047,6 @@ export default function ReportScreen() {
                   button and an icon both doing the same thing. */}
               <p className="bsr-more">
                 <a href={`/neighbourhood-report/${area.pinCode}`} target="_blank">See the detailed area report →</a>
-                <span className="bsr-more-note">
-                  Every figure behind these, the schools by name and board, price band, and nearby localities compared.
-                </span>
               </p>
 
               <div className={`bsr-half-detail${halfOpen.area ? '' : ' is-collapsed'}`}>
@@ -1086,7 +1083,7 @@ export default function ReportScreen() {
               </ul>
 
               <p className="bsr-methodology-note">
-                Neighbourhood scores combine cited public-record data with a zone-level model, so nearby pincodes in the same zone can land close together or identical. Named school detail in the full report is the one part sourced locality by locality.
+                Scores use a zone-level model, so nearby pincodes can score identically. School names in the full report are the one part sourced locality by locality.
               </p>
               </div>
 
@@ -1215,12 +1212,8 @@ export default function ReportScreen() {
             </button>
             <span className="bsr-more-note">
               {!solar?.pathData
-                ? 'Waiting for the 3D map — this is built from photographs of it, so there is nothing to make until it loads. '
-                : ''}
-              The evidence behind the seven scores above: this block photographed at 12 points through
-              the year, 3 per season at 9am / noon / 3pm, each described, with the month-by-month
-              sunlight figures for this floor. About a minute, and the full report below then builds
-              on the same photographs instead of taking them again.
+                ? 'Waiting for the 3D map — this is built from photographs of it, so there is nothing to make until it loads.'
+                : 'Built from 12 photos of this block through the year.'}
             </span>
           </p>
 
