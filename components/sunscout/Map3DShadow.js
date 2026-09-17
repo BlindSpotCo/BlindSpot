@@ -69,7 +69,14 @@ html,body{background:var(--bg-2);overflow:hidden;}
 #map{width:100%;height:100vh;}
 .tbadge{position:absolute;top:14px;left:14px;z-index:25;background:rgba(255,253,248,0.94);border:1px solid var(--line);border-radius:var(--radius-md);padding:7px 14px;color:var(--ss);font-size:13px;font-weight:600;font-family:'Geist Mono',monospace;letter-spacing:.04em;pointer-events:none;}
 .hint{position:absolute;bottom:12px;left:14px;z-index:25;color:var(--text-mute);font-size:11px;pointer-events:none;font-family:'Geist Mono',monospace;background:rgba(255,253,248,.92);border:1px solid var(--line);padding:5px 14px;border-radius:20px;white-space:nowrap;}
-.tile-row{position:absolute;top:14px;left:14px;z-index:25;display:flex;gap:6px;}
+/* Was top:14px;left:14px -- the SAME corner the parent page's own
+   floating toolbar (search/floor/faces/date/report button, see
+   .bsr-mapbar in report.css) sits in now, at the same z-index range.
+   That outer toolbar is wider and taller than this iframe's internal
+   buttons, so it fully covers Street/Satellite here -- not removed,
+   just hidden underneath. Bottom-left, stacked just above .hint, is
+   clear on every side (view-controls/compass live top-right). */
+.tile-row{position:absolute;bottom:50px;left:14px;z-index:25;display:flex;gap:6px;}
 .tile-btn{background:rgba(255,253,248,.94);border:1px solid var(--line);color:var(--text-mute);font-size:13px;font-weight:600;font-family:'Geist Mono',monospace;padding:7px 16px;border-radius:var(--radius-md);cursor:pointer;}
 .tile-btn.on{border-color:var(--ss);color:var(--ss);background:rgba(175,95,48,.08);}
 .cb{background:var(--paper);border:1.5px solid var(--line);color:var(--text-mute);font-size:13px;font-weight:700;padding:7px 11px;border-radius:var(--radius-md);cursor:pointer;line-height:1;}
