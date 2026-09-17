@@ -534,7 +534,16 @@ document.getElementById('map').addEventListener('wheel', function(){
 const FACING_DIRS=['North','North-East','East','South-East','South','South-West','West','North-West'];
 function bearingToFacing(b){return FACING_DIRS[Math.round((((b%360)+360)%360)/45)%8];}
 function syncFacingReadout(){try{document.getElementById('facing-readout').textContent='Facing: '+bearingToFacing(curRot);}catch(e){}}
-map.on('rotate',function(){try{curRot=((map.getRotation()%360)+360)%360;document.getElementById('cmp').style.transform='rotate('+curRot+'deg)';syncFacingReadout();drawArc();}catch(e){}});
+// Was 'rotate('+curRot+'deg)' -- pre-existing bug, unrelated to the
+// facing feature above but exposed by it: the sun-arc math (theta=
+// (az-curRot), same file, further up) already establishes that a bearing
+// b sits at clockwise-from-top offset (b-curRot), so North (b=0) belongs
+// at offset -curRot, not +curRot. Rotating the compass dial by +curRot
+// span it exactly backwards -- e.g. at curRot=270 (West at the top,
+// confirmed independently by the sunset marker rendering at the top of
+// the screen) the dial showed N on the wrong side, which is what made a
+// correct "Facing: West" look wrong at a glance.
+map.on('rotate',function(){try{curRot=((map.getRotation()%360)+360)%360;document.getElementById('cmp').style.transform='rotate('+(-curRot)+'deg)';syncFacingReadout();drawArc();}catch(e){}});
 map.on('tilt',function(){try{var t=map.getTilt();if(t!=null)curTilt=t;drawArc();}catch(e){}});
 
 // The map's own 'resize' event (fired when its container's dimensions
@@ -554,7 +563,7 @@ function _reassertCamera(){
     try{
       map.setRotation(curRot);
       map.setTilt(curTilt);
-      document.getElementById('cmp').style.transform='rotate('+curRot+'deg)';
+      document.getElementById('cmp').style.transform='rotate('+(-curRot)+'deg)';
       syncFacingReadout();
       drawArc();
       saveCamera();
@@ -565,7 +574,7 @@ map.on('resize',_reassertCamera);
 window.addEventListener('resize',_reassertCamera);
 window.addEventListener('orientationchange',_reassertCamera);
 
-function aR(d){curRot=(curRot+d+360)%360;map.setRotation(curRot);document.getElementById('cmp').style.transform='rotate('+curRot+'deg)';syncFacingReadout();drawArc();saveCamera();}
+function aR(d){curRot=(curRot+d+360)%360;map.setRotation(curRot);document.getElementById('cmp').style.transform='rotate('+(-curRot)+'deg)';syncFacingReadout();drawArc();saveCamera();}
 function aT(d){curTilt=Math.max(0,Math.min(70,curTilt+d));map.setTilt(curTilt);drawArc();saveCamera();}
 function rst(){curRot=0;curTilt=0;map.setRotation(0);map.setTilt(0);document.getElementById('cmp').style.transform='rotate(0deg)';syncFacingReadout();drawArc();saveCamera();}
 document.getElementById('btn-up').onclick=function(){aT(-10);};
