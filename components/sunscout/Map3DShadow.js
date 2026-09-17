@@ -9,7 +9,7 @@ import { useEffect, useMemo, useRef } from 'react';
 // Diagnostics for the parent<->iframe handshake. On in dev, silent in
 // production: this channel is invisible when it breaks, and a failure in it
 // looks exactly like a map that never loaded.
-export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTimes, animating, onLocationSelect, onFacingSelect, onScreenshot, onReady, onStatus, debug }) {
+export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTimes, animating, onLocationSelect, onScreenshot, onReady, onStatus, debug }) {
   // Diagnostics for the parent<->iframe handshake. Dev by default, and
   // switchable on in a production build (?debug=1): when this channel
   // breaks it is completely invisible, and a break in it looks exactly
@@ -100,7 +100,7 @@ html,body{background:var(--bg-2);overflow:hidden;}
   </div>
   <div class="hint">Tap to move pin · drag to look around</div>
   <div class="view-controls" style="position:absolute;top:14px;right:14px;z-index:25;display:flex;flex-direction:column;gap:5px;align-items:center;background:rgba(255,253,248,0.97);border:1px solid var(--line);border-radius:var(--radius-md);padding:10px 9px;box-shadow:0 2px 12px rgba(28,24,18,0.08);">
-    <div style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;white-space:nowrap;line-height:1.4;text-align:center;">Set view angle<br/><span style="font-size:10.5px;font-weight:500;color:var(--text-mute);text-transform:none;letter-spacing:0;opacity:0.85;">turn to your balcony</span></div>
+    <div style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;white-space:nowrap;line-height:1.4;text-align:center;">Set view angle<br/><span style="font-size:10.5px;font-weight:500;color:var(--text-mute);text-transform:none;letter-spacing:0;opacity:0.85;">e.g. balcony view</span></div>
     <button class="cb" id="btn-up">▲</button>
     <div style="display:flex;gap:4px;">
       <button class="cb" id="btn-left">◀</button>
@@ -108,24 +108,8 @@ html,body{background:var(--bg-2);overflow:hidden;}
       <button class="cb" id="btn-right">▶</button>
     </div>
     <button class="cb" id="btn-down">▼</button>
-    <!-- Reads curRot (the map's OWN rotation) as a real compass bearing --
-         it's already true-north-referenced, see the theta=(az-curRot) sun
-         projection above. So whatever's at the TOP of the screen right now
-         IS the bearing curRot points to. Rotate until that's the direction
-         your balcony/main window opens onto, then confirm: this turns "set
-         the facing" from a guess in a dropdown into reading it off the
-         actual view. facing-readout updates live as you drag/rotate (see
-         syncFacingReadout, called from every place curRot changes); the
-         button posts it to the parent page only when tapped, so just
-         looking around never silently changes the saved facing. -->
-    <div id="facing-readout" style="margin-top:2px;font-family:'Geist Mono',monospace;font-size:11px;font-weight:700;color:var(--ss);text-align:center;white-space:nowrap;">Facing: North</div>
-    <button id="btn-set-facing" style="margin-top:2px;background:var(--ss);color:#FFFDF8;border:1.5px solid var(--ss);font-size:10.5px;font-weight:700;padding:6px 10px;border-radius:var(--radius-md);cursor:pointer;font-family:inherit;white-space:nowrap;">Use as facing ↓</button>
   </div>
-  <!-- Was top:192px -- the view-controls panel above grew two rows taller
-       (facing-readout + the confirm button), so the compass, positioned
-       independently rather than inside that panel, needed to move down by
-       the same amount to stay clear of it instead of overlapping. -->
-  <div style="position:absolute;top:240px;right:20px;z-index:25;width:38px;height:38px;pointer-events:none;background:rgba(255,253,248,.94);border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+  <div style="position:absolute;top:192px;right:20px;z-index:25;width:38px;height:38px;pointer-events:none;background:rgba(255,253,248,.94);border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;">
     <svg id="cmp" width="30" height="30" viewBox="-20 -20 40 40" style="transition:transform .2s;">
       <polygon points="0,-12 3,0 0,3 -3,0" fill="#AF5F30"/>
       <polygon points="0,12 3,0 0,-3 -3,0" fill="#5A5140"/>
@@ -525,25 +509,7 @@ document.getElementById('map').addEventListener('wheel', function(){
   }, 300);
 }, {passive:true});
 
-// curRot=0 is true north (the sun's real astronomical azimuth is placed on
-// screen via theta=(az-curRot), which only lines up if that holds) -- so
-// whatever compass point is at the TOP of the screen right now IS curRot
-// itself, in real degrees. bearingToFacing snaps that to the same 8-point
-// labels the Faces dropdown uses (see FACING_HEAT_MULTIPLIER/FACING_TIME_OF_DAY
-// in shadeHeatScore.js -- these strings have to match those exactly).
-const FACING_DIRS=['North','North-East','East','South-East','South','South-West','West','North-West'];
-function bearingToFacing(b){return FACING_DIRS[Math.round((((b%360)+360)%360)/45)%8];}
-function syncFacingReadout(){try{document.getElementById('facing-readout').textContent='Facing: '+bearingToFacing(curRot);}catch(e){}}
-// Was 'rotate('+curRot+'deg)' -- pre-existing bug, unrelated to the
-// facing feature above but exposed by it: the sun-arc math (theta=
-// (az-curRot), same file, further up) already establishes that a bearing
-// b sits at clockwise-from-top offset (b-curRot), so North (b=0) belongs
-// at offset -curRot, not +curRot. Rotating the compass dial by +curRot
-// span it exactly backwards -- e.g. at curRot=270 (West at the top,
-// confirmed independently by the sunset marker rendering at the top of
-// the screen) the dial showed N on the wrong side, which is what made a
-// correct "Facing: West" look wrong at a glance.
-map.on('rotate',function(){try{curRot=((map.getRotation()%360)+360)%360;document.getElementById('cmp').style.transform='rotate('+(-curRot)+'deg)';syncFacingReadout();drawArc();}catch(e){}});
+map.on('rotate',function(){try{curRot=((map.getRotation()%360)+360)%360;document.getElementById('cmp').style.transform='rotate('+curRot+'deg)';drawArc();}catch(e){}});
 map.on('tilt',function(){try{var t=map.getTilt();if(t!=null)curTilt=t;drawArc();}catch(e){}});
 
 // The map's own 'resize' event (fired when its container's dimensions
@@ -563,8 +529,7 @@ function _reassertCamera(){
     try{
       map.setRotation(curRot);
       map.setTilt(curTilt);
-      document.getElementById('cmp').style.transform='rotate('+(-curRot)+'deg)';
-      syncFacingReadout();
+      document.getElementById('cmp').style.transform='rotate('+curRot+'deg)';
       drawArc();
       saveCamera();
     }catch(e){}
@@ -574,28 +539,14 @@ map.on('resize',_reassertCamera);
 window.addEventListener('resize',_reassertCamera);
 window.addEventListener('orientationchange',_reassertCamera);
 
-function aR(d){curRot=(curRot+d+360)%360;map.setRotation(curRot);document.getElementById('cmp').style.transform='rotate('+(-curRot)+'deg)';syncFacingReadout();drawArc();saveCamera();}
+function aR(d){curRot=(curRot+d+360)%360;map.setRotation(curRot);document.getElementById('cmp').style.transform='rotate('+curRot+'deg)';drawArc();saveCamera();}
 function aT(d){curTilt=Math.max(0,Math.min(70,curTilt+d));map.setTilt(curTilt);drawArc();saveCamera();}
-function rst(){curRot=0;curTilt=0;map.setRotation(0);map.setTilt(0);document.getElementById('cmp').style.transform='rotate(0deg)';syncFacingReadout();drawArc();saveCamera();}
+function rst(){curRot=0;curTilt=0;map.setRotation(0);map.setTilt(0);document.getElementById('cmp').style.transform='rotate(0deg)';drawArc();saveCamera();}
 document.getElementById('btn-up').onclick=function(){aT(-10);};
 document.getElementById('btn-down').onclick=function(){aT(10);};
 document.getElementById('btn-left').onclick=function(){aR(-15);};
 document.getElementById('btn-right').onclick=function(){aR(15);};
 document.getElementById('btn-n').onclick=function(){rst();};
-syncFacingReadout();
-// Only fires on tap, never on drag/rotate alone -- see the comment on the
-// button's markup above. Sends both the label (what actually gets used)
-// and the raw bearing (useful for debugging/logging), and gives the
-// button itself a moment of "✓ Saved" feedback so a tap outside the map's
-// own message channel still feels like it did something.
-document.getElementById('btn-set-facing').onclick=function(){
-  var f=bearingToFacing(curRot);
-  window.parent.postMessage({type:'map3d_setFacing',facing:f,bearing:curRot},'*');
-  var btn=document.getElementById('btn-set-facing');
-  var prev=btn.textContent;
-  btn.textContent='✓ Set to '+f;
-  setTimeout(function(){btn.textContent=prev;},1400);
-};
 
 var ai=${startIdx},isAnimating=${animating?'true':'false'};
 // Smooth animation: the old version snapped straight from one path point to
@@ -671,11 +622,6 @@ notifyParent('map3d_ready');
       // capture -- and a report is meant to be evidence.
       if (iframeRef.current && e.source !== iframeRef.current.contentWindow) return;
       if(e.data?.type==='map3d_click' && onLocationSelect) onLocationSelect(e.data.lat, e.data.lon);
-      // "Use as facing" in the view-controls panel -- e.data.facing is
-      // already snapped to one of the 8 labels the Faces dropdown uses
-      // (see bearingToFacing in the srcDoc script), so this can go
-      // straight into the same setFacing the dropdown calls.
-      if(e.data?.type==='map3d_setFacing' && onFacingSelect) onFacingSelect(e.data.facing, e.data.bearing);
       if(e.data?.type==='screenshotReady' && onScreenshot) onScreenshot(e.data.label, e.data.data);
       // Real readiness/failure, reported by the iframe document itself
       // rather than guessed from this component's mount -- see the
@@ -691,7 +637,7 @@ notifyParent('map3d_ready');
     if (DEBUG) console.log('[map3d] parent listening; iframe el:', !!iframeRef.current,
       'contentWindow:', !!iframeRef.current?.contentWindow);
     return () => window.removeEventListener('message', handler);
-  }, [onLocationSelect, onFacingSelect, onScreenshot, onStatus, DEBUG]);
+  }, [onLocationSelect, onScreenshot, onStatus, DEBUG]);
 
   // A new srcDoc is a whole new document: it has to announce itself again
   // before anything may be posted into it. Without this, moving the pin

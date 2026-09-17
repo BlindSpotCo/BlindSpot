@@ -1301,14 +1301,6 @@ export default function ReportScreen() {
               sunTimes={solar.sunTimes}
               animating={animating}
               onLocationSelect={onMapClick}
-              // "Use as facing" on the map's own view-controls panel --
-              // reads whatever the user rotated the view to, snapped to
-              // the nearest of the 8 compass labels, and feeds it into
-              // the exact same state the Faces dropdown sets. So this is
-              // an alternate way to fill facing, not a separate value --
-              // the dropdown (both copies, unitgate + map toolbar) picks
-              // it up immediately since they're all just `facing`.
-              onFacingSelect={(f) => { setAssumed(false); setFacing(f); }}
               onReady={capture.onReady}
               onScreenshot={capture.onScreenshot}
               onStatus={capture.onStatus}
