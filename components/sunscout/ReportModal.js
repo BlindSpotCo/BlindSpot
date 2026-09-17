@@ -416,12 +416,20 @@ export default function ReportModal({
                 fontSize:12.5, color:SUB, lineHeight:1.7, marginBottom:22, textAlign:'left',
                 borderTop:`1px solid ${LINE}`, borderBottom:`1px solid ${LINE}`, padding:'11px 2px',
               }}>
+                {/* galleryOnly is the only run where "images"/"frames" refers
+                    to what's on the page the user is about to open -- the
+                    full/combined report has no images embedded in it at all
+                    (see the __GALLERY_URL__ comment in report/pdf/route.js);
+                    its 12 map frames live one click away, in the linked sun
+                    & shadow gallery. Saying just "images" there read as a
+                    claim about a report that visibly has none, so this
+                    names where they actually are for that case. */}
                 {[
                   shortfall?.frames > 0
-                    ? `${SHOTS.length - shortfall.frames} of ${SHOTS.length} map frames came back.`
+                    ? `${SHOTS.length - shortfall.frames} of ${SHOTS.length} map frames came back${galleryOnly ? '' : ' (in the linked sun & shadow gallery)'}.`
                     : null,
                   shortfall?.captions > 0
-                    ? `${shortfall.captions} ${shortfall.captions === 1 ? 'image has' : 'images have'} no written description.`
+                    ? `${shortfall.captions} ${shortfall.captions === 1 ? 'image has' : 'images have'} no written description${galleryOnly ? '' : ' (in the linked sun & shadow gallery)'}.`
                     : null,
                   shortfall?.table ? 'The monthly sunlight table couldn’t be worked out for this pin.' : null,
                   aiNotice && !shortfall?.captions ? 'The written sections didn’t come back this time.' : null,

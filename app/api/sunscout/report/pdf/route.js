@@ -456,28 +456,68 @@ export async function POST(req) {
     </div>` : ''}
   ` : '';
 
-  // Simple bar chart for the main report -- the full numeric table (above)
-  // now lives in the gallery/appendix only, so the main report stays quick
-  // to read: one glance at the shape of the year instead of a 12-row table.
-  // Pure CSS (flex + divs), no chart library, so it renders identically in
-  // the browser and in html2canvas for the PDF export.
+  // Line chart, not bars, for the main report -- the full numeric table
+  // (above) now lives in the gallery/appendix only, so the main report
+  // stays quick to read: one glance at the shape of the year instead of a
+  // 12-row table.
+  //
+  // Was a bar chart scaled 0-to-max, which made every month read as
+  // "basically full" -- usable-sun-hours varies by design over a narrow
+  // band (a good vs. a bad month here is ~5.0h vs ~5.7h, ~12%), and a bar's
+  // length only means anything measured from a shared zero baseline, so
+  // that real 12% swing rendered as bars all sitting at 88-100% height --
+  // visually flat even though the underlying number was moving. Switching
+  // to months-as-a-trend was the actual fix: this is a single-series
+  // value changing across a continuous axis (a month sequence), which is
+  // a line/area's job, not a bar's -- and unlike a bar, a line's vertical
+  // position isn't read as "proportion of a zero baseline," so scoping the
+  // y-domain tightly around the real min/max (instead of forcing it down
+  // to 0) is honest here, not misleading, and is what actually makes the
+  // May-July peak and Dec-Jan dip visible. (A log scale, which was asked
+  // about, doesn't fix this at all -- these values span one order of
+  // magnitude, not several, so a log axis would barely move the bars; the
+  // problem was never the scale's shape, it was the 0-baseline the bar
+  // form forces.)
+  //
+  // Inline SVG rather than CSS bars -- html2canvas 1.4.1 (loaded below for
+  // the PDF export) rasterizes plain SVG shapes (line/path/circle/text)
+  // fine, so this renders identically in the browser and in the export.
   const sunBarChart = summary?.monthlySummary ? (() => {
     const months = summary.monthlySummary;
-    const max = Math.max(...months.map(m => m.usableHours), 1);
-    const bars = months.map(m => {
-      const pct = m.usableHours > 0 ? Math.max(4, Math.round((m.usableHours / max) * 100)) : 2;
-      return `
-        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:90px;">
-          <div style="font-size:9.5px;color:${DIM};margin-bottom:4px;">${m.usableHours > 0 ? m.usableHours.toFixed(1) + 'h' : ''}</div>
-          <div style="width:65%;height:${pct}%;background:${m.usableHours > 0 ? SUN : LINE};min-height:2px;"></div>
-        </div>`;
-    }).join('');
-    const labels = months.map(m => `<div style="flex:1;text-align:center;font-size:9.5px;color:${DIM};">${m.month.slice(0,3)}</div>`).join('');
+    const hours = months.map(m => m.usableHours);
+    const dataMin = Math.min(...hours), dataMax = Math.max(...hours);
+    // Padding the domain (rather than running it exactly min-to-max) keeps
+    // the line off the very top/bottom edge and keeps a flat month from
+    // ever reading as "zero" -- a fixed 0.4h floor on the pad so a
+    // near-flat year (small dataMax-dataMin) doesn't re-introduce the same
+    // "everything looks the same" problem this chart is fixing.
+    const pad = Math.max((dataMax - dataMin) * 0.25, 0.4);
+    const yMin = Math.max(0, dataMin - pad), yMax = dataMax + pad;
+    const W = 720, H = 130, L = 4, R = 4, T = 22, B = 20;
+    const plotW = W - L - R, plotH = H - T - B;
+    const x = (i) => L + (months.length === 1 ? plotW / 2 : (i / (months.length - 1)) * plotW);
+    const y = (v) => T + plotH - ((v - yMin) / (yMax - yMin)) * plotH;
+    const pts = months.map((m, i) => [x(i), y(m.usableHours)]);
+    const linePath = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+    const areaPath = `${linePath} L${pts[pts.length - 1][0].toFixed(1)},${(T + plotH).toFixed(1)} L${pts[0][0].toFixed(1)},${(T + plotH).toFixed(1)} Z`;
+    // Direct-labeling every point (not just peak/trough) is deliberate here,
+    // not the usual "selective labels" default -- this chart doubles as the
+    // only place in the main report these 12 numbers appear (the full table
+    // moved to the appendix), so the labels ARE the data, not decoration.
+    const valueLabels = pts.map((p, i) => `<text x="${p[0].toFixed(1)}" y="${(p[1] - 8).toFixed(1)}" text-anchor="middle" font-size="9.5" fill="${DIM}">${months[i].usableHours.toFixed(1)}h</text>`).join('');
+    const dots = pts.map(p => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.6" fill="${SUN}"/>`).join('');
+    const monthLabels = months.map((m, i) => `<text x="${x(i).toFixed(1)}" y="${H - 4}" text-anchor="middle" font-size="9.5" fill="${DIM}">${m.month.slice(0,3)}</text>`).join('');
     return `
       <div style="margin:10px 0 12px;">
         <div style="font-size:11.5px;font-weight:700;color:${INK};margin-bottom:6px;">Usable sun hours by month</div>
-        <div style="display:flex;align-items:flex-end;gap:3px;">${bars}</div>
-        <div style="display:flex;gap:3px;border-top:1px solid ${LINE};padding-top:6px;margin-top:4px;">${labels}</div>
+        <svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="display:block;overflow:visible;">
+          <line x1="${L}" y1="${T + plotH}" x2="${W - R}" y2="${T + plotH}" stroke="${LINE}" stroke-width="1"/>
+          <path d="${areaPath}" fill="${SUN}" fill-opacity="0.1" stroke="none"/>
+          <path d="${linePath}" fill="none" stroke="${SUN}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+          ${dots}
+          ${valueLabels}
+          ${monthLabels}
+        </svg>
       </div>`;
   })() : '';
 
@@ -764,10 +804,17 @@ export async function POST(req) {
 <body>
   <div class="no-print" style="position:fixed;top:20px;right:20px;z-index:100;display:flex;gap:10px;align-items:center;">
     <span id="pdf-status" style="font-size:12px;color:${DIM};max-width:260px;text-align:right;"></span>
+    <!-- Was two buttons here: this one and a plain onclick="window.close()"
+         "Close" beside Download PDF. That second one was never anything
+         but a worse copy of this one -- back-to-sunscout-btn ALSO closes
+         the tab (see its listener below), it just tries window.opener.focus()
+         first when this report opened from the BlindSpot tab, which is the
+         common case and strictly better than closing blind. Two buttons
+         both labeled "close" that do almost the same thing read as a
+         mistake, not a choice, so the redundant one is gone. -->
     <button id="back-to-sunscout-btn" style="background:#fff;color:${WINE};border:1px solid ${WINE};padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;">← Close</button>
     <button id="print-btn" style="background:${CARD};color:${MUTE};border:1px solid ${LINE};padding:10px 16px;font-size:13px;cursor:pointer;">Print</button>
     <button id="download-pdf-btn" style="background:${GRADIENT};color:#fff;border:none;padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(107,36,48,0.3);display:inline-flex;align-items:center;gap:7px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg>Download PDF</button>
-    <button onclick="window.close()" style="background:${CARD};color:${MUTE};border:1px solid ${LINE};padding:10px 18px;font-size:14px;cursor:pointer;">Close</button>
   </div>
 
   <div id="report-root" style="max-width:900px;margin:0 auto;background:#fff;">
