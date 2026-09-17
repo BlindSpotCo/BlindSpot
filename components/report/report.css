@@ -426,19 +426,21 @@
   padding:4px 9px;border-radius:3px;
 }
 .bsr-visit{
-  margin-top:24px;padding-top:20px;
+  margin-top:16px;padding-top:14px;
   border-top:1px solid var(--line-soft,rgba(28,24,18,.1));
 }
 .bsr-visit h2{font-size:20px;font-weight:700}
-.bsr-visit-lede{margin-top:4px;color:var(--text-mute,#5A5140);max-width:72ch;font-size:14px}
-.bsr-todo{list-style:none;margin:12px 0 0;padding:0}
+.bsr-visit-lede{margin-top:2px;color:var(--text-mute,#5A5140);max-width:72ch;font-size:13px}
+.bsr-todo{list-style:none;margin:6px 0 0;padding:0}
 .bsr-todo li{border-top:1px solid var(--line-soft,rgba(28,24,18,.08))}
-.bsr-todo-plain{display:flex;gap:12px;padding:10px 0}
+.bsr-todo-plain{display:flex;gap:12px;padding:7px 0}
 
-/* The whole row is the target, not the 22px square -- this list gets used
-   one-handed while walking around a flat. */
+/* The whole row is the target, not the 20px square -- this list gets used
+   one-handed while walking around a flat. Padding thinned to match the
+   rest of the page's tighter density -- was 9px/8px/6px, over five items
+   that's the same "too much air" issue the map toolbar had. */
 .bsr-todo-row{
-  display:flex;gap:12px;padding:9px 8px 6px 0;cursor:pointer;
+  display:flex;gap:10px;padding:6px 8px 4px 0;cursor:pointer;
   border-radius:4px;
 }
 .bsr-todo-row:hover{background:color-mix(in srgb, var(--brand,#3D4116) 5%, transparent)}
@@ -446,13 +448,13 @@
 
 .bsr-box{
   appearance:none;-webkit-appearance:none;
-  flex:none;width:20px;height:20px;margin:2px 0 0;border-radius:4px;
+  flex:none;width:18px;height:18px;margin:2px 0 0;border-radius:4px;
   border:1.5px solid var(--brand,#7A2E43);background:color-mix(in srgb, var(--brand,#3D4116) 8%, transparent);
   cursor:pointer;display:grid;place-content:center;
   transition:background .12s ease,border-color .12s ease;
 }
 .bsr-box::after{
-  content:"";width:11px;height:6px;margin-top:-3px;
+  content:"";width:10px;height:5px;margin-top:-2px;
   border-left:2.5px solid #FFFDF8;border-bottom:2.5px solid #FFFDF8;
   transform:rotate(-45deg) scale(0);transition:transform .12s ease;
 }
@@ -460,17 +462,17 @@
 .bsr-box:checked::after{transform:rotate(-45deg) scale(1)}
 
 .bsr-todo-body{min-width:0}
-.bsr-todo-title{display:block;font-size:15px;font-weight:700;margin-bottom:1px}
-.bsr-todo-text{display:block;font-size:14px;line-height:1.45;color:var(--text-mute,#5A5140)}
+.bsr-todo-title{display:block;font-size:14px;font-weight:700;margin-bottom:0}
+.bsr-todo-text{display:block;font-size:13px;line-height:1.35;color:var(--text-mute,#5A5140)}
 
-/* Indented to sit under the label text, not the checkbox (22px box + 16px
-   gap = 38px) -- both are outside the <label> (see the JSX comment), and
+/* Indented to sit under the label text, not the checkbox (18px box + 10px
+   gap = 28px) -- both are outside the <label> (see the JSX comment), and
    both are collapsed by default: a box for every item, all empty, is what
    read as a repeated wall in the first place. Only a ticked item, one
    already holding a note, or "+ Add a note" itself shows the textarea. */
 .bsr-todo-addnote{
-  display:block;margin:0 0 8px 32px;padding:0;
-  font:inherit;font-size:12.5px;font-weight:600;color:var(--text-dim,#847C70);
+  display:block;margin:0 0 5px 28px;padding:0;
+  font:inherit;font-size:12px;font-weight:600;color:var(--text-dim,#847C70);
   background:none;border:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px;
   text-decoration-style:dotted;
 }
@@ -483,17 +485,17 @@
 
 /* Sits below the label, deliberately outside it -- see the JSX comment.
    Only rendered once relevant (see showNote above), indented to the same
-   38px as .bsr-todo-addnote so the two read as one slot that's either a
+   28px as .bsr-todo-addnote so the two read as one slot that's either a
    quiet link or an open field, never both at once. Still a dashed outline
    until it actually holds text, same reasoning as before -- it just no
    longer has five empty siblings doing the same thing at once. */
 .bsr-todo-notewrap{
-  display:block;position:relative;width:calc(100% - 32px);margin:0 0 8px 32px;
+  display:block;position:relative;width:calc(100% - 28px);margin:0 0 5px 28px;
 }
 .bsr-todo-note{
   display:block;width:100%;box-sizing:border-box;resize:vertical;
-  padding:8px 30px 8px 10px;
-  font:inherit;font-size:14.5px;line-height:1.5;color:var(--text,#1C1812);
+  padding:6px 28px 6px 9px;
+  font:inherit;font-size:13.5px;line-height:1.4;color:var(--text,#1C1812);
   background:transparent;
   border:1px dashed var(--line-soft,rgba(28,24,18,.18));border-radius:4px;
   transition:background .12s ease,border-color .12s ease;
@@ -513,15 +515,15 @@
    kept (see collapseNote in ReportScreen.js), only the field's visibility
    changes. */
 .bsr-todo-notehide{
-  position:absolute;top:6px;right:6px;z-index:1;
-  width:20px;height:20px;display:flex;align-items:center;justify-content:center;
+  position:absolute;top:4px;right:4px;z-index:1;
+  width:18px;height:18px;display:flex;align-items:center;justify-content:center;
   padding:0;border:0;border-radius:50%;cursor:pointer;
   background:var(--bg-2,#F1E9DA);color:var(--text-mute,#5A5140);
 }
 .bsr-todo-notehide:hover{background:var(--line-soft,rgba(28,24,18,.14));color:var(--text,#1C1812)}
 
 .bsr-todo-count{
-  margin-top:8px;font-size:13.5px;color:var(--text-mute,#5A5140);
+  margin-top:6px;font-size:13px;color:var(--text-mute,#5A5140);
 }
 .bsr-todo-count button{
   font:inherit;font-weight:600;background:none;border:0;padding:0;cursor:pointer;
