@@ -961,7 +961,6 @@ export default function ReportScreen() {
 
       {/* ---------- the answer, before anything else ---------- */}
       <section className={`bsr-answer is-${topTone}`} id="the-score" aria-live="polite">
-        <a href="#the-visit" className="bsr-card-zoom" aria-label="Jump to what to check before you decide">🔍</a>
         <p className="bsr-big">
           {/* Names what the number actually is before you see the number
               itself -- a bare "72 out of 100" with no label doesn't say
@@ -995,17 +994,10 @@ export default function ReportScreen() {
 
       </section>
 
+      <div className="bsr-halves">
+
         {/* ================= THE AREA ================= */}
         <section className="bsr-half bsr-area">
-          <button
-            type="button"
-            className="bsr-card-zoom"
-            aria-label={halfOpen.area ? 'Collapse the area breakdown' : 'Expand the area breakdown'}
-            aria-expanded={halfOpen.area}
-            onClick={() => toggleHalf('area')}
-          >
-            🔍
-          </button>
           <p className="bsr-kicker">The area around it</p>
           <h2>{hasArea ? area.name : 'This locality'}</h2>
           <p className="bsr-sub">
@@ -1039,15 +1031,21 @@ export default function ReportScreen() {
                 <span className="bsr-outof">{area.score} out of 100 · grade {area.grade}</span>
               </p>
 
-              {/* Right under the score, not after the breakdown -- this is
-                  the one link most people actually want, and it shouldn't
-                  take opening (or closing) the row-by-row detail to reach
-                  it. The magnifying glass in the corner is the only way to
-                  open that detail now -- one control per card, not a text
-                  button and an icon both doing the same thing. */}
-              <p className="bsr-more">
-                <a href={`/neighbourhood-report/${area.pinCode}`} target="_blank">See the detailed area report →</a>
-              </p>
+              {/* Collapsed to the rating above by default at every width --
+                  the factor-by-factor breakdown and the methodology note
+                  are one tap away instead of a wall of rows nobody reads
+                  top to bottom. The "see detailed report" link just below
+                  stays outside this toggle (see bsr-more after the closing
+                  div) so it's never hidden by a collapsed state. */}
+              <button
+                type="button"
+                className="bsr-half-toggle"
+                aria-expanded={halfOpen.area}
+                onClick={() => toggleHalf('area')}
+              >
+                <span className={`bsr-half-toggle-chevron${halfOpen.area ? ' is-open' : ''}`} aria-hidden="true">▾</span>
+                {halfOpen.area ? 'Show less' : 'Show the full breakdown'}
+              </button>
 
               <div className={`bsr-half-detail${halfOpen.area ? '' : ' is-collapsed'}`}>
               <ul className="bsr-rows">
@@ -1134,15 +1132,6 @@ export default function ReportScreen() {
 
         {/* ================= THE FLAT ================= */}
         <section className="bsr-half bsr-unit" id="the-flat" ref={unitRef}>
-          <button
-            type="button"
-            className="bsr-card-zoom"
-            aria-label={halfOpen.unit ? 'Collapse the flat breakdown' : 'Expand the flat breakdown'}
-            aria-expanded={halfOpen.unit}
-            onClick={() => toggleHalf('unit')}
-          >
-            🔍
-          </button>
           <p className="bsr-kicker">The flat itself</p>
 
           {/* Used to be an h2 ("34th floor, faces east") sitting directly
@@ -1197,25 +1186,21 @@ export default function ReportScreen() {
             {busy ? <span className="bsr-busy">recalculating…</span> : null}
           </p>
 
-          {/* Right under the score, not after the breakdown -- same
-              reasoning as the area card opposite it. The corner
-              magnifying glass is the only way into the sub-score detail
-              now, not a second text button doing the same thing. */}
-          <p className="bsr-more">
-            <button
-              type="button"
-              className="bsr-genlink"
-              disabled={!solar?.pathData}
-              onClick={() => setReportOpen('gallery')}
-            >
-              See the sun and shadow through the year →
-            </button>
-            <span className="bsr-more-note">
-              {!solar?.pathData
-                ? 'Waiting for the 3D map — this is built from photographs of it, so there is nothing to make until it loads.'
-                : 'Built from 12 photos of this block through the year.'}
-            </span>
-          </p>
+          {/* Same collapse-at-every-width pattern as "the area" above --
+              the sub-score breakdown is one tap away. Floor/facing inputs
+              and the rating stay outside this, above -- they're the
+              actionable part, not detail to hide. The "see the sun and
+              shadow" link stays outside the toggle too (below the closing
+              div) so collapsing this never hides it. */}
+          <button
+            type="button"
+            className="bsr-half-toggle"
+            aria-expanded={halfOpen.unit}
+            onClick={() => toggleHalf('unit')}
+          >
+            <span className={`bsr-half-toggle-chevron${halfOpen.unit ? ' is-open' : ''}`} aria-hidden="true">▾</span>
+            {halfOpen.unit ? 'Show less' : 'Show the full breakdown'}
+          </button>
 
           <div className={`bsr-half-detail${halfOpen.unit ? '' : ' is-collapsed'}`}>
           {/* The seven scores below are computed off the 3D model further
@@ -1288,7 +1273,6 @@ export default function ReportScreen() {
           </p>
         </section>
       </div>
-
       {/* ---------- the map, full width ----------
           It lived inside the flat's card until the card's ~500px made
           Map3DShadow hide its own view-angle pad (its stylesheet drops
