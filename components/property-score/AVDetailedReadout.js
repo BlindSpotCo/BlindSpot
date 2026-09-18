@@ -24,29 +24,21 @@ import { FACTOR_LABELS } from '@/lib/property-score/ui';
 import { sourceFor } from '@/lib/aslivastu/cityMeta';
 import FieldFeedback from '@/components/shared/FieldFeedback';
 
-// `dark` flips a box to the near-black ink card used for the Sheet
-// identity / Composite Index / Dimension readout boxes -- requested
-// because the default `var(--paper)` fill read as barely-there-whiter
-// than the page's own `var(--bg)`, not as a deliberate surface. Border
-// and corner marks switch to white-tinted so they stay visible against
-// `var(--ink)` instead of disappearing (the default olive border/marks
-// are tuned for contrast on paper, not on ink).
-export function BPF({ children, style, className = '', dark = false }) {
-  const surface = dark
-    ? { background: 'var(--ink)', border: '1px solid rgba(255,253,248,0.16)' }
-    : { background: 'var(--paper)', border: '1px solid color-mix(in srgb, var(--slate) 55%, transparent)' };
+// Used to render a bordered "blueprint frame" box (hairline border + 4
+// corner "+" survey marks) around every section of this page -- exactly
+// the boxed "spec sheet" look the main report page (components/report)
+// never had. Flattened to a plain passthrough wrapper on request, so
+// every section that used to render inside one of these now sits flush
+// on the page background instead, separated by whitespace like the main
+// report's rows. Kept as a named component (rather than deleting it and
+// swapping every call site for a bare <div>) so a future section can
+// still opt back into a boxed treatment in one place if it ever needs to.
+export function BPF({ children, style, className = '' }) {
   return (
-    <div className={`bpf-av ${className}`} style={{ position: 'relative', ...surface, ...style }}>
-      <span style={bpfMark('tl', dark)}>+</span><span style={bpfMark('tr', dark)}>+</span>
-      <span style={bpfMark('bl', dark)}>+</span><span style={bpfMark('br', dark)}>+</span>
+    <div className={`bpf-av ${className}`} style={{ position: 'relative', ...style }}>
       {children}
     </div>
   );
-}
-function bpfMark(pos, dark = false) {
-  const base = { position: 'absolute', color: dark ? 'rgba(255,253,248,0.55)' : 'var(--slate)', fontSize: 13, lineHeight: 1, opacity: .5 };
-  const offsets = { tl: { top: -7, left: -5 }, tr: { top: -7, right: -5 }, bl: { bottom: -8, left: -5 }, br: { bottom: -8, right: -5 } };
-  return { ...base, ...offsets[pos] };
 }
 
 export function Info({ text }) {

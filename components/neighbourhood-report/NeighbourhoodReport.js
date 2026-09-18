@@ -261,18 +261,12 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
             <p className="avsheet-note">First-pass area assessment · reflects this PIN, not a specific building or street.</p>
           </BPF>
 
-          {/* Light card now, matching the main report's premium-tile
-              pattern (.ts4-verdict) instead of a solid scoreColor(nqi)
-              fill -- a colour-mix() wash + glow built from scoreColor(nqi),
-              same autumn score-colour ramp used everywhere else on the
-              report, never AsliVastu's own wine/red brand colour. The
-              verdict word itself is scoreColor(nqi) as plain text colour,
-              so no readableTextColor() contrast juggling is needed any
-              more. Per-record, so this stays inline. */}
-          <div className="avsheet-verdict" style={{
-            background: `linear-gradient(165deg, color-mix(in srgb, ${scoreColor(nqi)} 12%, var(--paper)) 0%, var(--paper) 60%)`,
-            boxShadow: `0 1px 2px rgba(28,24,18,.05), 0 20px 40px -28px color-mix(in srgb, ${scoreColor(nqi)} 45%, transparent)`,
-          }}>
+          {/* No card here any more -- flush on the page background like
+              the rest of the hero row, same autumn scoreColor(nqi) ramp
+              used everywhere else on the report as the word's own text
+              colour, never AsliVastu's own wine/red brand colour. Per-record,
+              so this stays inline. */}
+          <div className="avsheet-verdict">
             <p className="avsheet-label" style={{ color: 'var(--slate)', opacity: .75 }}>Verdict</p>
             <h2 className="avsheet-verdict-word" style={{ color: scoreColor(nqi) }}>{verdict.label}</h2>
             <p className="avsheet-verdict-why" style={{ color: 'var(--text-mute)' }}>{verdict.why}</p>
@@ -283,7 +277,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
             the number people trust most since it's backed by the
             government record, not a scraped market estimate. Was
             previously buried below the dimension readout. */}
-        <BPF style={{ padding: '20px 22px', marginBottom: 20, borderColor: 'var(--slate)' }}>
+        <BPF style={{ padding: '20px 22px', marginBottom: 20 }}>
           {/* Heading used to hardcode "Guidance Value" -- Karnataka's
               term -- on every city including Delhi, whose own records
               say circle rate. Now follows the record's city. */}
