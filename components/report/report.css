@@ -9,13 +9,13 @@
    not their first. */
 
 .bsr{
-  --bsr-good:#3C7A50;
-  --bsr-good-bg:#E8F0E9;
-  --bsr-avg:#6B5C43;
-  --bsr-avg-bg:#F2EDE3;
-  --bsr-poor:#A2483C;
-  --bsr-poor-bg:#F8E9E5;
-  --bsr-none-bg:#EEEAE1;
+  --bsr-good:#10B981;
+  --bsr-good-bg:#D1FAE5;
+  --bsr-avg:#F59E0B;
+  --bsr-avg-bg:#FEF3C7;
+  --bsr-poor:#EF4444;
+  --bsr-poor-bg:#FEE2E2;
+  --bsr-none-bg:#F1F5F9;
   --bsr-head-h:96px;
 
   /* No card anywhere on this page any more, but a full 1800px ceiling

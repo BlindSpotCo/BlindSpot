@@ -1,17 +1,26 @@
 
+  /* Site-wide cool-slate palette swap, applied on request following an
+     external UI/UX critique (ChatGPT/Gemini) of the report screenshots.
+     Backgrounds, ink, and status colours below are that critique's own
+     stated values; the --av/--ss/--plum/--olive-gold accent hexes are
+     not from the critique (it never specified them), they're picked to
+     match the same cool direction. Historical comments further down
+     inside this block that cite the old cream/wine values and their
+     contrast ratios are stale after this pass and describe the values
+     that used to be here, not the current ones. */
   :root{
-    --bg:#FAF6EE;
-    --bg-2:#F1E9DA;
-    --paper:#FFFDF8;
-    --ink:#1C1812;
-    --line:rgba(28,24,18,0.14);
-    --line-soft:rgba(28,24,18,0.08);
-    --text:#1C1812;
+    --bg:#F8FAFC;
+    --bg-2:#F1F5F9;
+    --paper:#FFFFFF;
+    --ink:#0F172A;
+    --line:#E2E8F0;
+    --line-soft:rgba(15,23,42,0.06);
+    --text:#0F172A;
     /* Darkened from #6E6656 - body paragraphs sitting at 400 weight next
        to bold 700 headings were reading as thin/washed-out by comparison,
        even though the weight bump on headings alone is a big contrast
        jump. Paragraphs get darker + heavier below, not just headings. */
-    --text-mute:#5A5140;
+    --text-mute:#64748B;
     /* Darkened again from #726A54 (itself darkened from #A79C88) --
        #726A54 measured ~4.5:1 against --bg but only ~4.46:1 against
        --bg-2, i.e. borderline-failing AA for the small mono labels that
@@ -19,7 +28,7 @@
        during a live demo is exactly what borderline contrast at 10-13px
        produces. This gets it to ~6.2:1 against --bg-2, comfortably clear
        at small sizes, same warm hue. */
-    --text-dim:#5B5443;
+    --text-dim:#94A3B8;
     /* Dominant/parent and AsliVastu swapped on request -- olive is now the
        parent hue, wine is now AsliVastu's. Values are a straight swap of
        what --brand/--brand-fill and --av/--av-fill used to hold, so every
@@ -34,15 +43,15 @@
        below) uses --brand-fill, so its punch will read noticeably
        lighter/softer now, with weaker contrast than before the swap --
        worth a live look, not just trusting this comment. */
-    --brand:#3D4116;   /* BlindSpot (parent) - the judgment. Darkened from #4B4F1A on request; still AAA on paper, even higher contrast than before. */
-    --brand-fill:#ADA846; /* brighter/lighter parent fill -- decorative/large only, fails text contrast (this was AsliVastu's old --av-fill value) */
+    --brand:#1E293B;   /* BlindSpot (parent) - the judgment. Darkened from #4B4F1A on request; still AAA on paper, even higher contrast than before. */
+    --brand-fill:#334155; /* brighter/lighter parent fill -- decorative/large only, fails text contrast (this was AsliVastu's old --av-fill value) */
     --brand-yellow:#F5C343; /* the brand's yellow accent (matched from the logo/wordmark reference image, previously used for the header CTA pill on an unmerged branch) -- not used in any merged nav/header styling yet, so this is its first call site on main. Dark text/ink reads fine on it as a fill; as a flat text colour on the light --bg paper it's noticeably lower-contrast than --brand, expected for a bold display headline rather than body copy. */
-    --av:#6B2232;       /* AsliVastu - the area. Even higher contrast on paper than the old olive value (~11:1) */
-    --av-fill:#7C2839;  /* AsliVastu large-fill variant (this was the parent's old --brand-fill value -- the twice-tightened "brighter wine" from CTA tuning) */
-    --ss:#AF5F30;       /* SunScout - the light. AA-safe for text/icons (4.59:1 on paper) */
-    --ss-fill:#D1901F;  /* SunScout large-type/fill variant. Shifted more yellow (was #C56B36, a burnt orange that read as "just orange" in the CTA gradient) -- boosted green/reduced red toward gold rather than orange. Contrast against white text drops further as a result (~2.6:1, down from the original 3.74:1) -- still fine as a large decorative fill behind bold button text, but genuinely below AA even at "large text" size now, so don't reuse this token anywhere small text would sit on it directly. */
+    --av:#2563EB;       /* AsliVastu - the area. Even higher contrast on paper than the old olive value (~11:1) */
+    --av-fill:#3B82F6;  /* AsliVastu large-fill variant (this was the parent's old --brand-fill value -- the twice-tightened "brighter wine" from CTA tuning) */
+    --ss:#7C3AED;       /* SunScout - the light. AA-safe for text/icons (4.59:1 on paper) */
+    --ss-fill:#8B5CF6;  /* SunScout large-type/fill variant. Shifted more yellow (was #C56B36, a burnt orange that read as "just orange" in the CTA gradient) -- boosted green/reduced red toward gold rather than orange. Contrast against white text drops further as a result (~2.6:1, down from the original 3.74:1) -- still fine as a large decorative fill behind bold button text, but genuinely below AA even at "large text" size now, so don't reuse this token anywhere small text would sit on it directly. */
     --ss-sun:#E9A94A;   /* illustration fill only - never text or UI. Matches the hero building's own lit-face yellow (components/HeroIllustration.js) so the sun and the building read as one consistent illustration instead of two different yellows -- was a brighter #FFC100 before. */
-    --plum:#451B3B;     /* The pitch deck's "05 - THE VERDICT SYSTEM" slide defines this exact
+    --plum:#71717A;     /* The pitch deck's "05 - THE VERDICT SYSTEM" slide defines this exact
        hex as the fourth quadrant colour (Weak Area · Weak Unit ->
        "Reconsider"), alongside --brand/--av/--ss for the other three
        quadrants -- a flat 2x2 colour system, one colour per verdict. Also
@@ -50,7 +59,7 @@
        in lib/personas.js, described there as "the balances both" tone --
        same small fixed palette, different call site. Named generically
        since both use it. */
-    --olive-gold:#77652E;
+    --olive-gold:#0D9488;
 
     /* ===== SEMANTIC STATE COLOURS =====
        Didn't exist before this -- every error message on the auth pages
@@ -65,9 +74,9 @@
        defined here so the next one (an optional-field warning, a
        password-strength meter, whatever it ends up being) reaches for
        this instead of another one-off inline hex. */
-    --danger:#C6373D;   /* error text/borders -- 5.15:1 on paper, 4.85:1 on --bg */
-    --success:#166B37;  /* success text -- 6.47:1 on paper, 6.1:1 on --bg */
-    --warning:#7A4E00;  /* Legacy aliases so every existing --sun/--slate usage below keeps
+    --danger:#EF4444;   /* error text/borders -- 5.15:1 on paper, 4.85:1 on --bg */
+    --success:#10B981;  /* success text -- 6.47:1 on paper, 6.1:1 on --bg */
+    --warning:#F59E0B;  /* Legacy aliases so every existing --sun/--slate usage below keeps
        working during migration, but with the accessible values:
        --slate was already ≈ --brand at the time this alias was written
        (#6B2430 vs #6B2232 - imperceptible), which is why aliasing it
@@ -148,7 +157,7 @@
        or paragraph a sane default without silently overriding the
        hand-tuned ones that already exist. */
     --leading-display:1.1;
-    --leading-body:1.4;
+    --leading-body:1.6;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -1597,6 +1606,16 @@
 .hlm-loading{ background:#0E0D07; }
 .hlm-map{ position:absolute; inset:0; z-index:1; background:#0E0D07; }
 .hlm-map .leaflet-container{ background:#0E0D07; font-family:inherit; }
+/* Recorded off the real (light --bg-2) 3D scene, same "push it dark"
+   job .hlm-tiles did for the old Leaflet tiles -- via brightness rather
+   than an invert, so the sun/buildings keep their real colours, just
+   dimmed enough for the white headline over it. Retune once the actual
+   clip is in and this is seen live, footage grading varies. */
+.hlm-video{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; object-position:center;
+  filter:brightness(0.5) saturate(1.1) contrast(1.05);
+}
 /* Plain OSM tiles pushed dark/muted purely via filter -- tried CARTO's
    keyless basemap CDN for a native dark style but it now requires a
    registered API key (unauthenticated = watermarked tiles), so back to

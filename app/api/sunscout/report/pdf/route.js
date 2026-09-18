@@ -37,18 +37,18 @@ import path from 'node:path';
 export const maxDuration = 60;
 
 // -- BlindSpot theme (mirrors the CSS vars in app/globals.css) --------------
-const BG        = '#FAF6EE'; // --bg
-const CARD      = '#F1E9DA'; // --bg-2
-const LINE      = '#E3D9C4'; // solid approximation of --line for canvas-safe rendering
-const LINE_SOFT = '#EDE4D2'; // solid approximation of --line-soft
-const INK       = '#1C1812'; // --ink / --text
-const MUTE      = '#5A5140'; // --text-mute
-const DIM       = '#726A54'; // --text-dim
-const SUN       = '#C9812E'; // --sun
-const WINE      = '#6B2430'; // --slate (BlindSpot's deep wine accent)
+const BG        = '#F8FAFC'; // --bg
+const CARD      = '#F1F5F9'; // --bg-2
+const LINE      = '#E2E8F0'; // --line (already a solid value post palette-swap)
+const LINE_SOFT = '#EDF1F5'; // solid approximation of --line-soft for canvas-safe rendering
+const INK       = '#0F172A'; // --ink / --text
+const MUTE      = '#64748B'; // --text-mute
+const DIM       = '#94A3B8'; // --text-dim
+const SUN       = '#7C3AED'; // --ss (SunScout/unit accent, cool-palette pass)
+const WINE      = '#1E293B'; // --brand (BlindSpot's slate accent, cool-palette pass)
 const GRADIENT  = `linear-gradient(90deg, ${SUN}, ${WINE})`;
-const GOOD = '#2F7D4F', OK = '#B08D2B', POOR = '#B14B4B';
-const DISPLAY = "'Space Grotesk', Arial, sans-serif";
+const GOOD = '#10B981', OK = '#F59E0B', POOR = '#EF4444';
+const DISPLAY = "'Geist', Arial, sans-serif";
 
 let MARK_BASE64 = null;
 function getMarkDataUri() {
@@ -191,8 +191,8 @@ function formatNarrative(rawAnalysis, { dropLeadingHeader = false } = {}) {
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/^[-•] (.+)$/gm, `<li style="margin-bottom:6px;color:${MUTE};line-height:1.65;font-size:14px;">$1</li>`)
     .replace(/(<li[^>]*>[\s\S]*?<\/li>\n?)+/g, (m) => `<ul style="margin:0 0 12px;padding-left:18px;">${m}</ul>`)
-    .replace(/\n\n/g, `</p><p style="margin:0 0 10px;color:${MUTE};line-height:1.7;font-size:14px;font-family:Arial,sans-serif;">`)
-    .replace(/^/, `<p style="margin:0 0 10px;color:${MUTE};line-height:1.7;font-size:14px;font-family:Arial,sans-serif;">`)
+    .replace(/\n\n/g, `</p><p style="margin:0 0 10px;color:${MUTE};line-height:1.7;font-size:14px;font-family:${DISPLAY};">`)
+    .replace(/^/, `<p style="margin:0 0 10px;color:${MUTE};line-height:1.7;font-size:14px;font-family:${DISPLAY};">`)
     .replace(/$/, '</p>')
     .replace(/<p[^>]*><\/p>/g, '');
 }
@@ -425,7 +425,7 @@ export async function POST(req) {
 
   const monthlyTableSection = summary?.monthlySummary ? `
     <div style="overflow-x:auto;">
-    <table style="width:100%;border-collapse:collapse;font-size:12.5px;font-family:Arial,sans-serif;margin-bottom:12px;min-width:600px;">
+    <table style="width:100%;border-collapse:collapse;font-size:12.5px;font-family:${DISPLAY};margin-bottom:12px;min-width:600px;">
       <thead>
         <tr style="background:${CARD};">
           ${['Month','Sunrise','Sunset','Noon Elevation','Usable Sun','Peak Window',`Floor ${safeFloor} Clearance`]
@@ -790,10 +790,10 @@ export async function POST(req) {
   <meta charset="UTF-8"/>
   <title>${hasNeighbourhood ? 'BlindSpot Report' : 'Home Comfort Report'} - ${safeAddress}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@700;800&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:Arial,sans-serif;background:${BG};color:${INK}}
+    body{font-family:${DISPLAY};background:${BG};color:${INK}}
     @media print{
       .no-print{display:none!important}
       body{background:#fff;print-color-adjust:exact;-webkit-print-color-adjust:exact}
@@ -814,7 +814,7 @@ export async function POST(req) {
          mistake, not a choice, so the redundant one is gone. -->
     <button id="back-to-sunscout-btn" style="background:#fff;color:${WINE};border:1px solid ${WINE};padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;">← Close</button>
     <button id="print-btn" style="background:${CARD};color:${MUTE};border:1px solid ${LINE};padding:10px 16px;font-size:13px;cursor:pointer;">Print</button>
-    <button id="download-pdf-btn" style="background:${GRADIENT};color:#fff;border:none;padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(107,36,48,0.3);display:inline-flex;align-items:center;gap:7px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg>Download PDF</button>
+    <button id="download-pdf-btn" style="background:${GRADIENT};color:#fff;border:none;padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(30,41,59,0.3);display:inline-flex;align-items:center;gap:7px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg>Download PDF</button>
   </div>
 
   <div id="report-root" style="max-width:900px;margin:0 auto;background:#fff;">
@@ -833,7 +833,7 @@ export async function POST(req) {
         </div>
         <div style="font-size:11px;color:${DIM};display:flex;align-items:center;gap:5px;"><span style="color:${DIM};">${PIN_SVG}</span>${parseFloat(lat).toFixed(5)}°N, ${parseFloat(lon).toFixed(5)}°E · ${date}</div>
 
-        <p style="font-size:12.5px;line-height:1.6;color:${MUTE};margin-top:10px;max-width:72ch;font-family:Arial,sans-serif;">
+        <p style="font-size:12.5px;line-height:1.6;color:${MUTE};margin-top:10px;max-width:72ch;font-family:${DISPLAY};">
           ${hasNeighbourhood
             ? `Every figure is a government record or a calculation from the sun's real path over this block. Estimates are marked as such.`
             : `Every figure is calculated from the sun's real path over this block. Estimates are marked as such.`}
@@ -981,10 +981,10 @@ export async function POST(req) {
   <title>Sun &amp; Shadow - ${safeAddress}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@700;800&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:Arial,Helvetica,sans-serif;background:${BG};color:${INK};-webkit-font-smoothing:antialiased}
+    body{font-family:${DISPLAY};background:${BG};color:${INK};-webkit-font-smoothing:antialiased}
     img{max-width:100%}
     @media print{
       .no-print{display:none!important}
