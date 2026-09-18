@@ -1,5 +1,6 @@
 'use client';
 // components/ProblemSolution.js
+import { useState } from 'react';
 // V3 -- v2's icon grid used flat neutral chips and a run-on sentence at
 // the bottom that read as another paragraph (plus a text-wrapping
 // glitch around the second <strong>, fixed here with explicit {' '}
@@ -72,6 +73,9 @@ const BLINDSPOTS = [
 ];
 
 export default function ProblemSolution() {
+  const [active, setActive] = useState(0);
+  const activeItem = BLINDSPOTS[active];
+
   return (
     <section className="section section-tint reveal">
       <div className="st-grain" aria-hidden="true" />
@@ -83,16 +87,29 @@ export default function ProblemSolution() {
           </div>
         </div>
 
-        <div className="ps3-grid">
-          {BLINDSPOTS.map((b) => (
-            <div key={b.label} className={`ps3-item reveal accent-${b.accent}`}>
-              <span className="ps3-icon" aria-hidden="true">{b.icon}</span>
-              <div className="ps3-item-body">
-                <span className="ps3-item-label">{b.label}</span>
-                <span className="ps3-item-desc">{b.desc}</span>
-              </div>
-            </div>
+        <div className="ps3-selector reveal" role="tablist" aria-label="What listings leave out">
+          {BLINDSPOTS.map((b, i) => (
+            <button
+              key={b.label}
+              type="button"
+              role="tab"
+              aria-selected={i === active}
+              className={`ps3-tab accent-${b.accent}${i === active ? ' is-active' : ''}`}
+              onClick={() => setActive(i)}
+              onMouseEnter={() => setActive(i)}
+            >
+              <span className="ps3-tab-icon" aria-hidden="true">{b.icon}</span>
+              <span className="ps3-tab-label">{b.label}</span>
+            </button>
           ))}
+        </div>
+
+        <div className={`ps3-panel accent-${activeItem.accent}`} key={activeItem.label}>
+          <span className="ps3-panel-icon" aria-hidden="true">{activeItem.icon}</span>
+          <div className="ps3-panel-body">
+            <h3 className="ps3-panel-label">{activeItem.label}</h3>
+            <p className="ps3-panel-desc">{activeItem.desc}</p>
+          </div>
         </div>
 
         <div className="ps3-eq">
