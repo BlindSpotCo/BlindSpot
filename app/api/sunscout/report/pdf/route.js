@@ -44,7 +44,7 @@ const LINE_SOFT = '#EDF1F5'; // solid approximation of --line-soft for canvas-sa
 const INK       = '#0F172A'; // --ink / --text
 const MUTE      = '#64748B'; // --text-mute
 const DIM       = '#94A3B8'; // --text-dim
-const SUN       = '#7C3AED'; // --ss (SunScout/unit accent, cool-palette pass)
+const SUN       = '#AF5F30'; // --ss (back to its original warm value, see app/globals.css)
 const WINE      = '#1E293B'; // --brand (BlindSpot's slate accent, cool-palette pass)
 const GRADIENT  = `linear-gradient(90deg, ${SUN}, ${WINE})`;
 const GOOD = '#10B981', OK = '#F59E0B', POOR = '#EF4444';

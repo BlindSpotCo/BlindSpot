@@ -1,13 +1,13 @@
 
-  /* Site-wide cool-slate palette swap, applied on request following an
-     external UI/UX critique (ChatGPT/Gemini) of the report screenshots.
-     Backgrounds, ink, and status colours below are that critique's own
-     stated values; the --av/--ss/--plum/--olive-gold accent hexes are
-     not from the critique (it never specified them), they're picked to
-     match the same cool direction. Historical comments further down
-     inside this block that cite the old cream/wine values and their
-     contrast ratios are stale after this pass and describe the values
-     that used to be here, not the current ones. */
+  /* Cool-slate palette swap (see bdef759), kept -- except --av and
+     --ss, which are back to their original warm hexes on request: the
+     actual complaint was specifically "blue and purple," not the cool
+     direction generally. Backgrounds, ink, text, --brand, and the
+     status colours below are all still the cool-slate values.
+     Historical comments further down this block that cite the old
+     cream/wine values for OTHER tokens are stale (those tokens are
+     cool-slate now); the --av/--ss lines themselves are back to their
+     pre-swap state, so comments right next to them are accurate again. */
   :root{
     --bg:#F8FAFC;
     --bg-2:#F1F5F9;
@@ -46,10 +46,10 @@
     --brand:#1E293B;   /* BlindSpot (parent) - the judgment. Darkened from #4B4F1A on request; still AAA on paper, even higher contrast than before. */
     --brand-fill:#334155; /* brighter/lighter parent fill -- decorative/large only, fails text contrast (this was AsliVastu's old --av-fill value) */
     --brand-yellow:#F5C343; /* the brand's yellow accent (matched from the logo/wordmark reference image, previously used for the header CTA pill on an unmerged branch) -- not used in any merged nav/header styling yet, so this is its first call site on main. Dark text/ink reads fine on it as a fill; as a flat text colour on the light --bg paper it's noticeably lower-contrast than --brand, expected for a bold display headline rather than body copy. */
-    --av:#2563EB;       /* AsliVastu - the area. Even higher contrast on paper than the old olive value (~11:1) */
-    --av-fill:#3B82F6;  /* AsliVastu large-fill variant (this was the parent's old --brand-fill value -- the twice-tightened "brighter wine" from CTA tuning) */
-    --ss:#7C3AED;       /* SunScout - the light. AA-safe for text/icons (4.59:1 on paper) */
-    --ss-fill:#8B5CF6;  /* SunScout large-type/fill variant. Shifted more yellow (was #C56B36, a burnt orange that read as "just orange" in the CTA gradient) -- boosted green/reduced red toward gold rather than orange. Contrast against white text drops further as a result (~2.6:1, down from the original 3.74:1) -- still fine as a large decorative fill behind bold button text, but genuinely below AA even at "large text" size now, so don't reuse this token anywhere small text would sit on it directly. */
+    --av:#6B2232;       /* AsliVastu - the area. Even higher contrast on paper than the old olive value (~11:1) */
+    --av-fill:#7C2839;  /* AsliVastu large-fill variant (this was the parent's old --brand-fill value -- the twice-tightened "brighter wine" from CTA tuning) */
+    --ss:#AF5F30;       /* SunScout - the light. AA-safe for text/icons (4.59:1 on paper) */
+    --ss-fill:#D1901F;  /* SunScout large-type/fill variant. Shifted more yellow (was #C56B36, a burnt orange that read as "just orange" in the CTA gradient) -- boosted green/reduced red toward gold rather than orange. Contrast against white text drops further as a result (~2.6:1, down from the original 3.74:1) -- still fine as a large decorative fill behind bold button text, but genuinely below AA even at "large text" size now, so don't reuse this token anywhere small text would sit on it directly. */
     --ss-sun:#E9A94A;   /* illustration fill only - never text or UI. Matches the hero building's own lit-face yellow (components/HeroIllustration.js) so the sun and the building read as one consistent illustration instead of two different yellows -- was a brighter #FFC100 before. */
     --plum:#71717A;     /* The pitch deck's "05 - THE VERDICT SYSTEM" slide defines this exact
        hex as the fourth quadrant colour (Weak Area · Weak Unit ->
