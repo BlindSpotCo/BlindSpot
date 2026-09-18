@@ -19,6 +19,7 @@ import ReportModal from '@/components/sunscout/ReportModal';
 import useMapCapture, { SHOTS } from '@/lib/sunscout/useMapCapture';
 import { FACTOR_LABELS, FACING_OPTS } from '@/lib/property-score/ui';
 import { getActionItems } from '@/lib/property-score/actionItems';
+import RoomPhotoAnalyzer from './RoomPhotoAnalyzer';
 import './report.css';
 
 
@@ -796,6 +797,12 @@ export default function ReportScreen() {
 
         <div className="bsr-unitgate">
           <div className="bsr-unitgate-panel" role="dialog" aria-modal="true" aria-label="Set the floor and facing before scoring">
+            <div className="bsr-unitgate-mark" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="4.2" />
+                <path d="M12 2v3M12 19v3M22 12h-3M5 12H2M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1M18.4 18.4l-2.1-2.1M7.7 7.7 5.6 5.6" />
+              </svg>
+            </div>
             <span className="bsr-unitgate-eyebrow">Before your score</span>
             <h2 className="bsr-unitgate-title">Which floor, which way does it face?</h2>
             <p className="bsr-unitgate-lede">
@@ -804,33 +811,69 @@ export default function ReportScreen() {
             </p>
 
             <div className="bsr-unitgate-row">
-              <label className="bsr-unitgate-floor">
+              <div className="bsr-unitgate-floor">
                 <span>Floor</span>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={2}
-                  value={gFloor}
-                  onChange={(e) => setGFloor(e.target.value.replace(/[^\d]/g, '').slice(0, 2))}
-                  placeholder={String(DEFAULT_FLOOR)}
-                  aria-label="Floor number"
-                />
-              </label>
-
-              <div className="bsr-unitgate-facing" role="radiogroup" aria-label="Which way the flat faces">
-                {FACING_OPTS.map((f) => (
+                <div className="bsr-unitgate-stepper">
                   <button
-                    key={f}
                     type="button"
-                    role="radio"
-                    aria-checked={f === gFacing}
-                    className={`bsr-unitgate-chip${f === gFacing ? ' on' : ''}`}
-                    onClick={() => setGFacing(f)}
+                    className="bsr-unitgate-step"
+                    aria-label="Lower floor"
+                    onClick={() => setGFloor(String(Math.max(0, (parseInt(gFloor, 10) || DEFAULT_FLOOR) - 1)))}
                   >
-                    {FACING_SHORT[f]}
+                    −
                   </button>
-                ))}
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={2}
+                    value={gFloor}
+                    onChange={(e) => setGFloor(e.target.value.replace(/[^\d]/g, '').slice(0, 2))}
+                    placeholder={String(DEFAULT_FLOOR)}
+                    aria-label="Floor number"
+                  />
+                  <button
+                    type="button"
+                    className="bsr-unitgate-step"
+                    aria-label="Higher floor"
+                    onClick={() => setGFloor(String(Math.min(MAX_FLOOR, (parseInt(gFloor, 10) || DEFAULT_FLOOR) + 1)))}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              {/* A compass, not a button grid -- FACING_OPTS is already
+                  clockwise from North (see lib/property-score/ui.js), so
+                  it drops straight onto a 3x3 grid-template-areas layout
+                  with N/S/E/W as the cardinal cells and the diagonals as
+                  smaller corner cells around a dead centre, the way an
+                  actual compass reads. Matches this app's whole premise
+                  (facing decides the sun/shadow numbers below) far more
+                  than eight identical rectangles ever did. */}
+              <div className="bsr-unitgate-compass-wrap">
+                <span>Facing</span>
+                <div className="bsr-unitgate-compass" role="radiogroup" aria-label="Which way the flat faces">
+                  {FACING_OPTS.map((f) => {
+                    const short = FACING_SHORT[f];
+                    const isCardinal = short.length === 1;
+                    return (
+                      <button
+                        key={f}
+                        type="button"
+                        role="radio"
+                        aria-checked={f === gFacing}
+                        className={`bsr-unitgate-chip bsr-unitgate-chip--${short.toLowerCase()}${isCardinal ? ' is-cardinal' : ''}${f === gFacing ? ' on' : ''}`}
+                        onClick={() => setGFacing(f)}
+                      >
+                        {short}
+                      </button>
+                    );
+                  })}
+                  <div className="bsr-unitgate-compass-center" aria-hidden="true">
+                    {gFacing ? FACING_SHORT[gFacing] : '·'}
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1544,6 +1587,8 @@ export default function ReportScreen() {
           </p>
         )}
       </section>
+
+      <RoomPhotoAnalyzer lat={lat} lon={lon} floor={floor} tzOffset={TZ} />
 
       {/* ---------- the written verdict ---------- */}
       <section className="bsr-close">

@@ -801,14 +801,25 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 .bsr-unitgate{
   display:flex;justify-content:center;
   padding:10vh 0 12vh;
+  /* A plain beige void behind a plain white card was the whole "mid"
+     complaint -- a quiet wash keyed off the brand accent gives the panel
+     something to sit on without competing with it. */
+  background:radial-gradient(60% 55% at 50% 38%, rgba(175,95,48,.08), transparent 72%);
 }
 .bsr-unitgate-panel{
   width:100%;max-width:480px;
   background:var(--paper,#FFFDF8);
   border:1px solid var(--line,rgba(28,24,18,.14));
-  border-radius:12px;
-  box-shadow:0 18px 44px rgba(28,24,18,.14);
-  padding:28px 26px;
+  border-radius:14px;
+  box-shadow:0 22px 54px rgba(28,24,18,.16);
+  padding:30px 28px;
+}
+.bsr-unitgate-mark{
+  width:38px;height:38px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bg,#FAF6EE);color:var(--ss,#AF5F30);
+  border:1px solid var(--line-soft,rgba(28,24,18,.1));
+  margin-bottom:14px;
 }
 .bsr-unitgate-eyebrow{
   display:block;font-family:'Geist Mono',monospace;font-weight:600;
@@ -824,40 +835,88 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   color:var(--text-mute,#5A5140);
 }
 .bsr-unitgate-row{
-  display:flex;flex-direction:column;gap:16px;
-  margin-top:22px;
+  display:flex;flex-direction:column;align-items:center;gap:22px;
+  margin-top:24px;
 }
 .bsr-unitgate-floor{
-  display:flex;flex-direction:column;gap:6px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  width:100%;
 }
-.bsr-unitgate-floor span{
+.bsr-unitgate-floor span,
+.bsr-unitgate-compass-wrap > span{
   font-family:'Geist Mono',monospace;font-weight:600;font-size:11.5px;
   letter-spacing:.06em;text-transform:uppercase;color:var(--text-mute,#5A5140);
 }
-.bsr-unitgate-floor input{
-  width:88px;font:inherit;font-size:17px;font-weight:700;text-align:center;
-  padding:9px 10px;border-radius:6px;min-height:42px;
-  border:1px solid var(--line,rgba(28,24,18,.2));
-  background:var(--bg,#FAF6EE);color:var(--text,#1C1812);
+/* Floor stepper -- a bare text box read as an afterthought next to
+   everything else on this page. −/+ either side of the number makes it
+   something you tap through rather than type into, and it's the same
+   control shape whether you're on a trackpad or a thumb. */
+.bsr-unitgate-stepper{
+  display:flex;align-items:stretch;width:100%;max-width:220px;
+  border:1px solid var(--line,rgba(28,24,18,.2));border-radius:9px;
+  background:var(--bg,#FAF6EE);overflow:hidden;
 }
-.bsr-unitgate-floor input:focus-visible{
-  outline:2px solid var(--ss,#AF5F30);outline-offset:1px;border-color:var(--ss,#AF5F30);
+.bsr-unitgate-stepper:focus-within{
+  border-color:var(--ss,#AF5F30);box-shadow:0 0 0 2px rgba(175,95,48,.15);
 }
-.bsr-unitgate-facing{
-  display:grid;grid-template-columns:repeat(4, 1fr);gap:8px;
+.bsr-unitgate-step{
+  flex:0 0 40px;border:none;background:transparent;cursor:pointer;
+  font-size:18px;font-weight:700;color:var(--text-mute,#5A5140);
+  transition:background .15s ease, color .15s ease;
+}
+.bsr-unitgate-step:hover{background:var(--line-soft,rgba(28,24,18,.07));color:var(--text,#1C1812)}
+.bsr-unitgate-stepper input{
+  flex:1;min-width:0;border:none;background:transparent;
+  font:inherit;font-size:17px;font-weight:700;text-align:center;
+  color:var(--text,#1C1812);padding:9px 0;min-height:44px;
+}
+.bsr-unitgate-stepper input:focus-visible{outline:none}
+/* The facing picker as an actual compass -- N/S/E/W as the four cardinal
+   cells, the diagonals smaller around them, a dead centre showing the
+   live pick. FACING_OPTS is already clockwise from North (see
+   lib/property-score/ui.js), so it drops straight onto this layout. */
+.bsr-unitgate-compass-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+}
+.bsr-unitgate-compass{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  grid-template-rows:repeat(3, minmax(0,1fr));
+  grid-template-areas:
+    "nw n ne"
+    "w  c  e"
+    "sw s se";
+  gap:7px;
+  width:min(232px, 68vw);
+  aspect-ratio:1;
 }
 .bsr-unitgate-chip{
-  border:1px solid var(--line-soft,rgba(28,24,18,.14));border-radius:8px;
-  background:var(--bg,#FAF6EE);padding:10px 4px;
-  font-family:'Geist Mono',monospace;font-size:13px;font-weight:600;
+  border:1px solid var(--line-soft,rgba(28,24,18,.14));border-radius:9px;
+  background:var(--bg,#FAF6EE);
+  font-family:'Geist Mono',monospace;font-weight:600;
   color:var(--text-mute,#5A5140);cursor:pointer;
-  transition:background .15s ease, color .15s ease, border-color .15s ease;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s ease, color .15s ease, border-color .15s ease, transform .15s ease;
 }
-.bsr-unitgate-chip:hover{border-color:var(--line,rgba(28,24,18,.3));color:var(--text,#1C1812)}
-.bsr-unitgate-chip.on{background:var(--ss,#AF5F30);border-color:var(--ss,#AF5F30);color:#FFFDF8}
+.bsr-unitgate-chip.is-cardinal{font-size:14.5px;font-weight:800;color:var(--text,#1C1812)}
+.bsr-unitgate-chip:not(.is-cardinal){font-size:11px;opacity:.85}
+.bsr-unitgate-chip--n{grid-area:n} .bsr-unitgate-chip--ne{grid-area:ne}
+.bsr-unitgate-chip--e{grid-area:e} .bsr-unitgate-chip--se{grid-area:se}
+.bsr-unitgate-chip--s{grid-area:s} .bsr-unitgate-chip--sw{grid-area:sw}
+.bsr-unitgate-chip--w{grid-area:w} .bsr-unitgate-chip--nw{grid-area:nw}
+.bsr-unitgate-chip:hover{border-color:var(--ss,#AF5F30);color:var(--text,#1C1812);transform:translateY(-1px)}
+.bsr-unitgate-chip.on{background:var(--ss,#AF5F30);border-color:var(--ss,#AF5F30);color:#FFFDF8;opacity:1}
+.bsr-unitgate-compass-center{
+  grid-area:c;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--paper,#FFFDF8);
+  border:1px dashed var(--line,rgba(28,24,18,.25));
+  font-family:'Geist Mono',monospace;font-weight:700;font-size:12px;
+  color:var(--ss,#AF5F30);
+}
 .bsr-unitgate-actions{
   display:flex;flex-direction:column;align-items:stretch;gap:12px;
-  margin-top:24px;
+  margin-top:26px;
 }
 .bsr-unitgate-go{
   border:none;border-radius:999px;background:var(--ss,#AF5F30);color:#FFFDF8;
@@ -875,4 +934,84 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 @media (min-width:560px){
   .bsr-unitgate-actions{flex-direction:row-reverse;align-items:center;justify-content:flex-start}
   .bsr-unitgate-go{flex-shrink:0}
+}
+
+/* ---------------- room photo analysis ----------------
+   Sits right after the visit checklist, same section rhythm (border-top,
+   margin-top) as .bsr-visit above it -- reads as a continuation of the
+   same "before you decide" moment, not a separate feature bolted on. */
+.bsr-roomphoto{
+  margin-top:16px;padding-top:14px;
+  border-top:1px solid var(--line-soft,rgba(28,24,18,.1));
+}
+.bsr-roomphoto h2{font-size:24px;font-weight:700}
+.bsr-roomphoto-lede{
+  margin:8px 0 0;font-size:14.5px;line-height:1.6;max-width:64ch;
+  color:var(--text-mute,#5A5140);
+}
+.bsr-roomphoto-drop{
+  margin-top:18px;display:flex;flex-direction:column;align-items:center;gap:10px;
+  border:1.5px dashed var(--line,rgba(28,24,18,.25));border-radius:10px;
+  padding:34px 20px;cursor:pointer;color:var(--text-mute,#5A5140);
+  transition:border-color .15s ease, background .15s ease, color .15s ease;
+}
+.bsr-roomphoto-drop:hover{
+  border-color:var(--ss,#AF5F30);color:var(--text,#1C1812);
+  background:color-mix(in srgb, var(--ss,#AF5F30) 4%, transparent);
+}
+.bsr-roomphoto-drop span{font-size:13.5px;font-weight:600}
+.bsr-roomphoto-setup,.bsr-roomphoto-result{margin-top:18px;max-width:560px}
+.bsr-roomphoto-preview{position:relative;border-radius:10px;overflow:hidden;background:var(--bg,#FAF6EE)}
+.bsr-roomphoto-preview img{display:block;width:100%;height:auto;max-height:420px;object-fit:contain;background:#1C1812}
+.bsr-roomphoto-change{
+  margin-top:10px;border:none;background:none;color:var(--ss,#AF5F30);
+  font:inherit;font-size:13px;font-weight:600;cursor:pointer;
+  text-decoration:underline;text-underline-offset:2px;padding:0;
+}
+.bsr-roomphoto-bearing{
+  margin-top:20px;display:flex;flex-direction:column;align-items:center;gap:12px;
+}
+.bsr-roomphoto-bearing > span{
+  font-family:'Geist Mono',monospace;font-weight:600;font-size:12px;
+  letter-spacing:.04em;color:var(--text-mute,#5A5140);text-align:center;
+}
+.bsr-roomphoto-error{color:#A2483C;font-size:13px;margin-top:12px}
+.bsr-roomphoto-go{
+  margin-top:18px;width:100%;border:none;border-radius:999px;
+  background:var(--ss,#AF5F30);color:#FFFDF8;
+  font:inherit;font-size:15px;font-weight:700;padding:13px 20px;cursor:pointer;
+  transition:opacity .15s ease, transform .15s ease;
+}
+.bsr-roomphoto-go:disabled{opacity:.4;cursor:not-allowed}
+.bsr-roomphoto-go:not(:disabled):hover{transform:translateY(-1px)}
+
+/* Annotated result -- each detected window gets an absolutely-positioned
+   box (from its bbox, in percent) plus a small tag anchored to it. Tags
+   are positioned above-left of the box by default; there's no collision
+   avoidance for overlapping windows (fine at up to 4 windows on a typical
+   room photo, and this is the localhost-tested version of the feature). */
+.bsr-roomphoto-preview--annotated{background:#1C1812}
+.bsr-roomphoto-window{
+  position:absolute;border:2px solid var(--ss,#AF5F30);border-radius:4px;
+  box-shadow:0 0 0 1px rgba(255,253,248,.5);pointer-events:none;
+}
+.bsr-roomphoto-tag{
+  position:absolute;left:0;bottom:100%;margin-bottom:6px;
+  display:flex;flex-direction:column;gap:2px;
+  background:rgba(28,24,18,.92);color:#FFFDF8;
+  border-radius:6px;padding:7px 10px;
+  font-size:11.5px;line-height:1.45;white-space:nowrap;
+  max-width:min(240px, 60vw);white-space:normal;
+}
+.bsr-roomphoto-tag strong{font-size:12px;font-weight:700}
+.bsr-roomphoto-tag .bsr-roomphoto-impression{
+  color:rgba(255,253,248,.65);font-size:10.5px;font-style:italic;
+}
+.bsr-roomphoto-note{
+  margin-top:14px;font-size:13.5px;line-height:1.6;
+  color:var(--text-mute,#5A5140);
+}
+.bsr-roomphoto-caveat{
+  margin-top:8px;font-size:11.5px;line-height:1.6;
+  color:var(--text-mute,#5A5140);opacity:.8;
 }
