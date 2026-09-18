@@ -2042,40 +2042,44 @@ header.header-on-dark .brand-word-img{
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 .section-tint .section-inner{ position:relative; z-index:1 }
-/* ---------- 01 - Problem / Solution (icon grid) ---------- */
+/* ---------- 01 - Problem / Solution (oversized ghost-icon rows) ----------
+   No cards here any more -- picked by the user over two other concrete
+   directions (an editorial row style matching the report pages, and a
+   connected-line/circuit diagram) after "replace the boxes... something
+   cool visual". Each blindspot is a full-width row on the section's own
+   background: the label/description sit on plain paper, and its icon is
+   blown up into a large, faint accent-tinted watermark bleeding off the
+   row's right edge, instead of a small badge inside a boxed tile. Rows
+   are divided by a hairline only -- same divider language as the report
+   pages' row lists, so this reads as the same product, not a separate
+   landing-page style. */
 .ps3-grid{
-  display:grid; grid-template-columns:repeat(6, 1fr); gap:var(--space-4);
+  display:flex; flex-direction:column;
   margin-top:var(--space-2);
+  border-top:1px solid var(--line);
 }
 .ps3-item{
-  display:flex; flex-direction:column; align-items:flex-start; gap:14px;
-  padding:var(--space-6) var(--space-5);
-  background:var(--paper); border:none;
-  border-radius:20px;
-  box-shadow:0 1px 2px rgba(28,24,18,.04), 0 20px 40px -30px rgba(28,24,18,.18);
-  transition:transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s ease, background .35s ease;
+  position:relative; overflow:hidden;
+  display:flex; align-items:center;
+  min-height:116px; padding:22px 4px;
+  border-bottom:1px solid var(--line);
+  transition:padding-left .4s cubic-bezier(.16,1,.3,1);
 }
-/* Premium elevated tile on request -- the flat gray unboxed version
-   read as bland. Real depth via shadow, a subtle accent-tinted
-   gradient wash, bigger icon badge with its own colored glow. */
-.ps3-item:hover{ transform:translateY(-6px); box-shadow:0 1px 2px rgba(28,24,18,.04), 0 28px 52px -28px rgba(28,24,18,.26) }
-.ps3-item.accent-av{ background:linear-gradient(165deg, color-mix(in srgb, var(--av) 10%, var(--paper)) 0%, var(--paper) 60%); }
-.ps3-item.accent-ss{ background:linear-gradient(165deg, color-mix(in srgb, var(--ss) 10%, var(--paper)) 0%, var(--paper) 60%); }
-.ps3-item.accent-av:hover{ box-shadow:0 1px 2px rgba(28,24,18,.04), 0 28px 52px -26px color-mix(in srgb, var(--av) 45%, transparent); }
-.ps3-item.accent-ss:hover{ box-shadow:0 1px 2px rgba(28,24,18,.04), 0 28px 52px -26px color-mix(in srgb, var(--ss) 45%, transparent); }
-.ps3-icon{
+.ps3-item:hover{ padding-left:16px; }
+.ps3-icon{ position:absolute; top:50%; right:-6px; transform:translateY(-50%);
+  width:132px; height:132px;
   display:flex; align-items:center; justify-content:center;
-  width:56px; height:56px; border-radius:15px;
-  background:var(--brand); color:#fff;
-  box-shadow:0 10px 20px -8px rgba(28,24,18,.3);
-  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;
+  transition:transform .5s cubic-bezier(.16,1,.3,1), color .35s ease;
 }
-.ps3-item:hover .ps3-icon{ transform:scale(1.08) rotate(-4deg) }
-.ps3-item.accent-av .ps3-icon{ background:var(--av); box-shadow:0 10px 22px -6px color-mix(in srgb, var(--av) 65%, transparent); }
-.ps3-item.accent-ss .ps3-icon{ background:var(--ss); box-shadow:0 10px 22px -6px color-mix(in srgb, var(--ss) 65%, transparent); }
-.ps3-icon svg{ width:26px; height:26px }
-.ps3-item-label{ font-size:13.5px; font-weight:600; color:var(--ink); line-height:1.3 }
-.ps3-item-desc{ font-size:12px; color:var(--text-mute); line-height:1.45 }
+.ps3-item.accent-av .ps3-icon{ color:color-mix(in srgb, var(--av) 20%, transparent); }
+.ps3-item.accent-ss .ps3-icon{ color:color-mix(in srgb, var(--ss) 22%, transparent); }
+.ps3-item.accent-av:hover .ps3-icon{ color:color-mix(in srgb, var(--av) 34%, transparent); transform:translateY(-50%) scale(1.08); }
+.ps3-item.accent-ss:hover .ps3-icon{ color:color-mix(in srgb, var(--ss) 36%, transparent); transform:translateY(-50%) scale(1.08); }
+.ps3-icon svg{ width:100%; height:100%; stroke-width:0.85; }
+.ps3-item-body{ position:relative; z-index:1; max-width:64%; }
+.ps3-item-label{ display:block; font-size:19px; font-weight:700; color:var(--ink); line-height:1.25; }
+.ps3-item-desc{ display:block; margin-top:5px; font-size:13.5px; color:var(--text-mute); line-height:1.5; }
 
 .ps3-eq{
   margin-top:var(--space-7); display:flex; align-items:center; flex-wrap:wrap; gap:14px;
@@ -2088,11 +2092,12 @@ header.header-on-dark .brand-word-img{
 .ps3-eq-badge.accent-ss{ background:var(--ss) }
 .ps3-eq-op{ font-size:20px; color:var(--text-dim); font-weight:600 }
 .ps3-eq-result{ font-size:17px; color:var(--text); font-weight:600 }
-@media (max-width:900px){
-  .ps3-grid{ grid-template-columns:repeat(3, 1fr) }
-}
 @media (max-width:640px){
-  .ps3-grid{ grid-template-columns:repeat(2, 1fr); gap:var(--space-3) }
+  .ps3-item{ min-height:92px; padding:18px 4px; }
+  .ps3-icon{ width:86px; height:86px; right:-14px; }
+  .ps3-item-body{ max-width:100%; padding-right:64px; }
+  .ps3-item-label{ font-size:16.5px; }
+  .ps3-item-desc{ font-size:12.5px; }
   .ps3-eq{ gap:10px }
   .ps3-eq-result{ font-size:15px }
 }
