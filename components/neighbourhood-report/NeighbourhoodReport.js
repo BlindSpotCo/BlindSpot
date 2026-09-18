@@ -19,7 +19,7 @@
 // is here.
 
 import { useState, useMemo } from 'react';
-import AVDetailedReadout, { BPF, source, scoreColor, verdictFor, explain, AQI_PLAIN, formatDateLong, inr, readableTextColor, Info } from '@/components/property-score/AVDetailedReadout';
+import AVDetailedReadout, { BPF, source, scoreColor, verdictFor, explain, AQI_PLAIN, formatDateLong, inr, Info } from '@/components/property-score/AVDetailedReadout';
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
 import { cityMeta } from '@/lib/aslivastu/cityMeta';
 import useLiveAqi from '@/lib/aslivastu/useLiveAqi';
@@ -174,16 +174,16 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
             apart. See the comment on that CSS block for the full
             reasoning. */}
         <div className="avsheet-hero">
-          <BPF dark className="avsheet-box">
-            <p className="avsheet-label" style={{ color: 'rgba(255,253,248,0.65)' }}>Sheet 01 · {record.area || record.city} · PIN {record.pin_code}</p>
+          <BPF marks={false} className="avsheet-box">
+            <p className="avsheet-label" style={{ color: 'var(--slate)' }}>Sheet 01 · {record.area || record.city} · PIN {record.pin_code}</p>
             <h1 className="avsheet-name">{record.name}</h1>
             <p className="avsheet-meta">
               {record.dimensions_scored || Object.keys(record.scores || {}).length}/{record.dimensions_total || Object.keys(record.scores || {}).length} dimensions · scored {formatDateLong(record.scored_at) || '-'}
             </p>
           </BPF>
 
-          <BPF dark className="avsheet-box">
-            <p className="avsheet-label" style={{ color: 'rgba(255,253,248,0.65)' }}>Composite index</p>
+          <BPF marks={false} className="avsheet-box">
+            <p className="avsheet-label" style={{ color: 'var(--slate)' }}>Composite index</p>
             <div className="avsheet-scorerow">
               <span className="avsheet-score">{nqi}</span>
               <span className="avsheet-grade">{grade}</span>
@@ -193,7 +193,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
               {coverage < 100 ? ` · ${coverage}% of the model` : ''}.
             </p>
             {coverage < 100 && (
-              <p className="avsheet-note" style={{ color: '#F0C77A' }}>
+              <p className="avsheet-note" style={{ color: 'var(--warning)' }}>
                 We have no records for {missing.map(k => (FACTOR_LABELS[k] || k).toLowerCase()).join(', ')} in
                 this pincode, so this score is worked out from the {`${coverage}%`} of the model we do have{coverage < 60 ? ' - treat it as indicative rather than settled' : ''}.
               </p>
@@ -204,17 +204,20 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
             <p className="avsheet-note">First-pass area assessment · reflects this PIN, not a specific building or street.</p>
           </BPF>
 
-          {/* Verdict fill stays scoreColor(nqi) -- the same autumn
-              score-colour ramp used everywhere else on the report,
-              never AsliVastu's own wine/red brand colour. Text colour is
-              computed from that fill via readableTextColor() (perceptual
-              luminance) rather than hardcoded white -- the bright
-              mid-tier fills need dark ink, only the two darkest tiers
-              need white. Per-record, so these two stay inline. */}
-          <div className="avsheet-verdict" style={{ background: scoreColor(nqi), color: readableTextColor(scoreColor(nqi)) }}>
-            <p className="avsheet-label" style={{ color: 'inherit', opacity: .75 }}>Verdict</p>
-            <h2 className="avsheet-verdict-word">{verdict.label}</h2>
-            <p className="avsheet-verdict-why" style={{ opacity: .92 }}>{verdict.why}</p>
+          {/* Light card now instead of a solid scoreColor(nqi) fill -- a
+              colour-mix() wash + glow built from scoreColor(nqi), same
+              autumn score-colour ramp used everywhere else on the report,
+              never AsliVastu's own wine/red brand colour. The verdict word
+              itself carries scoreColor(nqi) as plain text colour, so no
+              readableTextColor() contrast juggling is needed any more.
+              Per-record, so this stays inline. */}
+          <div className="avsheet-verdict" style={{
+            background: `linear-gradient(165deg, color-mix(in srgb, ${scoreColor(nqi)} 12%, var(--paper)) 0%, var(--paper) 60%)`,
+            boxShadow: `0 1px 2px rgba(28,24,18,.05), 0 20px 40px -28px color-mix(in srgb, ${scoreColor(nqi)} 45%, transparent)`,
+          }}>
+            <p className="avsheet-label" style={{ color: 'var(--slate)', opacity: .75 }}>Verdict</p>
+            <h2 className="avsheet-verdict-word" style={{ color: scoreColor(nqi) }}>{verdict.label}</h2>
+            <p className="avsheet-verdict-why" style={{ color: 'var(--text-mute)' }}>{verdict.why}</p>
           </div>
         </div>
 
@@ -222,7 +225,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
             the number people trust most since it's backed by the
             government record, not a scraped market estimate. Was
             previously buried below the dimension readout. */}
-        <BPF style={{ padding: '20px 22px', marginBottom: 20, borderColor: 'var(--slate)' }}>
+        <BPF marks={false} style={{ padding: '20px 22px', marginBottom: 20, borderColor: 'var(--slate)' }}>
           {/* Heading used to hardcode "Guidance Value" -- Karnataka's
               term -- on every city including Delhi, whose own records
               say circle rate. Now follows the record's city. */}
@@ -268,7 +271,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
             data table below, not an all-dark page. Score number goes
             back to scoreColor(row.score) as its own text colour -- fine
             on light paper even for the darkest tiers. */}
-        <BPF className="avsheet-readout">
+        <BPF marks={false} className="avsheet-readout">
           <p className="avsheet-label avsheet-readout-label">Dimension readout · weight = exact contribution to the {nqi}</p>
           {rows.map(row => {
             const weak = row.score < 50;
@@ -309,7 +312,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
         </BPF>
 
         {/* ── Inspection notes ── */}
-        <BPF style={{ padding: 20, marginBottom: 24 }}>
+        <BPF marks={false} style={{ padding: 20, marginBottom: 24 }}>
           <p className="kick">Inspection Notes</p>
           <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 9 }}>
             {good.map((g, i) => <div key={'g' + i} style={{ display: 'flex', gap: 9, fontSize: 13, lineHeight: 1.45 }}><span style={{ color: '#3D6B2E', fontWeight: 700 }}>✓</span><span style={{ color: 'var(--text-mute)' }}>{g}</span></div>)}
@@ -322,7 +325,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
         {nearby?.length > 0 && (
           <div style={{ marginBottom: 24 }}>
             <p className="kick" style={{ marginBottom: 14 }}>Comparison</p>
-            <BPF style={{ padding: '18px 20px' }} className="nr-table-scroll">
+            <BPF marks={false} style={{ padding: '18px 20px' }} className="nr-table-scroll">
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                   <thead>

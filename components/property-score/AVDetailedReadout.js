@@ -24,27 +24,29 @@ import { FACTOR_LABELS } from '@/lib/property-score/ui';
 import { sourceFor } from '@/lib/aslivastu/cityMeta';
 import FieldFeedback from '@/components/shared/FieldFeedback';
 
-// `dark` flips a box to the near-black ink card used for the Sheet
-// identity / Composite Index / Dimension readout boxes -- requested
-// because the default `var(--paper)` fill read as barely-there-whiter
-// than the page's own `var(--bg)`, not as a deliberate surface. Border
-// and corner marks switch to white-tinted so they stay visible against
-// `var(--ink)` instead of disappearing (the default olive border/marks
-// are tuned for contrast on paper, not on ink).
-export function BPF({ children, style, className = '', dark = false }) {
-  const surface = dark
-    ? { background: 'var(--ink)', border: '1px solid rgba(255,253,248,0.16)' }
-    : { background: 'var(--paper)', border: '1px solid color-mix(in srgb, var(--slate) 55%, transparent)' };
+// `marks` toggles the 4 corner "+" survey marks -- on by default, so
+// FloorPlanAnalysis.js's cards (BPF's other consumer) keep their current
+// look untouched. The neighbourhood report and AVDetailedReadout's own
+// cards pass marks={false} at their call sites: that page is matching
+// the main /report page's flat, whitespace-separated sections now, and
+// dropped the blueprint-frame look. `dark` (the near-black ink variant
+// used by the old Sheet identity / Composite Index boxes) is gone -- both
+// of those are light cards now too, see NeighbourhoodReport.js.
+export function BPF({ children, style, className = '', marks = true }) {
   return (
-    <div className={`bpf-av ${className}`} style={{ position: 'relative', ...surface, ...style }}>
-      <span style={bpfMark('tl', dark)}>+</span><span style={bpfMark('tr', dark)}>+</span>
-      <span style={bpfMark('bl', dark)}>+</span><span style={bpfMark('br', dark)}>+</span>
+    <div className={`bpf-av ${className}`} style={{ position: 'relative', background: 'var(--paper)', border: '1px solid color-mix(in srgb, var(--slate) 55%, transparent)', ...style }}>
+      {marks && (
+        <>
+          <span style={bpfMark('tl')}>+</span><span style={bpfMark('tr')}>+</span>
+          <span style={bpfMark('bl')}>+</span><span style={bpfMark('br')}>+</span>
+        </>
+      )}
       {children}
     </div>
   );
 }
-function bpfMark(pos, dark = false) {
-  const base = { position: 'absolute', color: dark ? 'rgba(255,253,248,0.55)' : 'var(--slate)', fontSize: 13, lineHeight: 1, opacity: .5 };
+function bpfMark(pos) {
+  const base = { position: 'absolute', color: 'var(--slate)', fontSize: 13, lineHeight: 1, opacity: .5 };
   const offsets = { tl: { top: -7, left: -5 }, tr: { top: -7, right: -5 }, bl: { bottom: -8, left: -5 }, br: { bottom: -8, right: -5 } };
   return { ...base, ...offsets[pos] };
 }
@@ -64,7 +66,7 @@ export function Info({ text }) {
 // own hover tooltip. Matches AV's own StatCard exactly (label, value, tip).
 function CategoryCard({ title, tip, stats, pinCode, city, provenance }) {
   return (
-    <BPF style={{ padding: '18px 20px' }}>
+    <BPF marks={false} style={{ padding: '18px 20px' }}>
       <p style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', margin: '0 0 14px', display: 'flex', alignItems: 'center' }}>{title}<Info text={tip} /></p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '14px 20px' }}>
         {stats.filter(Boolean).map(([label, val, itemTip, fieldKey]) => {
@@ -335,7 +337,7 @@ export default function AVDetailedReadout({ record }) {
           <p style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', marginBottom: 14 }}>
             Schools · {record.schools_count} mapped
           </p>
-          <BPF style={{ padding: 0, overflow: 'hidden' }}>
+          <BPF marks={false} style={{ padding: 0, overflow: 'hidden' }}>
             {record.schools_list.map((sc, i) => (
               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, fontSize: 13.5, padding: '11px 18px', borderTop: i ? '1px dashed var(--line-soft)' : 'none' }}>
                 <span style={{ color: 'var(--text)' }}>{sc.name}</span>
@@ -351,7 +353,7 @@ export default function AVDetailedReadout({ record }) {
         <p style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', marginBottom: 14 }}>
           Methodology · Data Sources
         </p>
-        <BPF style={{ padding: 0, overflow: 'hidden' }}>
+        <BPF marks={false} style={{ padding: 0, overflow: 'hidden' }}>
           {Object.entries(record.weights_applied || {}).map(([k, w], i) => (
             <div key={k} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13.5, padding: '10px 18px', borderTop: i ? '1px dashed var(--line-soft)' : 'none', flexWrap: 'wrap', gap: 8 }}>
               <span style={{ color: 'var(--text)', fontWeight: 600, minWidth: 150 }}>{FACTOR_LABELS[k] || k}</span>
