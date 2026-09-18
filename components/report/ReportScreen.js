@@ -23,6 +23,7 @@ import {
   ShieldCheck, GraduationCap, Wind, Droplets, Zap, Route, Building2, Waves,
   Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake,
 } from 'lucide-react';
+import RoomPhotoAnalyzer from './RoomPhotoAnalyzer';
 import './report.css';
 
 
@@ -1626,6 +1627,8 @@ export default function ReportScreen() {
           </p>
         )}
       </section>
+
+      <RoomPhotoAnalyzer lat={lat} lon={lon} floor={floor} tzOffset={TZ} />
 
       {/* ---------- the written verdict ---------- */}
       <section className="bsr-close">
