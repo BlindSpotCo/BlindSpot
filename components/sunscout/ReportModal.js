@@ -414,9 +414,16 @@ export default function ReportModal({
 
   useEffect(() => {
     // autoGenerate used to call generate() straight away here, skipping
-    // any step at all. Now every path stops at the personalize-questions
-    // step first -- generate() only ever runs from that step's own button.
-    if (autoGenerate) setShowQuestions(true);
+    // any step at all. Now the combined/full-report path stops at the
+    // personalize-questions step first -- generate() only ever runs from
+    // that step's own button. The sun & shadow document (galleryOnly) is
+    // the 12 map frames plus the monthly table, not a written verdict
+    // shaped by who's reading it -- none of the five questions change
+    // anything about that run (see the `persona`/`personalizeAnswers`
+    // block in report/analyse/route.js, both ignored when captionsOnly),
+    // so asking them first would just be a stalling screen. Straight to
+    // generate() for that one, same as before.
+    if (autoGenerate) { if (galleryOnly) generate(); else setShowQuestions(true); }
     // Mount-only -- floor/facing/prefill are fixed for this modal's
     // lifetime, and generate() itself isn't a stable dependency.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -717,14 +724,46 @@ export default function ReportModal({
               />
             </div>
 
+            {/* Only reachable for galleryOnly: the combined-report path
+                always detours through the questions step (which has its
+                own inline error + Try Again) before generate() ever runs,
+                so a failure there never lands back here. A galleryOnly
+                failure has nowhere else to surface, since this form is the
+                only step it ever shows. */}
+            {galleryOnly && error && (
+              <div style={{ border:'1px solid #dc2626', padding:'10px 14px', fontSize:12, color:'#dc2626', marginBottom:16, fontFamily:MONO }}>ERROR: {error}</div>
+            )}
+
             <div style={{ display:'flex', gap:0 }}>
-              <button onClick={() => setShowQuestions(true)} style={{ flex:1, background:ORG, color:'#fff', border:'1px solid transparent', boxSizing:'border-box', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
-                Continue
+              {/* galleryOnly (the sun & shadow document, not the combined
+                  verdict) skips the personalize step entirely and generates
+                  straight away -- none of those five questions change a
+                  document that's just 12 map frames plus the monthly
+                  table, see the mount-effect comment above for why. */}
+              <button onClick={() => (galleryOnly ? generate() : setShowQuestions(true))} style={{ flex:1, background:ORG, color:'#fff', border:'1px solid transparent', boxSizing:'border-box', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
+                {galleryOnly && error ? 'Try again' : galleryOnly ? 'Generate the report' : 'Continue'}
               </button>
               <button onClick={onClose} style={{ background:'transparent', color:SUB, border:`1px solid ${LINE}`, borderLeft:'none', boxSizing:'border-box', padding:'14px 20px', fontSize:13, cursor:'pointer' }}>Cancel</button>
             </div>
-            <div style={{ fontFamily:MONO, fontSize:10.5, color:SUB, textAlign:'center', marginTop:12, letterSpacing:'.03em' }}>A few quick questions next, then about two minutes to build</div>
+            <div style={{ fontFamily:MONO, fontSize:10.5, color:SUB, textAlign:'center', marginTop:12, letterSpacing:'.03em' }}>
+              {galleryOnly ? 'About a minute · photographs the map, then lays it out' : 'A few quick questions next, then about two minutes to build'}
+            </div>
           </>
+        ) : (autoGenerate && galleryOnly && error) ? (
+          // autoGenerate skips the form above entirely, so a galleryOnly
+          // failure on that path has no step to reappear in at all --
+          // this is its only way out. (The combined-report autoGenerate
+          // path never lands here; its failures re-show the questions
+          // step instead, see isQuestionsStep above.)
+          <div style={{ textAlign:'center', padding:'30px 0' }}>
+            <div style={{ border:'1px solid #dc2626', padding:'10px 14px', fontSize:12, color:'#dc2626', marginBottom:20, fontFamily:MONO, textAlign:'left' }}>ERROR: {error}</div>
+            <div style={{ display:'flex', gap:0 }}>
+              <button onClick={generate} style={{ flex:1, background:ORG, color:'#fff', border:'1px solid transparent', boxSizing:'border-box', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
+                Try Again
+              </button>
+              <button onClick={onClose} style={{ background:'transparent', color:SUB, border:`1px solid ${LINE}`, borderLeft:'none', boxSizing:'border-box', padding:'14px 20px', fontSize:13, cursor:'pointer' }}>Cancel</button>
+            </div>
+          </div>
         ) : (
           <div className="rm-generating" style={{ textAlign:'center', padding:'30px 0' }}>
             <div className="rm-generating-spinner" style={{ marginBottom:20, animation:'rm-spin 1.6s linear infinite', display:'inline-block', color:ORG }}>
