@@ -44,6 +44,7 @@
        lighter/softer now, with weaker contrast than before the swap --
        worth a live look, not just trusting this comment. */
     --brand:#1E293B;   /* BlindSpot (parent) - the judgment. Darkened from #4B4F1A on request; still AAA on paper, even higher contrast than before. */
+    --dark-surface:#3D4116; /* Warm dark olive -- the original pre-cool-slate --brand value, reused only for large full-bleed dark backgrounds (pin-drop transition overlay, footer/closing CTA) where the cool-slate --brand navy read as "blue". --brand itself stays cool-slate everywhere else (buttons, header, small accents). */
     --brand-fill:#334155; /* brighter/lighter parent fill -- decorative/large only, fails text contrast (this was AsliVastu's old --av-fill value) */
     --brand-yellow:#F5C343; /* the brand's yellow accent (matched from the logo/wordmark reference image, previously used for the header CTA pill on an unmerged branch) -- not used in any merged nav/header styling yet, so this is its first call site on main. Dark text/ink reads fine on it as a fill; as a flat text colour on the light --bg paper it's noticeably lower-contrast than --brand, expected for a bold display headline rather than body copy. */
     --av:#6B2232;       /* AsliVastu - the area. Even higher contrast on paper than the old olive value (~11:1) */
@@ -893,7 +894,7 @@
      these numbers. */
   .pdt{ position:fixed; inset:0; z-index:9999; pointer-events:all; overflow:hidden }
   .pdt-field{
-    position:absolute; inset:0; background:var(--brand);
+    position:absolute; inset:0; background:var(--dark-surface);
     clip-path:inset(100% 0 0 0);
     animation:pdt-wipe .58s cubic-bezier(.7,0,.2,1) forwards;
   }
@@ -2050,18 +2051,18 @@ header.header-on-dark .brand-word-img{
 .ps3-item{
   display:flex; flex-direction:column; align-items:flex-start; gap:10px;
   padding:var(--space-5) var(--space-4);
-  background:var(--paper); border:1px solid var(--line); border-top:3px solid var(--line);
+  background:transparent; border:none;
   border-radius:var(--radius-lg);
-  transition:transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s ease, background .3s ease;
+  transition:transform .3s cubic-bezier(.16,1,.3,1), background .3s ease;
 }
-.ps3-item:hover{ transform:translateY(-4px); box-shadow:0 14px 28px -16px rgba(28,24,18,.22) }
-/* A 3px top border alone was too easy to miss as the "which engine
-   catches this" signal -- a faint tint across the whole card (still
-   light enough that the white icon square and dark label stay readable)
-   makes the av/ss pairing legible across the whole grid at a glance,
-   not just on the one sliver most people scroll straight past. */
-.ps3-item.accent-av{ border-top-color:var(--av); background:color-mix(in srgb, var(--av) 5%, var(--paper)); }
-.ps3-item.accent-ss{ border-top-color:var(--ss); background:color-mix(in srgb, var(--ss) 5%, var(--paper)); }
+/* Unboxed on request -- no border, no top-accent bar. The faint av/ss
+   tint stays as a soft rounded wash (no hard edge) so the two-engine
+   pairing still reads at a glance without looking like a card. */
+.ps3-item:hover{ background:color-mix(in srgb, var(--ink) 3%, transparent) }
+.ps3-item.accent-av{ background:color-mix(in srgb, var(--av) 6%, transparent); }
+.ps3-item.accent-ss{ background:color-mix(in srgb, var(--ss) 6%, transparent); }
+.ps3-item.accent-av:hover{ background:color-mix(in srgb, var(--av) 10%, transparent); }
+.ps3-item.accent-ss:hover{ background:color-mix(in srgb, var(--ss) 10%, transparent); }
 .ps3-icon{
   display:flex; align-items:center; justify-content:center;
   width:44px; height:44px; border-radius:var(--radius-md);
@@ -2319,7 +2320,7 @@ header.header-on-dark .brand-word-img{
    section matches the numbered 01-05 rhythm above it instead of being
    the one section with no label at all. */
 .section-closing2{
-  position:relative; overflow:hidden; background:var(--brand); color:#fff;
+  position:relative; overflow:hidden; background:var(--dark-surface); color:#fff;
   padding:var(--space-9) 0 0;
 }
 .section-closing2::before{
