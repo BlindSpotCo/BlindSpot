@@ -19,6 +19,10 @@ import ReportModal from '@/components/sunscout/ReportModal';
 import useMapCapture, { SHOTS } from '@/lib/sunscout/useMapCapture';
 import { FACTOR_LABELS, FACING_OPTS } from '@/lib/property-score/ui';
 import { getActionItems } from '@/lib/property-score/actionItems';
+import {
+  ShieldCheck, GraduationCap, Wind, Droplets, Zap, Route, Building2, Waves,
+  Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake,
+} from 'lucide-react';
 import './report.css';
 
 
@@ -37,6 +41,31 @@ const FACTOR_MEANS = {
   roads: 'Road condition, potholes and when it was last resurfaced',
   infrastructure: 'Metro, highways and what is planned nearby',
   sewerage: 'Drainage coverage, treatment and waterlogging risk',
+};
+
+// One small icon per row -- same keys as FACTOR_MEANS above, plus the
+// live AQI row (shares the 'air' icon) and the sub-scores on the flat
+// side. Purely decorative scanning aids, so every <Icon> below is
+// rendered aria-hidden and the row's own text still carries the meaning.
+const FACTOR_ICONS = {
+  crime: ShieldCheck,
+  schools: GraduationCap,
+  air: Wind,
+  water: Droplets,
+  power: Zap,
+  roads: Route,
+  infrastructure: Building2,
+  sewerage: Waves,
+};
+
+const SUBSCORE_ICONS = {
+  sun: Sun,
+  shadeHeat: Thermometer,
+  view: Eye,
+  privacy: Lock,
+  wind: Fan,
+  dampness: CloudRain,
+  noise: Volume2,
 };
 
 // North at the top, the way a compass is read. null is the middle cell.
@@ -1049,18 +1078,23 @@ export default function ReportScreen() {
 
               <div className={`bsr-half-detail${halfOpen.area ? '' : ' is-collapsed'}`}>
               <ul className="bsr-rows">
-                {factorKeys.map((k) => (
+                {factorKeys.map((k) => {
+                  const RowIcon = FACTOR_ICONS[k];
+                  return (
                   <li key={k}>
+                    {RowIcon ? <RowIcon className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" /> : null}
                     <span className="bsr-row-what">
                       {FACTOR_LABELS[k] || k}
                       {FACTOR_MEANS[k] ? <span className="bsr-row-note">{FACTOR_MEANS[k]}</span> : null}
                     </span>
                     <span className={`bsr-tag is-${toneOf(area.factors[k])}`}>{word(area.factors[k])}</span>
                   </li>
-                ))}
+                  );
+                })}
 
                 {aqi != null && (
                   <li>
+                    <Wind className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" />
                     <span className="bsr-row-what">
                       Air quality today
                       <span className="bsr-row-note">Live reading, AQI {aqi}</span>
@@ -1069,15 +1103,19 @@ export default function ReportScreen() {
                   </li>
                 )}
 
-                {missingKeys.filter((k) => !(k === 'air' && aqi != null)).map((k) => (
+                {missingKeys.filter((k) => !(k === 'air' && aqi != null)).map((k) => {
+                  const RowIcon = FACTOR_ICONS[k];
+                  return (
                   <li key={k}>
+                    {RowIcon ? <RowIcon className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" /> : null}
                     <span className="bsr-row-what">
                       {FACTOR_LABELS[k] || k}
                       <span className="bsr-row-note">Not in the records for this pin</span>
                     </span>
                     <span className="bsr-tag is-none">Not recorded</span>
                   </li>
-                ))}
+                  );
+                })}
               </ul>
 
               <p className="bsr-methodology-note">
@@ -1215,8 +1253,11 @@ export default function ReportScreen() {
 
 
           <ul className="bsr-rows">
-            {(unit.subScores || []).map((s) => (
+            {(unit.subScores || []).map((s) => {
+              const RowIcon = SUBSCORE_ICONS[s.key];
+              return (
               <li key={s.key}>
+                {RowIcon ? <RowIcon className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" /> : null}
                 <span className="bsr-row-what">
                   {s.label}
                   {s.summary ? <span className="bsr-row-note">{s.summary}</span> : null}
@@ -1235,7 +1276,8 @@ export default function ReportScreen() {
                   <span className={`bsr-tag is-${toneOf(s.score)}`}>{word(s.score)}</span>
                 )}
               </li>
-            ))}
+              );
+            })}
             {/* A ₹ figure, not a Good/Fair/Poor judgement -- riding on the
                 same Shade & Heat exposure data, but shown as its own row
                 with a neutral tag rather than a sixth graded score. The
@@ -1243,6 +1285,7 @@ export default function ReportScreen() {
                 hovers; the visible note stays a one-line caveat. */}
             {unit.thermalCost && (
               <li>
+                <Snowflake className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" />
                 <span className="bsr-row-what">
                   Est. summer AC cost
                   <span className="bsr-row-note" title={unit.thermalCost.methodology}>
