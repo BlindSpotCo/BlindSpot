@@ -325,8 +325,39 @@ Be concrete about what you can actually see. Never end mid-sentence. If an image
 }
 
 export async function POST(req) {
-  const { screenshots, lat, lon, address, floor, facing, tzOffset, avRecord, combinedScore, unitScore, areaWeight, unitWeight, personaId, customNote, actionItems, skipAi, captionsOnly } = await req.json();
+  const { screenshots, lat, lon, address, floor, facing, tzOffset, avRecord, combinedScore, unitScore, areaWeight, unitWeight, personaId, customNote, purpose, horizon, priorities, actionItems, skipAi, captionsOnly } = await req.json();
   const persona = personaId ? (await import('@/lib/personas')).getPersona(personaId) : null;
+
+  // purpose/horizon/priorities come from ReportModal's "personalize your
+  // report" step (Q2-Q4 -- Q1 is personaId above, Q5 is customNote below).
+  // Fixed option sets from the UI, not free text, but looked up through a
+  // known map anyway rather than trusted as raw strings straight into the
+  // prompt -- an unrecognised key is silently dropped instead of printed.
+  const PURPOSE_TEXT = {
+    buying_to_live: "buying this to live in it themselves",
+    buying_to_rent: "buying this to rent it out",
+    renting_deciding: "currently renting nearby and deciding whether to buy",
+    researching: "just researching and comparing options, nothing decided yet",
+  };
+  const HORIZON_TEXT = {
+    under_3: "under 3 years",
+    '3_7': "3 to 7 years",
+    '10_plus': "10+ years",
+    unsure: "not sure yet",
+  };
+  const PRIORITY_TEXT = {
+    safety: "safety & crime", schools: "schools", sunlight: "sunlight & daylight",
+    privacy: "noise & privacy", air: "air quality", connectivity: "connectivity/commute",
+    resale: "resale value", price: "price vs. fundamentals",
+  };
+  const purposeText = PURPOSE_TEXT[purpose] || null;
+  const horizonText = HORIZON_TEXT[horizon] || null;
+  const safePriorities = Array.isArray(priorities) ? priorities.filter((p) => PRIORITY_TEXT[p]).slice(0, 3) : [];
+  const personalizeAnswers = [
+    purposeText ? `Why they're looking: ${purposeText}.` : null,
+    horizonText ? `How long they plan to stay or hold it: ${horizonText}.` : null,
+    safePriorities.length ? `What they said matters most to them, in their own order: ${safePriorities.map((p) => PRIORITY_TEXT[p]).join(', ')}.` : null,
+  ].filter(Boolean).join(' ');
   // Free-text ask from the buyer, captured right before they hit Generate
   // (see UnitVerdict's own field -- the report modal itself auto-starts,
   // so this is the only chance to ask). Capped and stripped of the model's
@@ -537,6 +568,7 @@ NO REPETITION: every fact and every figure appears in exactly one section - the 
 Plain language: explain any technical term (azimuth, feasibility band) in a short clause the first time, and prefer the everyday word.
 Use these names exactly when you refer to them: "Neighbourhood Score" (the area), "Home Comfort Score" (this unit), "BlindSpot Verdict" (the combined result).
 ${persona ? `\nWHO'S READING THIS: ${persona.reportFocus}\n` : ''}
+${personalizeAnswers ? `\nTHEIR OWN ANSWERS, ASKED RIGHT BEFORE GENERATING THIS REPORT: ${personalizeAnswers}\nUse these to decide what to lead with and dwell on, even where it cuts against the persona default above - if they flagged a priority that isn't normally emphasised for this reader type, still give it real space, since they told you directly it matters to them, which outweighs an assumed default.\n` : ''}
 ${safeCustomNote ? `\nTHE BUYER'S OWN REQUEST - they typed this themselves right before generating this report, so treat it as the single strongest signal of what they actually care about, above persona defaults or generic coverage: "${safeCustomNote}"\nDirectly address this in the BlindSpot Verdict section - do not just mention it in passing, actually answer it using the ground-truth data above. If the data above genuinely doesn't cover what they asked (e.g. they asked about something this report doesn't measure), say so plainly rather than inventing an answer. Never quote their request back verbatim or write "you mentioned" - just make sure the answer is unmistakably there.\n` : ''}
 
 FORMATTING RULES (follow exactly, every time, regardless of location):
