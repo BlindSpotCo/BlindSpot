@@ -304,6 +304,10 @@ export default function ReportScreen() {
   const [locBusy, setLocBusy] = useState(false);
   const [locError, setLocError] = useState('');
   const [search, setSearch] = useState('');
+  // Whether the header's inline "change address" form is open -- the
+  // search box used to live permanently in the map toolbar; now it's a
+  // rare action tucked next to the address itself, revealed on demand.
+  const [addrEditOpen, setAddrEditOpen] = useState(false);
 
   // Bumped by the retry button, so the scores effect can be re-run without
   // changing the address it is scoring.
@@ -520,6 +524,7 @@ export default function ReportScreen() {
   const moveTo = useCallback((toLat, toLon, label) => {
     if (!Number.isFinite(toLat) || !Number.isFinite(toLon)) return;
     setLocError('');
+    setAddrEditOpen(false);
     setSolar(null); setSolarFailed(false); setAqi(null);
     setPlace({ lat: toLat, lon: toLon, pinCode: '', address: label || '' });
     pinAsked.current = `${toLat},${toLon}`;
@@ -814,13 +819,37 @@ export default function ReportScreen() {
             <span className="bsr-head-links">
               <a href="/compare" className="is-primary">Compare flats</a>
               <a href="/my-reports">My reports</a>
-              <a href="/">Change address</a>
             </span>
           </div>
           <p className="bsr-addr">
             <span className="bsr-pin" aria-hidden="true" />
             <span className="bsr-addr-text">{address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}</span>
+            <button
+              type="button"
+              className="bsr-addr-change"
+              onClick={() => setAddrEditOpen((v) => !v)}
+              aria-expanded={addrEditOpen}
+            >
+              {addrEditOpen ? 'Cancel' : 'Change address'}
+            </button>
           </p>
+          {addrEditOpen && (
+            <form className="bsr-addr-edit bsr-locbar" onSubmit={onSearchSubmit}>
+              <input
+                type="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Address or coordinates"
+                aria-label="Move the pin to another address or coordinates -- press Enter to search"
+                autoFocus
+              />
+              {locBusy ? <span className="bsr-loc-busy" aria-live="polite">Finding…</span> : null}
+              <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
+                My location
+              </button>
+              {locError ? <p className="bsr-locerror">{locError}</p> : null}
+            </form>
+          )}
         </header>
 
         <div className="bsr-unitgate">
@@ -979,13 +1008,42 @@ export default function ReportScreen() {
                 next step here than either of the other two links. */}
             <a href="/compare" className="is-primary">Compare flats</a>
             <a href="/my-reports">My reports</a>
-            <a href="/">Change address</a>
           </span>
         </div>
         <p className="bsr-addr">
           <span className="bsr-pin" aria-hidden="true" />
           <span className="bsr-addr-text">{address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}</span>
+          {/* Used to be a plain link back to "/" -- moving the pin meant
+              leaving the report entirely and starting over. This reveals
+              the same search-or-coordinates form the map toolbar used to
+              carry, right where the address itself is written, and closes
+              itself again once moveTo() actually lands a new pin. */}
+          <button
+            type="button"
+            className="bsr-addr-change"
+            onClick={() => setAddrEditOpen((v) => !v)}
+            aria-expanded={addrEditOpen}
+          >
+            {addrEditOpen ? 'Cancel' : 'Change address'}
+          </button>
         </p>
+        {addrEditOpen && (
+          <form className="bsr-addr-edit bsr-locbar" onSubmit={onSearchSubmit}>
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Address or coordinates"
+              aria-label="Move the pin to another address or coordinates -- press Enter to search"
+              autoFocus
+            />
+            {locBusy ? <span className="bsr-loc-busy" aria-live="polite">Finding…</span> : null}
+            <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
+              My location
+            </button>
+            {locError ? <p className="bsr-locerror">{locError}</p> : null}
+          </form>
+        )}
       </header>
 
       {/* ---------- the answer, before anything else ---------- */}
@@ -1365,23 +1423,12 @@ export default function ReportScreen() {
           )}
 
           <div className="bsr-mapbar">
-            <form className="bsr-locbar" onSubmit={onSearchSubmit}>
-              <input
-                type="search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Address or coordinates"
-                aria-label="Move the pin to another address or coordinates -- press Enter to search"
-              />
-              {locBusy ? <span className="bsr-loc-busy" aria-live="polite">Finding…</span> : null}
-              <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
-                My location
-              </button>
-            </form>
-
-            {/* Play/pause moved up here, sharing the search row's line on
-                phone, instead of sitting last after floor/faces/date -- it
-                was getting pushed too far down the toolbar to reach. */}
+            {/* The address search used to open this toolbar -- moved to the
+                header instead (see .bsr-addr-edit, next to "Change
+                address"), since moving the pin is an edit to the address
+                itself, not something that belongs floating over the map
+                with floor/faces/date. Play/pause is the toolbar's first
+                row now. */}
             <p className="bsr-mapbar-time">
               <button
                 type="button"
@@ -1484,7 +1531,6 @@ export default function ReportScreen() {
             >
               Get the sun &amp; shadow report →
             </button>
-            {locError ? <p className="bsr-locerror">{locError}</p> : null}
           </div>
         </div>
         <p className="bsr-maphint">

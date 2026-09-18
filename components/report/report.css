@@ -113,6 +113,23 @@
   .bsr-head-links a{font-size:14px}
   .bsr-head-links a.is-primary{font-size:13px;padding:5px 12px}
 }
+/* The "change address" toggle -- sits inline right after the address
+   text it edits, styled like the head-links so it reads as one more
+   action on this bar rather than a form control. Opens .bsr-addr-edit
+   below, which reuses the base .bsr-locbar rules further down this file
+   (same input + button as the map toolbar used to have). */
+.bsr-addr-change{
+  font:inherit;font-size:13px;font-weight:600;cursor:pointer;
+  flex:none;white-space:nowrap;
+  background:none;border:0;padding:0;margin:0;
+  color:var(--brand,#3D4116);text-decoration:underline;text-underline-offset:3px;
+}
+.bsr-addr-change:hover{color:var(--text,#1C1812)}
+.bsr-addr-edit{margin-top:8px;max-width:420px}
+.bsr-addr-edit input[type=search]{min-height:32px}
+@media (max-width:560px){
+  .bsr-addr-edit{max-width:100%}
+}
 
 /* ---------------- the answer ---------------- */
 .bsr-answer{
@@ -611,17 +628,18 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
    above it -- physically part of the map you're looking at, not
    something that scrolls or lives away from it. It sizes to its own
    content (max-width caps it, nothing stretches it) so it never reads as
-   a big, mostly-empty strip -- the earlier search box's flex:1 with no
-   cap was exactly that. z-index sits above .bsr-map-guard's dimming
+   a big, mostly-empty strip. z-index sits above .bsr-map-guard's dimming
    layer, so the controls stay usable whether the map is armed for
    interaction or not (and read fine over the guard's dimmed map too).
-   Mobile-first: two short rows (search, then floor/facing/date). At
-   768px+ -- the same breakpoint Map3DShadow itself hides its own "set
-   view angle" pad below -- it becomes one row, with a max-width that
-   keeps clear of that pad's top-right corner instead of overlapping it
-   the way the old pill row once did. Every control is deliberately
-   smaller than its counterpart in "the flat" below: this is glanced at
-   and adjusted in passing, not read. */
+   The address search that used to open this toolbar now lives in the
+   header instead (see .bsr-addr-change/.bsr-addr-edit above) -- what's
+   left is play/pause and floor/facing/date, so mobile fits in two short
+   rows instead of three. At 768px+ -- the same breakpoint Map3DShadow
+   itself hides its own "set view angle" pad below -- it becomes one row,
+   with a max-width that keeps clear of that pad's top-right corner
+   instead of overlapping it the way the old pill row once did. Every
+   control is deliberately smaller than its counterpart in "the flat"
+   below: this is glanced at and adjusted in passing, not read. */
 .bsr-mapbar{
   position:absolute;top:8px;left:8px;z-index:10;
   width:auto;height:auto;max-width:calc(100% - 16px);
@@ -636,20 +654,6 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   border:1px solid rgba(28,24,18,.14);
   border-radius:8px;
   box-shadow:0 4px 14px rgba(28,24,18,.16);
-}
-.bsr-mapbar .bsr-locbar{ margin-top:0;flex-wrap:nowrap;gap:5px; }
-/* Search input: shrunk further (was 34px tall via the base .bsr-locbar
-   rule) -- it's a glance-and-tap control, not the focal point, and the
-   old height was the single biggest thing eating the toolbar's row. */
-.bsr-mapbar .bsr-locbar input[type=search]{
-  min-width:0;max-width:120px;min-height:24px;font-size:11px;padding:3px 6px;
-}
-/* "Move pin" button is gone -- Enter submits the form. What's left here
-   is just the busy label (while a search is in flight) and My location,
-   both small pills instead of one being a full submit button. */
-.bsr-mapbar .bsr-loc-busy{ font-size:9.5px;color:var(--text-mute,#5A5140);white-space:nowrap;flex:none; }
-.bsr-mapbar .bsr-locbar button{
-  flex:none;white-space:nowrap;font-size:10px;min-height:24px;padding:0 7px;
 }
 .bsr-mapbar .bsr-set{ margin-top:0;min-height:0;flex-wrap:nowrap;gap:6px; }
 .bsr-mapbar .bsr-set-field{ flex:none; }
@@ -696,8 +700,6 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
     max-width:calc(100% - 230px);
     padding:6px 10px;
   }
-  .bsr-mapbar .bsr-locbar input[type=search]{ max-width:170px;min-height:27px;font-size:12px; }
-  .bsr-mapbar .bsr-locbar button{ font-size:11px;min-height:27px;padding:0 9px; }
   .bsr-mapbar .bsr-set{ gap:8px; }
   .bsr-mapbar .bsr-set-field span{ font-size:10.5px; }
   .bsr-mapbar .bsr-set select,
