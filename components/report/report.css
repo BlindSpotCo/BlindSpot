@@ -40,11 +40,11 @@
 }
 .bsr-empty-actions button{
   font:inherit;font-weight:700;cursor:pointer;min-height:48px;padding:13px 26px;
-  border:0;border-radius:4px;background:var(--ss,#AF5F30);color:#FFFDF8;
+  border:0;border-radius:4px;background:var(--brand,#3D4116);color:#FFFDF8;
 }
 .bsr-empty-actions button:hover{filter:brightness(.9)}
 .bsr-empty-actions a{
-  font-weight:600;color:var(--ss,#AF5F30);text-decoration:underline;text-underline-offset:4px;
+  font-weight:600;color:var(--brand,#3D4116);text-decoration:underline;text-underline-offset:4px;
 }
 
 .bsr-empty h1{font-size:30px;margin-bottom:10px}
@@ -87,7 +87,7 @@
 .bsr-addr{display:flex;align-items:center;gap:9px;min-width:0;flex:1;margin-top:4px}
 .bsr-pin{
   width:11px;height:11px;border-radius:50%;flex:none;
-  background:var(--ss,#AF5F30);box-shadow:0 0 0 4px rgba(175,95,48,.15);
+  background:var(--brand,#3D4116);box-shadow:0 0 0 4px rgba(30,41,59,.15);
 }
 .bsr-addr-text{
   font-size:15.5px;font-weight:600;
@@ -95,7 +95,7 @@
 }
 .bsr-head-links{display:flex;gap:18px;flex:none}
 .bsr-head-links a{
-  color:var(--ss,#AF5F30);font-size:15px;font-weight:600;
+  color:var(--brand,#3D4116);font-size:15px;font-weight:600;
   text-decoration:underline;text-underline-offset:3px;white-space:nowrap;
 }
 /* Three underlined links of equal weight is a list to read rather than a
@@ -103,11 +103,11 @@
    loses the underline, so it reads as the action and the other two stay
    the utilities they are. */
 .bsr-head-links a.is-primary{
-  text-decoration:none;border:1.5px solid var(--ss,#AF5F30);
+  text-decoration:none;border:1.5px solid var(--brand,#3D4116);
   border-radius:999px;padding:5px 14px;font-size:14px;
   transition:background .15s ease,color .15s ease;
 }
-.bsr-head-links a.is-primary:hover{background:var(--ss,#AF5F30);color:#FFFDF8}
+.bsr-head-links a.is-primary:hover{background:var(--brand,#3D4116);color:#FFFDF8}
 @media (max-width:560px){
   .bsr-head-links{gap:12px;flex-wrap:wrap}
   .bsr-head-links a{font-size:14px}
@@ -556,12 +556,12 @@
   border-top:1px solid var(--line-soft,rgba(28,24,18,.1));
 }
 .bsr-close h2{font-size:20px;font-weight:700}
-.bsr-close h2 em{font-style:italic;color:var(--ss,#AF5F30)}
+.bsr-close h2 em{font-style:italic;color:var(--brand,#3D4116)}
 .bsr-close > p{margin:4px auto 14px;max-width:60ch;color:var(--text-mute,#5A5140);font-size:14.5px}
 .bsr-cta{
   display:inline-block;font-size:16px;font-weight:700;text-decoration:none;
   padding:12px 26px;border-radius:4px;
-  background:var(--ss,#AF5F30);color:#FFFDF8;
+  background:var(--brand,#3D4116);color:#FFFDF8;
 }
 /* .bsr-cta is used as both an <a> and the page's primary <button>. Buttons
    carry a UA border, the system font and a default cursor; the links don't.
@@ -576,7 +576,7 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   color:var(--text-mute,#5A5140);
 }
 .bsr-also a{
-  color:var(--ss,#AF5F30);font-weight:600;
+  color:var(--brand,#3D4116);font-weight:600;
   text-decoration:underline;text-underline-offset:4px;
 }
 
@@ -589,7 +589,7 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 .bsr a:focus-visible,
 .bsr button:focus-visible,
 .bsr input:not(.bsr-box):focus-visible{
-  outline:2px solid var(--ss,#AF5F30);outline-offset:3px;border-radius:3px;
+  outline:2px solid var(--brand,#3D4116);outline-offset:3px;border-radius:3px;
 }
 
 @media (max-width:900px){
@@ -674,7 +674,7 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
    row has room rather than claiming a full row of its own. */
 .bsr-mapbar .bsr-mapbar-time{ margin-top:0;display:flex;align-items:center;flex-wrap:nowrap;gap:5px; }
 .bsr-mapbar .bsr-play{ font-size:9.5px;min-height:24px;padding:0 7px;flex:none; }
-.bsr-mapbar .bsr-mapbar-time input[type=range]{ flex:none;width:60px;min-width:50px;height:24px;accent-color:var(--ss,#AF5F30); }
+.bsr-mapbar .bsr-mapbar-time input[type=range]{ flex:none;width:60px;min-width:50px;height:24px;accent-color:var(--brand,#3D4116); }
 .bsr-mapbar .bsr-clock{ font-size:10px;min-width:40px;flex:none; }
 /* Generating the report moved here from a link up top (see .bsr-more a
    in the flat section) -- this is now the actual trigger, so it reads as
@@ -685,8 +685,8 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 .bsr-mapbar-report{
   font-family:inherit;font-size:10px;font-weight:700;cursor:pointer;
   min-height:26px;padding:0 9px;margin-top:5px;border-radius:4px;flex:none;
-  border:1px solid var(--ss,#AF5F30);
-  background:var(--ss,#AF5F30);color:#FFFDF8;
+  border:1px solid var(--brand,#3D4116);
+  background:var(--brand,#3D4116);color:#FFFDF8;
 }
 .bsr-mapbar-report:hover:not(:disabled){filter:brightness(.94)}
 .bsr-mapbar-report:disabled{opacity:.5;cursor:not-allowed}
@@ -727,7 +727,7 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   border:1px solid var(--line,rgba(28,24,18,.14));
   background:var(--paper,#FFFDF8);color:var(--text-mute,#5A5140);
 }
-.bsr-locbar button:hover:not(:disabled){border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
+.bsr-locbar button:hover:not(:disabled){border-color:var(--brand,#3D4116);color:var(--brand,#3D4116)}
 .bsr-locbar button:disabled{opacity:.55;cursor:default}
 .bsr-locerror{
   margin:6px 0 0;padding:6px 10px;font-size:12.5px;color:var(--poor,#A2483C);
@@ -743,10 +743,10 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 .bsr-play{
   font:inherit;font-size:15px;font-weight:700;cursor:pointer;flex:none;
   min-height:46px;padding:0 18px;border-radius:4px;
-  border:1px solid var(--ss,#AF5F30);
-  background:var(--paper,#FFFDF8);color:var(--ss,#AF5F30);
+  border:1px solid var(--brand,#3D4116);
+  background:var(--paper,#FFFDF8);color:var(--brand,#3D4116);
 }
-.bsr-play.is-on{background:var(--ss,#AF5F30);color:#FFFDF8}
+.bsr-play.is-on{background:var(--brand,#3D4116);color:#FFFDF8}
 .bsr-play:hover{filter:brightness(.96)}
 
 /* anchor jumps between the flat and the map read better eased */
@@ -792,9 +792,9 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   background:var(--paper,#FFFDF8);
   border:1px solid var(--line,rgba(28,24,18,.14));
 }
-.bsr-datein:hover{border-color:var(--ss,#AF5F30)}
+.bsr-datein:hover{border-color:var(--brand,#3D4116)}
 .bsr-datein:focus-visible{
-  outline:2px solid var(--ss,#AF5F30);outline-offset:1px;border-color:var(--ss,#AF5F30);
+  outline:2px solid var(--brand,#3D4116);outline-offset:1px;border-color:var(--brand,#3D4116);
 }
 
 
@@ -819,7 +819,7 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 .bsr-unitgate-eyebrow{
   display:block;font-family:'Geist Mono',monospace;font-weight:600;
   font-size:12px;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--ss,#AF5F30);margin-bottom:6px;
+  color:var(--brand,#3D4116);margin-bottom:6px;
 }
 .bsr-unitgate-title{
   margin:0;font-size:22px;font-weight:800;line-height:1.25;
@@ -847,7 +847,7 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   background:var(--bg,#FAF6EE);color:var(--text,#1C1812);
 }
 .bsr-unitgate-floor input:focus-visible{
-  outline:2px solid var(--ss,#AF5F30);outline-offset:1px;border-color:var(--ss,#AF5F30);
+  outline:2px solid var(--brand,#3D4116);outline-offset:1px;border-color:var(--brand,#3D4116);
 }
 .bsr-unitgate-facing{
   display:grid;grid-template-columns:repeat(4, 1fr);gap:8px;
@@ -860,13 +860,13 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   transition:background .15s ease, color .15s ease, border-color .15s ease;
 }
 .bsr-unitgate-chip:hover{border-color:var(--line,rgba(28,24,18,.3));color:var(--text,#1C1812)}
-.bsr-unitgate-chip.on{background:var(--ss,#AF5F30);border-color:var(--ss,#AF5F30);color:#FFFDF8}
+.bsr-unitgate-chip.on{background:var(--brand,#3D4116);border-color:var(--brand,#3D4116);color:#FFFDF8}
 .bsr-unitgate-actions{
   display:flex;flex-direction:column;align-items:stretch;gap:12px;
   margin-top:24px;
 }
 .bsr-unitgate-go{
-  border:none;border-radius:999px;background:var(--ss,#AF5F30);color:#FFFDF8;
+  border:none;border-radius:999px;background:var(--brand,#3D4116);color:#FFFDF8;
   font:inherit;font-size:15px;font-weight:700;padding:13px 20px;cursor:pointer;
   transition:opacity .15s ease, transform .15s ease;
 }
