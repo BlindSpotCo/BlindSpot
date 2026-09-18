@@ -45,7 +45,7 @@ const INK       = '#0F172A'; // --ink / --text
 const MUTE      = '#64748B'; // --text-mute
 const DIM       = '#94A3B8'; // --text-dim
 const SUN       = '#AF5F30'; // --ss (back to its original warm value, see app/globals.css)
-const WINE      = '#1E293B'; // --brand (BlindSpot's slate accent, cool-palette pass)
+const WINE      = '#3D4116'; // --brand (back to its original warm olive, see app/globals.css)
 const GRADIENT  = `linear-gradient(90deg, ${SUN}, ${WINE})`;
 const GOOD = '#10B981', OK = '#F59E0B', POOR = '#EF4444';
 const DISPLAY = "'Geist', Arial, sans-serif";
@@ -814,7 +814,7 @@ export async function POST(req) {
          mistake, not a choice, so the redundant one is gone. -->
     <button id="back-to-sunscout-btn" style="background:#fff;color:${WINE};border:1px solid ${WINE};padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;">← Close</button>
     <button id="print-btn" style="background:${CARD};color:${MUTE};border:1px solid ${LINE};padding:10px 16px;font-size:13px;cursor:pointer;">Print</button>
-    <button id="download-pdf-btn" style="background:${GRADIENT};color:#fff;border:none;padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(30,41,59,0.3);display:inline-flex;align-items:center;gap:7px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg>Download PDF</button>
+    <button id="download-pdf-btn" style="background:${GRADIENT};color:#fff;border:none;padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(61,65,22,0.3);display:inline-flex;align-items:center;gap:7px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg>Download PDF</button>
   </div>
 
   <div id="report-root" style="max-width:900px;margin:0 auto;background:#fff;">

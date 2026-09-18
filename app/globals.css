@@ -43,9 +43,8 @@
        below) uses --brand-fill, so its punch will read noticeably
        lighter/softer now, with weaker contrast than before the swap --
        worth a live look, not just trusting this comment. */
-    --brand:#1E293B;   /* BlindSpot (parent) - the judgment. Darkened from #4B4F1A on request; still AAA on paper, even higher contrast than before. */
-    --dark-surface:#3D4116; /* Warm dark olive -- the original pre-cool-slate --brand value, reused only for large full-bleed dark backgrounds (pin-drop transition overlay, footer/closing CTA) where the cool-slate --brand navy read as "blue". --brand itself stays cool-slate everywhere else (buttons, header, small accents). */
-    --brand-fill:#334155; /* brighter/lighter parent fill -- decorative/large only, fails text contrast (this was AsliVastu's old --av-fill value) */
+    --brand:#3D4116;   /* BlindSpot (parent) - the judgment. Back to its original warm olive on request -- the cool-slate navy read as "blue" everywhere it's used as a solid fill (buttons, CTAs, the footer/closing section), not just the two spots fixed earlier. */
+    --brand-fill:#ADA846; /* brighter/lighter parent fill -- decorative/large only, fails text contrast (this was AsliVastu's old --av-fill value). Back to its original warm value alongside --brand. */
     --brand-yellow:#F5C343; /* the brand's yellow accent (matched from the logo/wordmark reference image, previously used for the header CTA pill on an unmerged branch) -- not used in any merged nav/header styling yet, so this is its first call site on main. Dark text/ink reads fine on it as a fill; as a flat text colour on the light --bg paper it's noticeably lower-contrast than --brand, expected for a bold display headline rather than body copy. */
     --av:#6B2232;       /* AsliVastu - the area. Even higher contrast on paper than the old olive value (~11:1) */
     --av-fill:#7C2839;  /* AsliVastu large-fill variant (this was the parent's old --brand-fill value -- the twice-tightened "brighter wine" from CTA tuning) */
@@ -894,7 +893,7 @@
      these numbers. */
   .pdt{ position:fixed; inset:0; z-index:9999; pointer-events:all; overflow:hidden }
   .pdt-field{
-    position:absolute; inset:0; background:var(--dark-surface);
+    position:absolute; inset:0; background:var(--brand);
     clip-path:inset(100% 0 0 0);
     animation:pdt-wipe .58s cubic-bezier(.7,0,.2,1) forwards;
   }
@@ -2049,30 +2048,32 @@ header.header-on-dark .brand-word-img{
   margin-top:var(--space-2);
 }
 .ps3-item{
-  display:flex; flex-direction:column; align-items:flex-start; gap:10px;
-  padding:var(--space-5) var(--space-4);
-  background:transparent; border:none;
-  border-radius:var(--radius-lg);
-  transition:transform .3s cubic-bezier(.16,1,.3,1), background .3s ease;
+  display:flex; flex-direction:column; align-items:flex-start; gap:14px;
+  padding:var(--space-6) var(--space-5);
+  background:var(--paper); border:none;
+  border-radius:20px;
+  box-shadow:0 1px 2px rgba(28,24,18,.04), 0 20px 40px -30px rgba(28,24,18,.18);
+  transition:transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s ease, background .35s ease;
 }
-/* Unboxed on request -- no border, no top-accent bar. The faint av/ss
-   tint stays as a soft rounded wash (no hard edge) so the two-engine
-   pairing still reads at a glance without looking like a card. */
-.ps3-item:hover{ background:color-mix(in srgb, var(--ink) 3%, transparent) }
-.ps3-item.accent-av{ background:color-mix(in srgb, var(--av) 6%, transparent); }
-.ps3-item.accent-ss{ background:color-mix(in srgb, var(--ss) 6%, transparent); }
-.ps3-item.accent-av:hover{ background:color-mix(in srgb, var(--av) 10%, transparent); }
-.ps3-item.accent-ss:hover{ background:color-mix(in srgb, var(--ss) 10%, transparent); }
+/* Premium elevated tile on request -- the flat gray unboxed version
+   read as bland. Real depth via shadow, a subtle accent-tinted
+   gradient wash, bigger icon badge with its own colored glow. */
+.ps3-item:hover{ transform:translateY(-6px); box-shadow:0 1px 2px rgba(28,24,18,.04), 0 28px 52px -28px rgba(28,24,18,.26) }
+.ps3-item.accent-av{ background:linear-gradient(165deg, color-mix(in srgb, var(--av) 10%, var(--paper)) 0%, var(--paper) 60%); }
+.ps3-item.accent-ss{ background:linear-gradient(165deg, color-mix(in srgb, var(--ss) 10%, var(--paper)) 0%, var(--paper) 60%); }
+.ps3-item.accent-av:hover{ box-shadow:0 1px 2px rgba(28,24,18,.04), 0 28px 52px -26px color-mix(in srgb, var(--av) 45%, transparent); }
+.ps3-item.accent-ss:hover{ box-shadow:0 1px 2px rgba(28,24,18,.04), 0 28px 52px -26px color-mix(in srgb, var(--ss) 45%, transparent); }
 .ps3-icon{
   display:flex; align-items:center; justify-content:center;
-  width:44px; height:44px; border-radius:var(--radius-md);
+  width:56px; height:56px; border-radius:15px;
   background:var(--brand); color:#fff;
+  box-shadow:0 10px 20px -8px rgba(28,24,18,.3);
   transition:transform .3s cubic-bezier(.34,1.56,.64,1);
 }
-.ps3-item:hover .ps3-icon{ transform:scale(1.1) rotate(-4deg) }
-.ps3-item.accent-av .ps3-icon{ background:var(--av) }
-.ps3-item.accent-ss .ps3-icon{ background:var(--ss) }
-.ps3-icon svg{ width:22px; height:22px }
+.ps3-item:hover .ps3-icon{ transform:scale(1.08) rotate(-4deg) }
+.ps3-item.accent-av .ps3-icon{ background:var(--av); box-shadow:0 10px 22px -6px color-mix(in srgb, var(--av) 65%, transparent); }
+.ps3-item.accent-ss .ps3-icon{ background:var(--ss); box-shadow:0 10px 22px -6px color-mix(in srgb, var(--ss) 65%, transparent); }
+.ps3-icon svg{ width:26px; height:26px }
 .ps3-item-label{ font-size:13.5px; font-weight:600; color:var(--ink); line-height:1.3 }
 .ps3-item-desc{ font-size:12px; color:var(--text-mute); line-height:1.45 }
 
@@ -2100,14 +2101,15 @@ header.header-on-dark .brand-word-img{
 .ts4-grid{ display:grid; grid-template-columns:1fr 1fr; gap:var(--space-6) }
 .ts4-card{
   position:relative; overflow:hidden;
-  background:var(--paper); border:none;
-  box-shadow:0 1px 2px rgba(28,24,18,.05), 0 18px 36px -28px color-mix(in srgb, var(--ts4-accent) 35%, transparent);
-  border-radius:var(--radius-lg); padding:var(--space-6);
+  background:linear-gradient(165deg, color-mix(in srgb, var(--ts4-accent) 7%, var(--paper)) 0%, var(--paper) 55%);
+  border:none;
+  box-shadow:0 1px 2px rgba(28,24,18,.05), 0 26px 50px -32px color-mix(in srgb, var(--ts4-accent) 45%, transparent);
+  border-radius:22px; padding:var(--space-7);
   transition:transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s ease;
 }
 .ts4-card:hover{
-  transform:translateY(-5px);
-  box-shadow:0 1px 2px rgba(28,24,18,.05), 0 24px 48px -20px color-mix(in srgb, var(--ts4-accent) 40%, transparent);
+  transform:translateY(-6px);
+  box-shadow:0 1px 2px rgba(28,24,18,.05), 0 34px 64px -28px color-mix(in srgb, var(--ts4-accent) 55%, transparent);
 }
 .ts4-tag{ display:block; font-size:11px; letter-spacing:.1em; color:var(--ts4-accent); margin-bottom:var(--space-3) }
 .ts4-name{ font-size:23px; margin-bottom:10px }
@@ -2149,13 +2151,14 @@ header.header-on-dark .brand-word-img{
    first, then what it's made of. */
 .ts4-verdict{
   display:flex; align-items:center; gap:28px; flex-wrap:wrap;
-  background:var(--paper); border:none;
-  box-shadow:0 1px 2px rgba(28,24,18,.05), 0 18px 36px -28px rgba(60,122,80,.35);
-  border-radius:var(--radius-lg); padding:26px 28px;
+  background:linear-gradient(165deg, color-mix(in srgb, #3C7A50 9%, var(--paper)) 0%, var(--paper) 60%);
+  border:none;
+  box-shadow:0 1px 2px rgba(28,24,18,.05), 0 26px 50px -32px rgba(60,122,80,.4);
+  border-radius:22px; padding:34px 36px;
   margin-bottom:var(--space-6);
 }
-.ts4-verdict.is-avg{ box-shadow:0 1px 2px rgba(28,24,18,.05), 0 18px 36px -28px rgba(107,92,67,.35); }
-.ts4-verdict.is-poor{ box-shadow:0 1px 2px rgba(28,24,18,.05), 0 18px 36px -28px rgba(162,72,60,.35); }
+.ts4-verdict.is-avg{ background:linear-gradient(165deg, color-mix(in srgb, #6B5C43 9%, var(--paper)) 0%, var(--paper) 60%); box-shadow:0 1px 2px rgba(28,24,18,.05), 0 26px 50px -32px rgba(107,92,67,.4); }
+.ts4-verdict.is-poor{ background:linear-gradient(165deg, color-mix(in srgb, #A2483C 9%, var(--paper)) 0%, var(--paper) 60%); box-shadow:0 1px 2px rgba(28,24,18,.05), 0 26px 50px -32px rgba(162,72,60,.4); }
 .ts4-verdict-big{ display:flex; flex-direction:column; flex:none }
 .ts4-verdict-n{
   font-size:52px; line-height:.88; font-weight:800; letter-spacing:-.04em;
@@ -2321,7 +2324,7 @@ header.header-on-dark .brand-word-img{
    section matches the numbered 01-05 rhythm above it instead of being
    the one section with no label at all. */
 .section-closing2{
-  position:relative; overflow:hidden; background:var(--dark-surface); color:#fff;
+  position:relative; overflow:hidden; background:var(--brand); color:#fff;
   padding:var(--space-9) 0 0;
 }
 .section-closing2::before{
