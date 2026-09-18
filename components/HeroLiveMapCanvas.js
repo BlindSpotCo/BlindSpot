@@ -31,6 +31,13 @@ import PinDropTransition from '@/components/PinDropTransition';
 import { scoreColor } from '@/components/property-score/AVDetailedReadout';
 import TypewriterCycle from '@/components/TypewriterCycle';
 
+// The hero backdrop is a recorded clip of the real sun/shadow animation
+// (Map3DShadow, same component the report page uses), not a live 3D
+// scene -- one video, muted/looped, instead of a WebGL iframe + a solar
+// fetch on every landing visit. Drop the file in public/ under this name
+// to swap it; see the .hlm-map-video render below.
+const HERO_VIDEO_SRC = '/hero-solar.mp4';
+
 // Same default coordinates as the homepage's original rotating
 // coordinate readout -- opens on the same place that readout used to cite.
 const DEFAULT_CENTER = { lat: 12.9716, lon: 77.5946 };
@@ -316,37 +323,24 @@ export default function HeroLiveMapCanvas() {
 
   return (
     <div className="hlm-root" id="find">
-      <MapContainer
-        center={[center.lat, center.lon]}
-        zoom={pin ? FLY_ZOOM : DEFAULT_ZOOM - INTRO_ZOOM_OFFSET}
-        zoomControl={false}
-        scrollWheelZoom={false}
-        dragging={false}
-        doubleClickZoom={false}
-        touchZoom={false}
-        boxZoom={false}
-        keyboard={false}
-        className="hlm-map"
-      >
-        {/* CARTO's basemaps.cartocdn.com now requires a registered API
-            key -- unauthenticated requests come back as tiles watermarked
-            "API key required", which is what shipped here briefly. Back
-            to plain OSM tiles (proven, no key) with the dark treatment
-            done entirely via the .hlm-tiles CSS filter below. */}
-        <TileLayer
-          className="hlm-tiles"
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          // Requests one zoom level higher and stitches 4 tiles per slot on a
-          // HiDPI/retina screen instead of stretching the standard 256px tile --
-          // this is the other real source of softness on a Mac's retina display,
-          // separate from the fractional-zoom issue above.
-          detectRetina
+      {/* The hero's backdrop: a recorded loop of the real sun/shadow
+          animation, muted/autoplay/loop like any decorative background
+          video -- no live map, no per-visitor solar fetch. Picking a
+          search result still opens the report exactly as before (see
+          `pick()` / PinDropTransition below); this is just chrome behind
+          the search box, same as the map it replaces. */}
+      <div className="hlm-map hlm-map-video">
+        <video
+          className="hlm-video"
+          src={HERO_VIDEO_SRC}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          aria-hidden="true"
         />
-        {pin && <Marker position={[pin.lat, pin.lon]} icon={pinIcon} />}
-        <FlyTo lat={center.lat} lon={center.lon} zoom={pin ? FLY_ZOOM : DEFAULT_ZOOM} flyKey={flyKey} />
-        {!pin && <IntroFly lat={DEFAULT_CENTER.lat} lon={DEFAULT_CENTER.lon} zoom={DEFAULT_ZOOM} />}
-      </MapContainer>
+      </div>
 
       <div className="hlm-glow" aria-hidden="true" />
       <div className="hlm-scrim" aria-hidden="true" />
