@@ -19,41 +19,12 @@
 // is here.
 
 import { useState, useMemo } from 'react';
-import AVDetailedReadout, { BPF, source, scoreColor, verdictFor, explain, AQI_PLAIN, formatDateLong, inr, Info } from '@/components/property-score/AVDetailedReadout';
-import { ShieldCheck, GraduationCap, Wind, Droplets, Zap, Route, Building2, Waves } from 'lucide-react';
+import AVDetailedReadout, { BPF, source, scoreColor, verdictFor, explain, AQI_PLAIN, formatDateLong, inr, readableTextColor, Info } from '@/components/property-score/AVDetailedReadout';
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
 import { cityMeta } from '@/lib/aslivastu/cityMeta';
 import useLiveAqi from '@/lib/aslivastu/useLiveAqi';
 import { gradeFor } from '@/lib/aslivastu/aqi';
 import SaveReportButton from '@/components/reports/SaveReportButton';
-
-// Same icon-per-row + word()/toneOf() pattern as the main report's
-// .bsr-rows (components/report/ReportScreen.js) -- identical FACTOR_LABELS
-// keys, identical score thresholds, so a dimension graded "Good" here
-// reads exactly like "Good" on the report page.
-const FACTOR_ICONS = {
-  crime: ShieldCheck,
-  schools: GraduationCap,
-  air: Wind,
-  water: Droplets,
-  power: Zap,
-  roads: Route,
-  infrastructure: Building2,
-  sewerage: Waves,
-};
-function word(score) {
-  if (typeof score !== 'number' || Number.isNaN(score)) return null;
-  if (score >= 80) return 'Excellent';
-  if (score >= 60) return 'Good';
-  if (score >= 40) return 'Fair';
-  return 'Poor';
-}
-function toneOf(score) {
-  if (typeof score !== 'number' || Number.isNaN(score)) return 'none';
-  if (score >= 60) return 'good';
-  if (score >= 40) return 'avg';
-  return 'poor';
-}
 
 /* Used to import Barlow/Barlow Condensed and set them as this page's
    body/heading fonts -- a pair the rest of the site never loads
@@ -87,40 +58,6 @@ const CSS = `
   .nr-wrap { padding: 28px 18px 48px !important; }
   .nr-table-scroll table th:nth-child(5), .nr-table-scroll table td:nth-child(5),
   .nr-table-scroll table th:nth-child(6), .nr-table-scroll table td:nth-child(6) { display: none; }
-}
-
-/* Dimension readout rows -- same icon + pill-tag pattern as the main
-   report's .bsr-rows (components/report/report.css): same word()/toneOf()
-   thresholds, same tag colours (the site's global --success/--warning/
-   --danger, identical hex to the report's --bsr-good/avg/poor tokens),
-   not a separate palette or the old striped/hatched score bar. Score and
-   weight stay visible here (this readout is denser than the report's
-   summary rows) -- just restyled to sit quietly beside the tag. */
-.nr-rows{ list-style:none;margin:0;padding:0;border-top:1px solid var(--line); }
-.nr-row{
-  display:flex;align-items:flex-start;gap:14px;padding:16px 0;
-  border-bottom:1px solid var(--line);
-}
-.nr-row:last-child{ border-bottom:0; }
-.nr-row-icon{ flex:none;margin-top:2px;color:var(--slate); }
-.nr-row-what{ flex:1;min-width:0; }
-.nr-row-label{ display:block;font-size:15px;font-weight:700;color:var(--ink); }
-.nr-row-note{ display:block;font-size:11.5px;color:var(--text-dim);margin-top:3px; }
-.nr-row-explain{ display:block;font-size:12.5px;color:var(--text-mute);line-height:1.5;margin-top:5px; }
-.nr-row-right{ flex:none;display:flex;align-items:center;gap:12px;padding-top:1px; }
-.nr-row-score{ font-family:'Geist',sans-serif;font-size:20px;font-weight:400;color:var(--text-mute);min-width:24px;text-align:right; }
-.nr-tag{
-  flex:none;font-size:12.5px;font-weight:600;
-  padding:3px 11px;line-height:1.5;border-radius:20px;white-space:nowrap;
-}
-.nr-tag.is-good{ background:color-mix(in srgb, var(--success) 16%, var(--paper)); color:var(--success); }
-.nr-tag.is-avg{ background:color-mix(in srgb, var(--warning) 18%, var(--paper)); color:var(--warning); }
-.nr-tag.is-poor{ background:color-mix(in srgb, var(--danger) 14%, var(--paper)); color:var(--danger); }
-@media (max-width: 640px) {
-  .nr-row{ flex-wrap:wrap; gap:10px 14px; }
-  .nr-row-what{ flex-basis:100%; order:1; }
-  .nr-row-icon{ order:0; }
-  .nr-row-right{ order:2; margin-left:32px; }
 }
 `;
 
@@ -160,6 +97,12 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
   // reading is available.
   const record = useLiveAqi(rawRecord);
   const [closeHint, setCloseHint] = useState(false);
+  // Mobile-only accordion state for the dimension readout -- collapsed by
+  // default below 640px so all 8 rows' labels/scores fit on screen at
+  // once without scrolling through every row's explain paragraph; tap a
+  // row to reveal its source + explanation. No-op visually above 640px
+  // (CSS keeps detail always visible on desktop).
+  const [expandedRows, setExpandedRows] = useState(new Set());
 
   const { nqi, grade, rows, coverage, missing } = useMemo(() => {
     const w = WEIGHT_PRESETS.Default;
@@ -231,16 +174,16 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
             apart. See the comment on that CSS block for the full
             reasoning. */}
         <div className="avsheet-hero">
-          <BPF className="avsheet-box">
-            <p className="avsheet-label" style={{ color: 'var(--slate)' }}>Sheet 01 · {record.area || record.city} · PIN {record.pin_code}</p>
+          <BPF dark className="avsheet-box">
+            <p className="avsheet-label" style={{ color: 'rgba(255,253,248,0.65)' }}>Sheet 01 · {record.area || record.city} · PIN {record.pin_code}</p>
             <h1 className="avsheet-name">{record.name}</h1>
             <p className="avsheet-meta">
               {record.dimensions_scored || Object.keys(record.scores || {}).length}/{record.dimensions_total || Object.keys(record.scores || {}).length} dimensions · scored {formatDateLong(record.scored_at) || '-'}
             </p>
           </BPF>
 
-          <BPF className="avsheet-box">
-            <p className="avsheet-label" style={{ color: 'var(--slate)' }}>Composite index</p>
+          <BPF dark className="avsheet-box">
+            <p className="avsheet-label" style={{ color: 'rgba(255,253,248,0.65)' }}>Composite index</p>
             <div className="avsheet-scorerow">
               <span className="avsheet-score">{nqi}</span>
               <span className="avsheet-grade">{grade}</span>
@@ -250,7 +193,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
               {coverage < 100 ? ` · ${coverage}% of the model` : ''}.
             </p>
             {coverage < 100 && (
-              <p className="avsheet-note" style={{ color: 'var(--warning)' }}>
+              <p className="avsheet-note" style={{ color: '#F0C77A' }}>
                 We have no records for {missing.map(k => (FACTOR_LABELS[k] || k).toLowerCase()).join(', ')} in
                 this pincode, so this score is worked out from the {`${coverage}%`} of the model we do have{coverage < 60 ? ' - treat it as indicative rather than settled' : ''}.
               </p>
@@ -261,15 +204,17 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
             <p className="avsheet-note">First-pass area assessment · reflects this PIN, not a specific building or street.</p>
           </BPF>
 
-          {/* No card here any more -- flush on the page background like
-              the rest of the hero row, same autumn scoreColor(nqi) ramp
-              used everywhere else on the report as the word's own text
-              colour, never AsliVastu's own wine/red brand colour. Per-record,
-              so this stays inline. */}
-          <div className="avsheet-verdict">
-            <p className="avsheet-label" style={{ color: 'var(--slate)', opacity: .75 }}>Verdict</p>
-            <h2 className="avsheet-verdict-word" style={{ color: scoreColor(nqi) }}>{verdict.label}</h2>
-            <p className="avsheet-verdict-why" style={{ color: 'var(--text-mute)' }}>{verdict.why}</p>
+          {/* Verdict fill stays scoreColor(nqi) -- the same autumn
+              score-colour ramp used everywhere else on the report,
+              never AsliVastu's own wine/red brand colour. Text colour is
+              computed from that fill via readableTextColor() (perceptual
+              luminance) rather than hardcoded white -- the bright
+              mid-tier fills need dark ink, only the two darkest tiers
+              need white. Per-record, so these two stay inline. */}
+          <div className="avsheet-verdict" style={{ background: scoreColor(nqi), color: readableTextColor(scoreColor(nqi)) }}>
+            <p className="avsheet-label" style={{ color: 'inherit', opacity: .75 }}>Verdict</p>
+            <h2 className="avsheet-verdict-word">{verdict.label}</h2>
+            <p className="avsheet-verdict-why" style={{ opacity: .92 }}>{verdict.why}</p>
           </div>
         </div>
 
@@ -277,7 +222,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
             the number people trust most since it's backed by the
             government record, not a scraped market estimate. Was
             previously buried below the dimension readout. */}
-        <BPF style={{ padding: '20px 22px', marginBottom: 20 }}>
+        <BPF style={{ padding: '20px 22px', marginBottom: 20, borderColor: 'var(--slate)' }}>
           {/* Heading used to hardcode "Guidance Value" -- Karnataka's
               term -- on every city including Delhi, whose own records
               say circle rate. Now follows the record's city. */}
@@ -325,25 +270,42 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
             on light paper even for the darkest tiers. */}
         <BPF className="avsheet-readout">
           <p className="avsheet-label avsheet-readout-label">Dimension readout · weight = exact contribution to the {nqi}</p>
-          <ul className="nr-rows">
-            {rows.map(row => {
-              const RowIcon = FACTOR_ICONS[row.k];
-              return (
-                <li key={row.k} className="nr-row">
-                  {RowIcon ? <RowIcon className="nr-row-icon" size={18} strokeWidth={2} aria-hidden="true" /> : null}
-                  <span className="nr-row-what">
-                    <span className="nr-row-label">{FACTOR_LABELS[row.k]}</span>
-                    <span className="nr-row-note">{source(row.k, record.city)} · {row.weight}% weight</span>
-                    <span className="nr-row-explain">{explain(row.k, record)}</span>
-                  </span>
-                  <span className="nr-row-right">
-                    <span className="nr-row-score">{row.score}</span>
-                    <span className={`nr-tag is-${toneOf(row.score)}`}>{word(row.score)}</span>
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
+          {rows.map(row => {
+            const weak = row.score < 50;
+            const col = scoreColor(row.score);
+            const isOpen = expandedRows.has(row.k);
+            return (
+              <div key={row.k} className={`avsheet-row${isOpen ? ' avsheet-row--open' : ''}`}>
+                <div>
+                  <div className="avsheet-row-label">{FACTOR_LABELS[row.k]}</div>
+                  <div className="avsheet-row-src avsheet-row-detail">{source(row.k, record.city)}</div>
+                </div>
+                <div className="avsheet-row-weight">{row.weight}%</div>
+                <div style={{ paddingTop: 2 }}>
+                  <div className="avsheet-track">
+                    <div style={{ position: 'absolute', inset: 0, width: `${row.score}%`,
+                      background: weak ? undefined : col,
+                      backgroundImage: weak ? `repeating-linear-gradient(45deg, ${col} 0 3px, transparent 3px 6px)` : undefined }} />
+                  </div>
+                  <p className="avsheet-explain avsheet-row-detail">{explain(row.k, record)}</p>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'flex-end' }}>
+                  <div className="avsheet-row-score" style={{ color: col }}>{row.score}</div>
+                  <button
+                    type="button"
+                    className="avsheet-row-toggle"
+                    aria-expanded={isOpen}
+                    aria-label={isOpen ? 'Hide detail' : 'Show detail'}
+                    onClick={() => setExpandedRows(prev => {
+                      const next = new Set(prev);
+                      next.has(row.k) ? next.delete(row.k) : next.add(row.k);
+                      return next;
+                    })}
+                  >{isOpen ? '▲' : '▼'}</button>
+                </div>
+              </div>
+            );
+          })}
         </BPF>
 
         {/* ── Inspection notes ── */}
