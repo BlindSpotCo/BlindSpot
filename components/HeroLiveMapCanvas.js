@@ -143,6 +143,7 @@ export default function HeroLiveMapCanvas() {
   const [autoGo, setAutoGo] = useState(false);
   const debounceRef = useRef(null);
   const boxRef = useRef(null);
+  const heroVideoRef = useRef(null);
   const requestIdRef = useRef(0);
   // Which suggestion the keyboard is on. The list had no key handling at
   // all: you could tab into it, but nothing announced it and nothing
@@ -321,6 +322,23 @@ export default function HeroLiveMapCanvas() {
     );
   })();
 
+  // Belt-and-braces autoplay for the hero video (see the comment on the
+  // <video> element below for why the JSX attribute alone isn't always
+  // enough on phones). Setting `muted` as a real property before calling
+  // play() is what mobile autoplay policies actually check; `loadeddata`
+  // covers the case where the browser hadn't buffered enough to allow
+  // play() on the very first attempt.
+  useEffect(() => {
+    const v = heroVideoRef.current;
+    if (!v) return;
+    v.muted = true;
+    v.defaultMuted = true;
+    const tryPlay = () => { v.play().catch(() => {}); };
+    tryPlay();
+    v.addEventListener('loadeddata', tryPlay);
+    return () => v.removeEventListener('loadeddata', tryPlay);
+  }, []);
+
   return (
     <div className="hlm-root" id="find">
       {/* The hero's backdrop: a recorded loop of the real sun/shadow
@@ -328,9 +346,20 @@ export default function HeroLiveMapCanvas() {
           video -- no live map, no per-visitor solar fetch. Picking a
           search result still opens the report exactly as before (see
           `pick()` / PinDropTransition below); this is just chrome behind
-          the search box, same as the map it replaces. */}
+          the search box, same as the map it replaces.
+
+          autoPlay/muted/loop/playsInline are set as JSX attributes below,
+          but on some mobile browsers React's SSR-rendered `muted`
+          attribute doesn't reliably carry over to the actual DOM
+          property once the page hydrates -- and a video that isn't
+          *really* muted at that point fails the browser's autoplay
+          policy and falls back to a native "tap to play" button instead
+          of just looping. The ref + effect below force `muted` as a real
+          property and retry play() ourselves, which is what actually
+          fixes that on phones. */}
       <div className="hlm-map hlm-map-video">
         <video
+          ref={heroVideoRef}
           className="hlm-video"
           src={HERO_VIDEO_SRC}
           autoPlay
