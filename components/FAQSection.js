@@ -2,8 +2,16 @@
 // components/FAQSection.js
 // Every answer is a real fact about the actual product (free to search,
 // no login required for a score, government-record + solar-geometry
-// sourcing, live coverage via coverageLabel(), 50/50 adjustable
-// weighting) -- no invented stats.
+// sourcing, live coverage via coverageLabel(), the per-window room-photo
+// analysis) -- no invented stats.
+//
+// v4 -- "Can I change how much the area matters vs. the unit itself?"
+// claimed a manual 50/50 weighting toggle that ReportScreen.js had
+// already removed (areaWeight is now a hardcoded 0.5 there, see that
+// file's own comment) -- so the FAQ was advertising a control that no
+// longer exists. Swapped for a question about the room-photo window
+// analysis (RoomPhotoAnalyzer.js / app/api/sunscout/room-photo/analyse),
+// a real, currently-live feature the old FAQ never mentioned at all.
 //
 // v2 -- two changes:
 // 1. Each row got its own `.reveal` class so the list would cascade in
@@ -52,7 +60,7 @@ function useFaqItems() {
     },
     {
       q: 'Where does the data actually come from?',
-      a: 'The Neighbourhood Score comes from government records - police, CPCB live AQI, DISCOM power data, municipal water and road surveys, CBSE school listings. The Home Comfort Score comes from real solar-geometry modelling for the floor and facing you pick - not broker-supplied information either way.',
+      a: "The Neighbourhood Score comes from government records - police, CPCB live AQI, DISCOM power data, municipal water and road surveys, CBSE school listings - combined with a zone-level model, so nearby pincodes often share a score on most dimensions. Named schools are the one part sourced address by address, not by zone. The Home Comfort Score comes from real solar-geometry modelling for the floor and facing you pick, not broker-supplied information either way.",
     },
     {
       q: 'Which cities are covered?',
@@ -64,8 +72,8 @@ function useFaqItems() {
       a: "BlindSpot has no stake in any specific listing - the score doesn't change based on who's selling, and it's the same number whether you ask about the flat they're pushing or the one next door.",
     },
     {
-      q: 'Can I change how much the area matters vs. the unit itself?',
-      a: 'Yes. The two scores start weighted 50/50 into your BlindSpot Score, and you can shift that balance yourself if the neighbourhood matters more to you than the sunlight, or the other way round.',
+      q: 'Can it tell me about one specific room, not just the whole flat?',
+      a: "Yes. Upload a photo of the room and the direction you were facing when you took it, and BlindSpot finds each window in the photo and gives it real sun-hours and heat data for its own direction, not just the flat's overall facing. The numbers come from the same solar-geometry model as the rest of the report; only spotting the windows in your photo uses AI.",
     },
   ];
 }

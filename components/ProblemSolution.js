@@ -25,6 +25,7 @@ const BLINDSPOTS = [
   {
     label: 'Sunlight hours',
     desc: 'Real daylight hours for this floor and facing.',
+    source: 'Solar-geometry modelling, for this floor and facing',
     accent: 'ss',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
@@ -33,6 +34,7 @@ const BLINDSPOTS = [
   {
     label: 'Air quality',
     desc: 'Live AQI for the area, not a guess.',
+    source: 'CPCB live AQI feed',
     accent: 'av',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 8h11a3 3 0 1 0-2.4-4.8M3 16h14a3 3 0 1 1-2.4 4.8M3 12h17a3 3 0 1 0-2.4-4.8"/></svg>
@@ -41,6 +43,7 @@ const BLINDSPOTS = [
   {
     label: 'Crime nearby',
     desc: 'Real police records, not word of mouth.',
+    source: 'Local police records',
     accent: 'av',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-5.4-7-11a7 7 0 1 1 14 0c0 5.6-7 11-7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>
@@ -49,6 +52,7 @@ const BLINDSPOTS = [
   {
     label: 'Water supply',
     desc: 'Municipal water survey data for the area.',
+    source: 'Municipal water survey data',
     accent: 'av',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2.5s6.5 7.4 6.5 12a6.5 6.5 0 1 1-13 0c0-4.6 6.5-12 6.5-12z"/></svg>
@@ -57,6 +61,7 @@ const BLINDSPOTS = [
   {
     label: 'Power cuts',
     desc: 'DISCOM power reliability data for the area.',
+    source: 'DISCOM power reliability data',
     accent: 'av',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg>
@@ -65,6 +70,7 @@ const BLINDSPOTS = [
   {
     label: 'Blocked light',
     desc: 'Whether nearby buildings actually shade this unit.',
+    source: 'Solar-geometry modelling, shadow cast by nearby buildings',
     accent: 'ss',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21h7V9l-3-4-3 4v8H3z"/><path d="M14 21h7V6l-3-4-3 4v11z"/></svg>
@@ -87,28 +93,34 @@ export default function ProblemSolution() {
           </div>
         </div>
 
-        <div className="ps3-selector reveal" role="tablist" aria-label="What listings leave out">
-          {BLINDSPOTS.map((b, i) => (
-            <button
-              key={b.label}
-              type="button"
-              role="tab"
-              aria-selected={i === active}
-              className={`ps3-tab accent-${b.accent}${i === active ? ' is-active' : ''}`}
-              onClick={() => setActive(i)}
-              onMouseEnter={() => setActive(i)}
-            >
-              <span className="ps3-tab-icon" aria-hidden="true">{b.icon}</span>
-              <span className="ps3-tab-label">{b.label}</span>
-            </button>
-          ))}
-        </div>
+        <div className="ps3-card">
+          <div className="ps3-selector reveal" role="tablist" aria-label="What listings leave out">
+            {BLINDSPOTS.map((b, i) => (
+              <button
+                key={b.label}
+                type="button"
+                role="tab"
+                aria-selected={i === active}
+                className={`ps3-tab accent-${b.accent}${i === active ? ' is-active' : ''}`}
+                onClick={() => setActive(i)}
+                onMouseEnter={() => setActive(i)}
+              >
+                <span className="ps3-tab-icon" aria-hidden="true">{b.icon}</span>
+                <span className="ps3-tab-label">{b.label}</span>
+              </button>
+            ))}
+          </div>
 
-        <div className={`ps3-panel accent-${activeItem.accent}`} key={activeItem.label}>
-          <span className="ps3-panel-icon" aria-hidden="true">{activeItem.icon}</span>
-          <div className="ps3-panel-body">
-            <h3 className="ps3-panel-label">{activeItem.label}</h3>
-            <p className="ps3-panel-desc">{activeItem.desc}</p>
+          <div className={`ps3-panel accent-${activeItem.accent}`} key={activeItem.label}>
+            <span className="ps3-panel-icon" aria-hidden="true">{activeItem.icon}</span>
+            <div className="ps3-panel-body">
+              <h3 className="ps3-panel-label">{activeItem.label}</h3>
+              <p className="ps3-panel-desc">{activeItem.desc}</p>
+              <p className="ps3-panel-source">
+                <span className="ps3-panel-source-dot" aria-hidden="true" />
+                {activeItem.source}
+              </p>
+            </div>
           </div>
         </div>
 

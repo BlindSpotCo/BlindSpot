@@ -322,6 +322,19 @@
 .bsr-more a:hover{color:var(--ss,#AF5F30)}
 .bsr-area .bsr-more a:hover{color:var(--av,#7A2E43)}
 
+/* .bsr-more-cta: "See the detailed area report" and "Get the sun & shadow
+   report" (.bsr-mapbar-report, in the map toolbar below) are the same
+   level of action -- both open/generate a real report -- so both get a
+   solid button. "See the sun and shadow on the map" stays a plain
+   .bsr-more link: it only scrolls to a view already on this page, not a
+   report of its own, so it stays the lower-weight action of the pair. */
+.bsr-more.bsr-more-cta a{
+  min-height:36px;padding:0 18px;border-radius:4px;
+  font-weight:700;text-decoration:none;
+  background:var(--av,#7A2E43);color:#FFFDF8;
+}
+.bsr-area .bsr-more.bsr-more-cta a:hover{filter:brightness(.92);color:#FFFDF8}
+
 .bsr-methodology-note{
   margin-top:8px;padding-top:8px;border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
   font-size:11.5px;line-height:1.55;color:var(--text-mute,#5A5140);max-width:52ch;opacity:.85;

@@ -2050,27 +2050,52 @@ header.header-on-dark .brand-word-img{
    clicking or hovering one drives one large detail panel below with
    that blindspot's full description and an oversized icon with a soft
    accent-coloured glow behind it. Only one thing is ever big on screen
-   at a time, and it changes -- dynamic, not a static wall of 6. */
-.ps3-selector{
-  display:flex; flex-wrap:wrap; gap:6px 30px;
+   at a time, and it changes -- dynamic, not a static wall of 6.
+
+   Round 2: shipped, then rejected again -- "tab strip feels
+   disconnected" and "too empty/sparse". Both are fixed here without
+   changing the underlying concept (tabs driving one big panel, not a
+   grid, per the rejections above): .ps3-card now wraps the tab strip
+   and the panel in one bordered/shadowed surface, with the tab header
+   on a faintly tinted background and the active tab's own background
+   matching the panel's paper colour, so the selected tab visually
+   fuses into the panel below it instead of the two reading as separate
+   stacked pieces. The panel itself gets real padding instead of
+   floating in a plain margin, a faint accent-tinted wash behind the
+   whole thing (not just the icon), and a third line -- a real data
+   source for that blindspot (CPCB/DISCOM/police/municipal/solar-
+   geometry, matching what FAQSection.js already states) -- so it's not
+   just an icon and one sentence surrounded by white space. */
+.ps3-card{
   margin-top:var(--space-2);
+  border:1px solid var(--line);
+  border-radius:var(--radius-lg);
+  background:var(--paper);
+  box-shadow:0 1px 2px rgba(28,24,18,.04), 0 20px 40px -32px rgba(28,24,18,.16);
+  overflow:hidden;
+}
+.ps3-selector{
+  display:flex; flex-wrap:wrap; gap:2px 6px;
+  padding:10px 14px 0;
+  background:color-mix(in srgb, var(--slate) 5%, var(--paper));
   border-bottom:1px solid var(--line);
 }
 .ps3-tab{
   display:flex; align-items:center; gap:9px;
   background:none; border:none; margin:0; cursor:pointer;
-  padding:14px 2px 15px;
+  padding:12px 14px 13px;
+  border-radius:var(--radius-md) var(--radius-md) 0 0;
   position:relative;
   color:var(--text-dim);
-  transition:color .25s ease;
+  transition:color .25s ease, background .25s ease;
   -webkit-tap-highlight-color:transparent;
 }
 .ps3-tab::after{
-  content:''; position:absolute; left:0; right:0; bottom:-1px; height:2px;
+  content:''; position:absolute; left:14px; right:14px; bottom:-1px; height:2px;
   background:transparent; transition:background .25s ease;
 }
 .ps3-tab:hover{ color:var(--ink); }
-.ps3-tab.is-active{ color:var(--ink); }
+.ps3-tab.is-active{ color:var(--ink); background:var(--paper); }
 .ps3-tab.is-active.accent-av::after{ background:var(--av); }
 .ps3-tab.is-active.accent-ss::after{ background:var(--ss); }
 .ps3-tab-icon{ display:flex; width:18px; height:18px; flex:none; }
@@ -2081,27 +2106,46 @@ header.header-on-dark .brand-word-img{
 
 .ps3-panel{
   display:flex; align-items:center; gap:36px;
-  margin-top:48px; min-height:180px;
+  padding:var(--space-6);
+  min-height:220px;
+  position:relative;
   animation:ps3PanelIn .45s cubic-bezier(.16,1,.3,1) both;
 }
+.ps3-panel::before{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(65% 100% at 0% 50%, var(--glow) 0%, transparent 72%);
+}
+.ps3-panel.accent-av{ --glow:color-mix(in srgb, var(--av) 9%, transparent); }
+.ps3-panel.accent-ss{ --glow:color-mix(in srgb, var(--ss) 9%, transparent); }
 @keyframes ps3PanelIn{
-  frof{ opacity:0; transform:translateY(10px); }
+  from{ opacity:0; transform:translateY(10px); }
   to{ opacity:1; transform:translateY(0); }
 }
 .ps3-panel-icon{
-  position:relative; flex:none;
+  position:relative; z-index:1; flex:none;
   display:flex; align-items:center; justify-content:center;
   width:96px; height:96px;
 }
 .ps3-panel-icon::before{
   content:''; position:absolute; inset:-22px; border-radius:50%;
-  background:radial-gradient(circle, var(--glow) 0%, transparent 70%);
+  background:radial-gradient(circle, var(--iconglow) 0%, transparent 70%);
 }
-.ps3-panel.accent-av .ps3-panel-icon{ --glow:color-mix(in srgb, var(--av) 30%, transparent); color:var(--av); }
-.ps3-panel.accent-ss .ps3-panel-icon{ --glow:color-mix(in srgb, var(--ss) 30%, transparent); color:var(--ss); }
+.ps3-panel.accent-av .ps3-panel-icon{ --iconglow:color-mix(in srgb, var(--av) 30%, transparent); color:var(--av); }
+.ps3-panel.accent-ss .ps3-panel-icon{ --iconglow:color-mix(in srgb, var(--ss) 30%, transparent); color:var(--ss); }
 .ps3-panel-icon svg{ position:relative; width:100%; height:100%; stroke-width:1.2; }
+.ps3-panel-body{ position:relative; z-index:1; }
 .ps3-panel-label{ font-size:28px; font-weight:700; color:var(--ink); line-height:1.2; margin:0; }
 .ps3-panel-desc{ margin:10px 0 0; font-size:16px; color:var(--text-mute); line-height:1.55; max-width:46ch; }
+.ps3-panel-source{
+  display:flex; align-items:center; gap:8px;
+  margin:18px 0 0; padding-top:14px; max-width:46ch;
+  border-top:1px dashed var(--line);
+  font-family:'Geist Mono',monospace; font-size:11px; font-weight:600;
+  letter-spacing:.04em; text-transform:uppercase; color:var(--text-dim);
+}
+.ps3-panel-source-dot{ width:6px; height:6px; border-radius:50%; flex:none; }
+.ps3-panel.accent-av .ps3-panel-source-dot{ background:var(--av); }
+.ps3-panel.accent-ss .ps3-panel-source-dot{ background:var(--ss); }
 
 .ps3-eq{
   margin-top:var(--space-7); display:flex; align-items:center; flex-wrap:wrap; gap:14px;
@@ -2115,14 +2159,15 @@ header.header-on-dark .brand-word-img{
 .ps3-eq-op{ font-size:20px; color:var(--text-dim); font-weight:600 }
 .ps3-eq-result{ font-size:17px; color:var(--text); font-weight:600 }
 @media (max-width:640px){
-  .ps3-selector{ flex-wrap:nowrap; overflow-x:auto; gap:22px; padding-bottom:2px; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+  .ps3-selector{ flex-wrap:nowrap; overflow-x:auto; gap:2px 16px; padding:6px 12px 0; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
   .ps3-selector::-webkit-scrollbar{ display:none; }
-  .ps3-tab{ flex:none; }
+  .ps3-tab{ flex:none; padding:10px 10px 11px; }
   .ps3-tab-label{ font-size:12.5px; }
-  .ps3-panel{ margin-top:32px; gap:20px; align-items:flex-start; }
+  .ps3-panel{ padding:var(--space-5) var(--space-4); gap:20px; align-items:flex-start; min-height:0; }
   .ps3-panel-icon{ width:64px; height:64px; }
   .ps3-panel-label{ font-size:21px; }
   .ps3-panel-desc{ font-size:14px; max-width:100%; }
+  .ps3-panel-source{ margin-top:14px; padding-top:12px; font-size:10px; }
   .ps3-eq{ gap:10px }
   .ps3-eq-result{ font-size:15px }
 }
@@ -2252,10 +2297,22 @@ header.header-on-dark .brand-word-img{
 
 /* ---------- 05 - FAQ ---------- */
 .faq2-list{ max-width:760px }
+/* Used to be `margin:0 -16px` (bleed the hover/open background flush to
+   the screen edge), on the assumption that .wrap.section-inner always
+   carries .wrap's normal 16px side padding for it to bleed into. It
+   doesn't -- .section-inner's own `padding:88px 0` shorthand zeroes that
+   padding wherever the two classes land on one element (every other
+   section just pads itself internally instead of relying on it), so the
+   negative margin had nothing to bleed into and pushed this row 16px past
+   the real viewport edge on both sides, causing a page-wide horizontal
+   scrollbar (confirmed via getBoundingClientRect at both 375px and 604px
+   widths -- worse on touch, but not actually mobile-only). Dropped; with
+   the parent's real 0px padding this now spans edge-to-edge on its own,
+   the same flush look the negative margin was faking. */
 .faq2-item{
   border-bottom:1px solid var(--line);
   border-radius:14px;
-  padding:0 16px; margin:0 -16px;
+  padding:0 16px;
   transition:background .3s ease;
   opacity:0; /* pre-reveal state -- see the cascade rule below */
 }

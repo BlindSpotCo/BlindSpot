@@ -1189,7 +1189,7 @@ export default function ReportScreen() {
                   rel="noopener" on purpose: that report's own Close button
                   is window.close(), which the browser refuses without an
                   opener. Same call AVAreaCard's link makes. */}
-              <p className="bsr-more">
+              <p className="bsr-more bsr-more-cta">
                 <a href={`/neighbourhood-report/${area.pinCode}`} target="_blank">See the detailed area report →</a>
               </p>
             </>
