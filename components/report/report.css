@@ -913,8 +913,15 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 .bsr-roomphoto-lede{
   font-size:14px;line-height:1.55;color:var(--text-mute,#5A5140);margin:0 0 16px;max-width:60ch;
 }
-.bsr-roomphoto-cards{display:flex;flex-direction:column;gap:22px}
-.bsr-roomphoto-card + .bsr-roomphoto-card{padding-top:18px;border-top:1px dashed var(--line-soft,rgba(28,24,18,.16))}
+/* A real row, not a stack -- multiple photos sit side by side and wrap
+   onto a new row once they run out of space, rather than one long scroll
+   of full-width cards. auto-fit + a 250px minimum means it naturally
+   collapses to a single column on a narrow phone without a media query. */
+.bsr-roomphoto-cards{
+  display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
+  gap:20px;align-items:start;
+}
+.bsr-roomphoto-card{min-width:0}
 
 .bsr-roomphoto-drop{
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
@@ -972,20 +979,31 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 .bsr-roomphoto-legend i{width:20px;height:3px;border-radius:2px;display:inline-block}
 
 .bsr-roomphoto-window{
-  position:absolute;border:1.5px solid rgba(255,255,255,.85);border-radius:6px;
-  box-shadow:0 0 0 1px rgba(0,0,0,.3);pointer-events:none;
+  position:absolute;border:2px solid rgba(255,255,255,.9);border-radius:6px;
+  box-shadow:0 0 0 1.5px rgba(0,0,0,.35);pointer-events:none;
 }
-/* The numbered badge sits at the window's own top-left corner -- it's the
-   only thing left ON the photo besides the arrows, and it's just a number,
-   so it stays legible at any size instead of the old paragraph-in-a-tag. */
-.bsr-roomphoto-badge{
-  position:absolute;transform:translate(-50%,-50%);
-  width:24px;height:24px;border-radius:50%;
+/* The headline, right on the photo -- window number, compass direction,
+   and a one-word Sun/Shade verdict, in a solid pill big enough to read
+   without zooming. It's colour-coded to match its arrow (sun-orange /
+   air-blue border) so the two connect visually even though the label
+   sits off to the side of the arrow, not on top of it. */
+.bsr-roomphoto-onlabel{
+  position:absolute;z-index:4;margin-top:8px;
+  display:flex;align-items:center;gap:6px;
+  padding:5px 9px 5px 6px;border-radius:8px;border:2px solid;
+  background:rgba(15,13,10,.92);color:#FFFDF8;
+  font-weight:700;line-height:1;white-space:nowrap;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);pointer-events:none;
+}
+.bsr-roomphoto-onlabel.is-right{margin-right:8px}
+.bsr-roomphoto-onlabel.is-left{margin-left:8px}
+.bsr-roomphoto-onlabel-n{
   display:flex;align-items:center;justify-content:center;
-  background:rgba(20,17,12,.88);color:#FFFDF8;
-  font-family:'Geist Mono',monospace;font-weight:700;font-size:12.5px;
-  border:1.5px solid rgba(255,255,255,.85);pointer-events:none;
+  width:1.6em;height:1.6em;border-radius:50%;
+  background:rgba(255,255,255,.18);font-family:'Geist Mono',monospace;font-size:.82em;
 }
+.bsr-roomphoto-onlabel strong{font-size:1.05em;letter-spacing:.01em}
+.bsr-roomphoto-onlabel span:last-child{opacity:.85;font-weight:600}
 
 /* The actual sun/heat/direction text, moved OFF the image and into a
    proper readable list underneath -- this is the bulk of the fix for
@@ -1008,9 +1026,12 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   font-size:12px;line-height:1.5;color:var(--text-mute,#5A5140);margin:0;font-style:italic;
 }
 
-.bsr-roomphoto-add{
-  margin-top:18px;padding:11px 20px;border-radius:9px;cursor:pointer;
+/* Sits as its own grid cell at the end of the row, next to the finished
+   photo cards -- not a full-width block shoved underneath them. */
+.bsr-roomphoto-addcard{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  min-height:160px;padding:20px;border-radius:12px;cursor:pointer;
   border:1.5px dashed var(--line,rgba(28,24,18,.25));background:transparent;
-  color:var(--text,#1C1812);font-size:13.5px;font-weight:600;
+  color:var(--text-mute,#5A5140);font-size:13px;font-weight:600;text-align:center;line-height:1.4;
 }
-.bsr-roomphoto-add:hover{border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
+.bsr-roomphoto-addcard:hover{border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}

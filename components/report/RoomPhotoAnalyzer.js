@@ -5,16 +5,19 @@
 // room photos as you want (capped at MAX_PHOTOS so one report doesn't turn
 // into an unbounded pile of Gemini calls); each one asks for the one thing
 // it actually needs besides the photo -- which way the camera was facing --
-// via the same compass control as the floor/facing gate.
+// via the same compass control as the floor/facing gate. Multiple photos
+// sit in a row (a real grid, not one stacked under the next) so comparing
+// a couple of rooms doesn't turn into an endless scroll.
 //
 // Every number drawn on a photo comes back already computed server-side
 // (see app/api/sunscout/room-photo/analyse/route.js): this component's own
-// job is purely presentational -- draw a yellow arrow where the API says
-// sunlight comes in, a blue arrow where it says air moves, and spell the
-// rest out as real, readable text underneath rather than tiny labels
-// crammed onto the photo itself.
+// job is purely presentational -- a bold yellow arrow + label where the
+// API says sunlight comes in, a blue one where it says air moves. The
+// label carries the headline (direction, sun verdict) right on the photo;
+// a plain-text list underneath carries the rest (heat, ventilation, the
+// building/road caveat) for anyone who wants the full readout.
 
-import { useState, useRef, useCallback, useId } from 'react';
+import { useState, useRef, useEffect, useCallback, useId } from 'react';
 
 const FACING_DEG = {
   North: 0, 'North-East': 45, East: 90, 'South-East': 135,
@@ -40,11 +43,13 @@ const MAX_DIM = 1280;
 // which matters because the arrow/badge overlay math below assumes the
 // displayed image is a uniform scale of the original, with no letterboxing.
 const MAX_PREVIEW_H = 420;
-const MAX_PREVIEW_W = 640;
+const MAX_PREVIEW_W = 420;
 const MAX_PHOTOS = 4;
 
-const SUN_COLOR = '#F2A93B';
-const AIR_COLOR = '#3B82C4';
+const SUN_COLOR = '#F5A623';
+const SUN_DARK = '#B9760A';
+const AIR_COLOR = '#2F86EB';
+const AIR_DARK = '#1E5FA8';
 
 function downscaleToDataUrl(file) {
   return new Promise((resolve, reject) => {
@@ -76,36 +81,6 @@ function emptyPhoto() {
   };
 }
 
-// A short, fixed-length arrow anchored at (xPct, yPct) inside the preview
-// box, rotated to point wherever `angleDeg` says. Angle is computed from
-// the ORIGINAL photo's pixel dimensions (not the 0-100 viewBox), so it
-// stays visually correct regardless of the photo's own aspect ratio --
-// see angleInto() below.
-function Arrow({ xPct, yPct, angleDeg, color, length, dashed }) {
-  const w = length, h = 16;
-  return (
-    <div
-      aria-hidden="true"
-      style={{
-        position: 'absolute', left: `${xPct}%`, top: `${yPct}%`,
-        width: `${w}px`, height: 0, transformOrigin: '2px 50%',
-        transform: `rotate(${angleDeg}deg)`, pointerEvents: 'none',
-      }}
-    >
-      <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{ position: 'absolute', left: 0, top: -h / 2, overflow: 'visible' }}>
-        <line
-          x1={2} y1={h / 2} x2={w - 9} y2={h / 2}
-          stroke={color} strokeWidth={3.2} strokeLinecap="round"
-          strokeDasharray={dashed ? '1,5' : undefined}
-          style={{ filter: `drop-shadow(0 0 2px rgba(0,0,0,.45))` }}
-        />
-        <polygon points={`${w - 12},${h / 2 - 5} ${w - 1},${h / 2} ${w - 12},${h / 2 + 5}`} fill={color}
-          style={{ filter: `drop-shadow(0 0 2px rgba(0,0,0,.45))` }} />
-      </svg>
-    </div>
-  );
-}
-
 // Angle (degrees) from a window's bbox centre toward the middle of the
 // frame, computed in the photo's real pixel space so it isn't skewed by
 // non-square aspect ratios -- a 9:16 phone photo and a 4:3 one both point
@@ -122,8 +97,80 @@ function getsSun(w) {
   return !/little direct sun/i.test(w.sunLabel || '');
 }
 
+// A bold, chunky arrow anchored at (xPct, yPct), rotated to `angleDeg`,
+// sized off the box's own measured pixel width (`boxPx`) so it reads at
+// the same visual weight whether the photo is a small phone screenshot or
+// a big desktop preview -- a fixed pixel length looked lost on a wide
+// photo and oversized on a small one.
+function Arrow({ xPct, yPct, angleDeg, color, dark, boxPx, kind }) {
+  const len = Math.round(Math.max(46, Math.min(150, boxPx * 0.24)));
+  const sw = Math.max(4, Math.min(9, boxPx * 0.016));
+  const headH = sw * 2.6;
+  const w = len, h = headH + 4;
+  const dashed = kind === 'air';
+  return (
+    <div
+      aria-hidden="true"
+      style={{
+        position: 'absolute', left: `${xPct}%`, top: `${yPct}%`,
+        width: `${w}px`, height: 0, transformOrigin: '3px 50%',
+        transform: `rotate(${angleDeg}deg)`, pointerEvents: 'none', zIndex: 3,
+      }}
+    >
+      <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{ position: 'absolute', left: 0, top: -h / 2, overflow: 'visible' }}>
+        <line
+          x1={3} y1={h / 2} x2={w - headH + 2} y2={h / 2}
+          stroke={dark} strokeWidth={sw + 3} strokeLinecap="round"
+          strokeDasharray={dashed ? `${sw},${sw * 2.1}` : undefined}
+          opacity={0.55}
+        />
+        <line
+          x1={3} y1={h / 2} x2={w - headH + 2} y2={h / 2}
+          stroke={color} strokeWidth={sw} strokeLinecap="round"
+          strokeDasharray={dashed ? `${sw * 1.1},${sw * 1.9}` : undefined}
+        />
+        <polygon
+          points={`${w - headH},${h / 2 - headH * 0.62} ${w},${h / 2} ${w - headH},${h / 2 + headH * 0.62}`}
+          fill={color} stroke={dark} strokeWidth={1.5} strokeLinejoin="round"
+        />
+      </svg>
+    </div>
+  );
+}
+
+// The label that actually lives ON the photo: direction + the headline
+// verdict, big enough to read at a glance. Anchored at the window's own
+// edge, flipped to the opposite side of the frame from where the arrow
+// points so the two never sit on top of each other.
+function OnPhotoLabel({ w, bbox, boxPx, sunny, index }) {
+  const cx = (bbox[0] + bbox[2]) / 2;
+  const fromRight = cx > 0.5;
+  // Anchored just INSIDE the window's own top-left (or top-right) corner,
+  // not floating above the bbox -- floating above it clips against the
+  // photo's own rounded-corner mask whenever a window sits near the top
+  // of the frame, which is common (most windows start well above centre).
+  const fs = Math.max(11.5, Math.min(15, boxPx * 0.032));
+  return (
+    <div
+      className={`bsr-roomphoto-onlabel${fromRight ? ' is-right' : ' is-left'}`}
+      style={{
+        top: `${bbox[1] * 100}%`,
+        [fromRight ? 'right' : 'left']: `${(fromRight ? (1 - bbox[2]) : bbox[0]) * 100}%`,
+        fontSize: `${fs}px`,
+        borderColor: sunny ? SUN_COLOR : AIR_COLOR,
+      }}
+    >
+      <span className="bsr-roomphoto-onlabel-n">{index + 1}</span>
+      <strong>{w.direction}</strong>
+      <span>{sunny ? 'Sun' : 'Shade'}</span>
+    </div>
+  );
+}
+
 function PhotoCard({ photo, onBearing, onAnalyse, onChange, onRemove, canRemove, index }) {
   const inputId = useId();
+  const previewRef = useRef(null);
+  const [boxPx, setBoxPx] = useState(320);
   const { previewUrl, width, height, bearingName, loading, error, result } = photo;
 
   // Cap the preview box's WIDTH so, given the photo's real aspect ratio,
@@ -132,6 +179,17 @@ function PhotoCard({ photo, onBearing, onAnalyse, onChange, onRemove, canRemove,
   const aspect = width && height ? width / height : 4 / 3;
   const boxW = Math.min(MAX_PREVIEW_W, aspect * MAX_PREVIEW_H);
   const boxStyle = previewUrl ? { maxWidth: `${Math.round(boxW)}px` } : undefined;
+
+  useEffect(() => {
+    const el = previewRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver((entries) => {
+      const w = entries[0]?.contentRect?.width;
+      if (w) setBoxPx(w);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [previewUrl, result]);
 
   return (
     <div className="bsr-roomphoto-card">
@@ -211,7 +269,7 @@ function PhotoCard({ photo, onBearing, onAnalyse, onChange, onRemove, canRemove,
             </div>
           )}
 
-          <div className="bsr-roomphoto-preview bsr-roomphoto-preview--annotated" style={boxStyle}>
+          <div className="bsr-roomphoto-preview bsr-roomphoto-preview--annotated" style={boxStyle} ref={previewRef}>
             <img src={previewUrl} alt="Annotated room" />
             {result.windows.map((w, i) => {
               const cx = ((w.bbox[0] + w.bbox[2]) / 2) * 100;
@@ -227,11 +285,9 @@ function PhotoCard({ photo, onBearing, onAnalyse, onChange, onRemove, canRemove,
                       width: `${(w.bbox[2] - w.bbox[0]) * 100}%`, height: `${(w.bbox[3] - w.bbox[1]) * 100}%`,
                     }}
                   />
-                  {sunny && <Arrow xPct={cx} yPct={cy} angleDeg={angle} color={SUN_COLOR} length={54} />}
-                  <Arrow xPct={cx} yPct={cy} angleDeg={angle + 16} color={AIR_COLOR} length={38} dashed />
-                  <span className="bsr-roomphoto-badge" style={{ left: `${w.bbox[0] * 100}%`, top: `${w.bbox[1] * 100}%` }}>
-                    {i + 1}
-                  </span>
+                  {sunny && <Arrow xPct={cx} yPct={cy} angleDeg={angle - 10} color={SUN_COLOR} dark={SUN_DARK} boxPx={boxPx} kind="sun" />}
+                  <Arrow xPct={cx} yPct={cy} angleDeg={angle + 26} color={AIR_COLOR} dark={AIR_DARK} boxPx={boxPx} kind="air" />
+                  <OnPhotoLabel w={w} bbox={w.bbox} boxPx={boxPx} sunny={sunny} index={i} />
                 </div>
               );
             })}
@@ -370,13 +426,14 @@ export default function RoomPhotoAnalyzer({ lat, lon, floor, tzOffset }) {
             onRemove={() => onRemove(photo.id)}
           />
         ))}
-      </div>
 
-      {canAddMore && (
-        <button type="button" className="bsr-roomphoto-add" onClick={() => setPhotos((prev) => [...prev, emptyPhoto()])}>
-          + Add another photo ({photos.length}/{MAX_PHOTOS})
-        </button>
-      )}
+        {canAddMore && (
+          <button type="button" className="bsr-roomphoto-addcard" onClick={() => setPhotos((prev) => [...prev, emptyPhoto()])}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+            <span>Add another photo<br />({photos.length}/{MAX_PHOTOS})</span>
+          </button>
+        )}
+      </div>
     </section>
   );
 }
