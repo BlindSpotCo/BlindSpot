@@ -4,6 +4,11 @@ Item 7 of the trust-framework checklist: "Version your scoring model... publish 
 
 Version numbers are for this dataset/methodology, not the app (`package.json`'s `version` is separate).
 
+## v1.5 - 2026-09-19
+
+- 16 sourced point-fixes to `master_by_pin.json`, found by checking real, currently operational transit stations and government utility listings against pins whose own area name matched them exactly (or nearly so): `metro_stations_nearby` corrected from 0 to 1 for 13 Mumbai pins (Saki Naka, Jogeshwari East, Bangur Nagar, Oshiwara, Mandapeshwar, Magathane, Dadar East, Hutatma Chowk, Santacruz West, Bandra West, Mantralaya, Deonar, Worli Colony), 1 Bangalore pin (HSR Layout, missed because the Yellow Line opened after the v1.4 station registry was built), and 1 Hyderabad pin (Khairatabad); `discom` corrected from UHBVN to DHBVN for Mahendragarh (122505), confirmed against the district's own government website. Each fix carries a `_provenance` entry naming its source.
+- This was a spot-check, not an exhaustive re-run of `scripts/metro_stations.py` - Mumbai and Hyderabad still have no real station registry behind them (see v1.4's note), so `validate:data`'s `unverified-field` warnings for those two cities are still accurate for every pin not listed above. A proper fix is redoing metro_stations.py with real Mumbai (5-line, ~76-station) and Hyderabad (Red/Blue/Green) station data the way Delhi NCR and Bangalore already got.
+
 ## v1.4 - 2026-09-13 (this pass)
 
 - Real, sourced `metro_stations_nearby` for Delhi NCR + Bangalore via a centroid-radius join against named DMRC/Namma Metro station registries (`scripts/metro_stations.py`, `scripts/patch_metro.py`). Fixes the flagship bug in `docs/data-integrity-architecture.md` (PIN 110001 / Connaught Place: 0 → 8 stations). Mumbai/Hyderabad metro unchanged - no sourced station data found yet.

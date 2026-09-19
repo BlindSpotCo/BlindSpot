@@ -3061,7 +3061,7 @@
     "highway_proximity": "Low",
     "smart_city_project": false,
     "infra_score_raw": 25,
-    "discom": "UHBVN",
+    "discom": "DHBVN",
     "outage_frequency": 1,
     "avg_outage_hours": 1.4,
     "reliability": "Excellent",
@@ -3096,6 +3096,14 @@
         "as_of": "2026-09-13",
         "confidence": "high",
         "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+      },
+      "discom": {
+        "value": "DHBVN",
+        "source_id": "Mahendragarh district government website (public utility directory)",
+        "method": "verified against the district's own government website",
+        "as_of": "2026-09-19",
+        "confidence": "high",
+        "note": "District's own site lists DHBVN, not UHBVN, as its power distributor"
       }
     }
   },
@@ -6990,7 +6998,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 320,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -7025,12 +7033,12 @@
     "water_tier": "core",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 0,
-        "source_id": "bmrcl_stations_2026_09",
-        "method": "spatial_join_radius_1500m_centroid",
-        "as_of": "2026-09-13",
+        "value": 1,
+        "source_id": "Namma Metro Yellow Line official station list",
+        "method": "name-matched against real, currently operational station list",
+        "as_of": "2026-09-19",
         "confidence": "high",
-        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+        "note": "HSR Layout station (opened Aug 2025) shares this pin's own area name"
       }
     }
   },
@@ -9090,7 +9098,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 278,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -9122,7 +9130,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Mumbai Metro Line 3 (Aqua Line) official station list",
+        "method": "name-matched against real, currently operational station list",
+        "as_of": "2026-09-19",
+        "confidence": "high",
+        "note": "Dadar station (opened 2025) shares this pin's own area name"
+      }
+    }
   },
   {
     "pin_code": "400015",
@@ -9531,7 +9549,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 225,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -9563,7 +9581,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Mumbai Metro Line 3 (Aqua Line) official station list",
+        "method": "name-matched against real, currently operational station list",
+        "as_of": "2026-09-19",
+        "confidence": "high",
+        "note": "Hutatma Chowk station (opened 2025) shares this pin's own area name"
+      }
+    }
   },
   {
     "pin_code": "400024",
@@ -9874,7 +9902,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 285,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -9906,7 +9934,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Mumbai Metro Line 3 (Aqua Line) official station list",
+        "method": "name-matched against real, currently operational station list",
+        "as_of": "2026-09-19",
+        "confidence": "high",
+        "note": "Worli station (opened May 2025) shares this pin's own area name"
+      }
+    }
   },
   {
     "pin_code": "400031",
@@ -9972,7 +10010,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 253,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -10004,7 +10042,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Mumbai Metro Line 3 (Aqua Line) official station list",
+        "method": "name-matched against real, currently operational station list",
+        "as_of": "2026-09-19",
+        "confidence": "high",
+        "note": "Vidhan Bhavan station (opened 2025) is immediately adjacent to Mantralaya"
+      }
+    }
   },
   {
     "pin_code": "400033",
@@ -10413,7 +10461,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 243,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -10445,7 +10493,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Mumbai Metro Line 3 (Aqua Line) official station list",
+        "method": "name-matched against real, currently operational station list",
+        "as_of": "2026-09-19",
+        "confidence": "high",
+        "note": "Bandra Colony station (opened 2025) sits in this pin's own area"
+      }
+    }
   },
   {
     "pin_code": "400051",
@@ -10609,7 +10667,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 260,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -10641,7 +10699,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Mumbai Metro Line 3 (Aqua Line) official station list",
+        "method": "name-matched against real, currently operational station list",
+        "as_of": "2026-09-19",
+        "confidence": "high",
+        "note": "Santacruz station (opened Oct 2024) shares this pin's own area name"
+      }
+    }
   },
   {
     "pin_code": "400055",
@@ -10903,7 +10971,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 255,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -10935,7 +11003,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Mumbai Metro Line 7 official station list",
+        "method": "name-matched against real, currently operational station list",
+        "as_of": "2026-09-19",
+        "confidence": "high",
+        "note": "Jogeshwari East station (opened 2022/23) shares this pin's own area name"
+      }
+    }
   },
   {
     "pin_code": "400061",
@@ -11197,7 +11275,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 240,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -11229,7 +11307,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "edge"
+    "discom_confidence": "edge",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Mumbai Metro Line 7 official station list",
+        "method": "name-matched against real, currently operational station list",
+        "as_of": "2026-09-19",
+        "confidence": "high",
+        "note": "Magathane station (opened 2022/23) shares this pin's own area name"
+      }
+    }
   },
   {
     "pin_code": "400067",
@@ -11393,7 +11481,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 220,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -11425,7 +11513,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Mumbai Metro Line 2A official station list",
+        "method": "name-matched against real, currently operational station list",
+        "as_of": "2026-09-19",
+        "confidence": "high",
+        "note": "Bangur Nagar station (opened 2022/23) shares this pin's own area name"
+      }
+    }
   },
   {
     "pin_code": "400091",
@@ -11883,7 +11981,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 277,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -11915,7 +12013,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Mumbai Metro Line 2A official station list",
+        "method": "name-matched against real, currently operational station list",
+        "as_of": "2026-09-19",
+        "confidence": "high",
+        "note": "Oshiwara station (opened 2022/23) shares this pin's own area name"
+      }
+    }
   },
   {
     "pin_code": "400103",
@@ -11932,7 +12040,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 261,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -11964,7 +12072,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Mumbai Metro Line 2A official station list",
+        "method": "name-matched against real, currently operational station list",
+        "as_of": "2026-09-19",
+        "confidence": "high",
+        "note": "Mandapeshwar station (opened 2022/23) shares this pin's own area name"
+      }
+    }
   },
   {
     "pin_code": "400104",
@@ -12128,7 +12246,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 265,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 1,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -12160,7 +12278,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Mumbai Metro Line 1 official station list",
+        "method": "name-matched against real, currently operational station list",
+        "as_of": "2026-09-19",
+        "confidence": "high",
+        "note": "Saki Naka station (operational since 2014) shares this pin's own area name"
+      }
+    }
   },
   {
     "pin_code": "400073",
@@ -13010,7 +13138,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 327,
     "zone_type": "Industrial",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -13042,7 +13170,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "edge"
+    "discom_confidence": "edge",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Mumbai Metro Line 2B official station list",
+        "method": "name-matched against real, currently operational station list",
+        "as_of": "2026-09-19",
+        "confidence": "high",
+        "note": "Deonar station (opened April 2026) shares this pin's own area name"
+      }
+    }
   },
   {
     "pin_code": "400089",
@@ -13845,7 +13983,7 @@
     "total_cognizable_crimes": 272,
     "crime_commissionerate": "Hyderabad City",
     "zone_type": "Commercial",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -13879,7 +14017,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Hyderabad Metro Red Line official station list",
+        "method": "name-matched against real, currently operational station list",
+        "as_of": "2026-09-19",
+        "confidence": "high",
+        "note": "Khairatabad station (long-operational) shares this pin's own area name"
+      }
+    }
   },
   {
     "pin_code": "500028",
