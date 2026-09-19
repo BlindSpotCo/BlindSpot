@@ -2297,10 +2297,22 @@ header.header-on-dark .brand-word-img{
 
 /* ---------- 05 - FAQ ---------- */
 .faq2-list{ max-width:760px }
+/* Used to be `margin:0 -16px` (bleed the hover/open background flush to
+   the screen edge), on the assumption that .wrap.section-inner always
+   carries .wrap's normal 16px side padding for it to bleed into. It
+   doesn't -- .section-inner's own `padding:88px 0` shorthand zeroes that
+   padding wherever the two classes land on one element (every other
+   section just pads itself internally instead of relying on it), so the
+   negative margin had nothing to bleed into and pushed this row 16px past
+   the real viewport edge on both sides, causing a page-wide horizontal
+   scrollbar (confirmed via getBoundingClientRect at both 375px and 604px
+   widths -- worse on touch, but not actually mobile-only). Dropped; with
+   the parent's real 0px padding this now spans edge-to-edge on its own,
+   the same flush look the negative margin was faking. */
 .faq2-item{
   border-bottom:1px solid var(--line);
   border-radius:14px;
-  padding:0 16px; margin:0 -16px;
+  padding:0 16px;
   transition:background .3s ease;
   opacity:0; /* pre-reveal state -- see the cascade rule below */
 }
