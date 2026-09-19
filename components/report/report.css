@@ -885,14 +885,24 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   .bsr-unitgate-go{flex-shrink:0}
 }
 
-/* ---------- room-photo window analysis ---------- */
+/* ---------- room-photo window analysis ----------
+   One card per photo (.bsr-roomphoto-card), stacked. The preview box's
+   WIDTH is capped inline per-photo (JS computes it from the photo's own
+   aspect ratio, see MAX_PREVIEW_H in the component) so a tall phone photo
+   can never blow past a sane on-screen height -- capping height directly
+   with object-fit would letterbox the image and throw off the percentage
+   math the arrow/badge overlay relies on, so width is capped instead and
+   the image is left filling its box exactly. */
 .bsr-roomphoto{
   margin-top:16px;padding-top:14px;border-top:1px solid var(--line-soft,rgba(28,24,18,.14));
 }
 .bsr-roomphoto h2{font-size:18px;font-weight:700;margin:0 0 6px;color:var(--text,#1C1812)}
 .bsr-roomphoto-lede{
-  font-size:14px;line-height:1.55;color:var(--text-mute,#5A5140);margin:0 0 14px;max-width:56ch;
+  font-size:14px;line-height:1.55;color:var(--text-mute,#5A5140);margin:0 0 16px;max-width:60ch;
 }
+.bsr-roomphoto-cards{display:flex;flex-direction:column;gap:22px}
+.bsr-roomphoto-card + .bsr-roomphoto-card{padding-top:18px;border-top:1px dashed var(--line-soft,rgba(28,24,18,.16))}
+
 .bsr-roomphoto-drop{
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
   width:100%;padding:28px 16px;border-radius:12px;cursor:pointer;
@@ -904,18 +914,25 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 .bsr-roomphoto-drop span{font-size:14px;font-weight:600}
 .bsr-roomphoto-setup{display:flex;flex-direction:column;gap:16px}
 .bsr-roomphoto-preview{
-  position:relative;width:100%;border-radius:12px;overflow:hidden;
+  position:relative;width:100%;margin:0 auto;border-radius:12px;overflow:hidden;
   background:var(--bg,#FAF6EE);line-height:0;
 }
 .bsr-roomphoto-preview img{width:100%;height:auto;display:block}
 .bsr-roomphoto-preview--annotated{border:1px solid var(--line-soft,rgba(28,24,18,.14))}
-.bsr-roomphoto-change{
+.bsr-roomphoto-remove{
   position:absolute;top:10px;right:10px;z-index:2;
-  padding:7px 12px;border-radius:999px;border:none;cursor:pointer;
-  background:rgba(28,24,18,.68);color:#FFFDF8;font-size:12px;font-weight:600;
+  width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+  padding:0;border-radius:50%;border:none;cursor:pointer;
+  background:rgba(28,24,18,.68);color:#FFFDF8;
   backdrop-filter:blur(2px);
 }
-.bsr-roomphoto-change:hover{background:rgba(28,24,18,.85)}
+.bsr-roomphoto-remove:hover{background:rgba(28,24,18,.85)}
+.bsr-roomphoto-change{
+  align-self:flex-start;
+  padding:8px 14px;border-radius:999px;border:1px solid var(--line,rgba(28,24,18,.22));cursor:pointer;
+  background:var(--bg,#FAF6EE);color:var(--text,#1C1812);font-size:13px;font-weight:600;
+}
+.bsr-roomphoto-change:hover{border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
 .bsr-roomphoto-bearing{display:flex;flex-direction:column;align-items:center;gap:10px}
 .bsr-roomphoto-bearing > span:first-child{
   font-size:13px;font-weight:600;color:var(--text,#1C1812);text-align:center;
@@ -931,22 +948,56 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 .bsr-roomphoto-go:hover{background:#95502A}
 .bsr-roomphoto-go:disabled{opacity:.5;cursor:not-allowed}
 .bsr-roomphoto-result{display:flex;flex-direction:column;gap:14px}
+
+/* Legend above the photo, not crowded onto it -- says once what the two
+   arrow colours mean instead of repeating it per window. */
+.bsr-roomphoto-legend{
+  display:flex;gap:18px;flex-wrap:wrap;
+  font-size:13px;font-weight:600;color:var(--text,#1C1812);
+}
+.bsr-roomphoto-legend span{display:inline-flex;align-items:center;gap:7px}
+.bsr-roomphoto-legend i{width:20px;height:3px;border-radius:2px;display:inline-block}
+
 .bsr-roomphoto-window{
-  position:absolute;border:2px solid #FFC857;border-radius:6px;
-  box-shadow:0 0 0 1px rgba(0,0,0,.25);pointer-events:none;
+  position:absolute;border:1.5px solid rgba(255,255,255,.85);border-radius:6px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.3);pointer-events:none;
 }
-.bsr-roomphoto-tag{
-  position:absolute;bottom:100%;left:0;margin-bottom:6px;
-  display:flex;flex-direction:column;gap:2px;
-  min-width:150px;max-width:220px;padding:8px 10px;border-radius:8px;
-  background:rgba(20,17,12,.92);color:#FFFDF8;font-size:11.5px;line-height:1.4;
-  pointer-events:none;
+/* The numbered badge sits at the window's own top-left corner -- it's the
+   only thing left ON the photo besides the arrows, and it's just a number,
+   so it stays legible at any size instead of the old paragraph-in-a-tag. */
+.bsr-roomphoto-badge{
+  position:absolute;transform:translate(-50%,-50%);
+  width:24px;height:24px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(20,17,12,.88);color:#FFFDF8;
+  font-family:'Geist Mono',monospace;font-weight:700;font-size:12.5px;
+  border:1.5px solid rgba(255,255,255,.85);pointer-events:none;
 }
-.bsr-roomphoto-tag strong{font-size:12px;font-weight:700}
-.bsr-roomphoto-impression{color:rgba(255,253,248,.72);font-style:italic;font-size:10.5px}
+
+/* The actual sun/heat/direction text, moved OFF the image and into a
+   proper readable list underneath -- this is the bulk of the fix for
+   "the text is tiny and doesn't add much". */
+.bsr-roomphoto-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.bsr-roomphoto-list li{display:flex;gap:12px;align-items:flex-start}
+.bsr-roomphoto-list-badge{
+  flex:none;width:24px;height:24px;border-radius:50%;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--text,#1C1812);color:#FFFDF8;
+  font-family:'Geist Mono',monospace;font-weight:700;font-size:12.5px;
+}
+.bsr-roomphoto-list-head{font-size:14.5px;font-weight:700;color:var(--text,#1C1812);margin:0 0 2px}
+.bsr-roomphoto-list p{font-size:14px;line-height:1.5;color:var(--text-mute,#5A5140);margin:0}
+.bsr-roomphoto-impression{font-style:italic;font-size:12.5px;margin-top:2px}
 .bsr-roomphoto-note{
-  font-size:13.5px;line-height:1.5;color:var(--text,#1C1812);margin:0;
+  font-size:14px;line-height:1.5;color:var(--text,#1C1812);margin:0;font-weight:600;
 }
 .bsr-roomphoto-caveat{
   font-size:12px;line-height:1.5;color:var(--text-mute,#5A5140);margin:0;font-style:italic;
 }
+
+.bsr-roomphoto-add{
+  margin-top:18px;padding:11px 20px;border-radius:9px;cursor:pointer;
+  border:1.5px dashed var(--line,rgba(28,24,18,.25));background:transparent;
+  color:var(--text,#1C1812);font-size:13.5px;font-weight:600;
+}
+.bsr-roomphoto-add:hover{border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
