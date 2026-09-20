@@ -257,13 +257,6 @@ export default function ReportScreen({ view = 'verdict' }) {
   // the SunScout top bar does, rather than sending you back up to the
   // report header to move the pin.
   const [mapSearchOpen, setMapSearchOpen] = useState(false);
-  // Asked once, as the map opens, and only while the floor and facing are
-  // still the defaults. Answering writes them into the URL (assumed drops
-  // to 0), so coming back to this screen later -- or landing on the
-  // verdict -- carries the answer and never re-asks.
-  const [unitAsk, setUnitAsk] = useState(
-    () => view === 'map' && (params.get('assumed') === '1' || !params.get('floor') || !params.get('facing'))
-  );
 
   // The address, the unit and whether a pin was placed -- everything the
   // other screen needs to open on exactly what this one is showing.
@@ -1063,79 +1056,6 @@ export default function ReportScreen({ view = 'verdict' }) {
             >
               Click to interact with the map
             </button>
-          )}
-
-          {/* Floor and facing, asked as the map opens. It is a dialog over
-              the map rather than a screen in front of it: the block is
-              already drawn behind it, so the question arrives in the
-              place it will be answered about, and dismissing it leaves
-              you exactly where you were rather than completing a step. */}
-          {fullMap && unitAsk && (
-            <div className="bsr-unitask" role="dialog" aria-modal="false" aria-label="Set the floor and facing">
-              <p className="bsr-unitask-say">Which floor, and which way does it face?</p>
-              <p className="bsr-unitask-sub">
-                Sun, shade, view, privacy and airflow are all set by the unit, not the address.
-              </p>
-
-              <div className="bsr-unitask-row">
-                <label className="bsr-unitask-floor">
-                  <span>Floor</span>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    maxLength={2}
-                    value={floorText}
-                    onChange={(e) => {
-                      const raw = e.target.value.replace(/[^\d]/g, '').slice(0, 2);
-                      setFloorText(raw);
-                      const n = parseInt(raw, 10);
-                      if (Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR) { setAssumed(false); setFloor(n); }
-                    }}
-                    onBlur={() => {
-                      const n = parseInt(floorText, 10);
-                      const clamped = Number.isFinite(n) ? Math.min(MAX_FLOOR, Math.max(1, n)) : floor;
-                      setFloor(clamped);
-                      setFloorText(String(clamped));
-                    }}
-                    aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
-                    autoFocus
-                  />
-                </label>
-
-                <div className="bsr-compass is-mini">
-                  <div className="bsr-compass-grid" role="radiogroup" aria-label="Which way the flat faces">
-                    {FACING_OPTS.map((f) => (
-                      <button
-                        key={f}
-                        type="button"
-                        role="radio"
-                        aria-checked={f === facing}
-                        title={f}
-                        className={`bsr-compass-pt is-${FACING_SHORT[f].toLowerCase()}${f === facing ? ' on' : ''}`}
-                        onClick={() => { setAssumed(false); setFacing(f); }}
-                      >
-                        {FACING_SHORT[f]}
-                      </button>
-                    ))}
-                    <span className="bsr-compass-face" aria-live="polite">
-                      <span className="bsr-compass-face-label">Faces</span>
-                      <span className="bsr-compass-face-val">{facing}</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bsr-unitask-actions">
-                <button type="button" className="bsr-unitask-go" onClick={() => setUnitAsk(false)}>
-                  {assumed ? 'Use the defaults' : 'Done'}
-                </button>
-                {/* Changing your mind later is the toolbar, which carries
-                    the same two controls -- said here so dismissing this
-                    doesn't feel like losing the chance. */}
-                <span className="bsr-unitask-note">You can change both on the toolbar above.</span>
-              </div>
-            </div>
           )}
 
           {/* The step's own action, on the map rather than tucked in the
