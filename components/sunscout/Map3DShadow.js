@@ -408,115 +408,51 @@ let curEl=${mel}, curAz=${maz};
 function projectToScreen(az,el){
   const mapEl=document.getElementById('map');
   const W=mapEl.clientWidth||800,H=mapEl.clientHeight||window.innerHeight||600;
-  // Two earlier attempts here both had real problems:
-  //  1) Math.min() between width/height edge-distances: which one binds
-  //     switches abruptly as the sun sweeps -> jagged zigzag.
-  //  2) Rigidly rotating a fixed-shape ellipse's POINT: mathematically
-  //     preserves each point's distance from center regardless of curRot,
-  //     but the ellipse is very anisotropic on a landscape screen (much
-  //     wider than tall), so at some rotations that preserved distance
-  //     badly overflows the container's height -- the arc stopped
-  //     adapting its length to the rotation at all ("same length" as it
-  //     turns, extending well past the visible map).
-  // Fix: use the closed-form polar equation of the ellipse INSCRIBED IN
-  // THE CONTAINER, r(theta)=1/sqrt((sin/halfW)^2+(cos/halfH)^2), evaluated
-  // at the sun's screen-relative bearing theta=(az-curRot). This rotates
-  // smoothly with the camera (no branching, verified zigzag-free
-  // numerically) while always staying within the container -- so it
-  // genuinely shrinks/grows with rotation instead of holding constant
-  // length, without either the corner-jump bug or the overflow bug.
-  const halfW=W/2*0.90, halfH=H/2*0.72;
-  const th=(az-curRot)*D2R, s=Math.sin(th), c=Math.cos(th);
-  const rEdge=1/Math.sqrt((s/halfW)**2+(c/halfH)**2);
-  const f=Math.max(0,el)/90, r=rEdge*(1-f);
-  return[W/2+r*s,H/2-r*c];
+  // Back to SunScout's own projection (components/Map3DShadow.tsx), which
+  // is a real per-point projection of the day's azimuth and elevation --
+  // the path is the data, not a shape drawn over it.
+  //
+  // The version this replaces solved the polar equation of the ellipse
+  // INSCRIBED in the container. That is the right answer to "keep it
+  // inside the box" and the wrong answer to "draw a sun path": on a
+  // landscape screen the inscribed ellipse is dominated by whichever
+  // half-axis the bearing happens to point along, so the arc kept
+  // changing length as the camera turned and, on most days, occupied a
+  // short crooked slice of the screen with dead space at both ends.
+  //
+  // Independent rx/ry instead of one radius, so the horizontal extent is
+  // always ~0.48W regardless of bearing: the arc reaches the sides of the
+  // map on every rotation. The extra 0.6 on the vertical term flattens it
+  // into the perspective of the tilted map rather than standing it up
+  // like a circle drawn on the glass.
+  const f=Math.max(0,el)/90;
+  const rx=W*0.48*(1-f), ry=H*0.44*(1-f), ar=(az-curRot)*D2R;
+  return[W/2+rx*Math.sin(ar),H/2-ry*Math.cos(ar)*0.6];
 }
 
-// The arc used to be the sun's real projected position, point by point:
-// every allPts entry pushed through projectToScreen and joined into a
-// polyline. It was correct and it read badly -- the path only occupies
-// the part of the ellipse the day's azimuths actually sweep, so on most
-// days it sat as a short crooked line with dead space at both ends, and
-// it flexed as the camera turned.
-//
-// This is a diagram instead: one smooth curve, edge to edge, apex set by
-// how high the sun actually gets that day. It still says the two things
-// worth saying -- the sun crosses this view, and it gets this high -- and
-// it says them at a glance. The shadows on the buildings are the real
-// data; this is the legend for them.
-//
-// The one piece of truth kept in it: which way the sun travels across
-// THIS view. Rise and set are projected once to see which is on the left
-// at the current rotation, and the curve is drawn in that direction, so
-// a sun moving right-to-left on screen is drawn moving right-to-left.
-function sunCurve(){
-  const mapEl=document.getElementById('map');
-  const W=mapEl.clientWidth||800, H=mapEl.clientHeight||window.innerHeight||600;
-  const ab=allPts.filter(function(p){return p.el>=0;});
-  if(ab.length<2)return null;
-  let maxEl=0;
-  for(let i=0;i<ab.length;i++) if(ab[i].el>maxEl) maxEl=ab[i].el;
-  // Floor of 0.22H so a low-sun winter day still reads as an arc rather
-  // than a flat line, ceiling near 0.62H so an overhead summer sun still
-  // leaves room for the labels.
-  const baseY=H*0.80;
-  const apexY=baseY-H*(0.22+0.40*Math.min(maxEl,90)/90);
-  const xRise=projectToScreen(ab[0].az,0)[0];
-  const xSet=projectToScreen(ab[ab.length-1].az,0)[0];
-  const flip=xRise>xSet;
-  const x0=flip?W:0, x1=flip?0:W;
-  return {W:W,H:H,x0:x0,x1:x1,y0:baseY,cx:(x0+x1)/2,cy:2*apexY-baseY};
-}
-
-// Quadratic Bezier, so cy above is set to put the apex exactly on apexY.
-function curveAt(c,t){
-  const mt=1-t;
-  return [mt*mt*c.x0+2*mt*t*c.cx+t*t*c.x1, mt*mt*c.y0+2*mt*t*c.cy+t*t*c.y0];
-}
-
-function dayFraction(hhmm){
-  function mins(v){ const a=String(v).split(':'); return (+a[0])*60+(+a[1]); }
-  const r=mins('${sunTimes.rise}'), s=mins('${sunTimes.set}'), n=mins(hhmm);
-  if(!(s>r)) return 0;
-  return Math.max(0,Math.min(1,(n-r)/(s-r)));
-}
 
 function drawArc(){
-  const c=sunCurve();
-  if(!c){ while(arcSvg.firstChild)arcSvg.removeChild(arcSvg.firstChild); return; }
-  arcSvg.setAttribute('viewBox','0 0 '+c.W+' '+c.H);
+  const W=document.getElementById('map').clientWidth||800,H=window.innerHeight||600;
+  arcSvg.setAttribute('viewBox','0 0 '+W+' '+H);
   while(arcSvg.firstChild)arcSvg.removeChild(arcSvg.firstChild);
-
-  const d='M '+c.x0.toFixed(1)+' '+c.y0.toFixed(1)+
-          ' Q '+c.cx.toFixed(1)+' '+c.cy.toFixed(1)+
-          ' '+c.x1.toFixed(1)+' '+c.y0.toFixed(1);
-  [['rgba(175,95,48,0.10)',14],['rgba(209,144,31,0.20)',6]].forEach(function(st){
-    const g=document.createElementNS('http://www.w3.org/2000/svg','path');
-    g.setAttribute('d',d);g.setAttribute('fill','none');
-    g.setAttribute('stroke',st[0]);g.setAttribute('stroke-width',st[1]);g.setAttribute('stroke-linecap','round');
+  const ab=allPts.filter(function(p){return p.el>=0;});
+  if(ab.length<2)return;
+  const sc=ab.map(function(p){return projectToScreen(p.az,p.el);});
+  [['rgba(175,95,48,0.12)',14],['rgba(209,144,31,0.22)',6]].forEach(function(c){
+    const g=document.createElementNS('http://www.w3.org/2000/svg','polyline');
+    g.setAttribute('points',sc.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' '));
+    g.setAttribute('fill','none');g.setAttribute('stroke',c[0]);g.setAttribute('stroke-width',c[1]);g.setAttribute('stroke-linecap','round');
     arcSvg.appendChild(g);
   });
-  const arc=document.createElementNS('http://www.w3.org/2000/svg','path');
-  arc.setAttribute('d',d);arc.setAttribute('fill','none');
-  arc.setAttribute('stroke','#AF5F30');arc.setAttribute('stroke-width','2.5');
-  arc.setAttribute('stroke-dasharray','6 9');arc.setAttribute('opacity','0.85');
+  const arc=document.createElementNS('http://www.w3.org/2000/svg','polyline');
+  arc.setAttribute('points',sc.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' '));
+  arc.setAttribute('fill','none');arc.setAttribute('stroke','#AF5F30');arc.setAttribute('stroke-width','2.5');arc.setAttribute('stroke-dasharray','6 9');arc.setAttribute('opacity','0.85');
   arcSvg.appendChild(arc);
-
-  // Labels sit inboard of the edges the curve now touches, so neither
-  // one runs off the side of the map.
-  [{t:0,txt:'Rise ${sunTimes.rise}'},{t:1,txt:'Set ${sunTimes.set}'}].forEach(function(lbl){
-    const pt=curveAt(c,lbl.t);
-    const atLeft=pt[0]<c.W/2;
-    const ci=document.createElementNS('http://www.w3.org/2000/svg','circle');
-    ci.setAttribute('cx',pt[0].toFixed(1));ci.setAttribute('cy',pt[1].toFixed(1));
-    ci.setAttribute('r','4.5');ci.setAttribute('fill','#AF5F30');arcSvg.appendChild(ci);
-    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
-    t.setAttribute('x',(pt[0]+(atLeft?12:-12)).toFixed(1));
-    t.setAttribute('y',(pt[1]-10).toFixed(1));
-    t.setAttribute('fill','#1C1812');t.setAttribute('font-size','13');
-    t.setAttribute('font-family',"'Geist Mono',monospace");t.setAttribute('font-weight','600');
-    t.setAttribute('text-anchor',atLeft?'start':'end');t.setAttribute('opacity','0.9');
-    t.textContent=lbl.txt;arcSvg.appendChild(t);
+  ab.forEach(function(p,i){if(i%3!==0)return;const s=projectToScreen(p.az,p.el);const d=document.createElementNS('http://www.w3.org/2000/svg','circle');d.setAttribute('cx',s[0].toFixed(1));d.setAttribute('cy',s[1].toFixed(1));d.setAttribute('r','2.5');d.setAttribute('fill','#FFD23C');d.setAttribute('opacity','0.85');arcSvg.appendChild(d);});
+  var riseLabel='Rise ' + '${sunTimes.rise}', setLabel='Set ' + '${sunTimes.set}';
+  [{pt:sc[0],txt:riseLabel,anchor:'end'},{pt:sc[sc.length-1],txt:setLabel,anchor:'start'}].forEach(function(lbl){
+    const ci=document.createElementNS('http://www.w3.org/2000/svg','circle');ci.setAttribute('cx',lbl.pt[0].toFixed(1));ci.setAttribute('cy',lbl.pt[1].toFixed(1));ci.setAttribute('r','4.5');ci.setAttribute('fill','#AF5F30');arcSvg.appendChild(ci);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',(lbl.pt[0]+(lbl.anchor==='end'?-10:10)).toFixed(1));t.setAttribute('y',(lbl.pt[1]-8).toFixed(1));t.setAttribute('fill','#1C1812');t.setAttribute('font-size','13');t.setAttribute('font-family',"'Geist Mono',monospace");t.setAttribute('font-weight','600');t.setAttribute('text-anchor',lbl.anchor);t.setAttribute('opacity','0.9');t.textContent=lbl.txt;arcSvg.appendChild(t);
   });
 }
 
@@ -524,20 +460,16 @@ function placeSunXY(x,y,visible){
   if(!visible){sunEl.style.display='none';return;}
   sunEl.style.display='block';sunEl.style.left=x+'px';sunEl.style.top=y+'px';
 }
-// On the curve, not on its own projection -- otherwise the glyph and the
-// path it is supposed to be travelling would disagree with each other.
-function moveSun(p){
-  if(p.el<-5){placeSunXY(0,0,false);return;}
-  const c=sunCurve();
-  if(!c){placeSunXY(0,0,false);return;}
-  const s=curveAt(c,dayFraction(p.time));
+function moveSun(az,el){
+  if(el<-5){placeSunXY(0,0,false);return;}
+  const s=projectToScreen(az,el);
   placeSunXY(s[0],s[1],true);
 }
 
 function updateView(p){
   if(p.iso)map.setDate(new Date(p.iso));
   curEl=p.el;curAz=p.az;
-  moveSun(p);
+  moveSun(p.az,p.el);
   var stm=document.getElementById('stm');if(stm)stm.textContent=p.time;
   var st2=document.getElementById('sun-time');if(st2)st2.textContent=p.time;
 }
@@ -634,31 +566,27 @@ function animTick(ts){
   var p0=allPts[ai],p1=allPts[(ai+1)%allPts.length];
   var el=lerp(p0.el,p1.el,t),az=lerpAngle(p0.az,p1.az,t);
   curEl=el;curAz=az;
-  // The icon rides the drawn curve, by time of day, exactly as the paused
-  // view does. This used to interpolate the two points' PROJECTIONS,
-  // which was right when the arc was that same projection plotted point
-  // by point -- once the arc became a plain curve, it left the sun
-  // tracking a path that is no longer on screen, drifting below the line
-  // it is supposed to be travelling.
-  var c=sunCurve();
-  if(!c||(p0.el<-5&&p1.el<-5)){
+  // Interpolating az/el then re-projecting doesn't trace the same path as
+  // the drawn arc: projectToScreen is non-linear (sin/cos), so a straight
+  // line in az/el space is a curved line on screen -- the icon would drift
+  // off the polyline drawArc() actually draws between these two points.
+  // Interpolating the two points' own screen positions instead guarantees
+  // the icon always sits exactly on that same straight segment.
+  if(p0.el<-5&&p1.el<-5){
     placeSunXY(0,0,false);
   }else{
-    var f0=dayFraction(p0.time), f1=dayFraction(p1.time);
-    // allPts wraps at the end of the day, so the last pair runs backwards.
-    // Hold at the final fraction rather than sweeping back to sunrise.
-    var f=(f1>=f0)?lerp(f0,f1,t):f0;
-    var sp=curveAt(c,f);
-    placeSunXY(sp[0],sp[1],true);
+    // drawArc() only plots points with el>=0. If one side of this pair
+    // falls below that (just past sunrise/before sunset), interpolating
+    // toward its projection slides the icon toward a point that was never
+    // actually drawn. Clamp each side's elevation to >=0 for this
+    // projection so the icon never targets anywhere off the visible line.
+    var s0=projectToScreen(p0.az,Math.max(0,p0.el)), s1=projectToScreen(p1.az,Math.max(0,p1.el));
+    placeSunXY(lerp(s0[0],s1[0],t), lerp(s0[1],s1[1],t), true);
   }
   try{map.setDate(interpDate(p0.iso,p1.iso,t));}catch(e){}
   var stm=document.getElementById('stm');if(stm)stm.textContent=p0.time;
   var st2=document.getElementById('sun-time');if(st2)st2.textContent=p0.time;
-  // The arc is a fixed shape now -- it depends on the container and the
-  // day, not on the clock -- so redrawing the whole SVG on every frame
-  // was rebuilding an identical path sixty times a second. drawArc is
-  // still called on rotate/tilt/resize, which is when it can actually
-  // change.
+  drawArc();
   if(t>=1){ai=(ai+1)%allPts.length;animStartT=ts;}
   animFrame=requestAnimationFrame(animTick);
 }
