@@ -384,7 +384,7 @@ export default function HeroLiveMapCanvas() {
               pill below is proof (real cycling examples), not an
               explanation, so it doesn't substitute for one. One flat
               sentence, no animation of its own. */}
-          <p className="hlm-sub">Search any address and see its real sunlight, safety and air quality, verified against government records, not the listing.</p>
+          <p className="hlm-sub">What the listing won&apos;t tell you. We will.</p>
           <p className="hlm-typed-line">
             <TypewriterCycle
               items={BLINDSPOT_EXAMPLES}
