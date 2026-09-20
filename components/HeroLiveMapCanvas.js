@@ -379,6 +379,12 @@ export default function HeroLiveMapCanvas() {
         <div className="hlm-copy">
           <span className="hlm-eyebrow">Property Intelligence</span>
           <h1 className="hlm-h1">Every property has a <span className="hlm-h1-accent" data-text="blindspot.">blindspot.</span></h1>
+          {/* Per feedback that the hero was headline-only with no plain
+              statement of what the tool actually does -- the typed-line
+              pill below is proof (real cycling examples), not an
+              explanation, so it doesn't substitute for one. One flat
+              sentence, no animation of its own. */}
+          <p className="hlm-sub">Search any address and see its real sunlight, safety and air quality, verified against government records, not the listing.</p>
           <p className="hlm-typed-line">
             <TypewriterCycle
               items={BLINDSPOT_EXAMPLES}

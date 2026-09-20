@@ -60,7 +60,7 @@ function useFaqItems() {
     },
     {
       q: 'Where does the data actually come from?',
-      a: "The area half is government records - police, CPCB, DISCOM, municipal surveys, CBSE listings - scored by zone, so neighbouring pincodes often land close. Schools are the exception, matched address by address. The flat half is solar geometry for the floor and facing you pick. Nothing broker-supplied either way.",
+      a: "The area half is government records - police, CPCB, DISCOM, municipal surveys, CBSE listings - scored by zone, so neighbouring pincodes often land close. Schools are the exception, matched address by address. The flat half runs the NOAA solar-position algorithm for the floor and facing you pick, against OpenStreetMap building data for what's actually around it. Nothing broker-supplied either way.",
     },
     {
       q: 'Which cities are covered?',
