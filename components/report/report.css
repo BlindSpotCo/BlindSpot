@@ -400,7 +400,7 @@
    it inherited width:100%;height:100%, which overrode its own width and
    made `bottom` meaningless -- a full-bleed panel pinned to the top of
    the map instead of a button at the bottom of it. */
-.bsr-map > *:not(.bsr-mapbar):not(.bsr-mapcta){width:100%;height:100%}
+.bsr-map > *:not(.bsr-mapbar):not(.bsr-mapcta):not(.bsr-unitask){width:100%;height:100%}
 .bsr-map-wait{
   display:flex;align-items:center;justify-content:center;text-align:center;
   height:100%;padding:0 24px;color:var(--text-mute,#5A5140);font-size:16px;
@@ -685,7 +685,7 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   width:2.4em; flex:none; font-size:14px; font-weight:700; min-height:32px; padding:3px 5px;
 }
 .bsr-mapbar .bsr-set select{ max-width:80px; flex:none; }
-.bsr-mapbar .bsr-set-date select{ max-width:64px; font-size:10px; }
+.bsr-mapbar .bsr-set-date select{ max-width:124px; font-size:10px; }
 .bsr-mapbar .bsr-datein{ min-height:24px; font-size:10px; padding:2px 5px; flex:none; }
 .bsr-mapbar .bsr-assumed{ font-size:9px; padding:1px 5px; white-space:nowrap; flex:none; }
 /* The play/pause control now sits right after the search row (moved in
@@ -722,7 +722,7 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   .bsr-mapbar .bsr-set input[type="text"]{ font-size:12px; min-height:27px; padding:3px 6px; }
   .bsr-mapbar .bsr-set-floor input[type="text"]{ width:2.8em; font-size:15px; min-height:34px; }
   .bsr-mapbar .bsr-set select{ max-width:120px; }
-  .bsr-mapbar .bsr-set-date select{ max-width:96px; font-size:11px; }
+  .bsr-mapbar .bsr-set-date select{ max-width:150px; font-size:11px; }
   .bsr-mapbar .bsr-datein{ min-height:27px; font-size:11px; padding:3px 6px; }
   .bsr-mapbar .bsr-assumed{ font-size:10px; padding:2px 6px; }
   .bsr-mapbar .bsr-play{ font-size:11px;min-height:27px;padding:0 10px; }
@@ -1324,3 +1324,76 @@ body.bsr-noscroll{overflow:hidden}
   text-decoration:underline;text-underline-offset:2px;cursor:pointer;
 }
 .bsr-inline-link:hover{color:var(--brand,#3D4116)}
+
+/* ---- floor + facing, asked as the map opens ----
+   Centred over the map, not a screen in front of it: the block is
+   already drawn behind it, so the question is asked in the place it is
+   about, and dismissing it leaves you where you were. */
+.bsr-unitask{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  z-index:18; width:min(380px, calc(100% - 28px));
+  padding:20px 20px 16px;
+  border-radius:16px;
+  background:rgba(255,253,248,.98);
+  border:1px solid var(--line,rgba(28,24,18,.16));
+  box-shadow:0 18px 48px rgba(28,24,18,.28);
+  text-align:center;
+}
+.bsr-unitask-say{
+  margin:0; font-size:17px; font-weight:800; line-height:1.3;
+  color:var(--text,#1C1812);
+}
+.bsr-unitask-sub{
+  margin:7px 0 0; font-size:13px; line-height:1.5;
+  color:var(--text-mute,#5A5140);
+}
+.bsr-unitask-row{
+  display:flex; flex-direction:column; align-items:center; gap:14px;
+  margin-top:16px;
+}
+.bsr-unitask-floor{ display:flex; align-items:center; gap:10px }
+.bsr-unitask-floor span{
+  font-family:'Geist Mono',monospace; font-size:10.5px; font-weight:600;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--text-mute,#5A5140);
+}
+.bsr-unitask-floor input{
+  width:76px; font:inherit; font-size:18px; font-weight:700; text-align:center;
+  padding:7px 10px; border-radius:8px; min-height:42px;
+  border:1px solid var(--line,rgba(28,24,18,.2));
+  background:var(--bg,#FAF6EE); color:var(--text,#1C1812);
+}
+.bsr-unitask-floor input:focus-visible{
+  outline:2px solid var(--brand,#3D4116); outline-offset:1px;
+  border-color:var(--brand,#3D4116);
+}
+.bsr-unitask-actions{
+  display:flex; flex-direction:column; align-items:center; gap:7px;
+  margin-top:16px;
+}
+.bsr-unitask-go{
+  width:100%; font:inherit; font-size:15px; font-weight:700; cursor:pointer;
+  padding:12px 20px; border-radius:999px;
+  border:1px solid var(--brand,#3D4116);
+  background:var(--brand,#3D4116); color:#FFFDF8;
+}
+.bsr-unitask-go:hover{ filter:brightness(.94) }
+.bsr-unitask-note{
+  font-size:11.5px; color:var(--text-dim,#5B5443);
+}
+@media (max-width:560px){
+  .bsr-unitask{ padding:16px 15px 13px }
+  .bsr-unitask-say{ font-size:15.5px }
+  .bsr-unitask-sub{ font-size:12.5px }
+}
+
+/* The compass at callout size, for the entry dialog. */
+.bsr-compass.is-mini .bsr-compass-grid{
+  grid-template-columns:44px 68px 44px;
+  grid-template-rows:repeat(3, 44px);
+  gap:5px; padding:7px;
+}
+.bsr-compass.is-mini .bsr-compass-pt{ font-size:11px }
+.bsr-compass.is-mini .bsr-compass-pt.is-n,
+.bsr-compass.is-mini .bsr-compass-pt.is-s{ width:44px }
+.bsr-compass.is-mini .bsr-compass-face-label{ font-size:8px }
+.bsr-compass.is-mini .bsr-compass-face-val{ font-size:10px }

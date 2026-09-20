@@ -1036,20 +1036,26 @@ export async function POST(req) {
       </div>` : ''}
     </div>
 
+    ${/* The pictures come first and the numbers follow them. A reader
+          opening this wants to see the light on the building; a twelve-row
+          table of usable-hours figures in front of that is the appendix
+          arriving before the thing it is an appendix to. */''}
+    ${screenshotPages ? `
+    <div style="border-top:2px solid ${INK};padding-top:30px;margin-bottom:26px;">
+      <div style="font-size:11.5px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.12em;">What that looks like on the ground</div>
+    </div>` : ''}
+
+    ${screenshotPages}
+
     ${monthlyTableSection ? `
-    <div style="margin-bottom:36px;">
+    <div style="border-top:2px solid ${INK};padding-top:30px;margin-top:38px;margin-bottom:36px;">
       <div style="font-size:11.5px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px;">Sunlight, month by month</div>
       <p style="font-size:13px;color:${DIM};line-height:1.7;margin-bottom:16px;max-width:64ch;">
         Floor ${safeFloor}, facing ${safeFacing}. Sunrise and sunset are true for this location; usable hours and
         floor clearance are calculated from the sun's angle against a general estimate of the buildings around it.
       </p>
       ${monthlyTableSection}
-    </div>
-    <div style="border-top:2px solid ${INK};padding-top:30px;margin-bottom:30px;">
-      <div style="font-size:11.5px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.12em;">What that looks like on the ground</div>
     </div>` : ''}
-
-    ${screenshotPages}
 
 
     <div style="margin-top:38px;padding-top:17px;border-top:1px solid ${LINE};display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
