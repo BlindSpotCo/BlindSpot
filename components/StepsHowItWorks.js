@@ -24,8 +24,8 @@ const STEPS = [
   },
   {
     accent: 'ss',
-    title: 'Get both scores',
-    copy: 'Area, then the exact floor and facing.',
+    title: 'One pin, two real scores',
+    copy: "One for the area you're moving into. One for the exact floor and facing you set.",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="10" width="6" height="11" rx="1"/><rect x="15" y="5" width="6" height="16" rx="1"/><rect x="9" y="14" width="6" height="7" rx="1"/></svg>
     ),
