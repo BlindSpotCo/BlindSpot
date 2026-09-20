@@ -27,20 +27,34 @@
 const NEIGHBOURHOOD_DIMS = [
   { label: 'Safety', word: 'Excellent', tone: 'good' },
   { label: 'Infrastructure', word: 'Fair', tone: 'avg' },
-  { label: 'Air Quality', word: 'Good', tone: 'good' },
+  { label: 'Air Quality', word: 'Good', tone: 'good', fill: 3 },
   { label: 'Schools', word: 'Excellent', tone: 'good' },
   { label: 'Power', word: 'Excellent', tone: 'good' },
   { label: 'Water', word: 'Excellent', tone: 'good' },
   { label: 'Roads', word: 'Excellent', tone: 'good' },
   { label: 'Drainage', word: 'Excellent', tone: 'good' },
 ];
+// Dampness was missing here while section 01 above lists "Damp rooms"
+// as one of the eight things we check -- the engine that supposedly
+// produces it then showed five rows with no dampness among them.
+// computeDampnessScore() for this exact example (South-facing, Delhi
+// NCR's 564mm Jun-Sep normal from cityMeta.js): rainfallRatio
+// 564/1900 = 0.297, South facing multiplier 1.15, so
+// 0.45(0.297) + 0.35(0.75) = 0.396 before the drying term, landing
+// 60 at best and lower as monsoon-month sun drops. Tagged Fair, the
+// conservative side of that 58-60 boundary, since monsoon drying is
+// never actually at the model's ceiling.
 const COMFORT_DIMS = [
   { label: 'Sun', word: 'Excellent', tone: 'good' },
   { label: 'Heat Risk', word: 'Poor', tone: 'poor' },
   { label: 'View', word: 'Fair', tone: 'avg' },
   { label: 'Privacy', word: 'Fair', tone: 'avg' },
   { label: 'Ventilation', word: 'Fair', tone: 'avg' },
+  { label: 'Dampness', word: 'Fair', tone: 'avg' },
 ];
+
+// Excellent/Good/Fair/Poor -> how many of the four meter segments light.
+const METER_FILL = { good: 4, avg: 2, poor: 1 };
 
 function ScoreCard({ accentVar, tag, name, blurb, score, grade, word, tone, example, dims }) {
   return (
@@ -57,9 +71,19 @@ function ScoreCard({ accentVar, tag, name, blurb, score, grade, word, tone, exam
 
       <ul className="ts4-rows">
         {dims.map((d) => (
-          <li key={d.label} className="ts4-row">
+          <li key={d.label} className={`ts4-row is-${d.tone}`}>
             <span className="ts4-row-label">{d.label}</span>
-            <span className={`ts4-row-tag is-${d.tone}`}>{d.word}</span>
+            <span className="ts4-row-word">{d.word}</span>
+            {/* Four segments, filled to the tone. Eight rows of the
+                word "Excellent" was unreadable as a pattern -- which
+                factor is the weak one took reading every line. The
+                meter makes Infrastructure and Heat Risk findable at a
+                glance, and the word stays for anyone who wants it. */}
+            <span className="ts4-row-meter" aria-hidden="true">
+              {[0, 1, 2, 3].map((seg) => (
+                <span key={seg} className={seg < (d.fill ?? METER_FILL[d.tone]) ? 'is-on' : undefined} />
+              ))}
+            </span>
           </li>
         ))}
       </ul>
@@ -95,8 +119,26 @@ export default function TwoScores() {
             <span className="ts4-verdict-of">out of 100</span>
           </div>
           <div className="ts4-verdict-say">
-            <p className="ts4-verdict-head">Worth a look, but go in with your eyes open.</p>
-            <p className="ts4-verdict-sub">Good locality. This flat is the weak half - ask for a higher floor.</p>
+            <p className="ts4-verdict-head">Worth a look - eyes open.</p>
+            <p className="ts4-verdict-sub">Good locality. This flat is the weak half - ask for a higher floor or another facing.</p>
+          </div>
+          {/* The right half of this card was empty, and the sentence
+              explaining where 66 comes from was a separate line of prose
+              at the very bottom of the section, six hundred pixels below
+              the number it explained. Showing the arithmetic instead:
+              the two numbers, in the two colours the cards below use,
+              adding up in front of you. The prose line is gone. */}
+          <div className="ts4-verdict-math" aria-label="66 is the average of 82 and 50">
+            <span className="ts4-vm-item accent-av">
+              <em>82</em>
+              <span>Neighbourhood</span>
+            </span>
+            <span className="ts4-vm-op" aria-hidden="true">+</span>
+            <span className="ts4-vm-item accent-ss">
+              <em>50</em>
+              <span>This flat</span>
+            </span>
+            <span className="ts4-vm-note">Weighted 50/50 - yours to change</span>
           </div>
         </div>
 
@@ -127,9 +169,6 @@ export default function TwoScores() {
           />
         </div>
 
-        <p className="ts3-combine">
-          The verdict up top is these two, 50/50 - yours to reweight.
-        </p>
       </div>
     </section>
   );

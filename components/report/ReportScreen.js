@@ -100,25 +100,27 @@ function toneOf(score) {
 }
 function headlineFor(score, hasArea) {
   if (!hasArea) {
-    if (score >= 75) return 'This flat holds up well on its own.';
-    if (score >= 50) return 'This flat is workable - a few things worth checking in person.';
-    return 'Several things on this flat are worth a closer look before you commit.';
+    if (score >= 75) return 'This flat holds up on its own.';
+    if (score >= 50) return 'Workable - a few things to check in person.';
+    return 'Several things here need a closer look.';
   }
-  if (score >= 75) return 'Worth going ahead - with a few things to check.';
-  if (score >= 58) return 'Worth a look, but go in with your eyes open.';
-  return 'Worth a very close look before you commit to this one.';
+  if (score >= 75) return 'Worth going ahead, with a few checks.';
+  if (score >= 58) return 'Worth a look - eyes open.';
+  return 'Worth a very close look before you commit.';
 }
 // The API's quadrant copy is written for us, not for a buyer ("Location
 // Play", "worth comparing other floors/facings"). Same logic, said
-// plainly -- and naming the actual factor (light, outlook, airflow, the
-// streets around it) rather than just judging "the flat" as a whole.
+// plainly -- and naming the actual factor (light, outlook, the streets
+// around it) rather than just judging "the flat" as a whole. One line
+// each: this sits directly under a 20px headline saying much the same
+// thing, and three lines of qualification there read as hedging.
 function verdictSay(areaScore, unitScore) {
   const areaOk = areaScore >= 60;
   const unitOk = unitScore >= 60;
-  if (areaOk && unitOk) return 'The locality holds up and so does this particular flat - the combination is what people are actually looking for.';
-  if (!areaOk && unitOk) return 'The flat itself holds up well. It is the streets around it that need scrutiny, and that is the half you cannot change later.';
-  if (areaOk && !unitOk) return 'Good locality - but light, outlook or airflow on this exact floor and facing pull the score down. Ask to see a higher floor or a different facing in the same tower before deciding.';
-  return 'Both halves are worth verifying in person - the locality and this specific floor and facing. Worth a close look before you put money down.';
+  if (areaOk && unitOk) return 'Locality and flat both hold up - that combination is the rare part.';
+  if (!areaOk && unitOk) return 'The flat holds up. The streets around it are the half you cannot change later.';
+  if (areaOk && !unitOk) return 'Good locality. This flat is the weak half - ask for a higher floor or another facing.';
+  return 'Both halves need seeing in person before you commit.';
 }
 function ord(n) {
   const s = ['th', 'st', 'nd', 'rd'];
