@@ -2177,6 +2177,14 @@ header.header-on-dark .brand-word-img{
   .ts4-vm-item em{ font-size:21px }
   .ts4-verdict-n{ font-size:42px }
   .ts4-verdict-head{ font-size:18px }
+  /* .ts4-card never had a mobile override -- it kept the full
+     --space-7 (48px) padding meant for the two-up desktop grid,
+     which on a single narrow mobile card reads as a dead band of
+     empty space above "ENGINE 1 . GOVERNMENT RECORDS" before any
+     content starts. --space-5 matches the gaps already used inside
+     this same card (.ts4-blurb, .ts4-example margins), so the
+     padding stops standing out from its own internal rhythm. */
+  .ts4-card{ padding:var(--space-5) }
 }
 
 /* ---------- 03 - How It Works (icon rail) ---------- */
