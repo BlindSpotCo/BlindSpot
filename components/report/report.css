@@ -394,10 +394,13 @@
   height:clamp(380px, 68vh, 760px);
   background:var(--bg-2,#F1E9DA);
 }
-/* :not(.bsr-mapbar) -- the toolbar is the one direct child that must NOT
+/* The toolbar and the step's CTA are the direct children that must NOT
    stretch to fill the map; everything else (the Map3DShadow iframe, the
-   loading/error message) still should. */
-.bsr-map > *:not(.bsr-mapbar){width:100%;height:100%}
+   loading/error message) still should. Without .bsr-mapcta listed here
+   it inherited width:100%;height:100%, which overrode its own width and
+   made `bottom` meaningless -- a full-bleed panel pinned to the top of
+   the map instead of a button at the bottom of it. */
+.bsr-map > *:not(.bsr-mapbar):not(.bsr-mapcta){width:100%;height:100%}
 .bsr-map-wait{
   display:flex;align-items:center;justify-content:center;text-align:center;
   height:100%;padding:0 24px;color:var(--text-mute,#5A5140);font-size:16px;
@@ -1211,6 +1214,56 @@ body.bsr-noscroll{overflow:hidden}
 /* Takes a full row of its own under the rest of the strip rather than
    squeezing the address out of the line it is on. */
 .bsr-fullbar-search{flex:1 0 100%;margin-top:0}
+
+/* ---- the step's own action, on the map ----
+   Bottom centre, above everything, deliberately the largest thing on
+   the screen after the map itself: this is the one action the whole
+   step exists for, and as a 13px pill in the header bar it read as
+   optional. The line above it is the instruction, so the button never
+   has to carry it. */
+.bsr-mapcta{
+  position:absolute; left:50%; bottom:22px; transform:translateX(-50%);
+  z-index:14; width:min(520px, calc(100% - 32px));
+  display:flex; flex-direction:column; align-items:center; gap:10px;
+  padding:16px 20px;
+  border-radius:16px;
+  background:rgba(255,253,248,.97);
+  border:1px solid var(--line,rgba(28,24,18,.14));
+  box-shadow:0 10px 34px rgba(28,24,18,.22);
+  text-align:center;
+}
+.bsr-mapcta-say{
+  margin:0; font-size:13.5px; line-height:1.5; color:var(--text-mute,#5A5140);
+  max-width:44ch;
+}
+.bsr-mapcta.is-ready .bsr-mapcta-say{ color:var(--brand,#3D4116); font-weight:600 }
+.bsr-mapcta-go{
+  width:100%; font:inherit; font-size:16px; font-weight:700; cursor:pointer;
+  padding:14px 24px; border-radius:999px;
+  border:1px solid var(--line,rgba(28,24,18,.22));
+  background:var(--paper,#FFFDF8); color:var(--text-mute,#5A5140);
+  transition:background .16s ease, color .16s ease, border-color .16s ease, transform .16s ease;
+}
+.bsr-mapcta-go:hover{ border-color:var(--brand,#3D4116); color:var(--brand,#3D4116) }
+/* Only once the pin is actually placed does this become the filled,
+   obvious next step -- before that it is a real escape hatch, but not
+   the recommended one. */
+.bsr-mapcta.is-ready .bsr-mapcta-go{
+  border-color:var(--brand,#3D4116);
+  background:var(--brand,#3D4116); color:#FFFDF8;
+  box-shadow:0 6px 18px rgba(61,65,22,.34);
+}
+.bsr-mapcta.is-ready .bsr-mapcta-go:hover{ color:#FFFDF8; transform:translateY(-1px) }
+.bsr-mapcta-go:focus-visible{ outline:2px solid var(--brand,#3D4116); outline-offset:3px }
+@media (max-width:560px){
+  .bsr-mapcta{ bottom:14px; width:calc(100% - 20px); padding:13px 14px; gap:8px; border-radius:14px }
+  .bsr-mapcta-say{ font-size:12.5px }
+  .bsr-mapcta-go{ font-size:15px; padding:13px 18px }
+}
+@media (prefers-reduced-motion:reduce){
+  .bsr-mapcta-go{ transition:none }
+  .bsr-mapcta.is-ready .bsr-mapcta-go:hover{ transform:none }
+}
 
 .bsr-mapbar-full{
   font-family:inherit;font-size:10px;font-weight:600;cursor:pointer;

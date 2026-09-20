@@ -255,7 +255,11 @@ export default function ReportScreen() {
   const [mapSearchOpen, setMapSearchOpen] = useState(false);
 
   // Confirming the spot is what ends the map step and opens the verdict.
+  // toVerdict marks THIS exit as "show me the verdict" so the scroll
+  // below lands on the score rather than on the map (see leftFull).
+  const exitToVerdict = useRef(false);
   const confirmSpot = useCallback(() => {
+    exitToVerdict.current = true;
     setSpotConfirmed(true);
     setFullMap(false);
   }, []);
@@ -529,7 +533,16 @@ export default function ReportScreen() {
     if (fullMap) { leftFull.current = true; return; }
     if (!leftFull.current) return;
     leftFull.current = false;
-    document.getElementById('the-block')?.scrollIntoView({ block: 'start' });
+    // Confirming the pin is a step forward, so it lands on the answer.
+    // This used to scroll to #the-block every time, which meant the
+    // button labelled "continue to the verdict" put you back at the top
+    // of the map you had just finished with -- the verdict was above
+    // you, unseen, and it read as though the button had done nothing.
+    // Toggling full screen off LATER (from the toolbar, pin already
+    // confirmed) still returns you to the map, which is where you were.
+    const target = exitToVerdict.current ? 'the-score' : 'the-block';
+    exitToVerdict.current = false;
+    document.getElementById(target)?.scrollIntoView({ block: 'start' });
     // The button that was focused (back-to-verdict) has just been
     // unmounted, which drops focus to the body and sends the next Tab
     // to the top of the document. Hand it to the control that now does
@@ -1423,22 +1436,6 @@ export default function ReportScreen() {
             two sizes. */}
         {fullMap && (
           <div className="bsr-fullbar">
-            {/* The primary action on this screen, and the only way into
-                the verdict on a first visit: it is the moment the pin
-                stops being a geocoder's guess and becomes the person's
-                own answer. Before the pin has been touched it reads as
-                an instruction, because "see the verdict" on an
-                unconfirmed centre-of-complex pin is exactly the thing
-                this step exists to stop. */}
-            <button
-              type="button"
-              className={`bsr-fullbar-back${pinTouched || spotConfirmed ? ' is-ready' : ''}`}
-              ref={fullBackRef}
-              onClick={confirmSpot}
-            >
-              {pinTouched || spotConfirmed ? 'Use this spot →' : 'Skip - score the centre'}
-            </button>
-
             <p className="bsr-fullbar-where">
               <span className="bsr-fullbar-addr">
                 {pinTouched
@@ -1534,6 +1531,31 @@ export default function ReportScreen() {
             >
               Click to interact with the map
             </button>
+          )}
+
+          {/* The step's own action, on the map rather than tucked in the
+              bar above it. It used to be a 13px pill sharing a row with
+              the address and a search button -- the one thing this screen
+              exists to make someone do, styled like the least important
+              control on it. Bottom centre, full-size, with the state of
+              the pin said directly above it. */}
+          {fullMap && (
+            <div className={`bsr-mapcta${pinTouched ? ' is-ready' : ''}`}>
+              <p className="bsr-mapcta-say">
+                {pinTouched
+                  ? 'Pin placed - every score below is for this exact spot.'
+                  : 'Tap your building on the map. The address alone lands on the centre of the complex.'}
+              </p>
+              <button
+                type="button"
+                className="bsr-mapcta-go"
+                ref={fullBackRef}
+                onClick={confirmSpot}
+              >
+                {pinTouched ? 'Continue to the verdict' : 'Continue without placing a pin'}
+                <span aria-hidden="true"> →</span>
+              </button>
+            </div>
           )}
 
           <div className="bsr-mapbar">
