@@ -1154,13 +1154,23 @@ body.bsr-noscroll{overflow:hidden}
   background:var(--paper,#FFFDF8);
   border-bottom:1px solid var(--line,rgba(28,24,18,.14));
 }
+/* Quiet until the pin has been moved -- on a first visit this reads
+   "Skip - score the centre", which is a real choice but not the one
+   being recommended, and a filled primary button would have said the
+   opposite. Once the pin is placed it becomes the primary action. */
 .bsr-fullbar-back{
   flex:none;font:inherit;font-size:13px;font-weight:700;cursor:pointer;
   padding:7px 14px;border-radius:999px;
-  border:1px solid var(--brand,#3D4116);
+  border:1px solid var(--line,rgba(28,24,18,.22));
+  background:var(--paper,#FFFDF8);color:var(--text-mute,#5A5140);
+  transition:background .15s ease,color .15s ease,border-color .15s ease;
+}
+.bsr-fullbar-back:hover{border-color:var(--brand,#3D4116);color:var(--brand,#3D4116)}
+.bsr-fullbar-back.is-ready{
+  border-color:var(--brand,#3D4116);
   background:var(--brand,#3D4116);color:#FFFDF8;
 }
-.bsr-fullbar-back:hover{filter:brightness(.94)}
+.bsr-fullbar-back.is-ready:hover{filter:brightness(.94);color:#FFFDF8}
 .bsr-fullbar-where{
   margin:0;min-width:0;flex:1 1 180px;
   display:flex;flex-direction:column;gap:1px;
@@ -1240,3 +1250,12 @@ body.bsr-noscroll{overflow:hidden}
   .bsr-unitgate-actions{flex-direction:row;justify-content:flex-start}
   .bsr-unitgate-actions.is-skip{justify-content:center}
 }
+
+/* A button that has to read as a link: it re-opens the full-screen map
+   rather than navigating, so it can't be an <a href>, but inside a
+   sentence it has to look like the anchor next to it. */
+.bsr-inline-link{
+  font:inherit;color:inherit;background:none;border:none;padding:0;
+  text-decoration:underline;text-underline-offset:2px;cursor:pointer;
+}
+.bsr-inline-link:hover{color:var(--brand,#3D4116)}

@@ -208,21 +208,29 @@ export default function ReportScreen() {
     () => params.get('assumed') === '1' || !params.get('floor') || !params.get('facing')
   );
 
-  // A listing gives you the tower, not the unit -- so on a genuinely
-  // fresh visit (no floor/facing in the URL: not a bookmarked link, not
-  // a "change address" round trip) nobody has said which flat this even
-  // is yet. Gate the actual scoring on answering that, rather than
-  // silently running the numbers for floor 5/South-East and hoping the
-  // "assumed" note further down gets noticed -- see the unitgate modal
-  // in the return below, and the early-out at the top of the scores
-  // effect. Once true for this mount, it stays true (changing floor or
-  // facing later, from within the report, is its own separate flow and
-  // doesn't need to re-ask).
-  const [unitChosen, setUnitChosen] = useState(
-    () => Boolean(params.get('floor') && params.get('facing'))
+  // WHERE the pin sits is what has to be right before any of this means
+  // anything, and geocoding an address returns the centre of whatever it
+  // matched -- the middle of a six-tower complex, the centroid of a road.
+  // Every number on this page is computed at that point: which buildings
+  // shade it, how far the road is, how open the outlook is. Scoring the
+  // centre of a complex and presenting it as someone's flat is wrong in a
+  // way no floor/facing answer can fix, and the old popup asked for floor
+  // and facing FIRST -- the two least consequential inputs in front of the
+  // one that decides everything.
+  //
+  // So the map is the first step now. A fresh arrival opens full screen on
+  // the 3D block with the day running, and the only question is which
+  // building is yours: a tap moves the pin, every score re-runs against
+  // the new spot, and confirming it is what opens the written verdict.
+  // Floor and facing still live on the map's own toolbar, where they can
+  // be set while looking at the thing they describe.
+  const [spotConfirmed, setSpotConfirmed] = useState(
+    () => params.get('confirmed') === '1'
   );
-  const [gFloor, setGFloor] = useState('');
-  const [gFacing, setGFacing] = useState('');
+  // Whether the pin has been moved off the geocoded point on this visit.
+  // Only changes what the map asks for -- "tap your building" before,
+  // "use this spot" after.
+  const [pinTouched, setPinTouched] = useState(false);
 
   // The map section below can take over the whole viewport (SunScout's
   // own screen is nothing BUT the map, and that is the view people
@@ -234,25 +242,23 @@ export default function ReportScreen() {
   // "here is the shadow on this block" is exactly the thing someone
   // sends to the person they are buying with, and without this it
   // reopened on the written verdict instead.
-  const [fullMap, setFullMap] = useState(() => params.get('view') === 'map');
+  // A fresh arrival lands on the map (see spotConfirmed above).
+  // ?view=map still forces it for a shared link, and ?confirmed=1 means
+  // this person has already placed their pin, so a refresh or a back
+  // doesn't send them round the loop again.
+  const [fullMap, setFullMap] = useState(
+    () => params.get('view') === 'map' || params.get('confirmed') !== '1'
+  );
   // The full-screen map carries the address search on itself, the way
   // the SunScout top bar does, rather than sending you back up to the
   // report header to move the pin.
   const [mapSearchOpen, setMapSearchOpen] = useState(false);
 
-  const confirmUnit = useCallback(() => {
-    const f = parseInt(gFloor, 10);
-    if (Number.isFinite(f)) { setFloor(f); setFloorText(String(f)); }
-    if (gFacing) setFacing(gFacing);
-    setAssumed(false);
-    setUnitChosen(true);
-  }, [gFloor, gFacing]);
-
-  // The floor/facing state already defaults to DEFAULT_FLOOR/
-  // DEFAULT_FACING (see their useState initialisers above), and `assumed`
-  // is already true whenever the URL arrived with no floor/facing -- so
-  // skipping the popup needs nothing but letting the scores effect run.
-  const skipUnit = useCallback(() => setUnitChosen(true), []);
+  // Confirming the spot is what ends the map step and opens the verdict.
+  const confirmSpot = useCallback(() => {
+    setSpotConfirmed(true);
+    setFullMap(false);
+  }, []);
 
   // "The area" and "the flat" each carry a full breakdown (every factor
   // row, the sub-scores) underneath a short summary (name/floor, rating
@@ -309,22 +315,6 @@ export default function ReportScreen() {
   // same scoring -- it only decides which of the two views opens first.
   // Defined here rather than next to confirmUnit because it needs
   // setAnimating, which is declared on the line above.
-  // The shadow map does NOT need the floor and the facing: it is the
-  // block in 3D with the sun moving over it, and it carries its own
-  // floor/faces controls in the toolbar anyway. Gating it on the popup
-  // was friction for nothing -- answer the question if you want a
-  // verdict, walk straight past it if you want to look at the shadows.
-  // Whatever IS filled in gets used, and `assumed` stays true unless
-  // both are, so the map's header strip keeps saying so.
-  const openShadowMap = useCallback(() => {
-    const f = parseInt(gFloor, 10);
-    if (Number.isFinite(f)) { setFloor(f); setFloorText(String(f)); }
-    if (gFacing) setFacing(gFacing);
-    if (Number.isFinite(f) && gFacing) setAssumed(false);
-    setUnitChosen(true);
-    setFullMap(true);
-    setAnimating(true);
-  }, [gFloor, gFacing]);
   // Which date the map is simulating. 'today' by default -- someone who has
   // just dropped a pin wants to recognise what they are looking at before
   // they start asking about December.
@@ -360,10 +350,11 @@ export default function ReportScreen() {
   /* ---------------- scores ---------------- */
   useEffect(() => {
     if (!hasPlace) { setState('error'); setFailure('no-place'); return; }
-    // Waiting on the "which floor, which way does it face" popup -- see
-    // unitChosen above. Nothing fetches, nothing scores, until it's
-    // answered (explicitly, or via its "just browse" skip).
-    if (!unitChosen) return;
+    // Scoring runs from the moment there is a pin, including while the
+    // map step is still open -- that is the point of it. Every tap that
+    // moves the pin re-runs this, and the score in the map's header
+    // updates, so you can see the number change as you move from the
+    // middle of the complex onto your own tower.
 
     const id = ++scoreReq.current;
     let cancelled = false;
@@ -472,7 +463,7 @@ export default function ReportScreen() {
     }
     run().finally(() => { if (!cancelled && id === scoreReq.current) setBusy(false); });
     return () => { cancelled = true; };
-  }, [hasPlace, lat, lon, pinCode, floor, facing, areaWeight, scoreNonce, unitChosen]);
+  }, [hasPlace, lat, lon, pinCode, floor, facing, areaWeight, scoreNonce]);
 
   /* ---------------- full-screen map housekeeping ----------------
      Locking the body while the map owns the viewport: without it a
@@ -666,6 +657,9 @@ export default function ReportScreen() {
   const reportRunning = reportOpen !== null && reportBusy;
   const onMapClick = useCallback((clickLat, clickLon) => {
     if (reportRunning) { setLocError('The report is being built from this spot - let it finish, then move the pin.'); return; }
+    // This is the whole point of the map step: the tap that moves the pin
+    // off the geocoded centre and onto the actual building.
+    setPinTouched(true);
     moveTo(clickLat, clickLon, '');
   }, [moveTo, reportRunning]);
 
@@ -903,8 +897,11 @@ export default function ReportScreen() {
     // both reopen on the map you were actually looking at rather than
     // dropping you back into the written verdict.
     if (fullMap) q.set('view', 'map');
+    // Once the pin is placed, say so in the URL -- otherwise a refresh or
+    // the back button drops you back onto the map step you just finished.
+    if (spotConfirmed) q.set('confirmed', '1');
     window.history.replaceState(window.history.state, '', `${window.location.pathname}?${q.toString()}`);
-  }, [hasPlace, lat, lon, pinCode, address, floor, facing, assumed, fullMap]);
+  }, [hasPlace, lat, lon, pinCode, address, floor, facing, assumed, fullMap, spotConfirmed]);
 
   /* ---------------- states that aren't the report ---------------- */
   if (!hasPlace) {
@@ -919,149 +916,6 @@ export default function ReportScreen() {
     );
   }
 
-  // Before anything gets scored: which flat is this actually for? Sun,
-  // shade, view, privacy, airflow, dampness and noise all depend on the
-  // real unit, not just the building -- so this blocks the scores effect
-  // above (see unitChosen) rather than running the numbers for floor 5/
-  // South-East and hoping the "assumed" note further down gets noticed.
-  // The address header still shows above it, so the popup reads as "one
-  // more thing about this address" rather than a blank interstitial.
-  if (!unitChosen) {
-    return (
-      <div className="bsr">
-        <header className="bsr-head">
-          <div className="bsr-head-top">
-            <h1 className="bsr-title">Your BlindSpot report</h1>
-            <span className="bsr-head-links">
-              <a href="/compare" className="is-primary">Compare flats</a>
-              <a href="/my-reports">My reports</a>
-            </span>
-          </div>
-          <p className="bsr-addr">
-            <span className="bsr-pin" aria-hidden="true" />
-            <span className="bsr-addr-text">{address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}</span>
-            <button
-              type="button"
-              className="bsr-addr-change"
-              onClick={() => setAddrEditOpen((v) => !v)}
-              aria-expanded={addrEditOpen}
-            >
-              {addrEditOpen ? 'Cancel' : 'Change address'}
-            </button>
-          </p>
-          {addrEditOpen && (
-            <form className="bsr-addr-edit bsr-locbar" onSubmit={onSearchSubmit}>
-              <input
-                type="search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Address or coordinates"
-                aria-label="Move the pin to another address or coordinates -- press Enter to search"
-                autoFocus
-              />
-              {locBusy ? <span className="bsr-loc-busy" aria-live="polite">Finding…</span> : null}
-              <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
-                My location
-              </button>
-              {locError ? <p className="bsr-locerror">{locError}</p> : null}
-            </form>
-          )}
-        </header>
-
-        <div className="bsr-unitgate">
-          <div className="bsr-unitgate-panel" role="dialog" aria-modal="true" aria-label="Set the floor and facing before scoring">
-            <span className="bsr-unitgate-eyebrow">Before your score</span>
-            <h2 className="bsr-unitgate-title">Which floor, which way does it face?</h2>
-            <p className="bsr-unitgate-lede">
-              Sun, shade, view, privacy and airflow are all set by the unit, not the address.
-            </p>
-
-            {/* No placeholder on the floor box. A greyed "5" in an empty
-                field reads as a value already filled in -- people skipped
-                it believing they had answered, and the one number the
-                whole unit score rests on was a default nobody chose. */}
-            <div className="bsr-unitgate-row">
-              <label className="bsr-unitgate-floor">
-                <span>Floor</span>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={2}
-                  value={gFloor}
-                  onChange={(e) => setGFloor(e.target.value.replace(/[^\d]/g, '').slice(0, 2))}
-                  aria-label="Floor number"
-                />
-              </label>
-
-              {/* Eight identical grey chips in two rows said nothing about
-                  what they were. It's a compass, so it's drawn as one:
-                  each direction sits where it actually points, and the
-                  middle says which one is picked. */}
-              <div className="bsr-compass">
-                <div className="bsr-compass-grid" role="radiogroup" aria-label="Which way the flat faces">
-                  {FACING_OPTS.map((f) => (
-                    <button
-                      key={f}
-                      type="button"
-                      role="radio"
-                      aria-checked={f === gFacing}
-                      title={f}
-                      className={`bsr-compass-pt is-${FACING_SHORT[f].toLowerCase()}${f === gFacing ? ' on' : ''}`}
-                      onClick={() => setGFacing(f)}
-                    >
-                      {FACING_SHORT[f]}
-                    </button>
-                  ))}
-                  <span className="bsr-compass-face" aria-live="polite">
-                    {gFacing ? (
-                      <>
-                        <span className="bsr-compass-face-label">Faces</span>
-                        <span className="bsr-compass-face-val">{gFacing}</span>
-                      </>
-                    ) : (
-                      <span className="bsr-compass-face-ask">Which way?</span>
-                    )}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* The verdict genuinely needs both -- it is scored for that
-                exact unit. The map genuinely needs neither. So only one
-                of these two is ever disabled. */}
-            <div className="bsr-unitgate-actions">
-              <button
-                type="button"
-                className="bsr-unitgate-go"
-                disabled={!gFloor || !gFacing}
-                onClick={confirmUnit}
-              >
-                See the verdict
-              </button>
-              <button
-                type="button"
-                className="bsr-unitgate-go is-map"
-                onClick={openShadowMap}
-              >
-                See the shadow map
-              </button>
-            </div>
-            <p className="bsr-unitgate-note">
-              {gFloor && gFacing
-                ? 'The map opens full screen and plays the whole day over this block.'
-                : 'The map needs neither - open it now and set the floor and facing on the map itself.'}
-            </p>
-            <div className="bsr-unitgate-actions is-skip">
-              <button type="button" className="bsr-unitgate-skip" onClick={skipUnit}>
-                I don&rsquo;t have a specific flat in mind - let me just browse
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
   if (state === 'error') {
     return (
       <div className="bsr">
@@ -1223,6 +1077,21 @@ export default function ReportScreen() {
               read as if it were already this exact unit's verdict. Says
               so up here, where the number actually is, not only next to
               the inputs further down the page. */}
+          {/* The bigger caveat of the two, and it goes first. Shade,
+              outlook, airflow and noise are all computed at the pin, and
+              an untouched pin is wherever the geocoder put the address --
+              typically the centre of the complex, not a building. Said
+              here, next to the number it qualifies, with the way to fix
+              it one click away. */}
+          {!pinTouched && (
+            <p className="bsr-assumed-note">
+              Scored at the centre of this address, not a specific building -{' '}
+              <button type="button" className="bsr-inline-link" onClick={() => setFullMap(true)}>
+                open the map and tap your tower
+              </button>{' '}
+              to score the real spot.
+            </p>
+          )}
           {assumed && (
             <p className="bsr-assumed-note">
               Scored for a typical {ord(DEFAULT_FLOOR)} floor, {DEFAULT_FACING.toLowerCase()}-facing
@@ -1554,17 +1423,28 @@ export default function ReportScreen() {
             two sizes. */}
         {fullMap && (
           <div className="bsr-fullbar">
+            {/* The primary action on this screen, and the only way into
+                the verdict on a first visit: it is the moment the pin
+                stops being a geocoder's guess and becomes the person's
+                own answer. Before the pin has been touched it reads as
+                an instruction, because "see the verdict" on an
+                unconfirmed centre-of-complex pin is exactly the thing
+                this step exists to stop. */}
             <button
               type="button"
-              className="bsr-fullbar-back"
+              className={`bsr-fullbar-back${pinTouched || spotConfirmed ? ' is-ready' : ''}`}
               ref={fullBackRef}
-              onClick={() => setFullMap(false)}
+              onClick={confirmSpot}
             >
-              ← See the verdict
+              {pinTouched || spotConfirmed ? 'Use this spot →' : 'Skip - score the centre'}
             </button>
 
             <p className="bsr-fullbar-where">
-              <span className="bsr-fullbar-addr">{address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}</span>
+              <span className="bsr-fullbar-addr">
+                {pinTouched
+                  ? 'Pin placed - scoring this exact spot'
+                  : 'Tap your building'}
+              </span>
               <span className="bsr-fullbar-unit">
                 {/* The pin lock has a one-line explanation under the
                     inline map (.bsr-maphint), which is off screen here --
@@ -1573,7 +1453,9 @@ export default function ReportScreen() {
                     taps with nothing saying why. */}
                 {reportRunning
                   ? 'Pin locked while the report is built'
-                  : `${ord(floor)} floor · faces ${facing.toLowerCase()}${assumed ? ' (assumed)' : ''}`}
+                  : pinTouched
+                    ? (address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`)
+                    : 'The address lands on the centre of the complex'}
               </span>
             </p>
 
@@ -1766,11 +1648,16 @@ export default function ReportScreen() {
             {/* Same toolbar, both states -- so the way in and the way
                 out of full screen live in the same place rather than
                 being two different controls in two different corners. */}
+            {/* Leaving full screen IS confirming the spot -- otherwise
+                this was a second exit that bypassed the header's button,
+                dropping someone on the verdict with `confirmed` still
+                false, so the next reload sent them back round the map
+                step they thought they had finished. */}
             <button
               type="button"
               className="bsr-mapbar-full"
               ref={fullToggleRef}
-              onClick={() => setFullMap((v) => !v)}
+              onClick={() => (fullMap ? confirmSpot() : setFullMap(true))}
               aria-pressed={fullMap}
             >
               {fullMap ? '✕ Exit full screen' : '⤢ Full screen'}
