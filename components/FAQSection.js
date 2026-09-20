@@ -56,24 +56,28 @@ function useFaqItems() {
   return [
     {
       q: 'Is BlindSpot free?',
-      a: 'Yes. Both scores, no cost. Sign in only to save a report.',
+      a: 'Yes, both scores. Sign in only if you want the report saved.',
     },
     {
       q: 'Where does the data actually come from?',
-      a: "Government records for the area - police, CPCB, DISCOM, municipal surveys, CBSE listings - scored zone-level, so nearby pincodes often match. Solar-geometry modelling for the flat. Nothing broker-supplied either way.",
+      a: "The area half is government records - police, CPCB, DISCOM, municipal surveys, CBSE listings - scored by zone, so neighbouring pincodes often land close. Schools are the exception, matched address by address. The flat half is solar geometry for the floor and facing you pick. Nothing broker-supplied either way.",
     },
     {
       q: 'Which cities are covered?',
-      a: 'Real Neighbourhood Score coverage right now, more on the way.',
+      a: 'Full Neighbourhood Score coverage in these five. The flat half works anywhere - it is geometry, not records.',
       cities: KNOWN_CITIES,
     },
     {
       q: 'How is this different from asking a broker?',
-      a: "We have no stake in any listing. Same number for the flat they're pushing and the one next door.",
+      a: "A broker earns on the flat they show you. We earn nothing either way, so the number is the same for the one they're pushing and the one next door.",
     },
     {
       q: 'Can it tell me about one specific room, not just the whole flat?',
-      a: "Yes. Upload a room photo and the direction you faced - every window gets its own sun and heat numbers. AI only spots the windows; the numbers are the same solar model.",
+      a: "Yes. Upload a room photo and the direction you faced - every window in it gets its own sun and heat numbers, not the flat\'s overall facing. AI only finds the windows; the numbers come from the same solar model.",
+    },
+    {
+      q: 'How accurate are the sun numbers?',
+      a: "They are geometry, not forecast: the real sun path for that date against OpenStreetMap building footprints and heights around the pin. That means shadow from the tower next door is modelled; cloud cover on any given day is not.",
     },
   ];
 }
@@ -85,8 +89,12 @@ export default function FAQSection() {
   return (
     <section className="section section-tint reveal">
       <div className="st-grain" aria-hidden="true" />
-      <div className="wrap section-inner">
-        <div className="section-head">
+      {/* Heading beside the questions, not stacked above them. Stacked,
+          the list ran at 760px down the left of a 1440px section with
+          the whole right half empty, and the section was taller than it
+          had any reason to be. */}
+      <div className="wrap section-inner faq2-wrap">
+        <div className="section-head faq2-head">
           <div>
             <span className="eyebrow">04 - Questions</span>
             <h2>Before you <span className="gold-word">ask</span>.</h2>
