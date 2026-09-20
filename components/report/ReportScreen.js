@@ -257,6 +257,11 @@ export default function ReportScreen({ view = 'verdict' }) {
   // the SunScout top bar does, rather than sending you back up to the
   // report header to move the pin.
   const [mapSearchOpen, setMapSearchOpen] = useState(false);
+  // A pointer at the floor/faces controls, shown while both are still the
+  // defaults. It points, it doesn't ask: the controls are right there and
+  // already work, so standing a dialog in front of them to collect the
+  // same two values was a second copy of a thing that wasn't broken.
+  const [showUnitTip, setShowUnitTip] = useState(() => view === 'map');
 
   // The address, the unit and whether a pin was placed -- everything the
   // other screen needs to open on exactly what this one is showing.
@@ -535,6 +540,10 @@ export default function ReportScreen({ view = 'verdict' }) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [fullMapLive, reportOpen]);
+
+  // The moment either control is touched, the tip has said what it had to
+  // say -- leaving it up would be pointing at something already answered.
+  useEffect(() => { if (!assumed) setShowUnitTip(false); }, [assumed]);
 
   // A half-typed address search shouldn't still be sitting open the next
   // time full screen is entered.
@@ -1176,6 +1185,22 @@ export default function ReportScreen({ view = 'verdict' }) {
               )}
               {assumed ? <span className="bsr-assumed">assumed</span> : null}
             </p>
+
+            {fullMap && showUnitTip && assumed && (
+              <span className="bsr-maptip" role="note">
+                <span className="bsr-maptip-text">
+                  Set your floor and facing - every score is for that exact unit
+                </span>
+                <button
+                  type="button"
+                  className="bsr-maptip-x"
+                  onClick={() => setShowUnitTip(false)}
+                  aria-label="Dismiss"
+                >
+                  ×
+                </button>
+              </span>
+            )}
             {/* Generating the sun & shadow report used to be one click from
                 a button up top, before anyone had watched the day animate
                 over this exact block or nudged the pin to the right spot --

@@ -1233,3 +1233,40 @@ body.bsr-noscroll{overflow:hidden}
 .bsr-inline-link:hover{color:var(--brand,#3D4116)}
 
 
+
+/* ---- the pointer at the floor/faces controls ----
+   A coach mark, not a dialog: it sits under the toolbar with a caret
+   aimed up at the two fields, and the fields stay usable the whole time.
+   A child of .bsr-mapbar (which is positioned), so it follows the
+   toolbar wherever that lands -- including when it wraps to two rows on
+   a phone -- instead of being pinned to coordinates that stop being
+   true at the first breakpoint. */
+.bsr-maptip{
+  position:absolute; top:calc(100% + 9px); left:100px;
+  z-index:11; display:flex; align-items:center; gap:8px;
+  max-width:min(320px, calc(100vw - 32px));
+  padding:8px 10px 8px 12px;
+  border-radius:10px;
+  background:var(--brand,#3D4116); color:#FFFDF8;
+  box-shadow:0 8px 22px rgba(28,24,18,.28);
+  animation:bsr-tip-in .22s ease-out;
+}
+/* The caret, pointing back up at Floor and Faces. */
+.bsr-maptip::before{
+  content:''; position:absolute; top:-6px; left:26px;
+  width:12px; height:12px; transform:rotate(45deg);
+  background:var(--brand,#3D4116);
+}
+.bsr-maptip-text{ font-size:12.5px; line-height:1.45; font-weight:600 }
+.bsr-maptip-x{
+  flex:none; border:none; background:none; cursor:pointer; line-height:1;
+  font-size:17px; color:rgba(255,253,248,.75); padding:0 2px;
+}
+.bsr-maptip-x:hover{ color:#FFFDF8 }
+@keyframes bsr-tip-in{ from{ opacity:0; transform:translateY(-4px) } to{ opacity:1; transform:translateY(0) } }
+@media (prefers-reduced-motion:reduce){ .bsr-maptip{ animation:none } }
+@media (max-width:640px){
+  .bsr-maptip{ left:6px; padding:7px 8px 7px 10px }
+  .bsr-maptip::before{ left:22px }
+  .bsr-maptip-text{ font-size:11.5px }
+}
