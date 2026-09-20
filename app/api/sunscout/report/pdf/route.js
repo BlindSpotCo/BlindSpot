@@ -351,7 +351,7 @@ export async function POST(req) {
       const PLURAL = new Set(['schools', 'roads']);
       const verb = PLURAL.has(key) ? 'are' : 'is';
       if (v >= 80) pros.push(`${label} ${verb} excellent (${v}/100)`);
-      else if (v < 50) cons.push(`${label} ${verb} weak (${v}/100)`);
+      else if (v < 50) cons.push(`${label} ${verb} low (${v}/100)`);
     }
   }
   if (summary?.solarFeasibility) {
@@ -552,14 +552,14 @@ export async function POST(req) {
     };
     if (gap <= -15) return {
       headline: 'A better flat than area',
-      line: 'A comfortable home in a weaker locality. The area is the half no unit in this building escapes.',
+      line: 'A comfortable home, in a locality that needs a closer look. The area is the half no unit in this building escapes.',
     };
     if (a >= 65 && u >= 65) return {
       headline: 'Both halves agree, and both are strong',
       line: 'Neither half is propping up the other. The checks below are ordinary diligence, not doubts.',
     };
     if (a < 50 && u < 50) return {
-      headline: 'Both halves agree, and both are weak',
+      headline: 'Both halves agree, and both need a close look',
       line: 'Neither half rescues the other, so a better floor or facing here would not be enough on its own.',
     };
     return {

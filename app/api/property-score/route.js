@@ -26,7 +26,7 @@ function quadrant(areaScore, unitScore) {
   const areaGood = areaScore >= 60;
   const unitGood = unitScore >= 60;
   if (areaGood && unitGood) return { label: 'Prime Pick', detail: 'Strong neighbourhood, strong unit, the combination buyers actually want.' };
-  if (!areaGood && unitGood) return { label: 'Hidden Gem', detail: 'The unit itself is genuinely good, but the surrounding area has real weaknesses worth understanding before you commit.' };
+  if (!areaGood && unitGood) return { label: 'Hidden Gem', detail: 'The unit itself is genuinely good, but the surrounding area has real gaps worth understanding before you commit.' };
   if (areaGood && !unitGood) return { label: 'Location Play', detail: 'Strong area, but this specific unit has real drawbacks (sun, shade, view, privacy, or airflow), worth comparing other floors/facings in the same building.' };
   return { label: 'Reconsider', detail: 'Both the area and this specific unit score below average, worth a closer look before deciding.' };
 }

@@ -194,8 +194,8 @@ export function readableTextColor(hex) {
 // verdict label/colour block the full report uses, instead of drifting out
 // of sync with a duplicate copy.
 export function verdictFor(nqi) {
-  if (nqi >= 80) return { label: 'Strong Buy', why: 'Scores well across the board, few weak spots to worry about.' };
-  if (nqi >= 60) return { label: 'Consider', why: 'Decent overall, with some weak dimensions worth inspecting on site before deciding.' };
+  if (nqi >= 80) return { label: 'Strong Buy', why: 'Scores well across the board, few gaps to worry about.' };
+  if (nqi >= 60) return { label: 'Consider', why: 'Decent overall, with a few dimensions worth inspecting on site before deciding.' };
   if (nqi >= 45) return { label: 'Below Average', why: 'Below the tracked-area average, compare nearby areas before committing.' };
   return { label: 'Avoid', why: 'Multiple dimensions score poorly, strongly recommend comparing alternatives.' };
 }

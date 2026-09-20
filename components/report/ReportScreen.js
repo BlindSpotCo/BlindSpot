@@ -119,7 +119,7 @@ function verdictSay(areaScore, unitScore) {
   const unitOk = unitScore >= 60;
   if (areaOk && unitOk) return 'Locality and flat both hold up - that combination is the rare part.';
   if (!areaOk && unitOk) return 'The flat holds up. The streets around it are the half you cannot change later.';
-  if (areaOk && !unitOk) return 'Good locality. This flat is the weak half - ask for a higher floor or another facing.';
+  if (areaOk && !unitOk) return 'Good locality. It is this floor and facing that cost it - ask what else the tower has.';
   return 'Both halves need seeing in person before you commit.';
 }
 function ord(n) {

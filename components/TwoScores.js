@@ -76,7 +76,7 @@ function ScoreCard({ accentVar, tag, name, blurb, score, grade, word, tone, exam
             <span className="ts4-row-word">{d.word}</span>
             {/* Four segments, filled to the tone. Eight rows of the
                 word "Excellent" was unreadable as a pattern -- which
-                factor is the weak one took reading every line. The
+                factor is the low one took reading every line. The
                 meter makes Infrastructure and Heat Risk findable at a
                 glance, and the word stays for anyone who wants it. */}
             <span className="ts4-row-meter" aria-hidden="true">
@@ -120,7 +120,7 @@ export default function TwoScores() {
           </div>
           <div className="ts4-verdict-say">
             <p className="ts4-verdict-head">Worth a look - eyes open.</p>
-            <p className="ts4-verdict-sub">Good locality. This flat is the weak half - ask for a higher floor or another facing.</p>
+            <p className="ts4-verdict-sub">Good locality. It’s this floor and facing that cost it - ask what else the tower has.</p>
           </div>
           {/* The right half of this card was empty, and the sentence
               explaining where 66 comes from was a separate line of prose
