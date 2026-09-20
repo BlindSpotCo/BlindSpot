@@ -798,6 +798,18 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   .bsr-visit h2,.bsr-close h2{font-size:18px}
   .bsr-unitgate{padding:4vh 0 6vh}
   .bsr-unitgate-panel{padding:20px 18px}
+
+  /* This column of controls (wrong-pincode link, the breakdown toggle,
+     the detailed-report button / sun-and-shadow link) is fine to
+     eyeball on a desktop pointer, but at 6-10px apart a thumb clips the
+     wrong one. Wider gaps and taller hit areas here, not a redesign --
+     same controls, same order, just room enough to land a tap. */
+  .bsr-pinlink{display:inline-block;padding:5px 0}
+  .bsr-rating{margin-top:12px}
+  .bsr-half-toggle{margin-top:16px;padding:7px 0}
+  .bsr-more{padding-top:18px}
+  .bsr-more a{min-height:40px}
+  .bsr-more.bsr-more-cta a{min-height:46px}
 }
 
 /* The date select sits inside .bsr-set (.bsr-set select already styles
