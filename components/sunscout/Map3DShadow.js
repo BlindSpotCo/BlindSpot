@@ -9,7 +9,7 @@ import { useEffect, useMemo, useRef } from 'react';
 // Diagnostics for the parent<->iframe handshake. On in dev, silent in
 // production: this channel is invisible when it breaks, and a failure in it
 // looks exactly like a map that never loaded.
-export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTimes, animating, onLocationSelect, onScreenshot, onReady, onStatus, debug }) {
+export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTimes, animating, onLocationSelect, onScreenshot, onReady, onStatus, debug, highlightId }) {
   // Diagnostics for the parent<->iframe handshake. Dev by default, and
   // switchable on in a production build (?debug=1): when this channel
   // breaks it is completely invisible, and a break in it looks exactly
@@ -42,6 +42,12 @@ export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTi
     const nowMins = new Date().getHours()*60+new Date().getMinutes();
     let startIdx=0, bd=99999;
     for(let i=0;i<pathData.length;i++){const[h,m]=pathData[i].time.split(':').map(Number);const d=Math.abs(h*60+m-nowMins);if(d<bd){bd=d;startIdx=i;}}
+
+    // Any pin move regenerates this whole document (lat/lon are memo
+    // deps), so a highlight applied by a click would be lost on the very
+    // next frame. Baking the id into the scene instead means it survives
+    // the reload the click itself causes.
+    const hlId = highlightId ? JSON.stringify(String(highlightId)) : 'null';
 
     const steps=20, rd=0.000035, ring=[];
     for(let i=0;i<=steps;i++){const a=2*Math.PI*i/steps;ring.push([lon+rd*Math.cos(a)/Math.cos(lat*Math.PI/180),lat+rd*Math.sin(a)]);}
@@ -380,6 +386,11 @@ HTMLCanvasElement.prototype.getContext=function(type,attrs){
 const map=new OSMBuildings({container:'map',position:{latitude:${lat},longitude:${lon}},zoom:initZoom,minZoom:13,maxZoom:20,tilt:curTilt,rotation:curRot,effects:['shadows'],attribution:''});
 HTMLCanvasElement.prototype.getContext=_origGetContext;
 map.setDate(new Date('${simIso}'));
+var HL_COLOR='#3D4116';
+var HL_ID=${hlId};
+// Re-applied on every load because the tiles stream in after this runs;
+// OSMBuildings keeps the id and colours the feature when it arrives.
+if(HL_ID){ try{ map.highlight(HL_ID, HL_COLOR); }catch(e){} setTimeout(function(){ try{ map.highlight(HL_ID, HL_COLOR); }catch(e){} }, 1200); }
 tL=map.addMapTiles(TILES.s);
 map.addGeoJSONTiles('https://{s}.data.osmbuildings.org/0.2/59fcc2e8/tile/{z}/{x}/{y}.json');
 map.addGeoJSON(${obsGj});
@@ -483,9 +494,36 @@ var mapEl=document.getElementById('map');
 
 mapEl.addEventListener('mousedown',function(e){_mmoved=false;_mdx=e.clientX;_mdy=e.clientY;});
 mapEl.addEventListener('mousemove',function(e){if(Math.abs(e.clientX-_mdx)>5||Math.abs(e.clientY-_mdy)>5)_mmoved=true;});
+// A tap is "this building is mine", so it reports WHAT was hit as well as
+// where. getTarget is the GL renderer's own hit test (async -- it reads a
+// pixel from the picking buffer), and it is feature-detected: if this
+// build of OSMBuildings doesn't expose it, or the tap landed on the
+// ground rather than a building, the pin still moves and the parent
+// still gets its coordinates. Screen x/y go up too, so the parent can
+// anchor its popup to the spot that was actually tapped.
+function reportPick(clientX, clientY){
+  var rect=mapEl.getBoundingClientRect();
+  var x=clientX-rect.left, y=clientY-rect.top;
+  var pos;
+  try{ pos=map.unproject(x,y); }catch(err){ return; }
+  if(!pos||pos.latitude==null) return;
+  var sent=false;
+  function send(id){
+    if(sent) return; sent=true;
+    if(id){ try{ map.highlight(id, HL_COLOR); }catch(e){} }
+    window.parent.postMessage({type:'map3d_click',lat:pos.latitude,lon:pos.longitude,buildingId:id||null,x:x,y:y},'*');
+  }
+  if(typeof map.getTarget==='function'){
+    // Don't let a picking buffer that never answers swallow the tap.
+    var t=setTimeout(function(){ send(null); },400);
+    try{ map.getTarget(x,y,function(id){ clearTimeout(t); send(id); }); }
+    catch(err){ clearTimeout(t); send(null); }
+  } else { send(null); }
+}
+
 mapEl.addEventListener('click',function(e){
   if(_mmoved)return;
-  try{var rect=mapEl.getBoundingClientRect();var pos=map.unproject(e.clientX-rect.left,e.clientY-rect.top);if(pos&&pos.latitude!=null)window.parent.postMessage({type:'map3d_click',lat:pos.latitude,lon:pos.longitude},'*');}catch(err){}
+  reportPick(e.clientX, e.clientY);
 });
 
 mapEl.addEventListener('touchstart',function(e){_mmoved=false;_tsx=e.touches[0].clientX;_tsy=e.touches[0].clientY;},{passive:true});
@@ -493,7 +531,7 @@ mapEl.addEventListener('touchmove',function(e){if(Math.abs(e.touches[0].clientX-
 mapEl.addEventListener('touchend',function(e){
   if(_mmoved)return;
   var touch=e.changedTouches[0];
-  try{var rect=mapEl.getBoundingClientRect();var pos=map.unproject(touch.clientX-rect.left,touch.clientY-rect.top);if(pos&&pos.latitude!=null)window.parent.postMessage({type:'map3d_click',lat:pos.latitude,lon:pos.longitude},'*');}catch(err){}
+  reportPick(touch.clientX, touch.clientY);
 });
 
 map.on('change',function(){try{var z=map.position?map.position.zoom:initZoom;if(z)initZoom=z;}catch(e){}saveCamera();});
@@ -613,7 +651,7 @@ mapIsUp = true;
 notifyParent('map3d_ready');
 </script></body></html>`;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lat, lon, pathData.length > 0 ? pathData[0].iso.slice(0,10) : '']);
+  }, [lat, lon, highlightId, pathData.length > 0 ? pathData[0].iso.slice(0,10) : '']);
 
   useEffect(() => {
     const handler = (e) => {
@@ -621,7 +659,7 @@ notifyParent('map3d_ready');
       // that can post here could move the pin or inject a frame into a
       // capture -- and a report is meant to be evidence.
       if (iframeRef.current && e.source !== iframeRef.current.contentWindow) return;
-      if(e.data?.type==='map3d_click' && onLocationSelect) onLocationSelect(e.data.lat, e.data.lon);
+      if(e.data?.type==='map3d_click' && onLocationSelect) onLocationSelect(e.data.lat, e.data.lon, { buildingId: e.data.buildingId ?? null, x: e.data.x, y: e.data.y });
       if(e.data?.type==='screenshotReady' && onScreenshot) onScreenshot(e.data.label, e.data.data);
       // Real readiness/failure, reported by the iframe document itself
       // rather than guessed from this component's mount -- see the

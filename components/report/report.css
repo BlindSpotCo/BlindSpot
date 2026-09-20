@@ -400,7 +400,7 @@
    it inherited width:100%;height:100%, which overrode its own width and
    made `bottom` meaningless -- a full-bleed panel pinned to the top of
    the map instead of a button at the bottom of it. */
-.bsr-map > *:not(.bsr-mapbar):not(.bsr-mapcta){width:100%;height:100%}
+.bsr-map > *:not(.bsr-mapbar):not(.bsr-mapcta):not(.bsr-unitpop){width:100%;height:100%}
 .bsr-map-wait{
   display:flex;align-items:center;justify-content:center;text-align:center;
   height:100%;padding:0 24px;color:var(--text-mute,#5A5140);font-size:16px;
@@ -1312,3 +1312,87 @@ body.bsr-noscroll{overflow:hidden}
   text-decoration:underline;text-underline-offset:2px;cursor:pointer;
 }
 .bsr-inline-link:hover{color:var(--brand,#3D4116)}
+
+/* ---- the floor/facing popup, anchored to the tapped building ----
+   Positioned at the tap point inside .bsr-map (which is position:
+   relative), and translated so it sits just above and centred on it,
+   the way a map callout does. The building underneath is highlighted in
+   the same brand colour by the renderer, so the two read as one object
+   rather than a panel that happens to be floating nearby. */
+.bsr-unitpop{
+  position:absolute; z-index:16;
+  transform:translate(-50%, calc(-100% - 18px));
+  width:238px; padding:12px 14px 14px;
+  border-radius:14px;
+  background:var(--paper,#FFFDF8);
+  border:1px solid var(--line,rgba(28,24,18,.16));
+  box-shadow:0 14px 38px rgba(28,24,18,.26);
+}
+/* The pointer down onto the building. */
+.bsr-unitpop::after{
+  content:''; position:absolute; left:50%; bottom:-7px;
+  width:12px; height:12px; transform:translateX(-50%) rotate(45deg);
+  background:var(--paper,#FFFDF8);
+  border-right:1px solid var(--line,rgba(28,24,18,.16));
+  border-bottom:1px solid var(--line,rgba(28,24,18,.16));
+}
+.bsr-unitpop.is-below{ transform:translate(-50%, 18px) }
+.bsr-unitpop.is-below::after{
+  top:-7px; bottom:auto;
+  border:none;
+  border-left:1px solid var(--line,rgba(28,24,18,.16));
+  border-top:1px solid var(--line,rgba(28,24,18,.16));
+}
+.bsr-unitpop-head{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  margin-bottom:10px;
+}
+.bsr-unitpop-title{
+  font-family:'Geist Mono',monospace; font-size:10px; font-weight:600;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--brand,#3D4116);
+}
+.bsr-unitpop-x{
+  border:none; background:none; cursor:pointer; line-height:1;
+  font-size:19px; color:var(--text-dim,#5B5443); padding:0 2px;
+}
+.bsr-unitpop-x:hover{ color:var(--text,#1C1812) }
+.bsr-unitpop-floor{ display:flex; align-items:center; gap:10px; margin-bottom:10px }
+.bsr-unitpop-floor span{
+  font-family:'Geist Mono',monospace; font-size:10.5px; font-weight:600;
+  letter-spacing:.06em; text-transform:uppercase; color:var(--text-mute,#5A5140);
+}
+.bsr-unitpop-floor input{
+  width:64px; font:inherit; font-size:16px; font-weight:700; text-align:center;
+  padding:6px 8px; border-radius:6px; min-height:36px;
+  border:1px solid var(--line,rgba(28,24,18,.2));
+  background:var(--bg,#FAF6EE); color:var(--text,#1C1812);
+}
+.bsr-unitpop-floor input:focus-visible{
+  outline:2px solid var(--brand,#3D4116); outline-offset:1px;
+}
+/* The compass again, sized for a callout rather than a full panel. */
+.bsr-compass.is-mini .bsr-compass-grid{
+  grid-template-columns:40px 62px 40px;
+  grid-template-rows:repeat(3, 40px);
+  gap:4px; padding:6px;
+}
+.bsr-compass.is-mini .bsr-compass-pt{ font-size:10.5px }
+.bsr-compass.is-mini .bsr-compass-pt.is-n,
+.bsr-compass.is-mini .bsr-compass-pt.is-s{ width:40px }
+.bsr-compass.is-mini .bsr-compass-face-label{ font-size:7.5px }
+.bsr-compass.is-mini .bsr-compass-face-val{ font-size:9.5px }
+.bsr-unitpop-done{
+  width:100%; margin-top:11px; font:inherit; font-size:13.5px; font-weight:700;
+  cursor:pointer; padding:9px 12px; border-radius:999px;
+  border:1px solid var(--brand,#3D4116);
+  background:var(--brand,#3D4116); color:#FFFDF8;
+}
+.bsr-unitpop-done:hover{ filter:brightness(.94) }
+@media (max-width:560px){
+  .bsr-unitpop{ width:212px; padding:10px 12px 12px }
+  .bsr-compass.is-mini .bsr-compass-grid{
+    grid-template-columns:36px 56px 36px; grid-template-rows:repeat(3, 36px);
+  }
+  .bsr-compass.is-mini .bsr-compass-pt.is-n,
+  .bsr-compass.is-mini .bsr-compass-pt.is-s{ width:36px }
+}
