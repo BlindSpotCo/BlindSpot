@@ -8,9 +8,21 @@ import {
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
-  const lat      = parseFloat(searchParams.get('lat')     || '51.505');
-  const lon      = parseFloat(searchParams.get('lon')     || '-0.09');
+  // Was `parseFloat(get('lat') || '51.505')` -- a London default carried
+  // over from the SunScout port. An empty string is falsy, so `?lat=&lon=`
+  // did not fail, it silently fell back to central London and returned a
+  // complete, plausible-looking sun path: the map would animate the wrong
+  // city's sun over an Indian block with nothing anywhere saying so. Every
+  // other endpoint here 400s on unusable coordinates; this one now does
+  // too, and the callers all pass real coordinates already.
+  const lat      = parseFloat(searchParams.get('lat'));
+  const lon      = parseFloat(searchParams.get('lon'));
   const tzOffset = parseInt(searchParams.get('tzOffset')  || '0', 10);
+
+  if (!Number.isFinite(lat) || !Number.isFinite(lon) ||
+      Math.abs(lat) > 90 || Math.abs(lon) > 180) {
+    return NextResponse.json({ error: 'Invalid lat/lon' }, { status: 400 });
+  }
   const simTimeP = searchParams.get('simTime') || null;
   const dateParam = searchParams.get('date');
   let dateStr;

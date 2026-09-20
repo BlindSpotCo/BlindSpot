@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
 // Only these origins are ever allowed to receive session tokens via a
@@ -14,6 +14,16 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
+
+  // /auth/callback sends people back here with ?error=... when the link
+  // itself failed -- an expired reset link, a spent one-time code, a
+  // cancelled Google consent screen. Without this the redirect was
+  // silent: you landed on a normal-looking sign-in form with no idea
+  // the link you had just clicked was the thing that didn't work.
+  useEffect(() => {
+    const reason = new URLSearchParams(window.location.search).get('error');
+    if (reason) setError(reason);
+  }, []);
 
   // Where to land after signing in. Defaults to the homepage; if someone
   // got bounced here from a gated page (e.g. /my-reports), that page sets
