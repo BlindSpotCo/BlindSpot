@@ -432,28 +432,91 @@ function projectToScreen(az,el){
   return[W/2+r*s,H/2-r*c];
 }
 
-function drawArc(){
-  const W=document.getElementById('map').clientWidth||800,H=window.innerHeight||600;
-  arcSvg.setAttribute('viewBox','0 0 '+W+' '+H);
-  while(arcSvg.firstChild)arcSvg.removeChild(arcSvg.firstChild);
+// The arc used to be the sun's real projected position, point by point:
+// every allPts entry pushed through projectToScreen and joined into a
+// polyline. It was correct and it read badly -- the path only occupies
+// the part of the ellipse the day's azimuths actually sweep, so on most
+// days it sat as a short crooked line with dead space at both ends, and
+// it flexed as the camera turned.
+//
+// This is a diagram instead: one smooth curve, edge to edge, apex set by
+// how high the sun actually gets that day. It still says the two things
+// worth saying -- the sun crosses this view, and it gets this high -- and
+// it says them at a glance. The shadows on the buildings are the real
+// data; this is the legend for them.
+//
+// The one piece of truth kept in it: which way the sun travels across
+// THIS view. Rise and set are projected once to see which is on the left
+// at the current rotation, and the curve is drawn in that direction, so
+// a sun moving right-to-left on screen is drawn moving right-to-left.
+function sunCurve(){
+  const mapEl=document.getElementById('map');
+  const W=mapEl.clientWidth||800, H=mapEl.clientHeight||window.innerHeight||600;
   const ab=allPts.filter(function(p){return p.el>=0;});
-  if(ab.length<2)return;
-  const sc=ab.map(function(p){return projectToScreen(p.az,p.el);});
-  [['rgba(175,95,48,0.12)',14],['rgba(209,144,31,0.22)',6]].forEach(function(c){
-    const g=document.createElementNS('http://www.w3.org/2000/svg','polyline');
-    g.setAttribute('points',sc.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' '));
-    g.setAttribute('fill','none');g.setAttribute('stroke',c[0]);g.setAttribute('stroke-width',c[1]);g.setAttribute('stroke-linecap','round');
+  if(ab.length<2)return null;
+  let maxEl=0;
+  for(let i=0;i<ab.length;i++) if(ab[i].el>maxEl) maxEl=ab[i].el;
+  // Floor of 0.22H so a low-sun winter day still reads as an arc rather
+  // than a flat line, ceiling near 0.62H so an overhead summer sun still
+  // leaves room for the labels.
+  const baseY=H*0.80;
+  const apexY=baseY-H*(0.22+0.40*Math.min(maxEl,90)/90);
+  const xRise=projectToScreen(ab[0].az,0)[0];
+  const xSet=projectToScreen(ab[ab.length-1].az,0)[0];
+  const flip=xRise>xSet;
+  const x0=flip?W:0, x1=flip?0:W;
+  return {W:W,H:H,x0:x0,x1:x1,y0:baseY,cx:(x0+x1)/2,cy:2*apexY-baseY};
+}
+
+// Quadratic Bezier, so cy above is set to put the apex exactly on apexY.
+function curveAt(c,t){
+  const mt=1-t;
+  return [mt*mt*c.x0+2*mt*t*c.cx+t*t*c.x1, mt*mt*c.y0+2*mt*t*c.cy+t*t*c.y0];
+}
+
+function dayFraction(hhmm){
+  function mins(v){ const a=String(v).split(':'); return (+a[0])*60+(+a[1]); }
+  const r=mins('${sunTimes.rise}'), s=mins('${sunTimes.set}'), n=mins(hhmm);
+  if(!(s>r)) return 0;
+  return Math.max(0,Math.min(1,(n-r)/(s-r)));
+}
+
+function drawArc(){
+  const c=sunCurve();
+  if(!c){ while(arcSvg.firstChild)arcSvg.removeChild(arcSvg.firstChild); return; }
+  arcSvg.setAttribute('viewBox','0 0 '+c.W+' '+c.H);
+  while(arcSvg.firstChild)arcSvg.removeChild(arcSvg.firstChild);
+
+  const d='M '+c.x0.toFixed(1)+' '+c.y0.toFixed(1)+
+          ' Q '+c.cx.toFixed(1)+' '+c.cy.toFixed(1)+
+          ' '+c.x1.toFixed(1)+' '+c.y0.toFixed(1);
+  [['rgba(175,95,48,0.10)',14],['rgba(209,144,31,0.20)',6]].forEach(function(st){
+    const g=document.createElementNS('http://www.w3.org/2000/svg','path');
+    g.setAttribute('d',d);g.setAttribute('fill','none');
+    g.setAttribute('stroke',st[0]);g.setAttribute('stroke-width',st[1]);g.setAttribute('stroke-linecap','round');
     arcSvg.appendChild(g);
   });
-  const arc=document.createElementNS('http://www.w3.org/2000/svg','polyline');
-  arc.setAttribute('points',sc.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' '));
-  arc.setAttribute('fill','none');arc.setAttribute('stroke','#AF5F30');arc.setAttribute('stroke-width','2.5');arc.setAttribute('stroke-dasharray','6 9');arc.setAttribute('opacity','0.85');
+  const arc=document.createElementNS('http://www.w3.org/2000/svg','path');
+  arc.setAttribute('d',d);arc.setAttribute('fill','none');
+  arc.setAttribute('stroke','#AF5F30');arc.setAttribute('stroke-width','2.5');
+  arc.setAttribute('stroke-dasharray','6 9');arc.setAttribute('opacity','0.85');
   arcSvg.appendChild(arc);
-  ab.forEach(function(p,i){if(i%3!==0)return;const s=projectToScreen(p.az,p.el);const d=document.createElementNS('http://www.w3.org/2000/svg','circle');d.setAttribute('cx',s[0].toFixed(1));d.setAttribute('cy',s[1].toFixed(1));d.setAttribute('r','2.5');d.setAttribute('fill','#FFD23C');d.setAttribute('opacity','0.85');arcSvg.appendChild(d);});
-  var riseLabel='Rise ' + '${sunTimes.rise}', setLabel='Set ' + '${sunTimes.set}';
-  [{pt:sc[0],txt:riseLabel,anchor:'end'},{pt:sc[sc.length-1],txt:setLabel,anchor:'start'}].forEach(function(lbl){
-    const ci=document.createElementNS('http://www.w3.org/2000/svg','circle');ci.setAttribute('cx',lbl.pt[0].toFixed(1));ci.setAttribute('cy',lbl.pt[1].toFixed(1));ci.setAttribute('r','4.5');ci.setAttribute('fill','#AF5F30');arcSvg.appendChild(ci);
-    const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',(lbl.pt[0]+(lbl.anchor==='end'?-10:10)).toFixed(1));t.setAttribute('y',(lbl.pt[1]-8).toFixed(1));t.setAttribute('fill','#1C1812');t.setAttribute('font-size','13');t.setAttribute('font-family',"'Geist Mono',monospace");t.setAttribute('font-weight','600');t.setAttribute('text-anchor',lbl.anchor);t.setAttribute('opacity','0.9');t.textContent=lbl.txt;arcSvg.appendChild(t);
+
+  // Labels sit inboard of the edges the curve now touches, so neither
+  // one runs off the side of the map.
+  [{t:0,txt:'Rise ${sunTimes.rise}'},{t:1,txt:'Set ${sunTimes.set}'}].forEach(function(lbl){
+    const pt=curveAt(c,lbl.t);
+    const atLeft=pt[0]<c.W/2;
+    const ci=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    ci.setAttribute('cx',pt[0].toFixed(1));ci.setAttribute('cy',pt[1].toFixed(1));
+    ci.setAttribute('r','4.5');ci.setAttribute('fill','#AF5F30');arcSvg.appendChild(ci);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',(pt[0]+(atLeft?12:-12)).toFixed(1));
+    t.setAttribute('y',(pt[1]-10).toFixed(1));
+    t.setAttribute('fill','#1C1812');t.setAttribute('font-size','13');
+    t.setAttribute('font-family',"'Geist Mono',monospace");t.setAttribute('font-weight','600');
+    t.setAttribute('text-anchor',atLeft?'start':'end');t.setAttribute('opacity','0.9');
+    t.textContent=lbl.txt;arcSvg.appendChild(t);
   });
 }
 
@@ -461,16 +524,20 @@ function placeSunXY(x,y,visible){
   if(!visible){sunEl.style.display='none';return;}
   sunEl.style.display='block';sunEl.style.left=x+'px';sunEl.style.top=y+'px';
 }
-function moveSun(az,el){
-  if(el<-5){placeSunXY(0,0,false);return;}
-  const s=projectToScreen(az,el);
+// On the curve, not on its own projection -- otherwise the glyph and the
+// path it is supposed to be travelling would disagree with each other.
+function moveSun(p){
+  if(p.el<-5){placeSunXY(0,0,false);return;}
+  const c=sunCurve();
+  if(!c){placeSunXY(0,0,false);return;}
+  const s=curveAt(c,dayFraction(p.time));
   placeSunXY(s[0],s[1],true);
 }
 
 function updateView(p){
   if(p.iso)map.setDate(new Date(p.iso));
   curEl=p.el;curAz=p.az;
-  moveSun(p.az,p.el);
+  moveSun(p);
   var stm=document.getElementById('stm');if(stm)stm.textContent=p.time;
   var st2=document.getElementById('sun-time');if(st2)st2.textContent=p.time;
 }
