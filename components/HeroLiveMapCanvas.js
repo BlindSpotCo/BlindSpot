@@ -1,12 +1,15 @@
 'use client';
 // components/HeroLiveMapCanvas.js
-// The live map hero -- rebuilt clean. A real, pannable Leaflet map on
-// the exact same tile source AddressConfirmMap.js already uses
-// (OpenStreetMap standard tiles -- free, no key, proven in this repo),
-// with a CSS filter on the tile layer only (not the markers/UI) to get
-// a dark, muted mood without needing a paid/keyed dark-tile provider.
-// Swap the TileLayer + drop the filter for a real dark-styled provider
-// (CARTO/MapTiler, once there's a key) in one place if that's ever wanted.
+// The hero -- a looping video backdrop (HERO_VIDEO_SRC below) with the
+// address search sitting on top of it. This used to be a real, pannable
+// Leaflet map that flew to the picked pin; that map was swapped for the
+// video (one recorded clip instead of a WebGL scene + a solar fetch on
+// every landing visit -- see the HERO_VIDEO_SRC comment), and every
+// Leaflet-specific piece of this file (MapContainer/TileLayer/Marker/
+// FlyTo/IntroFly/pinIcon) has been removed along with it, since none of
+// it was actually being rendered any more -- it was just dead code
+// quietly justifying stale timing (see AUTO_REPORT_HOLD_MS below, which
+// is the bug that made this obvious).
 //
 // Layout is a single flex column (.hlm-content) instead of magic-number
 // absolute positioning -- copy, search, and the insight row all sit in
@@ -16,17 +19,15 @@
 // Picking an address doesn't show an intermediate insight strip any
 // more -- it used to flash the neighbourhood score / live AQI for a
 // beat before the report opened, but that read as one more thing in the
-// way of a "straight to the report" flow. Picking a result just flies
-// the map to it and opens the report; scoreColor() from
+// way of a "straight to the report" flow. Picking a result holds
+// briefly on the now-filled-in address, then the full-screen
+// PinDropTransition takes over and opens the report; scoreColor() from
 // AVDetailedReadout.js is still used for the city panel's neighbourhood
 // list below, which is a real, standing list rather than a one-off
 // glimpse.
 
 import { useRouter } from 'next/navigation';
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
 import PinDropTransition from '@/components/PinDropTransition';
 import { scoreColor } from '@/components/property-score/AVDetailedReadout';
 import TypewriterCycle from '@/components/TypewriterCycle';
@@ -41,24 +42,17 @@ const HERO_VIDEO_SRC = '/hero-solar.mp4';
 // Same default coordinates as the homepage's original rotating
 // coordinate readout -- opens on the same place that readout used to cite.
 const DEFAULT_CENTER = { lat: 12.9716, lon: 77.5946 };
-const DEFAULT_ZOOM = 13; // whole zoom level -- a fractional resting zoom (was 12.4) forces
-// Leaflet to permanently CSS-scale the nearest integer-zoom tiles to hit it,
-// which is what was reading as "blurry" on the resting map, independent of
-// the .hlm-tiles filter's own blur below.
-const FLY_ZOOM = 15;
 
-// How long the map sits on the picked pin before the "acquiring site"
-// transition takes over and the report opens. This has to be at least
-// as long as FlyTo's own animation (1.1s) -- PinDropTransition's field
-// starts wiping the instant this timer fires and fully covers the
-// screen ~580ms later (see .pdt-field in globals.css), so a shorter
-// hold was cutting the fly-to off before the map ever reached the
-// picked location, let alone sat there long enough to read street
-// names at the zoomed-in level. This used to be tuned to 300ms for an
-// insight strip that showed neighbourhood/AQI facts under the pin --
-// that strip is gone (see the file header comment), so nothing left
-// needs it shorter than the animation it's covering.
-const AUTO_REPORT_HOLD_MS = 1250;
+// How long the picked address sits in the search box before the
+// "acquiring site" transition (PinDropTransition) covers the screen and
+// the report opens. This used to be tuned to cover a Leaflet fly-to
+// animation (1.1s) that played on the hero's old live map -- that map
+// is gone (see the file header comment), replaced by a static video
+// backdrop that doesn't react to the pick at all, so there is nothing
+// left for this hold to wait on. Long enough to register that the tap
+// landed and read the filled-in address, short enough that it doesn't
+// feel like a stall before the transition takes over.
+const AUTO_REPORT_HOLD_MS = 220;
 
 // Real categories BlindSpot actually scores -- not invented copy.
 // Sunlight/obstruction/shadow come from the Sunscout floor+facing engine
@@ -92,46 +86,6 @@ const KIND_LABELS = { city: 'City', neighbourhood: 'Neighbourhood', address: 'Ad
 // shows when someone searches a city outside that set.
 const COVERED_CITY_NAMES = 'Bangalore, Delhi NCR, Mumbai, Hyderabad and Chandigarh';
 
-const pinIcon = L.divIcon({
-  className: 'hlm-pin-icon',
-  html: '<span class="hlm-pin-ring"></span><span class="hlm-pin-dot"></span>',
-  iconSize: [22, 22],
-  iconAnchor: [11, 11],
-});
-
-function FlyTo({ lat, lon, zoom, flyKey }) {
-  const map = useMap();
-  const first = useRef(true);
-  useEffect(() => {
-    if (first.current) { first.current = false; return; }
-    map.flyTo([lat, lon], zoom, { duration: 1.1 });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flyKey]);
-  return null;
-}
-
-// First-load moment: the map mounts a couple of zoom levels out and
-// glides in to its real resting zoom, like descending toward the city
-// rather than the whole page just appearing already-arrived. Fires once
-// per mount, never again -- this is an entrance, not something that
-// should replay on every re-render.
-const INTRO_ZOOM_OFFSET = 3; // whole number -- keeps the pre-intro mount frame
-// (DEFAULT_ZOOM - INTRO_ZOOM_OFFSET) on a native tile zoom too, same reason.
-function IntroFly({ lat, lon, zoom }) {
-  const map = useMap();
-  const fired = useRef(false);
-  useEffect(() => {
-    if (fired.current) return;
-    fired.current = true;
-    const t = setTimeout(() => {
-      map.flyTo([lat, lon], zoom, { duration: 2.1, easeLinearity: 0.18 });
-    }, 350);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  return null;
-}
-
 export default function HeroLiveMapCanvas() {
   const router = useRouter();
   const [query, setQuery] = useState('');
@@ -139,7 +93,6 @@ export default function HeroLiveMapCanvas() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [pin, setPin] = useState(null);
-  const [flyKey, setFlyKey] = useState(0);
   const [autoGo, setAutoGo] = useState(false);
   const debounceRef = useRef(null);
   const boxRef = useRef(null);
@@ -271,7 +224,6 @@ export default function HeroLiveMapCanvas() {
     setQuery(r.displayName);
     setOpen(false);
     setResults([]);
-    setFlyKey((k) => k + 1);
     setAutoGo(false);
 
     router.prefetch?.(
