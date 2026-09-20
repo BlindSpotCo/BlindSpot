@@ -634,27 +634,31 @@ function animTick(ts){
   var p0=allPts[ai],p1=allPts[(ai+1)%allPts.length];
   var el=lerp(p0.el,p1.el,t),az=lerpAngle(p0.az,p1.az,t);
   curEl=el;curAz=az;
-  // Interpolating az/el then re-projecting doesn't trace the same path as
-  // the drawn arc: projectToScreen is non-linear (sin/cos), so a straight
-  // line in az/el space is a curved line on screen -- the icon would drift
-  // off the polyline drawArc() actually draws between these two points.
-  // Interpolating the two points' own screen positions instead guarantees
-  // the icon always sits exactly on that same straight segment.
-  if(p0.el<-5&&p1.el<-5){
+  // The icon rides the drawn curve, by time of day, exactly as the paused
+  // view does. This used to interpolate the two points' PROJECTIONS,
+  // which was right when the arc was that same projection plotted point
+  // by point -- once the arc became a plain curve, it left the sun
+  // tracking a path that is no longer on screen, drifting below the line
+  // it is supposed to be travelling.
+  var c=sunCurve();
+  if(!c||(p0.el<-5&&p1.el<-5)){
     placeSunXY(0,0,false);
   }else{
-    // drawArc() only plots points with el>=0. If one side of this pair
-    // falls below that (just past sunrise/before sunset), interpolating
-    // toward its projection slides the icon toward a point that was never
-    // actually drawn. Clamp each side's elevation to >=0 for this
-    // projection so the icon never targets anywhere off the visible line.
-    var s0=projectToScreen(p0.az,Math.max(0,p0.el)), s1=projectToScreen(p1.az,Math.max(0,p1.el));
-    placeSunXY(lerp(s0[0],s1[0],t), lerp(s0[1],s1[1],t), true);
+    var f0=dayFraction(p0.time), f1=dayFraction(p1.time);
+    // allPts wraps at the end of the day, so the last pair runs backwards.
+    // Hold at the final fraction rather than sweeping back to sunrise.
+    var f=(f1>=f0)?lerp(f0,f1,t):f0;
+    var sp=curveAt(c,f);
+    placeSunXY(sp[0],sp[1],true);
   }
   try{map.setDate(interpDate(p0.iso,p1.iso,t));}catch(e){}
   var stm=document.getElementById('stm');if(stm)stm.textContent=p0.time;
   var st2=document.getElementById('sun-time');if(st2)st2.textContent=p0.time;
-  drawArc();
+  // The arc is a fixed shape now -- it depends on the container and the
+  // day, not on the clock -- so redrawing the whole SVG on every frame
+  // was rebuilding an identical path sixty times a second. drawArc is
+  // still called on rotate/tilt/resize, which is when it can actually
+  // change.
   if(t>=1){ai=(ai+1)%allPts.length;animStartT=ts;}
   animFrame=requestAnimationFrame(animTick);
 }
