@@ -511,7 +511,10 @@ export default function ReportScreen({ view = 'verdict' }) {
      inside full screen) flips state back to 'loading' while `scores`
      stays up and the map stays on screen, and unlocking mid-recalc
      would let the page scroll away underneath it. */
-  const fullMapLive = fullMap && Boolean(scores) && state !== 'error';
+  // The map renders as soon as there is a sun path, with or without a
+  // score, so the things that follow the overlay -- the scroll lock,
+  // Escape, focus -- follow the overlay, not the scoring call.
+  const fullMapLive = fullMap;
   useEffect(() => {
     if (typeof document === 'undefined') return;
     if (!fullMapLive) { setMapArmed(true); return; }
@@ -930,6 +933,294 @@ export default function ReportScreen({ view = 'verdict' }) {
     window.history.replaceState(window.history.state, '', `${window.location.pathname}?${q.toString()}`);
   }, [hasPlace, lat, lon, pinCode, address, floor, facing, assumed, pinTouched]);
 
+  // null until the scores call lands -- see the score pill inside.
+  const mapScore = scores?.unit?.score ?? null;
+
+  // The map section, built once and rendered from two places: on its own
+  // (the /report/locate step, which must not wait for scoring) and inside
+  // the full report below. Same element either way, so moving between the
+  // two never remounts Map3DShadow and never reloads the 3D scene.
+  const mapZone = (
+      <section
+        className={`bsr-mapzone${fullMap ? ' is-full' : ''}`}
+        id="the-block"
+        aria-label="The block in 3D"
+      >
+        {/* Full screen only: the SunScout-style header strip. Search,
+            the live score for whatever the toolbar below is currently
+            set to, and the way back to the written verdict. Everything
+            else on the map (play/pause, floor, faces, date, report) is
+            the same toolbar the inline map uses -- one set of controls,
+            two sizes. */}
+        {fullMap && (
+          <div className="bsr-fullbar">
+            <p className="bsr-fullbar-where">
+              <span className="bsr-fullbar-addr">
+                {pinTouched
+                  ? 'Pin placed - scoring this exact spot'
+                  : 'Tap your building'}
+              </span>
+              <span className="bsr-fullbar-unit">
+                {/* The pin lock has a one-line explanation under the
+                    inline map (.bsr-maphint), which is off screen here --
+                    so the same warning takes this line while a capture
+                    is running, rather than the map silently ignoring
+                    taps with nothing saying why. */}
+                {reportRunning
+                  ? 'Pin locked while the report is built'
+                  : pinTouched
+                    ? (address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`)
+                    : 'The address lands on the centre of the complex'}
+              </span>
+            </p>
+
+            {/* Re-runs as the floor and faces in the toolbar below are
+                changed, so the effect of a change is visible without
+                leaving full screen for the verdict. `busy` is the same
+                re-scoring flag the verdict's own rating line uses --
+                without it the old number sits there looking settled
+                while a new one is in flight. */}
+            {/* Deliberately tolerant of there being no score yet: this
+                screen renders the moment the sun path is ready, and the
+                scoring call (which waits on live noise/OSM lookups) can
+                land seconds later. The pill says so rather than holding
+                the whole map back. */}
+            <span
+              className={`bsr-fullbar-score is-${toneOf(mapScore)}${busy || mapScore === null ? ' is-busy' : ''}`}
+              aria-live="polite"
+            >
+              <strong>{mapScore === null ? '—' : mapScore}</strong>
+              <span>
+                {mapScore === null ? 'scoring…' : busy ? 'rescoring…' : word(mapScore)}
+              </span>
+            </span>
+
+            <button
+              type="button"
+              className="bsr-fullbar-search-toggle"
+              onClick={() => setMapSearchOpen((v) => !v)}
+              aria-expanded={mapSearchOpen}
+            >
+              {mapSearchOpen ? 'Cancel' : 'Search address'}
+            </button>
+
+            {mapSearchOpen && (
+              <form className="bsr-fullbar-search bsr-locbar" onSubmit={onSearchSubmit}>
+                <input
+                  type="search"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Address or coordinates"
+                  aria-label="Move the pin to another address or coordinates -- press Enter to search"
+                  autoFocus
+                />
+                {locBusy ? <span className="bsr-loc-busy" aria-live="polite">Finding…</span> : null}
+                <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
+                  My location
+                </button>
+                {locError ? <p className="bsr-locerror">{locError}</p> : null}
+              </form>
+            )}
+          </div>
+        )}
+        <div className="bsr-map" onMouseLeave={() => setMapArmed(true)}>
+          {solar?.pathData ? (
+            <Map3DShadow
+              lat={lat}
+              lon={lon}
+              pathData={solar.pathData}
+              simTime={simTimeOf(minutes)}
+              simPos={solar.simPos}
+              sunTimes={solar.sunTimes}
+              animating={animating}
+              onLocationSelect={onMapClick}
+              onReady={capture.onReady}
+              onScreenshot={capture.onScreenshot}
+              onStatus={capture.onStatus}
+              debug={debug}
+            />
+          ) : (
+            <p className="bsr-map-wait">
+              {solarFailed ? 'The 3D view couldn’t load. The scores below are unaffected.' : 'Building the 3D view…'}
+            </p>
+          )}
+          {/* The guard exists to stop the map eating the PAGE's scroll.
+              Full screen there is no page scrolling behind it, so it is
+              only in the way. */}
+          {solar?.pathData && mapArmed && !fullMap && (
+            <button
+              type="button"
+              className="bsr-map-guard"
+              onClick={() => setMapArmed(false)}
+              aria-label="Click to interact with the 3D map"
+            >
+              Click to interact with the map
+            </button>
+          )}
+
+          {/* The step's own action, on the map rather than tucked in the
+              bar above it. It used to be a 13px pill sharing a row with
+              the address and a search button -- the one thing this screen
+              exists to make someone do, styled like the least important
+              control on it. Bottom centre, full-size, with the state of
+              the pin said directly above it. */}
+          {fullMap && (
+            <div className={`bsr-mapcta${pinTouched ? ' is-ready' : ''}`}>
+              <p className="bsr-mapcta-say">
+                {pinTouched
+                  ? 'Pin placed - every score below is for this exact spot.'
+                  : 'Tap your building on the map. The address alone lands on the centre of the complex.'}
+              </p>
+              <button
+                type="button"
+                className="bsr-mapcta-go"
+                ref={fullBackRef}
+                onClick={confirmSpot}
+              >
+                {pinTouched ? 'Continue to the verdict' : 'Continue without placing a pin'}
+                <span aria-hidden="true"> →</span>
+              </button>
+            </div>
+          )}
+
+          <div className="bsr-mapbar">
+            {/* The address search used to open this toolbar -- moved to the
+                header instead (see .bsr-addr-edit, next to "Change
+                address"), since moving the pin is an edit to the address
+                itself, not something that belongs floating over the map
+                with floor/faces/date. Play/pause is the toolbar's first
+                row now. */}
+            <p className="bsr-mapbar-time">
+              <button
+                type="button"
+                className={`bsr-play${animating ? ' is-on' : ''}`}
+                onClick={() => setAnimating((a) => !a)}
+                aria-pressed={animating}
+              >
+                {animating ? '❙❙ Pause' : '▶ Play'}
+              </button>
+              {!animating && (
+                <>
+                  <input
+                    id="bsr-time"
+                    type="range"
+                    min="330"
+                    max="1140"
+                    step="10"
+                    value={minutes}
+                    onChange={(e) => setMinutes(Number(e.target.value))}
+                    aria-label="Time of day"
+                  />
+                  <span className="bsr-clock">{clock(minutes)}</span>
+                </>
+              )}
+            </p>
+
+            <p className="bsr-set">
+              <label className="bsr-set-field bsr-set-floor">
+                <span>Floor</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={2}
+                  value={floorText}
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/[^\d]/g, '').slice(0, 2);
+                    setFloorText(raw);
+                    const n = parseInt(raw, 10);
+                    if (Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR) { setAssumed(false); setFloor(n); }
+                  }}
+                  onBlur={() => {
+                    const n = parseInt(floorText, 10);
+                    const clamped = Number.isFinite(n) ? Math.min(MAX_FLOOR, Math.max(1, n)) : floor;
+                    setFloor(clamped);
+                    setFloorText(String(clamped));
+                  }}
+                  aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
+                  placeholder="5"
+                />
+              </label>
+              <label className="bsr-set-field">
+                <span>Faces</span>
+                <select
+                  value={facing}
+                  onChange={(e) => { setAssumed(false); setFacing(e.target.value); }}
+                >
+                  {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
+                </select>
+              </label>
+              <label className="bsr-set-field bsr-set-date">
+                <span>Date</span>
+                <select
+                  value={seasonKey}
+                  onChange={(e) => setSeasonKey(e.target.value)}
+                  aria-label="Which day to simulate"
+                >
+                  {SEASONS.map((sn) => (
+                    <option key={sn.key} value={sn.key}>
+                      {sn.label}{sn.md ? ` - ${prettyDate(seasonDate(sn.key))}` : ''}
+                    </option>
+                  ))}
+                  <option value="custom">Pick a date…</option>
+                </select>
+              </label>
+              {seasonKey === 'custom' && (
+                <input
+                  type="date"
+                  className="bsr-datein"
+                  value={customDate || todayStr()}
+                  onChange={(e) => setCustomDate(e.target.value)}
+                  aria-label="Date to simulate"
+                />
+              )}
+              {assumed ? <span className="bsr-assumed">assumed</span> : null}
+            </p>
+            {/* Generating the sun & shadow report used to be one click from
+                a button up top, before anyone had watched the day animate
+                over this exact block or nudged the pin to the right spot --
+                so the report could be built from a location/floor/facing
+                nobody had actually looked at yet. That link now just
+                scrolls here (see .bsr-genlink below); this is the real
+                "make the report" action, living where the thing it reports
+                on is actually visible. */}
+            <button
+              type="button"
+              className="bsr-mapbar-report"
+              disabled={!solar?.pathData}
+              onClick={() => setReportOpen('gallery')}
+            >
+              Get the sun &amp; shadow report →
+            </button>
+            {/* Same toolbar, both states -- so the way in and the way
+                out of full screen live in the same place rather than
+                being two different controls in two different corners. */}
+            {/* Leaving full screen IS confirming the spot -- otherwise
+                this was a second exit that bypassed the header's button,
+                dropping someone on the verdict with `confirmed` still
+                false, so the next reload sent them back round the map
+                step they thought they had finished. */}
+            <button
+              type="button"
+              className="bsr-mapbar-full"
+              ref={fullToggleRef}
+              onClick={() => (fullMap ? confirmSpot() : openLocate())}
+              aria-pressed={fullMap}
+            >
+              {fullMap ? '✕ Exit full screen' : '⤢ Full screen'}
+            </button>
+          </div>
+        </div>
+        {!fullMap && (
+          <p className="bsr-maphint">
+            {reportRunning
+              ? 'The pin is locked while the report is built from this spot - moving it now would mix two blocks into one report.'
+              : 'Click again to move the pin to another building.'}
+          </p>
+        )}
+      </section>
+  );
+
   /* ---------------- states that aren't the report ---------------- */
   if (!hasPlace) {
     return (
@@ -941,6 +1232,10 @@ export default function ReportScreen({ view = 'verdict' }) {
         </div>
       </div>
     );
+  }
+
+  if (fullMap) {
+    return <div className="bsr">{mapZone}</div>;
   }
 
   if (state === 'error') {
@@ -968,6 +1263,12 @@ export default function ReportScreen({ view = 'verdict' }) {
       </div>
     );
   }
+  // The map step waits for the SUN PATH, which is one fast local
+  // calculation, not for the scoring call, which waits on live noise and
+  // OSM lookups and can take seconds. Sharing the boot screen below meant
+  // /report/locate sat on "Reading the records for this address..." with
+  // a map that was ready and nothing to do with records -- the one screen
+  // on the site that has no reason to wait for them.
   if (state === 'loading' && !scores) {
     return (
       <div className="bsr">
@@ -1437,277 +1738,7 @@ export default function ReportScreen({ view = 'verdict' }) {
           the top-right corner, the toolbar is kept clear of it (see
           .bsr-mapbar's right clearance in report.css) rather than
           overlapping it the way the old pill row once did. */}
-      <section
-        className={`bsr-mapzone${fullMap ? ' is-full' : ''}`}
-        id="the-block"
-        aria-label="The block in 3D"
-      >
-        {/* Full screen only: the SunScout-style header strip. Search,
-            the live score for whatever the toolbar below is currently
-            set to, and the way back to the written verdict. Everything
-            else on the map (play/pause, floor, faces, date, report) is
-            the same toolbar the inline map uses -- one set of controls,
-            two sizes. */}
-        {fullMap && (
-          <div className="bsr-fullbar">
-            <p className="bsr-fullbar-where">
-              <span className="bsr-fullbar-addr">
-                {pinTouched
-                  ? 'Pin placed - scoring this exact spot'
-                  : 'Tap your building'}
-              </span>
-              <span className="bsr-fullbar-unit">
-                {/* The pin lock has a one-line explanation under the
-                    inline map (.bsr-maphint), which is off screen here --
-                    so the same warning takes this line while a capture
-                    is running, rather than the map silently ignoring
-                    taps with nothing saying why. */}
-                {reportRunning
-                  ? 'Pin locked while the report is built'
-                  : pinTouched
-                    ? (address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`)
-                    : 'The address lands on the centre of the complex'}
-              </span>
-            </p>
-
-            {/* Re-runs as the floor and faces in the toolbar below are
-                changed, so the effect of a change is visible without
-                leaving full screen for the verdict. `busy` is the same
-                re-scoring flag the verdict's own rating line uses --
-                without it the old number sits there looking settled
-                while a new one is in flight. */}
-            <span
-              className={`bsr-fullbar-score is-${toneOf(unit.score)}${busy ? ' is-busy' : ''}`}
-              aria-live="polite"
-            >
-              <strong>{unit.score}</strong>
-              <span>{busy ? 'rescoring…' : word(unit.score)}</span>
-            </span>
-
-            <button
-              type="button"
-              className="bsr-fullbar-search-toggle"
-              onClick={() => setMapSearchOpen((v) => !v)}
-              aria-expanded={mapSearchOpen}
-            >
-              {mapSearchOpen ? 'Cancel' : 'Search address'}
-            </button>
-
-            {mapSearchOpen && (
-              <form className="bsr-fullbar-search bsr-locbar" onSubmit={onSearchSubmit}>
-                <input
-                  type="search"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Address or coordinates"
-                  aria-label="Move the pin to another address or coordinates -- press Enter to search"
-                  autoFocus
-                />
-                {locBusy ? <span className="bsr-loc-busy" aria-live="polite">Finding…</span> : null}
-                <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
-                  My location
-                </button>
-                {locError ? <p className="bsr-locerror">{locError}</p> : null}
-              </form>
-            )}
-          </div>
-        )}
-        <div className="bsr-map" onMouseLeave={() => setMapArmed(true)}>
-          {solar?.pathData ? (
-            <Map3DShadow
-              lat={lat}
-              lon={lon}
-              pathData={solar.pathData}
-              simTime={simTimeOf(minutes)}
-              simPos={solar.simPos}
-              sunTimes={solar.sunTimes}
-              animating={animating}
-              onLocationSelect={onMapClick}
-              onReady={capture.onReady}
-              onScreenshot={capture.onScreenshot}
-              onStatus={capture.onStatus}
-              debug={debug}
-            />
-          ) : (
-            <p className="bsr-map-wait">
-              {solarFailed ? 'The 3D view couldn’t load. The scores below are unaffected.' : 'Building the 3D view…'}
-            </p>
-          )}
-          {/* The guard exists to stop the map eating the PAGE's scroll.
-              Full screen there is no page scrolling behind it, so it is
-              only in the way. */}
-          {solar?.pathData && mapArmed && !fullMap && (
-            <button
-              type="button"
-              className="bsr-map-guard"
-              onClick={() => setMapArmed(false)}
-              aria-label="Click to interact with the 3D map"
-            >
-              Click to interact with the map
-            </button>
-          )}
-
-          {/* The step's own action, on the map rather than tucked in the
-              bar above it. It used to be a 13px pill sharing a row with
-              the address and a search button -- the one thing this screen
-              exists to make someone do, styled like the least important
-              control on it. Bottom centre, full-size, with the state of
-              the pin said directly above it. */}
-          {fullMap && (
-            <div className={`bsr-mapcta${pinTouched ? ' is-ready' : ''}`}>
-              <p className="bsr-mapcta-say">
-                {pinTouched
-                  ? 'Pin placed - every score below is for this exact spot.'
-                  : 'Tap your building on the map. The address alone lands on the centre of the complex.'}
-              </p>
-              <button
-                type="button"
-                className="bsr-mapcta-go"
-                ref={fullBackRef}
-                onClick={confirmSpot}
-              >
-                {pinTouched ? 'Continue to the verdict' : 'Continue without placing a pin'}
-                <span aria-hidden="true"> →</span>
-              </button>
-            </div>
-          )}
-
-          <div className="bsr-mapbar">
-            {/* The address search used to open this toolbar -- moved to the
-                header instead (see .bsr-addr-edit, next to "Change
-                address"), since moving the pin is an edit to the address
-                itself, not something that belongs floating over the map
-                with floor/faces/date. Play/pause is the toolbar's first
-                row now. */}
-            <p className="bsr-mapbar-time">
-              <button
-                type="button"
-                className={`bsr-play${animating ? ' is-on' : ''}`}
-                onClick={() => setAnimating((a) => !a)}
-                aria-pressed={animating}
-              >
-                {animating ? '❙❙ Pause' : '▶ Play'}
-              </button>
-              {!animating && (
-                <>
-                  <input
-                    id="bsr-time"
-                    type="range"
-                    min="330"
-                    max="1140"
-                    step="10"
-                    value={minutes}
-                    onChange={(e) => setMinutes(Number(e.target.value))}
-                    aria-label="Time of day"
-                  />
-                  <span className="bsr-clock">{clock(minutes)}</span>
-                </>
-              )}
-            </p>
-
-            <p className="bsr-set">
-              <label className="bsr-set-field bsr-set-floor">
-                <span>Floor</span>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={2}
-                  value={floorText}
-                  onChange={(e) => {
-                    const raw = e.target.value.replace(/[^\d]/g, '').slice(0, 2);
-                    setFloorText(raw);
-                    const n = parseInt(raw, 10);
-                    if (Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR) { setAssumed(false); setFloor(n); }
-                  }}
-                  onBlur={() => {
-                    const n = parseInt(floorText, 10);
-                    const clamped = Number.isFinite(n) ? Math.min(MAX_FLOOR, Math.max(1, n)) : floor;
-                    setFloor(clamped);
-                    setFloorText(String(clamped));
-                  }}
-                  aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
-                  placeholder="5"
-                />
-              </label>
-              <label className="bsr-set-field">
-                <span>Faces</span>
-                <select
-                  value={facing}
-                  onChange={(e) => { setAssumed(false); setFacing(e.target.value); }}
-                >
-                  {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
-                </select>
-              </label>
-              <label className="bsr-set-field bsr-set-date">
-                <span>Date</span>
-                <select
-                  value={seasonKey}
-                  onChange={(e) => setSeasonKey(e.target.value)}
-                  aria-label="Which day to simulate"
-                >
-                  {SEASONS.map((sn) => (
-                    <option key={sn.key} value={sn.key}>
-                      {sn.label}{sn.md ? ` - ${prettyDate(seasonDate(sn.key))}` : ''}
-                    </option>
-                  ))}
-                  <option value="custom">Pick a date…</option>
-                </select>
-              </label>
-              {seasonKey === 'custom' && (
-                <input
-                  type="date"
-                  className="bsr-datein"
-                  value={customDate || todayStr()}
-                  onChange={(e) => setCustomDate(e.target.value)}
-                  aria-label="Date to simulate"
-                />
-              )}
-              {assumed ? <span className="bsr-assumed">assumed</span> : null}
-            </p>
-            {/* Generating the sun & shadow report used to be one click from
-                a button up top, before anyone had watched the day animate
-                over this exact block or nudged the pin to the right spot --
-                so the report could be built from a location/floor/facing
-                nobody had actually looked at yet. That link now just
-                scrolls here (see .bsr-genlink below); this is the real
-                "make the report" action, living where the thing it reports
-                on is actually visible. */}
-            <button
-              type="button"
-              className="bsr-mapbar-report"
-              disabled={!solar?.pathData}
-              onClick={() => setReportOpen('gallery')}
-            >
-              Get the sun &amp; shadow report →
-            </button>
-            {/* Same toolbar, both states -- so the way in and the way
-                out of full screen live in the same place rather than
-                being two different controls in two different corners. */}
-            {/* Leaving full screen IS confirming the spot -- otherwise
-                this was a second exit that bypassed the header's button,
-                dropping someone on the verdict with `confirmed` still
-                false, so the next reload sent them back round the map
-                step they thought they had finished. */}
-            <button
-              type="button"
-              className="bsr-mapbar-full"
-              ref={fullToggleRef}
-              onClick={() => (fullMap ? confirmSpot() : openLocate())}
-              aria-pressed={fullMap}
-            >
-              {fullMap ? '✕ Exit full screen' : '⤢ Full screen'}
-            </button>
-          </div>
-        </div>
-        {!fullMap && (
-          <p className="bsr-maphint">
-            {reportRunning
-              ? 'The pin is locked while the report is built from this spot - moving it now would mix two blocks into one report.'
-              : 'Click again to move the pin to another building.'}
-          </p>
-        )}
-      </section>
+      {mapZone}
 
       <section className="bsr-visit" id="the-visit">
         <h2>What to check before you decide</h2>
