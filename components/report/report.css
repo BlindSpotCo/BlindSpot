@@ -1105,24 +1105,6 @@ body.bsr-noscroll{overflow:hidden}
   font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.04em;
   color:var(--text-mute,#5A5140);
 }
-/* The one number worth carrying onto the map: the flat's own score,
-   which re-runs as the floor/faces in the toolbar below are changed --
-   so the effect of a change is visible without leaving full screen. */
-.bsr-fullbar-score{
-  flex:none;display:flex;align-items:baseline;gap:6px;
-  padding:5px 12px;border-radius:999px;
-  background:var(--bsr-none-bg,rgba(28,24,18,.06));
-}
-.bsr-fullbar-score strong{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
-.bsr-fullbar-score span{font-size:11.5px;font-weight:600;letter-spacing:.03em}
-.bsr-fullbar-score.is-good{background:var(--bsr-good-bg);color:var(--bsr-good)}
-.bsr-fullbar-score.is-avg{background:var(--bsr-avg-bg);color:var(--bsr-avg)}
-.bsr-fullbar-score.is-poor{background:var(--bsr-poor-bg);color:var(--bsr-poor)}
-/* Mid-rescore: the number on screen is the previous floor's. Dimmed
-   rather than blanked, so the pill doesn't collapse and shove the row
-   around every time the floor is nudged. */
-.bsr-fullbar-score.is-busy{opacity:.6}
-.bsr-fullbar-score.is-busy span{font-style:italic}
 .bsr-fullbar-search-toggle{
   flex:none;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;
   padding:6px 12px;border-radius:999px;
@@ -1151,11 +1133,16 @@ body.bsr-noscroll{overflow:hidden}
   box-shadow:0 10px 34px rgba(28,24,18,.22);
   text-align:center;
 }
+/* Bold and brand-coloured in BOTH states, not just once the pin is
+   placed -- this line is the actual instruction ("tap your building on
+   the map"), and colouring it in only after that instruction has
+   already been followed meant the one moment it needed to read as an
+   active call to action, it looked like quiet supporting copy instead. */
 .bsr-mapcta-say{
-  margin:0; font-size:13.5px; line-height:1.5; color:var(--text-mute,#5A5140);
+  margin:0; font-size:14.5px; line-height:1.5; font-weight:700;
+  color:var(--brand,#3D4116);
   max-width:44ch;
 }
-.bsr-mapcta.is-ready .bsr-mapcta-say{ color:var(--brand,#3D4116); font-weight:600 }
 .bsr-mapcta-go{
   width:100%; font:inherit; font-size:16px; font-weight:700; cursor:pointer;
   padding:14px 24px; border-radius:999px;
@@ -1164,9 +1151,19 @@ body.bsr-noscroll{overflow:hidden}
   transition:background .16s ease, color .16s ease, border-color .16s ease, transform .16s ease;
 }
 .bsr-mapcta-go:hover{ border-color:var(--brand,#3D4116); color:var(--brand,#3D4116) }
-/* Only once the pin is actually placed does this become the filled,
-   obvious next step -- before that it is a real escape hatch, but not
-   the recommended one. */
+/* Before a pin is placed, this is a real escape hatch, but not the
+   recommended one -- and a full-size pill in the brand's own button
+   shape reads as "the button to press" regardless of its muted
+   colour, competing with the actual instruction above it for which one
+   is the thing to do. A plain underlined link only looks like what it
+   is: a way to skip, not the primary action. Once the pin IS placed,
+   this becomes the filled, obvious next step instead (below). */
+.bsr-mapcta:not(.is-ready) .bsr-mapcta-go{
+  width:auto; background:none; border:none; padding:2px;
+  font-size:13px; font-weight:600; text-decoration:underline; text-underline-offset:3px;
+  color:var(--text-dim,#8A7F68);
+}
+.bsr-mapcta:not(.is-ready) .bsr-mapcta-go:hover{ color:var(--brand,#3D4116) }
 .bsr-mapcta.is-ready .bsr-mapcta-go{
   border-color:var(--brand,#3D4116);
   background:var(--brand,#3D4116); color:#FFFDF8;

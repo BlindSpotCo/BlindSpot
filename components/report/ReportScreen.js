@@ -942,9 +942,6 @@ export default function ReportScreen({ view = 'verdict' }) {
     window.history.replaceState(window.history.state, '', `${window.location.pathname}?${q.toString()}`);
   }, [hasPlace, lat, lon, pinCode, address, floor, facing, assumed, pinTouched]);
 
-  // null until the scores call lands -- see the score pill inside.
-  const mapScore = scores?.unit?.score ?? null;
-
   // The map section, built once and rendered from two places: on its own
   // (the /report/locate step, which must not wait for scoring) and inside
   // the full report below. Same element either way, so moving between the
@@ -963,46 +960,31 @@ export default function ReportScreen({ view = 'verdict' }) {
             two sizes. */}
         {fullMap && (
           <div className="bsr-fullbar">
+            {/* Used to also carry "Tap your building" / "Pin placed" here,
+                the same message .bsr-mapcta already says once, clearly, at
+                the bottom, with the actual next-step button attached --
+                saying it twice (once as quiet supporting text up here, in
+                competition with a score pill and a search button) is what
+                made neither read as the instruction. This line's only job
+                now is showing where you searched. A score pill used to
+                sit here too, live against whatever floor/facing/pin are
+                CURRENTLY set -- including the un-set defaults on a first
+                visit -- with nothing saying it wasn't final. Dropped
+                rather than captioned: the actual score belongs to the
+                verdict, after "Continue", not a preview here. */}
             <p className="bsr-fullbar-where">
               <span className="bsr-fullbar-addr">
-                {pinTouched
-                  ? 'Pin placed - scoring this exact spot'
-                  : 'Tap your building'}
+                {address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}
               </span>
-              <span className="bsr-fullbar-unit">
-                {/* The pin lock has a one-line explanation under the
-                    inline map (.bsr-maphint), which is off screen here --
-                    so the same warning takes this line while a capture
-                    is running, rather than the map silently ignoring
-                    taps with nothing saying why. */}
-                {reportRunning
-                  ? 'Pin locked while the report is built'
-                  : pinTouched
-                    ? (address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`)
-                    : 'The address lands on the centre of the complex'}
-              </span>
+              {/* The pin lock has a one-line explanation under the inline
+                  map (.bsr-maphint), which is off screen here -- so the
+                  same warning takes this line while a capture is
+                  running, rather than the map silently ignoring taps
+                  with nothing saying why. */}
+              {reportRunning && (
+                <span className="bsr-fullbar-unit">Pin locked while the report is built</span>
+              )}
             </p>
-
-            {/* Re-runs as the floor and faces in the toolbar below are
-                changed, so the effect of a change is visible without
-                leaving full screen for the verdict. `busy` is the same
-                re-scoring flag the verdict's own rating line uses --
-                without it the old number sits there looking settled
-                while a new one is in flight. */}
-            {/* Deliberately tolerant of there being no score yet: this
-                screen renders the moment the sun path is ready, and the
-                scoring call (which waits on live noise/OSM lookups) can
-                land seconds later. The pill says so rather than holding
-                the whole map back. */}
-            <span
-              className={`bsr-fullbar-score is-${toneOf(mapScore)}${busy || mapScore === null ? ' is-busy' : ''}`}
-              aria-live="polite"
-            >
-              <strong>{mapScore === null ? '—' : mapScore}</strong>
-              <span>
-                {mapScore === null ? 'scoring…' : busy ? 'rescoring…' : word(mapScore)}
-              </span>
-            </span>
 
             <button
               type="button"
@@ -1010,7 +992,7 @@ export default function ReportScreen({ view = 'verdict' }) {
               onClick={() => setMapSearchOpen((v) => !v)}
               aria-expanded={mapSearchOpen}
             >
-              {mapSearchOpen ? 'Cancel' : 'Search address'}
+              {mapSearchOpen ? 'Cancel' : 'Not this address?'}
             </button>
 
             {mapSearchOpen && (
