@@ -46,18 +46,8 @@ import { goToSearch } from '@/components/goToSearch';
 import Link from 'next/link';
 
 const TEAM = [
-  {
-    initials: 'AG',
-    name: 'Arushri Gangji',
-    accent: 'ss',
-    linkedin: 'https://www.linkedin.com/in/arushri-gangji-056108381/',
-  },
-  {
-    initials: 'GB',
-    name: 'Gurshaan Singh Baweja',
-    accent: 'av',
-    linkedin: 'https://www.linkedin.com/in/gurshaan-singh-baweja',
-  },
+  { name: 'Arushri Gangji', linkedin: 'https://www.linkedin.com/in/arushri-gangji-056108381/' },
+  { name: 'Gurshaan Singh Baweja', linkedin: 'https://www.linkedin.com/in/gurshaan-singh-baweja' },
 ];
 
 export default function ClosingCTA() {
@@ -74,60 +64,53 @@ export default function ClosingCTA() {
         </div>
       </div>
 
+      {/* Footer v3 -- v2 followed a reference whose whole idea was a
+          190px BLINDSPOT wordmark as a "statement row", with the links
+          centred in a 520px column above it. On a real 1440px screen
+          that reads as a brand shouting its own name over a mostly
+          empty field: the wordmark alone was taller than everything
+          with information in it put together, and the two link columns
+          used a third of the width. Dropped the statement row, moved
+          to the ordinary shape a company footer has -- brand on the
+          left, link columns on the right, one legal line underneath.
+          The hover wipe went with it; a piece of typography nobody can
+          act on is not worth 200px and a clip-path animation. */}
       <footer>
         <div className="wrap">
-          <div className="footer-top">
-            <div className="footer-brand">
-              <img className="brand-mark-img" src="/mark.png" alt="BlindSpot" style={{ height: 19 }} />
-              <img className="brand-word-img" src="/wordmark.png" alt="BlindSpot" style={{ height: 10 }} />
+          <div className="footer-main">
+            <div className="footer-ident">
+              <div className="footer-brand">
+                <img className="brand-mark-img" src="/mark.png" alt="BlindSpot" style={{ height: 18 }} />
+                <img className="brand-word-img" src="/wordmark.png" alt="BlindSpot" style={{ height: 10 }} />
+              </div>
+              <p className="footer-tagline">Property Intelligence</p>
+              <p className="footer-fine">Government records + real solar geometry</p>
             </div>
-            <p className="footer-tagline">Property Intelligence</p>
-          </div>
 
-          <div className="footer-row2">
-            {/* Used to also have an "Explore" column repeating the header
-                nav's own How It Works / Tools / The Team links verbatim --
-                the header is right above this on every page, so this was
-                the exact same three links twice on screen with nothing new
-                in the second copy. Down to the two columns that actually
-                add something the nav doesn't: account actions, and the
-                team itself. */}
-            <div className="footer-col">
-              <span className="footer-col-title">Get Started</span>
-              <a href="/#find" onClick={goToSearch}>Uncover Your BlindSpot</a>
-              <a href="/signup">Create an account</a>
-              <a href="/login">Sign in</a>
-            </div>
-            <div className="footer-col" id="team">
-              <span className="footer-col-title">The Team</span>
-              {TEAM.map((m) => (
-                <a
-                  key={m.name}
-                  href={m.linkedin}
-                  target="_blank"
-                  rel="noopener"
-                  className={`footer-founder accent-${m.accent}`}
-                >
-                  <span className="footer-founder-avatar">{m.initials}</span>
-                  <span className="footer-founder-info">
-                    <span className="footer-founder-name">{m.name}</span>
-                    <span className="footer-founder-role">Co-founder</span>
-                  </span>
-                </a>
-              ))}
+            <div className="footer-links">
+              <div className="footer-col">
+                <span className="footer-col-title">Get Started</span>
+                <a href="/#find" onClick={goToSearch}>Uncover Your BlindSpot</a>
+                <a href="/signup">Create an account</a>
+                <a href="/login">Sign in</a>
+              </div>
+              {/* The avatars and the stacked name/role pairs were the
+                  other half of the height here. Two people, two links,
+                  one line each -- the role is said once, above them. */}
+              <div className="footer-col" id="team">
+                <span className="footer-col-title">Co-founders</span>
+                {TEAM.map((m) => (
+                  <a key={m.name} href={m.linkedin} target="_blank" rel="noopener">
+                    {m.name}
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="cc-foot-wordmark-wrap" aria-hidden="true">
-          <span className="cc-foot-wordmark cc-foot-wordmark-main">BLINDSPOT</span>
-          <span className="cc-foot-wordmark cc-foot-wordmark-alt">PROPERTY INTELLIGENCE</span>
-        </div>
-
-        <div className="wrap">
           <div className="footer-bottom">
-            <div className="footer-fine">DATA FROM GOVERNMENT SOURCES + REAL SOLAR GEOMETRY</div>
-            <div className="footer-copyright">© 2026 BlindSpot</div>
+            <span className="footer-copyright">© 2026 BlindSpot</span>
+            <span className="footer-copyright">Delhi NCR · Bangalore · Chandigarh · Hyderabad · Mumbai</span>
           </div>
         </div>
       </footer>

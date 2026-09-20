@@ -2452,7 +2452,7 @@ header.header-on-dark .brand-word-img{
 }
 .closing2-inner{
   position:relative; z-index:1; text-align:center; max-width:720px; margin:0 auto;
-  padding:0 0 var(--space-9);
+  padding:0 0 var(--space-7);
 }
 .closing2-inner::before{
   content:''; position:absolute; z-index:-1; pointer-events:none;
@@ -2487,142 +2487,53 @@ header.header-on-dark .brand-word-img{
 .section-closing2 .btn-cta:hover{ background:#fff; transform:translateY(-2px); box-shadow:0 20px 40px -14px rgba(0,0,0,0.5) }
 
 .section-closing2 footer{
-  position:relative; z-index:1; overflow:hidden; border-top:1px solid rgba(255,255,255,0.1);
+  position:relative; z-index:1; border-top:1px solid rgba(255,255,255,0.1);
 }
-.footer-top{
-  position:relative; z-index:1; display:flex; align-items:center; justify-content:center; gap:16px;
-  padding:var(--space-7) 0 var(--space-6); border-bottom:1px solid rgba(255,255,255,0.08);
-}
-.footer-tagline{
-  font-family:'Geist Mono',monospace; font-size:12px; letter-spacing:.08em; text-transform:uppercase;
-  color:rgba(255,253,248,0.62); padding-left:16px; border-left:1px solid rgba(255,255,255,0.15);
-}
-/* Two columns, not three -- the old third ("Explore") just repeated the
-   header nav's own links, so this already reads fine as the same
-   2-column shape the ≤900px layout below used to fall back to. */
-.footer-row2{
+/* Brand left, links right -- the ordinary shape, after v2's centred
+   520px column under a 190px wordmark. */
+.footer-main{
   position:relative; z-index:1;
-  display:grid; grid-template-columns:repeat(2, 1fr); gap:var(--space-6);
-  max-width:520px; margin:0 auto;
+  display:flex; flex-wrap:wrap; justify-content:space-between; gap:var(--space-6) var(--space-7);
   padding:var(--space-6) 0;
 }
-.footer-col{ display:flex; flex-direction:column; gap:12px; align-items:center; text-align:center }
+.footer-ident{ display:flex; flex-direction:column; gap:10px; min-width:200px }
+.footer-brand{ display:flex; align-items:center; gap:10px }
+.footer-tagline{
+  font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+  color:rgba(255,253,248,0.55); margin:0;
+}
+.footer-fine{
+  font-family:'Geist Mono',monospace; font-size:10.5px; letter-spacing:.04em;
+  color:rgba(255,253,248,0.38); margin:0; max-width:42ch; line-height:1.5; white-space:nowrap;
+}
+.footer-links{ display:flex; gap:var(--space-7); flex-wrap:wrap }
+.footer-col{ display:flex; flex-direction:column; gap:9px; align-items:flex-start; text-align:left }
 .footer-col-title{
-  font-family:'Geist Mono',monospace; font-size:11.5px; letter-spacing:.1em; text-transform:uppercase;
-  color:rgba(255,253,248,0.62); margin-bottom:2px;
+  font-family:'Geist Mono',monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:rgba(255,253,248,0.45);
 }
-.section-closing2 footer .brand-mark-img{ filter:brightness(0) invert(1); transition:transform .3s cubic-bezier(.34,1.56,.64,1) }
-.section-closing2 footer .brand:hover .brand-mark-img{ transform:rotate(8deg) }
-.section-closing2 footer .brand-word-img{ filter:none; }
+.section-closing2 footer .brand-mark-img{ filter:brightness(0) invert(1) }
+.section-closing2 footer .brand-word-img{ filter:none }
 .footer-col a{
-  color:rgba(255,253,248,0.62); text-decoration:none; font-size:14.5px; width:fit-content;
-  position:relative; transition:color .2s ease;
-}
-.footer-col a::after{
-  content:''; position:absolute; left:0; right:0; bottom:-2px; height:1px;
-  background:var(--brand-yellow); transform:scaleX(0); transform-origin:left; transition:transform .25s ease;
+  color:rgba(255,253,248,0.7); text-decoration:none; font-size:13.5px; width:fit-content;
+  transition:color .2s ease;
 }
 .footer-col a:hover{ color:#fff }
-.footer-col a:hover::after{ transform:scaleX(1) }
-
-/* Founder cards, moved into the footer's "Team" column from the old
-   standalone TeamSection (see ClosingCTA.js's top comment) -- own look
-   rather than reusing .team2-card since that was built for a paper
-   card on the light --bg-2 tint; this sits directly on the dark
-   --brand footer instead, so it borrows the same
-   rgba(255,253,248,..)-on-dark palette the rest of the footer already
-   uses. The default .footer-col a underline is switched off (::after
-   is display:none below) since a full-width underline reads oddly
-   under an avatar + two lines of text -- the name colour shift on
-   hover is the link's own affordance instead.
-   Stacked (avatar above name/role), not side-by-side -- side-by-side
-   put the avatar on the left and the text flush to its right, so the
-   *card's own bounding box* was centred under "The Team" but the text
-   itself (the part someone's eye actually reads) sat visibly off to
-   one side of that centre, by exactly half the avatar's width. Every
-   element on its own centre axis is centred, full stop, no matter how
-   the avatar/name/role widths compare to each other.
-   Sized down from the first pass at this (44px avatar, looser gaps) --
-   next to Explore/Get Started's tight 3-line lists, two cards that
-   tall read as a sparse, oversized block that didn't belong in the
-   same row. Smaller avatar and tighter gaps both within a card and
-   between the two of them keep it reading as one compact list, the
-   same rhythm as its sibling columns, not two floating clusters. */
-.footer-founder{
-  display:flex; flex-direction:column; align-items:center; gap:5px; width:fit-content;
-  text-decoration:none; margin-top:2px;
-}
-.footer-founder::after{ display:none }
-.footer-founder-avatar{
-  flex-shrink:0; width:30px; height:30px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  font-size:11px; font-weight:600; color:#fff;
-  background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.22);
-}
-.footer-founder.accent-ss .footer-founder-avatar{ background:color-mix(in srgb, var(--ss) 60%, transparent) }
-.footer-founder.accent-av .footer-founder-avatar{ background:color-mix(in srgb, var(--av) 60%, transparent) }
-.footer-founder-info{ display:flex; flex-direction:column; align-items:center; gap:1px; text-align:center }
-.footer-founder-name{ font-size:14px; font-weight:600; color:rgba(255,253,248,0.9); transition:color .2s ease }
-.footer-founder-role{ font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:rgba(255,253,248,0.42) }
-.footer-founder:hover .footer-founder-name{ color:var(--brand-yellow) }
-
-/* The wordmark is its own full-width statement row. On hover it
-   performs a wipe transition: BLINDSPOT clips away left-to-right
-   while the tagline (the same "Property Intelligence" line used
-   above in .footer-tagline) wipes in underneath it, in the same
-   spot -- a moving vertical edge sweeps across the row, old text
-   still showing to the right of the edge, new text already showing
-   to its left. Both layers occupy the same box (stacked via grid),
-   so nothing shifts layout. Touch devices get no hover, so they
-   simply see the static wordmark -- still a deliberate, finished
-   look, not a broken one. */
-.cc-foot-wordmark-wrap{
-  position:relative; z-index:1; height:clamp(70px, 15vw, 200px);
-  overflow:hidden; user-select:none; cursor:default;
-}
-.cc-foot-wordmark{
-  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  font-family:'Geist',sans-serif; font-weight:700;
-  line-height:1; letter-spacing:-0.02em; white-space:nowrap; color:var(--brand-yellow);
-  clip-path:inset(0 0 0 0);
-  /* Was cubic-bezier(.76,0,.24,1) at .65s -- that curve sits nearly flat
-     at both ends and rushes through the middle, which on a clip sweeping
-     the full width of a ~190px headline read as a jerky snap rather than
-     a smooth wipe. A plain ease-in-out cubic reads as fluid the whole
-     way through instead of "slow, snap, slow". will-change promotes this
-     to its own compositor layer up front (rather than only once the
-     transition starts) so the very first hover doesn't have to eat that
-     layer-promotion cost mid-animation, which is its own source of
-     jank on a box this large. */
-  transition:clip-path .7s cubic-bezier(.65,0,.35,1);
-  will-change:clip-path;
-}
-.cc-foot-wordmark-main{
-  font-size:clamp(56px, 14vw, 190px);
-}
-.cc-foot-wordmark-alt{
-  font-size:clamp(20px, 4.2vw, 58px); letter-spacing:0.14em;
-  clip-path:inset(0 100% 0 0);
-}
-.cc-foot-wordmark-wrap:hover .cc-foot-wordmark-main{ clip-path:inset(0 100% 0 0); }
-.cc-foot-wordmark-wrap:hover .cc-foot-wordmark-alt{ clip-path:inset(0 0 0 0); }
 .footer-bottom{
   position:relative; z-index:1;
   display:flex; align-items:center; justify-content:space-between; gap:var(--space-4); flex-wrap:wrap;
-  border-top:1px solid rgba(255,255,255,0.08); padding:var(--space-5) 0;
+  border-top:1px solid rgba(255,255,255,0.08); padding:14px 0;
 }
-.footer-fine{ font-family:'Geist Mono',monospace; font-size:12.5px; letter-spacing:.03em; color:rgba(255,253,248,0.62) }
-.footer-copyright{ font-size:12.5px; color:rgba(255,253,248,0.62) }
+.footer-copyright{
+  font-family:'Geist Mono',monospace; font-size:10.5px; letter-spacing:.05em;
+  color:rgba(255,253,248,0.42);
+}
 @media (max-width:640px){
   .section-closing2{ padding:var(--space-7) 0 0 }
-  .closing2-inner{ padding-bottom:var(--space-7) }
-  .footer-top{ padding:var(--space-6) 0 var(--space-5) }
-  .footer-row2{ grid-template-columns:1fr; gap:var(--space-5); padding:var(--space-5) 0 }
-  .footer-bottom{ flex-direction:column; align-items:flex-start; gap:8px }
-  .cc-foot-wordmark-wrap{ height:clamp(46px, 22vw, 90px) }
-}
-@media (prefers-reduced-motion: reduce){
-  .cc-foot-wordmark-main, .cc-foot-wordmark-alt{ transition:none }
+  .closing2-inner{ padding-bottom:var(--space-6) }
+  .footer-main{ gap:var(--space-5); padding:var(--space-5) 0 }
+  .footer-links{ gap:var(--space-6) }
+  .footer-bottom{ flex-direction:column; align-items:flex-start; gap:6px }
 }
 
 /* ══ Compare flats ══════════════════════════════════════════════════════
