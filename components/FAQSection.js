@@ -56,11 +56,11 @@ function useFaqItems() {
   return [
     {
       q: 'Is BlindSpot free?',
-      a: 'Yes. Search an address and see both scores at no cost. Sign in only if you want to save a report under My Reports.',
+      a: 'Yes. Both scores, no cost. Sign in only to save a report.',
     },
     {
       q: 'Where does the data actually come from?',
-      a: "The Neighbourhood Score comes from government records - police, CPCB live AQI, DISCOM power data, municipal water and road surveys, CBSE school listings - combined with a zone-level model, so nearby pincodes often share a score on most dimensions. Named schools are the one part sourced address by address, not by zone. The Home Comfort Score comes from real solar-geometry modelling for the floor and facing you pick, not broker-supplied information either way.",
+      a: "Government records for the area - police, CPCB, DISCOM, municipal surveys, CBSE listings - scored zone-level, so nearby pincodes often match. Solar-geometry modelling for the flat. Nothing broker-supplied either way.",
     },
     {
       q: 'Which cities are covered?',
@@ -69,11 +69,11 @@ function useFaqItems() {
     },
     {
       q: 'How is this different from asking a broker?',
-      a: "BlindSpot has no stake in any specific listing - the score doesn't change based on who's selling, and it's the same number whether you ask about the flat they're pushing or the one next door.",
+      a: "We have no stake in any listing. Same number for the flat they're pushing and the one next door.",
     },
     {
       q: 'Can it tell me about one specific room, not just the whole flat?',
-      a: "Yes. Upload a photo of the room and the direction you were facing when you took it, and BlindSpot finds each window in the photo and gives it real sun-hours and heat data for its own direction, not just the flat's overall facing. The numbers come from the same solar-geometry model as the rest of the report; only spotting the windows in your photo uses AI.",
+      a: "Yes. Upload a room photo and the direction you faced - every window gets its own sun and heat numbers. AI only spots the windows; the numbers are the same solar model.",
     },
   ];
 }
@@ -91,7 +91,6 @@ export default function FAQSection() {
             <span className="eyebrow">04 - Questions</span>
             <h2>Before you <span className="gold-word">ask</span>.</h2>
           </div>
-          <p>What the data covers, what it costs, and how much say you get over the number.</p>
         </div>
 
         <div className="faq2-list">

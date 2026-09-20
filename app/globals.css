@@ -2057,13 +2057,6 @@ header.header-on-dark .brand-word-img{
    ARE the two scores, each under its own badge. That also retires the
    old .ps3-eq badge equation underneath: "Neighbourhood + Home Comfort"
    is now read off the layout instead of asserted below it. */
-.section-head .ps4-lede{
-  /* .section-head p is the narrow right-hand column paragraph (320px);
-     this one sits under the h2 in the left column and needs real
-     measure. */
-  max-width:58ch; margin:16px 0 0; font-size:16.5px; line-height:1.65;
-  color:var(--text-mute);
-}
 .ps4-grid{
   display:grid; grid-template-columns:1fr 1fr; gap:var(--space-5);
   margin-top:var(--space-2);
@@ -2117,8 +2110,8 @@ header.header-on-dark .brand-word-img{
 .ps4-row-body{ display:flex; flex-direction:column; min-width:0 }
 .ps4-row-label{ font-size:15.5px; font-weight:700; color:var(--ink); line-height:1.3 }
 .ps4-row-desc{ margin-top:3px; font-size:14px; line-height:1.5; color:var(--text-mute) }
-.ps4-row-source{
-  margin-top:8px; font-family:'Geist Mono',monospace;
+.ps4-col-source{
+  margin:10px 0 0; font-family:'Geist Mono',monospace;
   font-size:10.5px; letter-spacing:.055em; text-transform:uppercase;
   line-height:1.45; color:var(--text-dim);
 }
@@ -2134,7 +2127,6 @@ header.header-on-dark .brand-word-img{
   .ps4-grid{ grid-template-columns:1fr; gap:var(--space-4) }
 }
 @media (max-width:640px){
-  .section-head .ps4-lede{ font-size:14.5px; margin-top:12px }
   .ps4-col-head{ padding:15px 16px 13px }
   .ps4-col-badge{ font-size:11.5px; padding:6px 12px }
   .ps4-col-scope{ font-size:12px }
@@ -2143,7 +2135,7 @@ header.header-on-dark .brand-word-img{
   .ps4-row-icon svg{ width:17px; height:17px }
   .ps4-row-label{ font-size:14.5px }
   .ps4-row-desc{ font-size:13px }
-  .ps4-row-source{ font-size:9.5px; margin-top:6px }
+  .ps4-col-source{ font-size:9.5px; margin-top:8px }
   .ps4-foot{ font-size:14px }
 }
 

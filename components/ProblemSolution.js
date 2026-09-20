@@ -35,34 +35,31 @@ const GROUPS = [
   {
     key: 'ss',
     score: 'Home Comfort Score',
-    scope: 'Scored for the exact floor and facing you pick',
+    scope: 'For the exact floor and facing you pick',
+    source: 'Solar-geometry modelling',
     items: [
       {
         label: 'Sunlight hours',
-        desc: 'How much direct sun this flat actually gets, hour by hour.',
-        source: 'Solar-geometry modelling, for this floor and facing',
+        desc: 'Real hours, not "well-lit".',
         icon: SUN_ICON,
       },
       {
         label: 'Blocked light',
-        desc: 'Whether the tower next door takes the morning with it.',
-        source: 'Shadow cast by the buildings around it',
+        desc: 'What the next tower takes.',
         icon: (
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21h7V9l-3-4-3 4v8H3z"/><path d="M14 21h7V6l-3-4-3 4v11z"/></svg>
         ),
       },
       {
         label: 'Summer heat',
-        desc: 'How hard this facing bakes, and what cooling it costs.',
-        source: 'Heat-exposure modelling + monthly AC estimate',
+        desc: 'The AC bill this facing earns.',
         icon: (
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 14.8V4.5a2 2 0 1 1 4 0v10.3a4 4 0 1 1-4 0z"/><circle cx="12" cy="18" r="1.4" fill="currentColor" stroke="none"/></svg>
         ),
       },
       {
         label: 'Damp rooms',
-        desc: 'The corners that never quite dry out after the monsoon.',
-        source: 'Monsoon climate against this orientation',
+        desc: 'Corners that never dry after monsoon.',
         icon: (
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3.5" y="3" width="17" height="13" rx="1.4"/><path d="M12 3v13M3.5 9.5h17"/><path d="M7.4 21c-.9 0-1.6-.7-1.6-1.6 0-.8 1.6-2.6 1.6-2.6s1.6 1.8 1.6 2.6c0 .9-.7 1.6-1.6 1.6zM16.6 21c-.9 0-1.6-.7-1.6-1.6 0-.8 1.6-2.6 1.6-2.6s1.6 1.8 1.6 2.6c0 .9-.7 1.6-1.6 1.6z"/></svg>
         ),
@@ -72,36 +69,33 @@ const GROUPS = [
   {
     key: 'av',
     score: 'Neighbourhood Score',
-    scope: 'Scored from government records for the pincode around it',
+    scope: 'From government records for that pincode',
+    source: 'CPCB · Police · DISCOM · Municipal surveys',
     items: [
       {
         label: 'Air quality',
-        desc: 'What you are actually breathing out on that balcony.',
-        source: 'CPCB live AQI feed',
+        desc: 'What you breathe on the balcony.',
         icon: (
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 8h11a3 3 0 1 0-2.4-4.8M3 16h14a3 3 0 1 1-2.4 4.8M3 12h17a3 3 0 1 0-2.4-4.8"/></svg>
         ),
       },
       {
         label: 'Crime nearby',
-        desc: 'The record for these streets, not word of mouth.',
-        source: 'Local police records',
+        desc: 'The record, not word of mouth.',
         icon: (
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-5.4-7-11a7 7 0 1 1 14 0c0 5.6-7 11-7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>
         ),
       },
       {
         label: 'Water supply',
-        desc: 'Whether this address runs on tankers by April.',
-        source: 'Municipal water survey data',
+        desc: 'Tankers by April, or not.',
         icon: (
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2.5s6.5 7.4 6.5 12a6.5 6.5 0 1 1-13 0c0-4.6 6.5-12 6.5-12z"/></svg>
         ),
       },
       {
         label: 'Power cuts',
-        desc: 'How often the lights - and the lift - actually go.',
-        source: 'DISCOM power reliability data',
+        desc: 'How often the lift stops.',
         icon: (
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg>
         ),
@@ -119,14 +113,6 @@ export default function ProblemSolution() {
           <div>
             <span className="eyebrow">01 - What Listings Leave Out</span>
             <h2>Every photo is real. Not every photo is the <span className="gold-word">whole story</span>.</h2>
-            {/* The old section went straight from the headline into the
-                tab strip, so nothing said what the eight things below
-                have in common: all of them decide what living there is
-                like, and none of them are in the listing. */}
-            <p className="ps4-lede">
-              Eight things that decide what a flat is like to live in. A listing tells you
-              none of them - and a site visit on one sunny Sunday afternoon tells you four at best.
-            </p>
           </div>
         </div>
 
@@ -136,6 +122,11 @@ export default function ProblemSolution() {
               <div className="ps4-col-head">
                 <span className="ps4-col-badge">{g.score}</span>
                 <p className="ps4-col-scope">{g.scope}</p>
+                {/* The eight per-row source lines this replaces were a
+                    whole second layer of text down the card. The claim
+                    is the same -- these are records, not opinions --
+                    said once per column instead of once per row. */}
+                <p className="ps4-col-source">{g.source}</p>
               </div>
 
               <ul className="ps4-list">
@@ -145,11 +136,6 @@ export default function ProblemSolution() {
                     <span className="ps4-row-body">
                       <span className="ps4-row-label">{b.label}</span>
                       <span className="ps4-row-desc">{b.desc}</span>
-                      {/* The line that separates this from a feature
-                          list: every row names where its number comes
-                          from, so the claim is checkable rather than
-                          asserted. */}
-                      <span className="ps4-row-source">{b.source}</span>
                     </span>
                   </li>
                 ))}
@@ -159,8 +145,7 @@ export default function ProblemSolution() {
         </div>
 
         <p className="ps4-foot">
-          Two scores, eight answers, <strong>one address</strong>{' '}
-          - and not a broker&apos;s word among them.
+          Two scores. Eight answers. <strong>No broker&apos;s word in any of them.</strong>
         </p>
       </div>
     </section>
