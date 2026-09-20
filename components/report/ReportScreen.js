@@ -222,6 +222,18 @@ export default function ReportScreen() {
   const [gFloor, setGFloor] = useState('');
   const [gFacing, setGFacing] = useState('');
 
+  // The map section below can take over the whole viewport (SunScout's
+  // own screen is nothing BUT the map, and that is the view people
+  // actually want when the question is "where does the sun land"). It
+  // is the same DOM node either way -- only the class changes -- so
+  // going full screen never remounts the iframe and the map never
+  // reloads or loses the angle you dragged it to.
+  const [fullMap, setFullMap] = useState(false);
+  // The full-screen map carries the address search on itself, the way
+  // the SunScout top bar does, rather than sending you back up to the
+  // report header to move the pin.
+  const [mapSearchOpen, setMapSearchOpen] = useState(false);
+
   const confirmUnit = useCallback(() => {
     const f = parseInt(gFloor, 10);
     if (Number.isFinite(f)) { setFloor(f); setFloorText(String(f)); }
@@ -229,6 +241,16 @@ export default function ReportScreen() {
     setAssumed(false);
     setUnitChosen(true);
   }, [gFloor, gFacing]);
+
+  // Second way out of the same popup: same floor/facing, but land on the
+  // full-screen animating map instead of the written verdict. Both
+  // answers are scored identically -- this only decides which of the two
+  // you are looking at when the page opens.
+  const confirmUnitToMap = useCallback(() => {
+    confirmUnit();
+    setFullMap(true);
+    setAnimating(true);
+  }, [confirmUnit]);
 
   // The floor/facing state already defaults to DEFAULT_FLOOR/
   // DEFAULT_FACING (see their useState initialisers above), and `assumed`
@@ -436,6 +458,38 @@ export default function ReportScreen() {
     return () => { cancelled = true; };
   }, [hasPlace, lat, lon, pinCode, floor, facing, areaWeight, scoreNonce, unitChosen]);
 
+  /* ---------------- full-screen map housekeeping ----------------
+     Locking the body while the map owns the viewport: without it a
+     wheel gesture that misses the iframe scrolls the report underneath,
+     so leaving full screen drops you somewhere you never navigated to.
+     Escape gets you out, the way it does out of any other overlay, and
+     the scroll guard is dropped on the way in (there is no page scroll
+     to protect) and re-armed on the way out. */
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    if (!fullMap) { setMapArmed(true); return; }
+    setMapArmed(false);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e) => { if (e.key === 'Escape') setFullMap(false); };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [fullMap]);
+
+  // Leaving full screen should put you back at the map you were just
+  // looking at, not at whatever scroll position the page happened to
+  // hold before it was locked.
+  const leftFull = useRef(false);
+  useEffect(() => {
+    if (fullMap) { leftFull.current = true; return; }
+    if (!leftFull.current) return;
+    leftFull.current = false;
+    document.getElementById('the-block')?.scrollIntoView({ block: 'start' });
+  }, [fullMap]);
+
   /* ---------------- sun path for the map ---------------- */
   useEffect(() => {
     if (!hasPlace) return;
@@ -526,6 +580,7 @@ export default function ReportScreen() {
     if (!Number.isFinite(toLat) || !Number.isFinite(toLon)) return;
     setLocError('');
     setAddrEditOpen(false);
+    setMapSearchOpen(false);
     setSolar(null); setSolarFailed(false); setAqi(null);
     setPlace({ lat: toLat, lon: toLon, pinCode: '', address: label || '' });
     pinAsked.current = `${toLat},${toLon}`;
@@ -893,6 +948,12 @@ export default function ReportScreen() {
               </div>
             </div>
 
+            {/* Two ways on from the same answer. The written verdict was
+                the only one for a long time, which meant the 3D map --
+                the thing that actually shows you why the flat scores
+                what it scores -- sat unseen below a wall of numbers.
+                Same floor, same facing, same scoring either way: this
+                only picks which view opens first. */}
             <div className="bsr-unitgate-actions">
               <button
                 type="button"
@@ -900,8 +961,22 @@ export default function ReportScreen() {
                 disabled={!gFloor || !gFacing}
                 onClick={confirmUnit}
               >
-                See my score
+                See the verdict
               </button>
+              <button
+                type="button"
+                className="bsr-unitgate-go is-map"
+                disabled={!gFloor || !gFacing}
+                onClick={confirmUnitToMap}
+              >
+                See the shadow map
+              </button>
+            </div>
+            <p className="bsr-unitgate-note">
+              The shadow map opens full screen and plays the whole day over this block.
+              The verdict is always one tap away from it.
+            </p>
+            <div className="bsr-unitgate-actions is-skip">
               <button type="button" className="bsr-unitgate-skip" onClick={skipUnit}>
                 I don&rsquo;t have a specific flat in mind - let me just browse
               </button>
@@ -1390,7 +1465,68 @@ export default function ReportScreen() {
           the top-right corner, the toolbar is kept clear of it (see
           .bsr-mapbar's right clearance in report.css) rather than
           overlapping it the way the old pill row once did. */}
-      <section className="bsr-mapzone" id="the-block" aria-label="The block in 3D">
+      <section
+        className={`bsr-mapzone${fullMap ? ' is-full' : ''}`}
+        id="the-block"
+        aria-label="The block in 3D"
+      >
+        {/* Full screen only: the SunScout-style header strip. Search,
+            the live score for whatever the toolbar below is currently
+            set to, and the way back to the written verdict. Everything
+            else on the map (play/pause, floor, faces, date, report) is
+            the same toolbar the inline map uses -- one set of controls,
+            two sizes. */}
+        {fullMap && (
+          <div className="bsr-fullbar">
+            <button
+              type="button"
+              className="bsr-fullbar-back"
+              onClick={() => setFullMap(false)}
+            >
+              ← See the verdict
+            </button>
+
+            <p className="bsr-fullbar-where">
+              <span className="bsr-fullbar-addr">{address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}</span>
+              <span className="bsr-fullbar-unit">
+                {ord(floor)} floor · faces {facing.toLowerCase()}
+                {assumed ? ' (assumed)' : ''}
+              </span>
+            </p>
+
+            <span className={`bsr-fullbar-score is-${toneOf(unit.score)}`}>
+              <strong>{unit.score}</strong>
+              <span>{word(unit.score)}</span>
+            </span>
+
+            <button
+              type="button"
+              className="bsr-fullbar-search-toggle"
+              onClick={() => setMapSearchOpen((v) => !v)}
+              aria-expanded={mapSearchOpen}
+            >
+              {mapSearchOpen ? 'Cancel' : 'Search address'}
+            </button>
+
+            {mapSearchOpen && (
+              <form className="bsr-fullbar-search bsr-locbar" onSubmit={onSearchSubmit}>
+                <input
+                  type="search"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Address or coordinates"
+                  aria-label="Move the pin to another address or coordinates -- press Enter to search"
+                  autoFocus
+                />
+                {locBusy ? <span className="bsr-loc-busy" aria-live="polite">Finding…</span> : null}
+                <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
+                  My location
+                </button>
+                {locError ? <p className="bsr-locerror">{locError}</p> : null}
+              </form>
+            )}
+          </div>
+        )}
         <div className="bsr-map" onMouseLeave={() => setMapArmed(true)}>
           {solar?.pathData ? (
             <Map3DShadow
@@ -1412,7 +1548,10 @@ export default function ReportScreen() {
               {solarFailed ? 'The 3D view couldn’t load. The scores below are unaffected.' : 'Building the 3D view…'}
             </p>
           )}
-          {solar?.pathData && mapArmed && (
+          {/* The guard exists to stop the map eating the PAGE's scroll.
+              Full screen there is no page scrolling behind it, so it is
+              only in the way. */}
+          {solar?.pathData && mapArmed && !fullMap && (
             <button
               type="button"
               className="bsr-map-guard"
@@ -1532,13 +1671,26 @@ export default function ReportScreen() {
             >
               Get the sun &amp; shadow report →
             </button>
+            {/* Same toolbar, both states -- so the way in and the way
+                out of full screen live in the same place rather than
+                being two different controls in two different corners. */}
+            <button
+              type="button"
+              className="bsr-mapbar-full"
+              onClick={() => setFullMap((v) => !v)}
+              aria-pressed={fullMap}
+            >
+              {fullMap ? '✕ Exit full screen' : '⤢ Full screen'}
+            </button>
           </div>
         </div>
-        <p className="bsr-maphint">
-          {reportRunning
-            ? 'The pin is locked while the report is built from this spot - moving it now would mix two blocks into one report.'
-            : 'Click again to move the pin to another building.'}
-        </p>
+        {!fullMap && (
+          <p className="bsr-maphint">
+            {reportRunning
+              ? 'The pin is locked while the report is built from this spot - moving it now would mix two blocks into one report.'
+              : 'Click again to move the pin to another building.'}
+          </p>
+        )}
       </section>
 
       <section className="bsr-visit" id="the-visit">

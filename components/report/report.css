@@ -1035,3 +1035,125 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   color:var(--text-mute,#5A5140);font-size:13px;font-weight:600;text-align:center;line-height:1.4;
 }
 .bsr-roomphoto-addcard:hover{border-color:var(--ss,#AF5F30);color:var(--ss,#AF5F30)}
+
+
+/* ================= the map, full screen =================
+   SunScout's whole screen is the map: shadows moving over the block,
+   with a thin bar of controls on top of it. This is that view, reached
+   from the "see the shadow map" answer in the floor/facing popup or
+   from "full screen" in the map's own toolbar.
+
+   It is deliberately the SAME element as the inline map further up the
+   report (.bsr-mapzone, only with .is-full added) rather than a second
+   map in a portal -- Map3DShadow is an iframe that rebuilds the whole
+   3D scene on mount, so a separate full-screen copy would mean a blank
+   map, a reload, and the loss of whatever angle and zoom you had just
+   dragged it to. Changing the class keeps the same iframe on screen and
+   only changes the box around it. */
+.bsr-mapzone.is-full{
+  position:fixed;inset:0;z-index:120;
+  margin:0;scroll-margin-top:0;
+  display:flex;flex-direction:column;
+  background:var(--bg-2,#F1E9DA);
+}
+.bsr-mapzone.is-full .bsr-map{
+  flex:1 1 auto;min-height:0;height:auto;
+  margin:0;border:none;border-radius:0;
+}
+/* The floating toolbar's top-left corner is where the header strip
+   above now ends, so it starts below it instead of underneath it. */
+.bsr-mapzone.is-full .bsr-mapbar{top:10px;left:10px}
+
+/* ---- the header strip (full screen only) ----
+   Back to the verdict, where the pin is, what it scores, and the
+   address search -- the report's own header is off screen here, so
+   everything needed to know what you are looking at and to move the
+   pin has to be on the map itself. */
+.bsr-fullbar{
+  flex:none;
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;
+  padding:10px 14px;
+  background:var(--paper,#FFFDF8);
+  border-bottom:1px solid var(--line,rgba(28,24,18,.14));
+}
+.bsr-fullbar-back{
+  flex:none;font:inherit;font-size:13px;font-weight:700;cursor:pointer;
+  padding:7px 14px;border-radius:999px;
+  border:1px solid var(--brand,#3D4116);
+  background:var(--brand,#3D4116);color:#FFFDF8;
+}
+.bsr-fullbar-back:hover{filter:brightness(.94)}
+.bsr-fullbar-where{
+  margin:0;min-width:0;flex:1 1 180px;
+  display:flex;flex-direction:column;gap:1px;
+}
+.bsr-fullbar-addr{
+  font-size:13.5px;font-weight:700;color:var(--text,#1C1812);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.bsr-fullbar-unit{
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.04em;
+  color:var(--text-mute,#5A5140);
+}
+/* The one number worth carrying onto the map: the flat's own score,
+   which re-runs as the floor/faces in the toolbar below are changed --
+   so the effect of a change is visible without leaving full screen. */
+.bsr-fullbar-score{
+  flex:none;display:flex;align-items:baseline;gap:6px;
+  padding:5px 12px;border-radius:999px;
+  background:var(--bsr-none-bg,rgba(28,24,18,.06));
+}
+.bsr-fullbar-score strong{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
+.bsr-fullbar-score span{font-size:11.5px;font-weight:600;letter-spacing:.03em}
+.bsr-fullbar-score.is-good{background:var(--bsr-good-bg);color:var(--bsr-good)}
+.bsr-fullbar-score.is-avg{background:var(--bsr-avg-bg);color:var(--bsr-avg)}
+.bsr-fullbar-score.is-poor{background:var(--bsr-poor-bg);color:var(--bsr-poor)}
+.bsr-fullbar-search-toggle{
+  flex:none;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;
+  padding:6px 12px;border-radius:999px;
+  border:1px solid var(--line,rgba(28,24,18,.2));
+  background:var(--paper,#FFFDF8);color:var(--text-mute,#5A5140);
+}
+.bsr-fullbar-search-toggle:hover{border-color:var(--brand,#3D4116);color:var(--brand,#3D4116)}
+/* Takes a full row of its own under the rest of the strip rather than
+   squeezing the address out of the line it is on. */
+.bsr-fullbar-search{flex:1 0 100%;margin-top:0}
+
+.bsr-mapbar-full{
+  font-family:inherit;font-size:10px;font-weight:600;cursor:pointer;
+  min-height:26px;padding:0 9px;margin-top:5px;border-radius:4px;flex:none;
+  border:1px solid var(--line,rgba(28,24,18,.2));
+  background:var(--paper,#FFFDF8);color:var(--text-mute,#5A5140);
+}
+.bsr-mapbar-full:hover{border-color:var(--brand,#3D4116);color:var(--brand,#3D4116)}
+@media (min-width:768px){
+  .bsr-mapbar-full{font-size:11.5px;min-height:29px;padding:0 12px}
+}
+@media (max-width:560px){
+  /* Phone: the score pill and the address fight for one line. The
+     score is the smaller thing to lose a line for. */
+  .bsr-fullbar{padding:8px 10px;gap:6px 8px}
+  .bsr-fullbar-back{font-size:12px;padding:6px 11px}
+  .bsr-fullbar-addr{font-size:12.5px}
+}
+
+/* The second answer out of the floor/facing popup. Same weight as the
+   verdict button -- neither is the fallback -- but only one of them is
+   filled, so the pair doesn't read as two competing primary actions. */
+.bsr-unitgate-go.is-map{
+  background:var(--paper,#FFFDF8);
+  color:var(--brand,#3D4116);
+  border:1px solid var(--brand,#3D4116);
+}
+.bsr-unitgate-go.is-map:not(:disabled):hover{background:rgba(61,65,22,.06)}
+.bsr-unitgate-note{
+  margin:10px 0 0;font-size:12.5px;line-height:1.55;
+  color:var(--text-mute,#5A5140);
+}
+.bsr-unitgate-actions.is-skip{margin-top:14px}
+@media (min-width:560px){
+  /* row-reverse on the base rule puts the LAST button first -- so the
+     verdict (written first in the JSX) needs to stay leftmost here. */
+  .bsr-unitgate-actions{flex-direction:row;justify-content:flex-start}
+  .bsr-unitgate-actions.is-skip{justify-content:center}
+}
