@@ -309,11 +309,22 @@ export default function ReportScreen() {
   // same scoring -- it only decides which of the two views opens first.
   // Defined here rather than next to confirmUnit because it needs
   // setAnimating, which is declared on the line above.
-  const confirmUnitToMap = useCallback(() => {
-    confirmUnit();
+  // The shadow map does NOT need the floor and the facing: it is the
+  // block in 3D with the sun moving over it, and it carries its own
+  // floor/faces controls in the toolbar anyway. Gating it on the popup
+  // was friction for nothing -- answer the question if you want a
+  // verdict, walk straight past it if you want to look at the shadows.
+  // Whatever IS filled in gets used, and `assumed` stays true unless
+  // both are, so the map's header strip keeps saying so.
+  const openShadowMap = useCallback(() => {
+    const f = parseInt(gFloor, 10);
+    if (Number.isFinite(f)) { setFloor(f); setFloorText(String(f)); }
+    if (gFacing) setFacing(gFacing);
+    if (Number.isFinite(f) && gFacing) setAssumed(false);
+    setUnitChosen(true);
     setFullMap(true);
     setAnimating(true);
-  }, [confirmUnit]);
+  }, [gFloor, gFacing]);
   // Which date the map is simulating. 'today' by default -- someone who has
   // just dropped a pin wants to recognise what they are looking at before
   // they start asking about December.
@@ -962,10 +973,13 @@ export default function ReportScreen() {
             <span className="bsr-unitgate-eyebrow">Before your score</span>
             <h2 className="bsr-unitgate-title">Which floor, which way does it face?</h2>
             <p className="bsr-unitgate-lede">
-              Sun, shade, view, privacy, airflow, dampness and noise all depend on the actual unit, not
-              just the address -- say which one and the score below is scored for it specifically.
+              Sun, shade, view, privacy and airflow are all set by the unit, not the address.
             </p>
 
+            {/* No placeholder on the floor box. A greyed "5" in an empty
+                field reads as a value already filled in -- people skipped
+                it believing they had answered, and the one number the
+                whole unit score rests on was a default nobody chose. */}
             <div className="bsr-unitgate-row">
               <label className="bsr-unitgate-floor">
                 <span>Floor</span>
@@ -976,33 +990,46 @@ export default function ReportScreen() {
                   maxLength={2}
                   value={gFloor}
                   onChange={(e) => setGFloor(e.target.value.replace(/[^\d]/g, '').slice(0, 2))}
-                  placeholder={String(DEFAULT_FLOOR)}
                   aria-label="Floor number"
                 />
               </label>
 
-              <div className="bsr-unitgate-facing" role="radiogroup" aria-label="Which way the flat faces">
-                {FACING_OPTS.map((f) => (
-                  <button
-                    key={f}
-                    type="button"
-                    role="radio"
-                    aria-checked={f === gFacing}
-                    className={`bsr-unitgate-chip${f === gFacing ? ' on' : ''}`}
-                    onClick={() => setGFacing(f)}
-                  >
-                    {FACING_SHORT[f]}
-                  </button>
-                ))}
+              {/* Eight identical grey chips in two rows said nothing about
+                  what they were. It's a compass, so it's drawn as one:
+                  each direction sits where it actually points, and the
+                  middle says which one is picked. */}
+              <div className="bsr-compass">
+                <div className="bsr-compass-grid" role="radiogroup" aria-label="Which way the flat faces">
+                  {FACING_OPTS.map((f) => (
+                    <button
+                      key={f}
+                      type="button"
+                      role="radio"
+                      aria-checked={f === gFacing}
+                      title={f}
+                      className={`bsr-compass-pt is-${FACING_SHORT[f].toLowerCase()}${f === gFacing ? ' on' : ''}`}
+                      onClick={() => setGFacing(f)}
+                    >
+                      {FACING_SHORT[f]}
+                    </button>
+                  ))}
+                  <span className="bsr-compass-face" aria-live="polite">
+                    {gFacing ? (
+                      <>
+                        <span className="bsr-compass-face-label">Faces</span>
+                        <span className="bsr-compass-face-val">{gFacing}</span>
+                      </>
+                    ) : (
+                      <span className="bsr-compass-face-ask">Which way?</span>
+                    )}
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Two ways on from the same answer. The written verdict was
-                the only one for a long time, which meant the 3D map --
-                the thing that actually shows you why the flat scores
-                what it scores -- sat unseen below a wall of numbers.
-                Same floor, same facing, same scoring either way: this
-                only picks which view opens first. */}
+            {/* The verdict genuinely needs both -- it is scored for that
+                exact unit. The map genuinely needs neither. So only one
+                of these two is ever disabled. */}
             <div className="bsr-unitgate-actions">
               <button
                 type="button"
@@ -1015,15 +1042,15 @@ export default function ReportScreen() {
               <button
                 type="button"
                 className="bsr-unitgate-go is-map"
-                disabled={!gFloor || !gFacing}
-                onClick={confirmUnitToMap}
+                onClick={openShadowMap}
               >
                 See the shadow map
               </button>
             </div>
             <p className="bsr-unitgate-note">
-              The shadow map opens full screen and plays the whole day over this block.
-              The verdict is always one tap away from it.
+              {gFloor && gFacing
+                ? 'The map opens full screen and plays the whole day over this block.'
+                : 'The map needs neither - open it now and set the floor and facing on the map itself.'}
             </p>
             <div className="bsr-unitgate-actions is-skip">
               <button type="button" className="bsr-unitgate-skip" onClick={skipUnit}>
