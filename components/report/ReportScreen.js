@@ -228,7 +228,11 @@ export default function ReportScreen() {
   // is the same DOM node either way -- only the class changes -- so
   // going full screen never remounts the iframe and the map never
   // reloads or loses the angle you dragged it to.
-  const [fullMap, setFullMap] = useState(false);
+  // ?view=map so it survives a refresh and travels in a shared link --
+  // "here is the shadow on this block" is exactly the thing someone
+  // sends to the person they are buying with, and without this it
+  // reopened on the written verdict instead.
+  const [fullMap, setFullMap] = useState(() => params.get('view') === 'map');
   // The full-screen map carries the address search on itself, the way
   // the SunScout top bar does, rather than sending you back up to the
   // report header to move the pin.
@@ -241,16 +245,6 @@ export default function ReportScreen() {
     setAssumed(false);
     setUnitChosen(true);
   }, [gFloor, gFacing]);
-
-  // Second way out of the same popup: same floor/facing, but land on the
-  // full-screen animating map instead of the written verdict. Both
-  // answers are scored identically -- this only decides which of the two
-  // you are looking at when the page opens.
-  const confirmUnitToMap = useCallback(() => {
-    confirmUnit();
-    setFullMap(true);
-    setAnimating(true);
-  }, [confirmUnit]);
 
   // The floor/facing state already defaults to DEFAULT_FLOOR/
   // DEFAULT_FACING (see their useState initialisers above), and `assumed`
@@ -309,6 +303,15 @@ export default function ReportScreen() {
   // SunScoutPanel starts it playing, and the shadows moving is the whole
   // reason the map is here. Passing false was switching it off.
   const [animating, setAnimating] = useState(true);
+  // Second way out of the floor/facing popup: same floor, same facing,
+  // same scoring -- it only decides which of the two views opens first.
+  // Defined here rather than next to confirmUnit because it needs
+  // setAnimating, which is declared on the line above.
+  const confirmUnitToMap = useCallback(() => {
+    confirmUnit();
+    setFullMap(true);
+    setAnimating(true);
+  }, [confirmUnit]);
   // Which date the map is simulating. 'today' by default -- someone who has
   // just dropped a pin wants to recognise what they are looking at before
   // they start asking about December.
@@ -462,22 +465,57 @@ export default function ReportScreen() {
      Locking the body while the map owns the viewport: without it a
      wheel gesture that misses the iframe scrolls the report underneath,
      so leaving full screen drops you somewhere you never navigated to.
-     Escape gets you out, the way it does out of any other overlay, and
-     the scroll guard is dropped on the way in (there is no page scroll
-     to protect) and re-armed on the way out. */
+
+     Deliberately a CLASS, not `document.body.style.overflow`. ReportModal
+     does its own inline save-and-restore of that property, and the report
+     is generated from the map's own toolbar -- so full screen and the
+     modal overlap by design. Two owners of one inline style is a stuck
+     page: leave full screen with the modal open and the modal's later
+     restore writes back the 'hidden' it captured from us, locking the
+     body with nothing on screen to explain it. A class and an inline
+     style don't collide, so each can come and go in any order.
+
+     Gated on the report actually being on screen, because the overlay
+     only exists in the main return: the floor/facing popup, the boot
+     screen and the error screen all return above it, and every one of
+     them is an ordinary page that has to stay scrollable. Deliberately
+     not `state === 'ready'` -- a re-score (changing the floor from
+     inside full screen) flips state back to 'loading' while `scores`
+     stays up and the map stays on screen, and unlocking mid-recalc
+     would let the page scroll away underneath it. */
+  const fullMapLive = fullMap && Boolean(scores) && state !== 'error';
   useEffect(() => {
     if (typeof document === 'undefined') return;
-    if (!fullMap) { setMapArmed(true); return; }
+    if (!fullMapLive) { setMapArmed(true); return; }
+    // The scroll guard exists to stop the map eating the page's scroll;
+    // there is no page scroll to protect here, so it is only in the way.
     setMapArmed(false);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('bsr-noscroll');
+    return () => document.body.classList.remove('bsr-noscroll');
+  }, [fullMapLive]);
+
+  // Escape leaves full screen, the way it leaves any other overlay --
+  // unless the report modal is up, in which case Escape belongs to it
+  // and pulling the map out from under a running capture would mean
+  // photographing a map that is mid-resize.
+  useEffect(() => {
+    if (!fullMapLive || reportOpen) return;
     const onKey = (e) => { if (e.key === 'Escape') setFullMap(false); };
     window.addEventListener('keydown', onKey);
-    return () => {
-      document.body.style.overflow = prev;
-      window.removeEventListener('keydown', onKey);
-    };
-  }, [fullMap]);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [fullMapLive, reportOpen]);
+
+  // A half-typed address search shouldn't still be sitting open the next
+  // time full screen is entered.
+  useEffect(() => { if (!fullMap) setMapSearchOpen(false); }, [fullMap]);
+
+  // Keyboard focus follows the view. Without this, tabbing after going
+  // full screen walks the report hidden underneath it.
+  const fullBackRef = useRef(null);
+  const fullToggleRef = useRef(null);
+  useEffect(() => {
+    if (fullMapLive) fullBackRef.current?.focus({ preventScroll: true });
+  }, [fullMapLive]);
 
   // Leaving full screen should put you back at the map you were just
   // looking at, not at whatever scroll position the page happened to
@@ -488,6 +526,11 @@ export default function ReportScreen() {
     if (!leftFull.current) return;
     leftFull.current = false;
     document.getElementById('the-block')?.scrollIntoView({ block: 'start' });
+    // The button that was focused (back-to-verdict) has just been
+    // unmounted, which drops focus to the body and sends the next Tab
+    // to the top of the document. Hand it to the control that now does
+    // the same job -- the toolbar's full-screen toggle.
+    fullToggleRef.current?.focus({ preventScroll: true });
   }, [fullMap]);
 
   /* ---------------- sun path for the map ---------------- */
@@ -843,8 +886,12 @@ export default function ReportScreen() {
     // sent someone, presented floor 5 / south-east as confirmed when nobody
     // had confirmed anything, with the whole unit score resting on them.
     if (assumed) q.set('assumed', '1');
+    // Which of the two views you are in, so a refresh and a shared link
+    // both reopen on the map you were actually looking at rather than
+    // dropping you back into the written verdict.
+    if (fullMap) q.set('view', 'map');
     window.history.replaceState(window.history.state, '', `${window.location.pathname}?${q.toString()}`);
-  }, [hasPlace, lat, lon, pinCode, address, floor, facing, assumed]);
+  }, [hasPlace, lat, lon, pinCode, address, floor, facing, assumed, fullMap]);
 
   /* ---------------- states that aren't the report ---------------- */
   if (!hasPlace) {
@@ -1481,6 +1528,7 @@ export default function ReportScreen() {
             <button
               type="button"
               className="bsr-fullbar-back"
+              ref={fullBackRef}
               onClick={() => setFullMap(false)}
             >
               ← See the verdict
@@ -1489,14 +1537,29 @@ export default function ReportScreen() {
             <p className="bsr-fullbar-where">
               <span className="bsr-fullbar-addr">{address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}</span>
               <span className="bsr-fullbar-unit">
-                {ord(floor)} floor · faces {facing.toLowerCase()}
-                {assumed ? ' (assumed)' : ''}
+                {/* The pin lock has a one-line explanation under the
+                    inline map (.bsr-maphint), which is off screen here --
+                    so the same warning takes this line while a capture
+                    is running, rather than the map silently ignoring
+                    taps with nothing saying why. */}
+                {reportRunning
+                  ? 'Pin locked while the report is built'
+                  : `${ord(floor)} floor · faces ${facing.toLowerCase()}${assumed ? ' (assumed)' : ''}`}
               </span>
             </p>
 
-            <span className={`bsr-fullbar-score is-${toneOf(unit.score)}`}>
+            {/* Re-runs as the floor and faces in the toolbar below are
+                changed, so the effect of a change is visible without
+                leaving full screen for the verdict. `busy` is the same
+                re-scoring flag the verdict's own rating line uses --
+                without it the old number sits there looking settled
+                while a new one is in flight. */}
+            <span
+              className={`bsr-fullbar-score is-${toneOf(unit.score)}${busy ? ' is-busy' : ''}`}
+              aria-live="polite"
+            >
               <strong>{unit.score}</strong>
-              <span>{word(unit.score)}</span>
+              <span>{busy ? 'rescoring…' : word(unit.score)}</span>
             </span>
 
             <button
@@ -1677,6 +1740,7 @@ export default function ReportScreen() {
             <button
               type="button"
               className="bsr-mapbar-full"
+              ref={fullToggleRef}
               onClick={() => setFullMap((v) => !v)}
               aria-pressed={fullMap}
             >

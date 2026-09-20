@@ -1055,7 +1055,24 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   margin:0;scroll-margin-top:0;
   display:flex;flex-direction:column;
   background:var(--bg-2,#F1E9DA);
+  animation:bsr-full-in .18s ease-out;
 }
+@keyframes bsr-full-in{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){
+  .bsr-mapzone.is-full{animation:none}
+}
+/* Printing while the map owns the viewport used to put a fixed overlay
+   over every page of the printed report. */
+@media print{
+  .bsr-mapzone.is-full{position:static;height:auto}
+  .bsr-fullbar{display:none}
+}
+/* Set while the map owns the viewport, so a wheel gesture that misses
+   the iframe can't scroll the report out from under it. A class, not an
+   inline style: ReportModal saves and restores body.style.overflow
+   itself, and the report is generated from the map's own toolbar, so
+   the two overlap by design and must not share one property. */
+body.bsr-noscroll{overflow:hidden}
 .bsr-mapzone.is-full .bsr-map{
   flex:1 1 auto;min-height:0;height:auto;
   margin:0;border:none;border-radius:0;
@@ -1108,6 +1125,11 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 .bsr-fullbar-score.is-good{background:var(--bsr-good-bg);color:var(--bsr-good)}
 .bsr-fullbar-score.is-avg{background:var(--bsr-avg-bg);color:var(--bsr-avg)}
 .bsr-fullbar-score.is-poor{background:var(--bsr-poor-bg);color:var(--bsr-poor)}
+/* Mid-rescore: the number on screen is the previous floor's. Dimmed
+   rather than blanked, so the pill doesn't collapse and shove the row
+   around every time the floor is nudged. */
+.bsr-fullbar-score.is-busy{opacity:.6}
+.bsr-fullbar-score.is-busy span{font-style:italic}
 .bsr-fullbar-search-toggle{
   flex:none;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;
   padding:6px 12px;border-radius:999px;
