@@ -240,12 +240,6 @@ export default function ReportScreen({ view = 'verdict' }) {
   // was skipped -- that decides the "scored at the centre of this
   // address" caveat below.
   const [pinTouched, setPinTouched] = useState(() => params.get('pin') === '1');
-  // Which building the renderer says was tapped, and where on screen it
-  // was -- the id goes back into the scene to keep it highlighted, the
-  // coordinates anchor the floor/facing popup to the building itself.
-  const [highlightId, setHighlightId] = useState(null);
-  const [unitPopup, setUnitPopup] = useState(null); // { x, y, below } | null
-  const mapBoxRef = useRef(null);
 
   // The map section below can take over the whole viewport (SunScout's
   // own screen is nothing BUT the map, and that is the view people
@@ -691,29 +685,11 @@ export default function ReportScreen({ view = 'verdict' }) {
   // finished five minutes earlier.
   const [reportBusy, setReportBusy] = useState(false);
   const reportRunning = reportOpen !== null && reportBusy;
-  const onMapClick = useCallback((clickLat, clickLon, meta) => {
+  const onMapClick = useCallback((clickLat, clickLon) => {
     if (reportRunning) { setLocError('The report is being built from this spot - let it finish, then move the pin.'); return; }
     // This is the whole point of the map step: the tap that moves the pin
     // off the geocoded centre and onto the actual building.
     setPinTouched(true);
-    setHighlightId(meta?.buildingId ?? null);
-    // Asking for floor and facing here, on the building, is the whole
-    // reason the old popup could be deleted: at this point the question
-    // is about something on screen and already picked out in brand
-    // colour, rather than an abstract one asked before anything was.
-    // Keep the callout on screen: a tap near an edge would otherwise put
-    // half of it outside the map, and one near the top has no room for
-    // the pointer above it, so it flips below the building instead.
-    if (typeof meta?.x === 'number') {
-      const box = mapBoxRef.current?.getBoundingClientRect();
-      const w = box?.width ?? 0;
-      const half = 130;
-      setUnitPopup({
-        x: w ? Math.min(Math.max(meta.x, half), w - half) : meta.x,
-        y: meta.y,
-        below: meta.y < 260,
-      });
-    }
     moveTo(clickLat, clickLon, '');
   }, [moveTo, reportRunning]);
 
@@ -1047,7 +1023,7 @@ export default function ReportScreen({ view = 'verdict' }) {
             )}
           </div>
         )}
-        <div className="bsr-map" ref={mapBoxRef} onMouseLeave={() => setMapArmed(true)}>
+        <div className="bsr-map" onMouseLeave={() => setMapArmed(true)}>
           {solar?.pathData ? (
             <Map3DShadow
               lat={lat}
@@ -1058,7 +1034,6 @@ export default function ReportScreen({ view = 'verdict' }) {
               sunTimes={solar.sunTimes}
               animating={animating}
               onLocationSelect={onMapClick}
-              highlightId={highlightId}
               onReady={capture.onReady}
               onScreenshot={capture.onScreenshot}
               onStatus={capture.onStatus}
@@ -1089,83 +1064,6 @@ export default function ReportScreen({ view = 'verdict' }) {
               exists to make someone do, styled like the least important
               control on it. Bottom centre, full-size, with the state of
               the pin said directly above it. */}
-          {/* Anchored to the tap, so the question arrives attached to the
-              building it is about. The building itself is highlighted in
-              the same brand colour by the renderer (see highlightId), so
-              the popup and the thing it describes read as one object. */}
-          {fullMap && unitPopup && (
-            <div
-              className={`bsr-unitpop${unitPopup.below ? ' is-below' : ''}`}
-              style={{ left: `${unitPopup.x}px`, top: `${unitPopup.y}px` }}
-              role="dialog"
-              aria-label="Set the floor and facing for this building"
-            >
-              <div className="bsr-unitpop-head">
-                <span className="bsr-unitpop-title">This building</span>
-                <button
-                  type="button"
-                  className="bsr-unitpop-x"
-                  onClick={() => setUnitPopup(null)}
-                  aria-label="Close"
-                >
-                  ×
-                </button>
-              </div>
-
-              <label className="bsr-unitpop-floor">
-                <span>Floor</span>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={2}
-                  value={floorText}
-                  onChange={(e) => {
-                    const raw = e.target.value.replace(/[^\d]/g, '').slice(0, 2);
-                    setFloorText(raw);
-                    const n = parseInt(raw, 10);
-                    if (Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR) { setAssumed(false); setFloor(n); }
-                  }}
-                  onBlur={() => {
-                    const n = parseInt(floorText, 10);
-                    const clamped = Number.isFinite(n) ? Math.min(MAX_FLOOR, Math.max(1, n)) : floor;
-                    setFloor(clamped);
-                    setFloorText(String(clamped));
-                  }}
-                  aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
-                />
-              </label>
-
-              {/* Same compass as everywhere else: each point where it
-                  actually points, the answer written out in the middle. */}
-              <div className="bsr-compass is-mini">
-                <div className="bsr-compass-grid" role="radiogroup" aria-label="Which way the flat faces">
-                  {FACING_OPTS.map((f) => (
-                    <button
-                      key={f}
-                      type="button"
-                      role="radio"
-                      aria-checked={f === facing}
-                      title={f}
-                      className={`bsr-compass-pt is-${FACING_SHORT[f].toLowerCase()}${f === facing ? ' on' : ''}`}
-                      onClick={() => { setAssumed(false); setFacing(f); }}
-                    >
-                      {FACING_SHORT[f]}
-                    </button>
-                  ))}
-                  <span className="bsr-compass-face" aria-live="polite">
-                    <span className="bsr-compass-face-label">Faces</span>
-                    <span className="bsr-compass-face-val">{facing}</span>
-                  </span>
-                </div>
-              </div>
-
-              <button type="button" className="bsr-unitpop-done" onClick={() => setUnitPopup(null)}>
-                Done
-              </button>
-            </div>
-          )}
-
           {fullMap && (
             <div className={`bsr-mapcta${pinTouched ? ' is-ready' : ''}`}>
               <p className="bsr-mapcta-say">
