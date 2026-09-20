@@ -275,7 +275,7 @@ export default function HeroLiveMapCanvas() {
     setAutoGo(false);
 
     router.prefetch?.(
-      `/report?lat=${r.lat}&lon=${r.lon}` +
+      `/report/locate?lat=${r.lat}&lon=${r.lon}` +
       `&pin_code=${encodeURIComponent(r.postcode || '')}` +
       `&address=${encodeURIComponent(r.displayName || '')}`
     );
@@ -536,7 +536,7 @@ export default function HeroLiveMapCanvas() {
             and opens. */}
         {pin && (
           <PinDropTransition
-            href={`/report?lat=${pin.lat}&lon=${pin.lon}` +
+            href={`/report/locate?lat=${pin.lat}&lon=${pin.lon}` +
                   `&pin_code=${encodeURIComponent(pin.postcode || '')}` +
                   `&address=${encodeURIComponent(pin.label || query || '')}`}
             autoStart={autoGo}

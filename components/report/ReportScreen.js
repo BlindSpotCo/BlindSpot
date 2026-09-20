@@ -13,7 +13,7 @@
 // screen -- nothing here can end up as a blank page.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Map3DShadow from '@/components/sunscout/Map3DShadow';
 import ReportModal from '@/components/sunscout/ReportModal';
 import useMapCapture, { SHOTS } from '@/lib/sunscout/useMapCapture';
@@ -179,8 +179,16 @@ function aqiWord(v) {
   return 'Very poor';
 }
 
-export default function ReportScreen() {
+// `view` is which of the two screens this is. They are separate routes --
+// /report/locate is the map step, /report is the verdict -- so moving
+// between them is a real navigation and the browser's own Back button
+// works the way it looks like it should: back from the verdict returns
+// to the map you placed the pin on, not to the landing page. As one
+// route with an internal flag, Back skipped the whole flow, which is
+// what someone reaching for it is least likely to want.
+export default function ReportScreen({ view = 'verdict' }) {
   const params = useSearchParams();
+  const router = useRouter();
 
   const [place, setPlace] = useState(() => ({
     lat: parseFloat(params.get('lat')),
@@ -224,13 +232,14 @@ export default function ReportScreen() {
   // the new spot, and confirming it is what opens the written verdict.
   // Floor and facing still live on the map's own toolbar, where they can
   // be set while looking at the thing they describe.
-  const [spotConfirmed, setSpotConfirmed] = useState(
-    () => params.get('confirmed') === '1'
-  );
   // Whether the pin has been moved off the geocoded point on this visit.
   // Only changes what the map asks for -- "tap your building" before,
   // "use this spot" after.
-  const [pinTouched, setPinTouched] = useState(false);
+  // Carried across the navigation in the query string (?pin=1), so the
+  // verdict knows whether the pin was actually placed or the map step
+  // was skipped -- that decides the "scored at the centre of this
+  // address" caveat below.
+  const [pinTouched, setPinTouched] = useState(() => params.get('pin') === '1');
 
   // The map section below can take over the whole viewport (SunScout's
   // own screen is nothing BUT the map, and that is the view people
@@ -242,27 +251,38 @@ export default function ReportScreen() {
   // "here is the shadow on this block" is exactly the thing someone
   // sends to the person they are buying with, and without this it
   // reopened on the written verdict instead.
-  // A fresh arrival lands on the map (see spotConfirmed above).
-  // ?view=map still forces it for a shared link, and ?confirmed=1 means
-  // this person has already placed their pin, so a refresh or a back
-  // doesn't send them round the loop again.
-  const [fullMap, setFullMap] = useState(
-    () => params.get('view') === 'map' || params.get('confirmed') !== '1'
-  );
+  // Which screen this is comes from the route, not from a flag.
+  const [fullMap, setFullMap] = useState(() => view === 'map');
   // The full-screen map carries the address search on itself, the way
   // the SunScout top bar does, rather than sending you back up to the
   // report header to move the pin.
   const [mapSearchOpen, setMapSearchOpen] = useState(false);
 
-  // Confirming the spot is what ends the map step and opens the verdict.
-  // toVerdict marks THIS exit as "show me the verdict" so the scroll
-  // below lands on the score rather than on the map (see leftFull).
-  const exitToVerdict = useRef(false);
+  // The address, the unit and whether a pin was placed -- everything the
+  // other screen needs to open on exactly what this one is showing.
+  const flowQuery = useCallback((extra = {}) => {
+    const q = new URLSearchParams();
+    q.set('lat', String(lat));
+    q.set('lon', String(lon));
+    if (pinCode) q.set('pin_code', pinCode);
+    if (address) q.set('address', address);
+    q.set('floor', String(floor));
+    q.set('facing', facing);
+    if (assumed) q.set('assumed', '1');
+    Object.entries(extra).forEach(([k, v]) => v && q.set(k, v));
+    return q.toString();
+  }, [lat, lon, pinCode, address, floor, facing, assumed]);
+
+  // Confirming the spot ends the map step -- a real navigation to the
+  // verdict, so Back comes back here with the pin still on it.
   const confirmSpot = useCallback(() => {
-    exitToVerdict.current = true;
-    setSpotConfirmed(true);
-    setFullMap(false);
-  }, []);
+    router.push(`/report?${flowQuery({ pin: pinTouched ? '1' : '' })}`);
+  }, [router, flowQuery, pinTouched]);
+
+  // ...and the way back to it from the verdict's own map toolbar.
+  const openLocate = useCallback(() => {
+    router.push(`/report/locate?${flowQuery({ pin: pinTouched ? '1' : '' })}`);
+  }, [router, flowQuery, pinTouched]);
 
   // "The area" and "the flat" each carry a full breakdown (every factor
   // row, the sub-scores) underneath a short summary (name/floor, rating
@@ -533,16 +553,10 @@ export default function ReportScreen() {
     if (fullMap) { leftFull.current = true; return; }
     if (!leftFull.current) return;
     leftFull.current = false;
-    // Confirming the pin is a step forward, so it lands on the answer.
-    // This used to scroll to #the-block every time, which meant the
-    // button labelled "continue to the verdict" put you back at the top
-    // of the map you had just finished with -- the verdict was above
-    // you, unseen, and it read as though the button had done nothing.
-    // Toggling full screen off LATER (from the toolbar, pin already
-    // confirmed) still returns you to the map, which is where you were.
-    const target = exitToVerdict.current ? 'the-score' : 'the-block';
-    exitToVerdict.current = false;
-    document.getElementById(target)?.scrollIntoView({ block: 'start' });
+    // Only reachable from the verdict's own full-screen toggle now (the
+    // map step exits by navigating), so this returns you to the map --
+    // which is where you were when you opened it.
+    document.getElementById('the-block')?.scrollIntoView({ block: 'start' });
     // The button that was focused (back-to-verdict) has just been
     // unmounted, which drops focus to the body and sends the next Tab
     // to the top of the document. Hand it to the control that now does
@@ -909,12 +923,12 @@ export default function ReportScreen() {
     // Which of the two views you are in, so a refresh and a shared link
     // both reopen on the map you were actually looking at rather than
     // dropping you back into the written verdict.
-    if (fullMap) q.set('view', 'map');
-    // Once the pin is placed, say so in the URL -- otherwise a refresh or
-    // the back button drops you back onto the map step you just finished.
-    if (spotConfirmed) q.set('confirmed', '1');
+    // Which screen you are on is the path now, not a flag. What the URL
+    // still has to carry is whether the pin was actually placed, so a
+    // refresh or a shared link keeps the caveat honest.
+    if (pinTouched) q.set('pin', '1');
     window.history.replaceState(window.history.state, '', `${window.location.pathname}?${q.toString()}`);
-  }, [hasPlace, lat, lon, pinCode, address, floor, facing, assumed, fullMap, spotConfirmed]);
+  }, [hasPlace, lat, lon, pinCode, address, floor, facing, assumed, pinTouched]);
 
   /* ---------------- states that aren't the report ---------------- */
   if (!hasPlace) {
@@ -1099,7 +1113,7 @@ export default function ReportScreen() {
           {!pinTouched && (
             <p className="bsr-assumed-note">
               Scored at the centre of this address, not a specific building -{' '}
-              <button type="button" className="bsr-inline-link" onClick={() => setFullMap(true)}>
+              <button type="button" className="bsr-inline-link" onClick={openLocate}>
                 open the map and tap your tower
               </button>{' '}
               to score the real spot.
@@ -1679,7 +1693,7 @@ export default function ReportScreen() {
               type="button"
               className="bsr-mapbar-full"
               ref={fullToggleRef}
-              onClick={() => (fullMap ? confirmSpot() : setFullMap(true))}
+              onClick={() => (fullMap ? confirmSpot() : openLocate())}
               aria-pressed={fullMap}
             >
               {fullMap ? '✕ Exit full screen' : '⤢ Full screen'}
