@@ -3,7 +3,6 @@
 import { useEffect } from 'react';
 import SiteHeader from '@/components/SiteHeader';
 import HeroLiveMap from '@/components/HeroLiveMap';
-import ProblemSolution from '@/components/ProblemSolution';
 import TwoScores from '@/components/TwoScores';
 import StepsHowItWorks from '@/components/StepsHowItWorks';
 import FAQSection from '@/components/FAQSection';
@@ -64,15 +63,17 @@ export default function Home() {
         <HeroLiveMap />
       </section>
 
-      {/* ===== THE REST OF THE PAGE -- redone from scratch =====
-          Five sections, each its own component: the problem/solution
-          framing, the two real scoring engines explained, the 3-step
-          flow, an FAQ, and the closing CTA + footer. The team used to
-          be its own sixth section here -- moved into ClosingCTA's
-          footer instead (see that file's top comment for why). */}
-      <ProblemSolution />
-      <TwoScores />
+      {/* ===== THE REST OF THE PAGE =====
+          Four sections. "What Listings Leave Out" used to open this
+          run, ahead of How It Works -- a long argument about what a
+          listing omits, before anything had said what this site does
+          with that. How It Works leads now (three steps, forty words),
+          so the first thing after the hero is the product, and the two
+          scores explain themselves straight after it. The section
+          numbers renumber with the order, since they are read as a
+          sequence. */}
       <StepsHowItWorks />
+      <TwoScores />
       <FAQSection />
       <ClosingCTA />
     </>

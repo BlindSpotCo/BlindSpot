@@ -47,7 +47,7 @@ export default function StepsHowItWorks() {
       <div className="wrap section-inner">
         <div className="section-head">
           <div>
-            <span className="eyebrow">03 - How It Works</span>
+            <span className="eyebrow">01 - How It Works</span>
             <h2>Three steps. No <span className="gold-word">broker</span> required.</h2>
           </div>
         </div>

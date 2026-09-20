@@ -55,7 +55,7 @@ export default function ClosingCTA() {
     <section className="section section-closing2 reveal">
       <div className="cc-grain" aria-hidden="true" />
       <div className="wrap closing2-inner">
-        <span className="eyebrow">05 - One Pin Away</span>
+        <span className="eyebrow">04 - One Pin Away</span>
         <h2>Because every property has a blindspot, and we&apos;re making it <span className="gold-word">visible</span>.</h2>
         <div className="closing2-ctas">
           <Link href="/#find" className="btn btn-lg btn-cta" onClick={goToSearch}>

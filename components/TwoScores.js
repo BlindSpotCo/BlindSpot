@@ -24,15 +24,20 @@
 // word + number reads faster and is one less thing that doesn't exist
 // in the real report.
 
+// The bars are the real raw scores, not a four-step approximation of
+// the word beside them -- same numbers the V6 comment above lists from
+// nqi_scores.json and lib/sunscout/scoring, so Infrastructure's 45 and
+// Air Quality's 75 read as genuinely different lengths instead of both
+// rounding to "some of the bar".
 const NEIGHBOURHOOD_DIMS = [
-  { label: 'Safety', word: 'Excellent', tone: 'good' },
-  { label: 'Infrastructure', word: 'Fair', tone: 'avg' },
-  { label: 'Air Quality', word: 'Good', tone: 'good', fill: 3 },
-  { label: 'Schools', word: 'Excellent', tone: 'good' },
-  { label: 'Power', word: 'Excellent', tone: 'good' },
-  { label: 'Water', word: 'Excellent', tone: 'good' },
-  { label: 'Roads', word: 'Excellent', tone: 'good' },
-  { label: 'Drainage', word: 'Excellent', tone: 'good' },
+  { label: 'Safety', word: 'Excellent', tone: 'good', score: 90 },
+  { label: 'Infrastructure', word: 'Fair', tone: 'avg', score: 45 },
+  { label: 'Air Quality', word: 'Good', tone: 'good', score: 75 },
+  { label: 'Schools', word: 'Excellent', tone: 'good', score: 100 },
+  { label: 'Power', word: 'Excellent', tone: 'good', score: 94 },
+  { label: 'Water', word: 'Excellent', tone: 'good', score: 100 },
+  { label: 'Roads', word: 'Excellent', tone: 'good', score: 100 },
+  { label: 'Drainage', word: 'Excellent', tone: 'good', score: 100 },
 ];
 // Dampness was missing here while section 01 above lists "Damp rooms"
 // as one of the eight things we check -- the engine that supposedly
@@ -45,16 +50,13 @@ const NEIGHBOURHOOD_DIMS = [
 // conservative side of that 58-60 boundary, since monsoon drying is
 // never actually at the model's ceiling.
 const COMFORT_DIMS = [
-  { label: 'Sun', word: 'Excellent', tone: 'good' },
-  { label: 'Heat Risk', word: 'Poor', tone: 'poor' },
-  { label: 'View', word: 'Fair', tone: 'avg' },
-  { label: 'Privacy', word: 'Fair', tone: 'avg' },
-  { label: 'Ventilation', word: 'Fair', tone: 'avg' },
-  { label: 'Dampness', word: 'Fair', tone: 'avg' },
+  { label: 'Sun', word: 'Excellent', tone: 'good', score: 100 },
+  { label: 'Heat Risk', word: 'Poor', tone: 'poor', score: 0 },
+  { label: 'View', word: 'Fair', tone: 'avg', score: 41 },
+  { label: 'Privacy', word: 'Fair', tone: 'avg', score: 44 },
+  { label: 'Ventilation', word: 'Fair', tone: 'avg', score: 50 },
+  { label: 'Dampness', word: 'Fair', tone: 'avg', score: 58 },
 ];
-
-// Excellent/Good/Fair/Poor -> how many of the four meter segments light.
-const METER_FILL = { good: 4, avg: 2, poor: 1 };
 
 function ScoreCard({ accentVar, tag, name, blurb, score, grade, word, tone, example, dims }) {
   return (
@@ -74,15 +76,18 @@ function ScoreCard({ accentVar, tag, name, blurb, score, grade, word, tone, exam
           <li key={d.label} className={`ts4-row is-${d.tone}`}>
             <span className="ts4-row-label">{d.label}</span>
             <span className="ts4-row-word">{d.word}</span>
-            {/* Four segments, filled to the tone. Eight rows of the
-                word "Excellent" was unreadable as a pattern -- which
-                factor is the low one took reading every line. The
-                meter makes Infrastructure and Heat Risk findable at a
-                glance, and the word stays for anyone who wants it. */}
+            {/* One full-length track filled to the real score, in the
+                same tone colours the verdict card above uses. Eight rows
+                of the word "Excellent" was unreadable as a pattern --
+                which factor is the low one took reading every line. The
+                four-segment version that replaced it only ever had five
+                lengths, so 45 and 41 drew identically; a real bar shows
+                the difference. Heat Risk is a true 0 and would draw
+                nothing at all, so the fill floors at 3% -- enough to
+                read as "almost none" in its own colour rather than as a
+                missing bar. */}
             <span className="ts4-row-meter" aria-hidden="true">
-              {[0, 1, 2, 3].map((seg) => (
-                <span key={seg} className={seg < (d.fill ?? METER_FILL[d.tone]) ? 'is-on' : undefined} />
-              ))}
+              <span className="ts4-row-fill" style={{ width: `${Math.max(d.score, 3)}%` }} />
             </span>
           </li>
         ))}
