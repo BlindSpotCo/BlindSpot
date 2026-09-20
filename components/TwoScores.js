@@ -143,7 +143,7 @@ export default function TwoScores() {
               <em>50</em>
               <span>This flat</span>
             </span>
-            <span className="ts4-vm-note">Weighted 50/50 - yours to change</span>
+            <span className="ts4-vm-note">Weighted 50/50</span>
           </div>
         </div>
 
