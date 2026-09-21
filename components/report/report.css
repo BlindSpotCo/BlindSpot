@@ -450,15 +450,17 @@
   height:clamp(380px, 68vh, 760px);
   background:var(--bg-2,#F1E9DA);
 }
-/* The toolbar and the step's CTA are the direct children that must NOT
-   stretch to fill the map; everything else (the Map3DShadow iframe, the
-   loading/error message) still should. Without .bsr-mapcta listed here
-   it inherited width:100%;height:100%, which overrode its own width and
-   made `bottom` meaningless -- a full-bleed panel pinned to the top of
-   the map instead of a button at the bottom of it. .bsr-dock (the card
-   that now wraps the CTA and the docked toolbar) is excluded for the same
-   reason: stretched, it became a 97%-opaque cream sheet over the whole map. */
-.bsr-map > *:not(.bsr-mapbar):not(.bsr-mapcta):not(.bsr-dock){width:100%;height:100%}
+/* The toolbar and the fields/CTA wrapper are the direct children that
+   must NOT stretch to fill the map; everything else (the Map3DShadow
+   iframe, the loading/error message) still should. Without
+   .bsr-dockzone listed here it inherited width:100%;height:100%, which
+   overrode its own `left`/`right`/`bottom` positioning -- a full-bleed
+   panel pinned to the top of the map instead of a card near its edge.
+   .bsr-dock and .bsr-mapcta live INSIDE .bsr-dockzone now (not direct
+   children of .bsr-map any more, even past 900px where .bsr-dockzone
+   itself renders no box -- see .bsr-dockzone's own rules below), so
+   this selector only needs to name the wrapper. */
+.bsr-map > *:not(.bsr-mapbar):not(.bsr-dockzone){width:100%;height:100%}
 .bsr-map-wait{
   display:flex;align-items:center;justify-content:center;text-align:center;
   height:100%;padding:0 24px;color:var(--text-mute,#5A5140);font-size:16px;
@@ -1284,23 +1286,27 @@ body.bsr-noscroll{overflow:hidden}
   .bsr-fullbar-season select{font-size:13.5px;min-height:38px;padding:5px 10px}
 }
 
-/* ---- the step's own action, on the map ----
-   Bottom centre, above everything, deliberately the largest thing on
-   the screen after the map itself: this is the one action the whole
-   step exists for, and as a 13px pill in the header bar it read as
-   optional. The line above it is the instruction, so the button never
-   has to carry it. */
-/* .bsr-dock is the right-side panel: who lives here (Floor/Faces),
-   then the one action this step exists for. Right side rather than
-   bottom-centre so it never sits over the part of the building someone
-   is trying to tap -- play/pause and season moved up to .bsr-fullbar
-   (above), so this card is just the unit and the go button, the way a
-   real form reads: a heading, two fields, one action. Mobile keeps a
-   full-width bottom sheet instead (see the max-width:899px block below)
-   -- a fixed-width side panel doesn't have anywhere to go on a phone. */
-.bsr-dock{
+/* ---- the fields and the step's own action, on the map ----
+   .bsr-dockzone wraps both .bsr-dock (Floor/Faces) and .bsr-mapcta
+   (the instruction line + go button) into one card below 900px --
+   there isn't room to separate them on a phone, so they read as a
+   single bottom sheet, same as before this was two elements instead
+   of one.
+
+   Past 900px there IS room, and the two want different homes: the
+   fields are something to glance at and set once, so they go in a
+   compact corner card, off to the side where they never sit over the
+   part of the building someone is trying to tap. The go button is the
+   one action this whole step exists for, and a corner card is the
+   wrong amount of attention for it -- bottom centre, deliberately the
+   largest thing on the screen after the map itself, is where an eye
+   actually goes looking for "the button to press now". It also keeps
+   it clear of the map's own "set view angle" pad, which lives on the
+   map's own left edge (see Map3DShadow.js) precisely so the two
+   floating panels stop competing for the same corner. */
+.bsr-dockzone{
   position:absolute; left:16px; right:16px; bottom:14px;
-  z-index:14; width:auto;
+  z-index:14;
   display:flex; flex-direction:column; align-items:stretch; gap:14px;
   padding:16px 18px;
   border-radius:16px;
@@ -1309,10 +1315,32 @@ body.bsr-noscroll{overflow:hidden}
   box-shadow:0 10px 34px rgba(28,24,18,.22);
   text-align:left;
 }
+.bsr-dock{ display:flex; flex-direction:column; align-items:stretch; gap:14px; }
 @media (min-width:900px){
+  /* display:contents drops .bsr-dockzone's own box (its card chrome
+     above stops applying) without touching the DOM, so .bsr-dock and
+     .bsr-mapcta below can each become their own independently
+     positioned card, anchored to .bsr-map same as the wrapper was. */
+  .bsr-dockzone{ display:contents; }
   .bsr-dock{
-    left:auto; right:20px; bottom:auto; top:96px;
-    width:min(288px, calc(100% - 40px));
+    position:absolute; left:auto; right:20px; bottom:auto; top:96px;
+    z-index:14; width:min(288px, calc(100% - 40px));
+    padding:16px 18px;
+    border-radius:16px;
+    background:rgba(255,253,248,.97);
+    border:1px solid var(--line,rgba(28,24,18,.14));
+    box-shadow:0 10px 34px rgba(28,24,18,.22);
+    text-align:left;
+  }
+  .bsr-mapcta{
+    position:absolute; left:50%; right:auto; bottom:24px; top:auto;
+    transform:translateX(-50%);
+    z-index:14; width:min(420px, calc(100% - 40px));
+    padding:18px 24px;
+    border-radius:16px;
+    background:rgba(255,253,248,.97);
+    border:1px solid var(--line,rgba(28,24,18,.14));
+    box-shadow:0 10px 34px rgba(28,24,18,.22);
   }
 }
 .bsr-dock-title{
@@ -1390,7 +1418,7 @@ body.bsr-noscroll{overflow:hidden}
 .bsr-mapcta.is-ready .bsr-mapcta-go:hover{ color:#FFFDF8; transform:translateY(-1px) }
 .bsr-mapcta-go:focus-visible{ outline:2px solid var(--brand,#3D4116); outline-offset:3px }
 @media (max-width:560px){
-  .bsr-dock{ left:10px; right:10px; bottom:14px; padding:13px 14px; gap:10px; border-radius:14px }
+  .bsr-dockzone{ left:10px; right:10px; bottom:14px; padding:13px 14px; gap:10px; border-radius:14px }
   .bsr-mapcta-say{ font-size:12.5px }
   .bsr-mapcta-go{ font-size:15px; padding:13px 18px }
 }

@@ -74,8 +74,10 @@ html,body{background:var(--bg-2);overflow:hidden;}
    .bsr-mapbar in report.css) sits in now, at the same z-index range.
    That outer toolbar is wider and taller than this iframe's internal
    buttons, so it fully covers Street/Satellite here -- not removed,
-   just hidden underneath. Bottom-left, stacked just above .hint, is
-   clear on every side (view-controls/compass live top-right). */
+   just hidden underneath. Bottom-left, stacked just above .hint, stays
+   clear of view-controls/compass even now that those moved to the
+   TOP-left (see below) -- different half of the same edge, not the
+   same corner. */
 .tile-row{position:absolute;bottom:50px;left:14px;z-index:25;display:flex;gap:6px;}
 .tile-btn{background:rgba(255,253,248,.94);border:1px solid var(--line);color:var(--text-mute);font-size:13px;font-weight:600;font-family:'Geist Mono',monospace;padding:7px 16px;border-radius:var(--radius-md);cursor:pointer;}
 .tile-btn.on{border-color:var(--ss);color:var(--ss);background:rgba(175,95,48,.08);}
@@ -99,7 +101,7 @@ html,body{background:var(--bg-2);overflow:hidden;}
     <button class="tile-btn" id="bsat" onclick="setT('sat')">Satellite</button>
   </div>
   <div class="hint">Tap to move pin · drag to look around</div>
-  <div class="view-controls" style="position:absolute;top:14px;right:14px;z-index:25;display:flex;flex-direction:column;gap:5px;align-items:center;background:rgba(255,253,248,0.97);border:1px solid var(--line);border-radius:var(--radius-md);padding:10px 9px;box-shadow:0 2px 12px rgba(28,24,18,0.08);">
+  <div class="view-controls" style="position:absolute;top:14px;left:14px;z-index:25;display:flex;flex-direction:column;gap:5px;align-items:center;background:rgba(255,253,248,0.97);border:1px solid var(--line);border-radius:var(--radius-md);padding:10px 9px;box-shadow:0 2px 12px rgba(28,24,18,0.08);">
     <div style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;white-space:nowrap;line-height:1.4;text-align:center;">Set view angle<br/><span style="font-size:10.5px;font-weight:500;color:var(--text-mute);text-transform:none;letter-spacing:0;opacity:0.85;">e.g. balcony view</span></div>
     <button class="cb" id="btn-up">▲</button>
     <div style="display:flex;gap:4px;">
@@ -109,7 +111,7 @@ html,body{background:var(--bg-2);overflow:hidden;}
     </div>
     <button class="cb" id="btn-down">▼</button>
   </div>
-  <div style="position:absolute;top:192px;right:20px;z-index:25;width:38px;height:38px;pointer-events:none;background:rgba(255,253,248,.94);border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+  <div style="position:absolute;top:192px;left:20px;z-index:25;width:38px;height:38px;pointer-events:none;background:rgba(255,253,248,.94);border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;">
     <svg id="cmp" width="30" height="30" viewBox="-20 -20 40 40" style="transition:transform .2s;">
       <polygon points="0,-12 3,0 0,3 -3,0" fill="#AF5F30"/>
       <polygon points="0,12 3,0 0,-3 -3,0" fill="#5A5140"/>

@@ -1422,12 +1422,18 @@ export default function ReportScreen({ view = 'verdict' }) {
               of the whole toolbar. Right side rather than bottom-centre
               so it doesn't sit over the part of the building someone is
               trying to tap. */}
+          {/* .bsr-dockzone is one bottom sheet below 900px (there's no
+              room to split the fields from the go button on a phone) and
+              becomes an invisible wrapper past it, where .bsr-dock and
+              .bsr-mapcta each take their own spot -- see report.css. */}
           {fullMap && (
-            <div className="bsr-dock">
-              <p className="bsr-dock-title">Pinpoint your unit</p>
-              <p className="bsr-set bsr-dock-fields">
-                {unitFieldsNode}
-              </p>
+            <div className="bsr-dockzone">
+              <div className="bsr-dock">
+                <p className="bsr-dock-title">Pinpoint your unit</p>
+                <p className="bsr-set bsr-dock-fields">
+                  {unitFieldsNode}
+                </p>
+              </div>
               <div className={`bsr-mapcta${pinTouched ? ' is-ready' : ''}`}>
                 <p className="bsr-mapcta-say">
                   {pinTouched
