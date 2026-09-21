@@ -204,7 +204,9 @@ export default function ReportScreen({ view = 'verdict' }) {
   const [floor, setFloor] = useState(parseInt(params.get('floor'), 10) || DEFAULT_FLOOR);
   // What is actually in the box while you type. Kept separate from `floor`
   // so a half-typed "1" on the way to "12" isn't clamped out from under you.
-  const [floorText, setFloorText] = useState(String(parseInt(params.get('floor'), 10) || DEFAULT_FLOOR));
+  const [floorText, setFloorText] = useState(
+    () => (params.get('assumed') !== '1' && params.get('floor')) ? String(parseInt(params.get('floor'), 10) || DEFAULT_FLOOR) : ''
+  );
   const [facing, setFacing] = useState(params.get('facing') || DEFAULT_FACING);
   // No longer user-adjustable (the "what matters more to you" toggle
   // was removed) -- kept as a plain constant so the score fetch and the
@@ -212,9 +214,18 @@ export default function ReportScreen({ view = 'verdict' }) {
   const areaWeight = 0.5;
   // A listing gives you the tower, not the unit -- so these two arrive
   // as defaults far more often than not. Say so until they're set.
-  const [assumed, setAssumed] = useState(
-    () => params.get('assumed') === '1' || !params.get('floor') || !params.get('facing')
-  );
+  // Whether each of the two was actually CHOSEN, separately. One shared
+  // `assumed` flag meant that picking a facing flipped the floor to
+  // "chosen" too, and a box showing 5 that nobody typed reads as an
+  // answer. Now an unset field shows nothing at all -- an empty floor box,
+  // a facing select saying "Select" -- and the scoring underneath quietly
+  // uses the defaults until each one is answered, which the verdict still
+  // says out loud.
+  // (?assumed=1 is read for links made before this, and means neither.)
+  const legacyAssumed = params.get('assumed') === '1';
+  const [floorSet, setFloorSet] = useState(() => !legacyAssumed && Boolean(params.get('floor')));
+  const [facingSet, setFacingSet] = useState(() => !legacyAssumed && Boolean(params.get('facing')));
+  const assumed = !(floorSet && facingSet);
 
   // WHERE the pin sits is what has to be right before any of this means
   // anything, and geocoding an address returns the centre of whatever it
@@ -271,12 +282,13 @@ export default function ReportScreen({ view = 'verdict' }) {
     q.set('lon', String(lon));
     if (pinCode) q.set('pin_code', pinCode);
     if (address) q.set('address', address);
-    q.set('floor', String(floor));
-    q.set('facing', facing);
-    if (assumed) q.set('assumed', '1');
+    // Only what was actually chosen travels -- a missing param IS "not set",
+    // so there is no separate flag to keep in step with it.
+    if (floorSet) q.set('floor', String(floor));
+    if (facingSet) q.set('facing', facing);
     Object.entries(extra).forEach(([k, v]) => v && q.set(k, v));
     return q.toString();
-  }, [lat, lon, pinCode, address, floor, facing, assumed]);
+  }, [lat, lon, pinCode, address, floor, facing, floorSet, facingSet]);
 
   // Confirming the spot ends the map step -- a real navigation to the
   // verdict, so Back comes back here with the pin still on it.
@@ -755,7 +767,9 @@ export default function ReportScreen({ view = 'verdict' }) {
     );
   }, [moveTo, reportRunning]);
 
-  useEffect(() => { setFloorText(String(floor)); }, [floor]);
+  // Only mirrors a floor someone actually chose. Unconditionally, this ran
+  // on mount and wrote the default 5 into a box meant to start empty.
+  useEffect(() => { if (floorSet) setFloorText(String(floor)); }, [floor, floorSet]);
 
   // Anchor for the flat half, still used by the in-page "the flat" link.
   const unitRef = useRef(null);
@@ -924,14 +938,12 @@ export default function ReportScreen({ view = 'verdict' }) {
     q.set('lon', String(lon));
     if (pinCode) q.set('pin_code', pinCode);
     if (address) q.set('address', address);
-    q.set('floor', String(floor));
-    q.set('facing', facing);
-    // Carry the fact that these are still guesses. This effect writes the
-    // defaults into the URL on mount, so on the next load `floor` was
-    // present and `assumed` initialised false -- a refresh, or a link you
-    // sent someone, presented floor 5 / south-east as confirmed when nobody
-    // had confirmed anything, with the whole unit score resting on them.
-    if (assumed) q.set('assumed', '1');
+    // Only what was actually chosen goes in the URL. A missing param now
+    // means "not set", which is what ?assumed=1 used to have to say
+    // separately -- and a link carrying floor=5 that nobody chose was
+    // exactly the problem that flag existed to paper over.
+    if (floorSet) q.set('floor', String(floor));
+    if (facingSet) q.set('facing', facing);
     // Which of the two views you are in, so a refresh and a shared link
     // both reopen on the map you were actually looking at rather than
     // dropping you back into the written verdict.
@@ -940,7 +952,7 @@ export default function ReportScreen({ view = 'verdict' }) {
     // refresh or a shared link keeps the caveat honest.
     if (pinTouched) q.set('pin', '1');
     window.history.replaceState(window.history.state, '', `${window.location.pathname}?${q.toString()}`);
-  }, [hasPlace, lat, lon, pinCode, address, floor, facing, assumed, pinTouched]);
+  }, [hasPlace, lat, lon, pinCode, address, floor, facing, floorSet, facingSet, pinTouched]);
 
   // The map section, built once and rendered from two places: on its own
   // (the /report/locate step, which must not wait for scoring) and inside
@@ -972,6 +984,19 @@ export default function ReportScreen({ view = 'verdict' }) {
                 visit -- with nothing saying it wasn't final. Dropped
                 rather than captioned: the actual score belongs to the
                 verdict, after "Continue", not a preview here. */}
+            {/* Top-right corner, where a close control is looked for.
+                Leaving the map confirms the pin and opens the verdict --
+                same as the continue button, just the quiet way. */}
+            <button
+              type="button"
+              className="bsr-fullbar-close"
+              onClick={confirmSpot}
+              aria-label="Close the map and see the verdict"
+              title="Close the map"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+
             <p className="bsr-fullbar-where">
               <span className="bsr-fullbar-addr">
                 {address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}
@@ -1108,39 +1133,64 @@ export default function ReportScreen({ view = 'verdict' }) {
             </p>
 
             <p className="bsr-set">
-              <label className="bsr-set-field bsr-set-floor">
-                <span>Floor</span>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={2}
-                  value={floorText}
-                  onChange={(e) => {
-                    const raw = e.target.value.replace(/[^\d]/g, '').slice(0, 2);
-                    setFloorText(raw);
-                    const n = parseInt(raw, 10);
-                    if (Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR) { setAssumed(false); setFloor(n); }
-                  }}
-                  onBlur={() => {
-                    const n = parseInt(floorText, 10);
-                    const clamped = Number.isFinite(n) ? Math.min(MAX_FLOOR, Math.max(1, n)) : floor;
-                    setFloor(clamped);
-                    setFloorText(String(clamped));
-                  }}
-                  aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
-                  placeholder="5"
-                />
-              </label>
-              <label className="bsr-set-field">
-                <span>Faces</span>
-                <select
-                  value={facing}
-                  onChange={(e) => { setAssumed(false); setFacing(e.target.value); }}
-                >
-                  {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
-                </select>
-              </label>
+              {/* Floor and faces as one group: they are the unit, they are
+                  asked together, and the pointer below aims at the gap
+                  between them -- left:50% of this group, whatever widths
+                  the two fields end up at. */}
+              <span className="bsr-set-unit">
+                <label className="bsr-set-field bsr-set-floor">
+                  <span>Floor</span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={2}
+                    value={floorText}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/[^\d]/g, '').slice(0, 2);
+                      setFloorText(raw);
+                      const n = parseInt(raw, 10);
+                      if (Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR) { setFloorSet(true); setFloor(n); }
+                    }}
+                    onBlur={() => {
+                      const n = parseInt(floorText, 10);
+                      // Left empty: stays empty. It used to snap back to the
+                      // default on blur, filling in a 5 nobody chose.
+                      if (!Number.isFinite(n)) { if (!floorSet) setFloorText(''); else setFloorText(String(floor)); return; }
+                      const clamped = Math.min(MAX_FLOOR, Math.max(1, n));
+                      setFloorSet(true);
+                      setFloor(clamped);
+                      setFloorText(String(clamped));
+                    }}
+                    aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
+                  />
+                </label>
+                <label className="bsr-set-field">
+                  <span>Faces</span>
+                  <select
+                    value={facingSet ? facing : ''}
+                    onChange={(e) => { if (!e.target.value) return; setFacingSet(true); setFacing(e.target.value); }}
+                    aria-label="Which way the flat faces"
+                  >
+                    {!facingSet && <option value="" disabled>Select</option>}
+                    {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
+                  </select>
+                </label>
+
+                {fullMap && showUnitTip && assumed && (
+                  <span className="bsr-maptip" role="note">
+                    <span className="bsr-maptip-text">Set your floor and facing</span>
+                    <button
+                      type="button"
+                      className="bsr-maptip-x"
+                      onClick={() => setShowUnitTip(false)}
+                      aria-label="Dismiss"
+                    >
+                      ×
+                    </button>
+                  </span>
+                )}
+              </span>
               <label className="bsr-set-field bsr-set-date">
                 <span>Select season</span>
                 <select
@@ -1165,24 +1215,8 @@ export default function ReportScreen({ view = 'verdict' }) {
                   aria-label="Date to simulate"
                 />
               )}
-              {assumed ? <span className="bsr-assumed">assumed</span> : null}
             </p>
 
-            {fullMap && showUnitTip && assumed && (
-              <span className="bsr-maptip" role="note">
-                <span className="bsr-maptip-text">
-                  Set your floor and facing - every score is for that exact unit
-                </span>
-                <button
-                  type="button"
-                  className="bsr-maptip-x"
-                  onClick={() => setShowUnitTip(false)}
-                  aria-label="Dismiss"
-                >
-                  ×
-                </button>
-              </span>
-            )}
             {/* Generating the sun & shadow report used to be one click from
                 a button up top, before anyone had watched the day animate
                 over this exact block or nudged the pin to the right spot --
@@ -1207,15 +1241,21 @@ export default function ReportScreen({ view = 'verdict' }) {
                 dropping someone on the verdict with `confirmed` still
                 false, so the next reload sent them back round the map
                 step they thought they had finished. */}
-            <button
-              type="button"
-              className="bsr-mapbar-full"
-              ref={fullToggleRef}
-              onClick={() => (fullMap ? confirmSpot() : openLocate())}
-              aria-pressed={fullMap}
-            >
-              {fullMap ? '✕ Exit full screen' : '⤢ Full screen'}
-            </button>
+            {/* Only on the verdict's inline map. On the map step, the way
+                out is the small x in the top-right corner of the screen,
+                which is where people look for it -- as a wide labelled
+                button at the end of this bar it was the most prominent
+                thing in the least important position. */}
+            {!fullMap && (
+              <button
+                type="button"
+                className="bsr-mapbar-full"
+                ref={fullToggleRef}
+                onClick={openLocate}
+              >
+                ⤢ Full screen
+              </button>
+            )}
           </div>
         </div>
         {!fullMap && (
@@ -1608,28 +1648,32 @@ export default function ReportScreen({ view = 'verdict' }) {
                   const raw = e.target.value.replace(/[^\d]/g, '').slice(0, 2);
                   setFloorText(raw);
                   const n = parseInt(raw, 10);
-                  if (Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR) { setAssumed(false); setFloor(n); }
+                  if (Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR) { setFloorSet(true); setFloor(n); }
                 }}
                 onBlur={() => {
                   const n = parseInt(floorText, 10);
-                  const clamped = Number.isFinite(n) ? Math.min(MAX_FLOOR, Math.max(1, n)) : floor;
+                  // Left empty: stays empty. It used to snap back to the
+                  // default on blur, filling in a 5 nobody chose.
+                  if (!Number.isFinite(n)) { if (!floorSet) setFloorText(''); else setFloorText(String(floor)); return; }
+                  const clamped = Math.min(MAX_FLOOR, Math.max(1, n));
+                  setFloorSet(true);
                   setFloor(clamped);
                   setFloorText(String(clamped));
                 }}
                 aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
-                placeholder="5"
               />
             </label>
             <label className="bsr-set-field">
               <span>Faces</span>
               <select
-                value={facing}
-                onChange={(e) => { setAssumed(false); setFacing(e.target.value); }}
+                value={facingSet ? facing : ''}
+                onChange={(e) => { if (!e.target.value) return; setFacingSet(true); setFacing(e.target.value); }}
+                aria-label="Which way the flat faces"
               >
+                {!facingSet && <option value="" disabled>Select</option>}
                 {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
               </select>
             </label>
-            {assumed ? <span className="bsr-assumed">assumed - set yours</span> : null}
           </p>
 
           <p className="bsr-rating" aria-live="polite">

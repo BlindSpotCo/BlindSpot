@@ -687,7 +687,6 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 .bsr-mapbar .bsr-set select{ max-width:80px; flex:none; }
 .bsr-mapbar .bsr-set-date select{ max-width:124px; font-size:10px; }
 .bsr-mapbar .bsr-datein{ min-height:24px; font-size:10px; padding:2px 5px; flex:none; }
-.bsr-mapbar .bsr-assumed{ font-size:9px; padding:1px 5px; white-space:nowrap; flex:none; }
 /* The play/pause control now sits right after the search row (moved in
    the JSX) instead of trailing after floor/faces/date, so it's reachable
    without scanning across the whole toolbar. It still shares whichever
@@ -724,7 +723,6 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   .bsr-mapbar .bsr-set select{ max-width:120px; }
   .bsr-mapbar .bsr-set-date select{ max-width:150px; font-size:11px; }
   .bsr-mapbar .bsr-datein{ min-height:27px; font-size:11px; padding:3px 6px; }
-  .bsr-mapbar .bsr-assumed{ font-size:10px; padding:2px 6px; }
   .bsr-mapbar .bsr-play{ font-size:11px;min-height:27px;padding:0 10px; }
   .bsr-mapbar .bsr-mapbar-time input[type=range]{ width:90px;min-width:70px;height:27px; }
   .bsr-mapbar .bsr-clock{ font-size:11px;min-width:50px; }
@@ -1076,23 +1074,6 @@ body.bsr-noscroll{overflow:hidden}
   background:var(--paper,#FFFDF8);
   border-bottom:1px solid var(--line,rgba(28,24,18,.14));
 }
-/* Quiet until the pin has been moved -- on a first visit this reads
-   "Skip - score the centre", which is a real choice but not the one
-   being recommended, and a filled primary button would have said the
-   opposite. Once the pin is placed it becomes the primary action. */
-.bsr-fullbar-back{
-  flex:none;font:inherit;font-size:13px;font-weight:700;cursor:pointer;
-  padding:7px 14px;border-radius:999px;
-  border:1px solid var(--line,rgba(28,24,18,.22));
-  background:var(--paper,#FFFDF8);color:var(--text-mute,#5A5140);
-  transition:background .15s ease,color .15s ease,border-color .15s ease;
-}
-.bsr-fullbar-back:hover{border-color:var(--brand,#3D4116);color:var(--brand,#3D4116)}
-.bsr-fullbar-back.is-ready{
-  border-color:var(--brand,#3D4116);
-  background:var(--brand,#3D4116);color:#FFFDF8;
-}
-.bsr-fullbar-back.is-ready:hover{filter:brightness(.94);color:#FFFDF8}
 .bsr-fullbar-where{
   margin:0;min-width:0;flex:1 1 180px;
   display:flex;flex-direction:column;gap:1px;
@@ -1231,39 +1212,127 @@ body.bsr-noscroll{overflow:hidden}
 
 
 
-/* ---- the pointer at the floor/faces controls ----
-   A coach mark, not a dialog: it sits under the toolbar with a caret
-   aimed up at the two fields, and the fields stay usable the whole time.
-   A child of .bsr-mapbar (which is positioned), so it follows the
-   toolbar wherever that lands -- including when it wraps to two rows on
-   a phone -- instead of being pinned to coordinates that stop being
-   true at the first breakpoint. */
+
+
+
+/* ---- floor + faces: one group, and the pointer that aims at it ----
+   The pointer is a child of this group, centred on it, so its caret lands
+   in the gap between the two fields at any width -- not on whichever
+   field happened to sit at a hard-coded offset. */
+.bsr-set-unit{
+  position:relative;
+  display:inline-flex; align-items:center; gap:inherit;
+}
 .bsr-maptip{
-  position:absolute; top:calc(100% + 9px); left:100px;
-  z-index:11; display:flex; align-items:center; gap:8px;
-  max-width:min(320px, calc(100vw - 32px));
-  padding:8px 10px 8px 12px;
-  border-radius:10px;
+  position:absolute; top:calc(100% + 14px); left:50%;
+  transform:translateX(-50%);
+  z-index:12;
+  display:inline-flex; align-items:center; gap:10px;
+  padding:9px 10px 9px 16px;
+  border-radius:999px;
   background:var(--brand,#3D4116); color:#FFFDF8;
-  box-shadow:0 8px 22px rgba(28,24,18,.28);
-  animation:bsr-tip-in .22s ease-out;
+  white-space:nowrap;
+  box-shadow:0 10px 26px rgba(28,24,18,.30), 0 0 0 4px rgba(61,65,22,.14);
+  animation:bsr-tip-in .25s ease-out, bsr-tip-bob 2.6s ease-in-out .4s infinite;
 }
-/* The caret, pointing back up at Floor and Faces. */
+/* The caret, straight up at the gap between Floor and Faces. */
 .bsr-maptip::before{
-  content:''; position:absolute; top:-6px; left:26px;
-  width:12px; height:12px; transform:rotate(45deg);
+  content:''; position:absolute; top:-6px; left:50%;
+  width:12px; height:12px;
+  transform:translateX(-50%) rotate(45deg);
   background:var(--brand,#3D4116);
+  border-radius:2px;
 }
-.bsr-maptip-text{ font-size:12.5px; line-height:1.45; font-weight:600 }
+.bsr-maptip-text{ font-size:13.5px; font-weight:700; letter-spacing:.005em }
 .bsr-maptip-x{
-  flex:none; border:none; background:none; cursor:pointer; line-height:1;
-  font-size:17px; color:rgba(255,253,248,.75); padding:0 2px;
+  flex:none; display:flex; align-items:center; justify-content:center;
+  width:22px; height:22px; border-radius:50%;
+  border:none; cursor:pointer; line-height:1; padding:0;
+  font-size:15px; color:#FFFDF8; background:rgba(255,253,248,.16);
 }
-.bsr-maptip-x:hover{ color:#FFFDF8 }
-@keyframes bsr-tip-in{ from{ opacity:0; transform:translateY(-4px) } to{ opacity:1; transform:translateY(0) } }
+.bsr-maptip-x:hover{ background:rgba(255,253,248,.28) }
+@keyframes bsr-tip-in{
+  from{ opacity:0; transform:translate(-50%, -4px) }
+  to  { opacity:1; transform:translate(-50%, 0) }
+}
+/* A slow nudge toward the fields, so it reads as pointing rather than
+   as a static label someone could mistake for part of the map. */
+@keyframes bsr-tip-bob{
+  0%,100%{ transform:translate(-50%, 0) }
+  50%    { transform:translate(-50%, -3px) }
+}
 @media (prefers-reduced-motion:reduce){ .bsr-maptip{ animation:none } }
 @media (max-width:640px){
-  .bsr-maptip{ left:6px; padding:7px 8px 7px 10px }
-  .bsr-maptip::before{ left:22px }
-  .bsr-maptip-text{ font-size:11.5px }
+  .bsr-maptip{ padding:7px 8px 7px 13px; gap:8px }
+  .bsr-maptip-text{ font-size:12.5px }
+}
+
+/* ---- the way out: a small x in the top-right corner of the screen ----
+   It replaces the wide labelled "Exit full screen" button that closed
+   the toolbar: the most prominent thing in the least important spot, on
+   a bar that was already too full. Small, but a real 34px target with a
+   visible edge, so it reads as a control and not as decoration. */
+.bsr-fullbar-close{
+  order:99; margin-left:auto;
+  flex:none; display:flex; align-items:center; justify-content:center;
+  width:34px; height:34px; border-radius:50%;
+  border:1px solid var(--line,rgba(28,24,18,.2));
+  background:var(--paper,#FFFDF8); color:var(--text,#1C1812);
+  cursor:pointer;
+  transition:background .15s ease, border-color .15s ease, color .15s ease;
+}
+.bsr-fullbar-close:hover{ border-color:var(--brand,#3D4116); color:var(--brand,#3D4116); background:rgba(61,65,22,.06) }
+.bsr-fullbar-close:focus-visible{ outline:2px solid var(--brand,#3D4116); outline-offset:2px }
+
+/* ---- the toolbar, at laptop size ----
+   Every control here was sized for a phone and left there: 10-12px text
+   and 24-29px targets on a 1440px screen, which is most of why it read
+   as cluttered -- small things packed tight look busier than the same
+   things at a comfortable size. Bigger controls, more room between the
+   three groups (play / the unit and season / the report), and a hairline
+   between each so they read as three things rather than one long row. */
+@media (min-width:1024px){
+  .bsr-mapbar{
+    top:14px; left:14px;
+    gap:10px 0; padding:10px 16px;
+    border-radius:14px;
+    max-width:calc(100% - 250px);
+    box-shadow:0 6px 22px rgba(28,24,18,.16);
+  }
+  .bsr-mapbar .bsr-mapbar-time{ gap:10px; padding-right:18px }
+  .bsr-mapbar .bsr-set{
+    gap:16px; padding:0 18px;
+    border-left:1px solid var(--line-soft,rgba(28,24,18,.12));
+  }
+  .bsr-mapbar .bsr-set-field{ gap:9px }
+  .bsr-mapbar .bsr-set-field span{
+    font-size:12.5px; font-weight:600; color:var(--text-mute,#5A5140);
+  }
+  .bsr-mapbar .bsr-set select,
+  .bsr-mapbar .bsr-set input[type="text"]{
+    font-size:14.5px; font-weight:600; min-height:40px; padding:6px 10px; border-radius:9px;
+  }
+  .bsr-mapbar .bsr-set-floor input[type="text"]{ width:3.2em; font-size:17px; min-height:40px }
+  .bsr-mapbar .bsr-set select{ max-width:150px }
+  .bsr-mapbar .bsr-set-date select{ max-width:190px; font-size:14px }
+  .bsr-mapbar .bsr-datein{ min-height:40px; font-size:13.5px; padding:6px 10px }
+  .bsr-mapbar .bsr-play{ font-size:13.5px; min-height:40px; padding:0 16px; border-radius:9px }
+  .bsr-mapbar .bsr-mapbar-time input[type=range]{ width:120px; height:40px }
+  .bsr-mapbar .bsr-clock{ font-size:13px; min-width:52px }
+  .bsr-mapbar-report{
+    margin-top:0; margin-left:2px;
+    font-size:14px; min-height:40px; padding:0 18px; border-radius:9px;
+  }
+  .bsr-set-unit{ gap:16px }
+}
+
+/* Phone: the bar wraps, and the report button used to land on a third
+   row directly under Floor/Faces -- exactly where the pointer hangs, so
+   the pointer covered it. Play and the report button share the first
+   row instead (both short), and the unit + season take the second, so
+   there is only map under the pointer. */
+@media (max-width:767px){
+  .bsr-mapbar .bsr-mapbar-time{ order:0 }
+  .bsr-mapbar-report{ order:1; margin-top:0; margin-left:auto }
+  .bsr-mapbar .bsr-set{ order:2; flex-basis:100% }
 }
