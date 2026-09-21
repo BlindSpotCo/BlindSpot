@@ -9,8 +9,6 @@
 // landing on the homepage. Same query string as /report, plus ?pin=1 once
 // a tap has moved the pin off the geocoded centre.
 
-import { Suspense } from 'react';
-import ReportScreen from '@/components/report/ReportScreen';
 
 export const metadata = {
   robots: { index: false, follow: true },
@@ -19,10 +17,10 @@ export const metadata = {
   description: 'Put the pin on your building before the report is scored.',
 };
 
-export default function LocatePage() {
-  return (
-    <Suspense fallback={<div className="bsr-boot">Opening the map…</div>}>
-      <ReportScreen view="map" />
-    </Suspense>
-  );
+// Renders nothing: the screen itself lives in app/report/layout.js so that
+// one instance survives navigation between /report/locate and /report
+// (a report generating on the map keeps going on the verdict). This file
+// exists for the URL of the map step and its metadata.
+export default function Page() {
+  return null;
 }

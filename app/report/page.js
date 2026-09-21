@@ -8,8 +8,6 @@
 // pin_code is optional -- an address outside neighbourhood coverage still
 // gets the flat's half, and the page says so rather than failing.
 
-import { Suspense } from 'react';
-import ReportScreen from '@/components/report/ReportScreen';
 
 export const metadata = {
   // The root layout sets canonical:'/' and any route that doesn't override
@@ -23,10 +21,10 @@ export const metadata = {
   description: 'The neighbourhood, the flat, and one honest verdict for the two together.',
 };
 
-export default function ReportPage() {
-  return (
-    <Suspense fallback={<div className="bsr-boot">Opening this address…</div>}>
-      <ReportScreen />
-    </Suspense>
-  );
+// Renders nothing: the screen itself lives in app/report/layout.js so that
+// one instance survives navigation between /report/locate and /report
+// (a report generating on the map keeps going on the verdict). This file
+// exists for the URL of the verdict and its metadata.
+export default function Page() {
+  return null;
 }

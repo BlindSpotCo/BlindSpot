@@ -1369,3 +1369,13 @@ body.bsr-noscroll{overflow:hidden}
   .bsr-mapbar-report{ order:1; margin-top:0; margin-left:auto }
   .bsr-mapbar .bsr-set{ order:2; flex-basis:100% }
 }
+
+/* The verdict is still loading its scores but the map is already alive
+   (it came from the map step, same instance). Moved offscreen rather than
+   hidden: display:none would stop the WebGL scene rendering, and a sun
+   report photographing it would get blank frames. Offscreen at full size,
+   it carries on drawing and the capture keeps working. */
+.bsr-mapzone.is-parked{
+  position:absolute; left:-10000px; top:0;
+  width:min(1200px, 100vw); pointer-events:none;
+}

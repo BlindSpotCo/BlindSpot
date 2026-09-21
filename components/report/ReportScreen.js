@@ -263,7 +263,10 @@ export default function ReportScreen({ view = 'verdict' }) {
   // sends to the person they are buying with, and without this it
   // reopened on the written verdict instead.
   // Which screen this is comes from the route, not from a flag.
-  const [fullMap, setFullMap] = useState(() => view === 'map');
+  // Derived from the route, not held in state: this component now stays
+  // mounted across /report/locate <-> /report (see app/report/layout.js),
+  // so `view` changes on a live instance and the screen has to follow it.
+  const fullMap = view === 'map';
   // The full-screen map carries the address search on itself, the way
   // the SunScout top bar does, rather than sending you back up to the
   // report header to move the pin.
@@ -548,7 +551,7 @@ export default function ReportScreen({ view = 'verdict' }) {
   // photographing a map that is mid-resize.
   useEffect(() => {
     if (!fullMapLive || reportOpen) return;
-    const onKey = (e) => { if (e.key === 'Escape') setFullMap(false); };
+    const onKey = (e) => { if (e.key === 'Escape') confirmSpot(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [fullMapLive, reportOpen]);
@@ -577,10 +580,11 @@ export default function ReportScreen({ view = 'verdict' }) {
     if (fullMap) { leftFull.current = true; return; }
     if (!leftFull.current) return;
     leftFull.current = false;
-    // Only reachable from the verdict's own full-screen toggle now (the
-    // map step exits by navigating), so this returns you to the map --
-    // which is where you were when you opened it.
-    document.getElementById('the-block')?.scrollIntoView({ block: 'start' });
+    // Leaving the map now always means going on to the verdict (the
+    // continue button, the corner x, Escape), so it lands on the answer
+    // at the top -- not on the map section halfway down, which read as
+    // though the button had done nothing.
+    window.scrollTo(0, 0);
     // The button that was focused (back-to-verdict) has just been
     // unmounted, which drops focus to the body and sends the next Tab
     // to the top of the document. Hand it to the control that now does
@@ -1028,7 +1032,7 @@ export default function ReportScreen({ view = 'verdict' }) {
   // two never remounts Map3DShadow and never reloads the 3D scene.
   const mapZone = (
       <section
-        className={`bsr-mapzone${fullMap ? ' is-full' : ''}`}
+        className={`bsr-mapzone${fullMap ? ' is-full' : ''}${!fullMap && !scores && state !== 'error' ? ' is-parked' : ''}`}
         id="the-block"
         aria-label="The block in 3D"
       >
@@ -1349,55 +1353,47 @@ export default function ReportScreen({ view = 'verdict' }) {
     );
   }
 
-  if (fullMap) {
-    return <div className="bsr">{mapZone}{reportModal}</div>;
-  }
 
-  if (state === 'error') {
-    return (
-      <div className="bsr">
-        <div className="bsr-empty">
-          <h1>We couldn&apos;t score this address.</h1>
-          <p>
-            {failure === 'scoring'
-              ? 'The scoring service didn’t answer. This is on us, not the address - try again in a moment.'
-              : 'Something went wrong reading this address.'}
-          </p>
-          {/* This screen returns above the map, the search bar and the
-              floor/facing controls, so nothing on the page could change the
-              inputs the failed effect depends on -- "try again in a moment"
-              with no way to try again, and a browser reload the only escape.
-              Retry re-runs it in place. */}
-          <p className="bsr-empty-actions">
-            <button type="button" onClick={() => { setFailure(''); setState('loading'); setScoreNonce((n) => n + 1); }}>
-              Try again
-            </button>
-            <a href="/">Start with another address</a>
-          </p>
-        </div>
-      </div>
-    );
-  }
-  // The map step waits for the SUN PATH, which is one fast local
-  // calculation, not for the scoring call, which waits on live noise and
-  // OSM lookups and can take seconds. Sharing the boot screen below meant
-  // /report/locate sat on "Reading the records for this address..." with
-  // a map that was ready and nothing to do with records -- the one screen
-  // on the site that has no reason to wait for them.
-  if (state === 'loading' && !scores) {
-    return (
-      <div className="bsr">
-        <div className="bsr-empty">
-          <p className="bsr-boot">Reading the records for this address…</p>
-        </div>
-      </div>
-    );
-  }
+  // What the verdict screen is showing. The map step shows none of it --
+  // just the map and the report modal, in the same slots they occupy here
+  // (see the return below for why the slots matter).
+  const verdictMode = fullMap ? 'none'
+    : state === 'error' ? 'error'
+    : !scores ? 'boot'
+    : 'ready';
 
-  const area = scores.area;
-  const unit = scores.unit;
+  const errorNode = (
+    <div className="bsr-empty">
+      <h1>We couldn&apos;t score this address.</h1>
+      <p>
+        {failure === 'scoring'
+          ? 'The scoring service didn’t answer. This is on us, not the address - try again in a moment.'
+          : 'Something went wrong reading this address.'}
+      </p>
+      {/* This screen returns above the map, the search bar and the
+          floor/facing controls, so nothing on the page could change the
+          inputs the failed effect depends on -- "try again in a moment"
+          with no way to try again, and a browser reload the only escape.
+          Retry re-runs it in place. */}
+      <p className="bsr-empty-actions">
+        <button type="button" onClick={() => { setFailure(''); setState('loading'); setScoreNonce((n) => n + 1); }}>
+          Try again
+        </button>
+        <a href="/">Start with another address</a>
+      </p>
+    </div>
+  );
+
+  const bootNode = (
+    <div className="bsr-empty">
+      <p className="bsr-boot">Reading the records for this address…</p>
+    </div>
+  );
+
+  const area = scores?.area;
+  const unit = scores?.unit ?? { score: null, subScores: [] };
   const hasArea = Boolean(area);
-  const topScore = hasArea ? scores.combined : unit.score;
+  const topScore = hasArea ? scores?.combined : unit.score;
   const topTone = toneOf(topScore);
 
   // One form, used from both the covered and the not-covered state. The
@@ -1440,546 +1436,566 @@ export default function ReportScreen({ view = 'verdict' }) {
 
   return (
     <div className="bsr">
+      {/* Fixed slots, and the order matters more than it looks. This one
+          component serves both /report/locate and /report, and the two
+          screens are the same tree with different parts switched on --
+          so the map (and the report modal after it) sit in the same
+          position among these children whichever screen is showing.
+          React keeps an element across a re-render only if it stays in
+          the same slot; if the map moved, the iframe would be torn down
+          and rebuilt, the 3D scene would reload, and a sun report in the
+          middle of photographing it would lose its camera. With the
+          slots fixed, going from the map to the verdict mid-report just
+          re-styles the same map and lets the report carry on. */}
+      {verdictMode === 'ready' && (
+        <>
 
-      {/* ---------- the page's own title, then which address this is ----------
-          The page used to open directly on the address pill -- nothing said
-          what this screen even was before the eye landed on a number a
-          moment later. One real <h1> line first, the same on every report;
-          the verdict headline further down is demoted to <h2> so there's
-          exactly one top-level heading on the page, not two competing
-          ones. */}
-      <header className="bsr-head">
-        <div className="bsr-head-top">
-          <h1 className="bsr-title">Your BlindSpot report</h1>
-          <span className="bsr-head-links">
-            {/* First, not last. Someone reading a verdict on one flat is most
-                likely to want the other two beside it -- that is a more common
-                next step here than either of the other two links. */}
-            <a href="/compare" className="is-primary">Compare flats</a>
-            <a href="/my-reports">My reports</a>
-          </span>
-        </div>
-        <p className="bsr-addr">
-          <span className="bsr-pin" aria-hidden="true" />
-          <span className="bsr-addr-text">{address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}</span>
-          {/* Used to be a plain link back to "/" -- moving the pin meant
-              leaving the report entirely and starting over. This reveals
-              the same search-or-coordinates form the map toolbar used to
-              carry, right where the address itself is written, and closes
-              itself again once moveTo() actually lands a new pin. */}
-          <button
-            type="button"
-            className="bsr-addr-change"
-            onClick={() => setAddrEditOpen((v) => !v)}
-            aria-expanded={addrEditOpen}
-          >
-            {addrEditOpen ? 'Cancel' : 'Change address'}
-          </button>
-        </p>
-        {addrEditOpen && (
-          <form className="bsr-addr-edit bsr-locbar" onSubmit={onSearchSubmit}>
-            <input
-              type="search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Address or coordinates"
-              aria-label="Move the pin to another address or coordinates -- press Enter to search"
-              autoFocus
-            />
-            {locBusy ? <span className="bsr-loc-busy" aria-live="polite">Finding…</span> : null}
-            <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
-              My location
-            </button>
-            {locError ? <p className="bsr-locerror">{locError}</p> : null}
-          </form>
-        )}
-      </header>
-
-      {/* ---------- the answer, before anything else ---------- */}
-      <section className={`bsr-answer is-${topTone}`} id="the-score" aria-live="polite">
-        <p className="bsr-big">
-          {/* Names what the number actually is before you see the number
-              itself -- a bare "72 out of 100" with no label doesn't say
-              what it's scoring or for what. */}
-          <span className="bsr-big-label">
-            {hasArea ? 'Neighbourhood + this flat, combined' : 'This flat, on its own'}
-          </span>
-          <span className="bsr-big-n">{topScore}</span>
-          <span className="bsr-big-of">out of 100</span>
-        </p>
-        <div className="bsr-answer-say">
-          <h2>{headlineFor(topScore, hasArea)}</h2>
-          <p>
-            {hasArea
-              ? verdictSay(area.score, unit.score)
-              : 'We don’t have neighbourhood records for this pin code yet, so this score is the flat on its own - sun, shade, view, privacy and airflow.'}
-          </p>
-          {/* This score's flat-half is only ever real once floor + facing
-              are set below -- until then it's scored for a typical mid
-              floor, South-East facing, and presenting it with no caveat
-              read as if it were already this exact unit's verdict. Says
-              so up here, where the number actually is, not only next to
-              the inputs further down the page. */}
-          {/* The bigger caveat of the two, and it goes first. Shade,
-              outlook, airflow and noise are all computed at the pin, and
-              an untouched pin is wherever the geocoder put the address --
-              typically the centre of the complex, not a building. Said
-              here, next to the number it qualifies, with the way to fix
-              it one click away. */}
-          {!pinTouched && (
-            <p className="bsr-assumed-note">
-              Scored at the centre of this address, not a specific building -{' '}
-              <button type="button" className="bsr-inline-link" onClick={openLocate}>
-                open the map and tap your tower
-              </button>{' '}
-              to score the real spot.
-            </p>
-          )}
-          {assumed && (
-            <p className="bsr-assumed-note">
-              Scored for a typical {ord(DEFAULT_FLOOR)} floor, {DEFAULT_FACING.toLowerCase()}-facing
-              unit - <a href="#the-flat" onClick={scrollToUnitSet}>set the actual floor and facing</a> to score this specific flat.
-            </p>
-          )}
-        </div>
-
-      </section>
-
-      <div className="bsr-halves">
-
-        {/* ================= THE AREA ================= */}
-        <section className="bsr-half bsr-area">
-          <p className="bsr-kicker">The area around it</p>
-          <h2>{hasArea ? area.name : 'This locality'}</h2>
-          <p className="bsr-sub">
-            {hasArea
-              ? `Government records for pin ${area.pinCode}.`
-              : pinPending
-                ? 'Finding the pincode for this pin\u2026'
-                : areaFailed
-                  ? 'Couldn\u2019t be loaded.'
-                  : 'Not covered yet.'}
-            {hasArea && (
-              <>
-                {' '}
-                <button type="button" className="bsr-pinlink" onClick={() => setPinFixOpen((v) => !v)}>
-                  {pinFixOpen ? 'Never mind' : 'Wrong pincode?'}
-                </button>
-              </>
-            )}
-          </p>
-
-          {/* The lookup lands on a neighbouring pincode often enough that
-              this has to be reachable from the covered state too, not only
-              when nothing was found. 560066 and 560067 are both Whitefield
-              and they are not the same set of records. */}
-          {hasArea && pinFixOpen && pinFixForm}
-
-          {hasArea ? (
-            <>
-              <p className="bsr-rating">
-                <span className={`bsr-word is-${toneOf(area.score)}`}>{word(area.score)}</span>
-                <span className="bsr-outof">{area.score} out of 100 · grade {area.grade}</span>
-              </p>
-
-              {/* Collapsed to the rating above by default at every width --
-                  the factor-by-factor breakdown and the methodology note
-                  are one tap away instead of a wall of rows nobody reads
-                  top to bottom. The "see detailed report" link just below
-                  stays outside this toggle (see bsr-more after the closing
-                  div) so it's never hidden by a collapsed state. */}
+          {/* ---------- the page's own title, then which address this is ----------
+              The page used to open directly on the address pill -- nothing said
+              what this screen even was before the eye landed on a number a
+              moment later. One real <h1> line first, the same on every report;
+              the verdict headline further down is demoted to <h2> so there's
+              exactly one top-level heading on the page, not two competing
+              ones. */}
+          <header className="bsr-head">
+            <div className="bsr-head-top">
+              <h1 className="bsr-title">Your BlindSpot report</h1>
+              <span className="bsr-head-links">
+                {/* First, not last. Someone reading a verdict on one flat is most
+                    likely to want the other two beside it -- that is a more common
+                    next step here than either of the other two links. */}
+                <a href="/compare" className="is-primary">Compare flats</a>
+                <a href="/my-reports">My reports</a>
+              </span>
+            </div>
+            <p className="bsr-addr">
+              <span className="bsr-pin" aria-hidden="true" />
+              <span className="bsr-addr-text">{address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}</span>
+              {/* Used to be a plain link back to "/" -- moving the pin meant
+                  leaving the report entirely and starting over. This reveals
+                  the same search-or-coordinates form the map toolbar used to
+                  carry, right where the address itself is written, and closes
+                  itself again once moveTo() actually lands a new pin. */}
               <button
                 type="button"
-                className="bsr-half-toggle"
-                aria-expanded={halfOpen.area}
-                onClick={() => toggleHalf('area')}
+                className="bsr-addr-change"
+                onClick={() => setAddrEditOpen((v) => !v)}
+                aria-expanded={addrEditOpen}
               >
-                <span className={`bsr-half-toggle-chevron${halfOpen.area ? ' is-open' : ''}`} aria-hidden="true">▾</span>
-                {halfOpen.area ? 'Show less' : 'Show the full breakdown'}
+                {addrEditOpen ? 'Cancel' : 'Change address'}
               </button>
+            </p>
+            {addrEditOpen && (
+              <form className="bsr-addr-edit bsr-locbar" onSubmit={onSearchSubmit}>
+                <input
+                  type="search"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Address or coordinates"
+                  aria-label="Move the pin to another address or coordinates -- press Enter to search"
+                  autoFocus
+                />
+                {locBusy ? <span className="bsr-loc-busy" aria-live="polite">Finding…</span> : null}
+                <button type="button" className="bsr-loc-me" onClick={useMyLocation} disabled={locBusy}>
+                  My location
+                </button>
+                {locError ? <p className="bsr-locerror">{locError}</p> : null}
+              </form>
+            )}
+          </header>
 
-              <div className={`bsr-half-detail${halfOpen.area ? '' : ' is-collapsed'}`}>
-              <ul className="bsr-rows">
-                {factorKeys.map((k) => {
-                  const RowIcon = FACTOR_ICONS[k];
-                  return (
-                  <li key={k}>
-                    {RowIcon ? <RowIcon className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" /> : null}
-                    <span className="bsr-row-what">
-                      {FACTOR_LABELS[k] || k}
-                      {FACTOR_MEANS[k] ? <span className="bsr-row-note">{FACTOR_MEANS[k]}</span> : null}
-                    </span>
-                    <span className={`bsr-tag is-${toneOf(area.factors[k])}`}>{word(area.factors[k])}</span>
-                  </li>
-                  );
-                })}
-
-                {aqi != null && (
-                  <li>
-                    <Wind className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" />
-                    <span className="bsr-row-what">
-                      Air quality today
-                      <span className="bsr-row-note">Live reading, AQI {aqi}</span>
-                    </span>
-                    <span className={`bsr-tag is-${aqi <= 100 ? 'good' : aqi <= 200 ? 'avg' : 'poor'}`}>{aqiWord(aqi)}</span>
-                  </li>
-                )}
-
-                {missingKeys.filter((k) => !(k === 'air' && aqi != null)).map((k) => {
-                  const RowIcon = FACTOR_ICONS[k];
-                  return (
-                  <li key={k}>
-                    {RowIcon ? <RowIcon className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" /> : null}
-                    <span className="bsr-row-what">
-                      {FACTOR_LABELS[k] || k}
-                      <span className="bsr-row-note">Not in the records for this pin</span>
-                    </span>
-                    <span className="bsr-tag is-none">Not recorded</span>
-                  </li>
-                  );
-                })}
-              </ul>
-
-              <p className="bsr-methodology-note">
-                Scores use a zone-level model, so nearby pincodes can score identically. School names in the full report are the one part sourced locality by locality.
+          {/* ---------- the answer, before anything else ---------- */}
+          <section className={`bsr-answer is-${topTone}`} id="the-score" aria-live="polite">
+            <p className="bsr-big">
+              {/* Names what the number actually is before you see the number
+                  itself -- a bare "72 out of 100" with no label doesn't say
+                  what it's scoring or for what. */}
+              <span className="bsr-big-label">
+                {hasArea ? 'Neighbourhood + this flat, combined' : 'This flat, on its own'}
+              </span>
+              <span className="bsr-big-n">{topScore}</span>
+              <span className="bsr-big-of">out of 100</span>
+            </p>
+            <div className="bsr-answer-say">
+              <h2>{headlineFor(topScore, hasArea)}</h2>
+              <p>
+                {hasArea
+                  ? verdictSay(area.score, unit.score)
+                  : 'We don’t have neighbourhood records for this pin code yet, so this score is the flat on its own - sun, shade, view, privacy and airflow.'}
               </p>
-              </div>
-
-              {/* Outside bsr-half-detail on purpose -- "see the detailed
-                  report" stays visible whether the breakdown above is
-                  open or collapsed. margin-top:auto in report.css lines
-                  this up with the flat's own link opposite it. No
-                  rel="noopener" on purpose: that report's own Close button
-                  is window.close(), which the browser refuses without an
-                  opener. Same call AVAreaCard's link makes. */}
-              <p className="bsr-more bsr-more-cta">
-                <a href={`/neighbourhood-report/${area.pinCode}`} target="_blank">See the detailed area report →</a>
-              </p>
-            </>
-          ) : (
-            <div className="bsr-nocover">
-              {pinPending ? (
-                <p>Looking up which pincode this pin falls in…</p>
-              ) : (
-                <>
-                  <p>
-                    {areaFailed
-                      ? `We couldn't load the neighbourhood records for pin ${pinCode} just now - that's a fault on our side, not a gap in coverage. The flat's own scores below are unaffected.`
-                      : pinCode
-                        ? `Pin ${pinCode} isn't in our neighbourhood records yet, so we won't guess at safety, water or schools here.`
-                        : "We couldn't work out the pincode for this exact spot, so there's nothing to look the area up by."}
-                    {areaFailed ? '' : ' BlindSpot has records for Delhi NCR, Bangalore, Chandigarh, Hyderabad and Mumbai.'}
-                  </p>
-                  {areaFailed && (
-                    <p style={{ marginTop: 10 }}>
-                      <button type="button" className="bsr-pinlink" onClick={() => setScoreNonce((n) => n + 1)}>
-                        Try loading the area again
-                      </button>
-                    </p>
-                  )}
-                </>
+              {/* This score's flat-half is only ever real once floor + facing
+                  are set below -- until then it's scored for a typical mid
+                  floor, South-East facing, and presenting it with no caveat
+                  read as if it were already this exact unit's verdict. Says
+                  so up here, where the number actually is, not only next to
+                  the inputs further down the page. */}
+              {/* The bigger caveat of the two, and it goes first. Shade,
+                  outlook, airflow and noise are all computed at the pin, and
+                  an untouched pin is wherever the geocoder put the address --
+                  typically the centre of the complex, not a building. Said
+                  here, next to the number it qualifies, with the way to fix
+                  it one click away. */}
+              {!pinTouched && (
+                <p className="bsr-assumed-note">
+                  Scored at the centre of this address, not a specific building -{' '}
+                  <button type="button" className="bsr-inline-link" onClick={openLocate}>
+                    open the map and tap your tower
+                  </button>{' '}
+                  to score the real spot.
+                </p>
               )}
-
-              {!pinPending && pinFixForm}
-              {aqi != null && (
-                <p className="bsr-nocover-aqi">
-                  What we can tell you: air today is <strong>{aqiWord(aqi).toLowerCase()}</strong>, AQI {aqi}.
+              {assumed && (
+                <p className="bsr-assumed-note">
+                  Scored for a typical {ord(DEFAULT_FLOOR)} floor, {DEFAULT_FACING.toLowerCase()}-facing
+                  unit - <a href="#the-flat" onClick={scrollToUnitSet}>set the actual floor and facing</a> to score this specific flat.
                 </p>
               )}
             </div>
-          )}
-        </section>
 
-        {/* ================= THE FLAT ================= */}
-        <section className="bsr-half bsr-unit" id="the-flat" ref={unitRef}>
-          <p className="bsr-kicker">The flat itself</p>
+          </section>
 
-          {/* Used to be an h2 ("34th floor, faces east") sitting directly
-              on top of these same two inputs saying the same thing again
-              right below it -- one fact shown twice a few pixels apart.
-              The inputs ARE the heading now: they're what's actually true
-              (and editable), so there's nothing left to restate in prose. */}
-          {/* Floor was a dropdown of sixty options. Nobody scrolls to 43 --
-              they know their floor and want to type it. The arrows still
-              work for nudging, and the value is only clamped when you leave
-              the field, so typing "1" on the way to "12" isn't fought. */}
-          <p className="bsr-set" ref={unitSetRef}>
-            <label className="bsr-set-field">
-              <span>Floor</span>
-              <input
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                maxLength={2}
-                value={floorText}
-                onChange={(e) => {
-                  const raw = e.target.value.replace(/[^\d]/g, '').slice(0, 2);
-                  setFloorText(raw);
-                  const n = parseInt(raw, 10);
-                  if (Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR) { setFloorSet(true); setFloor(n); }
-                }}
-                onBlur={() => {
-                  const n = parseInt(floorText, 10);
-                  // Left empty: stays empty. It used to snap back to the
-                  // default on blur, filling in a 5 nobody chose.
-                  if (!Number.isFinite(n)) { if (!floorSet) setFloorText(''); else setFloorText(String(floor)); return; }
-                  const clamped = Math.min(MAX_FLOOR, Math.max(1, n));
-                  setFloorSet(true);
-                  setFloor(clamped);
-                  setFloorText(String(clamped));
-                }}
-                aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
-              />
-            </label>
-            <label className="bsr-set-field">
-              <span>Faces</span>
-              <select
-                value={facingSet ? facing : ''}
-                onChange={(e) => { if (!e.target.value) return; setFacingSet(true); setFacing(e.target.value); }}
-                aria-label="Which way the flat faces"
-              >
-                {!facingSet && <option value="" disabled>Select</option>}
-                {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
-              </select>
-            </label>
-          </p>
+          <div className="bsr-halves">
 
-          <p className="bsr-rating" aria-live="polite">
-            <span className={`bsr-word is-${toneOf(unit.score)}`}>{word(unit.score)}</span>
-            <span className="bsr-outof">{unit.score} out of 100</span>
-            {busy ? <span className="bsr-busy">recalculating…</span> : null}
-          </p>
-
-          {/* Same collapse-at-every-width pattern as "the area" above --
-              the sub-score breakdown is one tap away. Floor/facing inputs
-              and the rating stay outside this, above -- they're the
-              actionable part, not detail to hide. The "see the sun and
-              shadow" link stays outside the toggle too (below the closing
-              div) so collapsing this never hides it. */}
-          <button
-            type="button"
-            className="bsr-half-toggle"
-            aria-expanded={halfOpen.unit}
-            onClick={() => toggleHalf('unit')}
-          >
-            <span className={`bsr-half-toggle-chevron${halfOpen.unit ? ' is-open' : ''}`} aria-hidden="true">▾</span>
-            {halfOpen.unit ? 'Show less' : 'Show the full breakdown'}
-          </button>
-
-          <div className={`bsr-half-detail${halfOpen.unit ? '' : ' is-collapsed'}`}>
-          {/* The seven scores below are computed off the 3D model further
-              down the page (five from the solar/floor model, plus
-              dampness from monsoon climate + orientation, plus noise
-              from live OSM road/rail proximity). Without saying so
-              they read as seven numbers from nowhere. */}
-          <p className="bsr-source">
-            Worked out from the sun&apos;s real path over the buildings around this one.{' '}
-            <a href="#the-block">See the block in 3D ↓</a>
-          </p>
-
-
-          <ul className="bsr-rows">
-            {(unit.subScores || []).map((s) => {
-              const RowIcon = SUBSCORE_ICONS[s.key];
-              return (
-              <li key={s.key}>
-                {RowIcon ? <RowIcon className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" /> : null}
-                <span className="bsr-row-what">
-                  {s.label}
-                  {s.summary ? <span className="bsr-row-note">{s.summary}</span> : null}
-                </span>
-                {/* `pending` (currently only Noise Risk, on its very
-                    first live view of an address) means this row's
-                    score/tone below isn't a real judgement yet, just a
-                    neutral placeholder -- tagging it "Fair" would read
-                    as a finished answer instead of one still loading, so
-                    it gets its own quiet in-progress pill instead. It
-                    swaps for the real tag in place once the background
-                    fetch resolves (see the scores effect above). */}
-                {s.pending ? (
-                  <span className="bsr-tag is-pending">Checking…</span>
-                ) : (
-                  <span className={`bsr-tag is-${toneOf(s.score)}`}>{word(s.score)}</span>
-                )}
-              </li>
-              );
-            })}
-            {/* A ₹ figure, not a Good/Fair/Poor judgement -- riding on the
-                same Shade & Heat exposure data, but shown as its own row
-                with a neutral tag rather than a sixth graded score. The
-                full formula sits in the title attribute for anyone who
-                hovers; the visible note stays a one-line caveat. */}
-            {unit.thermalCost && (
-              <li>
-                <Snowflake className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" />
-                <span className="bsr-row-what">
-                  Est. summer AC cost
-                  <span className="bsr-row-note" title={unit.thermalCost.methodology}>
-                    Standard 1.5-ton AC, typical summer use - an estimate to compare units, not a bill.
-                  </span>
-                </span>
-                <span className="bsr-tag is-none">
-                  ₹{unit.thermalCost.estCostRange[0].toLocaleString('en-IN')}–{unit.thermalCost.estCostRange[1].toLocaleString('en-IN')}/mo
-                </span>
-              </li>
-            )}
-          </ul>
-          </div>
-
-          {/* Outside bsr-half-detail on purpose -- stays visible whether
-              the breakdown above is open or collapsed, same as the area
-              half's report link opposite it. Used to generate the sun &
-              shadow report directly from here -- before anyone had seen
-              the day animate over the actual block below, or had a chance
-              to nudge the pin/floor/facing first. That's backwards: you'd
-              get a report for whatever the defaults happened to be, not
-              what you'd actually looked at. This is a plain scroll down to
-              the map now (an anchor, not a report trigger -- see .bsr-more
-              a below), and the real "generate" action lives on the map's
-              own toolbar instead, next to the controls it reports on. */}
-          <p className="bsr-more">
-            <a href="#the-block">See the sun and shadow on the map ↓</a>
-          </p>
-        </section>
-      </div>
-      {/* ---------- the map, full width ----------
-          It lived inside the flat's card until the card's ~500px made
-          Map3DShadow hide its own view-angle pad (its stylesheet drops
-          .view-controls under 768px), so half the map was unreachable.
-          Full width gives the controls back and gives the shadows room.
-          The toolbar (search, floor, facing, date) sits ON the map itself
-          now, not in a bar above it -- a floating card over the top-left
-          corner, so it's always physically part of the map you're looking
-          at rather than something that scrolls away from it. It has its
-          own z-index above .bsr-map-guard's dimming layer, so it stays
-          usable whether the map is armed for interaction or not. On
-          768px+, where Map3DShadow's own "set view angle" pad occupies
-          the top-right corner, the toolbar is kept clear of it (see
-          .bsr-mapbar's right clearance in report.css) rather than
-          overlapping it the way the old pill row once did. */}
-      {mapZone}
-
-      <section className="bsr-visit" id="the-visit">
-        <h2>What to check before you decide</h2>
-
-        <ul className="bsr-todo">
-          {actions.length === 0 ? (
-            <li className="bsr-todo-plain">
-              <span className="bsr-todo-body">
-                <strong className="bsr-todo-title">Nothing scored under 60.</strong>
-                <span className="bsr-todo-text">Still worth one visit at rush hour and one after dark before you commit.</span>
-              </span>
-            </li>
-          ) : (
-            actions.map((a) => {
-              const isTicked = ticked.has(a.key);
-              const hasNote = Boolean((notes[a.key] || '').trim());
-              // A box for every item, all empty, read as one repeated wall
-              // regardless of how short the placeholder was -- so nothing
-              // renders here at all until it's actually relevant: ticking
-              // an item (you've been and checked it -- the natural moment
-              // to say what you found) reveals its note field, a written
-              // note keeps it visible even if you later untick, and "+ Add
-              // a note" covers writing one without ticking. collapsedNotes
-              // overrides all three -- otherwise a field, once opened, had
-              // no way back to "+ Add a note" at all.
-              const showNote = !collapsedNotes.has(a.key) && (isTicked || hasNote || expandedNotes.has(a.key));
-              return (
-                <li key={a.key} className={isTicked ? 'is-done' : undefined}>
-                  <label className="bsr-todo-row">
-                    <input
-                      type="checkbox"
-                      className="bsr-box"
-                      checked={isTicked}
-                      onChange={() => toggleTick(a.key)}
-                    />
-                    <span className="bsr-todo-body">
-                      <strong className="bsr-todo-title">{a.label} - {String(word(a.score)).toLowerCase()} ({a.score})</strong>
-                      <span className="bsr-todo-text">{a.action}</span>
-                    </span>
-                  </label>
-                  {/* Both sit outside the <label> on purpose -- clicking
-                      either must never toggle the checkbox above it. */}
-                  {showNote ? (
-                    <span className="bsr-todo-notewrap">
-                      <textarea
-                        className="bsr-todo-note"
-                        placeholder="Notes (optional)"
-                        aria-label={`What did you find - ${a.label}`}
-                        value={notes[a.key] || ''}
-                        onChange={(e) => updateNote(a.key, e.target.value)}
-                        rows={2}
-                        autoFocus={isTicked && !hasNote}
-                      />
-                      {/* Closing keeps whatever's already typed -- this
-                          only hides the field, ticking it again (or "+ Add
-                          a note") brings it right back with the text
-                          still there. */}
-                      <button
-                        type="button"
-                        className="bsr-todo-notehide"
-                        onClick={() => collapseNote(a.key)}
-                        aria-label={`Hide the note field for ${a.label}`}
-                        title="Hide this note field"
-                      >
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-                      </button>
-                    </span>
-                  ) : (
-                    <button type="button" className="bsr-todo-addnote" onClick={() => revealNote(a.key)}>
-                      + Add a note
+            {/* ================= THE AREA ================= */}
+            <section className="bsr-half bsr-area">
+              <p className="bsr-kicker">The area around it</p>
+              <h2>{hasArea ? area.name : 'This locality'}</h2>
+              <p className="bsr-sub">
+                {hasArea
+                  ? `Government records for pin ${area.pinCode}.`
+                  : pinPending
+                    ? 'Finding the pincode for this pin\u2026'
+                    : areaFailed
+                      ? 'Couldn\u2019t be loaded.'
+                      : 'Not covered yet.'}
+                {hasArea && (
+                  <>
+                    {' '}
+                    <button type="button" className="bsr-pinlink" onClick={() => setPinFixOpen((v) => !v)}>
+                      {pinFixOpen ? 'Never mind' : 'Wrong pincode?'}
                     </button>
+                  </>
+                )}
+              </p>
+
+              {/* The lookup lands on a neighbouring pincode often enough that
+                  this has to be reachable from the covered state too, not only
+                  when nothing was found. 560066 and 560067 are both Whitefield
+                  and they are not the same set of records. */}
+              {hasArea && pinFixOpen && pinFixForm}
+
+              {hasArea ? (
+                <>
+                  <p className="bsr-rating">
+                    <span className={`bsr-word is-${toneOf(area.score)}`}>{word(area.score)}</span>
+                    <span className="bsr-outof">{area.score} out of 100 · grade {area.grade}</span>
+                  </p>
+
+                  {/* Collapsed to the rating above by default at every width --
+                      the factor-by-factor breakdown and the methodology note
+                      are one tap away instead of a wall of rows nobody reads
+                      top to bottom. The "see detailed report" link just below
+                      stays outside this toggle (see bsr-more after the closing
+                      div) so it's never hidden by a collapsed state. */}
+                  <button
+                    type="button"
+                    className="bsr-half-toggle"
+                    aria-expanded={halfOpen.area}
+                    onClick={() => toggleHalf('area')}
+                  >
+                    <span className={`bsr-half-toggle-chevron${halfOpen.area ? ' is-open' : ''}`} aria-hidden="true">▾</span>
+                    {halfOpen.area ? 'Show less' : 'Show the full breakdown'}
+                  </button>
+
+                  <div className={`bsr-half-detail${halfOpen.area ? '' : ' is-collapsed'}`}>
+                  <ul className="bsr-rows">
+                    {factorKeys.map((k) => {
+                      const RowIcon = FACTOR_ICONS[k];
+                      return (
+                      <li key={k}>
+                        {RowIcon ? <RowIcon className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" /> : null}
+                        <span className="bsr-row-what">
+                          {FACTOR_LABELS[k] || k}
+                          {FACTOR_MEANS[k] ? <span className="bsr-row-note">{FACTOR_MEANS[k]}</span> : null}
+                        </span>
+                        <span className={`bsr-tag is-${toneOf(area.factors[k])}`}>{word(area.factors[k])}</span>
+                      </li>
+                      );
+                    })}
+
+                    {aqi != null && (
+                      <li>
+                        <Wind className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" />
+                        <span className="bsr-row-what">
+                          Air quality today
+                          <span className="bsr-row-note">Live reading, AQI {aqi}</span>
+                        </span>
+                        <span className={`bsr-tag is-${aqi <= 100 ? 'good' : aqi <= 200 ? 'avg' : 'poor'}`}>{aqiWord(aqi)}</span>
+                      </li>
+                    )}
+
+                    {missingKeys.filter((k) => !(k === 'air' && aqi != null)).map((k) => {
+                      const RowIcon = FACTOR_ICONS[k];
+                      return (
+                      <li key={k}>
+                        {RowIcon ? <RowIcon className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" /> : null}
+                        <span className="bsr-row-what">
+                          {FACTOR_LABELS[k] || k}
+                          <span className="bsr-row-note">Not in the records for this pin</span>
+                        </span>
+                        <span className="bsr-tag is-none">Not recorded</span>
+                      </li>
+                      );
+                    })}
+                  </ul>
+
+                  <p className="bsr-methodology-note">
+                    Scores use a zone-level model, so nearby pincodes can score identically. School names in the full report are the one part sourced locality by locality.
+                  </p>
+                  </div>
+
+                  {/* Outside bsr-half-detail on purpose -- "see the detailed
+                      report" stays visible whether the breakdown above is
+                      open or collapsed. margin-top:auto in report.css lines
+                      this up with the flat's own link opposite it. No
+                      rel="noopener" on purpose: that report's own Close button
+                      is window.close(), which the browser refuses without an
+                      opener. Same call AVAreaCard's link makes. */}
+                  <p className="bsr-more bsr-more-cta">
+                    <a href={`/neighbourhood-report/${area.pinCode}`} target="_blank">See the detailed area report →</a>
+                  </p>
+                </>
+              ) : (
+                <div className="bsr-nocover">
+                  {pinPending ? (
+                    <p>Looking up which pincode this pin falls in…</p>
+                  ) : (
+                    <>
+                      <p>
+                        {areaFailed
+                          ? `We couldn't load the neighbourhood records for pin ${pinCode} just now - that's a fault on our side, not a gap in coverage. The flat's own scores below are unaffected.`
+                          : pinCode
+                            ? `Pin ${pinCode} isn't in our neighbourhood records yet, so we won't guess at safety, water or schools here.`
+                            : "We couldn't work out the pincode for this exact spot, so there's nothing to look the area up by."}
+                        {areaFailed ? '' : ' BlindSpot has records for Delhi NCR, Bangalore, Chandigarh, Hyderabad and Mumbai.'}
+                      </p>
+                      {areaFailed && (
+                        <p style={{ marginTop: 10 }}>
+                          <button type="button" className="bsr-pinlink" onClick={() => setScoreNonce((n) => n + 1)}>
+                            Try loading the area again
+                          </button>
+                        </p>
+                      )}
+                    </>
                   )}
+
+                  {!pinPending && pinFixForm}
+                  {aqi != null && (
+                    <p className="bsr-nocover-aqi">
+                      What we can tell you: air today is <strong>{aqiWord(aqi).toLowerCase()}</strong>, AQI {aqi}.
+                    </p>
+                  )}
+                </div>
+              )}
+            </section>
+
+            {/* ================= THE FLAT ================= */}
+            <section className="bsr-half bsr-unit" id="the-flat" ref={unitRef}>
+              <p className="bsr-kicker">The flat itself</p>
+
+              {/* Used to be an h2 ("34th floor, faces east") sitting directly
+                  on top of these same two inputs saying the same thing again
+                  right below it -- one fact shown twice a few pixels apart.
+                  The inputs ARE the heading now: they're what's actually true
+                  (and editable), so there's nothing left to restate in prose. */}
+              {/* Floor was a dropdown of sixty options. Nobody scrolls to 43 --
+                  they know their floor and want to type it. The arrows still
+                  work for nudging, and the value is only clamped when you leave
+                  the field, so typing "1" on the way to "12" isn't fought. */}
+              <p className="bsr-set" ref={unitSetRef}>
+                <label className="bsr-set-field">
+                  <span>Floor</span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={2}
+                    value={floorText}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/[^\d]/g, '').slice(0, 2);
+                      setFloorText(raw);
+                      const n = parseInt(raw, 10);
+                      if (Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR) { setFloorSet(true); setFloor(n); }
+                    }}
+                    onBlur={() => {
+                      const n = parseInt(floorText, 10);
+                      // Left empty: stays empty. It used to snap back to the
+                      // default on blur, filling in a 5 nobody chose.
+                      if (!Number.isFinite(n)) { if (!floorSet) setFloorText(''); else setFloorText(String(floor)); return; }
+                      const clamped = Math.min(MAX_FLOOR, Math.max(1, n));
+                      setFloorSet(true);
+                      setFloor(clamped);
+                      setFloorText(String(clamped));
+                    }}
+                    aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
+                  />
+                </label>
+                <label className="bsr-set-field">
+                  <span>Faces</span>
+                  <select
+                    value={facingSet ? facing : ''}
+                    onChange={(e) => { if (!e.target.value) return; setFacingSet(true); setFacing(e.target.value); }}
+                    aria-label="Which way the flat faces"
+                  >
+                    {!facingSet && <option value="" disabled>Select</option>}
+                    {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
+                  </select>
+                </label>
+              </p>
+
+              <p className="bsr-rating" aria-live="polite">
+                <span className={`bsr-word is-${toneOf(unit.score)}`}>{word(unit.score)}</span>
+                <span className="bsr-outof">{unit.score} out of 100</span>
+                {busy ? <span className="bsr-busy">recalculating…</span> : null}
+              </p>
+
+              {/* Same collapse-at-every-width pattern as "the area" above --
+                  the sub-score breakdown is one tap away. Floor/facing inputs
+                  and the rating stay outside this, above -- they're the
+                  actionable part, not detail to hide. The "see the sun and
+                  shadow" link stays outside the toggle too (below the closing
+                  div) so collapsing this never hides it. */}
+              <button
+                type="button"
+                className="bsr-half-toggle"
+                aria-expanded={halfOpen.unit}
+                onClick={() => toggleHalf('unit')}
+              >
+                <span className={`bsr-half-toggle-chevron${halfOpen.unit ? ' is-open' : ''}`} aria-hidden="true">▾</span>
+                {halfOpen.unit ? 'Show less' : 'Show the full breakdown'}
+              </button>
+
+              <div className={`bsr-half-detail${halfOpen.unit ? '' : ' is-collapsed'}`}>
+              {/* The seven scores below are computed off the 3D model further
+                  down the page (five from the solar/floor model, plus
+                  dampness from monsoon climate + orientation, plus noise
+                  from live OSM road/rail proximity). Without saying so
+                  they read as seven numbers from nowhere. */}
+              <p className="bsr-source">
+                Worked out from the sun&apos;s real path over the buildings around this one.{' '}
+                <a href="#the-block">See the block in 3D ↓</a>
+              </p>
+
+
+              <ul className="bsr-rows">
+                {(unit.subScores || []).map((s) => {
+                  const RowIcon = SUBSCORE_ICONS[s.key];
+                  return (
+                  <li key={s.key}>
+                    {RowIcon ? <RowIcon className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" /> : null}
+                    <span className="bsr-row-what">
+                      {s.label}
+                      {s.summary ? <span className="bsr-row-note">{s.summary}</span> : null}
+                    </span>
+                    {/* `pending` (currently only Noise Risk, on its very
+                        first live view of an address) means this row's
+                        score/tone below isn't a real judgement yet, just a
+                        neutral placeholder -- tagging it "Fair" would read
+                        as a finished answer instead of one still loading, so
+                        it gets its own quiet in-progress pill instead. It
+                        swaps for the real tag in place once the background
+                        fetch resolves (see the scores effect above). */}
+                    {s.pending ? (
+                      <span className="bsr-tag is-pending">Checking…</span>
+                    ) : (
+                      <span className={`bsr-tag is-${toneOf(s.score)}`}>{word(s.score)}</span>
+                    )}
+                  </li>
+                  );
+                })}
+                {/* A ₹ figure, not a Good/Fair/Poor judgement -- riding on the
+                    same Shade & Heat exposure data, but shown as its own row
+                    with a neutral tag rather than a sixth graded score. The
+                    full formula sits in the title attribute for anyone who
+                    hovers; the visible note stays a one-line caveat. */}
+                {unit.thermalCost && (
+                  <li>
+                    <Snowflake className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" />
+                    <span className="bsr-row-what">
+                      Est. summer AC cost
+                      <span className="bsr-row-note" title={unit.thermalCost.methodology}>
+                        Standard 1.5-ton AC, typical summer use - an estimate to compare units, not a bill.
+                      </span>
+                    </span>
+                    <span className="bsr-tag is-none">
+                      ₹{unit.thermalCost.estCostRange[0].toLocaleString('en-IN')}–{unit.thermalCost.estCostRange[1].toLocaleString('en-IN')}/mo
+                    </span>
+                  </li>
+                )}
+              </ul>
+              </div>
+
+              {/* Outside bsr-half-detail on purpose -- stays visible whether
+                  the breakdown above is open or collapsed, same as the area
+                  half's report link opposite it. Used to generate the sun &
+                  shadow report directly from here -- before anyone had seen
+                  the day animate over the actual block below, or had a chance
+                  to nudge the pin/floor/facing first. That's backwards: you'd
+                  get a report for whatever the defaults happened to be, not
+                  what you'd actually looked at. This is a plain scroll down to
+                  the map now (an anchor, not a report trigger -- see .bsr-more
+                  a below), and the real "generate" action lives on the map's
+                  own toolbar instead, next to the controls it reports on. */}
+              <p className="bsr-more">
+                <a href="#the-block">See the sun and shadow on the map ↓</a>
+              </p>
+            </section>
+          </div>
+          {/* ---------- the map, full width ----------
+              It lived inside the flat's card until the card's ~500px made
+              Map3DShadow hide its own view-angle pad (its stylesheet drops
+              .view-controls under 768px), so half the map was unreachable.
+              Full width gives the controls back and gives the shadows room.
+              The toolbar (search, floor, facing, date) sits ON the map itself
+              now, not in a bar above it -- a floating card over the top-left
+              corner, so it's always physically part of the map you're looking
+              at rather than something that scrolls away from it. It has its
+              own z-index above .bsr-map-guard's dimming layer, so it stays
+              usable whether the map is armed for interaction or not. On
+              768px+, where Map3DShadow's own "set view angle" pad occupies
+              the top-right corner, the toolbar is kept clear of it (see
+              .bsr-mapbar's right clearance in report.css) rather than
+              overlapping it the way the old pill row once did. */}
+        </>
+      )}
+      {verdictMode === 'boot' && bootNode}
+      {verdictMode === 'error' && errorNode}
+      {mapZone}
+      {verdictMode === 'ready' && (
+        <>
+
+          <section className="bsr-visit" id="the-visit">
+            <h2>What to check before you decide</h2>
+
+            <ul className="bsr-todo">
+              {actions.length === 0 ? (
+                <li className="bsr-todo-plain">
+                  <span className="bsr-todo-body">
+                    <strong className="bsr-todo-title">Nothing scored under 60.</strong>
+                    <span className="bsr-todo-text">Still worth one visit at rush hour and one after dark before you commit.</span>
+                  </span>
                 </li>
-              );
-            })
-          )}
-        </ul>
-        {actions.length > 0 && tickedHere > 0 && (
-          <p className="bsr-todo-count">
-            {tickedHere} of {actions.length} checked.{' '}
-            <button type="button" onClick={() => {
-              setTicked(new Set());
-              if (tickKey) { try { window.localStorage.removeItem(tickKey); } catch {} }
-            }}>Clear</button>
-          </p>
-        )}
-      </section>
+              ) : (
+                actions.map((a) => {
+                  const isTicked = ticked.has(a.key);
+                  const hasNote = Boolean((notes[a.key] || '').trim());
+                  // A box for every item, all empty, read as one repeated wall
+                  // regardless of how short the placeholder was -- so nothing
+                  // renders here at all until it's actually relevant: ticking
+                  // an item (you've been and checked it -- the natural moment
+                  // to say what you found) reveals its note field, a written
+                  // note keeps it visible even if you later untick, and "+ Add
+                  // a note" covers writing one without ticking. collapsedNotes
+                  // overrides all three -- otherwise a field, once opened, had
+                  // no way back to "+ Add a note" at all.
+                  const showNote = !collapsedNotes.has(a.key) && (isTicked || hasNote || expandedNotes.has(a.key));
+                  return (
+                    <li key={a.key} className={isTicked ? 'is-done' : undefined}>
+                      <label className="bsr-todo-row">
+                        <input
+                          type="checkbox"
+                          className="bsr-box"
+                          checked={isTicked}
+                          onChange={() => toggleTick(a.key)}
+                        />
+                        <span className="bsr-todo-body">
+                          <strong className="bsr-todo-title">{a.label} - {String(word(a.score)).toLowerCase()} ({a.score})</strong>
+                          <span className="bsr-todo-text">{a.action}</span>
+                        </span>
+                      </label>
+                      {/* Both sit outside the <label> on purpose -- clicking
+                          either must never toggle the checkbox above it. */}
+                      {showNote ? (
+                        <span className="bsr-todo-notewrap">
+                          <textarea
+                            className="bsr-todo-note"
+                            placeholder="Notes (optional)"
+                            aria-label={`What did you find - ${a.label}`}
+                            value={notes[a.key] || ''}
+                            onChange={(e) => updateNote(a.key, e.target.value)}
+                            rows={2}
+                            autoFocus={isTicked && !hasNote}
+                          />
+                          {/* Closing keeps whatever's already typed -- this
+                              only hides the field, ticking it again (or "+ Add
+                              a note") brings it right back with the text
+                              still there. */}
+                          <button
+                            type="button"
+                            className="bsr-todo-notehide"
+                            onClick={() => collapseNote(a.key)}
+                            aria-label={`Hide the note field for ${a.label}`}
+                            title="Hide this note field"
+                          >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                          </button>
+                        </span>
+                      ) : (
+                        <button type="button" className="bsr-todo-addnote" onClick={() => revealNote(a.key)}>
+                          + Add a note
+                        </button>
+                      )}
+                    </li>
+                  );
+                })
+              )}
+            </ul>
+            {actions.length > 0 && tickedHere > 0 && (
+              <p className="bsr-todo-count">
+                {tickedHere} of {actions.length} checked.{' '}
+                <button type="button" onClick={() => {
+                  setTicked(new Set());
+                  if (tickKey) { try { window.localStorage.removeItem(tickKey); } catch {} }
+                }}>Clear</button>
+              </p>
+            )}
+          </section>
 
-      <RoomPhotoAnalyzer lat={lat} lon={lon} floor={floor} tzOffset={TZ} />
+          <RoomPhotoAnalyzer lat={lat} lon={lon} floor={floor} tzOffset={TZ} />
 
-      {/* ---------- the written verdict ---------- */}
-      <section className="bsr-close">
-        <h2>Every property has a <em>blindspot.</em></h2>
-        <p>
-          {hasArea
-            ? 'One written verdict on the area and the flat, with what to verify before you buy. PDF.'
-            : 'One written verdict on this flat - sun, heat, view and what to verify. No neighbourhood records for this pincode, so it covers the flat only. PDF.'}
-        </p>
-        {/* Both reports are built from photographs of the map. With no map
-            there is nothing to photograph, and the run used to fail with
-            "something went wrong, things are busy" -- which is neither true
-            nor actionable. Say the real reason before they click. */}
-        <button
-          type="button"
-          className="bsr-cta"
-          disabled={!solar?.pathData}
-          onClick={() => setReportOpen('full')}
-        >
-          {hasArea ? 'Generate the full report' : 'Generate the full flat report'}
-        </button>
-        <span className="bsr-free">
-          {solar?.pathData
-            ? 'About two minutes. Builds on this page - keep browsing.'
-            : 'Waiting for the 3D map to load - the report is built from it.'}
-        </span>
-        <span className="bsr-also">
-          Already have the floor plan? <a href="/floor-plan-analysis">Get room-by-room furnishing advice →</a>
-        </span>
-      </section>
+          {/* ---------- the written verdict ---------- */}
+          <section className="bsr-close">
+            <h2>Every property has a <em>blindspot.</em></h2>
+            <p>
+              {hasArea
+                ? 'One written verdict on the area and the flat, with what to verify before you buy. PDF.'
+                : 'One written verdict on this flat - sun, heat, view and what to verify. No neighbourhood records for this pincode, so it covers the flat only. PDF.'}
+            </p>
+            {/* Both reports are built from photographs of the map. With no map
+                there is nothing to photograph, and the run used to fail with
+                "something went wrong, things are busy" -- which is neither true
+                nor actionable. Say the real reason before they click. */}
+            <button
+              type="button"
+              className="bsr-cta"
+              disabled={!solar?.pathData}
+              onClick={() => setReportOpen('full')}
+            >
+              {hasArea ? 'Generate the full report' : 'Generate the full flat report'}
+            </button>
+            <span className="bsr-free">
+              {solar?.pathData
+                ? 'About two minutes. Builds on this page - keep browsing.'
+                : 'Waiting for the 3D map to load - the report is built from it.'}
+            </span>
+            <span className="bsr-also">
+              Already have the floor plan? <a href="/floor-plan-analysis">Get room-by-room furnishing advice →</a>
+            </span>
+          </section>
 
-      {scores.notes?.length ? <p className="bsr-foot">{scores.notes.join(' ')}</p> : null}
-
+          {scores?.notes?.length ? <p className="bsr-foot">{scores.notes.join(' ')}</p> : null}
+        </>
+      )}
       {reportModal}
     </div>
   );
