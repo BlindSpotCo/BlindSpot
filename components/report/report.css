@@ -1291,20 +1291,22 @@ body.bsr-noscroll{overflow:hidden}
    .bsr-dockzone wraps both .bsr-dock (Floor/Faces) and .bsr-mapcta
    (the instruction line + go button) into one card below 900px --
    there isn't room to separate them on a phone, so they read as a
-   single bottom sheet, same as before this was two elements instead
-   of one.
+   single bottom sheet.
 
-   Past 900px there IS room, and the two want different homes: the
-   fields are something to glance at and set once, so they go in a
-   compact corner card, off to the side where they never sit over the
-   part of the building someone is trying to tap. The go button is the
-   one action this whole step exists for, and a corner card is the
-   wrong amount of attention for it -- bottom centre, deliberately the
-   largest thing on the screen after the map itself, is where an eye
-   actually goes looking for "the button to press now". It also keeps
-   it clear of the map's own "set view angle" pad, which lives on the
-   map's own left edge (see Map3DShadow.js) precisely so the two
-   floating panels stop competing for the same corner. */
+   Past 900px there's room for the real point of this layout: everything
+   that isn't the map itself lives in one column on the right, stacked
+   in the order your eye actually wants it -- the map's own "set view
+   angle" pad up top (Map3DShadow.js, unchanged), then the fields you
+   set once, then the button you press last. An earlier version put the
+   go button bottom-centre instead, to get it out from directly under
+   the view-angle pad -- but that just traded a crowded corner for two
+   floating groups pulling attention in different directions. The real
+   fix is spacing, not separation: .bsr-dockzone drops below the pad
+   (top offset cleared past its height) with a generous gap, and the
+   go button keeps its own full-width card and bold, filled treatment
+   once the pin's placed -- so it still reads as the thing to press
+   next, just from its rightful spot under the fields instead of
+   detached from them. */
 .bsr-dockzone{
   position:absolute; left:16px; right:16px; bottom:14px;
   z-index:14;
@@ -1318,14 +1320,22 @@ body.bsr-noscroll{overflow:hidden}
 }
 .bsr-dock{ display:flex; flex-direction:column; align-items:stretch; gap:14px; }
 @media (min-width:900px){
-  /* display:contents drops .bsr-dockzone's own box (its card chrome
-     above stops applying) without touching the DOM, so .bsr-dock and
-     .bsr-mapcta below can each become their own independently
-     positioned card, anchored to .bsr-map same as the wrapper was. */
-  .bsr-dockzone{ display:contents; }
+  /* One real column, not two independently-floating cards: .bsr-dockzone
+     stays a flex column but drops its own bottom-sheet chrome (no
+     background of its own past this width) and anchors top-right,
+     clear of the view-angle pad + compass above it (that cluster runs
+     roughly 14px to 230px tall -- 256px leaves a clean ~26px gap).
+     .bsr-dock and .bsr-mapcta go back to being plain flow children
+     (not each independently positioned), each keeping its own card
+     chrome, so they stack with one consistent gap instead of landing
+     wherever their own absolute coordinates happen to put them. */
+  .bsr-dockzone{
+    left:auto; right:20px; bottom:auto; top:256px;
+    width:min(300px, calc(100% - 40px));
+    background:none; border:none; box-shadow:none; padding:0;
+  }
   .bsr-dock{
-    position:absolute; left:auto; right:20px; bottom:auto; top:96px;
-    z-index:14; width:min(288px, calc(100% - 40px));
+    width:100%;
     padding:16px 18px;
     border-radius:16px;
     background:rgba(255,253,248,.97);
@@ -1334,10 +1344,8 @@ body.bsr-noscroll{overflow:hidden}
     text-align:left;
   }
   .bsr-mapcta{
-    position:absolute; left:50%; right:auto; bottom:24px; top:auto;
-    transform:translateX(-50%);
-    z-index:14; width:min(420px, calc(100% - 40px));
-    padding:18px 24px;
+    width:100%;
+    padding:18px 20px;
     border-radius:16px;
     background:rgba(255,253,248,.97);
     border:1px solid var(--line,rgba(28,24,18,.14));
