@@ -62,7 +62,11 @@
    of being hidden behind it. An explicit opaque fill here fixes that
    for good, independent of the homepage's scroll-driven toggle. */
 .bsr-head{
-  padding:12px 0 10px;border-bottom:1px solid var(--line,rgba(28,24,18,.14));
+  /* Was 12px/10px -- with the address now reading as its own highlighted
+     pill (see .bsr-addr-text below) a tight header felt like the pill
+     had no room to sit in, exactly the "spilling out" feeling the tight
+     old padding gave even though nothing was ever technically clipped. */
+  padding:18px 0 16px;border-bottom:1px solid var(--line,rgba(28,24,18,.14));
   background:var(--bg,#FAF6EE);
   /* Sticky, opaque, sitting above the page -- without some depth cue it
      just looks like a hard, flat crop through whatever text happens to
@@ -84,13 +88,23 @@
   font-size:13px;letter-spacing:.1em;text-transform:uppercase;
   color:var(--text-mute,#5A5140);
 }
-.bsr-addr{display:flex;align-items:center;gap:9px;min-width:0;flex:1;margin-top:4px}
+.bsr-addr{display:flex;align-items:center;gap:10px;min-width:0;flex:1;margin-top:10px}
 .bsr-pin{
   width:11px;height:11px;border-radius:50%;flex:none;
   background:var(--brand,#3D4116);box-shadow:0 0 0 4px rgba(30,41,59,.15);
 }
+/* This is the one fact on the whole screen everything else is scored
+   against -- it read as plain body text before, no different from a
+   caption, so it never landed as "the address this report is for." A
+   tinted, bordered pill (the same color-mix idiom .ts4-card and
+   .bsr-set-flash already use for --brand) gives it real visual weight
+   and, as a side effect, an actual visible edge -- so what looked like
+   text with nothing containing it now sits inside a box you can see. */
 .bsr-addr-text{
-  font-size:15.5px;font-weight:600;
+  font-size:15.5px;font-weight:700;color:var(--brand,#3D4116);
+  background:color-mix(in srgb, var(--brand,#3D4116) 8%, transparent);
+  border:1px solid color-mix(in srgb, var(--brand,#3D4116) 18%, transparent);
+  border-radius:7px;padding:4px 11px;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .bsr-head-links{display:flex;gap:18px;flex:none}
@@ -119,7 +133,11 @@
    below, which reuses the base .bsr-locbar rules further down this file
    (same input + button as the map toolbar used to have). */
 .bsr-addr-change{
-  font:inherit;font-size:13px;font-weight:600;cursor:pointer;
+  /* Was 13px/600 -- the smallest, quietest thing on the bar despite
+     being the only way to fix a wrong pin. Not a full is-primary pill
+     (this isn't the bar's main action), but sized to hold its own next
+     to the address pill beside it rather than reading as fine print. */
+  font:inherit;font-size:14.5px;font-weight:700;cursor:pointer;
   flex:none;white-space:nowrap;
   background:none;border:0;padding:0;margin:0;
   color:var(--brand,#3D4116);text-decoration:underline;text-underline-offset:3px;
@@ -806,8 +824,11 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 /* ---------------- phones ---------------- */
 @media (max-width:600px){
   .bsr{padding-left:16px;padding-right:16px;font-size:15px}
-  .bsr-head{padding:10px 0 8px}
+  .bsr-head{padding:14px 0 12px}
   .bsr-head-top{gap:6px}
+  .bsr-addr{margin-top:8px}
+  .bsr-addr-text{padding:3px 9px;font-size:14.5px}
+  .bsr-addr-change{font-size:13.5px}
   .bsr-sub,.bsr-set{min-height:0}
   /* Score sits on one line (label above, number + "out of 100" beside
      each other) instead of a tall stacked block above the headline. */
