@@ -1867,27 +1867,12 @@
   animation:hlm-spin 0.7s linear infinite;
 }
 @keyframes hlm-spin{ to{ transform:rotate(360deg); } }
-/* The action, inside the bar. The search box had no way to submit -- no
-   button, and Enter only worked with a suggestion already highlighted --
-   so nothing on screen said "this is the box, and this is how you go".
-   Filled brand green on the near-white shell: the only solid, high-
-   contrast control in the hero, so there is no doubt which box to use. */
-.hlm-search-go{
-  flex-shrink:0; display:inline-flex; align-items:center; gap:8px;
-  min-height:44px; padding:0 18px 0 20px;
-  border:none; border-radius:var(--radius-pill); cursor:pointer;
-  background:var(--brand,#3D4116); color:#FFFDF8;
-  font-family:'Geist',sans-serif; font-size:14.5px; font-weight:700; letter-spacing:.005em;
-  box-shadow:0 4px 14px rgba(61,65,22,.35);
-  transition:transform .15s ease, filter .15s ease;
-}
-.hlm-search-go:hover{ filter:brightness(1.08); transform:translateX(1px); }
-.hlm-search-go:focus-visible{ outline:3px solid rgba(245,195,67,.7); outline-offset:2px; }
-.hlm-search-go svg{ color:#FFFDF8; }
+/* The submit button that used to live here is gone -- Enter (already
+   wired in onSearchKeyDown) and clicking a suggestion row both already
+   submit, so a separate button was a second, redundant way to do the
+   same thing. */
 @media (max-width:560px){
   .hlm-search{ padding:6px 6px 6px 16px; }
-  .hlm-search-go{ min-height:40px; width:40px; padding:0; justify-content:center; }
-  .hlm-search-go-text{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
 }
 
 /* ---- "Try" chips, under the search box ----

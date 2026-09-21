@@ -437,18 +437,6 @@ export default function HeroLiveMapCanvas() {
                 autoComplete="off"
               />
               {loading && <span className="hlm-search-spinner" aria-hidden="true" />}
-              {/* The one filled, high-contrast thing in the hero, so there
-                  is no question which box is the one to use. Text on
-                  wider screens, just the arrow on a phone. */}
-              <button
-                type="button"
-                className="hlm-search-go"
-                onClick={() => searchAndPick()}
-                aria-label="Get the report for this place"
-              >
-                <span className="hlm-search-go-text">Get Report</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-              </button>
             </div>
 
             {cityPanel && (
