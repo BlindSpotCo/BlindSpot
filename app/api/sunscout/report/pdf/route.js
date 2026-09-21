@@ -388,6 +388,16 @@ export async function POST(req) {
     return score >= 70 ? GOOD : score >= 40 ? OK : POOR;
   }
 
+  // "December and January and November" (plain .join(' and')) reads worse
+  // the more months there are. A real list: comma-separated, "and" only
+  // before the last item, still just "X and Y" for exactly two.
+  function joinList(items) {
+    if (!items || !items.length) return '';
+    if (items.length === 1) return items[0];
+    if (items.length === 2) return `${items[0]} and ${items[1]}`;
+    return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
+  }
+
   // The nine-tile "consumer scorecard" that used to sit here has gone. It
   // restated the same numbers the area and flat sections carry, in derived
   // labels a reader had no way to check ("Indoor Plants: Good"), and it was
@@ -403,18 +413,18 @@ export async function POST(req) {
       const PLURAL = new Set(['schools', 'roads']);
       const verb = PLURAL.has(key) ? 'are' : 'is';
       if (v >= 80) pros.push(`${label} ${verb} excellent (${v}/100)`);
-      else if (v < 50) cons.push(`${label} ${verb} low (${v}/100)`);
+      else if (v < 50) cons.push(`${label} score ${verb} low (${v}/100)`);
     }
   }
   if (summary?.solarFeasibility) {
     const { bestMonths, avgUsableHours } = summary.solarFeasibility;
-    if (avgUsableHours >= 6) pros.push(`Strong sun exposure through ${bestMonths.join('/')}`);
+    if (avgUsableHours >= 6) pros.push(`Strong sun exposure in ${joinList(bestMonths)}`);
     const zero = summary.monthlySummary.filter(m => m.usableHours === 0);
     if (zero.length) cons.push(`No direct sun ${zero[0].month}${zero.length > 1 ? `–${zero[zero.length-1].month}` : ''} (${zero.length} month${zero.length > 1 ? 's' : ''})`);
   }
   if (shadeHeatSub) {
     if (shadeHeatSub.score >= 70) pros.push('Naturally well-shaded, low summer heat gain');
-    else if (shadeHeatSub.score < 40) cons.push('High summer heat-gain risk');
+    else if (shadeHeatSub.score < 40) cons.push('High summer heat risk');
   }
   if (windSub) {
     if (windSub.score >= 70) pros.push('Good natural ventilation potential');
@@ -797,7 +807,7 @@ export async function POST(req) {
       ${summary?.solarFeasibility ? `
       <p style="font-size:13.5px;color:${MUTE};line-height:1.6;margin-bottom:2px;">
         <strong style="color:${INK};">${summary.solarFeasibility.avgUsableHours}h of usable sun a day</strong> on average.
-        Best in ${summary.solarFeasibility.bestMonths.join(' and ')}; worst in ${summary.solarFeasibility.worstMonths.join(' and ')}.
+        Best in ${joinList(summary.solarFeasibility.bestMonths)}. Worst in ${joinList(summary.solarFeasibility.worstMonths)}.
       </p>` : ''}
       ${sunBarChart}
       ${formattedAnalysis || ''}
