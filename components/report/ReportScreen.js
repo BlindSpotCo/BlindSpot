@@ -954,6 +954,41 @@ export default function ReportScreen({ view = 'verdict' }) {
     window.history.replaceState(window.history.state, '', `${window.location.pathname}?${q.toString()}`);
   }, [hasPlace, lat, lon, pinCode, address, floor, facing, floorSet, facingSet, pinTouched]);
 
+  // The report modal, built once and rendered from both screens. It used
+  // to live only at the bottom of the full report, so the map step -- which
+  // returns early, without the report, so it doesn't wait for scoring --
+  // had the "Build the sun report" button in its toolbar and no modal to
+  // open: the click set reportOpen and nothing appeared. The gallery run
+  // only needs the map and the coordinates; the unit score it forwards is
+  // optional, so this is safe before scores have landed.
+  const reportModal = reportOpen && (
+      <ReportModal
+        /* Without a key React reuses this instance when the type changes,
+           so switching from the sun & shadow run to the full report kept
+           the finished gallery's state and simply relabelled it: "Your
+           report is ready - the full write-up", opening the gallery blob,
+           and saving the gallery under the full report's name. */
+        key={reportOpen}
+        lat={lat}
+        lon={lon}
+        tzOffset={TZ}
+        address={address}
+        captureScreenshots={captureOnce}
+        galleryOnly={reportOpen === 'gallery'}
+        prefillFloor={floor}
+        prefillFacing={facing}
+        prefillActionItems={actionsForAI.length ? actionsForAI : undefined}
+        unitScore={scores?.unit?.score}
+        unitSubScores={scores?.unit?.subScores}
+        areaRecord={reportOpen === 'full' ? avRecord : undefined}
+        combinedScore={reportOpen === 'full' ? scores?.combined : undefined}
+        areaWeight={reportOpen === 'full' ? areaWeight : undefined}
+        unitWeight={reportOpen === 'full' ? 1 - areaWeight : undefined}
+        onBusyChange={setReportBusy}
+        onClose={() => { setReportOpen(null); setReportBusy(false); }}
+      />
+    );
+
   // The map section, built once and rendered from two places: on its own
   // (the /report/locate step, which must not wait for scoring) and inside
   // the full report below. Same element either way, so moving between the
@@ -1282,7 +1317,7 @@ export default function ReportScreen({ view = 'verdict' }) {
   }
 
   if (fullMap) {
-    return <div className="bsr">{mapZone}</div>;
+    return <div className="bsr">{mapZone}{reportModal}</div>;
   }
 
   if (state === 'error') {
@@ -1912,33 +1947,7 @@ export default function ReportScreen({ view = 'verdict' }) {
 
       {scores.notes?.length ? <p className="bsr-foot">{scores.notes.join(' ')}</p> : null}
 
-      {reportOpen && (
-        <ReportModal
-          /* Without a key React reuses this instance when the type changes,
-             so switching from the sun & shadow run to the full report kept
-             the finished gallery's state and simply relabelled it: "Your
-             report is ready - the full write-up", opening the gallery blob,
-             and saving the gallery under the full report's name. */
-          key={reportOpen}
-          lat={lat}
-          lon={lon}
-          tzOffset={TZ}
-          address={address}
-          captureScreenshots={captureOnce}
-          galleryOnly={reportOpen === 'gallery'}
-          prefillFloor={floor}
-          prefillFacing={facing}
-          prefillActionItems={actionsForAI.length ? actionsForAI : undefined}
-          unitScore={unit.score}
-          unitSubScores={unit.subScores}
-          areaRecord={reportOpen === 'full' ? avRecord : undefined}
-          combinedScore={reportOpen === 'full' ? scores.combined : undefined}
-          areaWeight={reportOpen === 'full' ? areaWeight : undefined}
-          unitWeight={reportOpen === 'full' ? 1 - areaWeight : undefined}
-          onBusyChange={setReportBusy}
-          onClose={() => { setReportOpen(null); setReportBusy(false); }}
-        />
-      )}
+      {reportModal}
     </div>
   );
 }
