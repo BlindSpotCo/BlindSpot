@@ -1770,29 +1770,30 @@
    typed phrase that cycles through real examples of what BlindSpot
    catches. Reads as product proof, not marketing copy, which is why it
    sits in mono like the eyebrow rather than the headline's display font. */
-/* A caption, not a control. It used to be an outlined, blurred pill with
-   a blinking caret after the text -- the exact look of a text field, one
-   box above the one people were supposed to type in, so they clicked the
-   wrong one. No border, no background, no caret; a small label says what
-   the line is, and the example itself carries the colour. A soft text
-   shadow keeps it legible over the map without needing the pill. */
+/* One line, live-console feel -- a typed phrase that cycles through real
+   examples of what BlindSpot catches, in the dark blurred pill. Reads as
+   product proof, not marketing copy, which is why it sits in mono like the
+   eyebrow rather than the headline's display font.
+
+   No caret. The blinking bar after the text is what made this pill read as
+   an input -- a box with a cursor in it, one box above the search box
+   people were actually meant to type in. The pill and the typing stay;
+   the cursor is the part that was lying about what this is. */
 .hlm-typed-line{
-  display:flex; align-items:baseline; justify-content:center; gap:10px;
-  flex-wrap:wrap; margin:18px 0 0;
-  font-family:'Geist Mono',monospace; font-size:clamp(15px, 1.5vw, 17.5px);
-  text-shadow:0 1px 12px rgba(0,0,0,.55);
+  display:flex; align-items:baseline; justify-content:center; gap:8px;
+  flex-wrap:wrap; margin:20px 0 0; padding:8px 20px;
+  background:rgba(20,18,10,0.5); border:1px solid rgba(255,255,255,0.14);
+  border-radius:var(--radius-pill);
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  font-family:'Geist Mono',monospace; font-size:clamp(16px, 1.7vw, 19px);
   opacity:0; animation:hlmRise 1.05s cubic-bezier(.16,1,.3,1) 0.45s forwards;
 }
-.hlm-typed-lead{
-  font-size:.72em; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
-  color:rgba(255,253,248,.62);
-}
 .hlm-typed-text{
-  color:var(--brand-yellow, #F5C343); font-weight:600;
+  color:#FFFDF8; font-weight:500;
 }
 .hlm-typed-cursor{ display:none; }
 @media (max-width:640px){
-  .hlm-typed-line{ font-size:14px; gap:7px; }
+  .hlm-typed-line{ font-size:14.5px; padding:7px 16px; }
 }
 @keyframes hlmRise{
   from{ opacity:0; transform:translateY(16px); }

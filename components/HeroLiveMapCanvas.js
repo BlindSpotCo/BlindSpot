@@ -83,11 +83,13 @@ const SEARCH_PLACEHOLDER = 'Search a city, neighbourhood or address.';
 // One-click examples under the search box, one per covered city where it
 // fits. The label is what the chip says; the query carries the city so a
 // name that exists in several places ("Sector 17") lands in the right one.
+// A real building first, so the chips show that a specific address works
+// as well as an area -- that is the more useful thing to learn from them.
 const TRY_PLACES = [
-  { label: 'Whitefield', q: 'Whitefield, Bangalore' },
+  { label: 'Prestige Park Grove', q: 'Prestige Park Grove, Bangalore' },
   { label: 'Hauz Khas', q: 'Hauz Khas, New Delhi' },
+  { label: 'Sector 7', q: 'Sector 7, Chandigarh' },
   { label: 'Bandra West', q: 'Bandra West, Mumbai' },
-  { label: 'Sector 17', q: 'Sector 17, Chandigarh' },
 ];
 const KIND_LABELS = { city: 'City', neighbourhood: 'Neighbourhood', address: 'Address' };
 // The 5 cities BlindSpot actually has neighbourhood-score coverage for --
@@ -385,14 +387,7 @@ export default function HeroLiveMapCanvas() {
               explanation, so it doesn't substitute for one. One flat
               sentence, no animation of its own. */}
           <p className="hlm-sub">What the listing won&apos;t tell you. We will.</p>
-          {/* This used to sit in an outlined, blurred pill with a blinking
-              caret after the text -- which is exactly what a text field
-              looks like, so people tried to click into it, one box above
-              the box they were actually meant to type in. No outline, no
-              background, no caret: a labelled line of copy, which is what
-              it is. */}
           <p className="hlm-typed-line">
-            <span className="hlm-typed-lead">What we catch</span>
             <TypewriterCycle
               items={BLINDSPOT_EXAMPLES}
               className="hlm-typed-text"
