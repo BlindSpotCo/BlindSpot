@@ -3,21 +3,28 @@
 //
 // Upload a floor plan (PDF/JPG/PNG) → Gemini Vision reads it → shows a
 // marked-up copy of the plan (numbered pins per room) alongside a
-// furnishing-advice card per room. Same box/kick/BPF visual language as the
+// furnishing-advice card per room. Same box/kick/BPF layout language as the
 // AsliVastu report, recoloured to var(--sun) - BlindSpot's existing
 // unit-level accent - instead of var(--slate) (which is the AsliVastu/
 // neighbourhood-level accent), so the two AI-analysis surfaces read as
 // clearly different parts of the product.
+//
+// Typography was the one part NOT shared with the rest of the site: this
+// pulled its own Barlow/Barlow Condensed pair from Google Fonts instead of
+// the Geist/Geist Mono the whole app already loads in app/layout.js, so
+// every heading and label here rendered in a font that appears nowhere
+// else on BlindSpot. Now on the real site fonts -- .kick reads as the same
+// mono eyebrow used everywhere (.bx-eyebrow, .bsr-title, the homepage's
+// "PROPERTY INTELLIGENCE"), and .cond is just Geist at its own weight.
 
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import SaveReportButton from '@/components/reports/SaveReportButton';
 
 const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap');
-.fp { font-family: 'Barlow', sans-serif; }
-.fp .cond { font-family: 'Barlow Condensed', sans-serif; }
-.fp .kick { font-size: 11px; text-transform: uppercase; letter-spacing: .14em; font-weight: 600; color: var(--sun); margin: 0; }
+.fp { font-family: 'Geist', sans-serif; }
+.fp .cond { font-weight: 600; }
+.fp .kick { font-family: 'Geist Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .14em; font-weight: 600; color: var(--sun); margin: 0; }
 .fp-bpf { position: relative; border: 1px solid color-mix(in srgb, var(--sun) 55%, transparent); background: var(--paper); }
 .fp-bpf > .m { position: absolute; color: var(--sun); font-size: 12px; line-height: 1; opacity: .55; }
 .fp-bpf > .tl { top: -7px; left: -5px; } .fp-bpf > .tr { top: -7px; right: -5px; }
@@ -166,7 +173,7 @@ export default function FloorPlanAnalysis({ embedded = false }) {
 
         {!embedded && (
           <>
-            <h1 className="cond" style={{ fontSize: 40, fontWeight: 700, margin: '0 0 8px', textTransform: 'uppercase' }}>Furnish This Unit</h1>
+            <h1 className="cond" style={{ fontSize: 40, fontWeight: 700, margin: '0 0 8px', letterSpacing: '-0.015em' }}>Furnish this unit</h1>
             <p style={{ fontSize: 14, color: 'var(--text-mute)', maxWidth: 640, marginBottom: 28, lineHeight: 1.6 }}>
               Upload a floor plan - a PDF, JPG, or PNG - and get room-by-room furniture and placement suggestions, marked directly on the plan.
             </p>
