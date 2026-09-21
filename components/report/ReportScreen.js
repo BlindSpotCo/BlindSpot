@@ -315,13 +315,27 @@ export default function ReportScreen({ view = 'verdict' }) {
   // bsr-half-detail) so collapsing the breakdown never hides them.
   const [halfOpen, setHalfOpen] = useState({ area: false, unit: false });
   const toggleHalf = (key) => setHalfOpen((prev) => ({ ...prev, [key]: !prev[key] }));
-  // One-time default at mount, not a standing CSS override -- a person
-  // who then collapses a half on their own laptop stays collapsed.
+  // Default open at 768px+, not a standing CSS override -- a person who
+  // then collapses a half on their own laptop stays collapsed. This used
+  // to be a mount-only check, so someone who opened the page narrow (or
+  // in the phone-width layout) and then widened the same window/tab --
+  // no reload in between -- kept whatever halfOpen was at mount even
+  // after crossing into the desktop width, where .bsr-half-toggle itself
+  // is hidden by CSS. With no button left to reopen it, a half that
+  // happened to be closed stayed permanently stuck closed. A 'change'
+  // listener on the same query now re-checks on every crossing, not just
+  // at mount, so widening past 768px always opens both halves; narrowing
+  // back below it intentionally leaves whatever the person set, same as
+  // it always has on a laptop that starts wide.
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    if (window.matchMedia('(min-width: 768px)').matches) {
-      setHalfOpen({ area: true, unit: true });
-    }
+    const mq = window.matchMedia('(min-width: 768px)');
+    const openIfWide = () => {
+      if (mq.matches) setHalfOpen({ area: true, unit: true });
+    };
+    openIfWide();
+    mq.addEventListener('change', openIfWide);
+    return () => mq.removeEventListener('change', openIfWide);
   }, []);
 
   const [scores, setScores] = useState(null);   // { area|null, unit, combined|null }
