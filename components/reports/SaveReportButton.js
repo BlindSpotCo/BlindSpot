@@ -7,6 +7,20 @@
 // new name -- e.g. a flat/house number) -- and a title for this report.
 // Submits to POST /api/reports.
 //
+// The panel is a fixed-width (280px) absolute box anchored to its own
+// trigger's right edge -- fine on a full-width page (the other two call
+// sites), broken on the sun & shadow "report ready" screen: that button
+// sits inside a `flex:1` wrapper (ReportModal.js passes `style={{flex:1,
+// display:'flex'}}`) next to a Close button, inside a ~330px-wide corner
+// card. right:0 there anchors the panel to a point maybe 200px from the
+// card's own left edge, so a 280px panel opening leftward from it runs
+// straight off the card (and the button sits near the card's bottom, so
+// the panel's own height ran off the bottom too) -- exactly what the
+// screenshot showed. Under 480px the panel drops the trigger-relative
+// anchor entirely and becomes a small fixed, centred sheet instead
+// (.srb-panel / .srb-backdrop below), so it no longer matters how wide
+// or how narrow the thing that opened it is.
+//
 // If the person isn't signed in yet, clicking Save opens the popup
 // sign-in flow (lib/auth/popupSignIn.js) instead of losing whatever
 // report they're looking at -- same fix as the header's Sign in link.
@@ -182,7 +196,14 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
       </button>
 
       {open && (
+        <>
+        {/* Mobile-only backdrop -- invisible and non-interactive on a wide
+            screen (display:none is the base rule; the media query below
+            turns it on), a plain tap-to-close scrim once the panel becomes
+            a centred sheet. */}
+        <div className="srb-backdrop" onClick={() => setOpen(false)} />
         <div
+          className="srb-panel"
           style={{
             position: 'absolute', right: 0, top: 'calc(100% + 8px)', zIndex: 20,
             width: 280, background: '#FFFBF5', color: 'var(--ink, #1A0A00)',
@@ -268,7 +289,29 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
             </>
           )}
         </div>
+        </>
       )}
+
+      <style>{`
+        .srb-backdrop{ display:none }
+        @media (max-width:480px){
+          .srb-backdrop{
+            display:block; position:fixed; inset:0; background:rgba(10,5,0,0.45); z-index:1000;
+          }
+          /* Detached from the trigger entirely below 480px -- a fixed,
+             centred sheet instead of a box that opens relative to
+             whatever narrow flex slot the button happens to be sitting
+             in. Same panel, same fields, just positioned against the
+             viewport instead of the button. */
+          .srb-panel{
+            position: fixed !important; top: 50% !important; left: 50% !important; right: auto !important;
+            transform: translate(-50%, -50%) !important;
+            width: calc(100vw - 40px) !important; max-width: 340px !important;
+            max-height: 80vh !important; overflow-y: auto !important;
+            z-index: 1001 !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
