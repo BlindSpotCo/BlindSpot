@@ -433,8 +433,10 @@
    loading/error message) still should. Without .bsr-mapcta listed here
    it inherited width:100%;height:100%, which overrode its own width and
    made `bottom` meaningless -- a full-bleed panel pinned to the top of
-   the map instead of a button at the bottom of it. */
-.bsr-map > *:not(.bsr-mapbar):not(.bsr-mapcta){width:100%;height:100%}
+   the map instead of a button at the bottom of it. .bsr-dock (the card
+   that now wraps the CTA and the docked toolbar) is excluded for the same
+   reason: stretched, it became a 97%-opaque cream sheet over the whole map. */
+.bsr-map > *:not(.bsr-mapbar):not(.bsr-mapcta):not(.bsr-dock){width:100%;height:100%}
 .bsr-map-wait{
   display:flex;align-items:center;justify-content:center;text-align:center;
   height:100%;padding:0 24px;color:var(--text-mute,#5A5140);font-size:16px;
@@ -1492,4 +1494,43 @@ body.bsr-noscroll{overflow:hidden}
 .bsr-mapzone.is-parked{
   position:absolute; left:-10000px; top:0;
   width:min(1200px, 100vw); pointer-events:none;
+}
+
+/* ---- the map-step dock, laid out so everything in it actually fits ----
+   Inside the dock the toolbar inherits the floating toolbar's no-wrap rows
+   and laptop-size controls, which ran ~350px past the right edge of a
+   560px card (and clipped "Select season" to "ect season"). Here the
+   fields get a row of their own at the top of the card, play sits under
+   them, then the instruction and the way on.
+   Fields first is also what gives the "Set your floor and facing" pointer
+   somewhere to go: the card is pinned to the bottom of the screen, so a
+   pointer hanging BELOW the fields fell off it. It now sits just above
+   the card, over the map, pointing down at them. */
+.bsr-dock{ gap:14px }
+.bsr-dock .bsr-mapbar{
+  display:flex; flex-wrap:wrap; justify-content:center; align-items:center;
+  gap:12px 14px; order:-1;
+}
+.bsr-dock .bsr-mapbar .bsr-set{
+  order:-1; flex-basis:100%;
+  flex-wrap:wrap; justify-content:center; row-gap:10px;
+  border-left:none; padding:0;
+}
+.bsr-dock .bsr-mapbar .bsr-mapbar-time{ padding-right:0 }
+.bsr-dock .bsr-mapbar-report{ margin-left:0 }
+.bsr-dock .bsr-maptip{ top:auto; bottom:calc(100% + 18px) }
+.bsr-dock .bsr-maptip::before{ top:auto; bottom:-6px }
+@media (min-width:1024px){
+  .bsr-dock{ width:min(780px, calc(100% - 32px)); padding:18px 22px }
+}
+@media (max-width:767px){
+  .bsr-dock .bsr-mapbar .bsr-set{ order:-1 }
+  .bsr-dock .bsr-mapbar-report{ margin-left:0 }
+}
+/* The page focuses this on arrival (so keyboard users land on the step's
+   action). Before a pin is placed it's styled as a text link, and the
+   focus ring drew a box round it that made it look like a button nobody
+   meant to add. A heavier underline marks focus there instead. */
+.bsr-mapcta:not(.is-ready) .bsr-mapcta-go:focus-visible{
+  outline:none; text-decoration-thickness:2px;
 }
