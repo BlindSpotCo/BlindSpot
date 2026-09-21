@@ -12,16 +12,17 @@
   /* Text colours only -- the -bg tints below are unchanged. The original
      values (#10B981/#F59E0B/#EF4444) were picked to look right as a flat
      swatch, not as text: on their own -bg tint they measured 2.24:1,
-     1.93:1 and 3.08:1 (WCAG needs 4.5:1 for text this size), so the
-     amber "Fair" pill in particular read as barely-there yellow-on-cream.
-     These are the same hues darkened until each clears 4.5:1 against both
-     its own -bg tint and the page background/white, ~4.6-5.5:1 across the
-     three. */
-  --bsr-good:#0B7C56;
+     1.93:1 and 3.08:1 (WCAG needs 4.5:1 for text this size). A first pass
+     darkened these to clear 4.5:1 (~4.5-4.6:1 across the three) -- enough
+     to pass, not enough to actually feel readable at 12-13px, amber in
+     particular: the eye needs more headroom than the raw ratio suggests
+     in that hue. Darkened again to ~6.5-7.5:1 (AAA territory) against
+     both the -bg tint and white. */
+  --bsr-good:#045C3D;
   --bsr-good-bg:#D1FAE5;
-  --bsr-avg:#986206;
+  --bsr-avg:#6B4600;
   --bsr-avg-bg:#FEF3C7;
-  --bsr-poor:#D11212;
+  --bsr-poor:#A10E0E;
   --bsr-poor-bg:#FEE2E2;
   --bsr-none-bg:#F1F5F9;
   --bsr-head-h:96px;
