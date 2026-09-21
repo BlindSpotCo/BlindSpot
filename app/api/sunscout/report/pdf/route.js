@@ -1034,7 +1034,13 @@ export async function POST(req) {
 
   <div class="gallery-wrap" style="max-width:880px;margin:0 auto;padding:0 32px 60px;background:#fff;">
 
-    <div style="padding:44px 0 30px;border-bottom:2px solid ${INK};margin-bottom:34px;">
+    ${/* No border-bottom here -- the section right after this one
+          (screenshotPages, or the monthly table when there are no photos)
+          already draws its own border-top in the same 2px ink, so this used
+          to double up: two black rules stacked with the 34px margin sitting
+          between them as a visible gap, instead of the one divider it reads
+          as everywhere else on this page. */''}
+    <div style="padding:44px 0 30px;margin-bottom:34px;">
       <div style="font-size:11.5px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.12em;margin-bottom:11px;">A year of sun over this block</div>
       <h1 style="font-family:${DISPLAY};font-size:29px;font-weight:800;color:${INK};letter-spacing:-.015em;line-height:1.15;margin-bottom:9px;">${safeAddress}</h1>
       <div style="font-size:13px;color:${DIM};margin-bottom:18px;">Floor ${safeFloor}, facing ${safeFacing} &middot; ${parseFloat(lat).toFixed(5)}&deg;N, ${parseFloat(lon).toFixed(5)}&deg;E &middot; ${date}</div>
