@@ -288,7 +288,7 @@ function PropertyCard({ slot, tag, hue, bias, onPatch, onRemove }) {
           {!slot.loading && m?.unit && (
             <>
               <div className="bx-scores">
-                <Stat n={m.unit.score} k="unit" hue={hue} />
+                <Stat n={m.unit.score} k="unit" hue={hue} sub="Light, layout and floor" />
                 <Stat n={m.areaCovered ? m.area.score : null} k="area" hue={hue}
                       sub={m.areaCovered ? m.area.name
                         : slot.pin ? `${slot.pin} - outside our 5 cities`
@@ -306,7 +306,10 @@ function PropertyCard({ slot, tag, hue, bias, onPatch, onRemove }) {
 function Stat({ n, k, hue, sub }) {
   return (
     <div className="bx-stat">
-      <b style={{ color: n == null ? 'var(--text-dim)' : hue }}>{n == null ? ' - ' : n}</b>
+      <b style={{ color: n == null ? 'var(--text-dim)' : hue }}>
+        {n == null ? ' - ' : n}
+        {n != null && <span className="bx-stat-max">/100</span>}
+      </b>
       <span>{k}</span>
       {sub && <i>{sub}</i>}
     </div>
@@ -412,13 +415,18 @@ function Dial({ value, onChange, hue }) {
 
 // ── Verdict ─────────────────────────────────────────────────────────────
 function Verdict({ diff }) {
-  const { cheaper, dearer, gap, buys, gives } = diff;
+  const { cheaper, dearer, gap, buys, gives, basis, basisNote } = diff;
   if (!gap) return null;
   return (
     <section className="bx-verdict">
       <p className="bx-verdict-lead">
-        <em>{dearer.tag}</em> costs <b>{inr(gap, { compact: true })} more</b> than <em>{cheaper.tag}</em>.
+        {basis === 'price' ? (
+          <><em>{dearer.tag}</em> costs <b>{inr(gap, { compact: true })} more</b> than <em>{cheaper.tag}</em>.</>
+        ) : (
+          <><em>{dearer.tag}</em> runs <b>about {inr(gap, { compact: true })} more</b> than <em>{cheaper.tag}</em> in modelled costs.</>
+        )}
       </p>
+      {basisNote && <p className="bx-verdict-l thin">{basisNote}</p>}
       {buys.length > 0 && (
         <p className="bx-verdict-l"><span className="bx-chip buys">For that you get</span>{buys.join(' · ')}</p>
       )}

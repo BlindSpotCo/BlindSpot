@@ -28,7 +28,11 @@
        during a live demo is exactly what borderline contrast at 10-13px
        produces. This gets it to ~6.2:1 against --bg-2, comfortably clear
        at small sizes, same warm hue. */
-    --text-dim:#94A3B8;
+    /* Darkened from #94A3B8, which measured 2.56:1 against white --
+       failing AA for every small-text use of this token (chart axis
+       labels, the sun-strip month ticks, field captions). This gets it
+       to ~5.6:1, clearing 4.5:1 with headroom, same cool-slate hue. */
+    --text-dim:#57697F;
     /* Dominant/parent and AsliVastu swapped on request -- olive is now the
        parent hue, wine is now AsliVastu's. Values are a straight swap of
        what --brand/--brand-fill and --av/--av-fill used to hold, so every
@@ -2674,6 +2678,7 @@ header.header-on-dark .brand-word-img{
 .bx-scores{ display:flex; gap:22px; padding-top:2px }
 .bx-stat{ display:flex; flex-direction:column; gap:1px }
 .bx-stat b{ font-size:27px; font-weight:700; line-height:1; font-variant-numeric:tabular-nums }
+.bx-stat-max{ font-size:13px; font-weight:400; color:var(--text-dim); margin-left:1px }
 .bx-stat span{
   font-family:'Geist Mono',monospace; font-size:9.5px; font-weight:600;
   text-transform:uppercase; letter-spacing:.12em; color:var(--text-dim); margin-top:4px;
@@ -2710,18 +2715,26 @@ header.header-on-dark .brand-word-img{
 }
 .bx-verdict-lead{ font-size:19px; line-height:1.5; margin:0 0 13px; color:#FFFDF8 }
 .bx-verdict-lead em{
-  font-family:'Playfair Display',Georgia,serif; font-style:italic; font-weight:600; color:var(--ss-sun);
+  /* Not var(--ss-sun) -- that token is documented illustration-fill-only,
+     and measured 2.35:1 here anyway. Italic serif + weight already marks
+     this as emphasis, so it just takes the paragraph's own colour. */
+  font-family:'Playfair Display',Georgia,serif; font-style:italic; font-weight:600; color:#FFFDF8;
 }
 .bx-verdict-lead b{ font-weight:700 }
-.bx-verdict-l{ font-size:14px; line-height:1.75; margin:0 0 7px; color:rgba(246,239,228,.86) }
+/* Was rgba(246,239,228,.86) -- measured 3.58:1 against --plum, failing
+   AA. Solid #FFFDF8 (matching .bx-verdict-lead) clears 4.75:1. */
+.bx-verdict-l{ font-size:14px; line-height:1.75; margin:0 0 7px; color:#FFFDF8 }
 .bx-verdict-l:last-child{ margin-bottom:0 }
-.bx-verdict-l.thin{ color:rgba(246,239,228,.6); font-style:italic }
+.bx-verdict-l.thin{ color:rgba(255,253,248,.97); font-style:italic }
 .bx-chip{
   font-family:'Geist Mono',monospace; font-size:10px; font-weight:700;
   text-transform:uppercase; letter-spacing:.1em; padding:3px 8px; border-radius:4px; margin-right:10px; white-space:nowrap;
 }
-.bx-chip.buys{ background:rgba(233,169,74,.2); color:var(--ss-sun) }
-.bx-chip.gives{ background:rgba(246,239,228,.13); color:rgba(246,239,228,.8) }
+/* Solid, darker pill fills (not translucent tints, not --ss-sun as text --
+   see the .bx-verdict-lead em comment above) so the label text clears AA:
+   buys 8.99:1, gives 7.06:1, versus 2.35:1 / 2.75:1 before. */
+.bx-chip.buys{ background:#4A3F34; color:#FBEFD9 }
+.bx-chip.gives{ background:#58585F; color:#FFFFFF }
 
 /* ── Rows ─────────────────────────────────────────────────────────────── */
 .bx-block{ margin-bottom:34px }
@@ -2770,7 +2783,13 @@ header.header-on-dark .brand-word-img{
 .bx-field-l{ display:flex; flex-direction:column; font-size:12.5px; color:var(--text-mute) }
 .bx-field-l i{ font-style:normal; font-size:10.5px; color:var(--text-dim); line-height:1.35; max-width:18ch }
 .bx-field-in{
-  display:inline-flex; align-items:center; gap:4px; background:var(--bg); border:1px solid var(--line);
+  /* var(--line) here measured 1.18:1 against --bg -- invisible as a hint
+     that this is a fillable field, not just a static divider. This is
+     an input, so it gets its own darker, UI-appropriate border (~3.3:1,
+     clears the WCAG 3:1 floor for UI component boundaries) rather than
+     touching --line globally, which is used all over as a quiet static
+     edge that is fine to stay subtle. */
+  display:inline-flex; align-items:center; gap:4px; background:var(--bg); border:1px solid #7C8BA3;
   border-radius:7px; padding:5px 8px; flex:0 0 auto;
 }
 .bx-field-in:focus-within{ border-color:var(--brand) }
