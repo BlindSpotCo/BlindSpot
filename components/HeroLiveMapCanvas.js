@@ -80,6 +80,15 @@ const BLINDSPOT_EXAMPLES = [
 // and this is just the label each suggestion in the dropdown wears so
 // it's clear what you're about to pick.
 const SEARCH_PLACEHOLDER = 'Search a city, neighbourhood or address.';
+// One-click examples under the search box, one per covered city where it
+// fits. The label is what the chip says; the query carries the city so a
+// name that exists in several places ("Sector 17") lands in the right one.
+const TRY_PLACES = [
+  { label: 'Whitefield', q: 'Whitefield, Bangalore' },
+  { label: 'Hauz Khas', q: 'Hauz Khas, New Delhi' },
+  { label: 'Bandra West', q: 'Bandra West, Mumbai' },
+  { label: 'Sector 17', q: 'Sector 17, Chandigarh' },
+];
 const KIND_LABELS = { city: 'City', neighbourhood: 'Neighbourhood', address: 'Address' };
 // The 5 cities BlindSpot actually has neighbourhood-score coverage for --
 // named here once, for the "not covered yet" message the city panel
@@ -111,6 +120,10 @@ export default function HeroLiveMapCanvas() {
   const [cityPanel, setCityPanel] = useState(null);
   const [cityPanelOpen, setCityPanelOpen] = useState(false);
   const [cityFilter, setCityFilter] = useState('');
+  // Set when an explicit search (the button, Enter, a chip) comes back
+  // empty. Without it that case was silent -- the click did nothing at all,
+  // which reads as a broken button rather than "we couldn't find that".
+  const [noMatch, setNoMatch] = useState('');
 
   const center = pin || DEFAULT_CENTER;
 
@@ -144,6 +157,7 @@ export default function HeroLiveMapCanvas() {
     const v = e.target.value;
     setQuery(v);
     setOpen(true);
+    setNoMatch('');
     // Typing again backs out of a just-opened city panel -- the box goes
     // back to being a plain search the moment someone edits the query,
     // rather than leaving a stale neighbourhood list sitting there under
@@ -152,9 +166,43 @@ export default function HeroLiveMapCanvas() {
     runSearch(v);
   };
 
+  // Go from whatever is in the box to a picked place, in one action. The
+  // search box used to have no way to submit at all -- Enter did nothing
+  // unless a suggestion was already highlighted with the arrow keys, and
+  // there was no button -- so the only path forward was noticing the
+  // dropdown and clicking a row in it. Now: if suggestions for the current
+  // text are already showing, take the highlighted one (or the first);
+  // otherwise search right away, skipping the typing debounce, and take
+  // the top result. The try-chips call this with their own query.
+  const searchAndPick = async (q) => {
+    if (q == null && results.length > 0) { pick(results[active >= 0 ? active : 0]); return; }
+    const text = (q ?? query).trim();
+    if (text.length < 2) { document.getElementById('hlm-address')?.focus(); return; }
+    if (q != null) setQuery(q);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    const reqId = ++requestIdRef.current;
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({ q: text, lat: String(center.lat), lon: String(center.lon) });
+      const res = await fetch(`/api/sunscout/geocode-suggest?${params.toString()}`);
+      const data = await res.json();
+      if (reqId !== requestIdRef.current) return;
+      const list = Array.isArray(data?.results) ? data.results : [];
+      setResults(list);
+      setActive(-1);
+      if (list.length > 0) { setNoMatch(''); pick(list[0]); }
+      else { setNoMatch(text); setOpen(true); }
+    } catch {
+      if (reqId === requestIdRef.current) setResults([]);
+    } finally {
+      if (reqId === requestIdRef.current) setLoading(false);
+    }
+  };
+
   // Arrow keys, Enter and Escape on the suggestions.
   const onSearchKeyDown = (e) => {
     if (e.key === 'Escape') { setOpen(false); setActive(-1); setCityPanel(null); return; }
+    if (e.key === 'Enter' && active < 0) { e.preventDefault(); searchAndPick(); return; }
     if (!open || results.length === 0) return;
     if (e.key === 'ArrowDown') { e.preventDefault(); setActive((i) => (i + 1) % results.length); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setActive((i) => (i <= 0 ? results.length : i) - 1); }
@@ -337,7 +385,14 @@ export default function HeroLiveMapCanvas() {
               explanation, so it doesn't substitute for one. One flat
               sentence, no animation of its own. */}
           <p className="hlm-sub">What the listing won&apos;t tell you. We will.</p>
+          {/* This used to sit in an outlined, blurred pill with a blinking
+              caret after the text -- which is exactly what a text field
+              looks like, so people tried to click into it, one box above
+              the box they were actually meant to type in. No outline, no
+              background, no caret: a labelled line of copy, which is what
+              it is. */}
           <p className="hlm-typed-line">
+            <span className="hlm-typed-lead">What we catch</span>
             <TypewriterCycle
               items={BLINDSPOT_EXAMPLES}
               className="hlm-typed-text"
@@ -387,6 +442,18 @@ export default function HeroLiveMapCanvas() {
                 autoComplete="off"
               />
               {loading && <span className="hlm-search-spinner" aria-hidden="true" />}
+              {/* The one filled, high-contrast thing in the hero, so there
+                  is no question which box is the one to use. Text on
+                  wider screens, just the arrow on a phone. */}
+              <button
+                type="button"
+                className="hlm-search-go"
+                onClick={() => searchAndPick()}
+                aria-label="Reveal the blindspots for this place"
+              >
+                <span className="hlm-search-go-text">Reveal blindspots</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </button>
             </div>
 
             {cityPanel && (
@@ -459,6 +526,31 @@ export default function HeroLiveMapCanvas() {
               </div>
             )}
           </div>
+
+          {noMatch && !cityPanel && (
+            <p className="hlm-nomatch" role="status">
+              We couldn&apos;t find &ldquo;{noMatch}&rdquo;. Try adding the area or city.
+            </p>
+          )}
+
+          {/* One tap to a real result, for anyone who'd rather see what
+              this does before typing their own address. Hidden while the
+              city panel is open -- it grows downward into this space. */}
+          {!cityPanel && (
+            <div className="hlm-try" aria-label="Example places">
+              <span className="hlm-try-label">Try</span>
+              {TRY_PLACES.map((t) => (
+                <button
+                  key={t.label}
+                  type="button"
+                  className="hlm-try-chip"
+                  onClick={() => searchAndPick(t.q)}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          )}
 
           {!cityPanel && open && results.length > 0 && (
             <ul className="hlm-suggestions" id="hlm-suggestions" role="listbox" aria-label="City, neighbourhood and address suggestions">

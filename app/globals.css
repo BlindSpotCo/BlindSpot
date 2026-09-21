@@ -1770,25 +1770,29 @@
    typed phrase that cycles through real examples of what BlindSpot
    catches. Reads as product proof, not marketing copy, which is why it
    sits in mono like the eyebrow rather than the headline's display font. */
+/* A caption, not a control. It used to be an outlined, blurred pill with
+   a blinking caret after the text -- the exact look of a text field, one
+   box above the one people were supposed to type in, so they clicked the
+   wrong one. No border, no background, no caret; a small label says what
+   the line is, and the example itself carries the colour. A soft text
+   shadow keeps it legible over the map without needing the pill. */
 .hlm-typed-line{
-  display:flex; align-items:baseline; justify-content:center; gap:8px;
-  flex-wrap:wrap; margin:20px 0 0; padding:8px 20px;
-  background:rgba(20,18,10,0.5); border:1px solid rgba(255,255,255,0.14);
-  border-radius:var(--radius-pill);
-  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
-  font-family:'Geist Mono',monospace; font-size:clamp(16px, 1.7vw, 19px);
+  display:flex; align-items:baseline; justify-content:center; gap:10px;
+  flex-wrap:wrap; margin:18px 0 0;
+  font-family:'Geist Mono',monospace; font-size:clamp(15px, 1.5vw, 17.5px);
+  text-shadow:0 1px 12px rgba(0,0,0,.55);
   opacity:0; animation:hlmRise 1.05s cubic-bezier(.16,1,.3,1) 0.45s forwards;
 }
+.hlm-typed-lead{
+  font-size:.72em; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  color:rgba(255,253,248,.62);
+}
 .hlm-typed-text{
-  color:#FFFDF8; font-weight:500;
+  color:var(--brand-yellow, #F5C343); font-weight:600;
 }
-.hlm-typed-cursor{
-  display:inline-block; width:2px; height:17px; margin-left:2px;
-  background:rgba(255,253,248,0.7); vertical-align:-3px;
-  animation:blink 1s steps(1) infinite;
-}
+.hlm-typed-cursor{ display:none; }
 @media (max-width:640px){
-  .hlm-typed-line{ font-size:14.5px; padding:7px 16px; }
+  .hlm-typed-line{ font-size:14px; gap:7px; }
 }
 @keyframes hlmRise{
   from{ opacity:0; transform:translateY(16px); }
@@ -1830,7 +1834,7 @@
 .hlm-search-shell:focus-within{ box-shadow:0 28px 54px -16px rgba(0,0,0,0.65), 0 0 0 3px rgba(245,195,67,0.35); }
 .hlm-search-shell.hlm-shell-city-open{ border-radius:var(--radius-lg); }
 .hlm-search{
-  display:flex; align-items:center; gap:12px; padding:16px 22px;
+  display:flex; align-items:center; gap:12px; padding:8px 8px 8px 22px;
 }
 .hlm-search svg{ color:var(--text-mute); flex-shrink:0; }
 .hlm-search-input{
@@ -1845,6 +1849,55 @@
   animation:hlm-spin 0.7s linear infinite;
 }
 @keyframes hlm-spin{ to{ transform:rotate(360deg); } }
+/* The action, inside the bar. The search box had no way to submit -- no
+   button, and Enter only worked with a suggestion already highlighted --
+   so nothing on screen said "this is the box, and this is how you go".
+   Filled brand green on the near-white shell: the only solid, high-
+   contrast control in the hero, so there is no doubt which box to use. */
+.hlm-search-go{
+  flex-shrink:0; display:inline-flex; align-items:center; gap:8px;
+  min-height:44px; padding:0 18px 0 20px;
+  border:none; border-radius:var(--radius-pill); cursor:pointer;
+  background:var(--brand,#3D4116); color:#FFFDF8;
+  font-family:'Geist',sans-serif; font-size:14.5px; font-weight:700; letter-spacing:.005em;
+  box-shadow:0 4px 14px rgba(61,65,22,.35);
+  transition:transform .15s ease, filter .15s ease;
+}
+.hlm-search-go:hover{ filter:brightness(1.08); transform:translateX(1px); }
+.hlm-search-go:focus-visible{ outline:3px solid rgba(245,195,67,.7); outline-offset:2px; }
+.hlm-search-go svg{ color:#FFFDF8; }
+@media (max-width:560px){
+  .hlm-search{ padding:6px 6px 6px 16px; }
+  .hlm-search-go{ min-height:40px; width:40px; padding:0; justify-content:center; }
+  .hlm-search-go-text{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
+}
+
+/* ---- "Try" chips, under the search box ----
+   One tap to a real result. Light-on-dark and outlined so they read as
+   secondary to the filled button above -- examples, not the main path. */
+.hlm-try{
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px;
+  margin-top:14px;
+}
+.hlm-try-label{
+  font-family:'Geist Mono',monospace; font-size:11px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase; color:rgba(255,253,248,.7);
+  margin-right:2px;
+}
+.hlm-try-chip{
+  font-family:'Geist',sans-serif; font-size:13px; font-weight:600;
+  padding:7px 14px; border-radius:var(--radius-pill); cursor:pointer;
+  color:#FFFDF8; background:rgba(20,18,10,.45);
+  border:1px solid rgba(255,253,248,.28);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  transition:background .15s ease, border-color .15s ease;
+}
+.hlm-try-chip:hover{ background:rgba(20,18,10,.65); border-color:rgba(245,195,67,.8); }
+.hlm-try-chip:focus-visible{ outline:2px solid rgba(245,195,67,.8); outline-offset:2px; }
+@media (max-width:560px){
+  .hlm-try{ gap:6px; margin-top:12px; }
+  .hlm-try-chip{ font-size:12.5px; padding:6px 12px; }
+}
 
 .hlm-suggestions{
   position:absolute; top:calc(100% + 10px); left:0; right:0; z-index:5;
@@ -1950,10 +2003,20 @@
   .hlm-search-shell, .hlm-city-panel-inner{ transition:none; }
 }
 
+/* Was 11px at 58% white -- faint enough over the map that the page read
+   as ending at the hero. Full-strength, larger, on its own dark chip so
+   it holds up over bright tiles as well as dark ones. */
 .hlm-scroll-cue{
   position:absolute; bottom:24px; left:50%; transform:translateX(-50%); z-index:5; pointer-events:none;
-  display:flex; align-items:center; gap:7px; font-size:11px; letter-spacing:0.12em; color:rgba(255,253,248,0.58);
+  display:flex; align-items:center; gap:8px;
+  padding:7px 15px; border-radius:var(--radius-pill);
+  background:rgba(20,18,10,.55); border:1px solid rgba(255,253,248,.3);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  font-size:12.5px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase;
+  color:#FFFDF8;
+  box-shadow:0 6px 18px rgba(0,0,0,.35);
 }
+.hlm-scroll-cue-arrow{ color:var(--brand-yellow, #F5C343); font-size:14px; }
 .hlm-scroll-cue-arrow{ display:inline-block; animation:hlm-bob 1.8s ease-in-out infinite; }
 @keyframes hlm-bob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(4px); } }
 
@@ -2720,4 +2783,10 @@ header.header-on-dark .brand-word-img{
 }
 @media (prefers-reduced-motion: reduce){
   .bx-card::before, .bx-dial-pt circle{ transition:none }
+}
+
+.hlm-nomatch{
+  margin:12px 0 0; text-align:center;
+  font-size:13.5px; font-weight:600; color:#FFFDF8;
+  text-shadow:0 1px 10px rgba(0,0,0,.6);
 }
