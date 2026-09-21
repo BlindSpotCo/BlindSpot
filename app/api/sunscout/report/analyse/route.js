@@ -328,8 +328,9 @@ export async function POST(req) {
   const { screenshots, lat, lon, address, floor, facing, tzOffset, avRecord, combinedScore, unitScore, areaWeight, unitWeight, personaId, customNote, purpose, horizon, priorities, actionItems, skipAi, captionsOnly } = await req.json();
   const persona = personaId ? (await import('@/lib/personas')).getPersona(personaId) : null;
 
-  // purpose/horizon/priorities come from ReportModal's "personalize your
-  // report" step (Q2-Q4 -- Q1 is personaId above, Q5 is customNote below).
+  // purpose/horizon/priorities (and personaId above) come from the verdict
+  // page's optional goal / timeline / priorities questions -- see
+  // lib/reportQuestions.js for how one "goal" maps onto persona + purpose.
   // Fixed option sets from the UI, not free text, but looked up through a
   // known map anyway rather than trusted as raw strings straight into the
   // prompt -- an unrecognised key is silently dropped instead of printed.

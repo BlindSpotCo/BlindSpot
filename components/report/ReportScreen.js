@@ -24,6 +24,7 @@ import {
   Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake,
 } from 'lucide-react';
 import RoomPhotoAnalyzer from './RoomPhotoAnalyzer';
+import { GOAL_OPTIONS, HORIZON_OPTIONS, PRIORITY_OPTIONS, MAX_PRIORITIES } from '@/lib/reportQuestions';
 import './report.css';
 
 
@@ -364,6 +365,18 @@ export default function ReportScreen({ view = 'verdict' }) {
   // page -- no second screen, no second map, nothing to navigate back from.
   // null | 'gallery' (sun & shadow only) | 'full' (both halves).
   const [reportOpen, setReportOpen] = useState(null);
+  // The full report's optional questions, answered in place above its
+  // button (see lib/reportQuestions.js). reportAnswers is what the run
+  // actually uses: a snapshot taken on click, or {} for "skip".
+  const [goal, setGoal] = useState('');
+  const [horizon, setHorizon] = useState('');
+  const [priorities, setPriorities] = useState([]);
+  const [askNote, setAskNote] = useState('');
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [reportAnswers, setReportAnswers] = useState(null);
+  const togglePriority = (k) => setPriorities((p) => (
+    p.includes(k) ? p.filter((x) => x !== k) : p.length >= MAX_PRIORITIES ? [...p.slice(1), k] : [...p, k]
+  ));
   // The raw locality record the report generator wants -- the summary the
   // scoring API returns isn't the same shape.
   const [avRecord, setAvRecord] = useState(null);
@@ -1048,6 +1061,7 @@ export default function ReportScreen({ view = 'verdict' }) {
         unitScore={scores?.unit?.score}
         unitSubScores={scores?.unit?.subScores}
         areaRecord={reportOpen === 'full' ? avRecord : undefined}
+        answers={reportOpen === 'full' ? (reportAnswers || {}) : undefined}
         combinedScore={reportOpen === 'full' ? scores?.combined : undefined}
         areaWeight={reportOpen === 'full' ? areaWeight : undefined}
         unitWeight={reportOpen === 'full' ? 1 - areaWeight : undefined}
@@ -2034,13 +2048,74 @@ export default function ReportScreen({ view = 'verdict' }) {
                 there is nothing to photograph, and the run used to fail with
                 "something went wrong, things are busy" -- which is neither true
                 nor actionable. Say the real reason before they click. */}
+            {/* Three optional questions, right here, instead of a pop-up
+                that appeared after the click. Pills toggle off on a second
+                tap; priorities keep the latest two. */}
+            <div className="bsr-ask">
+              <div className="bsr-ask-q">
+                <span className="bsr-ask-label">Your goal</span>
+                <div className="bsr-ask-pills">
+                  {GOAL_OPTIONS.map((o) => (
+                    <button key={o.key} type="button" aria-pressed={goal === o.key}
+                      className={`bsr-ask-pill${goal === o.key ? ' is-on' : ''}`}
+                      onClick={() => setGoal(goal === o.key ? '' : o.key)}>{o.label}</button>
+                  ))}
+                </div>
+              </div>
+              <div className="bsr-ask-q">
+                <span className="bsr-ask-label">How long you'll stay or hold it</span>
+                <div className="bsr-ask-pills">
+                  {HORIZON_OPTIONS.map((o) => (
+                    <button key={o.key} type="button" aria-pressed={horizon === o.key}
+                      className={`bsr-ask-pill${horizon === o.key ? ' is-on' : ''}`}
+                      onClick={() => setHorizon(horizon === o.key ? '' : o.key)}>{o.label}</button>
+                  ))}
+                </div>
+              </div>
+              <div className="bsr-ask-q">
+                <span className="bsr-ask-label">Top priorities <em>pick up to {MAX_PRIORITIES}</em></span>
+                <div className="bsr-ask-pills">
+                  {PRIORITY_OPTIONS.map((o) => (
+                    <button key={o.key} type="button" aria-pressed={priorities.includes(o.key)}
+                      className={`bsr-ask-pill${priorities.includes(o.key) ? ' is-on' : ''}`}
+                      onClick={() => togglePriority(o.key)}>{o.label}</button>
+                  ))}
+                </div>
+              </div>
+              {noteOpen ? (
+                <textarea
+                  className="bsr-ask-note"
+                  rows={2}
+                  maxLength={400}
+                  value={askNote}
+                  onChange={(e) => setAskNote(e.target.value)}
+                  placeholder="e.g. I work from home and need good daylight"
+                  aria-label="Anything specific the report should address"
+                />
+              ) : (
+                <button type="button" className="bsr-ask-more" onClick={() => setNoteOpen(true)}>
+                  + Anything specific it should address?
+                </button>
+              )}
+            </div>
             <button
               type="button"
               className="bsr-cta"
               disabled={!solar?.pathData}
-              onClick={() => setReportOpen('full')}
+              onClick={() => {
+                setReportAnswers({ goal, horizon, priorities, note: askNote });
+                setReportOpen('full');
+              }}
             >
               {hasArea ? 'Generate the full report' : 'Generate the full flat report'}
+            </button>
+            <button
+              type="button"
+              className="bsr-ask-skip"
+              disabled={!solar?.pathData}
+              onClick={() => { setReportAnswers({}); setReportOpen('full'); }}
+            >
+              Skip &amp; generate the default report →
             </button>
             <span className="bsr-free">
               {solar?.pathData

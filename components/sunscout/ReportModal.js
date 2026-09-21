@@ -11,79 +11,10 @@ import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import SaveReportButton from '@/components/reports/SaveReportButton';
 import { SHOTS } from '@/lib/sunscout/useMapCapture';
+import { answersToRequest } from '@/lib/reportQuestions';
 
 const FACING = ['North','South','East','West','North-East','South-East','North-West','South-West'];
 
-// The "personalize your report" step, shown once per generation right
-// before the real work starts (both the manual-form path and the
-// autoGenerate path). Four quick-tap questions plus the existing free-text
-// note. AUDIENCE_OPTIONS.persona maps straight onto lib/personas.js's four
-// weighting profiles -- this replaces the old dedicated persona-picker
-// screen with one plain question instead of naming "persona" anywhere.
-const AUDIENCE_OPTIONS = [
-  { key: 'just_me', label: 'Just me', persona: 'young_professional' },
-  { key: 'family', label: 'My family, long-term', persona: 'family_buyer' },
-  { key: 'investment', label: 'Investment or rental', persona: 'investor' },
-  { key: 'client', label: 'A client of mine', persona: 'broker' },
-];
-const PURPOSE_OPTIONS = [
-  { key: 'buying_to_live', label: 'Buying to live in it' },
-  { key: 'buying_to_rent', label: 'Buying to rent out' },
-  { key: 'renting_deciding', label: 'Renting nearby, deciding whether to buy' },
-  { key: 'researching', label: 'Just researching / comparing' },
-];
-const HORIZON_OPTIONS = [
-  { key: 'under_3', label: 'Under 3 years' },
-  { key: '3_7', label: '3-7 years' },
-  { key: '10_plus', label: '10+ years' },
-  { key: 'unsure', label: 'Not sure yet' },
-];
-const PRIORITY_OPTIONS = [
-  { key: 'safety', label: 'Safety & crime' },
-  { key: 'schools', label: 'Schools' },
-  { key: 'sunlight', label: 'Sunlight & daylight' },
-  { key: 'privacy', label: 'Noise & privacy' },
-  { key: 'air', label: 'Air quality' },
-  { key: 'connectivity', label: 'Connectivity/commute' },
-  { key: 'resale', label: 'Resale value' },
-  { key: 'price', label: 'Price vs. fundamentals' },
-];
-
-const LABEL_STYLE = { fontFamily: "'Geist Mono', ui-monospace, monospace", fontSize: 10.5, fontWeight: 500, color: 'var(--ink, #1C1812)', letterSpacing: '.08em', display: 'block', marginBottom: 10, textTransform: 'uppercase' };
-
-// Single- or multi-select pill row shared by all four tap questions above.
-// `value` is a string for single-select, an array for multi (pass `multi`).
-function OptionPills({ options, value, onSelect, multi, max }) {
-  const ORG = 'var(--ss, #AF5F30)';
-  const INK = 'var(--ink, #1C1812)';
-  const SUB = 'var(--text-mute, #5A5140)';
-  const LINE = 'var(--line, rgba(28,24,18,0.14))';
-  const isSelected = (key) => (multi ? value.includes(key) : value === key);
-  return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-      {options.map((o) => {
-        const selected = isSelected(o.key);
-        const disabled = multi && !selected && max && value.length >= max;
-        return (
-          <button
-            key={o.key}
-            type="button"
-            disabled={disabled}
-            onClick={() => onSelect(o.key)}
-            style={{
-              background: selected ? ORG : '#fff',
-              color: selected ? '#fff' : (disabled ? SUB : INK),
-              border: `1px solid ${selected ? ORG : LINE}`,
-              padding: '9px 14px', fontSize: 12.5, fontWeight: 600,
-              cursor: disabled ? 'default' : 'pointer', borderRadius: 20,
-              opacity: disabled ? 0.55 : 1,
-            }}
-          >{o.label}</button>
-        );
-      })}
-    </div>
-  );
-}
 
 // These are the page's own tokens, not a second palette.
 //
@@ -133,6 +64,9 @@ export default function ReportModal({
   areaRecord, combinedScore, unitScore, areaWeight, unitWeight, unitSubScores, verdictLabel,
   personaId,
   prefillFloor, prefillFacing, prefillCustomNote, prefillActionItems,
+  // The verdict page's optional goal / timeline / priorities (+ note),
+  // answered inline before the click. See lib/reportQuestions.js.
+  answers,
   onBusyChange,
 }) {
   const [floor, setFloor]     = useState(prefillFloor != null ? String(prefillFloor) : '0');
@@ -154,19 +88,6 @@ export default function ReportModal({
   // modal's form), but stays editable here too for the standalone-SunScout
   // path where this modal's form is the only place to say it.
   const [customNote, setCustomNote] = useState(prefillCustomNote || '');
-  // The "personalize your report" step. Shown once per generation, before
-  // the real work starts, on BOTH the manual-form path and the
-  // autoGenerate path (which used to skip straight to generating with no
-  // step at all). Answers here feed the report prompt server-side -- see
-  // app/api/sunscout/report/analyse/route.js.
-  const [showQuestions, setShowQuestions] = useState(false);
-  const [audience, setAudience] = useState('');
-  const [purpose, setPurpose] = useState('');
-  const [horizon, setHorizon] = useState('');
-  const [priorities, setPriorities] = useState([]);
-  const togglePriority = (key) => {
-    setPriorities((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : (prev.length >= 3 ? prev : [...prev, key])));
-  };
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   // Which half of the job is running, and how far through the frame
@@ -269,12 +190,9 @@ export default function ReportModal({
     if (onFloorFacingSubmit && !autoGenerate) onFloorFacingSubmit(parseInt(floor, 10), facing);
 
     const addr = address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
-    const safeCustomNote = customNote.trim() || undefined;
-    // personaId as a prop is never actually passed by either caller today
-    // (ReportScreen.js doesn't set it) -- the "who's this for" question
-    // below is the only thing that ever sets it now, mapped straight onto
-    // lib/personas.js's four profiles.
-    const effectivePersonaId = personaId || AUDIENCE_OPTIONS.find((o) => o.key === audience)?.persona || undefined;
+    const asked = answersToRequest(answers);
+    const safeCustomNote = customNote.trim() || asked.customNote;
+    const effectivePersonaId = personaId || asked.personaId;
 
     // Capturing twelve frames off the 3D map takes about a minute. It is
     // by far the most expensive part of this and it either works or it
@@ -348,9 +266,9 @@ export default function ReportModal({
         screenshots, lat, lon, address: addr, floor, facing, tzOffset,
         avRecord: areaRecord || undefined, combinedScore, unitScore, areaWeight, unitWeight,
         personaId: effectivePersonaId, customNote: safeCustomNote,
-        purpose: purpose || undefined,
-        horizon: horizon || undefined,
-        priorities: priorities.length ? priorities : undefined,
+        purpose: asked.purpose,
+        horizon: asked.horizon,
+        priorities: asked.priorities,
         actionItems: prefillActionItems || undefined,
         // The sun & shadow document wants the per-image descriptions and
         // nothing else -- not the eight-section combined report it used to
@@ -495,17 +413,10 @@ export default function ReportModal({
   }, []);
 
   useEffect(() => {
-    // autoGenerate used to call generate() straight away here, skipping
-    // any step at all. Now the combined/full-report path stops at the
-    // personalize-questions step first -- generate() only ever runs from
-    // that step's own button. The sun & shadow document (galleryOnly) is
-    // the 12 map frames plus the monthly table, not a written verdict
-    // shaped by who's reading it -- none of the five questions change
-    // anything about that run (see the `persona`/`personalizeAnswers`
-    // block in report/analyse/route.js, both ignored when captionsOnly),
-    // so asking them first would just be a stalling screen. Straight to
-    // generate() for that one, same as before.
-    if (autoGenerate) { if (galleryOnly) generate(); else setShowQuestions(true); }
+    // Straight to work. The questions that shape the full report are
+    // answered on the verdict page before the click, so there is no step
+    // to stop at here any more.
+    if (autoGenerate) generate();
     // Mount-only -- floor/facing/prefill are fixed for this modal's
     // lifetime, and generate() itself isn't a stable dependency.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -521,14 +432,8 @@ export default function ReportModal({
   // Portalled to document.body so it also survives sitting inside a
   // display:none ancestor when a tab switch hides the Unit/Verdict panel
   // this component actually lives in underneath.
-  const isFormStep = !loading && !autoGenerate && !reportUrl && !showQuestions;
-  // Shown for BOTH paths -- manual (after the floor/facing form) and
-  // autoGenerate (which has no form step at all, so this is its first
-  // screen). Stays visible on a failed generate() too (loading goes back
-  // to false, showQuestions is never reset), so a retry re-shows this step
-  // with its own inline error instead of a separate dead-end error card.
-  const isQuestionsStep = !loading && !reportUrl && showQuestions;
-  const isBlockingStep = isFormStep || isQuestionsStep;
+  const isFormStep = !loading && !autoGenerate && !reportUrl;
+  const isBlockingStep = isFormStep;
 
   // Escape closes this -- but deliberately NOT while it's generating.
   // There is no cancel button during generation for the same reason:
@@ -641,69 +546,6 @@ export default function ReportModal({
             </div>
             <p style={{ fontSize:11.5, color:SUB, marginTop:14 }}>Opens in a new tab.</p>
           </div>
-        ) : isQuestionsStep ? (
-          // Shown once per generation, on both the manual-form path (after
-          // "Continue" below) and the autoGenerate path (which has no
-          // floor/facing form at all, so this is its first screen). Also
-          // re-shown on a failed generate() -- loading goes back to false,
-          // showQuestions is never reset -- with its own inline error, the
-          // same pattern the old form-step error box used.
-          <>
-            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
-              <div>
-                <div style={{ fontFamily:MONO, fontSize:10, fontWeight:500, color:ORG, letterSpacing:'.14em', marginBottom:6 }}>A FEW QUICK QUESTIONS</div>
-                <h2 className="modal-title" style={{ fontFamily:DISPLAY, fontSize:21, fontWeight:800, color:INK, margin:0 }}>Personalize your report</h2>
-              </div>
-              <button onClick={onClose} style={{ background:'none', border:'none', fontSize:18, cursor:'pointer', color:SUB, lineHeight:1, padding:4 }}>✕</button>
-            </div>
-
-            <p style={{ fontSize:13, color:SUB, lineHeight:1.6, marginBottom:24 }}>
-              Everything below is optional, but it changes what the report leads with and how it's written for you specifically.
-            </p>
-
-            <div style={{ marginBottom:22 }}>
-              <label style={LABEL_STYLE}>Who's this report for?</label>
-              <OptionPills options={AUDIENCE_OPTIONS} value={audience} onSelect={setAudience} />
-            </div>
-
-            <div style={{ marginBottom:22 }}>
-              <label style={LABEL_STYLE}>Why are you looking at this place?</label>
-              <OptionPills options={PURPOSE_OPTIONS} value={purpose} onSelect={setPurpose} />
-            </div>
-
-            <div style={{ marginBottom:22 }}>
-              <label style={LABEL_STYLE}>How long do you plan to stay or hold it?</label>
-              <OptionPills options={HORIZON_OPTIONS} value={horizon} onSelect={setHorizon} />
-            </div>
-
-            <div style={{ marginBottom:22 }}>
-              <label style={LABEL_STYLE}>What matters most to you? <span style={{ color:SUB, textTransform:'none', letterSpacing:0 }}>(up to 3)</span></label>
-              <OptionPills options={PRIORITY_OPTIONS} value={priorities} onSelect={togglePriority} multi max={3} />
-            </div>
-
-            <div style={{ marginBottom:24 }}>
-              <label style={LABEL_STYLE}>Anything specific you're worried about or want addressed? <span style={{ color:SUB, textTransform:'none', letterSpacing:0 }}>(optional)</span></label>
-              <textarea
-                value={customNote}
-                onChange={e => setCustomNote(e.target.value)}
-                rows={2}
-                placeholder="e.g. I care most about noise and safety, I work from home and need good daylight…"
-                style={{ width:'100%', border:`1px solid ${LINE}`, padding:'11px 12px', fontSize:13, fontFamily:'inherit', resize:'vertical', boxSizing:'border-box' }}
-              />
-            </div>
-
-            {error && (
-              <div style={{ border:'1px solid #dc2626', padding:'10px 14px', fontSize:12, color:'#dc2626', marginBottom:16, fontFamily:MONO }}>ERROR: {error}</div>
-            )}
-
-            <div style={{ display:'flex', gap:0 }}>
-              <button onClick={generate} className="rm-cta" style={{ flex:1, background:ORG, color:'#fff', border:'1px solid transparent', boxSizing:'border-box', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
-                {error ? 'Try again' : 'Generate the report'}
-              </button>
-              <button onClick={onClose} style={{ background:'transparent', color:SUB, border:`1px solid ${LINE}`, borderLeft:'none', boxSizing:'border-box', padding:'14px 20px', fontSize:13, cursor:'pointer' }}>Cancel</button>
-            </div>
-            <div style={{ fontFamily:MONO, fontSize:10.5, color:SUB, textAlign:'center', marginTop:12, letterSpacing:'.03em' }}>About two minutes · photographs the map, then writes it up</div>
-          </>
         ) : !loading && !autoGenerate ? (
           <>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
@@ -781,37 +623,23 @@ export default function ReportModal({
               />
             </div>
 
-            {/* Only reachable for galleryOnly: the combined-report path
-                always detours through the questions step (which has its
-                own inline error + Try Again) before generate() ever runs,
-                so a failure there never lands back here. A galleryOnly
-                failure has nowhere else to surface, since this form is the
-                only step it ever shows. */}
-            {galleryOnly && error && (
+            {error && (
               <div style={{ border:'1px solid #dc2626', padding:'10px 14px', fontSize:12, color:'#dc2626', marginBottom:16, fontFamily:MONO }}>ERROR: {error}</div>
             )}
 
             <div style={{ display:'flex', gap:0 }}>
-              {/* galleryOnly (the sun & shadow document, not the combined
-                  verdict) skips the personalize step entirely and generates
-                  straight away -- none of those five questions change a
-                  document that's just 12 map frames plus the monthly
-                  table, see the mount-effect comment above for why. */}
-              <button onClick={() => (galleryOnly ? generate() : setShowQuestions(true))} style={{ flex:1, background:ORG, color:'#fff', border:'1px solid transparent', boxSizing:'border-box', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
-                {galleryOnly && error ? 'Try again' : galleryOnly ? 'Generate the report' : 'Continue'}
+              <button onClick={generate} style={{ flex:1, background:ORG, color:'#fff', border:'1px solid transparent', boxSizing:'border-box', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
+                {error ? 'Try again' : 'Generate the report'}
               </button>
               <button onClick={onClose} style={{ background:'transparent', color:SUB, border:`1px solid ${LINE}`, borderLeft:'none', boxSizing:'border-box', padding:'14px 20px', fontSize:13, cursor:'pointer' }}>Cancel</button>
             </div>
             <div style={{ fontFamily:MONO, fontSize:10.5, color:SUB, textAlign:'center', marginTop:12, letterSpacing:'.03em' }}>
-              {galleryOnly ? 'About a minute · photographs the map, then lays it out' : 'A few quick questions next, then about two minutes to build'}
+              {galleryOnly ? 'About a minute · photographs the map, then lays it out' : 'About two minutes · photographs the map, then writes it up'}
             </div>
           </>
-        ) : (autoGenerate && galleryOnly && error) ? (
-          // autoGenerate skips the form above entirely, so a galleryOnly
-          // failure on that path has no step to reappear in at all --
-          // this is its only way out. (The combined-report autoGenerate
-          // path never lands here; its failures re-show the questions
-          // step instead, see isQuestionsStep above.)
+        ) : (autoGenerate && error) ? (
+          // autoGenerate skips the form above entirely, so a failure on
+          // that path has no step to reappear in -- this is its way out.
           <div style={{ textAlign:'center', padding:'30px 0' }}>
             <div style={{ border:'1px solid #dc2626', padding:'10px 14px', fontSize:12, color:'#dc2626', marginBottom:20, fontFamily:MONO, textAlign:'left' }}>ERROR: {error}</div>
             <div style={{ display:'flex', gap:0 }}>
