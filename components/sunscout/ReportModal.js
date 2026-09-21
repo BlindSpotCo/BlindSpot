@@ -643,6 +643,7 @@ export default function ReportModal({
             <div style={{ display:'flex', flexDirection:'column', gap:9 }}>
               <button
                 onClick={() => window.open(reportUrl, '_blank')}
+                className="rm-cta"
                 style={{ background:INK, color:'#fff', border:'none', borderRadius:4, padding:'14px', fontSize:14, fontWeight:700, cursor:'pointer', letterSpacing:'.01em', minHeight:46 }}
               >
                 Open the report
@@ -725,7 +726,7 @@ export default function ReportModal({
             )}
 
             <div style={{ display:'flex', gap:0 }}>
-              <button onClick={generate} style={{ flex:1, background:ORG, color:'#fff', border:'1px solid transparent', boxSizing:'border-box', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
+              <button onClick={generate} className="rm-cta" style={{ flex:1, background:ORG, color:'#fff', border:'1px solid transparent', boxSizing:'border-box', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
                 {error ? 'Try again' : 'Generate the report'}
               </button>
               <button onClick={onClose} style={{ background:'transparent', color:SUB, border:`1px solid ${LINE}`, borderLeft:'none', boxSizing:'border-box', padding:'14px 20px', fontSize:13, cursor:'pointer' }}>Cancel</button>
@@ -843,7 +844,7 @@ export default function ReportModal({
           <div style={{ textAlign:'center', padding:'30px 0' }}>
             <div style={{ border:'1px solid #dc2626', padding:'10px 14px', fontSize:12, color:'#dc2626', marginBottom:20, fontFamily:MONO, textAlign:'left' }}>ERROR: {error}</div>
             <div style={{ display:'flex', gap:0 }}>
-              <button onClick={generate} style={{ flex:1, background:ORG, color:'#fff', border:'1px solid transparent', boxSizing:'border-box', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
+              <button onClick={generate} className="rm-cta" style={{ flex:1, background:ORG, color:'#fff', border:'1px solid transparent', boxSizing:'border-box', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
                 Try Again
               </button>
               <button onClick={onClose} style={{ background:'transparent', color:SUB, border:`1px solid ${LINE}`, borderLeft:'none', boxSizing:'border-box', padding:'14px 20px', fontSize:13, cursor:'pointer' }}>Cancel</button>
@@ -935,6 +936,15 @@ export default function ReportModal({
           @keyframes rm-spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
           @keyframes rm-tip-in { from{ opacity:0; transform:translateY(4px) } to{ opacity:1; transform:none } }
           @media (prefers-reduced-motion: reduce){ .rm-gen-tip{ animation:none !important } }
+
+          /* Same press-then-settle idiom as .btn-cta in globals.css --
+             instant snap down on press, the base rule's bounce-easing
+             transition plays the settle on release. */
+          .rm-cta{ transition:transform .3s cubic-bezier(.34,1.56,.64,1); }
+          .rm-cta:active{ transform:scale(.97); transition:transform .05s ease; }
+          @media (prefers-reduced-motion:reduce){
+            .rm-cta, .rm-cta:active{ transition:none; }
+          }
 
           /* The non-blocking corner card (progress + "report ready") was
              sized for desktop -- width:360 with maxWidth:calc(100vw - 40px)

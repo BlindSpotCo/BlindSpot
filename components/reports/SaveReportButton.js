@@ -212,7 +212,13 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
           }}
         >
           {saved ? (
-            <p style={{ fontSize: 13, color: '#16a34a', fontWeight: 600, margin: 0 }}>Saved to My Reports.</p>
+            <p style={{ fontSize: 13, color: '#16a34a', fontWeight: 600, margin: 0, display: 'flex', alignItems: 'center' }}>
+              <svg className="cta-check" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              Saved to My Reports.
+            </p>
           ) : (
             <>
               <label style={{ display: 'block', fontSize: 11, textTransform: 'uppercase', letterSpacing: '.06em', color: '#8A8A8A', marginBottom: 6 }}>Title</label>
@@ -276,6 +282,7 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
 
               <button
                 onClick={handleSave}
+                className="srb-save-btn"
                 title={!signedIn ? 'Sign in first - saved reports live in your account.' : undefined}
                 disabled={saving || !signedIn || (folderChoice === '__new' && !newFolderName.trim())}
                 style={{
@@ -293,6 +300,26 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
       )}
 
       <style>{`
+        /* Same press-then-settle idiom used across the site's other CTAs
+           (see .btn-cta in globals.css) -- instant snap on press, a
+           bounce-eased settle on release. */
+        .srb-save-btn{ transition:transform .3s cubic-bezier(.34,1.56,.64,1); }
+        .srb-save-btn:active:not(:disabled){ transform:scale(.97); transition:transform .05s ease; }
+
+        @keyframes ctaCheckPop{
+          0%{ transform:scale(0); opacity:0 }
+          60%{ transform:scale(1.15); opacity:1 }
+          100%{ transform:scale(1); opacity:1 }
+        }
+        .cta-check{
+          display:inline-block; width:15px; height:15px; margin-right:6px;
+          animation:ctaCheckPop .38s cubic-bezier(.34,1.56,.64,1) both;
+        }
+        @media (prefers-reduced-motion:reduce){
+          .srb-save-btn, .srb-save-btn:active{ transition:none; }
+          .cta-check{ animation:none; }
+        }
+
         .srb-backdrop{ display:none }
         @media (max-width:480px){
           .srb-backdrop{

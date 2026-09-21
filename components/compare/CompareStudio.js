@@ -227,7 +227,15 @@ export default function CompareStudio({ initial }) {
 
           <div className="bx-foot">
             <button type="button" className="bx-copy" onClick={copy}>
-              {copied ? 'Link copied' : 'Copy a link to this comparison'}
+              {copied ? (
+                <>
+                  <svg className="cta-check" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  Link copied
+                </>
+              ) : 'Copy a link to this comparison'}
             </button>
             <p>
               The whole comparison is in that link. Nothing is stored on our side - not the addresses,

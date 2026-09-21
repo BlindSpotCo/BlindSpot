@@ -313,13 +313,23 @@
     background:var(--brand);
     color:#fff; border:none;
     box-shadow:0 12px 28px -12px rgba(61,65,22,0.55);
-    transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+    /* transform gets its own slower curve with a small overshoot
+       (cubic-bezier(.34,1.56,.64,1) -- a standard "back-out" ease) --
+       :active below swaps that to an instant .05s while the button is
+       actually held down, so the overshoot only plays on release. That's
+       the whole "completion" feel for every solid CTA on the site: no
+       glow, gradient or particles (the brand doc rules those out under
+       "restraint over range" -- see the .btn-cta history above), just
+       this button's existing press motion given a nicer curve back up. */
+    transition:transform .32s cubic-bezier(.34,1.56,.64,1), box-shadow .18s ease, background .18s ease;
   }
   .btn-cta:hover{ transform:translateY(-1px); box-shadow:0 16px 34px -12px rgba(61,65,22,0.65); background:#2E310F }
   /* Pressed state -- the hover lift settles back down and the shadow
      tightens under it, so a click reads as a real press rather than
-     the button just sitting there mid-hover. */
-  .btn-cta:active{ transform:translateY(0); box-shadow:0 8px 16px -10px rgba(61,65,22,0.55) }
+     the button just sitting there mid-hover. Now also snaps down (scale
+     .97) on an instant transition, so letting go is what plays the slow
+     settle-with-overshoot from the base rule above. */
+  .btn-cta:active{ transform:translateY(1px) scale(.97); box-shadow:0 8px 16px -10px rgba(61,65,22,0.55); transition:transform .05s ease, box-shadow .1s ease }
   /* Compare lives beside the primary CTA rather than in .nav-links, which
      collapses at 860px. Outlined in the SunScout hue: clearly a thing you
      can click, clearly not the main action. */
@@ -328,9 +338,10 @@
     border:1.5px solid var(--ss); color:var(--ss); background:transparent;
     border-radius:var(--radius-pill); padding:8px 16px;
     font-size:13.5px; font-weight:700; letter-spacing:.01em; text-decoration:none;
-    transition:background .15s ease, color .15s ease;
+    transition:background .15s ease, color .15s ease, transform .28s cubic-bezier(.34,1.56,.64,1);
   }
   .btn-compare:hover{ background:var(--ss); color:#FFFDF8 }
+  .btn-compare:active{ transform:scale(.96); transition:transform .05s ease }
   .btn-compare-short{ display:none }
   @media (max-width:720px){
     .btn-compare-full{ display:none }
@@ -347,7 +358,7 @@
     background:var(--brand);
     color:#fff; text-decoration:none;
     white-space:nowrap; box-shadow:0 8px 18px -8px rgba(61,65,22,0.55);
-    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+    transition:transform .28s cubic-bezier(.34,1.56,.64,1), box-shadow .15s ease, background .15s ease;
   }
   /* Mobile-first pill size -- was scattered across 3 breakpoints (2 of
      them !important, fighting each other; see the "THIRD PASS" comment
@@ -357,7 +368,9 @@
   .btn-cta-sm{ font-size:13px; padding:10px 14px }
   @media (min-width:768px){ .btn-cta-sm{ font-size:14px; padding:8px 16px } }
   .btn-cta-sm:hover{ transform:translateY(-1px); box-shadow:0 10px 22px -8px rgba(61,65,22,0.65); background:#2E310F }
-  .btn-cta-sm:active{ transform:translateY(0); box-shadow:0 5px 12px -6px rgba(61,65,22,0.55) }
+  /* Same press-then-settle idiom as .btn-cta above -- instant snap down,
+     bouncy release. */
+  .btn-cta-sm:active{ transform:translateY(1px) scale(.96); box-shadow:0 5px 12px -6px rgba(61,65,22,0.55); transition:transform .05s ease, box-shadow .1s ease }
   /* The one deliberate accent on an otherwise flat button -- the arrow
      glyph in the button label ("Uncover Your BlindSpot →") gets its own
      span so it can carry the SunScout orange while the rest of the label
@@ -2768,8 +2781,10 @@ header.header-on-dark .brand-word-img{
 .bx-copy{
   background:var(--brand); color:#FFFDF8; border:none; border-radius:8px; padding:11px 20px;
   font:inherit; font-size:13.5px; font-weight:700; cursor:pointer;
+  transition:transform .28s cubic-bezier(.34,1.56,.64,1), background .15s ease;
 }
 .bx-copy:hover{ background:#2F3211 }
+.bx-copy:active{ transform:scale(.97); transition:transform .05s ease }
 .bx-foot p{ font-size:12.5px; color:var(--text-dim); line-height:1.75; max-width:70ch; margin:0 }
 
 @media (max-width:760px){
@@ -2784,6 +2799,26 @@ header.header-on-dark .brand-word-img{
 }
 @media (prefers-reduced-motion: reduce){
   .bx-card::before, .bx-dial-pt circle{ transition:none }
+  .cta-check{ animation:none }
+  .btn-cta, .btn-cta:active, .btn-cta-sm, .btn-cta-sm:active,
+  .btn-compare, .btn-compare:active, .bx-copy, .bx-copy:active{ transition:none }
+}
+
+/* CTA "completion" feel -- a small stroke checkmark that pops in when a
+   genuine success state (saved, copied, etc.) renders it fresh into the
+   DOM. report.css and the inline <style> blocks in ReportModal.js /
+   SaveReportButton.js are separately-scoped stylesheets, so this same
+   keyframe + class is duplicated there rather than imported. Kept
+   deliberately plain -- no glow/gradient/particles, matching the
+   "restraint over range" brand-doc rule noted above .btn-cta. */
+@keyframes ctaCheckPop{
+  0%{ transform:scale(0); opacity:0 }
+  60%{ transform:scale(1.15); opacity:1 }
+  100%{ transform:scale(1); opacity:1 }
+}
+.cta-check{
+  display:inline-block; width:15px; height:15px; margin-right:6px; vertical-align:-2px;
+  animation:ctaCheckPop .38s cubic-bezier(.34,1.56,.64,1) both;
 }
 
 .hlm-nomatch{

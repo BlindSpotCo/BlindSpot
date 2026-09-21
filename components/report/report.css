@@ -361,8 +361,13 @@
   min-height:36px;padding:0 18px;border-radius:4px;
   font-weight:700;text-decoration:none;
   background:var(--av,#7A2E43);color:#FFFDF8;
+  transition:transform .28s cubic-bezier(.34,1.56,.64,1), filter .12s ease;
 }
 .bsr-area .bsr-more.bsr-more-cta a:hover{filter:brightness(.92);color:#FFFDF8}
+.bsr-more.bsr-more-cta a:active{transform:scale(.96);transition:transform .05s ease}
+@media (prefers-reduced-motion:reduce){
+  .bsr-more.bsr-more-cta a, .bsr-more.bsr-more-cta a:active{transition:none}
+}
 
 .bsr-methodology-note{
   margin-top:8px;padding-top:8px;border-top:1px solid var(--line-soft,rgba(28,24,18,.08));
@@ -657,6 +662,7 @@
   display:inline-block;font-size:16px;font-weight:700;text-decoration:none;
   padding:12px 26px;border-radius:4px;
   background:var(--brand,#3D4116);color:#FFFDF8;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1), background .15s ease;
 }
 /* .bsr-cta is used as both an <a> and the page's primary <button>. Buttons
    carry a UA border, the system font and a default cursor; the links don't.
@@ -664,6 +670,12 @@
 button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appearance:none;appearance:none}
 
 .bsr-cta:hover:not(:disabled){background:#95502A}
+/* Instant snap on press, the transition above plays the settle-with-
+   overshoot on release -- same idiom as .btn-cta in globals.css. */
+.bsr-cta:active:not(:disabled){transform:scale(.97);transition:transform .05s ease}
+@media (prefers-reduced-motion:reduce){
+  .bsr-cta, .bsr-cta:active{transition:none}
+}
 .bsr-free{display:block;margin-top:8px;font-size:13px;color:var(--text-mute,#5A5140)}
 .bsr-also{
   display:block;margin-top:14px;padding-top:12px;font-size:14px;
@@ -768,9 +780,14 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   min-height:26px;padding:0 9px;margin-top:5px;border-radius:4px;flex:none;
   border:1px solid var(--brand,#3D4116);
   background:var(--brand,#3D4116);color:#FFFDF8;
+  transition:transform .26s cubic-bezier(.34,1.56,.64,1), filter .12s ease;
 }
 .bsr-mapbar-report:hover:not(:disabled){filter:brightness(.94)}
+.bsr-mapbar-report:active:not(:disabled){transform:scale(.95);transition:transform .05s ease}
 .bsr-mapbar-report:disabled{opacity:.5;cursor:not-allowed}
+@media (prefers-reduced-motion:reduce){
+  .bsr-mapbar-report, .bsr-mapbar-report:active{transition:none}
+}
 @media (min-width:768px){
   .bsr-mapbar{
     gap:5px 12px;
