@@ -769,6 +769,16 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   border-radius:8px;
   box-shadow:0 4px 14px rgba(28,24,18,.16);
 }
+/* Two logical groups inside the bar -- what to simulate (left) and the
+   controls + the report action (right). `display:contents` keeps these
+   wrappers invisible to flex/order below the wide layout, so every
+   already-verified narrow-width wrap order and the /report/locate
+   dock's own centered layout keep matching the real .bsr-set /
+   .bsr-mapbar-time / .bsr-mapbar-report / .bsr-mapbar-full elements
+   exactly as before -- only the inline verdict map's bar switches to a
+   real two-column row, at the "laptop size" breakpoint further down. */
+.bsr-mapbar-filters,
+.bsr-mapbar-actions{ display:contents; }
 .bsr-mapbar .bsr-set{ margin-top:0;min-height:0;flex-wrap:nowrap;gap:6px; }
 /* Floor + Faces + Select season forced onto one line above just so
    the three stay visually grouped -- on a real 375-390px phone
@@ -877,7 +887,13 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   border:1px solid var(--brand,#3D4116);
   background:var(--paper,#FFFDF8);color:var(--brand,#3D4116);
 }
-.bsr-play.is-on{background:var(--brand,#3D4116);color:#FFFDF8}
+/* Tinted, not solid -- solid dark-olive is reserved for the one real
+   call to action in this bar ("Build the sun report"), so Pause never
+   reads as competing with it for which one to press. */
+.bsr-play.is-on{
+  background:color-mix(in srgb, var(--brand,#3D4116) 14%, var(--paper,#FFFDF8));
+  color:var(--brand,#3D4116);
+}
 .bsr-play:hover{filter:brightness(.96)}
 
 /* anchor jumps between the flat and the map read better eased */
@@ -1205,9 +1221,6 @@ body.bsr-noscroll{overflow:hidden}
   flex:1 1 auto;min-height:0;height:auto;
   margin:0;border:none;border-radius:0;
 }
-/* The floating toolbar's top-left corner is where the header strip
-   above now ends, so it starts below it instead of underneath it. */
-.bsr-mapzone.is-full .bsr-mapbar{top:10px;left:10px}
 
 /* ---- the header strip (full screen only) ----
    Back to the verdict, where the pin is, what it scores, and the
@@ -1244,46 +1257,100 @@ body.bsr-noscroll{overflow:hidden}
    squeezing the address out of the line it is on. */
 .bsr-fullbar-search{flex:1 0 100%;margin-top:0}
 
+/* Play/pause + the season now live in this bar, not the side panel --
+   sized for a document-flow strip rather than the floating corner pill
+   .bsr-mapbar uses, but the same controls, same state. */
+.bsr-fullbar-controls{
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px;flex:none;
+}
+.bsr-fullbar-controls .bsr-mapbar-time{margin-top:0;display:flex;align-items:center;gap:8px}
+.bsr-fullbar-controls .bsr-play{
+  font-size:12.5px;min-height:34px;padding:0 12px;border-radius:7px;
+}
+.bsr-fullbar-controls .bsr-mapbar-time input[type=range]{height:34px;width:80px}
+.bsr-fullbar-controls .bsr-clock{font-size:12px;min-width:44px}
+.bsr-fullbar-season{display:flex;align-items:center}
+.bsr-fullbar-season .bsr-set-field{gap:7px}
+.bsr-fullbar-season .bsr-set-field span{font-size:11.5px;font-weight:600;color:var(--text-mute,#5A5140)}
+.bsr-fullbar-season select{
+  font-family:inherit;font-size:12.5px;font-weight:600;color:var(--text,#1C1812);
+  min-height:34px;padding:4px 8px;border-radius:7px;
+  background:var(--paper,#FFFDF8);border:1px solid var(--line,rgba(28,24,18,.14));
+}
+.bsr-fullbar-season .bsr-datein{min-height:34px;font-size:11.5px;padding:4px 8px}
+@media (min-width:768px){
+  .bsr-fullbar-controls .bsr-play{font-size:13.5px;min-height:38px;padding:0 14px}
+  .bsr-fullbar-controls .bsr-mapbar-time input[type=range]{height:38px;width:110px}
+  .bsr-fullbar-season select{font-size:13.5px;min-height:38px;padding:5px 10px}
+}
+
 /* ---- the step's own action, on the map ----
    Bottom centre, above everything, deliberately the largest thing on
    the screen after the map itself: this is the one action the whole
    step exists for, and as a 13px pill in the header bar it read as
    optional. The line above it is the instruction, so the button never
    has to carry it. */
-/* .bsr-dock is the new outer wrapper -- it now owns the position that
-   .bsr-mapcta used to own itself. Before this, the map step's inputs
-   were split across two floating pieces that never looked related: this
-   toolbar top-left, the instruction + go button bottom-centre. Docking
-   the toolbar inside the same card as the instruction/CTA is what makes
-   "one clean floating sheet" true rather than just a claim -- one
-   border, one shadow, one card, reading top to bottom as status ->
-   inputs -> action. */
+/* .bsr-dock is the right-side panel: who lives here (Floor/Faces),
+   then the one action this step exists for. Right side rather than
+   bottom-centre so it never sits over the part of the building someone
+   is trying to tap -- play/pause and season moved up to .bsr-fullbar
+   (above), so this card is just the unit and the go button, the way a
+   real form reads: a heading, two fields, one action. Mobile keeps a
+   full-width bottom sheet instead (see the max-width:899px block below)
+   -- a fixed-width side panel doesn't have anywhere to go on a phone. */
 .bsr-dock{
-  position:absolute; left:50%; bottom:22px; transform:translateX(-50%);
-  z-index:14; width:min(560px, calc(100% - 24px));
-  display:flex; flex-direction:column; align-items:stretch; gap:12px;
+  position:absolute; left:16px; right:16px; bottom:14px;
+  z-index:14; width:auto;
+  display:flex; flex-direction:column; align-items:stretch; gap:14px;
   padding:16px 18px;
   border-radius:16px;
   background:rgba(255,253,248,.97);
   border:1px solid var(--line,rgba(28,24,18,.14));
   box-shadow:0 10px 34px rgba(28,24,18,.22);
-  text-align:center;
+  text-align:left;
 }
-/* The toolbar keeps its own look (play/pause, the floor/faces/season
-   row) but drops the floating-corner positioning it still needs on the
-   inline map -- inside the dock it's just the next block in the card,
-   not a second absolutely-positioned piece pretending to be part of
-   the first one. */
-.bsr-dock .bsr-mapbar{
-  position:static; top:auto; left:auto; z-index:auto;
-  width:100%; max-width:none;
-  justify-content:center;
-  padding:0; border:none; border-radius:0;
-  background:none; box-shadow:none;
+@media (min-width:900px){
+  .bsr-dock{
+    left:auto; right:20px; bottom:auto; top:96px;
+    width:min(288px, calc(100% - 40px));
+  }
 }
+.bsr-dock-title{
+  margin:0; font-size:11px; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--text-mute,#5A5140);
+}
+.bsr-dock-fields{ margin-top:0; }
+.bsr-dock-fields .bsr-set-unit{
+  display:flex; flex-direction:column; align-items:stretch; gap:14px; width:100%;
+}
+.bsr-dock-fields .bsr-set-field{
+  flex-direction:column; align-items:stretch; gap:5px; width:100%;
+}
+.bsr-dock-fields .bsr-set-field span{
+  font-size:12px; font-weight:600; color:var(--text-mute,#5A5140);
+}
+.bsr-dock-fields .bsr-set select,
+.bsr-dock-fields .bsr-set input[type="text"]{
+  width:100%; text-align:left; min-height:42px; font-size:15px; border-radius:8px;
+}
+/* The pointer that aimed at the gap between Floor and Faces doesn't fit
+   as a floating bubble in a panel this narrow -- a plain inline note
+   under the fields instead. Tinted, not the solid brand fill the
+   floating version uses -- solid dark-olive is reserved for "See the
+   verdict" a few lines down, so this hint never reads as a second
+   button to compare it against. */
+.bsr-dock-fields .bsr-maptip{
+  position:static; transform:none; margin-top:2px; animation:none;
+  display:block; white-space:normal; box-shadow:none; padding:8px 10px;
+  background:color-mix(in srgb, var(--brand,#3D4116) 12%, var(--paper,#FFFDF8));
+  color:var(--brand,#3D4116);
+}
+.bsr-dock-fields .bsr-maptip::before{ display:none; }
+.bsr-dock-fields .bsr-maptip-x{ color:var(--brand,#3D4116); background:rgba(61,65,22,.12); }
+.bsr-dock-fields .bsr-maptip-x:hover{ background:rgba(61,65,22,.22); }
 .bsr-mapcta{
-  display:flex; flex-direction:column; align-items:center; gap:10px;
-  text-align:center;
+  display:flex; flex-direction:column; align-items:stretch; gap:10px;
+  text-align:left;
 }
 /* Bold and brand-coloured in BOTH states, not just once the pin is
    placed -- this line is the actual instruction ("tap your building on
@@ -1293,11 +1360,10 @@ body.bsr-noscroll{overflow:hidden}
 .bsr-mapcta-say{
   margin:0; font-size:14.5px; line-height:1.5; font-weight:700;
   color:var(--brand,#3D4116);
-  max-width:44ch;
 }
 .bsr-mapcta-go{
   width:100%; font:inherit; font-size:16px; font-weight:700; cursor:pointer;
-  padding:14px 24px; border-radius:999px;
+  padding:14px 24px; border-radius:10px;
   border:1px solid var(--line,rgba(28,24,18,.22));
   background:var(--paper,#FFFDF8); color:var(--text-mute,#5A5140);
   transition:background .16s ease, color .16s ease, border-color .16s ease, transform .16s ease;
@@ -1324,7 +1390,7 @@ body.bsr-noscroll{overflow:hidden}
 .bsr-mapcta.is-ready .bsr-mapcta-go:hover{ color:#FFFDF8; transform:translateY(-1px) }
 .bsr-mapcta-go:focus-visible{ outline:2px solid var(--brand,#3D4116); outline-offset:3px }
 @media (max-width:560px){
-  .bsr-dock{ bottom:14px; width:calc(100% - 20px); padding:13px 14px; gap:10px; border-radius:14px }
+  .bsr-dock{ left:10px; right:10px; bottom:14px; padding:13px 14px; gap:10px; border-radius:14px }
   .bsr-mapcta-say{ font-size:12.5px }
   .bsr-mapcta-go{ font-size:15px; padding:13px 18px }
 }
@@ -1335,6 +1401,7 @@ body.bsr-noscroll{overflow:hidden}
 
 .bsr-mapbar-full{
   font-family:inherit;font-size:10px;font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;
   min-height:26px;padding:0 9px;margin-top:5px;border-radius:4px;flex:none;
   border:1px solid var(--line,rgba(28,24,18,.2));
   background:var(--paper,#FFFDF8);color:var(--text-mute,#5A5140);
@@ -1342,6 +1409,20 @@ body.bsr-noscroll{overflow:hidden}
 .bsr-mapbar-full:hover{border-color:var(--brand,#3D4116);color:var(--brand,#3D4116)}
 @media (min-width:768px){
   .bsr-mapbar-full{font-size:11.5px;min-height:29px;padding:0 12px}
+}
+/* A clean icon button once it's sitting right next to "Build the sun
+   report" to be compared against -- the label stays for phone, where
+   it's often the only other control sharing its row and needs to say
+   what it does on its own. */
+@media (min-width:1024px){
+  .bsr-mapzone:not(.is-full) .bsr-mapbar-full{
+    width:40px;height:40px;min-height:40px;padding:0;margin-top:0;
+    justify-content:center;border-radius:9px;font-size:17px;
+  }
+  .bsr-mapzone:not(.is-full) .bsr-mapbar-full-label{
+    position:absolute;width:1px;height:1px;overflow:hidden;
+    clip:rect(0,0,0,0);white-space:nowrap;
+  }
 }
 @media (max-width:560px){
   /* Phone: the score pill and the address fight for one line. The
@@ -1470,11 +1551,26 @@ body.bsr-noscroll{overflow:hidden}
     max-width:calc(100% - 250px);
     box-shadow:0 6px 22px rgba(28,24,18,.16);
   }
-  .bsr-mapbar .bsr-mapbar-time{ gap:10px; padding-right:18px }
-  .bsr-mapbar .bsr-set{
-    gap:16px; padding:0 18px;
-    border-left:1px solid var(--line-soft,rgba(28,24,18,.12));
+  /* The inline verdict map's bar becomes one real row here -- filters
+     (Floor/Faces/Season) on the left, the controls + the report action
+     on the right, split by a hairline, wrapping only if it genuinely
+     runs out of room (same "row + wrap, never forced" rule the rest of
+     this bar already follows). Scoped away from .is-full on purpose:
+     the /report/locate dock keeps its own centered, stacked layout
+     below untouched -- these wrapper divs are still `display:contents`
+     there. */
+  .bsr-mapzone:not(.is-full) .bsr-mapbar{ justify-content:space-between; }
+  .bsr-mapzone:not(.is-full) .bsr-mapbar-filters,
+  .bsr-mapzone:not(.is-full) .bsr-mapbar-actions{
+    display:flex; align-items:center;
   }
+  .bsr-mapzone:not(.is-full) .bsr-mapbar-filters{
+    gap:16px; padding-right:18px;
+    border-right:1px solid var(--line-soft,rgba(28,24,18,.12));
+  }
+  .bsr-mapzone:not(.is-full) .bsr-mapbar-actions{ gap:10px; padding-left:18px; }
+  .bsr-mapbar .bsr-mapbar-time{ gap:10px; padding-right:0 }
+  .bsr-mapbar .bsr-set{ gap:16px; padding:0; border-left:none; }
   .bsr-mapbar .bsr-set-field{ gap:9px }
   .bsr-mapbar .bsr-set-field span{
     font-size:12.5px; font-weight:600; color:var(--text-mute,#5A5140);
@@ -1491,7 +1587,7 @@ body.bsr-noscroll{overflow:hidden}
   .bsr-mapbar .bsr-mapbar-time input[type=range]{ width:120px; height:40px }
   .bsr-mapbar .bsr-clock{ font-size:13px; min-width:52px }
   .bsr-mapbar-report{
-    margin-top:0; margin-left:2px;
+    margin-top:0; margin-left:0;
     font-size:14px; min-height:40px; padding:0 18px; border-radius:9px;
   }
   .bsr-set-unit{ gap:16px }
@@ -1518,37 +1614,6 @@ body.bsr-noscroll{overflow:hidden}
   width:min(1200px, 100vw); pointer-events:none;
 }
 
-/* ---- the map-step dock, laid out so everything in it actually fits ----
-   Inside the dock the toolbar inherits the floating toolbar's no-wrap rows
-   and laptop-size controls, which ran ~350px past the right edge of a
-   560px card (and clipped "Select season" to "ect season"). Here the
-   fields get a row of their own at the top of the card, play sits under
-   them, then the instruction and the way on.
-   Fields first is also what gives the "Set your floor and facing" pointer
-   somewhere to go: the card is pinned to the bottom of the screen, so a
-   pointer hanging BELOW the fields fell off it. It now sits just above
-   the card, over the map, pointing down at them. */
-.bsr-dock{ gap:14px }
-.bsr-dock .bsr-mapbar{
-  display:flex; flex-wrap:wrap; justify-content:center; align-items:center;
-  gap:12px 14px; order:-1;
-}
-.bsr-dock .bsr-mapbar .bsr-set{
-  order:-1; flex-basis:100%;
-  flex-wrap:wrap; justify-content:center; row-gap:10px;
-  border-left:none; padding:0;
-}
-.bsr-dock .bsr-mapbar .bsr-mapbar-time{ padding-right:0 }
-.bsr-dock .bsr-mapbar-report{ margin-left:0 }
-.bsr-dock .bsr-maptip{ top:auto; bottom:calc(100% + 18px) }
-.bsr-dock .bsr-maptip::before{ top:auto; bottom:-6px }
-@media (min-width:1024px){
-  .bsr-dock{ width:min(780px, calc(100% - 32px)); padding:18px 22px }
-}
-@media (max-width:767px){
-  .bsr-dock .bsr-mapbar .bsr-set{ order:-1 }
-  .bsr-dock .bsr-mapbar-report{ margin-left:0 }
-}
 /* The page focuses this on arrival (so keyboard users land on the step's
    action). Before a pin is placed it's styled as a text link, and the
    focus ring drew a box round it that made it look like a button nobody
