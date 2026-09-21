@@ -103,6 +103,23 @@ const MONO = "'Geist Mono', ui-monospace, monospace";
 const SANS = "'Geist', system-ui, sans-serif";
 const DISPLAY = "'Geist', system-ui, sans-serif";
 
+// Shown one at a time while a report builds, in place of a frame counter.
+// Each is something worth checking on a site visit, and each is a claim
+// this product's own models make -- facing and heat (shadeHeatScore),
+// winter shadow length (the sun path), floor height and outlook
+// (view/privacy priors), monsoon exposure (dampnessScore). Nothing here
+// that the report itself would not back up.
+const REPORT_TIPS = [
+  'West-facing rooms take the sun in the hottest part of the day. Expect warmer evenings and a bigger AC bill in summer.',
+  'East-facing rooms get the morning sun, then sit in shade through the hottest hours - often the coolest facing in an Indian summer.',
+  'For most of the year the midday sun is to the south, so south-facing windows get light in every season - and the most in winter.',
+  'North-facing rooms get soft, even light and less direct sun. Cooler, but dimmer in the winter months.',
+  'The winter sun sits much lower in the sky. A tower next door that is harmless in May can block your light completely in December.',
+  'Higher floors usually get more hours of direct sun. The lowest floors are the first to be shaded by the buildings around them.',
+  'In most Indian cities the monsoon arrives from the south-west. Check walls on that side for damp patches and suspiciously fresh paint.',
+  'Visit at the time you will actually be home. A flat that is bright at noon can be in shade by four.',
+];
+
 export default function ReportModal({
   lat, lon, tzOffset, address, onClose, captureScreenshots, cancelCapture, onFloorFacingSubmit,
   // galleryOnly: this run was asked for the sun & shadow document -- the 12
@@ -157,6 +174,14 @@ export default function ReportModal({
   // true instead of one fixed sentence for two minutes.
   const [step, setStep] = useState('capturing'); // 'capturing' | 'analysing' | 'captioning' | 'writing'
   const [captured, setCaptured] = useState({ done: 0, total: 12 });
+  // Which tip is showing, and a displayed percentage that creeps toward
+  // the next milestone during the long waits (reading the images, writing
+  // the document), when the real figure would otherwise sit still for half
+  // a minute and read as stuck. It never passes the next real milestone
+  // and never goes backwards; the real figure takes over the moment it
+  // moves.
+  const [tipIndex, setTipIndex] = useState(() => Math.floor(Math.random() * REPORT_TIPS.length));
+  const [creep, setCreep] = useState(0);
   const [error, setError]     = useState('');
   const [reportUrl, setReportUrl] = useState(null);
   // The report itself only exists as a blob: URL (see generate() below),
@@ -429,6 +454,22 @@ export default function ReportModal({
       setLoading(false);
     }
   };
+
+  const generatingNow = loading && !error;
+  useEffect(() => {
+    if (!generatingNow) return;
+    const id = setInterval(() => setTipIndex((i) => (i + 1) % REPORT_TIPS.length), 6500);
+    return () => clearInterval(id);
+  }, [generatingNow]);
+  useEffect(() => {
+    if (!generatingNow) { setCreep(0); return; }
+    // Ceilings sit just under the next real milestone set in generate().
+    const ceiling = step === 'capturing' ? 0 : step === 'writing' ? 97 : 76;
+    if (!ceiling) return;
+    const id = setInterval(() => setCreep((c) => Math.min(ceiling, Math.max(c, progress) + 1)), 1100);
+    return () => clearInterval(id);
+  }, [generatingNow, step, progress]);
+  const shownProgress = Math.min(100, Math.max(progress, creep));
 
   // The one deliberate way out of a run in progress -- ends whichever
   // half is actually live (the map capture via the hook's own cancel, or
@@ -821,23 +862,51 @@ export default function ReportModal({
                 the frames out with the sunlight table; the other adds a
                 model reading all of it. Say which one this is, and how
                 long it should take. */}
-            <p style={{ fontFamily:MONO, fontSize:10.5, color:SUB, letterSpacing:'.04em', textTransform:'uppercase', marginBottom:12 }}>
-              {galleryOnly ? '12 map images, described · + sunlight table · ~1 min' : 'The written verdict, area and flat together · ~2 min'}
+            <p style={{ fontSize:12.5, color:SUB, marginBottom:16 }}>
+              {galleryOnly ? 'Usually takes about a minute.' : 'Usually takes about two minutes.'}
             </p>
-            {/* Says which phase is running, and counts the frames through
-                the long one. One unchanging sentence for two minutes is
-                why a working run and a stuck run looked identical. */}
-            <p style={{ fontFamily:MONO, fontSize:11.5, color:SUB, lineHeight:1.8, marginBottom:20 }}>
+            {/* What is happening, said the way a person would say it. This
+                used to be "Photographing the sun and shadow through the
+                year - frame 7 of 12" in monospace: accurate, and exactly
+                the kind of line that tells a non-technical reader nothing
+                except that a machine is counting. */}
+            <p className="rm-gen-step" style={{ fontSize:14, fontWeight:600, color:INK, lineHeight:1.5, marginBottom:12 }}>
               {step === 'capturing'
-                ? `Photographing the sun and shadow through the year - frame ${Math.min(captured.done + 1, captured.total)} of ${captured.total}.`
+                ? 'Generating your personalised sunlight analysis'
                 : step === 'captioning'
-                  ? 'Frames captured. Writing what each one shows.'
+                  ? 'Describing what each view shows'
                   : step === 'analysing'
-                    ? 'Frames captured. The AI is now reading them alongside the neighbourhood data.'
-                    : 'Almost there, laying out the document.'}
+                    ? 'Reading your building alongside the neighbourhood'
+                    : 'Putting your report together'}
             </p>
-            <div style={{ background:'#EFEBE3', height:4, overflow:'hidden' }}>
-              <div style={{ background:ORG, height:'100%', width:`${progress}%`, transition:'width 0.4s ease' }} />
+            {/* The bar with its number beside it. A thin bar alone asks
+                people to judge a proportion; "58%" doesn't. */}
+            <div className="rm-gen-bar" style={{ display:'flex', alignItems:'center', gap:12 }}>
+              <div style={{ flex:1, background:'#EFEBE3', height:6, borderRadius:3, overflow:'hidden' }}>
+                <div style={{ background:ORG, height:'100%', borderRadius:3, width:`${shownProgress}%`, transition:'width 0.6s ease' }} />
+              </div>
+              <span
+                aria-live="polite"
+                style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color:INK, minWidth:40, textAlign:'right', fontVariantNumeric:'tabular-nums' }}
+              >
+                {Math.round(shownProgress)}%
+              </span>
+            </div>
+            {/* Something worth knowing while you wait, instead of a frame
+                count -- what to look for on the site visit. Changes every
+                few seconds, which is also the clearest sign the run is
+                alive. */}
+            <div className="rm-gen-tip" key={tipIndex} style={{
+              marginTop:18, padding:'12px 14px', textAlign:'left',
+              background:'#F7F3EA', borderLeft:`3px solid ${ORG}`, borderRadius:4,
+              animation:'rm-tip-in .45s ease',
+            }}>
+              <div style={{ fontFamily:MONO, fontSize:10, fontWeight:700, letterSpacing:'.12em', textTransform:'uppercase', color:ORG, marginBottom:4 }}>
+                Did you know?
+              </div>
+              <div style={{ fontSize:13, lineHeight:1.55, color:INK }}>
+                {REPORT_TIPS[tipIndex]}
+              </div>
             </div>
             {/* The one deliberate way to stop a run in progress -- for
                 picking the wrong floor or facing and noticing mid-build.
@@ -864,6 +933,8 @@ export default function ReportModal({
 
         <style>{`
           @keyframes rm-spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+          @keyframes rm-tip-in { from{ opacity:0; transform:translateY(4px) } to{ opacity:1; transform:none } }
+          @media (prefers-reduced-motion: reduce){ .rm-gen-tip{ animation:none !important } }
 
           /* The non-blocking corner card (progress + "report ready") was
              sized for desktop -- width:360 with maxWidth:calc(100vw - 40px)
@@ -884,6 +955,8 @@ export default function ReportModal({
             .rm-generating-spinner{ margin-bottom:8px !important; }
             .rm-generating-spinner svg{ width:24px !important; height:24px !important; }
             .rm-generating-title{ font-size:14px !important; margin-bottom:2px !important; }
+            .rm-gen-tip{ display:none !important; }
+            .rm-gen-step{ font-size:12.5px !important; margin-bottom:8px !important; }
           }
         `}</style>
       </div>
