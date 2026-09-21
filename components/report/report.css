@@ -746,6 +746,18 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   box-shadow:0 4px 14px rgba(28,24,18,.16);
 }
 .bsr-mapbar .bsr-set{ margin-top:0;min-height:0;flex-wrap:nowrap;gap:6px; }
+/* Floor + Faces + Select season forced onto one line above just so
+   the three stay visually grouped -- on a real 375-390px phone
+   (iPhone SE/mini through the standard 12-15 width) that line is wider
+   than the toolbar itself, and since nowrap blocks it from breaking
+   internally the whole group ran 5-48px past the edge of the screen
+   (verified: document.documentElement.scrollWidth > clientWidth at
+   these exact widths). Letting it wrap only in that narrow band --
+   nowrap already measured clean at 414px+ -- keeps the single tidy row
+   everywhere it actually fits. */
+@media (max-width:410px){
+  .bsr-mapbar .bsr-set{ flex-wrap:wrap; row-gap:4px; }
+}
 .bsr-mapbar .bsr-set-field{ flex:none; }
 .bsr-mapbar .bsr-set-field span{ font-size:9.5px; }
 .bsr-mapbar .bsr-set select,

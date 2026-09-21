@@ -1492,7 +1492,12 @@ export default function ReportScreen({ view = 'verdict' }) {
             </div>
             <p className="bsr-addr">
               <span className="bsr-pin" aria-hidden="true" />
-              <span className="bsr-addr-text">{address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}</span>
+              {/* The pill ellipsis-truncates a long address to one line (see
+                  .bsr-addr-text in report.css) -- title gives back the full
+                  string on hover/long-press instead of it just vanishing. */}
+              <span className="bsr-addr-text" title={address || undefined}>
+                {address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}
+              </span>
               {/* Used to be a plain link back to "/" -- moving the pin meant
                   leaving the report entirely and starting over. This reveals
                   the same search-or-coordinates form the map toolbar used to
