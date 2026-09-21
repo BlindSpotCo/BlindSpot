@@ -2452,10 +2452,10 @@ header.header-on-dark .brand-word-img{
    section matches the numbered 01-05 rhythm above it instead of being
    the one section with no label at all. */
 .section-closing2{
-  /* Scoped to this banner only -- var(--ink) (the same dark slate used
-     for body text everywhere else), not var(--brand), which stays the
-     site's olive everywhere it's the shared CTA/button colour. */
-  position:relative; overflow:hidden; background:var(--ink); color:#fff;
+  /* Back to var(--brand) (the site's olive) -- var(--ink) here read as an
+     off-brand navy/blue against the olive nav CTA right above it, not the
+     "dark slate/navy brand tones" it was meant to be. */
+  position:relative; overflow:hidden; background:var(--brand); color:#fff;
   padding:var(--space-9) 0 0;
 }
 .section-closing2::before{
