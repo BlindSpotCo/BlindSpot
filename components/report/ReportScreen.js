@@ -1011,6 +1011,7 @@ export default function ReportScreen({ view = 'verdict' }) {
         tzOffset={TZ}
         address={address}
         captureScreenshots={captureOnce}
+        cancelCapture={capture.cancel}
         galleryOnly={reportOpen === 'gallery'}
         prefillFloor={floor}
         prefillFacing={facing}

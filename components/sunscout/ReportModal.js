@@ -104,7 +104,7 @@ const SANS = "'Geist', system-ui, sans-serif";
 const DISPLAY = "'Geist', system-ui, sans-serif";
 
 export default function ReportModal({
-  lat, lon, tzOffset, address, onClose, captureScreenshots, onFloorFacingSubmit,
+  lat, lon, tzOffset, address, onClose, captureScreenshots, cancelCapture, onFloorFacingSubmit,
   // galleryOnly: this run was asked for the sun & shadow document -- the 12
   // map angles and the monthly sunlight table -- not the combined verdict.
   // Same pipeline either way; only which blob we hand back changes.
@@ -174,6 +174,16 @@ export default function ReportModal({
   // complete ones: eleven frames could time out and the modal still said
   // "frame 12 of 12" and "Report Ready".
   const [shortfall, setShortfall] = useState(null); // { frames, captions, table }
+  // The deliberate Cancel button below, not the accidental-dismissal
+  // guards further down (Escape/beforeunload stay blocked during loading
+  // -- this is the one intentional way out). cancelledRef short-circuits
+  // postJson's retry and tells the catch block in generate() to close
+  // quietly instead of showing an error card; abortRef holds whichever
+  // fetch is currently in flight so Cancel can end it immediately rather
+  // than waiting out its 90s ceiling.
+  const cancelledRef = useRef(false);
+  const abortRef = useRef(null);
+  const [cancelling, setCancelling] = useState(false);
 
 
   // Floor + facing were already picked one step earlier, in UnitVerdict's
@@ -216,6 +226,8 @@ export default function ReportModal({
   };
 
   const generate = async () => {
+    cancelledRef.current = false;
+    setCancelling(false);
     setLoading(true);
     setError('');
     setAiNotice(false);
@@ -261,23 +273,36 @@ export default function ReportModal({
     // A ceiling on each request. Without one, a response that never
     // arrives -- a proxy holding the socket, the platform killing the
     // function without closing it -- leaves this awaiting forever, and
-    // there is deliberately no cancel button during generation. The result
-    // was a card spinning on "laying out the document" with no way out but
-    // a page reload. The analyse route budgets itself at ~48s, so 90s here
-    // is generous and still finite.
+    // (before the Cancel button below existed) there was no way out but a
+    // page reload -- the card just spun on "laying out the document"
+    // forever. The analyse route budgets itself at ~48s, so 90s here is
+    // generous and still finite -- Cancel no longer has to wait this out,
+    // but a run nobody's watching still ends on its own.
     const postJson = async (url, payload, label) => {
       for (let attempt = 0; attempt < 2; attempt++) {
+        if (cancelledRef.current) throw new Error('capture-cancelled');
         let res;
+        // A fresh controller per attempt, same as AbortSignal.timeout(90_000)
+        // used to give each one -- still a fresh 90s ceiling per attempt,
+        // just also reachable from outside: abortRef always points at
+        // whichever fetch is actually in flight, so Cancel can end it
+        // immediately instead of waiting out that ceiling.
+        const controller = new AbortController();
+        abortRef.current = controller;
+        const timeoutId = setTimeout(() => controller.abort(), 90_000);
         try {
           res = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
-            signal: AbortSignal.timeout(90_000),
+            signal: controller.signal,
           });
         } catch (netErr) {
+          if (cancelledRef.current) throw new Error('capture-cancelled');
           if (attempt === 0) { await new Promise(r => setTimeout(r, 1200)); continue; }
           throw new Error(`${label}-unreachable`);
+        } finally {
+          clearTimeout(timeoutId);
         }
         if (res.ok) return res.json();
         if (attempt === 0 && res.status >= 500) { await new Promise(r => setTimeout(r, 1200)); continue; }
@@ -373,6 +398,12 @@ export default function ReportModal({
         kind: galleryOnly ? 'sun-shadow' : (areaRecord ? 'combined' : 'unit'),
       });
     } catch (e) {
+      // A deliberate Cancel click, not a failure -- close quietly instead
+      // of landing on an error card the person now has to also dismiss.
+      // They already know why this stopped; they're the one who stopped
+      // it, usually to fix a floor or facing picked wrong a moment ago.
+      if (cancelledRef.current) { onClose?.(); return; }
+
       console.error('Report generation failed:', e);
       // The map failing to load is a different problem from the AI being
       // busy, and it needs a different response from the person -- "try
@@ -397,6 +428,19 @@ export default function ReportModal({
     } finally {
       setLoading(false);
     }
+  };
+
+  // The one deliberate way out of a run in progress -- ends whichever
+  // half is actually live (the map capture via the hook's own cancel, or
+  // an in-flight analyse/pdf request via abortRef) and lets generate()'s
+  // own catch block above close the modal quietly. Safe to call more than
+  // once: cancelCapture()/abort() are no-ops once nothing's listening.
+  const cancelGenerate = () => {
+    if (cancelledRef.current) return;
+    cancelledRef.current = true;
+    setCancelling(true);
+    cancelCapture?.();
+    abortRef.current?.abort();
   };
 
   // The page locks the map pin while frames are being captured. That has to
@@ -795,6 +839,26 @@ export default function ReportModal({
             <div style={{ background:'#EFEBE3', height:4, overflow:'hidden' }}>
               <div style={{ background:ORG, height:'100%', width:`${progress}%`, transition:'width 0.4s ease' }} />
             </div>
+            {/* The one deliberate way to stop a run in progress -- for
+                picking the wrong floor or facing and noticing mid-build.
+                Escape and the backdrop click stay blocked during loading
+                (see canDismiss above) so a stray keypress can't throw away
+                a minute of work by accident; this is a real click, on a
+                button whose only job is exactly that. */}
+            <button
+              type="button"
+              onClick={cancelGenerate}
+              disabled={cancelling}
+              style={{
+                marginTop:18, background:'none', border:'none', padding:0,
+                color:SUB, fontFamily:MONO, fontSize:11, letterSpacing:'.05em',
+                textTransform:'uppercase', textDecoration: cancelling ? 'none' : 'underline',
+                textUnderlineOffset:3, cursor: cancelling ? 'default' : 'pointer',
+                opacity: cancelling ? 0.6 : 1,
+              }}
+            >
+              {cancelling ? 'Stopping…' : 'Cancel · pick a different floor or facing'}
+            </button>
           </div>
         )}
 
