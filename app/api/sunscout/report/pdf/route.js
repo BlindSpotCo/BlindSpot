@@ -242,6 +242,58 @@ export async function POST(req) {
   const markDataUri = getMarkDataUri();
 
   const date = new Date().toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' });
+
+  // Print chrome. The report opens from a blob: URL, so the browser's own
+  // print header/footer stamped that URL and a timestamp on every page.
+  // @page margin:0 leaves the browser no room to draw them; our own header
+  // and footer take their place. The table wrapper is what makes it work
+  // across pages: thead/tfoot spacers repeat on every printed page and
+  // reserve the room the fixed header/footer sit in, so content never runs
+  // under them. On screen the table is display:block and invisible.
+  const printChrome = (docLabel) => ({
+    css: `
+    .print-only{display:none}
+    .pframe,.pframe>thead,.pframe>tbody,.pframe>tfoot,.pframe>*>tr,.pframe>*>tr>td{display:block}
+    @page{size:A4;margin:0}
+    @media print{
+      html,body{background:#fff!important}
+      .print-only{display:block}
+      .pframe{display:table;width:100%;border-collapse:collapse}
+      .pframe>thead{display:table-header-group}
+      .pframe>tbody{display:table-row-group}
+      .pframe>tfoot{display:table-footer-group}
+      .pframe>*>tr{display:table-row}
+      .pframe>*>tr>td{display:table-cell;padding:0;vertical-align:top}
+      .pspace-head{height:19mm}
+      .pspace-foot{height:15mm}
+      .print-head,.print-foot{position:fixed;left:0;right:0;padding:0 13mm;background:#fff;z-index:50;font-family:${DISPLAY}}
+      .print-head{top:0}
+      .print-foot{bottom:0}
+      .print-bar{display:flex;justify-content:space-between;align-items:center;gap:16px}
+      .print-head .print-bar{height:15mm;border-bottom:1.5px solid ${INK}}
+      .print-foot .print-bar{height:12mm;border-top:1px solid ${LINE}}
+      .print-brand{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:${INK};letter-spacing:-.005em;white-space:nowrap}
+      .print-kind{font-size:9px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.12em;margin-left:4px}
+      .print-addr{font-size:9.5px;color:${DIM};text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%}
+      .print-small{font-size:8.5px;color:${DIM};white-space:nowrap}
+      body{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+    }`,
+    open: `
+  <div class="print-only print-head"><div class="print-bar">
+    <div class="print-brand">${markDataUri ? `<img src="${markDataUri}" alt="" style="width:12px;height:14px;object-fit:contain;"/>` : ''}BlindSpot<span class="print-kind">${docLabel}</span></div>
+    <div class="print-addr">${safeAddress}</div>
+  </div></div>
+  <div class="print-only print-foot"><div class="print-bar">
+    <span class="print-small">blindspotco.net</span>
+    <span class="print-small">Prepared ${date} &middot; Floor ${safeFloor}, facing ${safeFacing}</span>
+  </div></div>
+  <table class="pframe" role="presentation">
+    <thead><tr><td><div class="print-only pspace-head"></div></td></tr></thead>
+    <tfoot><tr><td><div class="print-only pspace-foot"></div></td></tr></tfoot>
+    <tbody><tr><td>`,
+    close: `</td></tr></tbody>
+  </table>`,
+  });
   const shotCount = screenshots?.length || 0;
 
   const perImage = {};
@@ -417,9 +469,11 @@ export async function POST(req) {
               <img src="${shot.base64}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="The block at ${shot.label}"/>
               ${PROPERTY_MARKER_HTML}
             </div>
+            ${/* No caption -> just the frame. The picture stands on its own;
+                  an apology under it reads as a broken document. */''}
             ${perImage[shot.idx]
               ? `<p style="font-size:13.5px;color:${INK};line-height:1.65;margin-top:12px;">${perImage[shot.idx]}</p>`
-              : `<p style="font-size:12.5px;color:${DIM};line-height:1.55;margin-top:12px;">No description came back for this frame this time. The image and the sunlight figures for this month are unaffected - generating the report again usually fills it in.</p>`}
+              : ''}
           </div>
         `).join('')}
       </div>
@@ -793,6 +847,7 @@ export async function POST(req) {
   // The first section on a fresh page doesn't need a divider above it.
   const stripLeadRule = (html) => (html || '').replace(`<div style="${RULE}"></div>`, '');
 
+  const mainChrome = printChrome(hasNeighbourhood ? 'Property report' : 'Home comfort report');
   const mainHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -808,9 +863,10 @@ export async function POST(req) {
       body{background:#fff;print-color-adjust:exact;-webkit-print-color-adjust:exact}
       img{max-width:100%;}
     }
+    ${mainChrome.css}
   </style>
 </head>
-<body>
+<body>${mainChrome.open}
   <div class="no-print" style="position:fixed;top:20px;right:20px;z-index:100;display:flex;gap:10px;align-items:center;">
     <span id="pdf-status" style="font-size:12px;color:${DIM};max-width:260px;text-align:right;"></span>
     <!-- Was two buttons here: this one and a plain onclick="window.close()"
@@ -897,6 +953,7 @@ export async function POST(req) {
       </div>
     </div>
   </div>
+  ${mainChrome.close}
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -981,7 +1038,7 @@ export async function POST(req) {
   // the appendix it is -- it used to sit above all twelve images, which put
   // a technical table between the reader and the only reason they opened
   // this.
-  const describedCount = Object.keys(perImage).length;
+  const galleryChrome = printChrome('Sun &amp; Shadow');
   const galleryHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1017,9 +1074,10 @@ export async function POST(req) {
       .pdf-page{page-break-inside:avoid}
       .shot-card{page-break-inside:avoid}
     }
+    ${galleryChrome.css}
   </style>
 </head>
-<body>
+<body>${galleryChrome.open}
   <div class="no-print" style="position:sticky;top:0;z-index:100;background:${BG};border-bottom:1px solid ${LINE};padding:13px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
     <div style="display:flex;align-items:center;gap:9px;min-width:0;">
       ${markDataUri ? `<img src="${markDataUri}" alt="" style="width:16px;height:18px;object-fit:contain;"/>` : ''}
@@ -1047,8 +1105,7 @@ export async function POST(req) {
       <p style="font-size:14.5px;color:${MUTE};line-height:1.8;max-width:64ch;">
         ${shotCount >= 12
           ? `The 3D map at this exact pin, photographed twelve times: three points in each season, at 9am, noon and 3pm. The dark areas are real shadows, cast by the real buildings around this one. The orange dot is the property.`
-          : `The 3D map at this exact pin, photographed ${shotCount} times through the year. The dark areas are real shadows, cast by the real buildings around this one. The orange dot is the property. This is fewer than the twelve we aim for &mdash; the rest didn't come back from the map in time, so those points in the year aren't shown. Generating it again usually gets the full set.`}
-        ${describedCount ? `` : ` The written descriptions didn't come back this time; the images and the figures below are unaffected.`}
+          : `The 3D map at this exact pin, photographed ${shotCount} times through the year. The dark areas are real shadows, cast by the real buildings around this one. The orange dot is the property.`}
       </p>
       ${summary?.solarFeasibility ? `
       <div style="display:flex;gap:0;flex-wrap:wrap;margin-top:22px;border:1px solid ${LINE};">
@@ -1097,6 +1154,7 @@ export async function POST(req) {
       <span style="font-size:10.5px;color:${DIM};">3D map: OSMBuildings &middot; Solar geometry: NOAA algorithm</span>
     </div>
   </div>
+${galleryChrome.close}
 </body>
 </html>`;
 
