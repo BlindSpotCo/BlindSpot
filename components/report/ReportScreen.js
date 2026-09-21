@@ -304,6 +304,21 @@ export default function ReportScreen({ view = 'verdict' }) {
     router.push(`/report/locate?${flowQuery({ pin: pinTouched ? '1' : '' })}`);
   }, [router, flowQuery, pinTouched]);
 
+  // Both confirmSpot and openLocate above are router.push()es, not a
+  // local class toggle -- .bsr-mapzone.is-full itself is a cheap
+  // opacity fade (see report.css), but a real route change that was
+  // never prefetched costs a round trip for the new route's RSC payload
+  // before that fade even starts, which is what "Full screen" was
+  // actually waiting on. Both /report and /report/locate render nothing
+  // of their own (see their page.js files -- the shared layout is what
+  // holds the map, kept mounted across this exact navigation), so
+  // there's no per-query data to get wrong by warming them up front
+  // rather than on click.
+  useEffect(() => {
+    router.prefetch('/report/locate');
+    router.prefetch('/report');
+  }, [router]);
+
   // "The area" and "the flat" each carry a full breakdown (every factor
   // row, the sub-scores) underneath a short summary (name/floor, rating
   // word, score) -- one tap away behind "Show the full breakdown" rather
@@ -1872,17 +1887,26 @@ export default function ReportScreen({ view = 'verdict' }) {
 
               {/* Outside bsr-half-detail on purpose -- stays visible whether
                   the breakdown above is open or collapsed, same as the area
-                  half's report link opposite it. Used to generate the sun &
-                  shadow report directly from here -- before anyone had seen
-                  the day animate over the actual block below, or had a chance
-                  to nudge the pin/floor/facing first. That's backwards: you'd
-                  get a report for whatever the defaults happened to be, not
-                  what you'd actually looked at. This is a plain scroll down to
-                  the map now (an anchor, not a report trigger -- see .bsr-more
-                  a below), and the real "generate" action lives on the map's
-                  own toolbar instead, next to the controls it reports on. */}
-              <p className="bsr-more">
-                <a href="#the-block">See the sun and shadow on the map ↓</a>
+                  half's report link opposite it. Used to be a plain scroll
+                  link ("generating straight from here is backwards -- you'd
+                  get a report for whatever the defaults happened to be"),
+                  because floor/facing then lived only on the map toolbar
+                  below. They're set right above in this same card now (see
+                  the Floor/Faces fields at the top of this section), so
+                  that objection doesn't apply here any more -- this button
+                  generates from exactly the floor/facing already showing on
+                  this card, the same as .bsr-mapbar-report on the map
+                  toolbar does, and gives the flat half the same weight of
+                  CTA the area half has opposite it instead of a quiet
+                  scroll-down link with nothing to match. */}
+              <p className="bsr-more bsr-more-cta">
+                <button
+                  type="button"
+                  disabled={!solar?.pathData}
+                  onClick={() => setReportOpen('gallery')}
+                >
+                  Build the sun &amp; shadow report →
+                </button>
               </p>
             </section>
           </div>

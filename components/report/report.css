@@ -9,11 +9,19 @@
    not their first. */
 
 .bsr{
-  --bsr-good:#10B981;
+  /* Text colours only -- the -bg tints below are unchanged. The original
+     values (#10B981/#F59E0B/#EF4444) were picked to look right as a flat
+     swatch, not as text: on their own -bg tint they measured 2.24:1,
+     1.93:1 and 3.08:1 (WCAG needs 4.5:1 for text this size), so the
+     amber "Fair" pill in particular read as barely-there yellow-on-cream.
+     These are the same hues darkened until each clears 4.5:1 against both
+     its own -bg tint and the page background/white, ~4.6-5.5:1 across the
+     three. */
+  --bsr-good:#0B7C56;
   --bsr-good-bg:#D1FAE5;
-  --bsr-avg:#F59E0B;
+  --bsr-avg:#986206;
   --bsr-avg-bg:#FEF3C7;
-  --bsr-poor:#EF4444;
+  --bsr-poor:#D11212;
   --bsr-poor-bg:#FEE2E2;
   --bsr-none-bg:#F1F5F9;
   --bsr-head-h:96px;
@@ -351,22 +359,36 @@
 .bsr-more a:hover{color:var(--ss,#AF5F30)}
 .bsr-area .bsr-more a:hover{color:var(--av,#7A2E43)}
 
-/* .bsr-more-cta: "See the detailed area report" and "Get the sun & shadow
-   report" (.bsr-mapbar-report, in the map toolbar below) are the same
-   level of action -- both open/generate a real report -- so both get a
-   solid button. "See the sun and shadow on the map" stays a plain
-   .bsr-more link: it only scrolls to a view already on this page, not a
-   report of its own, so it stays the lower-weight action of the pair. */
-.bsr-more.bsr-more-cta a{
-  min-height:36px;padding:0 18px;border-radius:4px;
-  font-weight:700;text-decoration:none;
-  background:var(--av,#7A2E43);color:#FFFDF8;
+/* .bsr-more-cta: "See the detailed area report" and "Build the sun &
+   shadow report" (also on .bsr-mapbar-report, in the map toolbar below)
+   are the same level of action -- both open/generate a real report -- so
+   both get a solid button, in that half's own accent (--av for the area,
+   --ss for the flat -- the same split .bsr-more a:hover above uses, and
+   the same reason .bsr-genlink's comment warns about above: one
+   undifferentiated rule here would win for both halves again). A
+   <button>, not just <a>, now that the flat half generates its report
+   straight from this card instead of only scrolling to it -- reset to
+   look identical to the <a> version, plus a disabled state for while the
+   3D map (which this is captured from) is still loading, and the same
+   press feedback every other primary CTA on the site got (transform on
+   :active, skipped under reduced motion). */
+.bsr-more.bsr-more-cta a,
+.bsr-more.bsr-more-cta button{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:36px;padding:0 18px;border-radius:4px;border:0;
+  font:inherit;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;
+  background:var(--ss,#AF5F30);color:#FFFDF8;
   transition:transform .28s cubic-bezier(.34,1.56,.64,1), filter .12s ease;
 }
-.bsr-area .bsr-more.bsr-more-cta a:hover{filter:brightness(.92);color:#FFFDF8}
-.bsr-more.bsr-more-cta a:active{transform:scale(.96);transition:transform .05s ease}
+.bsr-more.bsr-more-cta a:hover,
+.bsr-more.bsr-more-cta button:hover:not(:disabled){filter:brightness(.92);color:#FFFDF8}
+.bsr-more.bsr-more-cta button:disabled{opacity:.55;cursor:not-allowed;filter:none}
+.bsr-area .bsr-more.bsr-more-cta a{background:var(--av,#7A2E43)}
+.bsr-more.bsr-more-cta a:active,
+.bsr-more.bsr-more-cta button:not(:disabled):active{transform:scale(.96);transition:transform .05s ease}
 @media (prefers-reduced-motion:reduce){
-  .bsr-more.bsr-more-cta a, .bsr-more.bsr-more-cta a:active{transition:none}
+  .bsr-more.bsr-more-cta a, .bsr-more.bsr-more-cta button,
+  .bsr-more.bsr-more-cta a:active, .bsr-more.bsr-more-cta button:active{transition:none}
 }
 
 .bsr-methodology-note{
@@ -902,8 +924,8 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
   .bsr-rating{margin-top:12px}
   .bsr-half-toggle{margin-top:16px;padding:7px 0}
   .bsr-more{padding-top:18px}
-  .bsr-more a{min-height:40px}
-  .bsr-more.bsr-more-cta a{min-height:46px}
+  .bsr-more a,.bsr-more button{min-height:40px}
+  .bsr-more.bsr-more-cta a,.bsr-more.bsr-more-cta button{min-height:46px}
 }
 
 /* The date select sits inside .bsr-set (.bsr-set select already styles

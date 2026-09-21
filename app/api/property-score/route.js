@@ -97,7 +97,15 @@ export async function GET(req) {
     const areaScore = persona
       ? (recomputeAreaScore(avRecord.scores, persona.avWeights) ?? avRecord.nqi_composite)
       : avRecord.nqi_composite;
-    const areaGrade = persona ? gradeFor(areaScore) : avRecord.grade;
+    // Was avRecord.grade (the letter stored in nqi_scores.json) on this
+    // branch -- that field comes from a different, older grading pass than
+    // gradeFor's A/B+/B/C+/C/D bands used everywhere else (the persona
+    // branch right above, and NeighbourhoodReport's own live recompute),
+    // and the two don't agree: a 60, which word() below calls "Good", read
+    // back as "grade C" from the stored field even though gradeFor(60) is
+    // a B. Always deriving the grade from the score being shown keeps the
+    // word and the letter in the same scale, whichever branch set the score.
+    const areaGrade = gradeFor(areaScore);
     const unitScore = ssResult.liveScore;
 
     const weighted = (areaScore * weightArea + unitScore * weightUnit) / totalWeight;
