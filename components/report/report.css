@@ -90,8 +90,8 @@
 }
 .bsr-addr{display:flex;align-items:center;gap:10px;min-width:0;flex:1;margin-top:10px}
 .bsr-pin{
-  width:11px;height:11px;border-radius:50%;flex:none;
-  background:var(--brand,#3D4116);box-shadow:0 0 0 4px rgba(30,41,59,.15);
+  width:7px;height:7px;border-radius:50%;flex:none;
+  background:var(--brand,#3D4116);
 }
 /* This is the one fact on the whole screen everything else is scored
    against -- it read as plain body text before, no different from a
@@ -101,10 +101,21 @@
    and, as a side effect, an actual visible edge -- so what looked like
    text with nothing containing it now sits inside a box you can see. */
 .bsr-addr-text{
+  /* flex:1 1 auto + min-width:0 is the actual fix -- without it this
+     span just sits at its own content width and "Change address" trails
+     right after it instead of landing on the row's right edge, which is
+     what made this row's trailing link end well short of "My reports"
+     above it. min-width:0 is also what lets the ellipsis below actually
+     fire on a long address instead of silently never triggering. */
+  flex:1 1 auto;min-width:0;
   font-size:15.5px;font-weight:700;color:var(--brand,#3D4116);
-  background:color-mix(in srgb, var(--brand,#3D4116) 8%, transparent);
-  border:1px solid color-mix(in srgb, var(--brand,#3D4116) 18%, transparent);
-  border-radius:7px;padding:4px 11px;
+  /* Was 8%/18% -- calibrated for the old cream palette and never
+     retuned after the cool-slate swap (see the comment at the top of
+     globals.css :root), where it read as barely-there gray instead of
+     a highlighted pill. */
+  background:color-mix(in srgb, var(--brand,#3D4116) 11%, var(--paper,#FFFDF8));
+  border:1px solid color-mix(in srgb, var(--brand,#3D4116) 26%, transparent);
+  border-radius:7px;padding:5px 12px;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .bsr-head-links{display:flex;gap:18px;flex:none}
