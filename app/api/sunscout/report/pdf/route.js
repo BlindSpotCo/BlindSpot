@@ -431,11 +431,14 @@ export async function POST(req) {
     else if (windSub.score < 40) cons.push('Limited ventilation potential');
   }
 
+  // Plain-spoken labels, not all-caps report jargon -- "Proceed with
+  // Caution" reads like something a person would actually say about a
+  // place, the way the old shouted "RECOMMENDED WITH CAUTION" pill didn't.
   const VERDICT_BADGE = {
-    'Prime Pick': { text: 'RECOMMENDED', color: GOOD },
-    'Hidden Gem': { text: 'RECOMMENDED WITH CAUTION', color: OK },
-    'Location Play': { text: 'RECOMMENDED WITH CAUTION', color: OK },
-    'Reconsider': { text: 'NOT RECOMMENDED', color: POOR },
+    'Prime Pick': { text: 'Recommended', color: GOOD },
+    'Hidden Gem': { text: 'Proceed with Caution', color: OK },
+    'Location Play': { text: 'Proceed with Caution', color: OK },
+    'Reconsider': { text: 'Not Recommended', color: POOR },
   };
   const badge = verdictLabel ? (VERDICT_BADGE[verdictLabel] || { text: escapeHtml(verdictLabel).toUpperCase(), color: SUN }) : null;
 
@@ -502,19 +505,19 @@ export async function POST(req) {
       <thead>
         <tr style="background:${CARD};">
           ${['Month','Sunrise','Sunset','Noon Elevation','Usable Sun','Peak Window',`Floor ${safeFloor} Clearance`]
-            .map(h => `<th style="text-align:left;padding:9px 10px;border-bottom:2px solid ${LINE};color:${WINE};font-weight:700;">${h}</th>`).join('')}
+            .map((h, i) => `<th style="text-align:${i === 3 || i === 4 ? 'right' : 'left'};padding:12px 16px;border-bottom:2px solid #E5E7EB;color:${WINE};font-weight:700;">${h}</th>`).join('')}
         </tr>
       </thead>
       <tbody>
         ${summary.monthlySummary.map((m, i) => `
           <tr style="background:${i % 2 === 0 ? '#fff' : '#FBF8F1'};">
-            <td style="padding:8px 10px;border-bottom:1px solid ${LINE_SOFT};font-weight:700;color:${INK};">${m.month}</td>
-            <td style="padding:8px 10px;border-bottom:1px solid ${LINE_SOFT};color:${MUTE};">${m.sunrise}</td>
-            <td style="padding:8px 10px;border-bottom:1px solid ${LINE_SOFT};color:${MUTE};">${m.sunset}</td>
-            <td style="padding:8px 10px;border-bottom:1px solid ${LINE_SOFT};color:${MUTE};">${m.noonElevation}°</td>
-            <td style="padding:8px 10px;border-bottom:1px solid ${LINE_SOFT};color:${MUTE};">${m.usableHours}h</td>
-            <td style="padding:8px 10px;border-bottom:1px solid ${LINE_SOFT};color:${MUTE};">${m.peakWindow}</td>
-            <td style="padding:8px 10px;border-bottom:1px solid ${LINE_SOFT};color:${MUTE};">${m.floorClearance}</td>
+            <td style="padding:12px 16px;border-bottom:1px solid #E5E7EB;font-weight:700;color:${INK};">${m.month}</td>
+            <td style="padding:12px 16px;border-bottom:1px solid #E5E7EB;color:${MUTE};">${m.sunrise}</td>
+            <td style="padding:12px 16px;border-bottom:1px solid #E5E7EB;color:${MUTE};">${m.sunset}</td>
+            <td style="padding:12px 16px;border-bottom:1px solid #E5E7EB;color:${MUTE};text-align:right;">${m.noonElevation}°</td>
+            <td style="padding:12px 16px;border-bottom:1px solid #E5E7EB;color:${MUTE};text-align:right;">${m.usableHours}h</td>
+            <td style="padding:12px 16px;border-bottom:1px solid #E5E7EB;color:${MUTE};">${m.peakWindow}</td>
+            <td style="padding:12px 16px;border-bottom:1px solid #E5E7EB;color:${MUTE};">${m.floorClearance}</td>
           </tr>
         `).join('')}
       </tbody>
@@ -710,29 +713,42 @@ export async function POST(req) {
     })
     .filter(Boolean);
 
-  const callColor = (c) => {
+  // "Great for" / "Okay for" / "Not ideal for" / "Not recommended for" --
+  // a plain-spoken lead word instead of a bare "Yes" / "Probably not"
+  // pill, so each card reads as a sentence a person would actually say.
+  const callWord = (c) => {
     const t = (c || '').toLowerCase();
-    if (t.startsWith('yes') && !t.includes('caveat')) return GOOD;
-    if (t.startsWith('yes')) return OK;
-    return POOR;
+    if (t.startsWith('yes') && !t.includes('caveat')) return 'Great for';
+    if (t.startsWith('yes')) return 'Okay for';
+    if (t.startsWith('probably not') || t.startsWith('not really')) return 'Not ideal for';
+    return 'Not recommended for';
   };
+  const callTint = (c) => {
+    const t = (c || '').toLowerCase();
+    if (t.startsWith('yes') && !t.includes('caveat')) return GOOD_TINT;
+    if (t.startsWith('yes')) return HEADS_UP_TINT;
+    return NOT_REC_TINT;
+  };
+  // The model's own sentence ends in a period; dropped inside "(...)"
+  // that reads as "(Excellent access to schools.)" -- strip it so the
+  // parenthetical reads as a clause, not a sentence trapped in brackets.
+  const dropTrailingPeriod = (t) => (t || '').replace(/\.\s*$/, '');
 
   const suitsSection = suitRows.length ? `
     <div style="${RULE}"></div>
     <div style="margin-bottom:16px;">
       <div style="${H2}">Who this is for</div>
-      <div style="display:flex;flex-direction:column;">
-        ${suitRows.filter(r => !r.negative).map((r) => `
-          <div style="display:flex;gap:14px;padding:8px 0;border-top:1px solid ${LINE_SOFT};align-items:baseline;flex-wrap:wrap;">
-            <div style="flex:0 0 200px;min-width:150px;">
-              <span style="font-size:13.5px;font-weight:700;color:${INK};line-height:1.4;">${r.who}</span>
-              ${r.call ? `<div style="font-size:12px;font-weight:700;color:${callColor(r.call)};margin-top:1px;">${r.call}</div>` : ''}
-            </div>
-            <div style="flex:1;min-width:220px;font-size:13.5px;color:${MUTE};line-height:1.6;">${r.why}</div>
-          </div>`).join('')}
+      <div style="display:flex;flex-direction:column;gap:9px;">
+        ${suitRows.filter(r => !r.negative).map((r) => {
+          const tint = callTint(r.call);
+          return `
+          <div style="background:${tint.bg};border:1px solid ${tint.border};border-radius:10px;padding:11px 15px;font-size:13.5px;line-height:1.55;color:${INK};">
+            <span style="font-weight:700;color:${tint.text};">${callWord(r.call)}</span> ${r.who}${r.why ? ` <span style="color:${MUTE};">(${dropTrailingPeriod(r.why)})</span>` : ''}
+          </div>`;
+        }).join('')}
       </div>
       ${suitRows.filter(r => r.negative).map((r) => `
-        <div style="margin-top:18px;padding:14px 17px;background:${CARD};border-left:3px solid ${POOR};">
+        <div style="margin-top:18px;padding:14px 17px;background:#FEF2F2;border:1px solid #FCA5A5;border-radius:10px;">
           <div style="font-size:12px;font-weight:700;color:${POOR};text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px;">${r.who}</div>
           <div style="font-size:14.5px;color:${INK};line-height:1.75;">${r.why || r.who}</div>
         </div>`).join('')}
@@ -800,7 +816,7 @@ export async function POST(req) {
   const flatSection = `
     <div style="${RULE}"></div>
     <div style="margin-bottom:16px;">
-      <div style="${H2}">Home Comfort Score &middot; floor ${safeFloor}, facing ${safeFacing}${typeof unitScore === 'number' ? ` &middot; ${unitScore}/100` : ''}</div>
+      <div style="${H2}">Flat Comfort${typeof unitScore === 'number' ? `: ${scoreWord(unitScore)} (${unitScore}/100)` : ''} &middot; Floor ${safeFloor}, Facing ${safeFacing}</div>
       <p style="font-size:12px;color:${DIM};margin-bottom:10px;">
         From the sun's real path over the buildings on this block${facingAssumptionNote ? '; facing assumed, not confirmed' : ''}.
       </p>
@@ -822,19 +838,26 @@ export async function POST(req) {
 
   // Strengths and watch-outs, computed from the real numbers. Two plain
   // lists, not two bordered cards inside a bordered grid.
-  const listBlock = (title, items, color) => items.length ? `
-    <div style="flex:1;min-width:230px;">
-      <div style="font-size:11.5px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:.09em;margin-bottom:6px;">${title}</div>
+  // Two bordered status cards side by side, not two plain lists -- a
+  // subtle tint and border (green for what's good, amber for what needs
+  // a heads-up) so the two read apart at a glance, not just by heading.
+  const listBlock = (title, items, tint) => items.length ? `
+    <div style="flex:1;min-width:230px;background:${tint.bg};border:1px solid ${tint.border};border-radius:12px;padding:16px 18px;">
+      <div style="font-size:11.5px;font-weight:700;color:${tint.text};text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px;">${title}</div>
       <ul style="margin:0;padding-left:17px;">
-        ${items.map(t => `<li style="font-size:13.5px;color:${MUTE};line-height:1.55;margin-bottom:4px;">${t}</li>`).join('')}
+        ${items.map(t => `<li style="font-size:13.5px;color:${INK};line-height:1.55;margin-bottom:4px;">${t}</li>`).join('')}
       </ul>
     </div>` : '';
 
+  const GOOD_TINT = { bg: '#F0FDF4', border: '#BBF7D0', text: '#15803D' };
+  const HEADS_UP_TINT = { bg: '#FFFBEB', border: '#FDE68A', text: '#B45309' };
+  const NOT_REC_TINT = { bg: '#FEF2F2', border: '#FCA5A5', text: '#B91C1C' };
+
   const strengthsSection = (pros.length || cons.length) ? `
     <div style="${RULE}"></div>
-    <div style="display:flex;gap:28px;flex-wrap:wrap;margin-bottom:16px;">
-      ${listBlock('Strengths', pros.map(p => escapeHtml(String(p).replace(/^\+\s*/, ''))), GOOD)}
-      ${listBlock('Watch-outs', cons.map(c => escapeHtml(String(c).replace(/^[-\u2212]\s*/, ''))), POOR)}
+    <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px;">
+      ${listBlock('The Good', pros.map(p => escapeHtml(String(p).replace(/^\+\s*/, ''))), GOOD_TINT)}
+      ${listBlock('The Heads-Up', cons.map(c => escapeHtml(String(c).replace(/^[-\u2212]\s*/, ''))), HEADS_UP_TINT)}
     </div>` : '';
 
   // Whatever the model wrote as its closing "what to check" section, pulled
@@ -842,7 +865,8 @@ export async function POST(req) {
   const checkSection = checkBody ? `
     <div style="${RULE}"></div>
     <div style="margin-bottom:26px;">
-      <div style="${H2}">What to verify before you decide</div>
+      <div style="${H2}">Your On-Site Inspection Checklist</div>
+      <p style="font-size:12.5px;color:${DIM};margin-bottom:10px;">Take this with you when you visit the flat with your broker.</p>
       ${formatNarrative(checkBody)}
     </div>` : '';
 
@@ -896,7 +920,7 @@ export async function POST(req) {
         ${labelPill}
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px;">
           <h1 style="font-size:24px;font-weight:800;color:${INK};margin:0;font-family:${DISPLAY};letter-spacing:-.01em;">${safeAddress}</h1>
-          ${badge ? `<span style="background:${badge.color};color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:5px 12px;text-transform:uppercase;">${badge.text}</span>` : ''}
+          ${badge ? `<span style="background:${badge.color};color:#fff;font-size:11.5px;font-weight:700;padding:5px 12px;border-radius:20px;">${badge.text}</span>` : ''}
         </div>
         <div style="font-size:11px;color:${DIM};display:flex;align-items:center;gap:5px;"><span style="color:${DIM};">${PIN_SVG}</span>${parseFloat(lat).toFixed(5)}°N, ${parseFloat(lon).toFixed(5)}°E · ${date}</div>
 
@@ -931,19 +955,20 @@ export async function POST(req) {
     <!-- Final page: what to verify, methodology, footer -->
     <div class="pdf-page" style="padding:14px 32px 32px;">
       ${stripLeadRule(checkSection)}
-      <div style="border:1px solid ${LINE_SOFT};padding:14px 20px;margin-top:${checkSection ? '18px' : '0'};">
-        <div style="font-size:11px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">How this report was built</div>
+      <details style="border:1px solid ${LINE_SOFT};padding:14px 20px;margin-top:${checkSection ? '18px' : '0'};border-radius:8px;">
+        <summary style="font-size:11px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.08em;cursor:pointer;">View Data Methodology and Sources</summary>
+        <p style="font-size:11.5px;color:${MUTE};line-height:1.6;margin:10px 0;">Calculated using exact sun angles for this floor, official police records, and public municipal data.</p>
         <ul style="margin:0;padding-left:18px;font-size:11px;color:${DIM};line-height:1.6;">
           ${hasNeighbourhood ? `<li>The Neighbourhood Score, its factor scores, crime, schools and price context come from public records. They are the same for every unit in this pincode and are not AI-generated.</li>` : ''}
           ${hasNeighbourhood ? `<li>BlindSpot Verdict score = Neighbourhood Score ${avRecord.nqi_composite} × ${Math.round((areaWeight ?? 0.5) * 100)}% + Home Comfort Score ${unitScore ?? '-'} × ${Math.round((unitWeight ?? 0.5) * 100)}% = ${combinedScore ?? '-'}. A weighted average, not AI-generated.</li>` : ''}
-          <li>Sun position and monthly sunlight hours use the NOAA solar-geometry algorithm. Deterministic, not AI-generated.</li>
+          <li>Sun position and monthly sunlight hours are calculated using exact sun angles for this floor. Deterministic, not AI-generated.</li>
           <li>Floor clearance uses a generic urban-obstruction estimate, not a measurement of this property's specific neighboring buildings.</li>
           ${summary?.buildingHeightNote ? `<li>${summary.buildingHeightNote.sentence}</li>` : ''}
           ${safeFacingAssumptionNote ? `<li>${safeFacingAssumptionNote}</li>` : ''}
           <li>The written sections use AI to interpret the numbers above. It is given them as fact and told not to estimate its own.</li>
           <li>The ${shotCount || 12} map images this is read from, and the description of each, are in the separate Sun &amp; Shadow document.</li>
         </ul>
-      </div>
+      </details>
 
       <div style="border-top:1px solid ${LINE_SOFT};padding-top:12px;margin-top:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
         <div style="display:flex;align-items:center;gap:7px;">

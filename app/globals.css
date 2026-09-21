@@ -2133,14 +2133,20 @@ header.header-on-dark .brand-word-img{
 .ts4-card{
   position:relative; overflow:hidden;
   background:linear-gradient(165deg, color-mix(in srgb, var(--ts4-accent) 7%, var(--paper)) 0%, var(--paper) 55%);
-  border:none;
-  box-shadow:0 1px 2px rgba(28,24,18,.05), 0 26px 50px -32px color-mix(in srgb, var(--ts4-accent) 45%, transparent);
+  border:1px solid #E2E8F0;
+  box-shadow:0 4px 20px rgba(0,0,0,0.06);
   border-radius:22px; padding:var(--space-7);
   transition:transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s ease;
 }
 .ts4-card:hover{
   transform:translateY(-6px);
-  box-shadow:0 1px 2px rgba(28,24,18,.05), 0 34px 64px -28px color-mix(in srgb, var(--ts4-accent) 55%, transparent);
+  box-shadow:0 10px 30px rgba(0,0,0,0.09);
+}
+.ts4-sample-tag{
+  position:absolute; top:var(--space-7); right:var(--space-7);
+  font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--text-dim); background:var(--bg); border:1px solid #E2E8F0; border-radius:20px;
+  padding:4px 10px;
 }
 .ts4-tag{ display:block; font-size:11px; letter-spacing:.1em; color:var(--ts4-accent); margin-bottom:var(--space-3) }
 .ts4-name{ font-size:23px; margin-bottom:10px }
@@ -2274,6 +2280,14 @@ header.header-on-dark .brand-word-img{
   padding:0 var(--space-4);
 }
 @media (min-width:768px){ .hiw3-rail{ padding:0 var(--space-6) } }
+.hiw3-coverage{
+  text-align:center; font-size:12.5px; color:var(--text-mute); margin-top:var(--space-6);
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.hiw3-coverage::before{
+  content:''; width:6px; height:6px; border-radius:50%; background:var(--brand-yellow); flex-shrink:0;
+  box-shadow:0 0 0 4px rgba(245,195,67,0.18);
+}
 .hiw3-rail::before{
   content:''; position:absolute; left:0; right:0; top:24px; height:1px; background:var(--line);
   z-index:0;
@@ -2453,7 +2467,10 @@ header.header-on-dark .brand-word-img{
    section matches the numbered 01-05 rhythm above it instead of being
    the one section with no label at all. */
 .section-closing2{
-  position:relative; overflow:hidden; background:var(--brand); color:#fff;
+  /* Scoped to this banner only -- var(--ink) (the same dark slate used
+     for body text everywhere else), not var(--brand), which stays the
+     site's olive everywhere it's the shared CTA/button colour. */
+  position:relative; overflow:hidden; background:var(--ink); color:#fff;
   padding:var(--space-9) 0 0;
 }
 .section-closing2::before{

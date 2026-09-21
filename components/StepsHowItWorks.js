@@ -61,6 +61,11 @@ export default function StepsHowItWorks() {
             </div>
           ))}
         </div>
+
+        {/* Same coverageLabel() the step-1 copy line already uses, so a
+            new city updates both places at once instead of this one
+            drifting into a stale, separately-typed list. */}
+        <p className="hiw3-coverage reveal">Live in {coverageLabel()}, more cities coming.</p>
       </div>
     </section>
   );

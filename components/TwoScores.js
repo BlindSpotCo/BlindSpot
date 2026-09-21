@@ -61,6 +61,7 @@ const COMFORT_DIMS = [
 function ScoreCard({ accentVar, tag, name, blurb, score, grade, word, tone, example, dims }) {
   return (
     <div className="ts4-card reveal" style={{ '--ts4-accent': `var(${accentVar})` }}>
+      <span className="ts4-sample-tag">Interactive Sample Report</span>
       <span className="mono ts4-tag">{tag}</span>
       <h3 className="ts4-name">{name}</h3>
       <p className="ts4-blurb">{blurb}</p>

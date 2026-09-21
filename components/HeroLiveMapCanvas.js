@@ -79,7 +79,7 @@ const BLINDSPOT_EXAMPLES = [
 // AND address results together (see geocode-suggest's own `kind` field),
 // and this is just the label each suggestion in the dropdown wears so
 // it's clear what you're about to pick.
-const SEARCH_PLACEHOLDER = 'Search a city, neighbourhood or address.';
+const SEARCH_PLACEHOLDER = 'Enter society name, landmark, or address...';
 // One-click examples under the search box, one per covered city where it
 // fits. The label is what the chip says; the query carries the city so a
 // name that exists in several places ("Sector 17") lands in the right one.
@@ -386,7 +386,7 @@ export default function HeroLiveMapCanvas() {
               pill below is proof (real cycling examples), not an
               explanation, so it doesn't substitute for one. One flat
               sentence, no animation of its own. */}
-          <p className="hlm-sub">What the listing won&apos;t tell you. We will.</p>
+          <p className="hlm-sub">Get honest, hidden details on any flat: afternoon sun heat, real noise levels, water supply, and neighbourhood safety, before you pay a token.</p>
           <p className="hlm-typed-line">
             <TypewriterCycle
               items={BLINDSPOT_EXAMPLES}
@@ -444,9 +444,9 @@ export default function HeroLiveMapCanvas() {
                 type="button"
                 className="hlm-search-go"
                 onClick={() => searchAndPick()}
-                aria-label="Reveal the blindspots for this place"
+                aria-label="Get the report for this place"
               >
-                <span className="hlm-search-go-text">Reveal blindspots</span>
+                <span className="hlm-search-go-text">Get Report</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
               </button>
             </div>
