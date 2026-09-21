@@ -774,6 +774,39 @@ export default function ReportScreen({ view = 'verdict' }) {
   // Anchor for the flat half, still used by the in-page "the flat" link.
   const unitRef = useRef(null);
 
+  // Where "set the actual floor and facing" (in the assumed-score note
+  // above "the area", and anywhere else that link appears) actually
+  // lands: the Floor/Faces row itself, not just the top of the whole
+  // "the flat" half. A bare #the-flat jump jumps to the right section
+  // but leaves you to spot the two fields yourself among everything
+  // else in it -- this scrolls straight to them and flashes the row for
+  // two seconds, the same "jump to it and light it up briefly" pattern
+  // a chat app uses when you tap a reply to jump to the original
+  // message.
+  const unitSetRef = useRef(null);
+  const unitSetFlashTimer = useRef(null);
+  const scrollToUnitSet = useCallback((e) => {
+    e.preventDefault();
+    const el = unitSetRef.current;
+    if (!el) return;
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+    el.classList.remove('bsr-set-flash');
+    // Restarts the animation if this is clicked again while a previous
+    // flash is still fading -- without the reflow the class re-add is a
+    // no-op as far as the browser's concerned, since it never actually
+    // left.
+    void el.offsetWidth;
+    el.classList.add('bsr-set-flash');
+    if (unitSetFlashTimer.current) clearTimeout(unitSetFlashTimer.current);
+    unitSetFlashTimer.current = setTimeout(() => {
+      el.classList.remove('bsr-set-flash');
+    }, 2000);
+  }, []);
+  useEffect(() => () => {
+    if (unitSetFlashTimer.current) clearTimeout(unitSetFlashTimer.current);
+  }, []);
+
   /* ---------------- the twelve map frames, captured once ----------------
      Photographing the map is the slow half of both reports -- twelve frames,
      about a minute -- and the frames depend only on where the pin is, not on
@@ -1505,7 +1538,7 @@ export default function ReportScreen({ view = 'verdict' }) {
           {assumed && (
             <p className="bsr-assumed-note">
               Scored for a typical {ord(DEFAULT_FLOOR)} floor, {DEFAULT_FACING.toLowerCase()}-facing
-              unit - <a href="#the-flat">set the actual floor and facing</a> to score this specific flat.
+              unit - <a href="#the-flat" onClick={scrollToUnitSet}>set the actual floor and facing</a> to score this specific flat.
             </p>
           )}
         </div>
@@ -1670,7 +1703,7 @@ export default function ReportScreen({ view = 'verdict' }) {
               they know their floor and want to type it. The arrows still
               work for nudging, and the value is only clamped when you leave
               the field, so typing "1" on the way to "12" isn't fought. */}
-          <p className="bsr-set">
+          <p className="bsr-set" ref={unitSetRef}>
             <label className="bsr-set-field">
               <span>Floor</span>
               <input

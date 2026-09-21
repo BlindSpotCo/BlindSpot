@@ -462,6 +462,39 @@
   outline:2px solid var(--ss,#AF5F30);outline-offset:1px;border-color:var(--ss,#AF5F30);
 }
 
+/* "set the actual floor and facing" (the assumed-score note above)
+   scrolls here and adds this class for 2s -- same "jump to it, then
+   light it up briefly" pattern a chat app uses for a tapped reply, so
+   the two fields that just got scrolled to are unmistakable rather
+   than left for the eye to find among everything else in this half.
+   --ss is the same accent this whole half already uses (the kicker,
+   the toggle), so the flash reads as *this* row, not a generic alert. */
+.bsr-set-flash{
+  border-radius:10px;
+  animation:bsr-set-flash-pulse 2s ease-out;
+}
+@keyframes bsr-set-flash-pulse{
+  0%{
+    background:color-mix(in srgb, var(--ss,#AF5F30) 20%, transparent);
+    box-shadow:0 0 0 6px color-mix(in srgb, var(--ss,#AF5F30) 20%, transparent);
+  }
+  65%{
+    background:color-mix(in srgb, var(--ss,#AF5F30) 14%, transparent);
+    box-shadow:0 0 0 6px color-mix(in srgb, var(--ss,#AF5F30) 8%, transparent);
+  }
+  100%{
+    background:transparent;
+    box-shadow:0 0 0 0 transparent;
+  }
+}
+@media (prefers-reduced-motion: reduce){
+  .bsr-set-flash{
+    animation:none;
+    border-radius:10px;
+    background:color-mix(in srgb, var(--ss,#AF5F30) 16%, transparent);
+  }
+}
+
 .bsr-assumed{
   font-size:12.5px;font-weight:600;align-self:center;
   color:var(--text-mute,#5A5140);
