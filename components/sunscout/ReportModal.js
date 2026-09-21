@@ -11,9 +11,40 @@ import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import SaveReportButton from '@/components/reports/SaveReportButton';
 import { SHOTS } from '@/lib/sunscout/useMapCapture';
-import { answersToRequest } from '@/lib/reportQuestions';
+import { answersToRequest, GOAL_OPTIONS, HORIZON_OPTIONS, PRIORITY_OPTIONS, MAX_PRIORITIES } from '@/lib/reportQuestions';
 
 const FACING = ['North','South','East','West','North-East','South-East','North-West','South-West'];
+
+const LABEL_STYLE = { fontFamily: "'Geist Mono', ui-monospace, monospace", fontSize: 10.5, fontWeight: 500, color: 'var(--ink, #1C1812)', letterSpacing: '.08em', display: 'block', marginBottom: 10, textTransform: 'uppercase' };
+
+// Tap-to-pick pill row for the three optional questions. A second tap on
+// the picked pill clears it (single) or removes it (multi).
+function OptionPills({ options, isOn, onPick }) {
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+      {options.map((o) => {
+        const on = isOn(o.key);
+        return (
+          <button
+            key={o.key}
+            type="button"
+            aria-pressed={on}
+            onClick={() => onPick(o.key)}
+            style={{
+              fontFamily: 'inherit', fontSize: 12.5, fontWeight: 600, lineHeight: 1,
+              padding: '9px 13px', borderRadius: 999, cursor: 'pointer',
+              background: on ? 'var(--brand, #3D4116)' : 'var(--card, #FFFDF8)',
+              color: on ? '#FFFDF8' : 'var(--ink, #1C1812)',
+              border: `1px solid ${on ? 'var(--brand, #3D4116)' : 'var(--line, rgba(28,24,18,0.16))'}`,
+            }}
+          >
+            {o.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 
 // These are the page's own tokens, not a second palette.
@@ -64,9 +95,6 @@ export default function ReportModal({
   areaRecord, combinedScore, unitScore, areaWeight, unitWeight, unitSubScores, verdictLabel,
   personaId,
   prefillFloor, prefillFacing, prefillCustomNote, prefillActionItems,
-  // The verdict page's optional goal / timeline / priorities (+ note),
-  // answered inline before the click. See lib/reportQuestions.js.
-  answers,
   onBusyChange,
 }) {
   const [floor, setFloor]     = useState(prefillFloor != null ? String(prefillFloor) : '0');
@@ -88,6 +116,16 @@ export default function ReportModal({
   // modal's form), but stays editable here too for the standalone-SunScout
   // path where this modal's form is the only place to say it.
   const [customNote, setCustomNote] = useState(prefillCustomNote || '');
+  // The optional questions step for the full report: goal, timeline, top
+  // priorities (see lib/reportQuestions.js). Shown after Generate is
+  // clicked, before any work starts. Skipping sends none of it.
+  const [showQuestions, setShowQuestions] = useState(false);
+  const [goal, setGoal] = useState('');
+  const [horizon, setHorizon] = useState('');
+  const [priorities, setPriorities] = useState([]);
+  const togglePriority = (k) => setPriorities((p) => (
+    p.includes(k) ? p.filter((x) => x !== k) : p.length >= MAX_PRIORITIES ? [...p.slice(1), k] : [...p, k]
+  ));
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   // Which half of the job is running, and how far through the frame
@@ -170,7 +208,8 @@ export default function ReportModal({
     setFacingExpanded(false);
   };
 
-  const generate = async () => {
+  const generate = async (opts) => {
+    const skipped = opts?.skip === true;
     cancelledRef.current = false;
     setCancelling(false);
     setLoading(true);
@@ -190,8 +229,8 @@ export default function ReportModal({
     if (onFloorFacingSubmit && !autoGenerate) onFloorFacingSubmit(parseInt(floor, 10), facing);
 
     const addr = address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
-    const asked = answersToRequest(answers);
-    const safeCustomNote = customNote.trim() || asked.customNote;
+    const asked = answersToRequest(skipped ? {} : { goal, horizon, priorities });
+    const safeCustomNote = skipped ? undefined : (customNote.trim() || undefined);
     const effectivePersonaId = personaId || asked.personaId;
 
     // Capturing twelve frames off the 3D map takes about a minute. It is
@@ -413,10 +452,10 @@ export default function ReportModal({
   }, []);
 
   useEffect(() => {
-    // Straight to work. The questions that shape the full report are
-    // answered on the verdict page before the click, so there is no step
-    // to stop at here any more.
-    if (autoGenerate) generate();
+    // The sun & shadow document is frames plus a table -- nothing the
+    // questions would change -- so it starts straight away. The full
+    // report stops at the questions step first.
+    if (autoGenerate) { if (galleryOnly) generate(); else setShowQuestions(true); }
     // Mount-only -- floor/facing/prefill are fixed for this modal's
     // lifetime, and generate() itself isn't a stable dependency.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -432,8 +471,11 @@ export default function ReportModal({
   // Portalled to document.body so it also survives sitting inside a
   // display:none ancestor when a tab switch hides the Unit/Verdict panel
   // this component actually lives in underneath.
-  const isFormStep = !loading && !autoGenerate && !reportUrl;
-  const isBlockingStep = isFormStep;
+  const isFormStep = !loading && !autoGenerate && !reportUrl && !showQuestions;
+  // Stays up on a failed run (loading drops back, showQuestions stays true),
+  // so a retry happens from here with the error shown inline.
+  const isQuestionsStep = !loading && !reportUrl && showQuestions;
+  const isBlockingStep = isFormStep || isQuestionsStep;
 
   // Escape closes this -- but deliberately NOT while it's generating.
   // There is no cancel button during generation for the same reason:
@@ -546,6 +588,54 @@ export default function ReportModal({
             </div>
             <p style={{ fontSize:11.5, color:SUB, marginTop:14 }}>Opens in a new tab.</p>
           </div>
+        ) : isQuestionsStep ? (
+          <>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:16 }}>
+              <div>
+                <div style={{ fontFamily:MONO, fontSize:10, fontWeight:500, color:ORG, letterSpacing:'.14em', marginBottom:6 }}>OPTIONAL</div>
+                <h2 className="modal-title" style={{ fontFamily:DISPLAY, fontSize:21, fontWeight:800, color:INK, margin:0 }}>Personalize your report</h2>
+              </div>
+              <button onClick={onClose} aria-label="Close" style={{ background:'none', border:'none', fontSize:18, cursor:'pointer', color:SUB, lineHeight:1, padding:4 }}>✕</button>
+            </div>
+
+            <div style={{ marginBottom:20 }}>
+              <label style={LABEL_STYLE}>What's your goal?</label>
+              <OptionPills options={GOAL_OPTIONS} isOn={(k) => goal === k} onPick={(k) => setGoal(goal === k ? '' : k)} />
+            </div>
+
+            <div style={{ marginBottom:20 }}>
+              <label style={LABEL_STYLE}>How long will you stay or hold it?</label>
+              <OptionPills options={HORIZON_OPTIONS} isOn={(k) => horizon === k} onPick={(k) => setHorizon(horizon === k ? '' : k)} />
+            </div>
+
+            <div style={{ marginBottom:20 }}>
+              <label style={LABEL_STYLE}>Top priorities <span style={{ color:SUB, textTransform:'none', letterSpacing:0 }}>(up to {MAX_PRIORITIES})</span></label>
+              <OptionPills options={PRIORITY_OPTIONS} isOn={(k) => priorities.includes(k)} onPick={togglePriority} />
+            </div>
+
+            <div style={{ marginBottom:22 }}>
+              <label style={LABEL_STYLE}>Anything specific to address? <span style={{ color:SUB, textTransform:'none', letterSpacing:0 }}>(optional)</span></label>
+              <textarea
+                value={customNote}
+                onChange={e => setCustomNote(e.target.value)}
+                rows={2}
+                maxLength={400}
+                placeholder="e.g. I work from home and need good daylight"
+                style={{ width:'100%', border:`1px solid ${LINE}`, padding:'11px 12px', fontSize:13, fontFamily:'inherit', resize:'vertical', boxSizing:'border-box' }}
+              />
+            </div>
+
+            {error && (
+              <div style={{ border:'1px solid #dc2626', padding:'10px 14px', fontSize:12, color:'#dc2626', marginBottom:16, fontFamily:MONO }}>ERROR: {error}</div>
+            )}
+
+            <button onClick={() => generate()} className="rm-cta" style={{ width:'100%', background:ORG, color:'#fff', border:'1px solid transparent', boxSizing:'border-box', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
+              {error ? 'Try again' : 'Generate the report'}
+            </button>
+            <button onClick={() => generate({ skip: true })} style={{ display:'block', margin:'12px auto 0', background:'none', border:'none', padding:'4px 2px', cursor:'pointer', fontFamily:'inherit', fontSize:13, fontWeight:600, color:SUB, textDecoration:'underline', textUnderlineOffset:4 }}>
+              Skip &amp; generate default report →
+            </button>
+          </>
         ) : !loading && !autoGenerate ? (
           <>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
@@ -628,13 +718,13 @@ export default function ReportModal({
             )}
 
             <div style={{ display:'flex', gap:0 }}>
-              <button onClick={generate} style={{ flex:1, background:ORG, color:'#fff', border:'1px solid transparent', boxSizing:'border-box', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
-                {error ? 'Try again' : 'Generate the report'}
+              <button onClick={() => (galleryOnly ? generate() : setShowQuestions(true))} style={{ flex:1, background:ORG, color:'#fff', border:'1px solid transparent', boxSizing:'border-box', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
+                {galleryOnly && error ? 'Try again' : galleryOnly ? 'Generate the report' : 'Continue'}
               </button>
               <button onClick={onClose} style={{ background:'transparent', color:SUB, border:`1px solid ${LINE}`, borderLeft:'none', boxSizing:'border-box', padding:'14px 20px', fontSize:13, cursor:'pointer' }}>Cancel</button>
             </div>
             <div style={{ fontFamily:MONO, fontSize:10.5, color:SUB, textAlign:'center', marginTop:12, letterSpacing:'.03em' }}>
-              {galleryOnly ? 'About a minute · photographs the map, then lays it out' : 'About two minutes · photographs the map, then writes it up'}
+              {galleryOnly ? 'About a minute · photographs the map, then lays it out' : 'A few optional questions next, then about two minutes to build'}
             </div>
           </>
         ) : (autoGenerate && error) ? (
@@ -643,7 +733,7 @@ export default function ReportModal({
           <div style={{ textAlign:'center', padding:'30px 0' }}>
             <div style={{ border:'1px solid #dc2626', padding:'10px 14px', fontSize:12, color:'#dc2626', marginBottom:20, fontFamily:MONO, textAlign:'left' }}>ERROR: {error}</div>
             <div style={{ display:'flex', gap:0 }}>
-              <button onClick={generate} className="rm-cta" style={{ flex:1, background:ORG, color:'#fff', border:'1px solid transparent', boxSizing:'border-box', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
+              <button onClick={() => generate()} className="rm-cta" style={{ flex:1, background:ORG, color:'#fff', border:'1px solid transparent', boxSizing:'border-box', padding:'14px', fontSize:13, fontWeight:700, cursor:'pointer', letterSpacing:'.03em', textTransform:'uppercase' }}>
                 Try Again
               </button>
               <button onClick={onClose} style={{ background:'transparent', color:SUB, border:`1px solid ${LINE}`, borderLeft:'none', boxSizing:'border-box', padding:'14px 20px', fontSize:13, cursor:'pointer' }}>Cancel</button>
