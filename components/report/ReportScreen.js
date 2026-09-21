@@ -338,19 +338,33 @@ export default function ReportScreen({ view = 'verdict' }) {
   // after crossing into the desktop width, where .bsr-half-toggle itself
   // is hidden by CSS. With no button left to reopen it, a half that
   // happened to be closed stayed permanently stuck closed. A 'change'
-  // listener on the same query now re-checks on every crossing, not just
-  // at mount, so widening past 768px always opens both halves; narrowing
-  // back below it intentionally leaves whatever the person set, same as
-  // it always has on a laptop that starts wide.
+  // listener on the same query re-checks on every crossing, not just
+  // at mount, so widening past 768px opens both halves; narrowing back
+  // below it intentionally leaves whatever the person set, same as it
+  // always has on a laptop that starts wide.
+  //
+  // The macOS "enter full screen" window transition (the green button /
+  // the toolbar's own full-screen toggle backing out to a maximised
+  // window) is exactly this crossing, but it is an animated, native
+  // resize rather than a single discrete change -- matchMedia's 'change'
+  // event is the standard way to catch a breakpoint crossing, but a
+  // plain 'resize' fires on every step of that animation in every
+  // browser and never misses it, so it backs the matchMedia listener up
+  // rather than replacing it. openIfWide only ever sets both halves to
+  // true, never false, so having both listeners fire is harmless.
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const mq = window.matchMedia('(min-width: 768px)');
     const openIfWide = () => {
-      if (mq.matches) setHalfOpen({ area: true, unit: true });
+      if (window.innerWidth >= 768) setHalfOpen({ area: true, unit: true });
     };
     openIfWide();
     mq.addEventListener('change', openIfWide);
-    return () => mq.removeEventListener('change', openIfWide);
+    window.addEventListener('resize', openIfWide);
+    return () => {
+      mq.removeEventListener('change', openIfWide);
+      window.removeEventListener('resize', openIfWide);
+    };
   }, []);
 
   const [scores, setScores] = useState(null);   // { area|null, unit, combined|null }
