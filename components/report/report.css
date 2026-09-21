@@ -1226,15 +1226,39 @@ body.bsr-noscroll{overflow:hidden}
    step exists for, and as a 13px pill in the header bar it read as
    optional. The line above it is the instruction, so the button never
    has to carry it. */
-.bsr-mapcta{
+/* .bsr-dock is the new outer wrapper -- it now owns the position that
+   .bsr-mapcta used to own itself. Before this, the map step's inputs
+   were split across two floating pieces that never looked related: this
+   toolbar top-left, the instruction + go button bottom-centre. Docking
+   the toolbar inside the same card as the instruction/CTA is what makes
+   "one clean floating sheet" true rather than just a claim -- one
+   border, one shadow, one card, reading top to bottom as status ->
+   inputs -> action. */
+.bsr-dock{
   position:absolute; left:50%; bottom:22px; transform:translateX(-50%);
-  z-index:14; width:min(520px, calc(100% - 32px));
-  display:flex; flex-direction:column; align-items:center; gap:10px;
-  padding:16px 20px;
+  z-index:14; width:min(560px, calc(100% - 24px));
+  display:flex; flex-direction:column; align-items:stretch; gap:12px;
+  padding:16px 18px;
   border-radius:16px;
   background:rgba(255,253,248,.97);
   border:1px solid var(--line,rgba(28,24,18,.14));
   box-shadow:0 10px 34px rgba(28,24,18,.22);
+  text-align:center;
+}
+/* The toolbar keeps its own look (play/pause, the floor/faces/season
+   row) but drops the floating-corner positioning it still needs on the
+   inline map -- inside the dock it's just the next block in the card,
+   not a second absolutely-positioned piece pretending to be part of
+   the first one. */
+.bsr-dock .bsr-mapbar{
+  position:static; top:auto; left:auto; z-index:auto;
+  width:100%; max-width:none;
+  justify-content:center;
+  padding:0; border:none; border-radius:0;
+  background:none; box-shadow:none;
+}
+.bsr-mapcta{
+  display:flex; flex-direction:column; align-items:center; gap:10px;
   text-align:center;
 }
 /* Bold and brand-coloured in BOTH states, not just once the pin is
@@ -1276,7 +1300,7 @@ body.bsr-noscroll{overflow:hidden}
 .bsr-mapcta.is-ready .bsr-mapcta-go:hover{ color:#FFFDF8; transform:translateY(-1px) }
 .bsr-mapcta-go:focus-visible{ outline:2px solid var(--brand,#3D4116); outline-offset:3px }
 @media (max-width:560px){
-  .bsr-mapcta{ bottom:14px; width:calc(100% - 20px); padding:13px 14px; gap:8px; border-radius:14px }
+  .bsr-dock{ bottom:14px; width:calc(100% - 20px); padding:13px 14px; gap:10px; border-radius:14px }
   .bsr-mapcta-say{ font-size:12.5px }
   .bsr-mapcta-go{ font-size:15px; padding:13px 18px }
 }

@@ -641,12 +641,19 @@ export default function ReportModal({
             })()}
 
             <div style={{ display:'flex', flexDirection:'column', gap:9 }}>
+              {/* On the map step, this corner card and the dock's
+                  "Continue to the verdict" button are both on screen at
+                  once, and both looked like "the" next step -- a plain
+                  "Open the report" here didn't say this leads somewhere
+                  different (the sun & shadow gallery, not the verdict).
+                  Naming which report fixes that without touching the
+                  other button at all. */}
               <button
                 onClick={() => window.open(reportUrl, '_blank')}
                 className="rm-cta"
                 style={{ background:INK, color:'#fff', border:'none', borderRadius:4, padding:'14px', fontSize:14, fontWeight:700, cursor:'pointer', letterSpacing:'.01em', minHeight:46 }}
               >
-                Open the report
+                {galleryOnly ? 'Open the sun & shadow report' : 'Open the report'}
               </button>
 
               <div style={{ display:'flex', gap:9 }}>
