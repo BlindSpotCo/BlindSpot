@@ -167,6 +167,16 @@ export async function POST(req) {
         ? 'Can run hot, Apr–Jun afternoons'
         : (feas.verdict === 'Excellent' || feas.verdict === 'Good') ? 'Warm, not harsh' : null;
 
+    // The fuller readout (verdict word, real average hours, peak time-of-
+    // day for the single best month, worst months) was already sitting in
+    // `feas`/`summary.monthlySummary` -- computeSolarSummary always
+    // computes all of it, the route just wasn't returning it. Nothing
+    // here is a new estimate, it's the same numbers sunLabel/heatLabel
+    // above are already built from.
+    const bestMonth = feas
+      ? [...summary.monthlySummary].sort((a, b) => b.usableHours - a.usableHours)[0]
+      : null;
+
     windows.push({
       bbox,
       direction,
@@ -174,6 +184,11 @@ export async function POST(req) {
       heatLabel,
       buildingVisible: Boolean(w.buildingVisible),
       roadVisible: Boolean(w.roadVisible),
+      verdict: feas?.verdict ?? null,
+      avgUsableHours: feas?.avgUsableHours ?? null,
+      bestMonths: feas?.bestMonths ?? [],
+      worstMonths: feas?.worstMonths ?? [],
+      peakWindow: bestMonth?.peakWindow ?? null,
     });
   }
 

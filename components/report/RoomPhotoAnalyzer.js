@@ -97,6 +97,67 @@ function getsSun(w) {
   return !/little direct sun/i.test(w.sunLabel || '');
 }
 
+const DIR_LONG = {
+  N: 'north', NE: 'north-east', E: 'east', SE: 'south-east',
+  S: 'south', SW: 'south-west', W: 'west', NW: 'north-west',
+};
+
+// Same 3-tone system the main report's .bsr-word/.bsr-tag already use --
+// Excellent/Good collapse to one tone, Marginal is the middle tone, Not
+// Recommended is the bottom one, matching how the main report's own
+// toneOf(score) collapses its 4-word scale into 3 colors.
+function toneFor(verdict) {
+  if (verdict === 'Excellent' || verdict === 'Good') return 'good';
+  if (verdict === 'Marginal') return 'avg';
+  if (verdict === 'Not Recommended') return 'poor';
+  return 'none';
+}
+
+function monthRange(months) {
+  if (!months || !months.length) return null;
+  return months.length === 1 ? months[0] : `${months[0]}–${months[months.length - 1]}`;
+}
+
+// One-line synthesis across every window in this photo, built entirely
+// from fields the API already returns per window -- no new estimate,
+// just picking the best window's verdict and stitching real facts into
+// a sentence, the same way headlineFor()/verdictSay() build sentences
+// from real scores elsewhere in the report.
+function roomSummaryFor(windows, crossVentilation) {
+  const withVerdict = windows.filter((w) => w.verdict);
+  if (!withVerdict.length) return null;
+
+  const RANK = { Excellent: 3, Good: 2, Marginal: 1, 'Not Recommended': 0 };
+  const best = [...withVerdict].sort((a, b) => (RANK[b.verdict] ?? -1) - (RANK[a.verdict] ?? -1))[0];
+  const tone = toneFor(best.verdict);
+  const word = best.verdict === 'Not Recommended' ? 'Poor' : best.verdict;
+
+  const dirs = [...new Set(windows.map((w) => DIR_LONG[w.direction] || w.direction))];
+  const dirList = dirs.length === 1
+    ? `${dirs[0]}-facing`
+    : dirs.length === 2
+      ? `${dirs[0]} and ${dirs[1]}-facing`
+      : `${dirs.slice(0, -1).join(', ')}, and ${dirs[dirs.length - 1]}-facing`;
+
+  const lightPart = tone === 'good'
+    ? 'this room gets strong, consistent light most of the year'
+    : tone === 'avg'
+      ? 'this room gets workable light for part of the year'
+      : 'this room gets little direct sun most of the year';
+
+  const runsHot = windows.some((w) => w.heatLabel === 'Can run hot, Apr–Jun afternoons');
+
+  let line = `With ${dirList} windows, ${lightPart}${runsHot ? ', though it can run hot on April–June afternoons' : ''}.`;
+
+  if (crossVentilation !== null) {
+    line += crossVentilation
+      ? ' These windows sit on different-enough walls for cross ventilation to be possible.'
+      : ' Windows sit close to the same wall, so cross ventilation is unlikely from this room alone.';
+  }
+
+  return { word, tone, line };
+}
+
 // A bold, chunky arrow anchored at (xPct, yPct), rotated to `angleDeg`,
 // sized off the box's own measured pixel width (`boxPx`) so it reads at
 // the same visual weight whether the photo is a small phone screenshot or
@@ -293,6 +354,19 @@ function PhotoCard({ photo, onBearing, onAnalyse, onChange, onRemove, canRemove,
             })}
           </div>
 
+          {(() => {
+            const summary = roomSummaryFor(result.windows, result.crossVentilation);
+            return summary ? (
+              <div className={`bsr-roomphoto-roomverdict is-${summary.tone}`}>
+                <div className={`bsr-word bsr-roomphoto-roomverdict-word is-${summary.tone}`}>{summary.word}</div>
+                <div className="bsr-roomphoto-roomverdict-body">
+                  <span className="bsr-roomphoto-roomverdict-label">This room, overall</span>
+                  <p className="bsr-roomphoto-roomverdict-line">{summary.line}</p>
+                </div>
+              </div>
+            ) : null;
+          })()}
+
           {result.windows.length === 0 ? (
             <p className="bsr-roomphoto-note">No window came through clearly in this photo — try one taken facing straight at a window.</p>
           ) : (
@@ -301,9 +375,32 @@ function PhotoCard({ photo, onBearing, onAnalyse, onChange, onRemove, canRemove,
                 {result.windows.map((w, i) => (
                   <li key={i}>
                     <span className="bsr-roomphoto-list-badge">{i + 1}</span>
-                    <div>
-                      <p className="bsr-roomphoto-list-head">{w.direction}-facing window</p>
-                      <p>{w.sunLabel}{w.heatLabel ? ` · ${w.heatLabel}` : ''}</p>
+                    <div className="bsr-roomphoto-list-body">
+                      <div className="bsr-roomphoto-list-headrow">
+                        <p className="bsr-roomphoto-list-head">{w.direction}-facing window</p>
+                        {w.verdict && (
+                          <span className={`bsr-tag is-${toneFor(w.verdict)}`}>
+                            {w.verdict === 'Not Recommended' ? 'Poor' : w.verdict}
+                          </span>
+                        )}
+                      </div>
+
+                      {w.avgUsableHours != null && (
+                        <p className="bsr-roomphoto-stats">
+                          <span>{w.avgUsableHours} hrs/day avg</span>
+                          {monthRange(w.bestMonths) && <><span className="mut"> · </span><span>best {monthRange(w.bestMonths)}</span></>}
+                          {w.peakWindow && <><span className="mut"> · </span><span>brightest {w.peakWindow}</span></>}
+                        </p>
+                      )}
+
+                      {(monthRange(w.worstMonths) || w.heatLabel) && (
+                        <p className="bsr-roomphoto-worst">
+                          {monthRange(w.worstMonths) && <>Least light: <b>{monthRange(w.worstMonths)}</b></>}
+                          {monthRange(w.worstMonths) && w.heatLabel ? ' · ' : ''}
+                          {w.heatLabel}
+                        </p>
+                      )}
+
                       {(w.buildingVisible || w.roadVisible) && (
                         <p className="bsr-roomphoto-impression">
                           {w.buildingVisible && w.roadVisible
@@ -319,13 +416,6 @@ function PhotoCard({ photo, onBearing, onAnalyse, onChange, onRemove, canRemove,
                 ))}
               </ul>
 
-              {result.crossVentilation !== null && (
-                <p className="bsr-roomphoto-note">
-                  {result.crossVentilation
-                    ? 'These windows sit on different-enough walls for cross ventilation to be possible.'
-                    : 'These windows are close to the same wall, so cross ventilation is unlikely from this room alone.'}
-                </p>
-              )}
               <p className="bsr-roomphoto-caveat">
                 Sun and heat figures are computed for this floor and each window's own direction. Arrows are illustrative, not to exact scale. Building/road mentions are a visual read of the photo, not checked against map data.
               </p>
