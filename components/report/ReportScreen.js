@@ -1297,14 +1297,21 @@ export default function ReportScreen({ view = 'verdict' }) {
                 scrolls here (see .bsr-genlink below); this is the real
                 "make the report" action, living where the thing it reports
                 on is actually visible. */}
-            <button
-              type="button"
-              className="bsr-mapbar-report"
-              disabled={!solar?.pathData}
-              onClick={() => setReportOpen('gallery')}
-            >
-              Build the sun report →
-            </button>
+            {/* Only on the verdict's inline map. The locate step
+                (fullMap) already has its own one action lower down --
+                "Continue to the verdict" / "Tap your building" -- so a
+                second, competing CTA up here in the toolbar was one too
+                many asks on a screen that just wants the pin placed. */}
+            {!fullMap && (
+              <button
+                type="button"
+                className="bsr-mapbar-report"
+                disabled={!solar?.pathData}
+                onClick={() => setReportOpen('gallery')}
+              >
+                Build the sun report →
+              </button>
+            )}
             {/* Same toolbar, both states -- so the way in and the way
                 out of full screen live in the same place rather than
                 being two different controls in two different corners. */}
