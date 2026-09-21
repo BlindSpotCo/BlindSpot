@@ -591,16 +591,8 @@ export async function POST(req) {
       ${PIN_SVG} ${safeReportLabel}
     </div>` : '';
 
-  // Said once, plainly, where the writing would have been. The numbers
-  // around it were computed here and are not affected.
-  const aiNote = `
-    <div style="border-left:3px solid ${DIM};background:${CARD};padding:14px 18px;margin-bottom:22px;">
-      <div style="font-size:14px;color:${INK};line-height:1.75;">
-        The written analysis is not included in this report. Everything computed is here and unaffected: the
-        Neighbourhood Score, the Home Comfort Score, how they combine into the BlindSpot Verdict, the
-        strengths and concerns, and the sunlight figures.
-      </div>
-    </div>`;
+  // No "the written analysis is missing" note: when the model doesn't
+  // answer, its sections are simply absent and the computed ones stand alone.
 
   // How the two halves relate, computed here rather than written, so it is
   // present and consistent with the numbers even when the narrative isn't.
@@ -808,7 +800,7 @@ export async function POST(req) {
         Best in ${summary.solarFeasibility.bestMonths.join(' and ')}; worst in ${summary.solarFeasibility.worstMonths.join(' and ')}.
       </p>` : ''}
       ${sunBarChart}
-      ${formattedAnalysis || (aiUnavailable ? aiNote : '')}
+      ${formattedAnalysis || ''}
     </div>`;
 
   const personaSection = personaBody ? `
@@ -905,7 +897,6 @@ export async function POST(req) {
         </p>
       </div>
 
-      ${aiUnavailable ? aiNote : ''}
       ${openingSection}
       ${strengthsSection}
       ${livingSection}

@@ -193,7 +193,6 @@ export default function ReportModal({
   // Set when the report was built but the written commentary wasn't --
   // the report is still worth opening, and saying nothing about the gap
   // would be worse than the gap.
-  const [aiNotice, setAiNotice] = useState(false);
   // What actually landed, so the finished card can say so rather than
   // claiming twelve of everything. Partial results were being presented as
   // complete ones: eleven frames could time out and the modal still said
@@ -255,7 +254,6 @@ export default function ReportModal({
     setCancelling(false);
     setLoading(true);
     setError('');
-    setAiNotice(false);
     setShortfall(null);
     setProgress(5);
 
@@ -361,7 +359,6 @@ export default function ReportModal({
       }, 'analysis');
 
       const { analysis, captions, summary, aiUnavailable, captionedCount } = analysed || {};
-      if (aiUnavailable) setAiNotice(true);
 
       // Three separate ways a run can come back short of what this modal
       // promised, none of which used to be visible anywhere: frames that
@@ -594,9 +591,6 @@ export default function ReportModal({
 
         {reportUrl ? (
           <div style={{ textAlign:'center', padding:'20px 0' }}>
-            {/* One quiet line, not a warning panel. What came back short is
-                worth saying, but it is a footnote to a finished report --
-                a bulleted box in amber read as though something had failed. */}
             <h3 style={{ fontFamily:DISPLAY, fontSize:20, fontWeight:800, color:INK, marginBottom:7, letterSpacing:'-.01em' }}>
               {galleryOnly ? 'Your sun & shadow report is ready' : 'Your report is ready'}
             </h3>
@@ -606,39 +600,9 @@ export default function ReportModal({
                 : 'The neighbourhood, the flat, and who this one suits.'}
             </p>
 
-            {/* frames/captions describe the auto-generated sun & shadow
-                gallery -- a bonus artifact linked from the full/combined
-                report, not something that report's user asked for or is
-                looking at (it has no images embedded at all; see the
-                __GALLERY_URL__ comment in report/pdf/route.js). Naming
-                "the linked gallery" still read as "why are you talking
-                about images in MY report" -- the actual fix is not
-                mentioning that gallery's completeness here at all unless
-                the user explicitly asked for it (galleryOnly). What they
-                asked for either came back complete or it didn't; a side
-                document's shortfall isn't their problem to see. */}
-            {(() => {
-              const notices = [
-                galleryOnly && shortfall?.frames > 0
-                  ? `${SHOTS.length - shortfall.frames} of ${SHOTS.length} map frames came back.`
-                  : null,
-                galleryOnly && shortfall?.captions > 0
-                  ? `${shortfall.captions} ${shortfall.captions === 1 ? 'image has' : 'images have'} no written description.`
-                  : null,
-                shortfall?.table ? 'The monthly sunlight table couldn’t be worked out for this pin.' : null,
-                aiNotice && !(galleryOnly && shortfall?.captions) ? 'The written sections didn’t come back this time.' : null,
-              ].filter(Boolean);
-              if (!notices.length) return null;
-              return (
-                <p style={{
-                  fontSize:12.5, color:SUB, lineHeight:1.7, marginBottom:22, textAlign:'left',
-                  borderTop:`1px solid ${LINE}`, borderBottom:`1px solid ${LINE}`, padding:'11px 2px',
-                }}>
-                  {notices.join(' ')}
-                  {' '}Everything else is measured and unaffected - generating again usually fills the rest in.
-                </p>
-              );
-            })()}
+            {/* No shortfall notice. Missing captions, frames or written
+                sections are left out of the document quietly -- a line here
+                saying so only made a finished report read as a failed one. */}
 
             <div style={{ display:'flex', flexDirection:'column', gap:9 }}>
               {/* On the map step, this corner card and the dock's
