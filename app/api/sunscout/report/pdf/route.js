@@ -388,29 +388,38 @@ export async function POST(req) {
   // canvases when exporting (see the script at the bottom).
   //
   // The description is the point of this document, not a caption under a
-  // picture, so it is set as body text at reading size and given the room
-  // to be read. The time of day belongs on the image; the season belongs to
-  // the group; neither needs repeating in the text.
+  // picture, so it is set as reading-weight body text next to its own
+  // image rather than a small caption underneath it. The time of day
+  // belongs on the image; the season belongs to the group; the floor and
+  // facing are already stated once at the top of the document -- none of
+  // the three need repeating under every single frame.
+  //
+  // Laid out as a real tiled grid (.shot-grid below), not one full-width
+  // card stacked under the next: a season is 3 frames (9am/noon/3pm), and
+  // stacking those full-width turned a document about photographs into a
+  // very long scroll of mostly whitespace. .shot-grid is a plain
+  // auto-fill/minmax grid rather than a hand-set column count, so it goes
+  // wide on desktop, narrows gracefully on a tablet-width window, and the
+  // sub-560px override below drops it to one column on a phone -- a photo
+  // and its description read better full-width there than squeezed into a
+  // grid cell.
   const screenshotPages = grouped.map((g) => `
     <div class="pdf-page" style="padding:38px 32px 30px;background:#fff;">
       <div style="display:flex;align-items:baseline;gap:12px;padding-bottom:11px;border-bottom:2px solid ${INK};margin-bottom:24px;">
         <h3 style="font-family:${DISPLAY};font-size:24px;font-weight:800;color:${INK};letter-spacing:-.01em;">${g.season}</h3>
         <span style="font-size:12.5px;color:${DIM};">${g.shots.map(sc => sc.label.split(' · ')[1] || sc.label).join(' · ')}</span>
       </div>
-      <div style="display:flex;flex-direction:column;gap:34px;">
+      <div class="shot-grid">
         ${g.shots.map((shot) => `
           <div class="shot-card">
-            <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px;">
-              <span style="font-family:${DISPLAY};font-size:17px;font-weight:800;color:${SUN};">${shot.label.split(' · ')[1] || shot.label}</span>
-              <span style="font-size:12px;color:${DIM};">${g.season} · floor ${safeFloor}, facing ${safeFacing}</span>
-            </div>
+            <span style="display:block;font-family:${DISPLAY};font-size:16px;font-weight:800;color:${SUN};margin-bottom:9px;">${shot.label.split(' · ')[1] || shot.label}</span>
             <div style="width:100%;aspect-ratio:16/9;overflow:hidden;background:#0A0C10;position:relative;border:1px solid ${LINE};">
               <img src="${shot.base64}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="The block at ${shot.label}"/>
               ${PROPERTY_MARKER_HTML}
             </div>
             ${perImage[shot.idx]
-              ? `<p style="font-size:15px;color:${INK};line-height:1.85;margin-top:13px;max-width:70ch;">${perImage[shot.idx]}</p>`
-              : `<p style="font-size:13.5px;color:${DIM};line-height:1.75;margin-top:13px;">No description came back for this frame this time. The image and the sunlight figures for this month are unaffected - generating the report again usually fills it in.</p>`}
+              ? `<p style="font-size:13.5px;color:${INK};line-height:1.65;margin-top:12px;">${perImage[shot.idx]}</p>`
+              : `<p style="font-size:12.5px;color:${DIM};line-height:1.55;margin-top:12px;">No description came back for this frame this time. The image and the sunlight figures for this month are unaffected - generating the report again usually fills it in.</p>`}
           </div>
         `).join('')}
       </div>
@@ -986,6 +995,22 @@ export async function POST(req) {
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:${DISPLAY};background:${BG};color:${INK};-webkit-font-smoothing:antialiased}
     img{max-width:100%}
+    /* The tiled gallery grid. auto-fill/minmax instead of a fixed column
+       count: a season has at most 3 frames, so this sits at 3-across on a
+       normal desktop window, drops to 2 on a narrower one, and the
+       sub-560px rule below takes it to a single column on a phone rather
+       than letting minmax alone decide (220px still fits 2-up around
+       440-560px, which read as cramped for a photo plus a paragraph). */
+    .shot-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:30px 22px;
+    }
+    .shot-card{ min-width:0 }
+    @media (max-width:560px){
+      .gallery-wrap{ padding-left:18px!important; padding-right:18px!important; }
+      .shot-grid{ grid-template-columns:1fr; gap:32px; }
+    }
     @media print{
       .no-print{display:none!important}
       body{background:#fff}
@@ -1007,7 +1032,7 @@ export async function POST(req) {
     </div>
   </div>
 
-  <div style="max-width:880px;margin:0 auto;padding:0 32px 60px;background:#fff;">
+  <div class="gallery-wrap" style="max-width:880px;margin:0 auto;padding:0 32px 60px;background:#fff;">
 
     <div style="padding:44px 0 30px;border-bottom:2px solid ${INK};margin-bottom:34px;">
       <div style="font-size:11.5px;font-weight:700;color:${WINE};text-transform:uppercase;letter-spacing:.12em;margin-bottom:11px;">A year of sun over this block</div>
