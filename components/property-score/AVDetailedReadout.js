@@ -341,7 +341,11 @@ export default function AVDetailedReadout({ record }) {
             {record.schools_list.map((sc, i) => (
               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, fontSize: 13.5, padding: '11px 18px', borderTop: i ? '1px dashed var(--line-soft)' : 'none' }}>
                 <span style={{ color: 'var(--text)' }}>{sc.name}</span>
-                <span style={{ color: 'var(--slate)', fontSize: 12, flexShrink: 0, fontWeight: 700, letterSpacing: '.03em' }}>{sc.board || 'CBSE'}</span>
+                {sc.board ? (
+                  <span style={{ color: 'var(--slate)', fontSize: 12, flexShrink: 0, fontWeight: 700, letterSpacing: '.03em' }}>{sc.board}</span>
+                ) : (
+                  <span style={{ color: 'var(--text-dim)', fontSize: 11.5, flexShrink: 0, fontStyle: 'italic' }}>Board not confirmed</span>
+                )}
               </div>
             ))}
           </BPF>

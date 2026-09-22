@@ -295,6 +295,29 @@ def rate_for(pin, zone):
 # leakage excluded) and for the 6 pincodes with nothing confirmed. `list`
 # holds a representative sample (not every school found) to keep the JSON
 # a reasonable size; `count` is the full tally.
+def infer_school_board(name):
+    """
+    Board is stated only where the school's own registered name says so --
+    never defaulted. "Kendriya Vidyalaya" is a categorical CBSE fact (KVS
+    schools are, without exception, CBSE nationwide), a literal "CBSE" or
+    "ICSE" in the name is self-declared, and "Matriculation" names a real,
+    distinct Tamil Nadu board. Every other school is genuinely unconfirmed
+    (this pass didn't reliably source board at the single-school level --
+    see this file's own module docstring) and stays board=None rather than
+    guessed. AVDetailedReadout.js shows "not confirmed" for a None board,
+    never a fabricated default.
+    """
+    lower = name.lower()
+    if "kendriya vidyalaya" in lower:
+        return "CBSE"
+    if "cbse" in lower:
+        return "CBSE"
+    if "icse" in lower:
+        return "ICSE"
+    if "matriculation" in lower:
+        return "Matriculation (Tamil Nadu)"
+    return None
+
 SCHOOLS_REAL = {
     "500002": {"count": 8, "list": ["Scholars Model High School", "Indo Embassy High School", "Limra School", "Solar High School", "Dawn Model High School"]},
     "500053": {"count": 2, "list": ["Narayana Schools (Falaknuma)", "Integral Foundation School"]},
@@ -400,7 +423,11 @@ def build():
 
         if pin in SCHOOLS_REAL:
             schools_n = SCHOOLS_REAL[pin]["count"]
-            schools_names = SCHOOLS_REAL[pin]["list"]
+            schools_names = [
+                {"name": nm, "address": None, "board": infer_school_board(nm),
+                 "pass_pct": None, "distance_km": None}
+                for nm in SCHOOLS_REAL[pin]["list"]
+            ]
             schools_sourced = True
         else:
             schools_n = max(0, round(0.4 + scores["schools"] / 50 + jitter(pin, 1, salt=6)))

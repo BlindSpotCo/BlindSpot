@@ -169,6 +169,29 @@ def rate_for(pin, zone):
 # exclusion rules). `list` is a representative sample where the real
 # count found exceeds a handful; `count` is the full tally actually
 # found and confirmed this session.
+def infer_school_board(name):
+    """
+    Board is stated only where the school's own registered name says so --
+    never defaulted. "Kendriya Vidyalaya" is a categorical CBSE fact (KVS
+    schools are, without exception, CBSE nationwide), a literal "CBSE" or
+    "ICSE" in the name is self-declared, and "Matriculation" names a real,
+    distinct Tamil Nadu board. Every other school is genuinely unconfirmed
+    (this pass didn't reliably source board at the single-school level --
+    see this file's own module docstring) and stays board=None rather than
+    guessed. AVDetailedReadout.js shows "not confirmed" for a None board,
+    never a fabricated default.
+    """
+    lower = name.lower()
+    if "kendriya vidyalaya" in lower:
+        return "CBSE"
+    if "cbse" in lower:
+        return "CBSE"
+    if "icse" in lower:
+        return "ICSE"
+    if "matriculation" in lower:
+        return "Matriculation (Tamil Nadu)"
+    return None
+
 SCHOOLS_REAL = {
     "600068": {"count": 1, "list": ["Sarathy Saraswathy Vidyalaya Matriculation Higher Secondary School"]},
     "600057": {"count": 1, "list": ["E.T.P.S. Matriculation School"]},
@@ -334,7 +357,11 @@ def build():
 
         schools_entry = SCHOOLS_REAL[pin]
         schools_n = schools_entry["count"]
-        schools_names = schools_entry["list"]
+        schools_names = [
+            {"name": nm, "address": None, "board": infer_school_board(nm),
+             "pass_pct": None, "distance_km": None}
+            for nm in schools_entry["list"]
+        ]
         schools_sourced = True
 
         outage = round(max(0.8, 5.0 - scores["power"] / 22), 1)

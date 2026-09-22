@@ -8,7 +8,7 @@ Generated 2026-09-22 by `scripts/city_launch_checklist.py` — item 8 of the tru
 |---|---|---|---|---|---|---|---|---|
 | Bangalore (n=66) | FAIL | FAIL | PENDING | PENDING | pass | pass | pass | **Keep labelled beta** |
 | Chandigarh (n=20) | pass | FAIL | PENDING | PENDING | N/A | FAIL | pass | **Keep labelled beta** |
-| Chennai (n=34) | pass | FAIL | PENDING | PENDING | pass | FAIL | pass | **Keep labelled beta** |
+| Chennai (n=34) | pass | FAIL | PENDING | PENDING | pass | PARTIAL | pass | **Keep labelled beta** |
 | Delhi NCR (n=86) | pass | FAIL | PENDING | PENDING | pass | pass | pass | **Keep labelled beta** |
 | Hyderabad (n=41) | pass | FAIL | PENDING | PENDING | pass | PARTIAL | pass | **Keep labelled beta** |
 | Mumbai (n=96) | pass | FAIL | PENDING | PENDING | pass | PARTIAL | pass | **Keep labelled beta** |
@@ -42,7 +42,7 @@ Generated 2026-09-22 by `scripts/city_launch_checklist.py` — item 8 of the tru
 - **3. Ground-truth sample >=95%**: sample generated (scripts/ground_truth_audit.py), not yet human-verified
 - **4. Resident feedback loop live**: widget + API shipped on 8/~30 fields; field_reports table not confirmed created
 - **5. Benchmark alignment (vs. circle-rate proxy)**: r=+0.73 vs. circle-rate proxy (not market price -- see script docstring)
-- **6. Confidence/abstention logic present**: 0/34 pins have a _provenance entry on at least one field
+- **6. Confidence/abstention logic present**: 1/34 pins have a _provenance entry on at least one field
 - **7. Versioning & changelog in place**: CHANGELOG.md exists as of v1.4
 
 ### Delhi NCR

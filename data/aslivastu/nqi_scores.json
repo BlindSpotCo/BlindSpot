@@ -21956,11 +21956,41 @@
     "total_cognizable_crimes": 279,
     "schools_count": 8,
     "schools_list": [
-      "Scholars Model High School",
-      "Indo Embassy High School",
-      "Limra School",
-      "Solar High School",
-      "Dawn Model High School"
+      {
+        "name": "Scholars Model High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Indo Embassy High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Limra School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Solar High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Dawn Model High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -22026,8 +22056,20 @@
     "total_cognizable_crimes": 307,
     "schools_count": 2,
     "schools_list": [
-      "Narayana Schools (Falaknuma)",
-      "Integral Foundation School"
+      {
+        "name": "Narayana Schools (Falaknuma)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Integral Foundation School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -22157,10 +22199,34 @@
     "total_cognizable_crimes": 303,
     "schools_count": 6,
     "schools_list": [
-      "Asian Grammar High School",
-      "Guru Nanak High School",
-      "Royal Indian High School",
-      "The Progress Global High School"
+      {
+        "name": "Asian Grammar High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Guru Nanak High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Royal Indian High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "The Progress Global High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -22290,7 +22356,13 @@
     "total_cognizable_crimes": 308,
     "schools_count": 1,
     "schools_list": [
-      "Kendriya Vidyalaya Kanchanbagh"
+      {
+        "name": "Kendriya Vidyalaya Kanchanbagh",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -22356,8 +22428,20 @@
     "total_cognizable_crimes": 292,
     "schools_count": 3,
     "schools_list": [
-      "Cambridge High School Saidabad",
-      "IPS International School"
+      {
+        "name": "Cambridge High School Saidabad",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "IPS International School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -22423,9 +22507,27 @@
     "total_cognizable_crimes": 356,
     "schools_count": 3,
     "schools_list": [
-      "Goodwill High School",
-      "Shrung Rishi High School",
-      "Gowtham Model School"
+      {
+        "name": "Goodwill High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Shrung Rishi High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Gowtham Model School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -22491,8 +22593,20 @@
     "total_cognizable_crimes": 280,
     "schools_count": 2,
     "schools_list": [
-      "Nehru Children's High School",
-      "Smart School Karwan"
+      {
+        "name": "Nehru Children's High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Smart School Karwan",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -22558,10 +22672,34 @@
     "total_cognizable_crimes": 227,
     "schools_count": 6,
     "schools_list": [
-      "Sultan-ul-Uloom Public School",
-      "Delhi School of Excellence",
-      "Ivy League CBSE School",
-      "Academic Heights Public School"
+      {
+        "name": "Sultan-ul-Uloom Public School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Delhi School of Excellence",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Ivy League CBSE School",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Academic Heights Public School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -22627,8 +22765,20 @@
     "total_cognizable_crimes": 243,
     "schools_count": 2,
     "schools_list": [
-      "Jubilee Hills Public School",
-      "Bharatiya Vidya Bhavan's Public School"
+      {
+        "name": "Jubilee Hills Public School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Bharatiya Vidya Bhavan's Public School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -22694,8 +22844,20 @@
     "total_cognizable_crimes": 238,
     "schools_count": 2,
     "schools_list": [
-      "Mount Banyan Global School",
-      "Zikra High School"
+      {
+        "name": "Mount Banyan Global School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Zikra High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -22825,11 +22987,41 @@
     "total_cognizable_crimes": 272,
     "schools_count": 7,
     "schools_list": [
-      "Nasr School",
-      "Nirmala High School",
-      "Holy Mary High School",
-      "Vidyaranya High School",
-      "Mark's High School"
+      {
+        "name": "Nasr School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Nirmala High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Holy Mary High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Vidyaranya High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Mark's High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -22895,9 +23087,27 @@
     "total_cognizable_crimes": 232,
     "schools_count": 6,
     "schools_list": [
-      "Govt HS Humayunnagar No. 1",
-      "Govt HS Humayun Nagar No. II",
-      "Brilliant Grammar High School"
+      {
+        "name": "Govt HS Humayunnagar No. 1",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Govt HS Humayun Nagar No. II",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Brilliant Grammar High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -23091,11 +23301,41 @@
     "total_cognizable_crimes": 289,
     "schools_count": 9,
     "schools_list": [
-      "EuroSchool Hyderabad",
-      "School of Accelerated Learning",
-      "Active Farm School",
-      "Samashti International School",
-      "CHIREC International School (Gachibowli campus)"
+      {
+        "name": "EuroSchool Hyderabad",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "School of Accelerated Learning",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Active Farm School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Samashti International School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "CHIREC International School (Gachibowli campus)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -23161,11 +23401,41 @@
     "total_cognizable_crimes": 284,
     "schools_count": 8,
     "schools_list": [
-      "Meridian School Madhapur",
-      "Narayana E-Techno School",
-      "Sri Chaitanya Techno School",
-      "AP Model School",
-      "CGR International School"
+      {
+        "name": "Meridian School Madhapur",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Narayana E-Techno School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sri Chaitanya Techno School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "AP Model School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "CGR International School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -23231,11 +23501,41 @@
     "total_cognizable_crimes": 236,
     "schools_count": 10,
     "schools_list": [
-      "Sanskriti School",
-      "CHIREC International School (Kondapur)",
-      "Maharishi Vidya Mandir",
-      "Githanjali The Global School",
-      "Academic Heights Public School"
+      {
+        "name": "Sanskriti School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "CHIREC International School (Kondapur)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Maharishi Vidya Mandir",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Githanjali The Global School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Academic Heights Public School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -23301,10 +23601,34 @@
     "total_cognizable_crimes": 302,
     "schools_count": 7,
     "schools_list": [
-      "Elate International School",
-      "Delhi School of Excellence",
-      "Krishnaveni Talent School",
-      "Delhi Public School (Chitrapuri Colony)"
+      {
+        "name": "Elate International School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Delhi School of Excellence",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Krishnaveni Talent School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Delhi Public School (Chitrapuri Colony)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -23370,11 +23694,41 @@
     "total_cognizable_crimes": 256,
     "schools_count": 9,
     "schools_list": [
-      "Sanghamitra School",
-      "Bhashyam Brooks UPS School",
-      "Meridian School Kukatpally",
-      "DAV Public School",
-      "Global Edge School"
+      {
+        "name": "Sanghamitra School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Bhashyam Brooks UPS School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Meridian School Kukatpally",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "DAV Public School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Global Edge School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -23440,10 +23794,34 @@
     "total_cognizable_crimes": 319,
     "schools_count": 5,
     "schools_list": [
-      "The Gaudium School",
-      "Oakridge International School",
-      "The Shri Ram Universal School",
-      "Kairos International School"
+      {
+        "name": "The Gaudium School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Oakridge International School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "The Shri Ram Universal School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Kairos International School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -23509,10 +23887,34 @@
     "total_cognizable_crimes": 312,
     "schools_count": 7,
     "schools_list": [
-      "Sri Chaitanya Junior College Bachupally",
-      "Surya Academy The Global School",
-      "Keshava Reddy Educational Hub",
-      "The Creek Planet School"
+      {
+        "name": "Sri Chaitanya Junior College Bachupally",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Surya Academy The Global School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Keshava Reddy Educational Hub",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "The Creek Planet School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -23642,10 +24044,34 @@
     "total_cognizable_crimes": 270,
     "schools_count": 8,
     "schools_list": [
-      "Gautami Vidya Kshetra School",
-      "MNR Indo-English High School",
-      "Janapriya Techno School",
-      "Meru International School"
+      {
+        "name": "Gautami Vidya Kshetra School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "MNR Indo-English High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Janapriya Techno School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Meru International School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -23711,11 +24137,41 @@
     "total_cognizable_crimes": 298,
     "schools_count": 5,
     "schools_list": [
-      "St. Mary's Centenary Jr. College",
-      "Sri Chaitanya Junior Kalasala",
-      "New Govt. Jr. College Secunderabad",
-      "Gujarathi High School",
-      "Gitanjali Devshala"
+      {
+        "name": "St. Mary's Centenary Jr. College",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sri Chaitanya Junior Kalasala",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "New Govt. Jr. College Secunderabad",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Gujarathi High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Gitanjali Devshala",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -23781,9 +24237,27 @@
     "total_cognizable_crimes": 196,
     "schools_count": 3,
     "schools_list": [
-      "Bhashyam School Bowenpally",
-      "Kendriya Vidyalaya Bowenpally",
-      "Rainbow Concept School"
+      {
+        "name": "Bhashyam School Bowenpally",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Kendriya Vidyalaya Bowenpally",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Rainbow Concept School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -23849,9 +24323,27 @@
     "total_cognizable_crimes": 246,
     "schools_count": 3,
     "schools_list": [
-      "Sacred Heart High School",
-      "Takshashila Public School",
-      "Govt PS(B) Lalagudano I"
+      {
+        "name": "Sacred Heart High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Takshashila Public School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Govt PS(B) Lalagudano I",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -23917,10 +24409,34 @@
     "total_cognizable_crimes": 240,
     "schools_count": 4,
     "schools_list": [
-      "Vedic Vidyalayam PS School",
-      "MS Creative School",
-      "Sri Sai Vidyalay High School",
-      "Sri Chaitanya Techno School Sitaphalmandi"
+      {
+        "name": "Vedic Vidyalayam PS School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "MS Creative School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sri Sai Vidyalay High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sri Chaitanya Techno School Sitaphalmandi",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -23986,10 +24502,34 @@
     "total_cognizable_crimes": 278,
     "schools_count": 4,
     "schools_list": [
-      "St. Joseph's High School",
-      "Kendriya Vidyalaya Trimulgherry",
-      "St. Thomas (SPG) PS",
-      "Prashanth Academy"
+      {
+        "name": "St. Joseph's High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Kendriya Vidyalaya Trimulgherry",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "St. Thomas (SPG) PS",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Prashanth Academy",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -24055,7 +24595,13 @@
     "total_cognizable_crimes": 282,
     "schools_count": 1,
     "schools_list": [
-      "Anandbagh High School"
+      {
+        "name": "Anandbagh High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -24121,9 +24667,27 @@
     "total_cognizable_crimes": 269,
     "schools_count": 5,
     "schools_list": [
-      "St Sai Grammar High School",
-      "Nalanda High School",
-      "SR Digi School"
+      {
+        "name": "St Sai Grammar High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Nalanda High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "SR Digi School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -24189,10 +24753,34 @@
     "total_cognizable_crimes": 268,
     "schools_count": 9,
     "schools_list": [
-      "Sainikpuri High School",
-      "Bharatiya Vidya Bhavan Sainikpuri",
-      "Vignan High School",
-      "Eastern Public School"
+      {
+        "name": "Sainikpuri High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Bharatiya Vidya Bhavan Sainikpuri",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Vignan High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Eastern Public School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -24258,9 +24846,27 @@
     "total_cognizable_crimes": 353,
     "schools_count": 4,
     "schools_list": [
-      "Kakatiya Techno School",
-      "Frobels Garden High School",
-      "St. Jude's High School"
+      {
+        "name": "Kakatiya Techno School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Frobels Garden High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "St. Jude's High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -24326,10 +24932,34 @@
     "total_cognizable_crimes": 289,
     "schools_count": 6,
     "schools_list": [
-      "Matrusri E & L School",
-      "Aryabhatta School",
-      "St. Hannah's High School",
-      "Narayana IIT Academy"
+      {
+        "name": "Matrusri E & L School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Aryabhatta School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "St. Hannah's High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Narayana IIT Academy",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -24395,9 +25025,27 @@
     "total_cognizable_crimes": 325,
     "schools_count": 5,
     "schools_list": [
-      "Suvidhya 21st Century Schools",
-      "Academic Heights Public School",
-      "Sanskriti The School"
+      {
+        "name": "Suvidhya 21st Century Schools",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Academic Heights Public School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sanskriti The School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -24463,11 +25111,41 @@
     "total_cognizable_crimes": 278,
     "schools_count": 11,
     "schools_list": [
-      "Rankers Concept School",
-      "Sri Chaitanya Techno School Uppal",
-      "Little Flower School",
-      "Sage International School",
-      "Global Indian International School"
+      {
+        "name": "Rankers Concept School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sri Chaitanya Techno School Uppal",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Little Flower School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sage International School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Global Indian International School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -24533,10 +25211,34 @@
     "total_cognizable_crimes": 345,
     "schools_count": 7,
     "schools_list": [
-      "Atomic Energy Central School",
-      "Narayana e-Techno School",
-      "Vignan Global Gen School",
-      "Ravindra Bharathi School"
+      {
+        "name": "Atomic Energy Central School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Narayana e-Techno School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Vignan Global Gen School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Ravindra Bharathi School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -24602,10 +25304,34 @@
     "total_cognizable_crimes": 285,
     "schools_count": 9,
     "schools_list": [
-      "Delhi International School Kompally",
-      "DRS International School",
-      "St. Peters International Residential School",
-      "Ryan International School"
+      {
+        "name": "Delhi International School Kompally",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "DRS International School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "St. Peters International Residential School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Ryan International School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -24671,11 +25397,41 @@
     "total_cognizable_crimes": 262,
     "schools_count": 10,
     "schools_list": [
-      "Pallavi Model School",
-      "Orchids The School",
-      "St Michael's School",
-      "St. Xavier's Convent High School",
-      "St. Ann's High School"
+      {
+        "name": "Pallavi Model School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Orchids The School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "St Michael's School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "St. Xavier's Convent High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "St. Ann's High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -26061,7 +26817,13 @@
     "total_cognizable_crimes": 299,
     "schools_count": 1,
     "schools_list": [
-      "Sarathy Saraswathy Vidyalaya Matriculation Higher Secondary School"
+      {
+        "name": "Sarathy Saraswathy Vidyalaya Matriculation Higher Secondary School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -26127,7 +26889,13 @@
     "total_cognizable_crimes": 303,
     "schools_count": 1,
     "schools_list": [
-      "E.T.P.S. Matriculation School"
+      {
+        "name": "E.T.P.S. Matriculation School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -26193,10 +26961,34 @@
     "total_cognizable_crimes": 304,
     "schools_count": 4,
     "schools_list": [
-      "Kavi Bharathi Vidyalaya",
-      "Holy Cross Matriculation School",
-      "Smt. Mohini Saraogi Viveknanda Vidyalaya",
-      "Revoor Padmanabha Chettys Matriculation Higher Secondary School"
+      {
+        "name": "Kavi Bharathi Vidyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Holy Cross Matriculation School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Smt. Mohini Saraogi Viveknanda Vidyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Revoor Padmanabha Chettys Matriculation Higher Secondary School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -26262,8 +27054,20 @@
     "total_cognizable_crimes": 354,
     "schools_count": 2,
     "schools_list": [
-      "Sri Ram Dayal Khemka Vivekananda Vidyalaya Junior College",
-      "Thiruthangal Nadar Vidhyalaya"
+      {
+        "name": "Sri Ram Dayal Khemka Vivekananda Vidyalaya Junior College",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Thiruthangal Nadar Vidhyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -26329,11 +27133,41 @@
     "total_cognizable_crimes": 319,
     "schools_count": 25,
     "schools_list": [
-      "C.S.I. Raja Gopal High School",
-      "Kalaimagal Vidyalaya High School",
-      "Sri Gouthamchand Kothari Jain Higher Secondary School",
-      "The Muthialpet Higher Secondary School",
-      "The Hindu Theological Higher Secondary School"
+      {
+        "name": "C.S.I. Raja Gopal High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Kalaimagal Vidyalaya High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sri Gouthamchand Kothari Jain Higher Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "The Muthialpet Higher Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "The Hindu Theological Higher Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -26399,7 +27233,13 @@
     "total_cognizable_crimes": 253,
     "schools_count": 1,
     "schools_list": [
-      "Don Bosco Matriculation Higher Secondary School"
+      {
+        "name": "Don Bosco Matriculation Higher Secondary School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -26465,10 +27305,34 @@
     "total_cognizable_crimes": 272,
     "schools_count": 4,
     "schools_list": [
-      "Good Shepherd Matriculation Higher Secondary School",
-      "Sharanalaya Montessori School",
-      "Vellalan Vidyalaya",
-      "Padma Seshadri Bala Bhavan (Nungambakkam)"
+      {
+        "name": "Good Shepherd Matriculation Higher Secondary School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sharanalaya Montessori School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Vellalan Vidyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Padma Seshadri Bala Bhavan (Nungambakkam)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -26534,8 +27398,20 @@
     "total_cognizable_crimes": 247,
     "schools_count": 2,
     "schools_list": [
-      "C.S.I. Bain Matriculation Higher Secondary School",
-      "Kerala Vidhyalayam Higher Secondary School"
+      {
+        "name": "C.S.I. Bain Matriculation Higher Secondary School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Kerala Vidhyalayam Higher Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -26601,9 +27477,27 @@
     "total_cognizable_crimes": 320,
     "schools_count": 3,
     "schools_list": [
-      "Maharishi Vidya Mandir",
-      "M.C.C. Higher Secondary School",
-      "MCC Public School"
+      {
+        "name": "Maharishi Vidya Mandir",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "M.C.C. Higher Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "MCC Public School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -26669,11 +27563,41 @@
     "total_cognizable_crimes": 267,
     "schools_count": 25,
     "schools_list": [
-      "SBOA School & Junior College",
-      "Chinmaya Vidyalaya",
-      "The Sunsmart Foundation International School",
-      "CSI Ewart Global School",
-      "DAV Matriculation Higher Secondary School"
+      {
+        "name": "SBOA School & Junior College",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Chinmaya Vidyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "The Sunsmart Foundation International School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "CSI Ewart Global School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "DAV Matriculation Higher Secondary School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -26739,7 +27663,13 @@
     "total_cognizable_crimes": 260,
     "schools_count": 1,
     "schools_list": [
-      "Loyola Matriculation Higher Secondary School"
+      {
+        "name": "Loyola Matriculation Higher Secondary School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -26805,8 +27735,20 @@
     "total_cognizable_crimes": 319,
     "schools_count": 2,
     "schools_list": [
-      "M.R. Matriculation Higher Secondary School",
-      "Sre Sasstha Matriculation School"
+      {
+        "name": "M.R. Matriculation Higher Secondary School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sre Sasstha Matriculation School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -26872,8 +27814,20 @@
     "total_cognizable_crimes": 254,
     "schools_count": 2,
     "schools_list": [
-      "National Star Matriculation Higher Secondary School",
-      "Mohamed Sathak Matriculation & Higher Secondary School"
+      {
+        "name": "National Star Matriculation Higher Secondary School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Mohamed Sathak Matriculation & Higher Secondary School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -26939,11 +27893,41 @@
     "total_cognizable_crimes": 261,
     "schools_count": 5,
     "schools_list": [
-      "Sri Ramakrishna Mission Higher Secondary School",
-      "Accord International Schools",
-      "Mahatma Gandhi Vidyalaya",
-      "Akshar Arbol International School",
-      "Holy Angels Anglo Indian Higher Secondary School"
+      {
+        "name": "Sri Ramakrishna Mission Higher Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Accord International Schools",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Mahatma Gandhi Vidyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Akshar Arbol International School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Holy Angels Anglo Indian Higher Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -27009,11 +27993,41 @@
     "total_cognizable_crimes": 297,
     "schools_count": 44,
     "schools_list": [
-      "P.S. Higher Secondary School",
-      "P.S. Senior Secondary School",
-      "Vidya Mandir Senior Secondary School",
-      "Santhome Hr. Sec. School",
-      "Ramakrishna Mission Residential High School"
+      {
+        "name": "P.S. Higher Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "P.S. Senior Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Vidya Mandir Senior Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Santhome Hr. Sec. School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Ramakrishna Mission Residential High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -27079,11 +28093,41 @@
     "total_cognizable_crimes": 304,
     "schools_count": 27,
     "schools_list": [
-      "Sishya, Adyar",
-      "Shiv Nadar School",
-      "Bala Vidya Mandir Adyar",
-      "Sri Sankara Sr Sec School Adyar",
-      "The Hindu Sr Sec School"
+      {
+        "name": "Sishya, Adyar",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Shiv Nadar School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Bala Vidya Mandir Adyar",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sri Sankara Sr Sec School Adyar",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "The Hindu Sr Sec School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -27149,11 +28193,41 @@
     "total_cognizable_crimes": 245,
     "schools_count": 25,
     "schools_list": [
-      "Vidya Mandir Senior Secondary School",
-      "P.S. Senior Secondary School",
-      "Chettinad Hari Shree Vidyalayam",
-      "St. Johns Matriculation Higher Secondary School",
-      "M.CT.M. Chidambaram Chettyar International School"
+      {
+        "name": "Vidya Mandir Senior Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "P.S. Senior Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Chettinad Hari Shree Vidyalayam",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "St. Johns Matriculation Higher Secondary School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "M.CT.M. Chidambaram Chettyar International School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -27219,7 +28293,13 @@
     "total_cognizable_crimes": 284,
     "schools_count": 1,
     "schools_list": [
-      "Arsha Vidya Mandir"
+      {
+        "name": "Arsha Vidya Mandir",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -27285,7 +28365,13 @@
     "total_cognizable_crimes": 293,
     "schools_count": 1,
     "schools_list": [
-      "St Joseph Nursery And Primary School"
+      {
+        "name": "St Joseph Nursery And Primary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -27351,8 +28437,20 @@
     "total_cognizable_crimes": 247,
     "schools_count": 2,
     "schools_list": [
-      "Jawahar Vidyalaya",
-      "Stella Matriculation School"
+      {
+        "name": "Jawahar Vidyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Stella Matriculation School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -27418,7 +28516,13 @@
     "total_cognizable_crimes": 301,
     "schools_count": 1,
     "schools_list": [
-      "Padma Seshadri Bala Bhavan Senior Secondary School (KK Nagar)"
+      {
+        "name": "Padma Seshadri Bala Bhavan Senior Secondary School (KK Nagar)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -27484,11 +28588,41 @@
     "total_cognizable_crimes": 306,
     "schools_count": 6,
     "schools_list": [
-      "The Indian Public School",
-      "Orchids The International School (Perungudi)",
-      "Thiruvalluvar Vidhyashram School",
-      "American World School",
-      "Sangford Schools"
+      {
+        "name": "The Indian Public School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Orchids The International School (Perungudi)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Thiruvalluvar Vidhyashram School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "American World School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sangford Schools",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -27554,11 +28688,41 @@
     "total_cognizable_crimes": 326,
     "schools_count": 9,
     "schools_list": [
-      "D.A.V. Public School, Velachery",
-      "Marg Vidhyalaya",
-      "Bethel Matriculation Higher Secondary School",
-      "Ponvidyashram Group of Senior Secondary Schools",
-      "Mount Carmel Matriculation School"
+      {
+        "name": "D.A.V. Public School, Velachery",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Marg Vidhyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Bethel Matriculation Higher Secondary School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Ponvidyashram Group of Senior Secondary Schools",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Mount Carmel Matriculation School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -27624,8 +28788,20 @@
     "total_cognizable_crimes": 309,
     "schools_count": 2,
     "schools_list": [
-      "Js Global School",
-      "Babaji Vidhyashram"
+      {
+        "name": "Js Global School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Babaji Vidhyashram",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -27691,8 +28867,20 @@
     "total_cognizable_crimes": 290,
     "schools_count": 2,
     "schools_list": [
-      "Orchids The International School, Thoraipakkam",
-      "APL Global School, Thoraipakkam"
+      {
+        "name": "Orchids The International School, Thoraipakkam",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "APL Global School, Thoraipakkam",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -27758,7 +28946,13 @@
     "total_cognizable_crimes": 266,
     "schools_count": 1,
     "schools_list": [
-      "Padma Seshadri Bala Bhavan (Siruseri)"
+      {
+        "name": "Padma Seshadri Bala Bhavan (Siruseri)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -27824,7 +29018,13 @@
     "total_cognizable_crimes": 296,
     "schools_count": 1,
     "schools_list": [
-      "Grace Matriculation Higher Secondary School"
+      {
+        "name": "Grace Matriculation Higher Secondary School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -27890,7 +29090,13 @@
     "total_cognizable_crimes": 339,
     "schools_count": 1,
     "schools_list": [
-      "Saraswathi Vidyalaya Senior Secondary School"
+      {
+        "name": "Saraswathi Vidyalaya Senior Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -27956,7 +29162,13 @@
     "total_cognizable_crimes": 298,
     "schools_count": 1,
     "schools_list": [
-      "Pon Vidyashram"
+      {
+        "name": "Pon Vidyashram",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -28022,11 +29234,41 @@
     "total_cognizable_crimes": 294,
     "schools_count": 16,
     "schools_list": [
-      "Velammal Vidyalaya",
-      "Ravindra Bharathi Global School",
-      "Sri Chaitanya Techno School",
-      "Narayana e-Techno School",
-      "RMK School"
+      {
+        "name": "Velammal Vidyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Ravindra Bharathi Global School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sri Chaitanya Techno School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Narayana e-Techno School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "RMK School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -28092,11 +29334,41 @@
     "total_cognizable_crimes": 308,
     "schools_count": 9,
     "schools_list": [
-      "MCC Campus Matriculation School",
-      "Christ King Girls Hr Sec School",
-      "Air Force School Tambaram",
-      "Valluvar Gurukulam Higher Secondary School",
-      "Jaigopal Garodia National Higher Secondary School"
+      {
+        "name": "MCC Campus Matriculation School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Christ King Girls Hr Sec School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Air Force School Tambaram",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Valluvar Gurukulam Higher Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Jaigopal Garodia National Higher Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -28162,9 +29434,27 @@
     "total_cognizable_crimes": 324,
     "schools_count": 3,
     "schools_list": [
-      "N.S.N Memorial Senior Secondary School",
-      "Rosily Matriculation Higher Secondary School",
-      "Sundravalli Memorial School"
+      {
+        "name": "N.S.N Memorial Senior Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Rosily Matriculation Higher Secondary School",
+        "address": null,
+        "board": "Matriculation (Tamil Nadu)",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sundravalli Memorial School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -28230,7 +29520,13 @@
     "total_cognizable_crimes": 340,
     "schools_count": 1,
     "schools_list": [
-      "St. Theresa's Girls' Higher Secondary School"
+      {
+        "name": "St. Theresa's Girls' Higher Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
@@ -28296,7 +29592,13 @@
     "total_cognizable_crimes": 325,
     "schools_count": 1,
     "schools_list": [
-      "San Academy CBSE School"
+      {
+        "name": "San Academy CBSE School",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
