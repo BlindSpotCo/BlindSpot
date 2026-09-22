@@ -4289,7 +4289,7 @@
     ],
     "total_cognizable_crimes": 298,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "Low",
     "smart_city_project": false,
@@ -4323,12 +4323,12 @@
     "city": "Delhi NCR",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 0,
-        "source_id": "dmrc_stations_2026_09",
-        "method": "spatial_join_radius_1500m_centroid",
-        "as_of": "2026-09-13",
+        "value": 1,
+        "source_id": "Wikipedia: Noida Sector 62 metro station (Delhi Metro Blue Line, operational since 9 March 2019)",
+        "method": "name-match / real-distance lookup against a named, currently operational station (pre-monetization audit, 2026-09-22)",
+        "as_of": "2026-09-22",
         "confidence": "high",
-        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+        "note": "Station sits inside Sector 62, the exact area this pincode (Sector 62 + 62A) covers. Centroid-to-station distance is 1.54km, just outside the automated 1.5km radius join -- but the station's own name states the sector, same name-match override logic already used for the v1.5 fixes. The registry entry BlindSpot's own automated join used for this pin (scripts/metro_stations.py) carries a wrong placeholder coordinate for this station (28.480863, 77.084888, shared incorrectly with 5 other unrelated stations); this override does not depend on that bad coordinate."
       }
     }
   },
@@ -10569,7 +10569,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 211,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -10601,7 +10601,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "YoMetro distance lookup: Santacruz metro station (Mumbai Metro Line 3, Aqua Line)",
+        "method": "name-match / real-distance lookup against a named, currently operational station (pre-monetization audit, 2026-09-22)",
+        "as_of": "2026-09-22",
+        "confidence": "high",
+        "note": "Santacruz station is 0.64km from Khar West, well within any reasonable walking-distance radius."
+      }
+    }
   },
   {
     "pin_code": "400053",
@@ -13878,7 +13888,7 @@
     "total_cognizable_crimes": 238,
     "crime_commissionerate": "Hyderabad City",
     "zone_type": "Commercial",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -13912,7 +13922,17 @@
     "flooding_incidents_annual": 2,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "YoMetro distance lookup: Errum Manzil metro station (Hyderabad Metro Red Line)",
+        "method": "name-match / real-distance lookup against a named, currently operational station (pre-monetization audit, 2026-09-22)",
+        "as_of": "2026-09-22",
+        "confidence": "high",
+        "note": "Errum Manzil station is 0.59km from Somajiguda, well within any reasonable walking-distance radius."
+      }
+    }
   },
   {
     "pin_code": "500038",
@@ -14150,7 +14170,7 @@
     "total_cognizable_crimes": 210,
     "crime_commissionerate": "Hyderabad City",
     "zone_type": "Commercial",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -14184,7 +14204,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "YoMetro distance lookup: Peddamma Gudi metro station (Hyderabad Metro Blue Line)",
+        "method": "name-match / real-distance lookup against a named, currently operational station (pre-monetization audit, 2026-09-22)",
+        "as_of": "2026-09-22",
+        "confidence": "high",
+        "note": "Peddamma Gudi station is 0.91km from Srinagar Colony, well within any reasonable walking-distance radius."
+      }
+    }
   },
   {
     "pin_code": "500032",
