@@ -1318,7 +1318,7 @@ body.bsr-noscroll{overflow:hidden}
   box-shadow:0 10px 34px rgba(28,24,18,.22);
   text-align:left;
 }
-.bsr-dock{ display:flex; flex-direction:column; align-items:stretch; gap:14px; }
+.bsr-dock{ position:relative; display:flex; flex-direction:column; align-items:stretch; gap:14px; }
 @media (min-width:900px){
   /* One real column, not two independently-floating cards: .bsr-dockzone
      stays a flex column but drops its own bottom-sheet chrome (no
@@ -1358,6 +1358,13 @@ body.bsr-noscroll{overflow:hidden}
 }
 .bsr-dock-fields{ margin-top:0; }
 .bsr-dock-fields .bsr-set-unit{
+  /* Breaks the positioning context .bsr-set-unit sets up for the base
+     .bsr-maptip (it anchors the OTHER copy of this bubble, on the
+     inline map toolbar, to the gap between the fields). In here the
+     badge anchors to .bsr-dock itself instead, so it floats off the
+     card's own corner, not off wherever the fields happen to start
+     inside it. */
+  position:static;
   display:flex; flex-direction:column; align-items:stretch; gap:14px; width:100%;
 }
 .bsr-dock-fields .bsr-set-field{
@@ -1370,21 +1377,39 @@ body.bsr-noscroll{overflow:hidden}
 .bsr-dock-fields .bsr-set input[type="text"]{
   width:100%; text-align:left; min-height:42px; font-size:15px; border-radius:8px;
 }
-/* The pointer that aimed at the gap between Floor and Faces doesn't fit
-   as a floating bubble in a panel this narrow -- a plain inline note
-   under the fields instead. Tinted, not the solid brand fill the
-   floating version uses -- solid dark-olive is reserved for "See the
-   verdict" a few lines down, so this hint never reads as a second
-   button to compare it against. */
+/* A small badge that pokes up outside the card's own top edge, not a
+   full-width line squeezed in between the fields -- it's a nudge to
+   glance up at what you just set, not another row of the form. Green
+   on purpose: everything else in this card and the CTA below it are
+   brand olive, so this is the one thing that visually reads as "new
+   info", not as part of the form or a second button. */
 .bsr-dock-fields .bsr-maptip{
-  position:static; transform:none; margin-top:2px; animation:none;
-  display:block; white-space:normal; box-shadow:none; padding:8px 10px;
-  background:color-mix(in srgb, var(--brand,#3D4116) 12%, var(--paper,#FFFDF8));
-  color:var(--brand,#3D4116);
+  position:absolute; top:-32px; left:auto; right:14px; bottom:auto;
+  transform:none; z-index:5;
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 7px 6px 12px;
+  border-radius:999px;
+  background:#146C43; color:#FFFDF8;
+  white-space:nowrap;
+  box-shadow:0 6px 16px rgba(20,108,67,.32), 0 0 0 3px var(--paper,#FFFDF8);
+  animation:bsr-tip-in .2s ease-out;
 }
-.bsr-dock-fields .bsr-maptip::before{ display:none; }
-.bsr-dock-fields .bsr-maptip-x{ color:var(--brand,#3D4116); background:rgba(61,65,22,.12); }
-.bsr-dock-fields .bsr-maptip-x:hover{ background:rgba(61,65,22,.22); }
+.bsr-dock-fields .bsr-maptip-text{ font-size:11.5px; font-weight:700; letter-spacing:.005em }
+/* The caret now points DOWN into the card instead of up at the fields --
+   same shape, just flipped, since the badge sits above the box now. */
+.bsr-dock-fields .bsr-maptip::before{
+  content:''; position:absolute; bottom:-5px; top:auto; left:auto; right:22px;
+  width:10px; height:10px;
+  transform:rotate(45deg);
+  background:#146C43;
+  border-radius:2px;
+}
+.bsr-dock-fields .bsr-maptip-x{
+  width:16px; height:16px; font-size:11px;
+  color:#FFFDF8; background:rgba(255,253,248,.22);
+}
+.bsr-dock-fields .bsr-maptip-x:hover{ background:rgba(255,253,248,.34) }
+@media (prefers-reduced-motion:reduce){ .bsr-dock-fields .bsr-maptip{ animation:none } }
 .bsr-mapcta{
   display:flex; flex-direction:column; align-items:stretch; gap:10px;
   text-align:left;
