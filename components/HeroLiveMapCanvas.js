@@ -121,6 +121,17 @@ export default function HeroLiveMapCanvas() {
   const [autoGo, setAutoGo] = useState(false);
   const debounceRef = useRef(null);
   const boxRef = useRef(null);
+  // The suggestions dropdown and the city-panel neighbourhood list are
+  // both capped at a fixed height in CSS (280px / 290px) -- fine on a
+  // tall screen, but .hlm-root is a fixed 100vh box with overflow:hidden,
+  // so on a shorter viewport (or with more copy above the search box
+  // than there used to be) that fixed cap can be taller than the real
+  // room left below the search box. The excess doesn't scroll into view,
+  // it just gets clipped away in silence -- rows are there in the DOM
+  // but never paintable. These refs let the effect below measure the
+  // real remaining space and clamp to that instead.
+  const suggestionsRef = useRef(null);
+  const cityListRef = useRef(null);
   const heroVideoRef = useRef(null);
   const requestIdRef = useRef(0);
   // Which suggestion the keyboard is on. The list had no key handling at
@@ -338,6 +349,28 @@ export default function HeroLiveMapCanvas() {
     );
   })();
 
+  // Clamp both lists to whatever room is actually left inside the hero,
+  // instead of trusting the CSS's fixed max-height -- see the refs'
+  // comment above. Re-measures whenever either list could newly be on
+  // screen (or its content changes height) and on resize; a floor keeps
+  // either list from being clamped down to something unusably short.
+  useEffect(() => {
+    const clamp = (el, floor) => {
+      if (!el) return;
+      const root = el.closest('.hlm-root');
+      if (!root) return;
+      const available = root.getBoundingClientRect().bottom - el.getBoundingClientRect().top - 16;
+      el.style.maxHeight = `${Math.max(floor, Math.floor(available))}px`;
+    };
+    const run = () => {
+      clamp(suggestionsRef.current, 120);
+      clamp(cityListRef.current, 160);
+    };
+    run();
+    window.addEventListener('resize', run);
+    return () => window.removeEventListener('resize', run);
+  }, [open, results.length, cityPanel, cityPanelOpen, filteredCityNeighbourhoods.length]);
+
   // Belt-and-braces autoplay for the hero video (see the comment on the
   // <video> element below for why the JSX attribute alone isn't always
   // enough on phones). Setting `muted` as a real property before calling
@@ -503,7 +536,7 @@ export default function HeroLiveMapCanvas() {
                       {filteredCityNeighbourhoods.length === 0 ? (
                         <p className="hlm-city-panel-empty">No neighbourhoods match &ldquo;{cityFilter}&rdquo;.</p>
                       ) : (
-                        <ul className="hlm-city-panel-list">
+                        <ul className="hlm-city-panel-list" ref={cityListRef}>
                           {filteredCityNeighbourhoods.map((n) => (
                             <li key={`${n.pin_code}-${n.sectorNum ?? ''}`}>
                               <button type="button" onClick={() => pickCityNeighbourhood(n)}>
@@ -550,7 +583,7 @@ export default function HeroLiveMapCanvas() {
           )}
 
           {!cityPanel && open && results.length > 0 && (
-            <ul className="hlm-suggestions" id="hlm-suggestions" role="listbox" aria-label="City, neighbourhood and address suggestions">
+            <ul className="hlm-suggestions" id="hlm-suggestions" role="listbox" aria-label="City, neighbourhood and address suggestions" ref={suggestionsRef}>
               {results.map((r, i) => (
                 <li key={`${r.lat},${r.lon},${i}`} role="presentation">
                   <button
@@ -588,7 +621,9 @@ export default function HeroLiveMapCanvas() {
         )}
       </div>
 
-      <span className="hlm-scroll-cue mono">Scroll<span className="hlm-scroll-cue-arrow">↓</span></span>
+      {!cityPanel && !(open && (results.length > 0 || noMatch)) && (
+        <span className="hlm-scroll-cue mono">Scroll<span className="hlm-scroll-cue-arrow">↓</span></span>
+      )}
     </div>
   );
 }
