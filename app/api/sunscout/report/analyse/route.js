@@ -27,7 +27,7 @@ import { checkBuildingHeights } from '@/lib/sunscout/buildingHeights';
 // repeated report-generation failures reported in review.
 export const maxDuration = 120;
 
-import { GEMINI_MODELS, fetchGemini } from '@/lib/gemini';
+import { GEMINI_MODELS, GEMINI_MODELS_LITE_FIRST, fetchGemini, deadModels, retryDelayMs, describeFailure } from '@/lib/gemini';
 
 const FACTOR_LABELS = {
   crime: 'Crime', infrastructure: 'Infrastructure', air: 'Air Quality',
@@ -60,25 +60,38 @@ Note: the neighbourhood score is the same for every unit in this pincode - it do
 // summary, no table, no reason. Every attempt below is bounded, and the loop
 // stops trying once there isn't time left for another one, so this route
 // always returns its own answer rather than being cut off mid-flight.
-function geminiCaller({ budgetMs = 48_000, maxOutputTokens = 6144, generationConfig = null } = {}) {
+function geminiCaller({ budgetMs = 48_000, maxOutputTokens = 6144, generationConfig = null, models = GEMINI_MODELS, attemptMs = 40_000 } = {}) {
   const startedAt = Date.now();
   const left = () => budgetMs - (Date.now() - startedAt);
+  // The last thing that went wrong, so a failed run can say what it was
+  // ("429 gemini-3.8-flash: quota ...") instead of just "busy".
+  // Keyed by model, so the reason lists every model's failure rather than
+  // only whichever one happened last.
+  const errs = {};
+  const state = {
+    get lastError() { return Object.values(errs).join('; '); },
+    set lastError(v) { const m = String(v).match(/gemini-[\w.-]+/); errs[m ? m[0] : '_'] = v; },
+  };
 
   const call = async (msgContents) => {
-    for (const model of GEMINI_MODELS) {
+    for (const model of models) {
+      if (deadModels.has(model)) continue;
       for (let attempt = 0; attempt < 2; attempt++) {
         const remaining = left();
         if (remaining < 6_000) {
-          console.warn('Gemini Vision: out of time budget, giving up before', model);
+          console.warn('Gemini: out of time budget, giving up before', model);
+          if (!Object.keys(errs).length) state.lastError = 'timed out';
           return null;
         }
         let res;
         try {
-          res = await fetchGemini(model, { contents: msgContents, generationConfig: { maxOutputTokens, temperature: 0.2, ...(generationConfig || {}) }, signal: AbortSignal.timeout(Math.min(remaining, 40_000)) });
+          res = await fetchGemini(model, { contents: msgContents, generationConfig: { maxOutputTokens, temperature: 0.2, ...(generationConfig || {}) }, signal: AbortSignal.timeout(Math.min(remaining, attemptMs)) });
         } catch (networkErr) {
-          console.error(`Gemini Vision network error (${model}, attempt ${attempt + 1}):`, networkErr?.message || networkErr);
-          if (attempt === 0 && left() > 12_000) { await new Promise(r => setTimeout(r, 800)); continue; }
-          break; // exhausted retries for this model, fall through to the next one
+          const why = networkErr?.name === 'TimeoutError' ? 'timed out' : (networkErr?.message || String(networkErr));
+          state.lastError = `${model}: ${why}`;
+          console.error(`Gemini network error (${model}, attempt ${attempt + 1}):`, why);
+          if (attempt === 0 && left() > 12_000 && networkErr?.name !== 'TimeoutError') { await new Promise(r => setTimeout(r, 800)); continue; }
+          break; // next model
         }
         if (res.ok) {
           const json = await res.json();
@@ -87,6 +100,7 @@ function geminiCaller({ budgetMs = 48_000, maxOutputTokens = 6144, generationCon
           // feature disappeared with nothing in the logs to say why.
           const cand = json?.candidates?.[0];
           if (cand && !cand?.content?.parts?.[0]?.text) {
+            state.lastError = `${model}: no text (finishReason=${cand.finishReason})`;
             console.warn(
               `[gemini] ${model} returned no text. finishReason=${cand.finishReason}`,
               'usage=', JSON.stringify(json?.usageMetadata || {}),
@@ -95,13 +109,18 @@ function geminiCaller({ budgetMs = 48_000, maxOutputTokens = 6144, generationCon
           return json;
         }
         const errText = await res.text();
-        console.error(`Gemini Vision request failed (${model}, attempt ${attempt + 1}):`, res.status, errText.slice(0, 500));
-        // 429 is a rate limit, and on a free-tier key it is usually a
-        // per-minute one that clears in a second or two. Abandoning the
-        // model on the first one meant a burst of requests came back empty
-        // rather than a little slower.
-        if (attempt === 0 && res.status === 429 && left() > 10_000) { await new Promise(r => setTimeout(r, 2_000)); continue; }
-        if (res.status === 429) break;
+        state.lastError = describeFailure(model, res.status, errText);
+        console.error(`Gemini request failed (${model}, attempt ${attempt + 1}):`, res.status, errText.slice(0, 500));
+        // Not found / no access: this model is out for this key. Don't ask
+        // it again from this instance.
+        if (res.status === 404 || res.status === 403) { deadModels.add(model); break; }
+        // A rate limit says how long to wait. Wait that long if there's
+        // time; otherwise try the next model, which has its own quota.
+        if (res.status === 429) {
+          const wait = retryDelayMs(errText) ?? 2_000;
+          if (attempt === 0 && wait <= 20_000 && left() > wait + 10_000) { await new Promise(r => setTimeout(r, wait)); continue; }
+          break;
+        }
         if (attempt === 0 && res.status >= 500 && left() > 12_000) { await new Promise(r => setTimeout(r, 800)); continue; }
         break;
       }
@@ -109,7 +128,7 @@ function geminiCaller({ budgetMs = 48_000, maxOutputTokens = 6144, generationCon
     return null;
   };
 
-  return { call, left };
+  return { call, left, state };
 }
 
 // Per-image descriptions for the sun & shadow gallery.
@@ -191,6 +210,7 @@ Be concrete about what you can actually see. Never end mid-sentence. If an image
   // batch used to leave the second with too little time to even ask.
   const perBatchMs = Math.max(15_000, Math.floor(budgetMs / Math.max(1, batches.length)));
 
+  let lastCaptionError = '';
   const runBatch = async ({ offset, shots, ms }) => {
     const out = new Map(); // global image index (0-based) -> description
     try {
@@ -207,8 +227,10 @@ Be concrete about what you can actually see. Never end mid-sentence. If an image
       //
       // Describing what is in a picture needs no reasoning chain, so the
       // budget goes to zero and every token is spent on the answer.
-      const { call } = geminiCaller({
+      const { call, state } = geminiCaller({
         budgetMs: ms || perBatchMs,
+        models: GEMINI_MODELS_LITE_FIRST,
+        attemptMs: 25_000,
         maxOutputTokens: 4096,
         generationConfig: {
           responseMimeType: 'application/json',
@@ -217,6 +239,7 @@ Be concrete about what you can actually see. Never end mid-sentence. If an image
         },
       });
       const d = await call([{ role: 'user', parts: [{ text: promptFor(shots) }, ...partsFor(shots)] }]);
+      if (state.lastError) lastCaptionError = state.lastError;
       const cand = d?.candidates?.[0];
       const raw = cand?.content?.parts?.[0]?.text || '';
       if (!raw) {
@@ -312,6 +335,7 @@ Be concrete about what you can actually see. Never end mid-sentence. If an image
   return {
     captions: Object.fromEntries(described),
     count: n,
+    error: n < screenshots.length ? (lastCaptionError || 'unknown') : '',
   };
 }
 
@@ -430,7 +454,7 @@ Note: floor clearance is an estimate based on typical urban obstruction heights,
       return NextResponse.json({ analysis: '', summary: reportSummary, aiUnavailable: true, aiReason: 'not-configured' });
     }
 
-    const { captions, count } = await describeImages({
+    const { captions, count, error: captionError } = await describeImages({
       screenshots, groundTruthText, floorN, facing: safeFacingInput,
     });
 
@@ -444,7 +468,7 @@ Note: floor clearance is an estimate based on typical urban obstruction heights,
 
     return NextResponse.json({
       analysis: '', captions, summary: reportSummary,
-      captionedCount: count, imageCount: screenshots.length,
+      captionedCount: count, imageCount: screenshots.length, captionError: captionError || undefined,
     });
   }
 
@@ -631,7 +655,11 @@ Say each of these once, plainly - don't restate one bullet's point while coverin
     // next one -- a single blip used to kill the whole report right away.
     // 429 (rate limit) still skips straight to the next model with no
     // retry, since retrying the same model won't help there.
-    const { call: callGemini, left } = geminiCaller();
+    // The written report is the long job: 12 images in, several thousand
+    // words out. It gets most of the route's 120s (captions run alongside
+    // on their own, smaller budget) and up to 70s for a single attempt --
+    // the current Flash model can need well over the old 40s ceiling.
+    const { call: callGemini, left, state: aiState } = geminiCaller({ budgetMs: 88_000, attemptMs: 70_000 });
 
     // The twelve image descriptions are their own batched job now, started
     // here so it runs alongside the narrative rather than after it. Asking
@@ -655,12 +683,12 @@ Say each of these once, plainly - don't restate one bullet's point while coverin
       // have -- they are a different, smaller job. Ship what landed.
       const caps = await captionsPromise;
       return NextResponse.json({
-        analysis: '', captions: caps.captions || {}, captionedCount: caps.count,
+        analysis: '', captions: caps.captions || {}, captionedCount: caps.count, captionError: caps.error || undefined,
         summary: reportSummary,
         avRecord: avRecord || null,
         combinedScore: combinedScore ?? null,
         aiUnavailable: true,
-        aiReason: 'busy',
+        aiReason: `busy${aiState.lastError ? ` (${aiState.lastError})` : ''}`,
       });
     }
 
@@ -702,7 +730,7 @@ Say each of these once, plainly - don't restate one bullet's point while coverin
       );
       const capsOnly = await captionsPromise;
       return NextResponse.json({
-        analysis: '', captions: capsOnly.captions || {}, captionedCount: capsOnly.count,
+        analysis: '', captions: capsOnly.captions || {}, captionedCount: capsOnly.count, captionError: capsOnly.error || undefined,
         summary: reportSummary,
         avRecord: avRecord || null,
         combinedScore: combinedScore ?? null,
@@ -721,7 +749,7 @@ Say each of these once, plainly - don't restate one bullet's point while coverin
     return NextResponse.json({
       analysis, captions: caps.captions || {}, summary: reportSummary,
       avRecord: avRecord || null, combinedScore: combinedScore ?? null,
-      captionedCount: caps.count, imageCount: screenshots.length,
+      captionedCount: caps.count, imageCount: screenshots.length, captionError: caps.error || undefined,
     });
   } catch (err) {
     console.error('Gemini Vision error:', err);

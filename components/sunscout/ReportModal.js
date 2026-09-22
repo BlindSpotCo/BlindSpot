@@ -340,10 +340,11 @@ export default function ReportModal({
         captionsOnly: Boolean(galleryOnly),
       }, 'analysis');
 
-      const { analysis, captions, summary, aiUnavailable, aiReason, captionedCount } = analysed || {};
+      const { analysis, captions, summary, aiUnavailable, aiReason, captionedCount, captionError } = analysed || {};
       // The report leaves the written sections out quietly when the model
       // doesn't answer, so the reason goes to the console instead.
       if (aiUnavailable) console.warn('[report] written analysis unavailable:', aiReason || 'unknown');
+      if (captionError) console.warn(`[report] image descriptions: ${captionedCount || 0}/${screenshots.length}, last error:`, captionError);
 
       // Three separate ways a run can come back short of what this modal
       // promised, none of which used to be visible anywhere: frames that
