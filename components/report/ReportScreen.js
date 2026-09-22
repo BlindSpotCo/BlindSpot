@@ -1342,8 +1342,11 @@ export default function ReportScreen({ view = 'verdict' }) {
                 this step exists for. Same state, same handlers as the
                 inline map's toolbar -- see playControlNode/seasonFieldNode
                 above mapbarNode. */}
+            {/* Pause/play sits right beside the address, quiet: it's a
+                viewing toggle, not something to act on. */}
+            <span className="bsr-fullbar-play">{playControlNode}</span>
+
             <div className="bsr-fullbar-controls">
-              {playControlNode}
               <span className="bsr-fullbar-season">
                 {seasonFieldNode}
               </span>

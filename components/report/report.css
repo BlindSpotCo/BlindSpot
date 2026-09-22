@@ -1683,3 +1683,91 @@ body.bsr-noscroll{overflow:hidden}
 .bsr-mapcta:not(.is-ready) .bsr-mapcta-go:focus-visible{
   outline:none; text-decoration-thickness:2px;
 }
+
+/* ---- map step top bar: pause beside the address, season readable ----
+   Pause/play is a viewing toggle, so it sits right after the address as a
+   quiet ghost button instead of a bordered control competing with the
+   season picker. The season label is the thing people need to spot, so
+   it goes bold and full-ink. */
+.bsr-fullbar-where{ flex:0 1 auto }
+.bsr-fullbar-play{ flex:none; display:flex; align-items:center; margin-right:auto }
+.bsr-fullbar-play .bsr-mapbar-time{ margin:0; display:flex; align-items:center; gap:6px }
+.bsr-fullbar-play .bsr-play,
+.bsr-fullbar-play .bsr-play.is-on{
+  font-size:12px; font-weight:500; min-height:28px; padding:0 9px; border-radius:999px;
+  background:transparent; border:1px solid transparent;
+  color:var(--text-dim,#8A7F68);
+}
+.bsr-fullbar-play .bsr-play:hover{
+  filter:none; border-color:var(--line,rgba(28,24,18,.18)); color:var(--brand,#3D4116);
+}
+.bsr-fullbar-play .bsr-mapbar-time input[type=range]{ height:28px; width:90px }
+.bsr-fullbar-play .bsr-clock{ font-size:11.5px; min-width:40px; color:var(--text-mute,#5A5140) }
+.bsr-fullbar-season .bsr-set-field span{
+  font-size:13px; font-weight:800; color:var(--text,#1C1812); letter-spacing:0;
+}
+@media (min-width:768px){
+  .bsr-fullbar-season .bsr-set-field span{ font-size:14px }
+}
+
+/* ---- phone: the unit panel is a two-line strip, not half the screen ----
+   Line 1: Floor + Balcony faces side by side. Line 2: the go button.
+   The panel title and the instruction sentence are dropped here (the
+   green floor/facing badge still floats above the strip) -- the map's own "Tap to move pin" hint already
+   says what to do, and the fields say what they are. */
+@media (max-width:767px){
+  .bsr-dockzone{
+    left:8px; right:8px; bottom:10px;
+    padding:10px 12px; gap:8px; border-radius:12px;
+  }
+  .bsr-dock{ gap:0 }
+  .bsr-dock-title,
+  .bsr-mapcta-say{ display:none }
+  .bsr-dock-fields .bsr-set-unit{ flex-direction:row; align-items:center; gap:10px }
+  .bsr-dock-fields .bsr-set-field{
+    flex-direction:row; align-items:center; gap:6px; width:auto; flex:1 1 auto; min-width:0;
+  }
+  .bsr-dock-fields .bsr-set-floor{ flex:0 0 auto }
+  .bsr-dock-fields .bsr-set-field span{ font-size:11.5px; white-space:nowrap }
+  .bsr-dock-fields .bsr-set select,
+  .bsr-dock-fields .bsr-set input[type="text"]{ min-height:34px; font-size:14px; padding:4px 8px }
+  .bsr-dock-fields .bsr-set input[type="text"]{ width:3em; text-align:center }
+  .bsr-dock-fields .bsr-set select{ flex:1 1 auto; min-width:0 }
+  .bsr-mapcta{ gap:0 }
+  .bsr-mapcta-go,
+  .bsr-mapcta.is-ready .bsr-mapcta-go{ font-size:14px; padding:9px 14px; border-radius:9px }
+  .bsr-mapcta:not(.is-ready) .bsr-mapcta-go{ align-self:center; padding:4px 2px; font-size:12.5px }
+}
+/* Phone top bar in two rows instead of four: address + pause + close on
+   the first, season + "Not this address?" on the second. */
+@media (max-width:767px){
+  .bsr-fullbar{ gap:6px 8px }
+  .bsr-fullbar-where{ order:1; flex:1 1 0; min-width:0 }
+  .bsr-fullbar-play{ order:2; margin-right:0 }
+  .bsr-fullbar-play .bsr-play{ padding:0 6px; font-size:11.5px }
+  .bsr-fullbar-close{ order:3; margin-left:0; width:30px; height:30px }
+  .bsr-fullbar-controls{ order:4; flex:1 1 auto }
+  .bsr-fullbar-search-toggle{ order:5; font-size:12px; padding:5px 10px }
+  .bsr-fullbar-search{ order:6 }
+  .bsr-fullbar-season select{ min-height:32px }
+}
+@media (max-width:767px){
+  .bsr-fullbar-controls{ flex:1 1 0; min-width:0 }
+  .bsr-fullbar-season,.bsr-fullbar-season .bsr-set-field{ min-width:0 }
+  .bsr-fullbar-season select{ min-width:0; max-width:150px; font-size:12.5px }
+  .bsr-dockzone .bsr-dock-fields .bsr-set-field select,
+  .bsr-dockzone .bsr-dock-fields .bsr-set-field input[type="text"]{ font-size:14px; font-weight:600; min-height:34px }
+}
+@media (max-width:767px){
+  /* Forced row break between the two phone rows. */
+  .bsr-fullbar::after{ content:''; order:4; flex:0 0 100%; height:0 }
+  .bsr-fullbar-controls{ order:5 }
+  .bsr-fullbar-search-toggle{ order:6 }
+  .bsr-fullbar-search{ order:7 }
+}
+.bsr-fullbar-season .bsr-set-field span{ white-space:nowrap }
+@media (max-width:767px){
+  /* On the phone strip the card's padding sits on .bsr-dockzone, not
+     .bsr-dock, so lift the badge clear of the fields. */
+  .bsr-dock-fields .bsr-maptip{ top:-40px; right:4px }
+}
