@@ -4,6 +4,10 @@ Item 7 of the trust-framework checklist: "Version your scoring model... publish 
 
 Version numbers are for this dataset/methodology, not the app (`package.json`'s `version` is separate).
 
+## v1.6 - 2026-09-22
+
+- Same audit applied to Chennai (added earlier this pass as v1.5 of the city roster, not to be confused with this file's own v1.5): checked all 34 pins' `metro_stations_nearby` against Chennai Metro's real, currently operational Blue and Green Line stations. Found the data build already correctly withheld metro credit from every pin only served by the still-under-construction Yellow/Red/Purple line corridors, better than Mumbai's equivalent gap. One confirmed miss: Thiruvottiyur (600019) corrected from 0 to 2 (Tiruvottriyur and Tiruvottriyur Theradi stations, operational since 2019, share this pin's area name under an alternate transliteration). `discom` (TANGEDCO, the single state utility) needed no correction. Two pins (Royapuram 600013, KK Nagar 600078) were flagged as sitting close to real stations without an exact name match; left unchanged pending a precise coordinate check.
+
 ## v1.5 - 2026-09-19
 
 - 16 sourced point-fixes to `master_by_pin.json`, found by checking real, currently operational transit stations and government utility listings against pins whose own area name matched them exactly (or nearly so): `metro_stations_nearby` corrected from 0 to 1 for 13 Mumbai pins (Saki Naka, Jogeshwari East, Bangur Nagar, Oshiwara, Mandapeshwar, Magathane, Dadar East, Hutatma Chowk, Santacruz West, Bandra West, Mantralaya, Deonar, Worli Colony), 1 Bangalore pin (HSR Layout, missed because the Yellow Line opened after the v1.4 station registry was built), and 1 Hyderabad pin (Khairatabad); `discom` corrected from UHBVN to DHBVN for Mahendragarh (122505), confirmed against the district's own government website. Each fix carries a `_provenance` entry naming its source.

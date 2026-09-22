@@ -16544,7 +16544,7 @@
     "total_cognizable_crimes": 304,
     "crime_commissionerate": "Greater Chennai Police",
     "zone_type": "Industrial",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -16580,7 +16580,17 @@
     "flooding_incidents_annual": 4,
     "data_completeness": 8,
     "merged_at": "2026-09-22T00:00:00",
-    "city": "Chennai"
+    "city": "Chennai",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Chennai Metro Blue Line official station list",
+        "method": "name-matched against real, currently operational station list",
+        "as_of": "2026-09-22",
+        "confidence": "high",
+        "note": "Tiruvottriyur and Tiruvottriyur Theradi stations (both operational since 2019) share this pin's own area name (Thiruvottiyur, alternate transliteration)"
+      }
+    }
   },
   {
     "pin_code": "600081",
