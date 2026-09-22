@@ -9,7 +9,7 @@ import { useEffect, useMemo, useRef } from 'react';
 // Diagnostics for the parent<->iframe handshake. On in dev, silent in
 // production: this channel is invisible when it breaks, and a failure in it
 // looks exactly like a map that never loaded.
-export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTimes, animating, onLocationSelect, onScreenshot, onReady, onStatus, debug, highlightId }) {
+export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTimes, animating, onLocationSelect, onScreenshot, onReady, onStatus, debug, highlight }) {
   // Diagnostics for the parent<->iframe handshake. Dev by default, and
   // switchable on in a production build (?debug=1): when this channel
   // breaks it is completely invisible, and a break in it looks exactly
@@ -30,6 +30,7 @@ export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTi
     }
   }, [onReady]);
 
+  const hlKey = highlight && highlight.id ? `${highlight.id}@${highlight.at}` : '';
   const html = useMemo(() => {
     const allPtsJs = JSON.stringify(pathData.map(p => ({
       lon: p.lon, lat: p.lat, shlat: p.shlat, shlon: p.shlon,
@@ -46,7 +47,9 @@ export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTi
     // The tapped tower, tinted. Baked into the scene rather than applied
     // after the click: moving the pin rebuilds this document, which would
     // wipe a highlight set on the old one.
-    const hlId = highlightId ? JSON.stringify(String(highlightId)) : 'null';
+    const hlJson = highlight && highlight.id && Array.isArray(highlight.at)
+      ? JSON.stringify({ id: String(highlight.id), at: [Number(highlight.at[0]), Number(highlight.at[1])] })
+      : 'null';
 
     const steps=20, rd=0.000035, ring=[];
     for(let i=0;i<=steps;i++){const a=2*Math.PI*i/steps;ring.push([lon+rd*Math.cos(a)/Math.cos(lat*Math.PI/180),lat+rd*Math.sin(a)]);}
@@ -385,55 +388,118 @@ HTMLCanvasElement.prototype.getContext=function(type,attrs){
 const map=new OSMBuildings({container:'map',position:{latitude:${lat},longitude:${lon}},zoom:initZoom,minZoom:13,maxZoom:20,tilt:curTilt,rotation:curRot,effects:['shadows'],attribution:''});
 HTMLCanvasElement.prototype.getContext=_origGetContext;
 map.setDate(new Date('${simIso}'));
-// The tapped tower, tinted. Two things about OSMBuildings 4.1.1 make the
-// obvious call fail:
-//  - highlight() takes a callback (feature -> colour), not (id, colour);
-//    the old form silently did nothing.
-//  - its built-in tint path is broken: the bundle defines a second
-//    clamp(value, min, max) that shadows the colour parser's clamp(v, max),
-//    so every tint colour parses to NaN and the building draws black.
-// So the per-feature tint buffer is rebuilt here with a plain hex parse,
-// using the library's own buffer class taken off an existing feature. The
-// shader then mixes it 50/50 with the wall colour, so this mid orange
-// lands as a soft peach on the near-white towers.
-var HL_COLOR='#C96F3B';
-var HL_ID=${hlId};
-function hexRGB(h){ h=String(h).replace('#',''); return [parseInt(h.slice(0,2),16)/255, parseInt(h.slice(2,4),16)/255, parseInt(h.slice(4,6),16)/255]; }
-function isHL(f){
-  if(!HL_ID||!f) return false;
-  var pb=f.properties&&f.properties.building;
-  return String(f.id)===HL_ID || (pb!=null && String(pb)===HL_ID);
+// The tapped spot, marked on its building: a short blue section of the
+// tower either side of the pin, not the whole footprint (a long slab block
+// lit up end to end says nothing about which flat). It is drawn as its own
+// small extrusion over the building rather than by tinting the library's
+// buffers: OSMBuildings 4.1.1 keeps no vertex positions on the page to cut
+// a section from, and its own highlight() is broken (a shadowed clamp()
+// turns every tint colour into NaN, so the building draws black).
+//
+// How: fetch the building's own footprint from the same data tiles the map
+// uses, find the point on its outline nearest the pin, clip the footprint
+// to a small square around that point, and extrude that piece a hair
+// larger and taller than the building so it sits on its surface.
+var HL_COLOR='#6FA8DC';
+var HL=${hlJson};         // {id, at:[lat,lon]} -- the spot on the facade
+var HL_HALF=9;           // metres either side of that spot
+var HL_LAT=${lat}, HL_LON=${lon};
+var _hlLayer=null;
+var M_LAT=111320, M_LON=111320*Math.cos(HL_LAT*Math.PI/180);
+function toM(c){ return [(c[0]-HL_LON)*M_LON, (c[1]-HL_LAT)*M_LAT]; }
+function toLL(m){ return [HL_LON+m[0]/M_LON, HL_LAT+m[1]/M_LAT]; }
+function tileXY(lat,lon,z){
+  var n=Math.pow(2,z), r=lat*Math.PI/180;
+  return [Math.floor((lon+180)/360*n), Math.floor((1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*n)];
 }
-var _tintPatched=false;
-function patchTint(){
-  if(_tintPatched) return true;
-  var coll=map.features, sample=null;
-  try{ coll.forEach(function(it){ if(!sample && it && it.tintBuffer) sample=it; }); }catch(e){}
-  if(!sample) return false;
-  var Buf=sample.tintBuffer.constructor, proto=Object.getPrototypeOf(sample);
-  proto.applyTintAndZScale=function(){
-    var tints=[], zs=[], zcb=coll.zScaleCallback||function(){};
-    (this.items||[]).forEach(function(item){
-      var f={id:item.id, properties:item.properties};
-      var col=isHL(f) ? hexRGB(HL_COLOR).concat([1]) : [0,0,0,0];
-      var hide=zcb(f);
-      for(var i=0;i<item.vertexCount;i++){ tints.push(col[0],col[1],col[2],col[3]); zs.push(hide?0:1); }
+function outerRings(g){
+  if(!g) return [];
+  if(g.type==='Polygon') return [g.coordinates[0]];
+  if(g.type==='MultiPolygon') return g.coordinates.map(function(p){ return p[0]; });
+  return [];
+}
+function partsOf(gj, id){
+  return (gj&&gj.features||[]).filter(function(f){
+    var pb=f.properties&&f.properties.building;
+    return String(f.id)===id || (pb!=null && String(pb)===id);
+  });
+}
+function heightOf(pr){ return pr.height!=null ? +pr.height : (pr.levels!=null ? pr.levels*3 : 10); }
+function minHeightOf(pr){ return pr.minHeight!=null ? +pr.minHeight : (pr.minLevel!=null ? pr.minLevel*3 : 0); }
+// The building's footprint, from the same data tiles the map draws. The
+// tile under a point, then its neighbours (a big block can straddle two).
+function withParts(id, lat, lon, cb){
+  if(typeof fetch!=='function'){ cb(null); return; }
+  var t=tileXY(lat,lon,15), tries=[[0,0],[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,-1],[1,-1],[-1,1]];
+  (function next(i){
+    if(i>=tries.length){ cb(null); return; }
+    fetch('https://a.data.osmbuildings.org/0.2/59fcc2e8/tile/15/'+(t[0]+tries[i][0])+'/'+(t[1]+tries[i][1])+'.json')
+      .then(function(r){ return r.json(); })
+      .then(function(gj){ var ps=partsOf(gj,id); if(ps.length) cb(ps); else next(i+1); })
+      .catch(function(){ next(i+1); });
+  })(0);
+}
+// Which point on the outline is the one that was tapped: the outline is
+// walked in ~1.5m steps and each point projected to the screen at ground,
+// half and full height -- the one landing nearest the tap wins. (The tap's
+// own ground position is useless for this: on a tilted view it lies behind
+// the building, where the view ray meets the ground.)
+function anchorFromScreen(parts, sx, sy){
+  var best=null, bd=1e18;
+  parts.forEach(function(f){
+    var pr=f.properties||{}, h=heightOf(pr), mh=minHeightOf(pr);
+    outerRings(f.geometry).forEach(function(r){
+      for(var i=0;i<r.length-1;i++){
+        var a=r[i], b=r[i+1], segM=Math.hypot((b[0]-a[0])*M_LON,(b[1]-a[1])*M_LAT), n=Math.max(1,Math.ceil(segM/1.5));
+        for(var k=0;k<=n;k++){
+          var lo=a[0]+(b[0]-a[0])*k/n, la=a[1]+(b[1]-a[1])*k/n;
+          [mh,(mh+h)/2,h].forEach(function(z){
+            var q; try{ q=map.project(la,lo,z); }catch(e){ return; }
+            if(!q) return;
+            var d=(q.x-sx)*(q.x-sx)+(q.y-sy)*(q.y-sy);
+            if(d<bd){ bd=d; best=[la,lo]; }
+          });
+        }
+      }
     });
-    try{ this.tintBuffer&&this.tintBuffer.destroy&&this.tintBuffer.destroy(); }catch(e){}
-    try{ this.zScaleBuffer&&this.zScaleBuffer.destroy&&this.zScaleBuffer.destroy(); }catch(e){}
-    this.tintBuffer=new Buf(4, new Float32Array(tints));
-    this.zScaleBuffer=new Buf(1, new Float32Array(zs));
-  };
-  _tintPatched=true;
-  return true;
+  });
+  return best;
 }
-function applyHL(){
-  if(!patchTint()) return;
-  try{ map.features.forEach(function(it){ if(it&&it.applyTintAndZScale) it.applyTintAndZScale(); }); }catch(e){}
+// Sutherland-Hodgman against an axis-aligned square.
+function clipSquare(ring, cx, cy, h){
+  var edges=[[0,cx-h,1],[0,cx+h,-1],[1,cy-h,1],[1,cy+h,-1]], out=ring.slice(0,-1);
+  edges.forEach(function(e){
+    var k=e[0], v=e[1], sgn=e[2], inp=out; out=[];
+    if(!inp.length) return;
+    for(var i=0;i<inp.length;i++){
+      var A=inp[i], B=inp[(i+1)%inp.length];
+      var ain=(A[k]-v)*sgn>=0, bin=(B[k]-v)*sgn>=0;
+      if(ain) out.push(A);
+      if(ain!==bin){ var t=(v-A[k])/(B[k]-A[k]); out.push([A[0]+t*(B[0]-A[0]), A[1]+t*(B[1]-A[1])]); }
+    }
+  });
+  return out;
 }
-// Tiles stream in after this runs; keep trying until the first building
-// exists to take the buffer class from, then new tiles use the patch.
-(function waitForTiles(n){ if(patchTint()){ applyHL(); return; } if(n<60) setTimeout(function(){ waitForTiles(n+1); },250); })(0);
+// A short section of the building around the spot, drawn as its own
+// extrusion a hair larger and taller than the building so it sits on it.
+function drawHL(parts, at){
+  var am=toM([at[1], at[0]]), feats=[];
+  parts.forEach(function(f, fi){
+    var pr=f.properties||{};
+    outerRings(f.geometry).forEach(function(r, ri){
+      var piece=clipSquare(r.map(toM), am[0], am[1], HL_HALF);
+      if(piece.length<3) return;
+      var cx=0, cy=0; piece.forEach(function(p){ cx+=p[0]; cy+=p[1]; }); cx/=piece.length; cy/=piece.length;
+      var ring=piece.map(function(p){ return toLL([cx+(p[0]-cx)*1.04, cy+(p[1]-cy)*1.04]); });
+      ring.push(ring[0]);
+      feats.push({type:'Feature', id:'bs-hl-'+fi+'-'+ri, properties:{color:HL_COLOR, roofColor:HL_COLOR, height:heightOf(pr)+0.4, minHeight:minHeightOf(pr)}, geometry:{type:'Polygon', coordinates:[ring]}});
+    });
+  });
+  try{ if(_hlLayer&&_hlLayer.destroy) _hlLayer.destroy(); }catch(e){}
+  _hlLayer=null;
+  if(feats.length) _hlLayer=map.addGeoJSON({type:'FeatureCollection', features:feats});
+}
+if(HL){ withParts(HL.id, HL.at[0], HL.at[1], function(ps){ if(ps) drawHL(ps, HL.at); }); }
 tL=map.addMapTiles(TILES.s);
 map.addGeoJSONTiles('https://{s}.data.osmbuildings.org/0.2/59fcc2e8/tile/{z}/{x}/{y}.json');
 map.addGeoJSON(${obsGj});
@@ -544,15 +610,27 @@ var _pending=null;
 function sendPick(id){
   if(!_pending) return;
   var p=_pending; _pending=null; clearTimeout(p.t);
-  if(id){ HL_ID=String(id); applyHL(); }
-  window.parent.postMessage({type:'map3d_click',lat:p.lat,lon:p.lon,buildingId:id?String(id):null},'*');
+  function post(at){
+    window.parent.postMessage({type:'map3d_click',lat:p.lat,lon:p.lon,buildingId:id?String(id):null,hlAt:at||null},'*');
+  }
+  if(!id){ post(null); return; }
+  // Work out the tapped spot on the facade while this scene (and its
+  // camera) still exists -- the pin move rebuilds it. Capped, so a slow
+  // tile never holds the pin back.
+  var done=false, guard=setTimeout(function(){ if(!done){ done=true; post(null); } }, 1200);
+  withParts(String(id), p.lat, p.lon, function(ps){
+    if(done) return; done=true; clearTimeout(guard);
+    var at=ps ? anchorFromScreen(ps, p.sx, p.sy) : null;
+    if(ps && at) drawHL(ps, at);
+    post(at);
+  });
 }
 function reportPick(clientX, clientY){
   var rect=mapEl.getBoundingClientRect(), pos;
   try{ pos=map.unproject(clientX-rect.left, clientY-rect.top); }catch(err){ return; }
   if(!pos||pos.latitude==null) return;
   if(_pending) clearTimeout(_pending.t);
-  _pending={lat:pos.latitude, lon:pos.longitude, t:setTimeout(function(){ sendPick(null); },300)};
+  _pending={lat:pos.latitude, lon:pos.longitude, sx:clientX-rect.left, sy:clientY-rect.top, t:setTimeout(function(){ sendPick(null); },300)};
 }
 map.on('pointerup',function(e){
   if(!_pending) return;
@@ -561,6 +639,7 @@ map.on('pointerup',function(e){
     var f=fs[i], pr=f&&f.properties||{};
     // The pin's own little marker disc is a feature too -- skip it.
     if(pr.color==='#D1901F' && (pr.height||0)<1) continue;
+    if(String(f.id).indexOf('bs-hl-')===0) continue;
     id=pr.building||f.id; if(id!=null) break;
   }
   sendPick(id);
@@ -698,7 +777,7 @@ mapIsUp = true;
 notifyParent('map3d_ready');
 </script></body></html>`;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lat, lon, highlightId, pathData.length > 0 ? pathData[0].iso.slice(0,10) : '']);
+  }, [lat, lon, hlKey, pathData.length > 0 ? pathData[0].iso.slice(0,10) : '']);
 
   useEffect(() => {
     const handler = (e) => {
@@ -706,7 +785,7 @@ notifyParent('map3d_ready');
       // that can post here could move the pin or inject a frame into a
       // capture -- and a report is meant to be evidence.
       if (iframeRef.current && e.source !== iframeRef.current.contentWindow) return;
-      if(e.data?.type==='map3d_click' && onLocationSelect) onLocationSelect(e.data.lat, e.data.lon, { buildingId: e.data.buildingId ?? null });
+      if(e.data?.type==='map3d_click' && onLocationSelect) onLocationSelect(e.data.lat, e.data.lon, { buildingId: e.data.buildingId ?? null, at: Array.isArray(e.data.hlAt) ? e.data.hlAt : null });
       if(e.data?.type==='screenshotReady' && onScreenshot) onScreenshot(e.data.label, e.data.data);
       // Real readiness/failure, reported by the iframe document itself
       // rather than guessed from this component's mount -- see the

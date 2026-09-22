@@ -759,7 +759,7 @@ export default function ReportScreen({ view = 'verdict' }) {
   const reportRunning = reportOpen !== null && reportBusy;
   const onMapClick = useCallback((clickLat, clickLon, meta) => {
     if (reportRunning) { setLocError('The report is being built from this spot - let it finish, then move the pin.'); return; }
-    setPicked(meta?.buildingId ? { id: meta.buildingId, lat: clickLat, lon: clickLon } : null);
+    setPicked(meta?.buildingId && meta?.at ? { id: meta.buildingId, at: meta.at, lat: clickLat, lon: clickLon } : null);
     // This is the whole point of the map step: the tap that moves the pin
     // off the geocoded centre and onto the actual building.
     setPinTouched(true);
@@ -1390,7 +1390,7 @@ export default function ReportScreen({ view = 'verdict' }) {
             <Map3DShadow
               lat={lat}
               lon={lon}
-              highlightId={picked && picked.lat === lat && picked.lon === lon ? picked.id : null}
+              highlight={picked && picked.lat === lat && picked.lon === lon ? picked : null}
               pathData={solar.pathData}
               simTime={simTimeOf(minutes)}
               simPos={solar.simPos}
