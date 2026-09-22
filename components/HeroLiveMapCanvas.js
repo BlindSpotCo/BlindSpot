@@ -81,15 +81,29 @@ const BLINDSPOT_EXAMPLES = [
 // it's clear what you're about to pick.
 const SEARCH_PLACEHOLDER = 'Enter society name, landmark, or address...';
 // One-click examples under the search box, one per covered city where it
-// fits. The label is what the chip says; the query carries the city so a
-// name that exists in several places ("Sector 17") lands in the right one.
-// A real building first, so the chips show that a specific address works
-// as well as an area -- that is the more useful thing to learn from them.
+// fits. A real building first, so the chips show that a specific address
+// works as well as an area -- that is the more useful thing to learn from
+// them.
+//
+// Hardcoded results (each field is exactly what pick() expects), not a
+// query string re-resolved on every click, for two real reasons found
+// while chasing a reported "lag" on these chips: (1) Photon + Nominatim
+// are free public demo instances (see geocode-suggest/route.js's own
+// comment) that can take well over a second to answer -- a real delay,
+// not an animation-timing bug, for a click that should be instant since
+// the place never changes. (2) naively taking the first search result for
+// a plain neighbourhood query often lands on a random nearby street
+// instead of the neighbourhood itself -- "Sector 7, Chandigarh" resolved
+// to "Sukhna Path, 7, Chandigarh" (a different street entirely), and
+// "Bandra West, Mumbai" resolved to "Gurunanak Marg", both confirmed live
+// against /api/sunscout/geocode-suggest. Every value below is a real
+// result from that same endpoint, picked out by hand instead of trusting
+// index 0.
 const TRY_PLACES = [
-  { label: 'Prestige Park Grove', q: 'Prestige Park Grove, Bangalore' },
-  { label: 'Hauz Khas', q: 'Hauz Khas, New Delhi' },
-  { label: 'Sector 7', q: 'Sector 7, Chandigarh' },
-  { label: 'Bandra West', q: 'Bandra West, Mumbai' },
+  { label: 'Prestige Park Grove', lat: 13.0157282, lon: 77.7539999, displayName: 'Prestige Park Grove (u/c), Doddabanahalli, Karnataka', postcode: null, kind: 'address' },
+  { label: 'Hauz Khas', lat: 28.5536023, lon: 77.1948144, displayName: 'Hauz Khas, South Delhi, Delhi', postcode: '110016', kind: 'neighbourhood' },
+  { label: 'Sector 7', lat: 30.7358664, lon: 76.8042826, displayName: 'Sector 7, Chandigarh', postcode: '160007', kind: 'neighbourhood' },
+  { label: 'Bandra West', lat: 19.0583358, lon: 72.8302669, displayName: 'Bandra West, Mumbai, Maharashtra', postcode: null, kind: 'neighbourhood' },
 ];
 const KIND_LABELS = { city: 'City', neighbourhood: 'Neighbourhood', address: 'Address' };
 // The 5 cities BlindSpot actually has neighbourhood-score coverage for --
@@ -527,7 +541,7 @@ export default function HeroLiveMapCanvas() {
                   key={t.label}
                   type="button"
                   className="hlm-try-chip"
-                  onClick={() => searchAndPick(t.q)}
+                  onClick={() => pick(t)}
                 >
                   {t.label}
                 </button>
