@@ -285,6 +285,8 @@ export default function ReportModal({
           clearTimeout(timeoutId);
         }
         if (res.ok) return res.json();
+        // Say why in the console -- a bare "failed-500" gave nothing to go on.
+        try { console.error(`[report] ${label} ${res.status}:`, (await res.text()).slice(0, 400)); } catch {}
         if (attempt === 0 && res.status >= 500) { await new Promise(r => setTimeout(r, 1200)); continue; }
         throw new Error(`${label}-failed-${res.status}`);
       }
@@ -301,8 +303,31 @@ export default function ReportModal({
       setStep(galleryOnly ? 'captioning' : 'analysing');
       setProgress(50);
 
+      // The model reads smaller copies. Twelve full 960px frames came close
+      // to Vercel's 4.5 MB request limit on their own; 640px at a lower
+      // JPEG quality is plenty to see shadows and roughly a third the size.
+      // The report itself still uses the full-size frames.
+      const shrink = (dataUrl) => new Promise((resolve) => {
+        try {
+          const img = new Image();
+          img.onload = () => {
+            try {
+              const w = Math.min(640, img.naturalWidth || 640);
+              const h = Math.round(w * (img.naturalHeight || 427) / (img.naturalWidth || 640));
+              const c = document.createElement('canvas');
+              c.width = w; c.height = h;
+              c.getContext('2d').drawImage(img, 0, 0, w, h);
+              resolve(c.toDataURL('image/jpeg', 0.72));
+            } catch { resolve(dataUrl); }
+          };
+          img.onerror = () => resolve(dataUrl);
+          img.src = dataUrl;
+        } catch { resolve(dataUrl); }
+      });
+      const aiShots = await Promise.all(screenshots.map(async (sc) => ({ ...sc, base64: await shrink(sc.base64) })));
+
       const analysed = await postJson('/api/sunscout/report/analyse', {
-        screenshots, lat, lon, address: addr, floor, facing, tzOffset,
+        screenshots: aiShots, lat, lon, address: addr, floor, facing, tzOffset,
         avRecord: areaRecord || undefined, combinedScore, unitScore, areaWeight, unitWeight,
         personaId: effectivePersonaId, customNote: safeCustomNote,
         purpose: asked.purpose,
@@ -315,7 +340,10 @@ export default function ReportModal({
         captionsOnly: Boolean(galleryOnly),
       }, 'analysis');
 
-      const { analysis, captions, summary, aiUnavailable, captionedCount } = analysed || {};
+      const { analysis, captions, summary, aiUnavailable, aiReason, captionedCount } = analysed || {};
+      // The report leaves the written sections out quietly when the model
+      // doesn't answer, so the reason goes to the console instead.
+      if (aiUnavailable) console.warn('[report] written analysis unavailable:', aiReason || 'unknown');
 
       // Three separate ways a run can come back short of what this modal
       // promised, none of which used to be visible anywhere: frames that
@@ -331,8 +359,15 @@ export default function ReportModal({
       setStep('writing');
       setProgress(78);
 
-      const { mainHtml, galleryHtml } = await postJson('/api/sunscout/report/pdf', {
-        lat, lon, tzOffset, address: addr, floor, facing, screenshots,
+      // The twelve frames stay in the browser. Sending them to the server
+      // just to have them pasted back into the HTML pushed this request
+      // past Vercel's 4.5 MB body limit on detailed maps -- the 500s. The
+      // server gets a short token per frame and the real images go back in
+      // here.
+      const shotToken = (i) => `__BS_SHOT_${i}__`;
+      const { mainHtml: mainTpl, galleryHtml: galleryTpl } = await postJson('/api/sunscout/report/pdf', {
+        lat, lon, tzOffset, address: addr, floor, facing,
+        screenshots: screenshots.map((sc, i) => ({ label: sc.label, base64: shotToken(i) })),
         analysis: analysis || '', captions: captions || {}, summary,
         reportLabel: reportLabel || undefined,
         facingAssumptionNote: (!facingTouched && facingSuggestion) ? facingSuggestion.sentence : undefined,
@@ -341,6 +376,10 @@ export default function ReportModal({
         aiUnavailable: Boolean(aiUnavailable) && !galleryOnly,
         galleryOnly: Boolean(galleryOnly),
       }, 'pdf');
+
+      const fillShots = (html) => screenshots.reduce((h, sc, i) => h.split(shotToken(i)).join(sc.base64), html || '');
+      const mainHtml = fillShots(mainTpl);
+      const galleryHtml = fillShots(galleryTpl);
 
       setProgress(100);
 

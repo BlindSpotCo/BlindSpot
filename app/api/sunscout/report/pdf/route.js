@@ -198,6 +198,17 @@ function formatNarrative(rawAnalysis, { dropLeadingHeader = false } = {}) {
 }
 
 export async function POST(req) {
+  // Any failure comes back with its message, so the browser console says
+  // what broke instead of a bare 500.
+  try {
+    return await buildReport(req);
+  } catch (err) {
+    console.error('[report/pdf] failed:', err);
+    return NextResponse.json({ error: String(err?.message || err) }, { status: 500 });
+  }
+}
+
+async function buildReport(req) {
   const {
     lat, lon, address, floor, facing, screenshots, analysis, summary,
     // Per-image descriptions, keyed by the image's index. They used to be
@@ -443,7 +454,7 @@ export async function POST(req) {
   const badge = verdictLabel ? (VERDICT_BADGE[verdictLabel] || { text: escapeHtml(verdictLabel).toUpperCase(), color: SUN }) : null;
 
   const seasons = ['Summer', 'Winter', 'Spring', 'Autumn'];
-  const shotsWithIndex = screenshots.map((s, i) => ({ ...s, idx: i }));
+  const shotsWithIndex = (Array.isArray(screenshots) ? screenshots : []).map((s, i) => ({ ...s, idx: i }));
   const grouped = seasons.map(s => ({
     season: s,
     shots: shotsWithIndex.filter(sc => sc.label.startsWith(s)),
