@@ -734,6 +734,14 @@ async function buildReport(req) {
     if (t.startsWith('probably not') || t.startsWith('not really')) return 'Not ideal for';
     return 'Not recommended for';
   };
+  // Declared here, above their first use: the "Who this is for" cards
+  // below read them while this function runs, and when they sat further
+  // down every report whose written analysis had that section crashed with
+  // "Cannot access ... before initialization" (only visible once the AI
+  // text started coming back).
+  const GOOD_TINT = { bg: '#F0FDF4', border: '#BBF7D0', text: '#15803D' };
+  const HEADS_UP_TINT = { bg: '#FFFBEB', border: '#FDE68A', text: '#B45309' };
+  const NOT_REC_TINT = { bg: '#FEF2F2', border: '#FCA5A5', text: '#B91C1C' };
   const callTint = (c) => {
     const t = (c || '').toLowerCase();
     if (t.startsWith('yes') && !t.includes('caveat')) return GOOD_TINT;
@@ -860,9 +868,6 @@ async function buildReport(req) {
       </ul>
     </div>` : '';
 
-  const GOOD_TINT = { bg: '#F0FDF4', border: '#BBF7D0', text: '#15803D' };
-  const HEADS_UP_TINT = { bg: '#FFFBEB', border: '#FDE68A', text: '#B45309' };
-  const NOT_REC_TINT = { bg: '#FEF2F2', border: '#FCA5A5', text: '#B91C1C' };
 
   const strengthsSection = (pros.length || cons.length) ? `
     <div style="${RULE}"></div>
