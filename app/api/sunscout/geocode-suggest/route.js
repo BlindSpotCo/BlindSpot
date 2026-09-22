@@ -249,6 +249,22 @@ export async function GET(req) {
       .slice(0, 8)
       .map(({ countrycode, ...rest }) => rest);
 
+    // A direct name match wins outright, before covered/distance even
+    // get a vote. Found live: searching "chennai" surfaced several
+    // Bengaluru side streets ahead of the actual "Chennai, Tamil Nadu"
+    // result, because every one of them counted as "covered" (Bangalore
+    // pincodes) and the covered/distance tie-break below only knows
+    // proximity to the bias point (which defaults to Bangalore until a
+    // pin is set) -- it has no idea any of these are a better textual
+    // match for what was actually typed. Someone typing a city or area
+    // name is almost always looking for that place itself, not a
+    // vaguely-related street the provider's fuzzy matching pulled in
+    // nearby, so a result whose own name starts with the query goes
+    // first regardless of how far it is from the bias point.
+    const firstSegment = (name) => (name || '').split(',')[0].trim().toLowerCase();
+    const qLower = q.trim().toLowerCase();
+    const isDirectNameMatch = (m) => firstSegment(m.displayName).startsWith(qLower);
+
     // Stable sort (guaranteed by the JS spec since ES2019). Covered
     // pincodes still win first place, same as before. Within each group,
     // when we actually know where the user is (hasRealBias), the nearer
@@ -263,6 +279,9 @@ export async function GET(req) {
     const isCovered = (m) =>
       (m.postcode && COVERED_PREFIXES.has(m.postcode.slice(0, 3))) || !!m.coveredCity;
     results.sort((a, b) => {
+      const aDirect = isDirectNameMatch(a) ? 0 : 1;
+      const bDirect = isDirectNameMatch(b) ? 0 : 1;
+      if (aDirect !== bDirect) return aDirect - bDirect;
       const aCovered = isCovered(a) ? 0 : 1;
       const bCovered = isCovered(b) ? 0 : 1;
       if (aCovered !== bCovered) return aCovered - bCovered;
