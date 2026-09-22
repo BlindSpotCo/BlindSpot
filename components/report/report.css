@@ -1379,19 +1379,20 @@ body.bsr-noscroll{overflow:hidden}
 }
 /* A small badge that pokes up outside the card's own top edge, not a
    full-width line squeezed in between the fields -- it's a nudge to
-   glance up at what you just set, not another row of the form. Green
-   on purpose: everything else in this card and the CTA below it are
-   brand olive, so this is the one thing that visually reads as "new
-   info", not as part of the form or a second button. */
+   glance up at what you just set, not another row of the form. Brand
+   olive, same as "See the verdict" below it -- it reads as new info
+   because of WHERE it sits (floating outside the card, its own
+   pointer aimed back in) rather than needing a different colour to
+   stand out. */
 .bsr-dock-fields .bsr-maptip{
   position:absolute; top:-32px; left:auto; right:14px; bottom:auto;
   transform:none; z-index:5;
   display:inline-flex; align-items:center; gap:6px;
   padding:6px 7px 6px 12px;
   border-radius:999px;
-  background:#146C43; color:#FFFDF8;
+  background:var(--brand,#3D4116); color:#FFFDF8;
   white-space:nowrap;
-  box-shadow:0 6px 16px rgba(20,108,67,.32), 0 0 0 3px var(--paper,#FFFDF8);
+  box-shadow:0 6px 16px rgba(61,65,22,.32), 0 0 0 3px var(--paper,#FFFDF8);
   animation:bsr-tip-in .2s ease-out;
 }
 .bsr-dock-fields .bsr-maptip-text{ font-size:11.5px; font-weight:700; letter-spacing:.005em }
@@ -1401,7 +1402,7 @@ body.bsr-noscroll{overflow:hidden}
   content:''; position:absolute; bottom:-5px; top:auto; left:auto; right:22px;
   width:10px; height:10px;
   transform:rotate(45deg);
-  background:#146C43;
+  background:var(--brand,#3D4116);
   border-radius:2px;
 }
 .bsr-dock-fields .bsr-maptip-x{
