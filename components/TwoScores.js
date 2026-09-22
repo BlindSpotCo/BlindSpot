@@ -61,7 +61,7 @@ const COMFORT_DIMS = [
 function ScoreCard({ accentVar, tag, name, blurb, score, grade, word, tone, example, dims }) {
   return (
     <div className="ts4-card reveal" style={{ '--ts4-accent': `var(${accentVar})` }}>
-      <span className="ts4-sample-tag">Interactive Sample Report</span>
+      <span className="ts4-sample-tag">Example</span>
       <span className="mono ts4-tag">{tag}</span>
       <h3 className="ts4-name">{name}</h3>
       <p className="ts4-blurb">{blurb}</p>
@@ -125,8 +125,8 @@ export default function TwoScores() {
             <span className="ts4-verdict-of">out of 100</span>
           </div>
           <div className="ts4-verdict-say">
-            <p className="ts4-verdict-head">Worth a look - eyes open.</p>
-            <p className="ts4-verdict-sub">Good locality. It’s this floor and facing that cost it - ask what else the tower has.</p>
+            <p className="ts4-verdict-head">Overall score for an example flat</p>
+            <p className="ts4-verdict-sub">A 5th-floor, south-facing flat in Connaught Place, Delhi. The neighbourhood scores 82 and the flat scores 50, so together it&apos;s 66.</p>
           </div>
           {/* The right half of this card was empty, and the sentence
               explaining where 66 comes from was a separate line of prose
@@ -142,35 +142,35 @@ export default function TwoScores() {
             <span className="ts4-vm-op" aria-hidden="true">+</span>
             <span className="ts4-vm-item accent-ss">
               <em>50</em>
-              <span>This flat</span>
+              <span>The flat</span>
             </span>
-            <span className="ts4-vm-note">Weighted 50/50</span>
+            <span className="ts4-vm-note">Equal weight</span>
           </div>
         </div>
 
         <div className="ts4-grid">
           <ScoreCard
             accentVar="--av"
-            tag="ENGINE 1 · GOVERNMENT RECORDS"
+            tag="SCORE 1"
             name="Neighbourhood Score"
-            blurb="The area, straight from government records." 
+            blurb="How the neighbourhood does, from government records." 
             score={82}
             grade="A"
             word="Excellent"
             tone="good"
-            example="Connaught Place, Central Delhi - real report"
+            example="Example: Connaught Place, Delhi"
             dims={NEIGHBOURHOOD_DIMS}
           />
           <ScoreCard
             accentVar="--ss"
-            tag="ENGINE 2 · REAL SOLAR GEOMETRY"
+            tag="SCORE 2"
             name="Home Comfort Score"
-            blurb="The exact unit, from the floor and facing you pick." 
+            blurb="How the flat itself does, from its floor and facing." 
             score={50}
             grade={null}
             word="Fair"
             tone="avg"
-            example="Floor 5, South-facing - real report"
+            example="Example: 5th floor, south-facing, same neighbourhood"
             dims={COMFORT_DIMS}
           />
         </div>

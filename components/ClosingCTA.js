@@ -110,7 +110,6 @@ export default function ClosingCTA() {
 
           <div className="footer-bottom">
             <span className="footer-copyright">© 2026 BlindSpot</span>
-            <span className="footer-copyright">Delhi NCR · Bangalore · Chandigarh · Hyderabad · Mumbai</span>
           </div>
         </div>
       </footer>

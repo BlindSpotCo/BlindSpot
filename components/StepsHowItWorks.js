@@ -17,23 +17,23 @@ const STEPS = [
   {
     accent: 'av',
     title: 'Search an address',
-    copy: coverageLabel() + ', more cities coming.',
+    copy: 'Type the address of the flat you are looking at.',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
     ),
   },
   {
     accent: 'ss',
-    title: 'One pin, two real scores',
-    copy: "One for the area you're moving into. One for the exact floor and facing you set.",
+    title: 'Get two scores',
+    copy: 'One for the neighbourhood. One for the flat, based on its floor and facing.',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="10" width="6" height="11" rx="1"/><rect x="15" y="5" width="6" height="16" rx="1"/><rect x="9" y="14" width="6" height="7" rx="1"/></svg>
     ),
   },
   {
     accent: 'brand',
-    title: 'See your verdict',
-    copy: 'One score. Recommended, or not.',
+    title: 'Read your report',
+    copy: 'One overall score, what stands out, and what to check on your visit.',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>
     ),
@@ -62,10 +62,8 @@ export default function StepsHowItWorks() {
           ))}
         </div>
 
-        {/* Same coverageLabel() the step-1 copy line already uses, so a
-            new city updates both places at once instead of this one
-            drifting into a stale, separately-typed list. */}
-        <p className="hiw3-coverage reveal">Live in {coverageLabel()}, more cities coming.</p>
+        {/* The only place the city list appears in this section. */}
+        <p className="hiw3-coverage reveal">Now in {coverageLabel()}. More cities soon.</p>
       </div>
     </section>
   );

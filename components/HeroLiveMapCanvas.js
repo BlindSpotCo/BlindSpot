@@ -408,7 +408,7 @@ export default function HeroLiveMapCanvas() {
               cursorClassName="hlm-typed-cursor"
             />
             <span className="sr-only">
-              We measure what a listing leaves out: how much real sunlight this flat gets through the year, how much of it sits in shade, and what government records say about safety, water, power, schools, roads and air in the area around it.
+              We measure what a listing leaves out: how much real sunlight this flat gets through the year, how much of it sits in shade, and what government records say about safety, water, power, schools, roads and air in the neighbourhood around it.
             </span>
           </p>
         </div>
@@ -526,7 +526,7 @@ export default function HeroLiveMapCanvas() {
 
           {noMatch && !cityPanel && (
             <p className="hlm-nomatch" role="status">
-              We couldn&apos;t find &ldquo;{noMatch}&rdquo;. Try adding the area or city.
+              We couldn&apos;t find &ldquo;{noMatch}&rdquo;. Try adding the neighbourhood or city.
             </p>
           )}
 

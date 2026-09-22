@@ -56,28 +56,28 @@ function useFaqItems() {
   return [
     {
       q: 'Is BlindSpot free?',
-      a: 'Yes, both scores. Sign in only if you want the report saved.',
+      a: 'Yes. Sign in only if you want to save a report.',
     },
     {
-      q: 'Where does the data actually come from?',
-      a: "The area half is government records - police, CPCB, DISCOM, municipal surveys, CBSE listings - scored by zone, so neighbouring pincodes often land close. Schools are the exception, matched address by address. The flat half runs the NOAA solar-position algorithm for the floor and facing you pick, against OpenStreetMap building data for what's actually around it. Nothing broker-supplied either way.",
+      q: 'Where does the data come from?',
+      a: "The neighbourhood score uses government data on safety, air, power, water, roads and schools. The flat score uses the sun's real path and the buildings around the flat, from map data. Nothing comes from brokers or sellers.",
     },
     {
       q: 'Which cities are covered?',
-      a: 'Full Neighbourhood Score coverage in these five. The flat half works anywhere - it is geometry, not records.',
+      a: 'The neighbourhood score works in these cities. The flat score works anywhere.',
       cities: KNOWN_CITIES,
     },
     {
       q: 'How is this different from asking a broker?',
-      a: "A broker earns on the flat they show you. We earn nothing either way, so the number is the same for the one they're pushing and the one next door.",
+      a: "A broker earns when you buy. We don't, so every flat is scored the same way.",
     },
     {
       q: 'Can it tell me about one specific room, not just the whole flat?',
-      a: "Yes. Upload a room photo and the direction you faced - every window in it gets its own sun and heat numbers, not the flat\'s overall facing. AI only finds the windows; the numbers come from the same solar model.",
+      a: "Yes. Upload a photo of the room and say which way you were facing. Each window gets its own sun and heat numbers.",
     },
     {
       q: 'How accurate are the sun numbers?',
-      a: "They are geometry, not forecast: the real sun path for that date against OpenStreetMap building footprints and heights around the pin. That means shadow from the tower next door is modelled; cloud cover on any given day is not.",
+      a: "They follow the sun's real path and the height of the buildings nearby, so shade from the tower next door is counted. Daily weather, like clouds, is not.",
     },
   ];
 }
