@@ -385,12 +385,55 @@ HTMLCanvasElement.prototype.getContext=function(type,attrs){
 const map=new OSMBuildings({container:'map',position:{latitude:${lat},longitude:${lon}},zoom:initZoom,minZoom:13,maxZoom:20,tilt:curTilt,rotation:curRot,effects:['shadows'],attribution:''});
 HTMLCanvasElement.prototype.getContext=_origGetContext;
 map.setDate(new Date('${simIso}'));
-// A light warm tint, just enough to find your tower again -- not a
-// fill that competes with the shadows.
-var HL_COLOR='#E9B98F';
+// The tapped tower, tinted. Two things about OSMBuildings 4.1.1 make the
+// obvious call fail:
+//  - highlight() takes a callback (feature -> colour), not (id, colour);
+//    the old form silently did nothing.
+//  - its built-in tint path is broken: the bundle defines a second
+//    clamp(value, min, max) that shadows the colour parser's clamp(v, max),
+//    so every tint colour parses to NaN and the building draws black.
+// So the per-feature tint buffer is rebuilt here with a plain hex parse,
+// using the library's own buffer class taken off an existing feature. The
+// shader then mixes it 50/50 with the wall colour, so this mid orange
+// lands as a soft peach on the near-white towers.
+var HL_COLOR='#C96F3B';
 var HL_ID=${hlId};
-function applyHL(){ if(HL_ID){ try{ map.highlight(HL_ID, HL_COLOR); }catch(e){} } }
-applyHL(); setTimeout(applyHL, 1200); setTimeout(applyHL, 3500);
+function hexRGB(h){ h=String(h).replace('#',''); return [parseInt(h.slice(0,2),16)/255, parseInt(h.slice(2,4),16)/255, parseInt(h.slice(4,6),16)/255]; }
+function isHL(f){
+  if(!HL_ID||!f) return false;
+  var pb=f.properties&&f.properties.building;
+  return String(f.id)===HL_ID || (pb!=null && String(pb)===HL_ID);
+}
+var _tintPatched=false;
+function patchTint(){
+  if(_tintPatched) return true;
+  var coll=map.features, sample=null;
+  try{ coll.forEach(function(it){ if(!sample && it && it.tintBuffer) sample=it; }); }catch(e){}
+  if(!sample) return false;
+  var Buf=sample.tintBuffer.constructor, proto=Object.getPrototypeOf(sample);
+  proto.applyTintAndZScale=function(){
+    var tints=[], zs=[], zcb=coll.zScaleCallback||function(){};
+    (this.items||[]).forEach(function(item){
+      var f={id:item.id, properties:item.properties};
+      var col=isHL(f) ? hexRGB(HL_COLOR).concat([1]) : [0,0,0,0];
+      var hide=zcb(f);
+      for(var i=0;i<item.vertexCount;i++){ tints.push(col[0],col[1],col[2],col[3]); zs.push(hide?0:1); }
+    });
+    try{ this.tintBuffer&&this.tintBuffer.destroy&&this.tintBuffer.destroy(); }catch(e){}
+    try{ this.zScaleBuffer&&this.zScaleBuffer.destroy&&this.zScaleBuffer.destroy(); }catch(e){}
+    this.tintBuffer=new Buf(4, new Float32Array(tints));
+    this.zScaleBuffer=new Buf(1, new Float32Array(zs));
+  };
+  _tintPatched=true;
+  return true;
+}
+function applyHL(){
+  if(!patchTint()) return;
+  try{ map.features.forEach(function(it){ if(it&&it.applyTintAndZScale) it.applyTintAndZScale(); }); }catch(e){}
+}
+// Tiles stream in after this runs; keep trying until the first building
+// exists to take the buffer class from, then new tiles use the patch.
+(function waitForTiles(n){ if(patchTint()){ applyHL(); return; } if(n<60) setTimeout(function(){ waitForTiles(n+1); },250); })(0);
 tL=map.addMapTiles(TILES.s);
 map.addGeoJSONTiles('https://{s}.data.osmbuildings.org/0.2/59fcc2e8/tile/{z}/{x}/{y}.json');
 map.addGeoJSON(${obsGj});
@@ -491,27 +534,37 @@ drawArc();
 var _mmoved=false, _mdx=0, _mdy=0, _tsx=0, _tsy=0;
 var mapEl=document.getElementById('map');
 
-// A tap reports which building it hit as well as where. getTarget is the
-// renderer's own hit test (it reads the picking buffer, async); if it is
-// missing, slow, or the tap hit the ground, the pin still moves -- only
-// the tint is skipped.
-function reportPick(clientX, clientY){
-  var rect=mapEl.getBoundingClientRect();
-  var x=clientX-rect.left, y=clientY-rect.top, pos;
-  try{ pos=map.unproject(x,y); }catch(err){ return; }
-  if(!pos||pos.latitude==null) return;
-  var sent=false;
-  function send(id){
-    if(sent) return; sent=true;
-    if(id){ HL_ID=id; applyHL(); }
-    window.parent.postMessage({type:'map3d_click',lat:pos.latitude,lon:pos.longitude,buildingId:id||null},'*');
-  }
-  if(typeof map.getTarget==='function'){
-    var t=setTimeout(function(){ send(null); },400);
-    try{ map.getTarget(x,y,function(id){ clearTimeout(t); send(id); }); }
-    catch(err){ clearTimeout(t); send(null); }
-  } else { send(null); }
+// A tap reports which building it hit as well as where. map.getTarget()
+// is a deprecated no-op in 4.1.1; the hit test now arrives through the
+// 'pointerup' event, a frame after the tap (it reads the picking buffer).
+// So the tap is held for that one frame and sent together with the
+// building it landed on. If nothing answers within 300ms (the tap hit the
+// ground), the pin still moves -- only the tint is skipped.
+var _pending=null;
+function sendPick(id){
+  if(!_pending) return;
+  var p=_pending; _pending=null; clearTimeout(p.t);
+  if(id){ HL_ID=String(id); applyHL(); }
+  window.parent.postMessage({type:'map3d_click',lat:p.lat,lon:p.lon,buildingId:id?String(id):null},'*');
 }
+function reportPick(clientX, clientY){
+  var rect=mapEl.getBoundingClientRect(), pos;
+  try{ pos=map.unproject(clientX-rect.left, clientY-rect.top); }catch(err){ return; }
+  if(!pos||pos.latitude==null) return;
+  if(_pending) clearTimeout(_pending.t);
+  _pending={lat:pos.latitude, lon:pos.longitude, t:setTimeout(function(){ sendPick(null); },300)};
+}
+map.on('pointerup',function(e){
+  if(!_pending) return;
+  var fs=(e&&e.features)||[], id=null;
+  for(var i=0;i<fs.length;i++){
+    var f=fs[i], pr=f&&f.properties||{};
+    // The pin's own little marker disc is a feature too -- skip it.
+    if(pr.color==='#D1901F' && (pr.height||0)<1) continue;
+    id=pr.building||f.id; if(id!=null) break;
+  }
+  sendPick(id);
+});
 
 mapEl.addEventListener('mousedown',function(e){_mmoved=false;_mdx=e.clientX;_mdy=e.clientY;});
 mapEl.addEventListener('mousemove',function(e){if(Math.abs(e.clientX-_mdx)>5||Math.abs(e.clientY-_mdy)>5)_mmoved=true;});
