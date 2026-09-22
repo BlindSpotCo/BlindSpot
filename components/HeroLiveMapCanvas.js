@@ -433,7 +433,7 @@ export default function HeroLiveMapCanvas() {
               pill below is proof (real cycling examples), not an
               explanation, so it doesn't substitute for one. One flat
               sentence, no animation of its own. */}
-          <p className="hlm-sub">Get honest, hidden details on any flat: how much sun it actually gets, and what's really around it, before you pay a token.</p>
+          <p className="hlm-sub">Get the honest details brokers won't tell you before signing any deal.</p>
           <p className="hlm-typed-line">
             <TypewriterCycle
               items={BLINDSPOT_EXAMPLES}
