@@ -148,7 +148,7 @@ function geminiCaller({ budgetMs = 48_000, maxOutputTokens = 6144, generationCon
 // report used to ask for these twelve descriptions as one section among six,
 // which is how a long shadow section could eat the token budget the rest of
 // the report needed -- and why the same truncation showed up there too.
-async function describeImages({ screenshots, groundTruthText, floorN, facing, budgetMs = 38_000 }) {
+async function describeImages({ screenshots, groundTruthText, floorN, facing, budgetMs = 90_000 }) {
   // Six per batch, not twelve: one request for all of them overruns the
   // output ceiling partway down the list and every image after the cut gets
   // nothing. Two batches of six sit well inside it.
@@ -230,7 +230,9 @@ Be concrete about what you can actually see. Never end mid-sentence. If an image
       const { call, state } = geminiCaller({
         budgetMs: ms || perBatchMs,
         models: GEMINI_MODELS_LITE_FIRST,
-        attemptMs: 25_000,
+        // The 3.x models take longer over six images than the 2.5 ones did;
+        // 25s cut them off mid-answer ('timed out').
+        attemptMs: 45_000,
         maxOutputTokens: 4096,
         generationConfig: {
           responseMimeType: 'application/json',
@@ -317,7 +319,7 @@ Be concrete about what you can actually see. Never end mid-sentence. If an image
         shots: idxs.map((n) => screenshots[n]),
         // A small group needs far less room than a full batch, and a tight
         // ceiling here keeps the whole pass inside its deadline.
-        ms: Math.min(14_000, Math.max(8_000, timeLeft() - 2_000)),
+        ms: Math.min(30_000, Math.max(8_000, timeLeft() - 2_000)),
       });
       got.forEach((v, k) => {
         const real = idxs[k];
@@ -462,7 +464,7 @@ Note: floor clearance is an estimate based on typical urban obstruction heights,
       console.warn('[report/analyse] no image descriptions came back; shipping the gallery without them.');
       return NextResponse.json({
         analysis: '', captions: {}, summary: reportSummary,
-        aiUnavailable: true, aiReason: 'captions-empty',
+        aiUnavailable: true, aiReason: `captions-empty${captionError ? ` (${captionError})` : ''}`,
       });
     }
 
@@ -670,7 +672,8 @@ Say each of these once, plainly - don't restate one bullet's point while coverin
     // instant is how a burst turns into a 429 that neither of them needed.
     const captionsPromise = new Promise((r) => setTimeout(r, 1_500))
       .then(() => describeImages({
-        screenshots, groundTruthText, floorN, facing: safeFacingInput, budgetMs: 38_000,
+        // Runs alongside the written report, inside the route's 120s.
+        screenshots, groundTruthText, floorN, facing: safeFacingInput, budgetMs: 80_000,
       }))
       .catch((err) => {
         console.error('[report/analyse] image descriptions failed:', err?.message || err);

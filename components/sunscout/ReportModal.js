@@ -269,7 +269,10 @@ export default function ReportModal({
         // immediately instead of waiting out that ceiling.
         const controller = new AbortController();
         abortRef.current = controller;
-        const timeoutId = setTimeout(() => controller.abort(), 90_000);
+        // The analysis route can use most of its 120s now that the newer
+        // models are slower; aborting at 90s would throw away a run that
+        // was about to answer, and then pay for it again.
+        const timeoutId = setTimeout(() => controller.abort(), label === 'analysis' ? 118_000 : 90_000);
         try {
           res = await fetch(url, {
             method: 'POST',
