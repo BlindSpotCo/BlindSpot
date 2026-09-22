@@ -12,7 +12,7 @@ export default function NotFound() {
       <h1>We don&apos;t have that one.</h1>
       <p>
         Either the page has moved, or it&apos;s an address outside our coverage. BlindSpot has
-        neighbourhood records for Delhi NCR, Bangalore, Chandigarh, Hyderabad and Mumbai.
+        neighbourhood records for Delhi NCR, Bangalore, Chandigarh, Hyderabad, Mumbai and Chennai.
       </p>
       <p className="bs-404-actions">
         <a href="/">Search another address</a>
