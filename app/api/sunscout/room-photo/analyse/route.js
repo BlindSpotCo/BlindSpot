@@ -24,8 +24,7 @@ import { computeSolarSummary, compassDir } from '@/lib/sunscout/solarReport';
 
 export const maxDuration = 45;
 
-const GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
-const GEMINI_URL = (model) => `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+import { GEMINI_MODELS, fetchGemini } from '@/lib/gemini';
 
 // Where a window sits in the frame -> assumed angular offset from the
 // camera's own centre bearing. A real lens' field of view varies by phone,
@@ -72,15 +71,7 @@ function geminiCaller({ budgetMs = 30_000, maxOutputTokens = 2048, generationCon
       if (remaining < 6_000) return null;
       let res;
       try {
-        res = await fetch(`${GEMINI_URL(model)}?key=${process.env.GEMINI_API_KEY}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: msgContents,
-            generationConfig: { maxOutputTokens, temperature: 0.15, ...(generationConfig || {}) },
-          }),
-          signal: AbortSignal.timeout(Math.min(remaining, 30_000)),
-        });
+        res = await fetchGemini(model, { contents: msgContents, generationConfig: { maxOutputTokens, temperature: 0.15, ...(generationConfig || {}) }, signal: AbortSignal.timeout(Math.min(remaining, 30_000)) });
       } catch (err) {
         console.error(`[room-photo] Gemini network error (${model}):`, err?.message || err);
         continue;

@@ -13,8 +13,7 @@ import { fileToImageDataUrl, FloorPlanInputError } from '@/lib/floorplan/toImage
 // plus possible MAX_TOKENS continuations can run long.
 export const maxDuration = 90;
 
-const GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
-const GEMINI_URL = (model) => `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+import { GEMINI_MODELS, fetchGemini } from '@/lib/gemini';
 
 const PROMPT_BASE = `You are a senior interior designer looking at an uploaded floor plan image, briefed to design this specific home in real depth - not a generic checklist. Your goal is to help build this person's dream home within the real constraints of this exact layout.
 
@@ -140,14 +139,7 @@ export async function POST(req) {
         for (let attempt = 0; attempt < 2; attempt++) {
           let res;
           try {
-            res = await fetch(`${GEMINI_URL(model)}?key=${process.env.GEMINI_API_KEY}`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: msgContents,
-                generationConfig: { maxOutputTokens: 32768, temperature: 0.3 },
-              }),
-            });
+            res = await fetchGemini(model, { contents: msgContents, generationConfig: { maxOutputTokens: 32768, temperature: 0.3 } });
           } catch (networkErr) {
             console.error(`Gemini Vision network error (${model}, attempt ${attempt + 1}):`, networkErr);
             if (attempt === 0) { await new Promise(r => setTimeout(r, 800)); continue; }
