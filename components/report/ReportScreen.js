@@ -721,6 +721,10 @@ export default function ReportScreen({ view = 'verdict' }) {
   // Coordinates land at once so the map and the flat's half react
   // immediately; the postcode and label follow from the reverse lookup,
   // which is what the area half needs.
+  // The building the last tap landed on, tinted on the map. Tied to the
+  // spot it was tapped at, so a search or "my location" that moves the
+  // pin elsewhere drops the tint on its own.
+  const [picked, setPicked] = useState(null);
   const moveTo = useCallback((toLat, toLon, label) => {
     if (!Number.isFinite(toLat) || !Number.isFinite(toLon)) return;
     setLocError('');
@@ -753,8 +757,9 @@ export default function ReportScreen({ view = 'verdict' }) {
   // finished five minutes earlier.
   const [reportBusy, setReportBusy] = useState(false);
   const reportRunning = reportOpen !== null && reportBusy;
-  const onMapClick = useCallback((clickLat, clickLon) => {
+  const onMapClick = useCallback((clickLat, clickLon, meta) => {
     if (reportRunning) { setLocError('The report is being built from this spot - let it finish, then move the pin.'); return; }
+    setPicked(meta?.buildingId ? { id: meta.buildingId, lat: clickLat, lon: clickLon } : null);
     // This is the whole point of the map step: the tap that moves the pin
     // off the geocoded centre and onto the actual building.
     setPinTouched(true);
@@ -1385,6 +1390,7 @@ export default function ReportScreen({ view = 'verdict' }) {
             <Map3DShadow
               lat={lat}
               lon={lon}
+              highlightId={picked && picked.lat === lat && picked.lon === lon ? picked.id : null}
               pathData={solar.pathData}
               simTime={simTimeOf(minutes)}
               simPos={solar.simPos}

@@ -9,7 +9,7 @@ import { useEffect, useMemo, useRef } from 'react';
 // Diagnostics for the parent<->iframe handshake. On in dev, silent in
 // production: this channel is invisible when it breaks, and a failure in it
 // looks exactly like a map that never loaded.
-export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTimes, animating, onLocationSelect, onScreenshot, onReady, onStatus, debug }) {
+export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTimes, animating, onLocationSelect, onScreenshot, onReady, onStatus, debug, highlightId }) {
   // Diagnostics for the parent<->iframe handshake. Dev by default, and
   // switchable on in a production build (?debug=1): when this channel
   // breaks it is completely invisible, and a break in it looks exactly
@@ -42,6 +42,11 @@ export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTi
     const nowMins = new Date().getHours()*60+new Date().getMinutes();
     let startIdx=0, bd=99999;
     for(let i=0;i<pathData.length;i++){const[h,m]=pathData[i].time.split(':').map(Number);const d=Math.abs(h*60+m-nowMins);if(d<bd){bd=d;startIdx=i;}}
+
+    // The tapped tower, tinted. Baked into the scene rather than applied
+    // after the click: moving the pin rebuilds this document, which would
+    // wipe a highlight set on the old one.
+    const hlId = highlightId ? JSON.stringify(String(highlightId)) : 'null';
 
     const steps=20, rd=0.000035, ring=[];
     for(let i=0;i<=steps;i++){const a=2*Math.PI*i/steps;ring.push([lon+rd*Math.cos(a)/Math.cos(lat*Math.PI/180),lat+rd*Math.sin(a)]);}
@@ -380,6 +385,12 @@ HTMLCanvasElement.prototype.getContext=function(type,attrs){
 const map=new OSMBuildings({container:'map',position:{latitude:${lat},longitude:${lon}},zoom:initZoom,minZoom:13,maxZoom:20,tilt:curTilt,rotation:curRot,effects:['shadows'],attribution:''});
 HTMLCanvasElement.prototype.getContext=_origGetContext;
 map.setDate(new Date('${simIso}'));
+// A light warm tint, just enough to find your tower again -- not a
+// fill that competes with the shadows.
+var HL_COLOR='#E9B98F';
+var HL_ID=${hlId};
+function applyHL(){ if(HL_ID){ try{ map.highlight(HL_ID, HL_COLOR); }catch(e){} } }
+applyHL(); setTimeout(applyHL, 1200); setTimeout(applyHL, 3500);
 tL=map.addMapTiles(TILES.s);
 map.addGeoJSONTiles('https://{s}.data.osmbuildings.org/0.2/59fcc2e8/tile/{z}/{x}/{y}.json');
 map.addGeoJSON(${obsGj});
@@ -480,11 +491,33 @@ drawArc();
 var _mmoved=false, _mdx=0, _mdy=0, _tsx=0, _tsy=0;
 var mapEl=document.getElementById('map');
 
+// A tap reports which building it hit as well as where. getTarget is the
+// renderer's own hit test (it reads the picking buffer, async); if it is
+// missing, slow, or the tap hit the ground, the pin still moves -- only
+// the tint is skipped.
+function reportPick(clientX, clientY){
+  var rect=mapEl.getBoundingClientRect();
+  var x=clientX-rect.left, y=clientY-rect.top, pos;
+  try{ pos=map.unproject(x,y); }catch(err){ return; }
+  if(!pos||pos.latitude==null) return;
+  var sent=false;
+  function send(id){
+    if(sent) return; sent=true;
+    if(id){ HL_ID=id; applyHL(); }
+    window.parent.postMessage({type:'map3d_click',lat:pos.latitude,lon:pos.longitude,buildingId:id||null},'*');
+  }
+  if(typeof map.getTarget==='function'){
+    var t=setTimeout(function(){ send(null); },400);
+    try{ map.getTarget(x,y,function(id){ clearTimeout(t); send(id); }); }
+    catch(err){ clearTimeout(t); send(null); }
+  } else { send(null); }
+}
+
 mapEl.addEventListener('mousedown',function(e){_mmoved=false;_mdx=e.clientX;_mdy=e.clientY;});
 mapEl.addEventListener('mousemove',function(e){if(Math.abs(e.clientX-_mdx)>5||Math.abs(e.clientY-_mdy)>5)_mmoved=true;});
 mapEl.addEventListener('click',function(e){
   if(_mmoved)return;
-  try{var rect=mapEl.getBoundingClientRect();var pos=map.unproject(e.clientX-rect.left,e.clientY-rect.top);if(pos&&pos.latitude!=null)window.parent.postMessage({type:'map3d_click',lat:pos.latitude,lon:pos.longitude},'*');}catch(err){}
+  reportPick(e.clientX, e.clientY);
 });
 
 mapEl.addEventListener('touchstart',function(e){_mmoved=false;_tsx=e.touches[0].clientX;_tsy=e.touches[0].clientY;},{passive:true});
@@ -492,7 +525,7 @@ mapEl.addEventListener('touchmove',function(e){if(Math.abs(e.touches[0].clientX-
 mapEl.addEventListener('touchend',function(e){
   if(_mmoved)return;
   var touch=e.changedTouches[0];
-  try{var rect=mapEl.getBoundingClientRect();var pos=map.unproject(touch.clientX-rect.left,touch.clientY-rect.top);if(pos&&pos.latitude!=null)window.parent.postMessage({type:'map3d_click',lat:pos.latitude,lon:pos.longitude},'*');}catch(err){}
+  reportPick(touch.clientX, touch.clientY);
 });
 
 map.on('change',function(){try{var z=map.position?map.position.zoom:initZoom;if(z)initZoom=z;}catch(e){}saveCamera();});
@@ -612,7 +645,7 @@ mapIsUp = true;
 notifyParent('map3d_ready');
 </script></body></html>`;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lat, lon, pathData.length > 0 ? pathData[0].iso.slice(0,10) : '']);
+  }, [lat, lon, highlightId, pathData.length > 0 ? pathData[0].iso.slice(0,10) : '']);
 
   useEffect(() => {
     const handler = (e) => {
@@ -620,7 +653,7 @@ notifyParent('map3d_ready');
       // that can post here could move the pin or inject a frame into a
       // capture -- and a report is meant to be evidence.
       if (iframeRef.current && e.source !== iframeRef.current.contentWindow) return;
-      if(e.data?.type==='map3d_click' && onLocationSelect) onLocationSelect(e.data.lat, e.data.lon);
+      if(e.data?.type==='map3d_click' && onLocationSelect) onLocationSelect(e.data.lat, e.data.lon, { buildingId: e.data.buildingId ?? null });
       if(e.data?.type==='screenshotReady' && onScreenshot) onScreenshot(e.data.label, e.data.data);
       // Real readiness/failure, reported by the iframe document itself
       // rather than guessed from this component's mount -- see the
