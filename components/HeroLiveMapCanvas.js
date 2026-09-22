@@ -109,7 +109,7 @@ const KIND_LABELS = { city: 'City', neighbourhood: 'Neighbourhood', address: 'Ad
 // The 5 cities BlindSpot actually has neighbourhood-score coverage for --
 // named here once, for the "not covered yet" message the city panel
 // shows when someone searches a city outside that set.
-const COVERED_CITY_NAMES = 'Bangalore, Delhi NCR, Mumbai, Hyderabad and Chandigarh';
+const COVERED_CITY_NAMES = 'Bangalore, Delhi NCR, Mumbai, Hyderabad, Chandigarh and Chennai';
 
 export default function HeroLiveMapCanvas() {
   const router = useRouter();

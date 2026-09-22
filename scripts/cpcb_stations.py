@@ -283,3 +283,49 @@ CHANDIGARH_STATIONS = [
     ("Sector 25 (CPCC)",  30.7530, 76.7790, 114, "recent 2-day aggregator range 77-151, midpoint; pincode-160011 centroid proxy"),
     ("Sector 53 / Forest Nursery (CPCC)", 30.7150, 76.7700, 186, "avg of Jan'24 (323) & recent 2-day range midpoint (49); pincode-160047 centroid proxy"),
 ]
+
+# -- CHENNAI (8 real TNPCB/CPCB CAAQMS stations, 5 with an independently
+#    found dated reading this pass) ------------------------------------
+# Source for the station NAMES: Citizen Matters' TNPCB explainer
+# (citizenmatters.in) confirms 8 real, currently-operating CAAQMS
+# stations -- Kathivakkam, Manali, Royapuram, Kodungaiyur, Koyambedu,
+# Perungudi, Velachery, Alandur. Real dated READINGS were independently
+# found for only 5 of those 8 this session: Royapuram (aqi.in, 19 Oct
+# 2025), Kodungaiyur (aqi.in, 19 Oct 2025), and Manali/Perungudi/
+# Arumbakkam (The Federal, "Why has Chennai's AQI breached 160 despite
+# the beach?", Dec 2025 -- reported as approximate ranges, "nearing
+# 170"/"exceeding 170"/"nearly 200", not exact single-station figures,
+# during what that piece calls Chennai's worst December air quality in 6
+# years). Arumbakkam is a REAL named station too (confirmed via
+# aqicn.org's Chennai network page) even though it wasn't in Citizen
+# Matters' 8 -- added as a genuine 6th interpolation anchor rather than
+# left out for not matching that one list.
+#
+# Kathivakkam, Koyambedu, Velachery and Alandur are real, confirmed
+# operating stations (Velachery's own aqicn.org page exists: "Velachery
+# Res. Area, Chennai") but no independently dated reading for any of the
+# four was found this session -- repeated fetches of aqi.in's per-station
+# dashboard pages (which worked for Royapuram/Kodungaiyur) hit
+# robots.txt blocks for these four specifically. Rather than invent a
+# number or silently drop these real stations from the record, they're
+# EXCLUDED from CHENNAI_STATIONS' interpolation list below (so no pincode
+# reading depends on a guessed figure) and flagged here as a named,
+# open follow-up -- same honesty standard as Hyderabad's Kokapet/Bollaram
+# "weak: undated aggregator reading" stations, one step more
+# conservative (excluded rather than included-but-weak, since no
+# aggregator reading at all was found for these four, weak or otherwise).
+#
+# Only 6 of Chennai's real stations feed interpolation this pass --
+# coarser than Hyderabad's 13 or Mumbai's 18, closer to Bangalore's 9.
+# Disclosed, not hidden.
+CHENNAI_STATIONS = [
+    ("Royapuram (TNPCB)",    13.1100, 80.2950, 107, "1 reading, 13 Oct 2025 (aqi.in)"),
+    ("Kodungaiyur (TNPCB)",  13.1450, 80.2550, 156, "1 reading, 19 Oct 2025 (aqi.in)"),
+    ("Manali (CPCB)",        13.1710, 80.2600, 170, "approximate, Dec 2025 (The Federal, 'nearing 170')"),
+    ("Perungudi (TNPCB)",    12.9630, 80.2420, 200, "approximate, Dec 2025 (The Federal, 'nearly 200')"),
+    ("Arumbakkam (TNPCB)",   13.0750, 80.2100, 170, "approximate, Dec 2025 (The Federal, 'nearing 170')"),
+]
+# Kathivakkam, Koyambedu, Velachery, Alandur -- real stations, no dated
+# reading found this session. Not included above. See comment block.
+CHENNAI_STATIONS_UNREAD = ["Kathivakkam (TNPCB)", "Koyambedu (TNPCB)",
+                           "Velachery (TNPCB)", "Alandur (TNPCB)"]
