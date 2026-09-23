@@ -321,6 +321,10 @@ export default function ReportScreen({ view = 'verdict' }) {
   // already work, so standing a dialog in front of them to collect the
   // same two values was a second copy of a thing that wasn't broken.
   const [showUnitTip, setShowUnitTip] = useState(() => view === 'map');
+  // Asked for the sunlight report before floor/facing were set -- a small
+  // popup asks for both first instead of quietly building it for a
+  // default 5th floor, south-east.
+  const [unitAsk, setUnitAsk] = useState(null); // null | { floor: '', facing: '' }
 
   // The address, the unit and whether a pin was placed -- everything the
   // other screen needs to open on exactly what this one is showing.
@@ -433,6 +437,10 @@ export default function ReportScreen({ view = 'verdict' }) {
     setReportsOpen((list) => (list.includes(type) ? list : [...list, type]));
     setReportFront(type);
   }, []);
+  const requestSunReport = () => {
+    if (floorSet && facingSet) { setReportOpen('gallery'); return; }
+    setUnitAsk({ floor: floorSet ? String(floor) : '', facing: facingSet ? facing : '' });
+  };
   const closeReport = useCallback((type) => {
     setReportsOpen((list) => list.filter((t) => t !== type));
     setReportFront((f) => (f === type ? null : f));
@@ -1393,7 +1401,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                   type="button"
                   className="bsr-mapbar-report"
                   disabled={!solar?.pathData}
-                  onClick={() => setReportOpen('gallery')}
+                  onClick={requestSunReport}
                 >
                   <Sun size={15} strokeWidth={2.2} aria-hidden="true" /> Year-round sunlight report
                 </button>
@@ -1428,18 +1436,9 @@ export default function ReportScreen({ view = 'verdict' }) {
                 visit -- with nothing saying it wasn't final. Dropped
                 rather than captioned: the actual score belongs to the
                 verdict, after "Continue", not a preview here. */}
-            {/* Top-right corner, where a close control is looked for.
-                Leaving the map confirms the pin and opens the verdict --
-                same as the continue button, just the quiet way. */}
-            <button
-              type="button"
-              className="bsr-fullbar-close"
-              onClick={confirmSpot}
-              aria-label="Close the map and see the analysis"
-              title="Close the map"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
-            </button>
+            {/* No x up here any more: it looked like "cancel" but actually
+                confirmed the pin and moved on. "See the analysis" (or
+                Escape) is the one way forward. */}
 
             <p className="bsr-fullbar-where">
               <span className="bsr-fullbar-addr">
@@ -1481,7 +1480,7 @@ export default function ReportScreen({ view = 'verdict' }) {
               type="button"
               className="bsr-fullbar-sun"
               disabled={!solar?.pathData}
-              onClick={() => setReportOpen('gallery')}
+              onClick={requestSunReport}
               title="Light and shadow on this unit across all four seasons"
             >
               <Sun size={16} strokeWidth={2.2} aria-hidden="true" />
@@ -2171,7 +2170,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                 <button
                   type="button"
                   disabled={!solar?.pathData}
-                  onClick={() => setReportOpen('gallery')}
+                  onClick={requestSunReport}
                 >
                   Get the year-round sunlight report →
                 </button>
@@ -2329,6 +2328,60 @@ export default function ReportScreen({ view = 'verdict' }) {
         </>
       )}
       {reportModal}
+      {unitAsk && (() => {
+        const n = parseInt(unitAsk.floor, 10);
+        const floorOk = Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR;
+        const ok = floorOk && Boolean(unitAsk.facing);
+        const go = (e) => {
+          e.preventDefault();
+          if (!ok) return;
+          setFloor(n); setFloorText(String(n)); setFloorSet(true);
+          setFacing(unitAsk.facing); setFacingSet(true);
+          setUnitAsk(null);
+          setReportOpen('gallery');
+        };
+        return (
+          <div className="bsr-ask" role="dialog" aria-modal="true" aria-labelledby="bsr-ask-title" onMouseDown={(e) => { if (e.target === e.currentTarget) setUnitAsk(null); }}>
+            <form className="bsr-ask-card" onSubmit={go} onKeyDown={(e) => { if (e.key === 'Escape') setUnitAsk(null); }}>
+              <button type="button" className="bsr-ask-x" onClick={() => setUnitAsk(null)} aria-label="Close">×</button>
+              <p className="bsr-ask-eyebrow"><Sun size={14} strokeWidth={2.2} aria-hidden="true" /> Year-round sunlight report</p>
+              <h2 id="bsr-ask-title">Which floor, and which way does it face?</h2>
+              <p className="bsr-ask-sub">Sunlight changes a lot between floors and facings, so the report is built for your exact unit.</p>
+              <label className="bsr-ask-floor">
+                <span>Floor</span>
+                <input
+                  type="text" inputMode="numeric" pattern="[0-9]*" maxLength={2} autoFocus
+                  placeholder="e.g. 12"
+                  value={unitAsk.floor}
+                  onChange={(e) => setUnitAsk((u) => ({ ...u, floor: e.target.value.replace(/[^\d]/g, '').slice(0, 2) }))}
+                  aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
+                />
+              </label>
+              <fieldset className="bsr-ask-facing">
+                <legend>Balcony / main window faces</legend>
+                <div className="bsr-ask-grid">
+                  {['North-West', 'North', 'North-East', 'West', null, 'East', 'South-West', 'South', 'South-East'].map((f, i) => (
+                    f ? (
+                      <button
+                        key={f} type="button"
+                        className={`bsr-ask-dir${unitAsk.facing === f ? ' is-on' : ''}`}
+                        aria-pressed={unitAsk.facing === f}
+                        title={f}
+                        onClick={() => setUnitAsk((u) => ({ ...u, facing: f }))}
+                      >
+                        {FACING_SHORT[f]}
+                      </button>
+                    ) : <span key={`c${i}`} className="bsr-ask-centre" aria-hidden="true" />
+                  ))}
+                </div>
+              </fieldset>
+              <button type="submit" className="bsr-ask-go" disabled={!ok}>
+                Build the sunlight report
+              </button>
+            </form>
+          </div>
+        );
+      })()}
     </div>
   );
 }
