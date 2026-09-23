@@ -2042,3 +2042,54 @@ body.bsr-noscroll{overflow:hidden}
   40%,60%{ transform:translateX(7px) }
 }
 @media (prefers-reduced-motion:reduce){ .bsr-nudge{ animation:none } }
+
+/* ================= summary: named dial + full-report CTA ================= */
+.bsr-sum-dial{ width:140px; height:140px }
+.bsr-sum-track,.bsr-sum-arc{ stroke-width:6.5 }
+.bsr-sum-label{
+  font-family:inherit;font-size:10px;font-weight:700;letter-spacing:.2em;
+  fill:var(--text-dim,#8A7F68);
+}
+.bsr-sum-n{ margin-top:2px }
+.bsr-sum-of{ top:calc(50% + 20px) }
+.bsr-sum .bsr-answer-say{ flex:1 1 320px }
+.bsr-sum-cta{
+  flex:0 0 280px;align-self:stretch;
+  display:flex;flex-direction:column;justify-content:center;gap:6px;
+  padding:16px 18px;border-radius:14px;
+  background:var(--paper,#FFFDF8);
+  border:1px solid color-mix(in srgb, var(--brand,#3D4116) 22%, transparent);
+  box-shadow:0 4px 14px rgba(28,24,18,.06);
+}
+.bsr-sum-cta-title{
+  display:flex;align-items:center;gap:7px;margin:0 !important;
+  font-size:15px;font-weight:750;color:var(--text,#1C1812);
+}
+.bsr-sum-cta-title svg{color:var(--brand,#3D4116)}
+.bsr-sum-cta-sub{margin:0 0 6px !important;font-size:13px !important;line-height:1.45;color:var(--text-mute,#5A5140)}
+.bsr-sum-cta-go{
+  width:100%;min-height:44px;border:0;border-radius:10px;cursor:pointer;
+  font:inherit;font-size:15px;font-weight:700;
+  background:var(--brand,#3D4116);color:#FFFDF8;
+  box-shadow:0 6px 16px rgba(61,65,22,.28);
+  transition:filter .15s ease,transform .15s ease;
+}
+.bsr-sum-cta-go:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-1px)}
+.bsr-sum-cta-go:disabled{opacity:.5;cursor:default;box-shadow:none}
+.bsr-sum-cta-go:focus-visible{outline:2px solid var(--brand,#3D4116);outline-offset:3px}
+.bsr-sum-cta-note{font-size:11.5px;color:var(--text-dim,#8A7F68);text-align:center}
+@media (prefers-reduced-motion:reduce){.bsr-sum-cta-go{transition:none}.bsr-sum-cta-go:hover:not(:disabled){transform:none}}
+@media (max-width:900px){
+  .bsr-sum{flex-wrap:wrap}
+  .bsr-sum-cta{flex:1 1 100%}
+}
+@media (max-width:560px){
+  .bsr-sum-dial{width:96px;height:96px}
+  .bsr-sum-label{font-size:11px;letter-spacing:.14em}
+  .bsr-sum-n{font-size:24px;margin-top:2px}
+  .bsr-sum-of{top:calc(50% + 12px)}
+  .bsr-sum-cta{padding:14px}
+}
+@media (max-width:560px){
+  .bsr-sum .bsr-answer-say{ flex:1 1 0; min-width:0 }
+}

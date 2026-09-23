@@ -21,7 +21,7 @@ import { FACTOR_LABELS, FACING_OPTS } from '@/lib/property-score/ui';
 import { getActionItems } from '@/lib/property-score/actionItems';
 import {
   ShieldCheck, GraduationCap, Wind, Droplets, Zap, Route, Building2, Waves,
-  Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake, Sofa, ArrowDown, MapPin, Scale, FolderOpen,
+  Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake, Sofa, ArrowDown, MapPin, Scale, FolderOpen, FileText,
 } from 'lucide-react';
 import RoomPhotoAnalyzer from './RoomPhotoAnalyzer';
 import './report.css';
@@ -1854,13 +1854,20 @@ export default function ReportScreen({ view = 'verdict' }) {
             const pct = Math.max(0, Math.min(100, Number(topScore) || 0));
             return (
           <section className="bsr-answer bsr-sum" id="the-score" aria-live="polite">
-            <div className="bsr-sum-dial" role="img" aria-label={`Overall ${topScore} out of 100`}>
-              <svg viewBox="0 0 120 120" aria-hidden="true">
-                <circle cx="60" cy="60" r="52" className="bsr-sum-track" />
+            <div className="bsr-sum-dial" role="img" aria-label={`Property score ${topScore} out of 100`}>
+              <svg viewBox="0 0 150 150" aria-hidden="true">
+                <defs>
+                  <path id="bsr-sum-label-arc" d="M 13 75 A 62 62 0 0 1 137 75" />
+                </defs>
+                {/* The name of the number, set along the top of the ring. */}
+                <text className="bsr-sum-label" textAnchor="middle">
+                  <textPath href="#bsr-sum-label-arc" startOffset="50%">PROPERTY SCORE</textPath>
+                </text>
+                <circle cx="75" cy="75" r="48" className="bsr-sum-track" />
                 <circle
-                  cx="60" cy="60" r="52" className="bsr-sum-arc"
-                  strokeDasharray={`${(pct / 100) * 326.7} 326.7`}
-                  transform="rotate(-90 60 60)"
+                  cx="75" cy="75" r="48" className="bsr-sum-arc"
+                  strokeDasharray={`${(pct / 100) * 301.6} 301.6`}
+                  transform="rotate(-90 75 75)"
                 />
               </svg>
               <span className="bsr-sum-n">{topScore}</span>
@@ -1899,6 +1906,27 @@ export default function ReportScreen({ view = 'verdict' }) {
                   unit - <a href="#the-flat" onClick={scrollToUnitSet}>set the actual floor and facing</a> to score this specific flat.
                 </p>
               )}
+            </div>
+            {/* The full report is one of the main things BlindSpot does --
+                it used to live only at the very bottom of the page. */}
+            <div className="bsr-sum-cta">
+              <p className="bsr-sum-cta-title"><FileText size={16} strokeWidth={2.2} aria-hidden="true" /> The full BlindSpot report</p>
+              <p className="bsr-sum-cta-sub">
+                {hasArea
+                  ? 'Area + this flat, written up with what to verify before you buy.'
+                  : 'This flat, written up with what to verify before you buy.'}
+              </p>
+              <button
+                type="button"
+                className="bsr-sum-cta-go"
+                disabled={!solar?.pathData}
+                onClick={() => setReportOpen('full')}
+              >
+                Generate full report <span aria-hidden="true">→</span>
+              </button>
+              <span className="bsr-sum-cta-note">
+                {solar?.pathData ? 'About two minutes · keep browsing' : 'Waiting for the 3D map to load'}
+              </span>
             </div>
           </section>
             );
