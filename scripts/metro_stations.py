@@ -583,3 +583,65 @@ HYDERABAD_STATIONS = [
     ("Narayanguda", 17.393865, 78.489825, "Green", "single"),
     ("Sultan Bazaar", 17.384293, 78.483818, "Green", "single"),
 ]
+
+# Ahmedabad Metro (Red Line + Blue Line), real operational stations with
+# real, individually-verified Wikipedia infobox coordinates -- the
+# centroid-radius join method (same as Delhi/Bangalore/Mumbai/Hyderabad),
+# NOT Chennai's hand-picked name-matched dict, which missed a real
+# station once (Thiruvottiyur) purely because of a spelling/transliteration
+# mismatch. Using real coordinates + haversine distance eliminates that
+# whole error class rather than trying to catch instances of it by hand.
+#
+# Each station's coordinate was cross-checked for internal consistency
+# (no two distinct stations sharing a near-identical coordinate, the
+# Mumbai/Hyderabad Wikipedia-infobox-copy-paste bug found in a prior
+# pass) and sanity-checked against Ahmedabad's real geographic bounds.
+# None of that class of error was found here.
+#
+# 3 real, named stations have NO reliable coordinate (Wikipedia's own
+# infobox was empty or the page repeatedly failed to resolve to a
+# distinct article) and are deliberately left OUT of this list rather
+# than estimated from a neighbouring station: Paldi, Thaltej Gam,
+# Kalupur Railway Station. All three are real, currently operational
+# stations -- excluded from the geo-join only, not disclaimed as
+# non-existent.
+#
+# "Sabarmati" and "Sabarmati Railway Station" are two distinct real Red
+# Line stations (~1.85km apart, each with its own separate, real
+# Wikipedia infobox coordinate) -- not a duplicate, both included.
+AHMEDABAD_STATIONS = [
+    # Red Line
+    ("AEC", 23.07511, 72.59321),
+    ("Gandhigram", 23.02667, 72.56890),
+    ("Jivraj Park", 23.00551, 72.53357),
+    ("Motera Stadium", 23.09654, 72.60071),
+    ("Rajiv Nagar", 23.00973, 72.53686),
+    ("Ranip", 23.06774, 72.57410),
+    ("Sabarmati", 23.08564, 72.59228),
+    ("Sabarmati Railway Station", 23.06979, 72.58777),
+    ("Shreyas", 23.01364, 72.54944),
+    ("Usmanpura", 23.04600, 72.56498),
+    ("Vadaj", 23.06766, 72.56580),
+    ("Vijay Nagar", 23.05618, 72.56239),
+    ("Old High Court", 23.03733, 72.56704),  # Red/Blue interchange, counted once
+    ("APMC", 22.99773, 72.53725),
+    # Blue Line
+    ("Amraiwadi", 23.00776, 72.62866),
+    ("Apparel Park", 23.01069, 72.61807),
+    ("Commerce Six Road", 23.04070, 72.55302),
+    ("Doordarshan Kendra", 23.04817, 72.52447),
+    ("Gheekanta", 23.02860, 72.58683),
+    ("Gujarat University", 23.04486, 72.54361),
+    ("Gurukul Road", 23.04587, 72.53493),
+    ("Kankaria East", 23.01520, 72.60442),
+    ("Nirant Cross Road", 22.99982, 72.65891),
+    ("Rabari Colony", 23.00553, 72.63545),
+    ("SP Stadium", 23.03987, 72.56164),
+    ("Shahpur", 23.03920, 72.58124),
+    ("Thaltej", 23.04974, 72.51621),
+    ("Vastral", 23.00360, 72.64761),
+    ("Vastral Gam", 22.99724, 72.66766),
+]
+# Paldi, Thaltej Gam, Kalupur Railway Station -- real, operational stations,
+# no reliable coordinate found this session. Not included above, not guessed.
+AHMEDABAD_STATIONS_UNREAD = ["Paldi", "Thaltej Gam", "Kalupur Railway Station"]

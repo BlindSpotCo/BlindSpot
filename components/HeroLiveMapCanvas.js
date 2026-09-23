@@ -106,10 +106,10 @@ const TRY_PLACES = [
   { label: 'Bandra West', lat: 19.0583358, lon: 72.8302669, displayName: 'Bandra West, Mumbai, Maharashtra', postcode: null, kind: 'neighbourhood' },
 ];
 const KIND_LABELS = { city: 'City', neighbourhood: 'Neighbourhood', address: 'Address' };
-// The 5 cities BlindSpot actually has neighbourhood-score coverage for --
+// The 7 cities BlindSpot actually has neighbourhood-score coverage for --
 // named here once, for the "not covered yet" message the city panel
 // shows when someone searches a city outside that set.
-const COVERED_CITY_NAMES = 'Bangalore, Delhi NCR, Mumbai, Hyderabad, Chandigarh and Chennai';
+const COVERED_CITY_NAMES = 'Bangalore, Delhi NCR, Mumbai, Hyderabad, Chandigarh, Chennai and Ahmedabad';
 
 export default function HeroLiveMapCanvas() {
   const router = useRouter();
