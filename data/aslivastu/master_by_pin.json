@@ -8461,7 +8461,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 168,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -8493,7 +8493,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 4,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: Hutatma Chowk (0.30km, single); Chhatrapati Shivaji Maharaj Terminus (0.95km, wiki); Churchgate (0.98km, single); Vidhan Bhavan (1.45km, single)"
+      }
+    }
   },
   {
     "pin_code": "400002",
@@ -8510,7 +8520,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 298,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -8542,7 +8552,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: Kalbadevi (0.49km, single); Chhatrapati Shivaji Maharaj Terminus (0.79km, wiki); Girgaon (1.03km, single)"
+      }
+    }
   },
   {
     "pin_code": "400003",
@@ -8559,7 +8579,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 282,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -8591,7 +8611,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Chhatrapati Shivaji Maharaj Terminus (1.29km, wiki); Kalbadevi (1.33km, single)"
+      }
+    }
   },
   {
     "pin_code": "400004",
@@ -8608,7 +8638,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 266,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -8640,7 +8670,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: Girgaon (0.91km, single); Grant Road (0.98km, single)"
+      }
+    }
   },
   {
     "pin_code": "400005",
@@ -8689,7 +8729,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Cuffe Parade (1.10km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400006",
@@ -8738,7 +8788,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Grant Road at 2.49km."
+      }
+    }
   },
   {
     "pin_code": "400007",
@@ -8755,7 +8815,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 218,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -8787,7 +8847,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: Grant Road (0.52km, single); Jagannath Shankar Sheth Road (1.29km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400008",
@@ -8804,7 +8874,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 202,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -8836,7 +8906,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Jagannath Shankar Sheth Road (0.33km, wiki); Grant Road (0.79km, single); Mahalaxmi (1.25km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400009",
@@ -8885,7 +8965,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Girgaon at 1.94km."
+      }
+    }
   },
   {
     "pin_code": "400010",
@@ -8934,7 +9024,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Jagannath Shankar Sheth Road at 2.17km."
+      }
+    }
   },
   {
     "pin_code": "400011",
@@ -8951,7 +9051,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 245,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -8983,7 +9083,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Mahalaxmi (0.39km, wiki); Jagannath Shankar Sheth Road (0.65km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400012",
@@ -9032,7 +9142,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Science Centre at 1.63km."
+      }
+    }
   },
   {
     "pin_code": "400013",
@@ -9049,7 +9169,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 213,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -9081,7 +9201,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Science Centre (0.96km, wiki); Acharya Atre Chowk (1.29km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400014",
@@ -9098,7 +9228,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 278,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -9133,12 +9263,12 @@
     "discom_confidence": "zone",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "Mumbai Metro Line 3 (Aqua Line) official station list",
-        "method": "name-matched against real, currently operational station list",
-        "as_of": "2026-09-19",
-        "confidence": "high",
-        "note": "Dadar station (opened 2025) shares this pin's own area name"
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: Dadar (0.80km, single); Siddhivinayak (1.43km, wiki)"
       }
     }
   },
@@ -9189,7 +9319,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Dadar at 2.47km."
+      }
+    }
   },
   {
     "pin_code": "400016",
@@ -9206,7 +9346,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 246,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -9238,7 +9378,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Shitaladevi Mandir (0.32km, wiki); Dharavi (1.09km, single)"
+      }
+    }
   },
   {
     "pin_code": "400017",
@@ -9287,7 +9437,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: Dharavi (0.76km, single)"
+      }
+    }
   },
   {
     "pin_code": "400018",
@@ -9304,7 +9464,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 214,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -9336,7 +9496,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Worli (0.29km, wiki); Acharya Atre Chowk (1.43km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400019",
@@ -9385,7 +9555,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Dadar at 1.68km."
+      }
+    }
   },
   {
     "pin_code": "400020",
@@ -9402,7 +9582,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 273,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 5,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -9434,7 +9614,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 5,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: Hutatma Chowk (0.47km, single); Churchgate (0.48km, single); Chhatrapati Shivaji Maharaj Terminus (0.76km, wiki); Vidhan Bhavan (1.18km, single); Kalbadevi (1.28km, single)"
+      }
+    }
   },
   {
     "pin_code": "400021",
@@ -9451,7 +9641,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 257,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -9483,7 +9673,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 4,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: Vidhan Bhavan (0.18km, single); Churchgate (0.64km, single); Hutatma Chowk (1.28km, single); Cuffe Parade (1.29km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400022",
@@ -9500,7 +9700,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 241,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -9532,7 +9732,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: Dharavi (1.45km, single)"
+      }
+    }
   },
   {
     "pin_code": "400023",
@@ -9549,7 +9759,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 225,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -9584,12 +9794,12 @@
     "discom_confidence": "zone",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "Mumbai Metro Line 3 (Aqua Line) official station list",
-        "method": "name-matched against real, currently operational station list",
-        "as_of": "2026-09-19",
-        "confidence": "high",
-        "note": "Hutatma Chowk station (opened 2025) shares this pin's own area name"
+        "value": 4,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: Hutatma Chowk (0.14km, single); Churchgate (0.73km, single); Chhatrapati Shivaji Maharaj Terminus (0.95km, wiki); Vidhan Bhavan (1.22km, single)"
       }
     }
   },
@@ -9640,7 +9850,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Bandra Kurla Complex at 3.15km."
+      }
+    }
   },
   {
     "pin_code": "400025",
@@ -9657,7 +9877,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 274,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -9689,7 +9909,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Siddhivinayak (0.29km, wiki); Worli (1.29km, wiki); Dadar (1.41km, single)"
+      }
+    }
   },
   {
     "pin_code": "400026",
@@ -9706,7 +9936,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 258,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -9738,7 +9968,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: Grant Road (1.10km, single)"
+      }
+    }
   },
   {
     "pin_code": "400027",
@@ -9755,7 +9995,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 242,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -9787,7 +10027,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Mahalaxmi (0.94km, wiki); Jagannath Shankar Sheth Road (1.24km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400028",
@@ -9804,7 +10054,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 226,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -9836,7 +10086,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: Dadar (0.50km, single); Shitaladevi Mandir (1.22km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400029",
@@ -9853,7 +10113,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 210,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -9885,7 +10145,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Bandra Colony (0.87km, wiki); Santacruz (1.25km, wiki); Bandra Kurla Complex (1.39km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400030",
@@ -9902,7 +10172,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 285,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -9937,12 +10207,12 @@
     "discom_confidence": "zone",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "Mumbai Metro Line 3 (Aqua Line) official station list",
-        "method": "name-matched against real, currently operational station list",
-        "as_of": "2026-09-19",
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
         "confidence": "high",
-        "note": "Worli station (opened May 2025) shares this pin's own area name"
+        "note": "Within 1.5km: Worli (0.41km, wiki); Acharya Atre Chowk (0.88km, wiki)"
       }
     }
   },
@@ -9993,7 +10263,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Dadar at 2.59km."
+      }
+    }
   },
   {
     "pin_code": "400032",
@@ -10010,7 +10290,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 253,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -10045,12 +10325,12 @@
     "discom_confidence": "zone",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "Mumbai Metro Line 3 (Aqua Line) official station list",
-        "method": "name-matched against real, currently operational station list",
-        "as_of": "2026-09-19",
-        "confidence": "high",
-        "note": "Vidhan Bhavan station (opened 2025) is immediately adjacent to Mantralaya"
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: Churchgate (0.26km, single); Vidhan Bhavan (0.49km, single); Hutatma Chowk (0.96km, single)"
       }
     }
   },
@@ -10069,7 +10349,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 237,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -10101,7 +10381,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Mahalaxmi (1.48km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400034",
@@ -10118,7 +10408,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 221,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -10150,7 +10440,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Mahalaxmi (0.73km, wiki); Science Centre (1.00km, wiki); Jagannath Shankar Sheth Road (1.28km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400035",
@@ -10199,7 +10499,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Girgaon at 2.36km."
+      }
+    }
   },
   {
     "pin_code": "400036",
@@ -10216,7 +10526,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 189,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -10248,7 +10558,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: Grant Road (0.84km, single); Jagannath Shankar Sheth Road (1.47km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400037",
@@ -10297,7 +10617,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Dadar at 2.77km."
+      }
+    }
   },
   {
     "pin_code": "400038",
@@ -10314,7 +10644,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 238,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -10346,7 +10676,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Chhatrapati Shivaji Maharaj Terminus (0.88km, wiki); Hutatma Chowk (1.21km, single); Kalbadevi (1.33km, single)"
+      }
+    }
   },
   {
     "pin_code": "400039",
@@ -10363,7 +10703,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 222,
     "zone_type": "Institutional",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -10395,7 +10735,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: Hutatma Chowk (0.39km, single); Chhatrapati Shivaji Maharaj Terminus (0.89km, wiki); Churchgate (1.10km, single)"
+      }
+    }
   },
   {
     "pin_code": "400049",
@@ -10444,7 +10794,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: D N Nagar at 2.32km."
+      }
+    }
   },
   {
     "pin_code": "400050",
@@ -10461,7 +10821,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 243,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -10496,12 +10856,12 @@
     "discom_confidence": "zone",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "Mumbai Metro Line 3 (Aqua Line) official station list",
-        "method": "name-matched against real, currently operational station list",
-        "as_of": "2026-09-19",
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
         "confidence": "high",
-        "note": "Bandra Colony station (opened 2025) sits in this pin's own area"
+        "note": "No station within 1.5km. Nearest overall: Bandra Colony at 2.38km."
       }
     }
   },
@@ -10520,7 +10880,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 227,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -10552,7 +10912,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Bandra Kurla Complex (1.48km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400052",
@@ -10569,7 +10939,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 211,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -10604,12 +10974,12 @@
     "discom_confidence": "zone",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "YoMetro distance lookup: Santacruz metro station (Mumbai Metro Line 3, Aqua Line)",
-        "method": "name-match / real-distance lookup against a named, currently operational station (pre-monetization audit, 2026-09-22)",
-        "as_of": "2026-09-22",
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
         "confidence": "high",
-        "note": "Santacruz station is 0.64km from Khar West, well within any reasonable walking-distance radius."
+        "note": "Within 1.5km: Santacruz (1.19km, wiki); Bandra Colony (1.24km, wiki)"
       }
     }
   },
@@ -10628,7 +10998,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 276,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 5,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -10660,7 +11030,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 5,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Andheri West (0.21km, wiki); D N Nagar (0.29km, wiki); Azad Nagar (0.52km, wiki); Versova (1.25km, wiki); Lower Oshiwara (1.42km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400054",
@@ -10736,7 +11116,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 244,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -10768,7 +11148,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Santacruz (0.43km, wiki); CSMIA Airport T1 (1.45km, single); Bandra Colony (1.49km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400056",
@@ -10817,7 +11207,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: CSMIA Airport T1 at 1.77km."
+      }
+    }
   },
   {
     "pin_code": "400057",
@@ -10834,7 +11234,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 212,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -10866,7 +11266,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: CSMIA Airport T1 (0.68km, single)"
+      }
+    }
   },
   {
     "pin_code": "400058",
@@ -10883,7 +11293,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 196,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 5,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -10915,7 +11325,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 5,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Andheri West (0.33km, wiki); D N Nagar (0.35km, wiki); Versova (0.80km, wiki); Azad Nagar (1.03km, wiki); Lower Oshiwara (1.12km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400059",
@@ -10932,7 +11352,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 180,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -10964,7 +11384,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 4,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Marol Naka (0.74km, wiki); Airport Road (0.96km, wiki); MIDC Andheri (1.08km, single); Saki Naka (1.28km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400060",
@@ -10981,7 +11411,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 255,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -11016,12 +11446,12 @@
     "discom_confidence": "zone",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "Mumbai Metro Line 7 official station list",
-        "method": "name-matched against real, currently operational station list",
-        "as_of": "2026-09-19",
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
         "confidence": "high",
-        "note": "Jogeshwari East station (opened 2022/23) shares this pin's own area name"
+        "note": "Within 1.5km: Jogeshwari East (0.45km, wiki); Mogra (1.27km, wiki); Goregaon East (1.42km, wiki)"
       }
     }
   },
@@ -11072,7 +11502,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Versova (0.78km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400062",
@@ -11121,7 +11561,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Aarey (1.13km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400063",
@@ -11170,7 +11620,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Aarey (1.43km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400064",
@@ -11187,7 +11647,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 272,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -11219,7 +11679,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Malad West (0.45km, wiki); Valnai-Meeth Chowky (1.37km, wiki); Lower Malad (1.50km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400065",
@@ -11236,7 +11706,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 256,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -11268,7 +11738,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Aarey JVLR at 2.71km."
+      }
+    }
   },
   {
     "pin_code": "400066",
@@ -11285,7 +11765,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 240,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -11320,12 +11800,12 @@
     "discom_confidence": "edge",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "Mumbai Metro Line 7 official station list",
-        "method": "name-matched against real, currently operational station list",
-        "as_of": "2026-09-19",
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
         "confidence": "high",
-        "note": "Magathane station (opened 2022/23) shares this pin's own area name"
+        "note": "Within 1.5km: Devipada (0.42km, wiki); Rashtriya Udyan (0.77km, wiki)"
       }
     }
   },
@@ -11344,7 +11824,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 224,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -11376,7 +11856,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Dahanukarwadi (0.23km, wiki); Valnai-Meeth Chowky (0.91km, wiki); Kandivli West (1.11km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400068",
@@ -11393,7 +11883,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 208,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 5,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -11425,7 +11915,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "edge"
+    "discom_confidence": "edge",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 5,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Anand Nagar (0.74km, wiki); Dahisar East (0.90km, wiki); Kandarpada (0.92km, wiki); Ovaripada (1.29km, wiki); Mandapeshwar (1.47km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400069",
@@ -11442,7 +11942,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 257,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -11474,7 +11974,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 4,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Andheri (0.36km, wiki); Gundavali (1.02km, wiki); Western Express Highway (1.12km, wiki); Azad Nagar (1.31km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400090",
@@ -11491,7 +12001,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 220,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -11526,12 +12036,12 @@
     "discom_confidence": "zone",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "Mumbai Metro Line 2A official station list",
-        "method": "name-matched against real, currently operational station list",
-        "as_of": "2026-09-19",
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
         "confidence": "high",
-        "note": "Bangur Nagar station (opened 2022/23) shares this pin's own area name"
+        "note": "Within 1.5km: Bangur Nagar (0.75km, wiki); Goregaon West (1.20km, wiki); Lower Malad (1.35km, wiki)"
       }
     }
   },
@@ -11550,7 +12060,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 285,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -11582,7 +12092,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Rashtriya Udyan (0.76km, wiki); Devipada (1.07km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400092",
@@ -11599,7 +12119,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 269,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -11631,7 +12151,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Shimpoli (1.06km, wiki); Borivali West (1.08km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400093",
@@ -11648,7 +12178,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 253,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 7,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -11680,7 +12210,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 7,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Chakala (J B Nagar) (0.12km, wiki); Airport Road (0.71km, wiki); MIDC Andheri (0.91km, single); Sahar Road (1.02km, wiki); Marol Naka (1.25km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400095",
@@ -11729,7 +12269,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Versova at 3.68km."
+      }
+    }
   },
   {
     "pin_code": "400096",
@@ -11746,7 +12296,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 270,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 5,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -11778,7 +12328,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 5,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: MIDC Andheri (0.31km, single); Chakala (J B Nagar) (0.85km, wiki); Airport Road (1.05km, wiki); SEEPZ (1.18km, single); Marol Naka (1.50km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400097",
@@ -11795,7 +12355,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 254,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -11827,7 +12387,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Dindoshi (0.43km, wiki); Kurar (0.54km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400098",
@@ -11844,7 +12414,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 238,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -11876,7 +12446,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Bandra Kurla Complex at 1.65km."
+      }
+    }
   },
   {
     "pin_code": "400099",
@@ -11893,7 +12473,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 303,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -11925,7 +12505,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Sahar Road (0.55km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400101",
@@ -11942,7 +12532,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 293,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -11974,7 +12564,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Poisar (0.15km, wiki); Akurli (0.65km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400102",
@@ -11991,7 +12591,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 277,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 5,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -12026,12 +12626,12 @@
     "discom_confidence": "zone",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "Mumbai Metro Line 2A official station list",
-        "method": "name-matched against real, currently operational station list",
-        "as_of": "2026-09-19",
+        "value": 5,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
         "confidence": "high",
-        "note": "Oshiwara station (opened 2022/23) shares this pin's own area name"
+        "note": "Within 1.5km: Azad Nagar (1.07km, wiki); Lower Oshiwara (1.11km, wiki); Andheri West (1.26km, wiki); Oshiwara (1.34km, wiki); D N Nagar (1.43km, wiki)"
       }
     }
   },
@@ -12050,7 +12650,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 261,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -12085,12 +12685,12 @@
     "discom_confidence": "zone",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "Mumbai Metro Line 2A official station list",
-        "method": "name-matched against real, currently operational station list",
-        "as_of": "2026-09-19",
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
         "confidence": "high",
-        "note": "Mandapeshwar station (opened 2022/23) shares this pin's own area name"
+        "note": "Within 1.5km: Eksar (0.55km, wiki); Borivali West (1.05km, wiki); Mandapeshwar (1.31km, wiki)"
       }
     }
   },
@@ -12109,7 +12709,7 @@
     "aqi_category": "Satisfactory",
     "total_cognizable_crimes": 245,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -12141,7 +12741,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Bangur Nagar (0.60km, wiki); Goregaon West (0.61km, wiki); Oshiwara (1.40km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400070",
@@ -12190,7 +12800,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Bandra Kurla Complex at 2.90km."
+      }
+    }
   },
   {
     "pin_code": "400071",
@@ -12207,7 +12827,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 281,
     "zone_type": "Industrial",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -12239,7 +12859,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Ghatkopar at 3.94km."
+      }
+    }
   },
   {
     "pin_code": "400072",
@@ -12256,7 +12886,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 265,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 1,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -12291,12 +12921,12 @@
     "discom_confidence": "zone",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "Mumbai Metro Line 1 official station list",
-        "method": "name-matched against real, currently operational station list",
-        "as_of": "2026-09-19",
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
         "confidence": "high",
-        "note": "Saki Naka station (operational since 2014) shares this pin's own area name"
+        "note": "Within 1.5km: Saki Naka (0.61km, wiki); Marol Naka (0.89km, wiki); Airport Road (1.40km, wiki)"
       }
     }
   },
@@ -12347,7 +12977,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Ghatkopar at 7.74km."
+      }
+    }
   },
   {
     "pin_code": "400074",
@@ -12396,7 +13036,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Ghatkopar at 5.75km."
+      }
+    }
   },
   {
     "pin_code": "400075",
@@ -12413,7 +13063,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 217,
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -12445,7 +13095,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Ghatkopar (0.53km, wiki); Jagruti Nagar (1.38km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400076",
@@ -12494,7 +13154,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Saki Naka at 2.41km."
+      }
+    }
   },
   {
     "pin_code": "400077",
@@ -12511,7 +13181,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 266,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -12543,7 +13213,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Ghatkopar (0.07km, wiki); Jagruti Nagar (0.98km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400078",
@@ -12592,7 +13272,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Aarey JVLR at 5.53km."
+      }
+    }
   },
   {
     "pin_code": "400079",
@@ -12641,7 +13331,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Ghatkopar at 3.25km."
+      }
+    }
   },
   {
     "pin_code": "400080",
@@ -12690,7 +13390,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "edge"
+    "discom_confidence": "edge",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Aarey JVLR at 7.60km."
+      }
+    }
   },
   {
     "pin_code": "400081",
@@ -12739,7 +13449,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "edge"
+    "discom_confidence": "edge",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Aarey JVLR at 8.88km."
+      }
+    }
   },
   {
     "pin_code": "400082",
@@ -12788,7 +13508,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "edge"
+    "discom_confidence": "edge",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Aarey JVLR at 7.88km."
+      }
+    }
   },
   {
     "pin_code": "400083",
@@ -12837,7 +13567,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Ghatkopar at 3.33km."
+      }
+    }
   },
   {
     "pin_code": "400084",
@@ -12886,7 +13626,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Asalpha at 2.70km."
+      }
+    }
   },
   {
     "pin_code": "400085",
@@ -12935,7 +13685,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Ghatkopar at 7.60km."
+      }
+    }
   },
   {
     "pin_code": "400094",
@@ -12984,7 +13744,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Ghatkopar at 6.71km."
+      }
+    }
   },
   {
     "pin_code": "400042",
@@ -13033,7 +13803,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Aarey JVLR at 6.16km."
+      }
+    }
   },
   {
     "pin_code": "400086",
@@ -13050,7 +13830,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 213,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -13082,7 +13862,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Jagruti Nagar (0.20km, wiki); Asalpha (0.89km, osm-corrected); Ghatkopar (0.97km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "400087",
@@ -13131,7 +13921,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Jagruti Nagar at 3.11km."
+      }
+    }
   },
   {
     "pin_code": "400088",
@@ -13148,7 +13948,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 327,
     "zone_type": "Industrial",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -13183,12 +13983,12 @@
     "discom_confidence": "edge",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "Mumbai Metro Line 2B official station list",
-        "method": "name-matched against real, currently operational station list",
-        "as_of": "2026-09-19",
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
         "confidence": "high",
-        "note": "Deonar station (opened April 2026) shares this pin's own area name"
+        "note": "No station within 1.5km. Nearest overall: Ghatkopar at 4.51km."
       }
     }
   },
@@ -13239,7 +14039,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "zone"
+    "discom_confidence": "zone",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Ghatkopar at 2.87km."
+      }
+    }
   },
   {
     "pin_code": "400043",
@@ -13288,7 +14098,17 @@
     "data_completeness": 7,
     "merged_at": "2026-08-17T00:00:00",
     "city": "Mumbai",
-    "discom_confidence": "edge"
+    "discom_confidence": "edge",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Ghatkopar at 3.63km."
+      }
+    }
   },
   {
     "pin_code": "500002",
@@ -13341,7 +14161,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: MG Bus Station at 1.91km."
+      }
+    }
   },
   {
     "pin_code": "500053",
@@ -13394,7 +14224,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: MG Bus Station at 4.28km."
+      }
+    }
   },
   {
     "pin_code": "500023",
@@ -13446,7 +14286,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: MG Bus Station at 2.69km."
+      }
+    }
   },
   {
     "pin_code": "500064",
@@ -13499,7 +14349,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: MG Bus Station at 4.20km."
+      }
+    }
   },
   {
     "pin_code": "500065",
@@ -13517,7 +14377,7 @@
     "total_cognizable_crimes": 287,
     "crime_commissionerate": "Hyderabad City",
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -13551,7 +14411,17 @@
     "flooding_incidents_annual": 5,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Malakpet (1.50km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "500058",
@@ -13604,7 +14474,17 @@
     "flooding_incidents_annual": 5,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: New Market at 5.24km."
+      }
+    }
   },
   {
     "pin_code": "500059",
@@ -13657,7 +14537,17 @@
     "flooding_incidents_annual": 4,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Musarambagh at 3.13km."
+      }
+    }
   },
   {
     "pin_code": "500012",
@@ -13676,7 +14566,7 @@
     "total_cognizable_crimes": 356,
     "crime_commissionerate": "Hyderabad City",
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -13710,7 +14600,17 @@
     "flooding_incidents_annual": 4,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Osmania Medical College (0.28km, wiki); MG Bus Station (0.30km, wiki); Sultan Bazaar (0.78km, single)"
+      }
+    }
   },
   {
     "pin_code": "500006",
@@ -13763,7 +14663,17 @@
     "flooding_incidents_annual": 6,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: MG Bus Station at 2.30km."
+      }
+    }
   },
   {
     "pin_code": "500034",
@@ -13782,7 +14692,7 @@
     "total_cognizable_crimes": 227,
     "crime_commissionerate": "Hyderabad City",
     "zone_type": "Institutional",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -13816,7 +14726,17 @@
     "flooding_incidents_annual": 2,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Jubilee Hills Check Post (0.40km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "500033",
@@ -13835,7 +14755,7 @@
     "total_cognizable_crimes": 243,
     "crime_commissionerate": "Hyderabad City",
     "zone_type": "Institutional",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -13869,7 +14789,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: Peddamma Gudi (0.12km, single); Madhapur (1.18km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "500082",
@@ -13888,7 +14818,7 @@
     "total_cognizable_crimes": 238,
     "crime_commissionerate": "Hyderabad City",
     "zone_type": "Commercial",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -13925,12 +14855,12 @@
     "city": "Hyderabad",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "YoMetro distance lookup: Errum Manzil metro station (Hyderabad Metro Red Line)",
-        "method": "name-match / real-distance lookup against a named, currently operational station (pre-monetization audit, 2026-09-22)",
-        "as_of": "2026-09-22",
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
         "confidence": "high",
-        "note": "Errum Manzil station is 0.59km from Somajiguda, well within any reasonable walking-distance radius."
+        "note": "Within 1.5km: Irrum Manzil (0.33km, wiki); Khairatabad (0.92km, wiki)"
       }
     }
   },
@@ -13950,7 +14880,7 @@
     "total_cognizable_crimes": 244,
     "crime_commissionerate": "Hyderabad City",
     "zone_type": "Commercial",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 5,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -13984,7 +14914,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 5,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Ameerpet (0.29km, wiki); Punjagutta (0.46km, wiki); Begumpet (0.90km, wiki); Madhura Nagar (0.97km, single); S R Nagar (1.08km, single)"
+      }
+    }
   },
   {
     "pin_code": "500004",
@@ -14003,7 +14943,7 @@
     "total_cognizable_crimes": 272,
     "crime_commissionerate": "Hyderabad City",
     "zone_type": "Commercial",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -14040,12 +14980,12 @@
     "city": "Hyderabad",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "Hyderabad Metro Red Line official station list",
-        "method": "name-matched against real, currently operational station list",
-        "as_of": "2026-09-19",
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
         "confidence": "high",
-        "note": "Khairatabad station (long-operational) shares this pin's own area name"
+        "note": "Within 1.5km: Khairatabad (0.52km, wiki); Lakdi-ka-pul (0.70km, wiki); Irrum Manzil (1.48km, wiki)"
       }
     }
   },
@@ -14066,7 +15006,7 @@
     "total_cognizable_crimes": 232,
     "crime_commissionerate": "Hyderabad City",
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 1,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -14100,7 +15040,17 @@
     "flooding_incidents_annual": 2,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Lakdi-ka-pul (1.49km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "500096",
@@ -14152,7 +15102,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Jubilee Hills Check Post at 2.50km."
+      }
+    }
   },
   {
     "pin_code": "500073",
@@ -14170,7 +15130,7 @@
     "total_cognizable_crimes": 210,
     "crime_commissionerate": "Hyderabad City",
     "zone_type": "Commercial",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 5,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -14207,12 +15167,12 @@
     "city": "Hyderabad",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "YoMetro distance lookup: Peddamma Gudi metro station (Hyderabad Metro Blue Line)",
-        "method": "name-match / real-distance lookup against a named, currently operational station (pre-monetization audit, 2026-09-22)",
-        "as_of": "2026-09-22",
+        "value": 5,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
         "confidence": "high",
-        "note": "Peddamma Gudi station is 0.91km from Srinagar Colony, well within any reasonable walking-distance radius."
+        "note": "Within 1.5km: Ameerpet (0.68km, wiki); Punjagutta (0.89km, wiki); Madhura Nagar (1.15km, single); Irrum Manzil (1.27km, wiki); Begumpet (1.47km, wiki)"
       }
     }
   },
@@ -14267,7 +15227,17 @@
     "flooding_incidents_annual": 4,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Raidurg at 3.01km."
+      }
+    }
   },
   {
     "pin_code": "500081",
@@ -14286,7 +15256,7 @@
     "total_cognizable_crimes": 284,
     "crime_commissionerate": "Cyberabad",
     "zone_type": "Commercial",
-    "metro_stations_nearby": 2,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -14320,7 +15290,17 @@
     "flooding_incidents_annual": 4,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Durgam Cheruvu (0.75km, wiki); HITEC City (0.90km, wiki); Madhapur (1.43km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "500084",
@@ -14373,7 +15353,17 @@
     "flooding_incidents_annual": 4,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: HITEC City at 2.58km."
+      }
+    }
   },
   {
     "pin_code": "500089",
@@ -14426,7 +15416,17 @@
     "flooding_incidents_annual": 2,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Raidurg at 4.40km."
+      }
+    }
   },
   {
     "pin_code": "500072",
@@ -14445,7 +15445,7 @@
     "total_cognizable_crimes": 256,
     "crime_commissionerate": "Cyberabad",
     "zone_type": "Commercial",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -14479,7 +15479,17 @@
     "flooding_incidents_annual": 2,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Kukatpally (0.15km, wiki); KPHB Colony (1.37km, wiki); Dr B R Ambedkar Balanagar (1.50km, wiki-corrected)"
+      }
+    }
   },
   {
     "pin_code": "500008",
@@ -14532,7 +15542,17 @@
     "flooding_incidents_annual": 2,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Raidurg at 4.69km."
+      }
+    }
   },
   {
     "pin_code": "500090",
@@ -14585,7 +15605,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Miyapur at 3.07km."
+      }
+    }
   },
   {
     "pin_code": "500106",
@@ -14637,7 +15667,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Raidurg at 7.84km."
+      }
+    }
   },
   {
     "pin_code": "500049",
@@ -14656,7 +15696,7 @@
     "total_cognizable_crimes": 270,
     "crime_commissionerate": "Cyberabad",
     "zone_type": "Commercial",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 0,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -14690,7 +15730,17 @@
     "flooding_incidents_annual": 4,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Miyapur at 2.24km."
+      }
+    }
   },
   {
     "pin_code": "500003",
@@ -14709,7 +15759,7 @@
     "total_cognizable_crimes": 298,
     "crime_commissionerate": "Hyderabad City",
     "zone_type": "Commercial",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 5,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -14743,7 +15793,17 @@
     "flooding_incidents_annual": 5,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 5,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Parade Ground (0.38km, wiki-corrected); JBS Parade Ground (0.55km, single); Secunderabad West (0.68km, wiki); Secunderabad East (0.79km, wiki); Paradise (1.46km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "500011",
@@ -14796,7 +15856,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Rasoolpura at 2.31km."
+      }
+    }
   },
   {
     "pin_code": "500017",
@@ -14815,7 +15885,7 @@
     "total_cognizable_crimes": 246,
     "crime_commissionerate": "Hyderabad City",
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -14849,7 +15919,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 2,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Parade Ground (0.68km, wiki-corrected); JBS Parade Ground (0.75km, single)"
+      }
+    }
   },
   {
     "pin_code": "500061",
@@ -14868,7 +15948,7 @@
     "total_cognizable_crimes": 240,
     "crime_commissionerate": "Hyderabad City",
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -14902,7 +15982,17 @@
     "flooding_incidents_annual": 2,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 4,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: Gandhi Hospital (0.30km, single); Secunderabad East (0.78km, wiki); Secunderabad West (0.94km, wiki); Musheerabad (1.12km, single)"
+      }
+    }
   },
   {
     "pin_code": "500015",
@@ -14955,7 +16045,17 @@
     "flooding_incidents_annual": 2,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: JBS Parade Ground at 3.04km."
+      }
+    }
   },
   {
     "pin_code": "500047",
@@ -15008,7 +16108,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: JBS Parade Ground at 3.85km."
+      }
+    }
   },
   {
     "pin_code": "500056",
@@ -15061,7 +16171,17 @@
     "flooding_incidents_annual": 2,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Mettuguda at 5.55km."
+      }
+    }
   },
   {
     "pin_code": "500094",
@@ -15114,7 +16234,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Mettuguda at 7.23km."
+      }
+    }
   },
   {
     "pin_code": "500040",
@@ -15167,7 +16297,17 @@
     "flooding_incidents_annual": 4,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Tarnaka at 3.31km."
+      }
+    }
   },
   {
     "pin_code": "500044",
@@ -15186,7 +16326,7 @@
     "total_cognizable_crimes": 289,
     "crime_commissionerate": "Malkajgiri",
     "zone_type": "Residential",
-    "metro_stations_nearby": 0,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -15220,7 +16360,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 4,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "medium",
+        "note": "Within 1.5km: RTC Cross Roads (0.24km, single); Chikkadpally (0.53km, single); Narayanguda (1.40km, single); Musheerabad (1.48km, single)"
+      }
+    }
   },
   {
     "pin_code": "500074",
@@ -15273,7 +16423,17 @@
     "flooding_incidents_annual": 3,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 1,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: LB Nagar (0.44km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "500039",
@@ -15292,7 +16452,7 @@
     "total_cognizable_crimes": 278,
     "crime_commissionerate": "Malkajgiri",
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 3,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -15326,7 +16486,17 @@
     "flooding_incidents_annual": 4,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 3,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "Within 1.5km: Uppal (0.56km, wiki); Stadium (0.96km, wiki); Nagole (1.02km, wiki)"
+      }
+    }
   },
   {
     "pin_code": "500062",
@@ -15379,7 +16549,17 @@
     "flooding_incidents_annual": 4,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Tarnaka at 5.46km."
+      }
+    }
   },
   {
     "pin_code": "500100",
@@ -15432,7 +16612,17 @@
     "flooding_incidents_annual": 4,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: Dr B R Ambedkar Balanagar at 10.46km."
+      }
+    }
   },
   {
     "pin_code": "500010",
@@ -15485,7 +16675,17 @@
     "flooding_incidents_annual": 5,
     "data_completeness": 7,
     "merged_at": "2026-09-06T00:00:00",
-    "city": "Hyderabad"
+    "city": "Hyderabad",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 0,
+        "source_id": "Real, named Mumbai/Hyderabad Metro station registry (scripts/metro_stations.py), built from individual Wikipedia infobox coordinates (cross-checked for internal consistency; several Wikipedia infobox errors caught and corrected -- see the registry file's own docstring) plus OSM/Mappls lookups for stations without a dedicated Wikipedia page",
+        "method": "centroid-radius join (1.5km), same method and radius as the Delhi NCR/Bangalore v1.4 fix",
+        "as_of": "2026-09-23",
+        "confidence": "high",
+        "note": "No station within 1.5km. Nearest overall: JBS Parade Ground at 6.32km."
+      }
+    }
   },
   {
     "pin_code": "160001",

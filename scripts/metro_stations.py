@@ -31,22 +31,43 @@ SOURCES (real, verifiable, checked against known geography before use)
   latitude/longitude column. Deduplicated from 85 rows to 83 unique
   stations by name.
 
-- MUMBAI_STATIONS / HYDERABAD_STATIONS: intentionally NOT populated in
-  this pass. No structured, sourced lat/lon dataset for Mumbai Metro or
-  Hyderabad Metro was found (checked: Wikipedia's "List of Mumbai Metro
-  stations" table has no coordinates column at all; no equivalent GitHub/
-  Kaggle dataset turned up the way it did for Delhi and Bangalore).
-  Assembling either list by hand from ~100+ individual Wikipedia station
-  pages would mean transcribing coordinates one at a time with no
-  independent check -- exactly the kind of unverified-scalar risk this
-  file exists to remove. Left as None so callers fail loudly instead of
-  silently scoring against an empty list; metro_stations_nearby for these
-  two cities is UNCHANGED by this pass and still carries the old,
-  known-broken zone/jitter-derived value (Mumbai 61% zero, Hyderabad 83%
-  zero across 41 pins -- this file's own audit, extending the
-  architecture doc's finding to a city it didn't originally cover).
-  Follow-up: source a real station list for these two before touching
-  their metro field.
+- MUMBAI_STATIONS (66 stations) / HYDERABAD_STATIONS (53 stations):
+  populated 2026-09-23, closing the follow-up this docstring used to
+  flag. No bulk structured dataset exists for either city (checked
+  again: Wikipedia's list pages still have no coordinates column, no
+  GitHub/Kaggle dataset turned up), so these were built by looking up
+  each individual, currently-operational station (Wikipedia infobox
+  where a dedicated page exists, OSM/Mappls cross-checked against 2+
+  sources otherwise), via 4 parallel research passes, one per
+  line-group per city.
+  That per-station approach caught real errors a bulk import would have
+  silently inherited: Wikipedia's own infoboxes for Mumbai's Asalpha
+  station and Hyderabad's Dr B R Ambedkar Balanagar, Habsiguda, and
+  Parade Ground stations are each wrong or duplicate another station's
+  coordinate outright (Parade Ground's infobox is a byte-for-byte copy
+  of Punjagutta's, 5.9km away). Each was corrected using an independent
+  source rather than propagated. Three Hyderabad stations (ESI
+  Hospital, Nampally, Gandhi Bhavan) have no reliable coordinate
+  anywhere checked (Wikipedia, Wikidata, yometro, ltmetro, railmetro,
+  nobroker, metrolinemap, OSM/mapcarta, Mappls) and are deliberately
+  left OUT rather than guessed; Victoria Memorial's only available
+  value is an unverified duplicate of LB Nagar's and is also left out
+  of the list actually used for distance joins, kept only as a comment.
+  Monorail stations and stations on lines still under construction
+  (Mumbai Line 6, Hyderabad Phase 2) are excluded -- this registry is
+  currently-operational metro only, matching what "metro_stations_nearby"
+  is supposed to mean.
+  Re-running the centroid-radius join with this registry changed
+  metro_stations_nearby for 77 of Mumbai+Hyderabad's 137 pins (both
+  up and down: several pins carried an unsourced "1" from the old
+  zone/jitter model in areas no operational line actually reaches, as
+  well as the expected undercounts) and added a real citation to 59
+  more pins whose existing value turned out to already be correct.
+  See CHANGELOG.md v1.10 for the full pass, including a handful of
+  pins (Hyderabad's Miyapur among them) where the pincode's own centroid
+  sits further from its namesake station than the standard 1.5km radius
+  -- kept consistent with the same standard applied everywhere else in
+  this dataset rather than special-cased, but worth a human sanity check.
 
 METHOD
 haversine() gives great-circle distance in km between two (lat, lon)
@@ -434,5 +455,131 @@ BANGALORE_STATIONS = [
 # rather than silently scoring every Mumbai/Hyderabad pin as "0 stations
 # within radius of an empty list", which would be a new fabricated 0, not
 # an honest gap.
-MUMBAI_STATIONS = None
-HYDERABAD_STATIONS = None
+MUMBAI_STATIONS = [
+    ("Versova", 19.13028, 72.82139, "1", "wiki"),
+    ("D N Nagar", 19.12806, 72.83028, "1", "wiki"),
+    ("Azad Nagar", 19.1269, 72.8378, "1", "wiki"),
+    ("Andheri", 19.12056, 72.84806, "1", "wiki"),
+    ("Asalpha", 19.0964, 72.8949, "1", "osm-corrected"),
+    ("Chakala (J B Nagar)", 19.112045, 72.867696, "1", "wiki"),
+    ("Saki Naka", 19.103528, 72.887962, "1", "wiki"),
+    ("Marol Naka", 19.108195, 72.879536, "1", "wiki"),
+    ("Western Express Highway", 19.11556, 72.85639, "1", "wiki"),
+    ("Ghatkopar", 19.0866611, 72.9079889, "1", "wiki"),
+    ("Jagruti Nagar", 19.092582, 72.901866, "1", "wiki"),
+    ("Airport Road", 19.11027, 72.87475, "1", "wiki"),
+    ("Andheri West", 19.1291337, 72.8314307, "2A", "wiki"),
+    ("Borivali West", 19.2313925, 72.8408607, "2A", "wiki"),
+    ("Eksar", 19.2404402, 72.8434822, "2A", "wiki"),
+    ("Kandivli West", 19.21413, 72.83735, "2A", "wiki"),
+    ("Kandarpada", 19.2565999, 72.8506506, "2A", "wiki"),
+    ("Shimpoli", 19.2228332, 72.8409432, "2A", "wiki"),
+    ("Mandapeshwar", 19.2495764, 72.8457622, "2A", "wiki"),
+    ("Dahisar East", 19.2511, 72.8670, "2A", "wiki"),
+    ("Anand Nagar", 19.257217, 72.8651362, "2A", "wiki"),
+    ("Lower Oshiwara", 19.1406979, 72.8317139, "2A", "wiki"),
+    ("Oshiwara", 19.1460351, 72.8339520, "2A", "wiki"),
+    ("Malad West", 19.18527, 72.83583, "2A", "wiki"),
+    ("Lower Malad", 19.17295, 72.83645, "2A", "wiki"),
+    ("Valnai-Meeth Chowky", 19.1968293, 72.8337752, "2A", "wiki"),
+    ("Goregaon West", 19.1530241, 72.8356664, "2A", "wiki"),
+    ("Bangur Nagar", 19.1624723, 72.8348708, "2A", "wiki"),
+    ("Dahanukarwadi", 19.20624, 72.83476, "2A", "wiki"),
+    ("CSMIA Airport T1", 19.093899, 72.853577, "3", "single"),
+    ("Sahar Road", 19.102196, 72.865236, "3", "wiki"),
+    ("MIDC Andheri", 19.117374, 72.873359, "3", "single"),
+    ("SEEPZ", 19.128741, 72.875562, "3", "single"),
+    ("Bandra Colony", 19.069963, 72.849360, "3", "wiki"),
+    ("Bandra Kurla Complex", 19.060663, 72.854680, "3", "wiki"),
+    ("Aarey JVLR", 19.130699, 72.884309, "3", "wiki"),
+    ("Santacruz", 19.079289, 72.847119, "3", "wiki"),
+    ("Acharya Atre Chowk", 18.997152, 72.817978, "3", "wiki"),
+    ("Shitaladevi Mandir", 19.038300, 72.842100, "3", "wiki"),
+    ("Dadar", 19.023704, 72.839385, "3", "single"),
+    ("Dharavi", 19.046339, 72.849685, "3", "single"),
+    ("Siddhivinayak", 19.015959, 72.830562, "3", "wiki"),
+    ("Worli", 19.008700, 72.819410, "3", "wiki"),
+    ("Mahalaxmi", 18.979467, 72.825401, "3", "wiki"),
+    ("Grant Road", 18.962986, 72.817942, "3", "single"),
+    ("Jagannath Shankar Sheth Road", 18.970826, 72.822026, "3", "wiki"),
+    ("Kalbadevi", 18.946511, 72.826943, "3", "single"),
+    ("Hutatma Chowk", 18.934066, 72.832380, "3", "single"),
+    ("Girgaon", 18.952182, 72.822131, "3", "single"),
+    ("Science Centre", 18.990490, 72.822242, "3", "wiki"),
+    ("Vidhan Bhavan", 18.924630, 72.825570, "3", "single"),
+    ("Churchgate", 18.930917, 72.826438, "3", "single"),
+    ("Cuffe Parade", 18.914256, 72.821500, "3", "wiki"),
+    ("Chhatrapati Shivaji Maharaj Terminus", 18.941326, 72.830817, "3", "wiki"),
+    ("Aarey", 19.169420, 72.858730, "7", "wiki"),
+    ("Akurli", 19.198290, 72.860650, "7", "wiki"),
+    ("Rashtriya Udyan", 19.234660, 72.863130, "7", "wiki"),
+    ("Poisar", 19.203890, 72.863420, "7", "wiki"),
+    ("Kurar", 19.187260, 72.858480, "7", "wiki"),
+    ("Ovaripada", 19.243460, 72.864200, "7", "wiki"),
+    ("Mogra", 19.128850, 72.855360, "7", "wiki"),
+    ("Devipada", 19.224250, 72.864220, "7", "wiki"),
+    ("Dindoshi", 19.179760, 72.858240, "7", "wiki"),
+    ("Gundavali", 19.115020, 72.855170, "7", "wiki"),
+    ("Goregaon East", 19.152720, 72.856520, "7", "wiki"),
+    ("Jogeshwari East", 19.143020, 72.855100, "7", "wiki"),
+]
+
+# Victoria Memorial is deliberately omitted from this list: its only
+# available coordinate (17.348426, 78.550959) is byte-for-byte identical
+# to LB Nagar's, an unverified duplicate rather than an independently
+# confirmed distinct point (see this file's own module docstring).
+HYDERABAD_STATIONS = [
+    ("Miyapur", 17.4964, 78.3731, "Red", "wiki"),
+    ("JNTU College", 17.498653, 78.388793, "Red", "wiki"),
+    ("KPHB Colony", 17.493780, 78.401795, "Red", "wiki"),
+    ("Kukatpally", 17.4851155, 78.409369, "Red", "wiki"),
+    ("Dr B R Ambedkar Balanagar", 17.476826, 78.4221146, "Red", "wiki-corrected"),
+    ("Moosapet", 17.4739606, 78.4204396, "Red", "wiki"),
+    ("Bharat Nagar", 17.463997, 78.4278693, "Red", "wiki"),
+    ("Erragadda", 17.4567784, 78.4304257, "Red", "wiki"),
+    ("S R Nagar", 17.441657, 78.439058, "Red", "single"),
+    ("Ameerpet", 17.4348028, 78.4480111, "Red", "wiki"),
+    ("Punjagutta", 17.436793, 78.443906, "Red", "wiki"),
+    ("Irrum Manzil", 17.4204695, 78.4539726, "Red", "wiki"),
+    ("Khairatabad", 17.41275, 78.45803, "Red", "wiki"),
+    ("Lakdi-ka-pul", 17.4038078, 78.4646968, "Red", "wiki"),
+    ("Assembly", 17.3978004, 78.4699168, "Red", "wiki"),
+    ("Osmania Medical College", 17.3823887, 78.4789574, "Red", "wiki"),
+    ("MG Bus Station", 17.378055, 78.480005, "Red", "wiki"),
+    ("Malakpet", 17.3772, 78.4940, "Red", "wiki"),
+    ("New Market", 17.3734, 78.5031, "Red", "wiki"),
+    ("Musarambagh", 17.3711, 78.5120, "Red", "wiki"),
+    ("Dilsukhnagar", 17.3686, 78.5257, "Red", "wiki"),
+    ("Chaitanyapuri", 17.3682882, 78.5357829, "Red", "wiki"),
+    ("LB Nagar", 17.348426, 78.550959, "Red", "wiki"),
+    ("Raidurg", 17.442222, 78.377222, "Blue", "wiki"),
+    ("HITEC City", 17.448889, 78.383056, "Blue", "wiki"),
+    ("Durgam Cheruvu", 17.44278, 78.38750, "Blue", "wiki"),
+    ("Madhapur", 17.437222, 78.398333, "Blue", "wiki"),
+    ("Peddamma Gudi", 17.4306, 78.4084, "Blue", "single"),
+    ("Jubilee Hills Check Post", 17.416389, 78.438333, "Blue", "wiki"),
+    ("Road No 5 Jubilee Hills", 17.43002, 78.42318, "Blue", "single"),
+    ("Yusufguda", 17.4350829, 78.4265277, "Blue", "wiki"),
+    ("Madhura Nagar", 17.43697, 78.4391, "Blue", "single"),
+    ("Begumpet", 17.4375, 78.45667, "Blue", "wiki"),
+    ("Prakash Nagar", 17.444722, 78.465278, "Blue", "wiki"),
+    ("Rasoolpura", 17.44333, 78.47583, "Blue", "wiki"),
+    ("Paradise", 17.4435274, 78.4850961, "Blue", "wiki"),
+    ("Parade Ground", 17.443284, 78.498881, "Blue", "wiki-corrected"),
+    ("Secunderabad East", 17.433611, 78.501667, "Blue", "wiki"),
+    ("Mettuguda", 17.435556, 78.519722, "Blue", "wiki"),
+    ("Tarnaka", 17.427778, 78.536111, "Blue", "wiki"),
+    ("Habsiguda", 17.42018, 78.54055, "Blue", "osm-corrected"),
+    ("NGRI", 17.4150, 78.5462, "Blue", "single"),
+    ("Stadium", 17.407336, 78.554261, "Blue", "wiki"),
+    ("Uppal", 17.3987948, 78.5538439, "Blue", "wiki"),
+    ("Nagole", 17.3908477, 78.5587195, "Blue", "wiki"),
+    ("JBS Parade Ground", 17.444742, 78.497303, "Green", "single"),
+    ("Secunderabad West", 17.4338060, 78.4987186, "Green", "wiki"),
+    ("Gandhi Hospital", 17.42531, 78.50184, "Green", "single"),
+    ("Musheerabad", 17.417874, 78.499505, "Green", "single"),
+    ("RTC Cross Roads", 17.407032, 78.496802, "Green", "single"),
+    ("Chikkadpally", 17.40036, 78.4949, "Green", "single"),
+    ("Narayanguda", 17.393865, 78.489825, "Green", "single"),
+    ("Sultan Bazaar", 17.384293, 78.483818, "Green", "single"),
+]
