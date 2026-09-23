@@ -1649,7 +1649,7 @@ export default function ReportScreen({ view = 'verdict' }) {
           {!fullMap && mapbarNode}
         </div>
         {!fullMap && (
-          <p className="bsr-maphint">
+          <p className={`bsr-maphint${reportRunning ? ' is-locked' : ''}`}>
             {reportRunning
               ? 'The pin is locked while the report is built from this spot - moving it now would mix two blocks into one report.'
               : 'Click again to move the pin to another building.'}
@@ -1875,7 +1875,9 @@ export default function ReportScreen({ view = 'verdict' }) {
             </div>
             <div className="bsr-answer-say">
               <p className="bsr-sum-eyebrow">
-                {hasArea ? 'At a glance · area + this flat' : 'At a glance · this flat'}
+                <span className="bsr-sum-eyebrow-full">{hasArea ? 'At a glance · area + this flat' : 'At a glance · this flat'}</span>
+                {/* Phone: the dial is too small for the curved label, so it's said here. */}
+                <span className="bsr-sum-eyebrow-ph">Property score</span>
               </p>
               <h2>{sum.headline}</h2>
               <p>

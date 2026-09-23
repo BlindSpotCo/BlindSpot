@@ -2093,3 +2093,128 @@ body.bsr-noscroll{overflow:hidden}
 @media (max-width:560px){
   .bsr-sum .bsr-answer-say{ flex:1 1 0; min-width:0 }
 }
+
+/* ================= phone pass (from real-device screenshots) ================= */
+@media (max-width:767px){
+  /* The sticky report header was ~130px of a 390px-wide screen, with
+     content showing through beneath it while scrolling. On a phone it
+     scrolls away with the page and is tighter. */
+  .bsr-head{ position:static; padding:10px 0 12px; box-shadow:none }
+  .bsr-head-row{ gap:10px }
+  .bsr-head-pin{ width:32px; height:32px; border-radius:9px }
+  .bsr-head-pin svg{ width:16px; height:16px }
+  .bsr-head .bsr-title{ font-size:10.5px }
+  .bsr-tool{ height:34px; font-size:13px !important; padding:0 10px }
+
+  /* Flat card: Floor/Faces at one size, not 17px labels and a 20px select. */
+  .bsr-unit > .bsr-set .bsr-set-field span{ font-size:14px }
+  .bsr-unit > .bsr-set select,
+  .bsr-unit > .bsr-set input[type="text"]{ font-size:16px; min-height:40px }
+
+  /* Inline map toolbar: Floor/Faces live in the flat card right above,
+     and so does the sunlight button -- on a phone the toolbar keeps only
+     what's about the map itself (play, season, full screen) on one row. */
+  .bsr-mapzone:not(.is-full) .bsr-mapbar .bsr-set-unit,
+  .bsr-mapzone:not(.is-full) .bsr-mapbar-report{ display:none }
+  .bsr-mapzone:not(.is-full) .bsr-mapbar{
+    flex-wrap:nowrap; align-items:center; gap:6px; padding:6px 8px; right:8px;
+  }
+  .bsr-mapzone:not(.is-full) .bsr-mapbar .bsr-set{ order:1; flex:1 1 auto; min-width:0; flex-basis:auto }
+  .bsr-mapzone:not(.is-full) .bsr-mapbar .bsr-set-date > span{ display:none }
+  .bsr-mapzone:not(.is-full) .bsr-mapbar .bsr-set-date,
+  .bsr-mapzone:not(.is-full) .bsr-mapbar .bsr-set-date select{ min-width:0; max-width:none; width:100% }
+  .bsr-mapzone:not(.is-full) .bsr-mapbar .bsr-mapbar-time{ order:0 }
+  .bsr-mapzone:not(.is-full) .bsr-mapbar-full{ order:2 }
+  .bsr-mapzone:not(.is-full) .bsr-mapbar-full-label{ display:none }
+  /* The map already says "Tap to move pin" itself. */
+  .bsr-maphint:not(.is-locked){ display:none }
+}
+
+/* Summary on a phone: dial beside the eyebrow + the two sub-scores, and
+   the headline/body get the full width under it -- instead of a 96px
+   dial column with nothing under it and the text squeezed beside it. */
+@media (max-width:560px){
+  .bsr-sum{ display:grid !important; grid-template-columns:88px 1fr; column-gap:14px; row-gap:0; align-items:center }
+  .bsr-sum .bsr-answer-say{ display:contents }
+  .bsr-sum-dial{ grid-column:1; grid-row:1 / span 2; width:88px; height:88px }
+  .bsr-sum-eyebrow{ grid-column:2; grid-row:1; align-self:end; font-size:10.5px !important; margin:0 0 4px !important }
+  .bsr-sum-split{ grid-column:2; grid-row:2; align-self:start; flex-direction:column; gap:2px !important; margin:0 !important; font-size:13px }
+  .bsr-sum .bsr-answer-say > h2{ grid-column:1 / -1; margin-top:14px !important; font-size:19px }
+  .bsr-sum .bsr-answer-say > p:not(.bsr-sum-eyebrow):not(.bsr-sum-split),
+  .bsr-sum .bsr-assumed-note,
+  .bsr-sum-cta{ grid-column:1 / -1 }
+  .bsr-sum-cta{ margin-top:14px }
+  .bsr-sum-n{ font-size:23px }
+  .bsr-sum-of{ top:calc(50% + 11px) }
+}
+
+/* ================= phone: compact everything ================= */
+.bsr-sum-eyebrow-ph{ display:none }
+@media (max-width:560px){
+  .bsr{ font-size:14.5px }
+
+  /* Summary: a small dial, "Property score" + the two sub-scores beside
+     it, then the headline -- one tight block, no dead corners. */
+  .bsr-sum{ grid-template-columns:60px 1fr; column-gap:12px; padding:12px 14px !important; margin-top:10px; border-radius:14px }
+  .bsr-sum-dial{ width:60px; height:60px }
+  .bsr-sum-label{ display:none }
+  .bsr-sum-dial svg{ inset:-14px; width:calc(100% + 28px); height:calc(100% + 28px); max-width:none }
+  .bsr-sum-track,.bsr-sum-arc{ stroke-width:8 }
+  .bsr-more.bsr-more-cta{ margin-top:10px !important }
+  .bsr-half .bsr-more-cta{ margin-top:10px !important }
+  .bsr-sum-n{ font-size:19px; margin-top:0 }
+  .bsr-sum-of{ display:none }
+  .bsr-sum-eyebrow-full{ display:none }
+  .bsr-sum-eyebrow-ph{ display:inline }
+  .bsr-sum-eyebrow{ font-size:10.5px !important; margin:0 0 2px !important }
+  .bsr-sum-split{ flex-direction:row !important; flex-wrap:wrap; gap:0 12px !important; font-size:12.5px }
+  .bsr-sum .bsr-answer-say > h2{ font-size:16.5px !important; margin-top:10px !important; line-height:1.3 }
+  .bsr-sum .bsr-answer-say > p:not(.bsr-sum-eyebrow):not(.bsr-sum-split){ font-size:13px !important; line-height:1.45; margin-top:2px }
+  .bsr-sum .bsr-assumed-note{ font-size:12px; padding:6px 9px; margin-top:8px }
+  .bsr-sum-cta{ margin-top:10px; padding:0; border:0; box-shadow:none; background:none; gap:4px }
+  .bsr-sum-cta-title,.bsr-sum-cta-sub{ display:none }
+  .bsr-sum-cta-go{ min-height:42px; font-size:14.5px; border-radius:9px }
+  .bsr-sum-cta-note{ font-size:11px }
+
+  /* The two halves */
+  .bsr-halves{ margin-top:12px; padding-top:12px; row-gap:18px !important }
+  .bsr-unit{ padding-top:14px !important }
+  .bsr-kicker{ font-size:10px; letter-spacing:.1em }
+  .bsr-half h2{ font-size:17px }
+  .bsr-sub{ min-height:0; font-size:12.5px; margin-top:0 }
+  .bsr-rating{ margin-top:4px; gap:8px }
+  .bsr-word{ font-size:19px }
+  .bsr-outof{ font-size:12.5px }
+  .bsr-half-toggle{ font-size:12.5px; margin-top:4px }
+  .bsr-more.bsr-more-cta{ margin-top:10px !important }
+  .bsr-more.bsr-more-cta a,
+  .bsr-more.bsr-more-cta button{ width:100%; min-height:40px; font-size:13.5px; border-radius:9px }
+  .bsr-unit > .bsr-set{ margin-top:4px }
+  .bsr-unit > .bsr-set .bsr-set-field span{ font-size:13px }
+  .bsr-unit > .bsr-set select,
+  .bsr-unit > .bsr-set input[type="text"]{ font-size:15px; min-height:36px; padding:3px 8px }
+
+  /* Map */
+  .bsr-mapzone:not(.is-full){ margin-top:14px }
+
+  /* Checklist */
+  .bsr-visit{ margin-top:12px; padding-top:12px }
+  .bsr-visit h2{ font-size:17px }
+  .bsr-todo{ margin-top:8px }
+  .bsr-todo-row{ gap:8px; padding:5px 0 2px }
+  .bsr-todo-title{ font-size:13.5px }
+  .bsr-todo-text{ font-size:12.5px; line-height:1.4 }
+  .bsr-todo-addnote{ font-size:11.5px; margin-bottom:4px }
+
+  /* Photo tool + closing */
+  .bsr-roomphoto{ margin-top:12px !important; padding-top:12px !important }
+  .bsr-close{ margin-top:14px !important; padding-top:14px !important }
+  .bsr-close h2{ font-size:16px }
+  .bsr-close > p{ font-size:13px; margin:2px auto 10px }
+  .bsr-close .bsr-cta{ width:100%; min-height:42px; font-size:14.5px }
+  .bsr-furnish{ margin-top:14px; padding:10px 12px; gap:10px }
+  .bsr-furnish-icon{ width:34px; height:34px }
+  .bsr-furnish-body strong{ font-size:14px }
+  .bsr-furnish-body span{ font-size:12px }
+  .bsr-foot{ font-size:11px }
+}
