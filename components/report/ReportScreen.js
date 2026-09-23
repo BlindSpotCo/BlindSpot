@@ -1586,6 +1586,19 @@ export default function ReportScreen({ view = 'verdict' }) {
               room to split the fields from the go button on a phone) and
               becomes an invisible wrapper past it, where .bsr-dock and
               .bsr-mapcta each take their own spot -- see report.css. */}
+          {/* The one instruction this step is about, on the map itself:
+              pick the building. Bold before a pin is placed; a quiet
+              confirmation after. pointer-events:none so taps go through
+              to the map underneath. */}
+          {fullMap && solar?.pathData && (
+            <p className={`bsr-pickhint${pinTouched ? ' is-done' : ''}`} role="status">
+              <MapPin size={16} strokeWidth={2.4} aria-hidden="true" />
+              {pinTouched
+                ? <span>Pin set. Tap another building to move it.</span>
+                : <span><strong>Tap your building on the map</strong> to set the location</span>}
+            </p>
+          )}
+
           {fullMap && (
             <div className="bsr-dockzone" ref={dockzoneRef}>
               <div className="bsr-dock">
