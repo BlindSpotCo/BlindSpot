@@ -691,7 +691,7 @@ export default function ReportModal({
 
             <p style={{ fontSize:13, color:SUB, lineHeight:1.6, marginBottom:26 }}>
               {areaRecord
-                ? `We combine your Neighbourhood Score for ${areaRecord.name || areaRecord.pin_code} with precise sun/shadow data for this exact unit - 12 real screenshots (3 per season) - then use AI to write one BlindSpot Verdict covering both. The report itself stays short and readable; the images and their descriptions sit in a gallery linked from the top of it.`
+                ? `We combine your Neighbourhood Score for ${areaRecord.name || areaRecord.pin_code} with precise sun/shadow data for this exact unit - 12 real screenshots (3 per season) - then use AI to write one BlindSpot Summary covering both. The report itself stays short and readable; the images and their descriptions sit in a gallery linked from the top of it.`
                 : 'We compute precise sun/shadow data for this exact location, capture 12 real screenshots (3 per season) at different times, then use AI to narrate the shadow patterns. The images and their descriptions open in a gallery linked from the top of the report, keeping the report itself short.'}
             </p>
 

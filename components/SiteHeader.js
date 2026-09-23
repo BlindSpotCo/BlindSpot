@@ -197,6 +197,10 @@ export default function SiteHeader({ homeHref = '/' }) {
                 <span className="btn-compare-full">Compare flats</span>
                 <span className="btn-compare-short">Compare</span>
               </Link>
+              <Link href="/floor-plan-analysis" className="btn-compare btn-furnish">
+                <span className="btn-compare-full">Furnish your home</span>
+                <span className="btn-compare-short">Furnish</span>
+              </Link>
               {!onFlow && (
                 <Link href="/#find" className="btn-cta-sm" onClick={goToSearch}>
                   <span className="btn-cta-full">Uncover Your BlindSpot</span>
@@ -242,6 +246,7 @@ export default function SiteHeader({ homeHref = '/' }) {
             <Link href="/#how-it-works" onClick={closeMobile}>How It Works</Link>
             <Link href="/#products" onClick={closeMobile}>Tools</Link>
             <Link href="/compare" onClick={closeMobile}>Compare</Link>
+            <Link href="/floor-plan-analysis" onClick={closeMobile}>Furnish your home</Link>
             <Link href="/#team" onClick={closeMobile}>The Team</Link>
             {!onFlow && <Link href="/#find" onClick={(e) => { closeMobile(); goToSearch(e); }}>Uncover Your BlindSpot</Link>}
             {checkedAuth && (

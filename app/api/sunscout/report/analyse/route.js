@@ -489,7 +489,7 @@ Note: floor clearance is an estimate based on typical urban obstruction heights,
   const hasNeighbourhood = Boolean(avRecord);
 
   const combinedGroundTruth = hasNeighbourhood ? `
-BLINDSPOT VERDICT SCORE: ${combinedScore ?? 'not computed'}/100 - built from the Neighbourhood Score (${avRecord.nqi_composite}/100, weighted ${Math.round((areaWeight ?? 0.5) * 100)}%) and this unit's Home Comfort Score (${unitScore ?? 'not computed'}/100, weighted ${Math.round((unitWeight ?? 0.5) * 100)}%). Treat both of these figures as fact, do not recompute them.` : '';
+BLINDSPOT OVERALL SCORE: ${combinedScore ?? 'not computed'}/100 - built from the Neighbourhood Score (${avRecord.nqi_composite}/100, weighted ${Math.round((areaWeight ?? 0.5) * 100)}%) and this unit's Home Comfort Score (${unitScore ?? 'not computed'}/100, weighted ${Math.round((unitWeight ?? 0.5) * 100)}%). Treat both of these figures as fact, do not recompute them.` : '';
 
   // Section numbers. The order is the order someone actually asks their
   // questions in: is this a good buy, what would living here be like, is it
@@ -507,7 +507,7 @@ BLINDSPOT VERDICT SCORE: ${combinedScore ?? 'not computed'}/100 - built from the
   // reader met the same finding three or four times in different words.
   // Now every fact has one home; other sections may only point at it.
   const verdictInstruction = hasNeighbourhood
-    ? `1. BLINDSPOT VERDICT
+    ? `1. BLINDSPOT SUMMARY
 Write this to the person, not about the property. Use "you". No bullets, no lists of numbers, no headings inside it.
 
 Four to five sentences, in the plainest English you have - the way you'd answer a friend who asked "should I buy this?" over the phone. Cover, in this order: what kind of place this is to live in, what this particular flat is like day to day, the one thing that would most worry you about it, and your actual call - worth pursuing, worth pursuing once one thing checks out, or better to keep looking. Commit to one of those three; a verdict that refuses to land is not a verdict.
@@ -532,12 +532,12 @@ For each, open with a plain verdict - "Yes", "Yes, with one caveat", "Probably n
 Then one final "- " line beginning exactly "Main Deal-Breaker: " naming the single biggest risk or limitation of this property as a whole - the one thing most likely to make a buyer walk away - in one plain sentence. This is about the property itself, not a buyer type, and it must not repeat a point already made above in this section.
 
 ${neighbourhoodSectionNumber}. NEIGHBOURHOOD FULL ANALYSIS
-Three to five sentences. Do NOT restate the ground-truth numbers one by one - they are already shown as bars beside this section, so repeating them adds nothing. Do not repeat a point already made in the Verdict or "What Living Here Is Actually Like" above - go deeper into the area than either of those, don't retell them.
+Three to five sentences. Do NOT restate the ground-truth numbers one by one - they are already shown as bars beside this section, so repeating them adds nothing. Do not repeat a point already made in the Summary or "What Living Here Is Actually Like" above - go deeper into the area than either of those, don't retell them.
 
 Analyse instead: which one or two factors are this area's real strength, which one or two are its real weakness, and what that combination means for someone living here. Weave the specific numbers in as evidence for a point, never as a checklist. Organise around the two or three things that actually matter here rather than touring every field. Cover the price context honestly - whether the band reads as good value for these fundamentals, priced in line, or a premium for the location, and say which.
 
 This section is about the AREA ONLY - no sunlight, no shadows, no talk of this specific unit.`
-    : `1. BLINDSPOT VERDICT
+    : `1. BLINDSPOT SUMMARY
 Write this to the person, not about the property. Use "you", plain English, no bullets.
 
 Four to five sentences: what this flat is like to live in for light and comfort day to day, what changes across the year, the one thing that would most worry you, and your actual call - worth pursuing, worth pursuing once one thing checks out, or keep looking. Commit to one.
@@ -605,7 +605,7 @@ Write personally, not clinically - like a knowledgeable friend giving honest adv
 Plain language throughout, not just the verdict's opening lines: explain any real-estate or technical term the first time it appears (azimuth, NQI, feasibility band, etc.) in a short clause rather than assuming the reader already knows it, and prefer the everyday word over the technical one wherever both say the same thing.
 ${persona ? `\nWHO'S READING THIS: ${persona.reportFocus}\n` : ''}
 ${personalizeAnswers ? `\nTHEIR OWN ANSWERS, ASKED RIGHT BEFORE GENERATING THIS REPORT: ${personalizeAnswers}\nUse these to decide what to lead with and dwell on, even where it cuts against the persona default above - if they flagged a priority that isn't normally emphasised for this reader type, still give it real space, since they told you directly it matters to them, which outweighs an assumed default.\n` : ''}
-${safeCustomNote ? `\nTHE BUYER'S OWN REQUEST - they typed this themselves right before generating this report, so treat it as the single strongest signal of what they actually care about, above persona defaults or generic coverage: "${safeCustomNote}"\nDirectly address this in the BlindSpot Verdict section - do not just mention it in passing, actually answer it using the ground-truth data above. If the data above genuinely doesn't cover what they asked (e.g. they asked about something this report doesn't measure), say so plainly rather than inventing an answer. Never quote their request back verbatim or write "you mentioned" - just make sure the answer is unmistakably there.\n` : ''}
+${safeCustomNote ? `\nTHE BUYER'S OWN REQUEST - they typed this themselves right before generating this report, so treat it as the single strongest signal of what they actually care about, above persona defaults or generic coverage: "${safeCustomNote}"\nDirectly address this in the BlindSpot Summary section - do not just mention it in passing, actually answer it using the ground-truth data above. If the data above genuinely doesn't cover what they asked (e.g. they asked about something this report doesn't measure), say so plainly rather than inventing an answer. Never quote their request back verbatim or write "you mentioned" - just make sure the answer is unmistakably there.\n` : ''}
 
 FORMATTING RULES (follow exactly, every time, regardless of location):
 - Never use emoji, anywhere, in any section, under any circumstances - not as bullet markers, not as decoration, not inline in a sentence. Plain text only.

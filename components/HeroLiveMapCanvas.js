@@ -31,6 +31,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import PinDropTransition from '@/components/PinDropTransition';
 import { scoreColor } from '@/components/property-score/AVDetailedReadout';
 import TypewriterCycle from '@/components/TypewriterCycle';
+import { TRY_PLACES_BY_CITY, DEFAULT_TRY_PLACES, CITY_CENTRES, nearestCoveredCity } from '@/lib/tryPlaces';
 
 // The hero backdrop is a recorded clip of the real sun/shadow animation
 // (Map3DShadow, same component the report page uses), not a live 3D
@@ -80,31 +81,9 @@ const BLINDSPOT_EXAMPLES = [
 // and this is just the label each suggestion in the dropdown wears so
 // it's clear what you're about to pick.
 const SEARCH_PLACEHOLDER = 'Enter society name, landmark, or address...';
-// One-click examples under the search box, one per covered city where it
-// fits. A real building first, so the chips show that a specific address
-// works as well as an area -- that is the more useful thing to learn from
-// them.
-//
-// Hardcoded results (each field is exactly what pick() expects), not a
-// query string re-resolved on every click, for two real reasons found
-// while chasing a reported "lag" on these chips: (1) Photon + Nominatim
-// are free public demo instances (see geocode-suggest/route.js's own
-// comment) that can take well over a second to answer -- a real delay,
-// not an animation-timing bug, for a click that should be instant since
-// the place never changes. (2) naively taking the first search result for
-// a plain neighbourhood query often lands on a random nearby street
-// instead of the neighbourhood itself -- "Sector 7, Chandigarh" resolved
-// to "Sukhna Path, 7, Chandigarh" (a different street entirely), and
-// "Bandra West, Mumbai" resolved to "Gurunanak Marg", both confirmed live
-// against /api/sunscout/geocode-suggest. Every value below is a real
-// result from that same endpoint, picked out by hand instead of trusting
-// index 0.
-const TRY_PLACES = [
-  { label: 'Prestige Park Grove', lat: 13.0157282, lon: 77.7539999, displayName: 'Prestige Park Grove (u/c), Doddabanahalli, Karnataka', postcode: null, kind: 'address' },
-  { label: 'Hauz Khas', lat: 28.5536023, lon: 77.1948144, displayName: 'Hauz Khas, South Delhi, Delhi', postcode: '110016', kind: 'neighbourhood' },
-  { label: 'Sector 7', lat: 30.7358664, lon: 76.8042826, displayName: 'Sector 7, Chandigarh', postcode: '160007', kind: 'neighbourhood' },
-  { label: 'Bandra West', lat: 19.0583358, lon: 72.8302669, displayName: 'Bandra West, Mumbai, Maharashtra', postcode: null, kind: 'neighbourhood' },
-];
+// One-click examples under the search box. Which ones depends on where the
+// visitor is -- see lib/tryPlaces.js for the per-city lists and why each
+// entry is hardcoded rather than a query re-resolved on every click.
 const KIND_LABELS = { city: 'City', neighbourhood: 'Neighbourhood', address: 'Address' };
 // The 5 cities BlindSpot actually has neighbourhood-score coverage for --
 // named here once, for the "not covered yet" message the city panel
@@ -151,6 +130,10 @@ export default function HeroLiveMapCanvas() {
   // empty. Without it that case was silent -- the click did nothing at all,
   // which reads as a broken button rather than "we couldn't find that".
   const [noMatch, setNoMatch] = useState('');
+  // Which covered city the visitor is in, if we can tell -- drives the
+  // example chips. null = couldn't place them, show the one-per-city mix.
+  const [homeCity, setHomeCity] = useState(null);
+  const tryPlaces = (homeCity && TRY_PLACES_BY_CITY[homeCity]?.slice(0, 4)) || DEFAULT_TRY_PLACES;
 
   const center = pin || DEFAULT_CENTER;
 
@@ -234,6 +217,59 @@ export default function HeroLiveMapCanvas() {
     if (e.key === 'ArrowDown') { e.preventDefault(); setActive((i) => (i + 1) % results.length); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setActive((i) => (i <= 0 ? results.length : i) - 1); }
     else if (e.key === 'Enter' && active >= 0) { e.preventDefault(); pick(results[active]); }
+  };
+
+  // Localise the example chips. Precise location only if the visitor has
+  // ALREADY granted it to this site (never prompts on landing); otherwise
+  // the IP city from /api/geo. Either failing just keeps the defaults.
+  useEffect(() => {
+    let cancelled = false;
+    const fromIp = () => fetch('/api/geo')
+      .then((r) => r.json())
+      .then((d) => { if (!cancelled && d?.city && TRY_PLACES_BY_CITY[d.city]) setHomeCity(d.city); })
+      .catch(() => {});
+    const perms = typeof navigator !== 'undefined' && navigator.permissions?.query;
+    if (!perms) { fromIp(); return () => { cancelled = true; }; }
+    navigator.permissions.query({ name: 'geolocation' }).then((st) => {
+      if (cancelled) return;
+      if (st.state !== 'granted') { fromIp(); return; }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const c = nearestCoveredCity(pos.coords.latitude, pos.coords.longitude);
+          if (cancelled) return;
+          if (c) setHomeCity(c); else fromIp();
+        },
+        () => { if (!cancelled) fromIp(); },
+        { maximumAge: 600000, timeout: 4000 }
+      );
+    }).catch(() => { if (!cancelled) fromIp(); });
+    return () => { cancelled = true; };
+  }, []);
+
+  // A building chip re-resolves its name through the geocoder first so it
+  // lands on the real footprint, but never waits more than ~1.5s for it --
+  // past that, or on no result, the chip's own coordinates are used.
+  const pickTry = async (t) => {
+    if (!t.q) { pick(t); return; }
+    setQuery(t.label);
+    setLoading(true);
+    const reqId = ++requestIdRef.current;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 1500);
+    let hit = null;
+    try {
+      const params = new URLSearchParams({ q: t.q, lat: String(t.lat), lon: String(t.lon) });
+      const res = await fetch(`/api/sunscout/geocode-suggest?${params.toString()}`, { signal: ctrl.signal });
+      const data = await res.json();
+      const first = Array.isArray(data?.results) ? data.results.find((r) => r.kind === 'address') : null;
+      // Only trust it if it's actually near where we expect (< 3km) --
+      // otherwise a same-named project in another city could win.
+      if (first && Math.abs(first.lat - t.lat) < 0.03 && Math.abs(first.lon - t.lon) < 0.03) hit = first;
+    } catch {}
+    clearTimeout(timer);
+    if (reqId !== requestIdRef.current) return;
+    setLoading(false);
+    pick(hit ? { ...hit, postcode: hit.postcode || t.postcode } : t);
   };
 
   // The debounce was never cleared: navigate away mid-search and a fetch
@@ -433,7 +469,7 @@ export default function HeroLiveMapCanvas() {
               pill below is proof (real cycling examples), not an
               explanation, so it doesn't substitute for one. One flat
               sentence, no animation of its own. */}
-          <p className="hlm-sub">Get the honest details brokers won't tell you before signing any deal.</p>
+          <p className="hlm-sub">Sunlight for your exact floor and facing. Safety, water, power and air for the streets around it. All before you sign.</p>
           <p className="hlm-typed-line">
             <TypewriterCycle
               items={BLINDSPOT_EXAMPLES}
@@ -568,13 +604,13 @@ export default function HeroLiveMapCanvas() {
               city panel is open -- it grows downward into this space. */}
           {!cityPanel && (
             <div className="hlm-try" aria-label="Example places">
-              <span className="hlm-try-label">Try</span>
-              {TRY_PLACES.map((t) => (
+              <span className="hlm-try-label">{homeCity ? `Try in ${CITY_CENTRES[homeCity].label}` : 'Try'}</span>
+              {tryPlaces.map((t) => (
                 <button
                   key={t.label}
                   type="button"
                   className="hlm-try-chip"
-                  onClick={() => pick(t)}
+                  onClick={() => pickTry(t)}
                 >
                   {t.label}
                 </button>

@@ -105,7 +105,7 @@ export default function TwoScores() {
         <div className="section-head">
           <div>
             <span className="eyebrow">02 - The Two Scores</span>
-            <h2>Two engines. One <span className="gold-word">verdict</span>.</h2>
+            <h2>Two engines. One clear <span className="gold-word">picture</span>.</h2>
           </div>
         </div>
 

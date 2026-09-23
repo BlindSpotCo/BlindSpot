@@ -146,7 +146,7 @@ function moveVerdictFirst(text) {
     sections.push({ title: matches[i][2].trim(), body: text.slice(start, end) });
   }
 
-  const verdictIdx = sections.findIndex(s => /blindspot\s*verdict/i.test(s.title));
+  const verdictIdx = sections.findIndex(s => /blindspot\s*(verdict|summary)/i.test(s.title));
   if (verdictIdx === -1) return text;
 
   const reordered = [sections[verdictIdx], ...sections.filter((_, i) => i !== verdictIdx)];
@@ -338,7 +338,7 @@ async function buildReport(req) {
   // alongside the monthly table & screenshots, same as the unit-only report
   // always did.
   const { body: verdictBody, rest: afterVerdict } = hasNeighbourhood
-    ? extractSection(cleanedRest, /blindspot\s*verdict/i)
+    ? extractSection(cleanedRest, /blindspot\s*(verdict|summary)/i)
     : { body: '', rest: moveVerdictFirst(cleanedRest) };
   // The section that only a combined report can write -- the two halves read
   // against each other. Pulled out to sit directly under the verdict, where
@@ -447,9 +447,9 @@ async function buildReport(req) {
   // place, the way the old shouted "RECOMMENDED WITH CAUTION" pill didn't.
   const VERDICT_BADGE = {
     'Prime Pick': { text: 'Recommended', color: GOOD },
-    'Hidden Gem': { text: 'Proceed with Caution', color: OK },
-    'Location Play': { text: 'Proceed with Caution', color: OK },
-    'Reconsider': { text: 'Not Recommended', color: POOR },
+    'Hidden Gem': { text: 'Worth a closer look', color: OK },
+    'Location Play': { text: 'Worth a closer look', color: OK },
+    'Reconsider': { text: 'Check in person', color: OK },
   };
   const badge = verdictLabel ? (VERDICT_BADGE[verdictLabel] || { text: escapeHtml(verdictLabel).toUpperCase(), color: SUN }) : null;
 
@@ -672,7 +672,7 @@ async function buildReport(req) {
   const topScore = hasNeighbourhood ? combinedScore : unitScore;
   const openingSection = `
     <div style="margin-bottom:30px;">
-      <div style="${H2}margin-bottom:10px;">BlindSpot Verdict</div>
+      <div style="${H2}margin-bottom:10px;">BlindSpot Summary</div>
       <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px;">
         <span style="font-family:${DISPLAY};font-size:64px;font-weight:800;line-height:1;color:${INK};">${topScore ?? '-'}</span>
         <span style="font-family:${DISPLAY};font-size:26px;font-weight:800;color:${gradeColor(topScore ?? 0)};">${topScore != null ? scoreWord(topScore) : ''}</span>
@@ -976,7 +976,7 @@ async function buildReport(req) {
         <p style="font-size:11.5px;color:${MUTE};line-height:1.6;margin:10px 0;">Calculated using exact sun angles for this floor, official police records, and public municipal data.</p>
         <ul style="margin:0;padding-left:18px;font-size:11px;color:${DIM};line-height:1.6;">
           ${hasNeighbourhood ? `<li>The Neighbourhood Score, its factor scores, crime, schools and price context come from public records. They are the same for every unit in this pincode and are not AI-generated.</li>` : ''}
-          ${hasNeighbourhood ? `<li>BlindSpot Verdict score = Neighbourhood Score ${avRecord.nqi_composite} × ${Math.round((areaWeight ?? 0.5) * 100)}% + Home Comfort Score ${unitScore ?? '-'} × ${Math.round((unitWeight ?? 0.5) * 100)}% = ${combinedScore ?? '-'}. A weighted average, not AI-generated.</li>` : ''}
+          ${hasNeighbourhood ? `<li>BlindSpot overall score = Neighbourhood Score ${avRecord.nqi_composite} × ${Math.round((areaWeight ?? 0.5) * 100)}% + Home Comfort Score ${unitScore ?? '-'} × ${Math.round((unitWeight ?? 0.5) * 100)}% = ${combinedScore ?? '-'}. A weighted average, not AI-generated.</li>` : ''}
           <li>Sun position and monthly sunlight hours are calculated using exact sun angles for this floor. Deterministic, not AI-generated.</li>
           <li>Floor clearance uses a generic urban-obstruction estimate, not a measurement of this property's specific neighboring buildings.</li>
           ${summary?.buildingHeightNote ? `<li>${summary.buildingHeightNote.sentence}</li>` : ''}

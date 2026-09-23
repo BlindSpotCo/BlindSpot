@@ -32,8 +32,8 @@ const STEPS = [
   },
   {
     accent: 'brand',
-    title: 'Read your report',
-    copy: 'One overall score, what stands out, and what to check on your visit.',
+    title: 'Walk in prepared',
+    copy: 'What stands out, what to ask the builder, and what to check on your site visit.',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>
     ),

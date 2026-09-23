@@ -355,6 +355,13 @@
   /* Below this the header is brand + burger only, and Compare is in the
      mobile panel where the rest of the navigation lives. */
   @media (max-width:520px){ .btn-compare{ display:none } }
+  /* Furnish sits beside Compare with the same outline, so the two tools
+     read as a pair. It drops to its short label earlier than Compare,
+     since the row gets tight on a laptop with the CTA and sign-in too. */
+  @media (max-width:1180px){
+    .btn-furnish .btn-compare-full{ display:none }
+    .btn-furnish .btn-compare-short{ display:inline }
+  }
 
   .btn-cta-sm{
     display:inline-flex; align-items:center; min-width:0; flex-shrink:1;
