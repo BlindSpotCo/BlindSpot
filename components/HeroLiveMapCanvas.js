@@ -446,14 +446,21 @@ export default function HeroLiveMapCanvas() {
         <video
           ref={heroVideoRef}
           className="hlm-video"
-          src={HERO_VIDEO_SRC}
+          poster="/hero-poster.jpg"
           autoPlay
           muted
           loop
           playsInline
           preload="auto"
           aria-hidden="true"
-        />
+        >
+          {/* Phones get a 960px encode (~0.55MB instead of 2.2MB) -- it sits
+              under a dark scrim, so the full 1920px was wasted bytes on the
+              first thing a phone loads. The poster paints instantly while
+              either one buffers. */}
+          <source src="/hero-solar-960.mp4" type="video/mp4" media="(max-width: 900px)" />
+          <source src={HERO_VIDEO_SRC} type="video/mp4" />
+        </video>
       </div>
 
       <div className="hlm-glow" aria-hidden="true" />

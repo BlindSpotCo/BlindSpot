@@ -85,17 +85,22 @@ export default function SiteHeader({ homeHref = '/' }) {
   useEffect(() => {
     if (!isHome) { setHeroCleared(true); return undefined; }
     setHeroCleared(false);
-    const compute = () => {
+    // Hero height is measured on load/resize only -- measuring it on every
+    // scroll event forced a layout per frame while scrolling the homepage.
+    let heroH = window.innerHeight;
+    const measure = () => {
       const heroEl = document.querySelector('.hero-statement');
-      const h = heroEl ? heroEl.getBoundingClientRect().height : window.innerHeight;
-      setHeroCleared(window.scrollY > h - 80);
+      heroH = heroEl ? heroEl.getBoundingClientRect().height : window.innerHeight;
     };
+    const compute = () => setHeroCleared(window.scrollY > heroH - 80);
+    const onResize = () => { measure(); compute(); };
+    measure();
     compute();
     window.addEventListener('scroll', compute, { passive: true });
-    window.addEventListener('resize', compute);
+    window.addEventListener('resize', onResize);
     return () => {
       window.removeEventListener('scroll', compute);
-      window.removeEventListener('resize', compute);
+      window.removeEventListener('resize', onResize);
     };
   }, [isHome]);
 

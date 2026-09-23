@@ -522,6 +522,7 @@ export default function ReportScreen({ view = 'verdict' }) {
   const pinAsked = useRef('');
 
   /* ---------------- scores ---------------- */
+  const lastScored = useRef(null);
   useEffect(() => {
     if (!hasPlace) { setState('error'); setFailure('no-place'); return; }
     // Scoring runs from the moment there is a pin, including while the
@@ -635,8 +636,17 @@ export default function ReportScreen({ view = 'verdict' }) {
         setFailure('scoring');
       }
     }
-    run().finally(() => { if (!cancelled && id === scoreReq.current) setBusy(false); });
-    return () => { cancelled = true; };
+    // Typing a floor ("1" on the way to "12") or flicking through facings
+    // used to fire two scoring requests per keystroke (fast pass + live
+    // noise). Only the unit changed -> wait a beat; anything else -> now.
+    const prev = lastScored.current;
+    const unitOnly = prev && prev.lat === lat && prev.lon === lon && prev.pinCode === pinCode
+      && (prev.floor !== floor || prev.facing !== facing);
+    lastScored.current = { lat, lon, pinCode, floor, facing };
+    const startT = setTimeout(() => {
+      run().finally(() => { if (!cancelled && id === scoreReq.current) setBusy(false); });
+    }, unitOnly ? 320 : 0);
+    return () => { cancelled = true; clearTimeout(startT); };
   }, [hasPlace, lat, lon, pinCode, floor, facing, areaWeight, scoreNonce]);
 
   /* ---------------- full-screen map housekeeping ----------------
@@ -835,13 +845,23 @@ export default function ReportScreen({ view = 'verdict' }) {
   // spot it was tapped at, so a search or "my location" that moves the
   // pin elsewhere drops the tint on its own.
   const [picked, setPicked] = useState(null);
+  const placeRef = useRef(null);
+  placeRef.current = hasPlace ? { lat, lon } : null;
   const moveTo = useCallback((toLat, toLon, label) => {
     if (!Number.isFinite(toLat) || !Number.isFinite(toLon)) return;
     setLocError('');
     setAddrEditOpen(false);
     setMapSearchOpen(false);
-    setSolar(null); setSolarFailed(false); setAqi(null);
-    setPlace({ lat: toLat, lon: toLon, pinCode: '', address: label || '' });
+    // A tap on a nearby tower keeps the 3D map up (the pin is moved inside
+    // it); clearing the sun path here unmounted the map and reloaded the
+    // whole scene on every tap. Only a jump to somewhere else resets it.
+    const here = placeRef.current;
+    const far = !here || Math.abs(here.lat - toLat) > 0.004 || Math.abs(here.lon - toLon) > 0.004;
+    if (far) { setSolar(null); setSolarFailed(false); }
+    setAqi(null);
+    // Same neighbourhood: keep the pincode we have until the reverse lookup
+    // answers, instead of blanking the area half for a moment on every tap.
+    setPlace((p) => ({ lat: toLat, lon: toLon, pinCode: far ? '' : p.pinCode, address: label || (far ? '' : p.address) }));
     pinAsked.current = `${toLat},${toLon}`;
     fetch(`/api/sunscout/reverse-geocode?lat=${toLat}&lon=${toLon}`)
       .then((r) => r.json())
