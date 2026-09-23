@@ -63,8 +63,15 @@ EXPECTED_VOCAB = {
     "reliability": {"Excellent", "Good", "Average", "Poor", "Very Poor"},
     "road_condition": {"Excellent", "Good", "Average", "Poor", "Very Poor"},
     "connectivity": {"High", "Medium", "Low"},
-    "treatment": {"Adequate", "Partial", "Inadequate"},
-    "grade": {"A", "B", "C", "D", "F"},
+    "treatment": {"Adequate", "Partial", "Inadequate", "Full"},
+    # Matches the canonical grade_for() range used by every build script
+    # (build_chennai.py, build_hyderabad.py, build_mumbai.py,
+    # build_chandigarh.py) and by the v1.11 grade-label fix: A>=80,
+    # B+>=70, B>=60, C+>=50, C>=40, D else. No A+, B-, C- or F ever gets
+    # produced by that function, so they're deliberately left out here too
+    # -- this whitelist should mirror what the scoring code can actually
+    # emit, not be padded with values nothing produces.
+    "grade": {"A", "B+", "B", "C+", "C", "D"},
 }
 
 nqi = json.load(open(NQI_PATH))

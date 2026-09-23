@@ -203,12 +203,19 @@ export function verdictFor(nqi) {
 // for the same reason as verdictFor -- AVAreaCard's dimension rows need the
 // exact same per-dimension explain sentence the full report uses.
 export function explain(k, r) {
-  const city = r.city || 'Delhi NCR';
+  // r.city and r.metro_stations_nearby used to fall back to `|| 'Delhi NCR'`
+  // and `|| 0` -- the same silent-wrong-default shape as the schools_list
+  // bug (pre-monetization audit, codebase section). Every one of the 343
+  // records currently has a real city and a real (non-null)
+  // metro_stations_nearby, so this never fires today, but a future record
+  // missing either field would otherwise show a confident, invented value
+  // instead of an honest "not confirmed". Hardened now, before it can.
+  const city = r.city || null;
   switch (k) {
     case 'crime': return r.crime_percentile != null
-      ? `${r.total_cognizable_crimes} crimes reported, safer than ${r.crime_percentile}% of tracked ${city} areas (${(r.crime_tier || '').toLowerCase()} tier).`
+      ? `${r.total_cognizable_crimes} crimes reported, safer than ${r.crime_percentile}% of tracked ${city ? `${city} ` : ''}areas${r.crime_tier ? ` (${r.crime_tier.toLowerCase()} tier)` : ''}.`
       : 'Cognizable crimes reported for the police catchment.';
-    case 'infrastructure': return `${r.metro_stations_nearby || 0} operational metro station(s) · ${(r.highway_proximity || '-').toLowerCase()} highway access · ${(r.zone_type || 'mixed').toLowerCase()} zone.`;
+    case 'infrastructure': return `${r.metro_stations_nearby != null ? r.metro_stations_nearby : 'not confirmed'} operational metro station(s) · ${(r.highway_proximity || '-').toLowerCase()} highway access · ${(r.zone_type || 'mixed').toLowerCase()} zone.`;
     // Names the station a live reading came from -- a "nearest station"
     // can be several km away, so attributing it matters. Falls back to the
     // plain band sentence for stored readings.
