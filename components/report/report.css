@@ -2025,58 +2025,20 @@ body.bsr-noscroll{overflow:hidden}
   .bsr-dock-fields .bsr-set input[type="text"]{ width:3.6em; padding:4px 6px }
 }
 
-/* ================= floor/facing popup before the sunlight report ================= */
-.bsr-ask{
-  position:fixed;inset:0;z-index:1100;
-  display:grid;place-items:center;padding:16px;
-  background:rgba(28,24,18,.38);
-  animation:bsr-ask-fade .15s ease-out;
+/* ================= "set floor/facing first" nudge =================
+   Pressing the sunlight report with floor/facing unset shakes the
+   nearest Floor/Facing fields and outlines the empty ones -- no popup. */
+.bsr-nudge{ animation:bsr-shake .5s cubic-bezier(.36,.07,.19,.97) both }
+.bsr-nudge .is-unset input,
+.bsr-nudge .is-unset select{
+  border:2px solid #E0A800 !important;background:#FFFBEA !important;
+  box-shadow:0 0 0 4px rgba(224,168,0,.25) !important;
 }
-.bsr-ask-card{
-  position:relative;width:min(360px,100%);
-  padding:20px 20px 18px;border-radius:16px;
-  background:var(--paper,#FFFDF8);color:var(--text,#1C1812);
-  box-shadow:0 24px 60px rgba(28,24,18,.3);
-  animation:bsr-ask-pop .18s ease-out;
+.bsr-nudge .is-unset > span{ color:#8A5A00 !important }
+@keyframes bsr-shake{
+  10%,90%{ transform:translateX(-2px) }
+  20%,80%{ transform:translateX(4px) }
+  30%,50%,70%{ transform:translateX(-7px) }
+  40%,60%{ transform:translateX(7px) }
 }
-.bsr-ask-x{
-  position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;
-  border:0;background:rgba(28,24,18,.06);color:var(--text-mute,#5A5140);
-  font-size:17px;line-height:1;cursor:pointer;
-}
-.bsr-ask-x:hover{background:rgba(28,24,18,.12)}
-.bsr-ask-eyebrow{
-  display:flex;align-items:center;gap:6px;margin:0 0 6px !important;
-  font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ss,#AF5F30);
-}
-.bsr-ask-card h2{font-size:19px;font-weight:700;line-height:1.25;margin:0 28px 4px 0}
-.bsr-ask-sub{font-size:13px;color:var(--text-mute,#5A5140);margin:0 0 14px !important;line-height:1.45}
-.bsr-ask-floor{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.bsr-ask-floor span,.bsr-ask-facing legend{font-size:12.5px;font-weight:700;color:var(--text-mute,#5A5140)}
-.bsr-ask-floor input{
-  width:5.5em;min-height:40px;padding:6px 10px;border-radius:9px;
-  font:inherit;font-size:16px;font-weight:700;text-align:center;
-  border:1.5px solid var(--line,rgba(28,24,18,.2));background:#fff;
-}
-.bsr-ask-floor input:focus-visible{outline:2px solid var(--ss,#AF5F30);outline-offset:1px}
-.bsr-ask-facing{border:0;margin:0 0 16px;padding:0}
-.bsr-ask-facing legend{padding:0;margin-bottom:8px}
-.bsr-ask-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:220px}
-.bsr-ask-dir{
-  min-height:40px;border-radius:9px;cursor:pointer;
-  font:inherit;font-size:13.5px;font-weight:700;
-  border:1.5px solid var(--line,rgba(28,24,18,.18));background:#fff;color:var(--text,#1C1812);
-}
-.bsr-ask-dir:hover{border-color:var(--ss,#AF5F30)}
-.bsr-ask-dir.is-on{background:var(--ss,#AF5F30);border-color:var(--ss,#AF5F30);color:#FFFDF8}
-.bsr-ask-centre{border-radius:50%;margin:12px;background:rgba(28,24,18,.08)}
-.bsr-ask-go{
-  width:100%;min-height:44px;border-radius:10px;cursor:pointer;
-  font:inherit;font-size:15px;font-weight:700;
-  border:0;background:var(--ss,#AF5F30);color:#FFFDF8;
-}
-.bsr-ask-go:disabled{opacity:.45;cursor:default}
-.bsr-ask-go:hover:not(:disabled){filter:brightness(.93)}
-@keyframes bsr-ask-fade{from{opacity:0}to{opacity:1}}
-@keyframes bsr-ask-pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){.bsr-ask,.bsr-ask-card{animation:none}}
+@media (prefers-reduced-motion:reduce){ .bsr-nudge{ animation:none } }

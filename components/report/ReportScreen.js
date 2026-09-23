@@ -321,10 +321,6 @@ export default function ReportScreen({ view = 'verdict' }) {
   // already work, so standing a dialog in front of them to collect the
   // same two values was a second copy of a thing that wasn't broken.
   const [showUnitTip, setShowUnitTip] = useState(() => view === 'map');
-  // Asked for the sunlight report before floor/facing were set -- a small
-  // popup asks for both first instead of quietly building it for a
-  // default 5th floor, south-east.
-  const [unitAsk, setUnitAsk] = useState(null); // null | { floor: '', facing: '' }
 
   // The address, the unit and whether a pin was placed -- everything the
   // other screen needs to open on exactly what this one is showing.
@@ -437,9 +433,33 @@ export default function ReportScreen({ view = 'verdict' }) {
     setReportsOpen((list) => (list.includes(type) ? list : [...list, type]));
     setReportFront(type);
   }, []);
-  const requestSunReport = () => {
+  // Asked for the sunlight report before floor/facing were set: no new
+  // popup -- point at the Floor/Facing fields already on screen nearest
+  // the button (shake them, outline the empty ones, focus the first), so
+  // it isn't quietly built for a default 5th floor, south-east.
+  const nudgeTimer = useRef(null);
+  const requestSunReport = (e) => {
     if (floorSet && facingSet) { setReportOpen('gallery'); return; }
-    setUnitAsk({ floor: floorSet ? String(floor) : '', facing: facingSet ? facing : '' });
+    const btn = e?.currentTarget;
+    let target = null;
+    if (btn?.closest('.bsr-fullbar')) {
+      target = document.querySelector('.bsr-dock');
+      setShowUnitTip(true);
+    } else if (btn?.closest('.bsr-mapbar')) {
+      target = btn.closest('.bsr-mapbar').querySelector('.bsr-set-unit');
+    } else {
+      target = document.querySelector('#the-flat .bsr-set');
+    }
+    if (!target) return;
+    const r = target.getBoundingClientRect();
+    if (r.top < 80 || r.bottom > window.innerHeight) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    target.classList.remove('bsr-nudge');
+    void target.offsetWidth; // restart the animation on a second tap
+    target.classList.add('bsr-nudge');
+    const empty = target.querySelector('.is-unset input, .is-unset select');
+    empty?.focus({ preventScroll: true });
+    if (nudgeTimer.current) clearTimeout(nudgeTimer.current);
+    nudgeTimer.current = setTimeout(() => target.classList.remove('bsr-nudge'), 2600);
   };
   const closeReport = useCallback((type) => {
     setReportsOpen((list) => list.filter((t) => t !== type));
@@ -1994,7 +2014,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                           : pinCode
                             ? `Pin ${pinCode} isn't in our neighbourhood records yet, so we won't guess at safety, water or schools here.`
                             : "We couldn't work out the pincode for this exact spot, so there's nothing to look the area up by."}
-                        {areaFailed ? '' : ' BlindSpot has records for Delhi NCR, Bangalore, Chandigarh, Hyderabad, Mumbai, Chennai and Ahmedabad.'}
+                        {areaFailed ? '' : ' BlindSpot has records for Delhi NCR, Bangalore, Chandigarh, Hyderabad, Mumbai and Chennai.'}
                       </p>
                       {areaFailed && (
                         <p style={{ marginTop: 10 }}>
@@ -2030,7 +2050,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                   work for nudging, and the value is only clamped when you leave
                   the field, so typing "1" on the way to "12" isn't fought. */}
               <p className="bsr-set" ref={unitSetRef}>
-                <label className="bsr-set-field">
+                <label className={`bsr-set-field${floorSet ? '' : ' is-unset'}`}>
                   <span>Floor</span>
                   <input
                     type="text"
@@ -2057,7 +2077,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                     aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
                   />
                 </label>
-                <label className="bsr-set-field">
+                <label className={`bsr-set-field${facingSet ? '' : ' is-unset'}`}>
                   <span>Faces</span>
                   <select
                     value={facingSet ? facing : ''}
@@ -2328,60 +2348,6 @@ export default function ReportScreen({ view = 'verdict' }) {
         </>
       )}
       {reportModal}
-      {unitAsk && (() => {
-        const n = parseInt(unitAsk.floor, 10);
-        const floorOk = Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR;
-        const ok = floorOk && Boolean(unitAsk.facing);
-        const go = (e) => {
-          e.preventDefault();
-          if (!ok) return;
-          setFloor(n); setFloorText(String(n)); setFloorSet(true);
-          setFacing(unitAsk.facing); setFacingSet(true);
-          setUnitAsk(null);
-          setReportOpen('gallery');
-        };
-        return (
-          <div className="bsr-ask" role="dialog" aria-modal="true" aria-labelledby="bsr-ask-title" onMouseDown={(e) => { if (e.target === e.currentTarget) setUnitAsk(null); }}>
-            <form className="bsr-ask-card" onSubmit={go} onKeyDown={(e) => { if (e.key === 'Escape') setUnitAsk(null); }}>
-              <button type="button" className="bsr-ask-x" onClick={() => setUnitAsk(null)} aria-label="Close">×</button>
-              <p className="bsr-ask-eyebrow"><Sun size={14} strokeWidth={2.2} aria-hidden="true" /> Year-round sunlight report</p>
-              <h2 id="bsr-ask-title">Which floor, and which way does it face?</h2>
-              <p className="bsr-ask-sub">Sunlight changes a lot between floors and facings, so the report is built for your exact unit.</p>
-              <label className="bsr-ask-floor">
-                <span>Floor</span>
-                <input
-                  type="text" inputMode="numeric" pattern="[0-9]*" maxLength={2} autoFocus
-                  placeholder="e.g. 12"
-                  value={unitAsk.floor}
-                  onChange={(e) => setUnitAsk((u) => ({ ...u, floor: e.target.value.replace(/[^\d]/g, '').slice(0, 2) }))}
-                  aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
-                />
-              </label>
-              <fieldset className="bsr-ask-facing">
-                <legend>Balcony / main window faces</legend>
-                <div className="bsr-ask-grid">
-                  {['North-West', 'North', 'North-East', 'West', null, 'East', 'South-West', 'South', 'South-East'].map((f, i) => (
-                    f ? (
-                      <button
-                        key={f} type="button"
-                        className={`bsr-ask-dir${unitAsk.facing === f ? ' is-on' : ''}`}
-                        aria-pressed={unitAsk.facing === f}
-                        title={f}
-                        onClick={() => setUnitAsk((u) => ({ ...u, facing: f }))}
-                      >
-                        {FACING_SHORT[f]}
-                      </button>
-                    ) : <span key={`c${i}`} className="bsr-ask-centre" aria-hidden="true" />
-                  ))}
-                </div>
-              </fieldset>
-              <button type="submit" className="bsr-ask-go" disabled={!ok}>
-                Build the sunlight report
-              </button>
-            </form>
-          </div>
-        );
-      })()}
     </div>
   );
 }
