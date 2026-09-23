@@ -420,7 +420,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 180,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -454,12 +454,12 @@
     "city": "Delhi NCR",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "dmrc_stations_2026_09",
+        "value": 2,
+        "source_id": "dmrc_stations_2026_09_registry_fix",
         "method": "spatial_join_radius_1500m_centroid",
-        "as_of": "2026-09-13",
+        "as_of": "2026-09-23",
         "confidence": "high",
-        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+        "note": "Re-run after fixing 28 wrong/duplicated coordinates in scripts/metro_stations.py's DELHI_STATIONS (pre-monetization audit follow-up: the registry had 11 groups of stations sharing an identical placeholder coordinate, only 2 of which were previously documented and worked around at the pincode level; the other 9 were found and fixed this pass). Stations within 1.5km of this pin's own centroid: Delhi Aerocity, Terminal 1 IGI Airport. Old value: 1."
       }
     }
   },
@@ -2044,7 +2044,7 @@
     "aqi_category": "Moderate",
     "total_cognizable_crimes": 380,
     "zone_type": "Mixed",
-    "metro_stations_nearby": 6,
+    "metro_stations_nearby": 4,
     "metro_planned_stations": 0,
     "highway_proximity": "Medium",
     "smart_city_project": false,
@@ -2078,12 +2078,12 @@
     "city": "Delhi NCR",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 6,
-        "source_id": "dmrc_stations_2026_09",
+        "value": 4,
+        "source_id": "dmrc_stations_2026_09_registry_fix",
         "method": "spatial_join_radius_1500m_centroid",
-        "as_of": "2026-09-13",
+        "as_of": "2026-09-23",
         "confidence": "high",
-        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+        "note": "Re-run after fixing 28 wrong/duplicated coordinates in scripts/metro_stations.py's DELHI_STATIONS (pre-monetization audit follow-up: the registry had 11 groups of stations sharing an identical placeholder coordinate, only 2 of which were previously documented and worked around at the pincode level; the other 9 were found and fixed this pass). Stations within 1.5km of this pin's own centroid: Chandni Chowk, Chawri Bazar, Jama Masjid, Kashmere Gate. Old value: 6."
       }
     }
   },
@@ -2334,7 +2334,7 @@
     "aqi_category": "Poor",
     "total_cognizable_crimes": 512,
     "zone_type": "Industrial",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -2368,12 +2368,12 @@
     "city": "Delhi NCR",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "dmrc_stations_2026_09",
+        "value": 2,
+        "source_id": "dmrc_stations_2026_09_registry_fix",
         "method": "spatial_join_radius_1500m_centroid",
-        "as_of": "2026-09-13",
+        "as_of": "2026-09-23",
         "confidence": "high",
-        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+        "note": "Re-run after fixing 28 wrong/duplicated coordinates in scripts/metro_stations.py's DELHI_STATIONS (pre-monetization audit follow-up: the registry had 11 groups of stations sharing an identical placeholder coordinate, only 2 of which were previously documented and worked around at the pincode level; the other 9 were found and fixed this pass). Stations within 1.5km of this pin's own centroid: Old Faridabad, Neelam Chowk Ajronda. Old value: 1."
       }
     }
   },
@@ -3574,7 +3574,7 @@
     ],
     "total_cognizable_crimes": 310,
     "zone_type": "Commercial",
-    "metro_stations_nearby": 11,
+    "metro_stations_nearby": 5,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": true,
@@ -3608,12 +3608,12 @@
     "city": "Delhi NCR",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 11,
-        "source_id": "dmrc_stations_2026_09",
+        "value": 5,
+        "source_id": "dmrc_stations_2026_09_registry_fix",
         "method": "spatial_join_radius_1500m_centroid",
-        "as_of": "2026-09-13",
+        "as_of": "2026-09-23",
         "confidence": "high",
-        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+        "note": "Re-run after fixing 28 wrong/duplicated coordinates in scripts/metro_stations.py's DELHI_STATIONS (pre-monetization audit follow-up: the registry had 11 groups of stations sharing an identical placeholder coordinate, only 2 of which were previously documented and worked around at the pincode level; the other 9 were found and fixed this pass). Stations within 1.5km of this pin's own centroid: Cyber City, Belvedere Towers, DLF Phase 3, Moulsari Avenue, DLF Phase 2. Old value: 11."
       }
     }
   },
@@ -4234,7 +4234,7 @@
     ],
     "total_cognizable_crimes": 225,
     "zone_type": "Residential",
-    "metro_stations_nearby": 1,
+    "metro_stations_nearby": 2,
     "metro_planned_stations": 0,
     "highway_proximity": "High",
     "smart_city_project": false,
@@ -4268,12 +4268,12 @@
     "city": "Delhi NCR",
     "_provenance": {
       "metro_stations_nearby": {
-        "value": 1,
-        "source_id": "dmrc_stations_2026_09",
+        "value": 2,
+        "source_id": "dmrc_stations_2026_09_registry_fix",
         "method": "spatial_join_radius_1500m_centroid",
-        "as_of": "2026-09-13",
+        "as_of": "2026-09-23",
         "confidence": "high",
-        "note": "Centroid-radius count against a real named station registry (scripts/metro_stations.py). Interim method -- the architecture doc's own preferred method is a buffered pin boundary polygon, not a centroid point; boundary geodata wasn't available this pass."
+        "note": "Re-run after fixing 28 wrong/duplicated coordinates in scripts/metro_stations.py's DELHI_STATIONS (pre-monetization audit follow-up: the registry had 11 groups of stations sharing an identical placeholder coordinate, only 2 of which were previously documented and worked around at the pincode level; the other 9 were found and fixed this pass). Stations within 1.5km of this pin's own centroid: Noida Sector 142, Noida Sector 137. Old value: 1."
       }
     }
   },
