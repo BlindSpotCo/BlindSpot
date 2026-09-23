@@ -711,7 +711,7 @@ export default function ReportScreen({ view = 'verdict' }) {
 
   // The moment either control is touched, the tip has said what it had to
   // say -- leaving it up would be pointing at something already answered.
-  useEffect(() => { if (!assumed) setShowUnitTip(false); }, [assumed]);
+  useEffect(() => { if (!assumed && pinTouched) setShowUnitTip(false); }, [assumed, pinTouched]);
 
   // A half-typed address search shouldn't still be sitting open the next
   // time full screen is entered.
@@ -1586,31 +1586,31 @@ export default function ReportScreen({ view = 'verdict' }) {
               room to split the fields from the go button on a phone) and
               becomes an invisible wrapper past it, where .bsr-dock and
               .bsr-mapcta each take their own spot -- see report.css. */}
-          {/* The one instruction this step is about, on the map itself:
-              pick the building. Bold before a pin is placed; a quiet
-              confirmation after. pointer-events:none so taps go through
-              to the map underneath. */}
-          {fullMap && solar?.pathData && (
-            <p className={`bsr-pickhint${pinTouched ? ' is-done' : ''}`} role="status">
-              <MapPin size={16} strokeWidth={2.4} aria-hidden="true" />
-              {pinTouched
-                ? <span>Pin set. Tap another building to move it.</span>
-                : <span><strong>Tap your building on the map</strong> to set the location</span>}
-            </p>
-          )}
-
           {fullMap && (
             <div className="bsr-dockzone" ref={dockzoneRef}>
               <div className="bsr-dock">
                 {/* Attached to the card's own top edge, full width, instead
                     of a pill floating above its right corner -- it lines up
                     with the box it's about. */}
-                {showUnitTip && assumed && (
+                {/* One yellow strip, one step at a time: pick the building
+                    first, then floor and facing. */}
+                {showUnitTip && (!pinTouched || assumed) && (
                   <p className="bsr-docktip" role="note">
-                    <span className="bsr-docktip-icon" aria-hidden="true"><ArrowDown size={15} strokeWidth={2.6} /></span>
+                    <span className="bsr-docktip-icon" aria-hidden="true">
+                      {pinTouched ? <ArrowDown size={15} strokeWidth={2.6} /> : <MapPin size={15} strokeWidth={2.6} />}
+                    </span>
                     <span className="bsr-docktip-text">
-                      <strong>Set your floor and facing</strong>
-                      <span>Scores change a lot between floors</span>
+                      {pinTouched ? (
+                        <>
+                          <strong>Set your floor and facing</strong>
+                          <span>Scores change a lot between floors</span>
+                        </>
+                      ) : (
+                        <>
+                          <strong>Tap your building on the map</strong>
+                          <span>{assumed ? 'Then set your floor and facing below' : 'So we score your exact tower'}</span>
+                        </>
+                      )}
                     </span>
                     <button
                       type="button"
@@ -1631,7 +1631,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                 <p className="bsr-mapcta-say">
                   {pinTouched
                     ? 'Pin placed - every score below is for this exact spot.'
-                    : 'Tap your building on the map. The address alone lands on the centre of the complex.'}
+                    : 'Without a pin, scores use the centre of the complex.'}
                 </p>
                 <button
                   type="button"
