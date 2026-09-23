@@ -118,10 +118,27 @@ const BAR_CSS = `
   @keyframes rm-bar-in{ from{ opacity:0; transform:translateY(6px) } to{ opacity:1; transform:none } }
   @keyframes rm-bar-pulse{ 0%{ box-shadow:0 0 0 0 rgba(175,95,48,.55) } 100%{ box-shadow:0 0 0 7px rgba(175,95,48,0) } }
   @media (prefers-reduced-motion:reduce){ .rm-bar, .rm-bar-dot.is-live, .rm-bar-fill{ animation:none; transition:none; } }
+
+  /* Phones and tablets: full-width strip at the bottom, stacked by
+     --rm-stack, and lifted clear of the map step's bottom sheet
+     (--bsr-dock-h, measured by ReportScreen) so it never covers
+     "See the analysis". */
+  @media (max-width:899px){
+    .rm-corner-card{
+      left:10px !important; right:10px !important; width:auto !important; max-width:none !important;
+      bottom:calc(10px + var(--rm-stack, 0px) + var(--bsr-dock-h, 0px)) !important;
+    }
+    .rm-corner-card > div{ max-height:calc(100vh - 140px - var(--bsr-dock-h, 0px)) !important; }
+  }
 `;
 
 export default function ReportModal({
   lat, lon, tzOffset, address, onClose, captureScreenshots, cancelCapture, onFloorFacingSubmit,
+  // Optional: let the page own the folded/expanded state (so two reports
+  // running at once never both sit open), where to stack in the corner,
+  // and whether a bottom dock (the map step's Floor/Facing sheet) needs
+  // clearing. All optional -- on its own this card manages itself.
+  minimized: minimizedProp, onMinimizedChange, stackOffset = 0, dockAware = false,
   // galleryOnly: this run was asked for the sun & shadow document -- the 12
   // map angles and the monthly sunlight table -- not the combined verdict.
   // Same pipeline either way; only which blob we hand back changes.
@@ -207,7 +224,9 @@ export default function ReportModal({
   const [cancelling, setCancelling] = useState(false);
   // The corner card can fold down to a thin bar so it stops covering the
   // map/page while a run finishes. Folding never cancels anything.
-  const [minimized, setMinimized] = useState(false);
+  const [minLocal, setMinLocal] = useState(false);
+  const minimized = minimizedProp ?? minLocal;
+  const setMinimized = (v) => { if (onMinimizedChange) onMinimizedChange(v); else setMinLocal(v); };
 
 
   // Floor + facing were already picked one step earlier, in UnitVerdict's
@@ -570,11 +589,13 @@ export default function ReportModal({
   // Escape does the same thing as the Cancel/Close button next to it.
   const canDismiss = !loading || Boolean(error) || Boolean(reportUrl);
   useEffect(() => {
-    if (!canDismiss) return;
+    // A folded bar doesn't take Escape -- with two reports open, only the
+    // one actually showing should close.
+    if (!canDismiss || minimized) return;
     const onKey = (e) => { if (e.key === 'Escape') onClose?.(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [canDismiss, onClose]);
+  }, [canDismiss, onClose, minimized]);
 
   // A report in flight is a minute or two of work that cannot be
   // recovered -- 12 map captures plus two model calls, all of it living
@@ -600,13 +621,20 @@ export default function ReportModal({
   }, [isBlockingStep]);
 
   // An error needs reading -- never leave it folded away.
-  useEffect(() => { if (error) setMinimized(false); }, [error]);
+  useEffect(() => { if (error) setMinimized(false); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
   const isCorner = !isBlockingStep;
   const barMode = isCorner && minimized && !error;
 
   const overlayStyle = isBlockingStep
     ? { position:'fixed', inset:0, zIndex:1000, background:'rgba(10,5,0,0.6)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }
-    : { position:'fixed', bottom:20, right:20, zIndex:1000, width:360, maxWidth:'calc(100vw - 40px)', pointerEvents:'none' };
+    : {
+        position:'fixed', bottom:`calc(20px + ${stackOffset}px)`, zIndex:1000, width:360, maxWidth:'calc(100vw - 40px)', pointerEvents:'none',
+        // On the map step past 900px the Floor/Facing card and the go
+        // button own the right-hand column, so reports sit bottom-left.
+        ...(dockAware ? { left:20 } : { right:20 }),
+        '--rm-stack': `${stackOffset}px`,
+      };
 
   const cardStyle = isBlockingStep
     ? { background:PAPER, border:`1px solid ${LINE}`, borderRadius:8, padding:0, width:'100%', maxWidth:480, maxHeight:'90vh', overflowY:'auto', boxShadow:'0 30px 90px rgba(0,0,0,0.35)', fontFamily:SANS }
@@ -619,7 +647,7 @@ export default function ReportModal({
   if (barMode) {
     const label = galleryOnly ? 'Sun & shadow report' : 'Full AI report';
     return createPortal(
-      <div className="rm-corner-card rm-bar-wrap" style={overlayStyle}>
+      <div className={`rm-corner-card rm-bar-wrap${dockAware ? ' rm-dock-aware' : ''}`} style={overlayStyle}>
         <button
           type="button"
           className={`rm-bar${reportUrl ? ' is-ready' : ''}`}
@@ -640,7 +668,7 @@ export default function ReportModal({
   }
 
   return createPortal(
-    <div className={`modal-overlay${isBlockingStep ? '' : ' rm-corner-card'}`} style={overlayStyle}>
+    <div className={`modal-overlay${isBlockingStep ? '' : ` rm-corner-card${dockAware ? ' rm-dock-aware' : ''}`}`} style={overlayStyle}>
       <div style={cardStyle}>
       <div className="modal-body" style={{ padding: isBlockingStep ? 24 : 18 }}>
 
@@ -974,7 +1002,7 @@ export default function ReportModal({
              not a screen. */
           @media (max-width:480px){
             .rm-corner-card{
-              left:10px !important; right:10px !important; bottom:10px !important;
+              left:10px !important; right:10px !important;
               width:auto !important; max-width:none !important;
             }
             .rm-corner-card .modal-body{ padding:12px 14px !important; }

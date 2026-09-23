@@ -421,8 +421,22 @@ export default function ReportScreen({ view = 'verdict' }) {
   const [busy, setBusy] = useState(false);
   // The sun & shadow report generates here, from the map already on this
   // page -- no second screen, no second map, nothing to navigate back from.
-  // null | 'gallery' (sun & shadow only) | 'full' (both halves).
-  const [reportOpen, setReportOpen] = useState(null);
+  // Both reports can run at once: 'gallery' (sun & shadow only) and
+  // 'full' (both halves) each get their own card. `reportsOpen` is the
+  // open ones in the order they were started; `reportFront` is the one
+  // shown as a full card -- every other open one is folded to a thin bar,
+  // so two cards never stack on top of each other.
+  const [reportsOpen, setReportsOpen] = useState([]);
+  const [reportFront, setReportFront] = useState(null);
+  const reportOpen = reportsOpen.length > 0;
+  const setReportOpen = useCallback((type) => {
+    setReportsOpen((list) => (list.includes(type) ? list : [...list, type]));
+    setReportFront(type);
+  }, []);
+  const closeReport = useCallback((type) => {
+    setReportsOpen((list) => list.filter((t) => t !== type));
+    setReportFront((f) => (f === type ? null : f));
+  }, []);
   // The raw locality record the report generator wants -- the summary the
   // scoring API returns isn't the same shape.
   const [avRecord, setAvRecord] = useState(null);
@@ -644,6 +658,29 @@ export default function ReportScreen({ view = 'verdict' }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [fullMapLive, reportOpen]);
 
+  // Below 900px the map step's Floor/Facing card is a bottom sheet. Publish
+  // its height as --bsr-dock-h so the report cards/bars (ReportModal) sit
+  // above it instead of on top of "See the analysis".
+  const dockzoneRef = useRef(null);
+  useEffect(() => {
+    const root = document.documentElement;
+    const el = dockzoneRef.current;
+    if (!fullMap || !el) { root.style.removeProperty('--bsr-dock-h'); return; }
+    const mq = window.matchMedia('(max-width: 899px)');
+    const update = () => {
+      root.style.setProperty('--bsr-dock-h', mq.matches ? `${Math.ceil(el.getBoundingClientRect().height) + 10}px` : '0px');
+    };
+    update();
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(update) : null;
+    ro?.observe(el);
+    mq.addEventListener?.('change', update);
+    return () => {
+      ro?.disconnect();
+      mq.removeEventListener?.('change', update);
+      root.style.removeProperty('--bsr-dock-h');
+    };
+  }, [fullMap]);
+
   // The moment either control is touched, the tip has said what it had to
   // say -- leaving it up would be pointing at something already answered.
   useEffect(() => { if (!assumed) setShowUnitTip(false); }, [assumed]);
@@ -800,8 +837,10 @@ export default function ReportScreen({ view = 'verdict' }) {
   // until the person closes them, and the pin was staying locked -- with
   // "the report is being built from this spot" -- for a report that had
   // finished five minutes earlier.
-  const [reportBusy, setReportBusy] = useState(false);
-  const reportRunning = reportOpen !== null && reportBusy;
+  const [reportBusy, setReportBusy] = useState({ gallery: false, full: false });
+  const reportRunning = reportBusy.gallery || reportBusy.full;
+  const onGalleryBusy = useCallback((b) => setReportBusy((r) => (r.gallery === b ? r : { ...r, gallery: b })), []);
+  const onFullBusy = useCallback((b) => setReportBusy((r) => (r.full === b ? r : { ...r, full: b })), []);
   const onMapClick = useCallback((clickLat, clickLon, meta) => {
     if (reportRunning) { setLocError('The report is being built from this spot - let it finish, then move the pin.'); return; }
     setPicked(meta?.buildingId ? { id: meta.buildingId, lat: clickLat, lon: clickLon } : null);
@@ -912,25 +951,58 @@ export default function ReportScreen({ view = 'verdict' }) {
      report meant sitting through that minute twice for identical pictures.
      Keep them for as long as the pin doesn't move. */
   const frameCache = useRef({ key: '', frames: null });
-  const captureOnce = useCallback(async (onProgress) => {
+  // Both reports can be started together. The second one doesn't start a
+  // second capture (the hook refuses: 'capture-already-running', and two
+  // runs would fight over one camera) -- it joins the one in flight and
+  // gets the same progress and the same frames.
+  const inflight = useRef(null); // { key, promise, owners: Map<owner, {onProgress, cancel}>, last }
+  const captureOnce = useCallback((onProgress, owner = 'gallery') => {
     const key = `${lat},${lon}`;
     const held = frameCache.current;
     if (held.key === key && held.frames?.length === SHOTS.length) {
       onProgress?.(held.frames.length, held.frames.length);
-      return held.frames;
+      return Promise.resolve(held.frames);
     }
-    const frames = await capture.captureScreenshots(onProgress);
-    // Only a COMPLETE set is worth keeping. Caching a run where eight of
-    // twelve frames timed out meant every later report at this pin silently
-    // reused the crippled set -- instantly, so it looked like a feature --
-    // and the only way out was to move the pin.
-    if (frames.length === SHOTS.length) frameCache.current = { key, frames };
-    else frameCache.current = { key: '', frames: null };
-    return frames;
+    let f = inflight.current && inflight.current.key === key ? inflight.current : null;
+    if (!f) {
+      f = { key, owners: new Map(), last: null };
+      f.promise = capture.captureScreenshots((done, total) => {
+        f.last = [done, total];
+        f.owners.forEach((o) => o.onProgress?.(done, total));
+      }).then((frames) => {
+        // Only a COMPLETE set is worth keeping. Caching a run where eight of
+        // twelve frames timed out meant every later report at this pin
+        // silently reused the crippled set.
+        if (frames.length === SHOTS.length) frameCache.current = { key, frames };
+        else frameCache.current = { key: '', frames: null };
+        return frames;
+      }).finally(() => { if (inflight.current === f) inflight.current = null; });
+      inflight.current = f;
+    }
+    // Each report gets its own way out: cancelling one leaves the capture
+    // running for the other, and only stops it when nobody is left.
+    let cancelMine;
+    const mine = new Promise((_, reject) => { cancelMine = () => reject(new Error('capture-cancelled')); });
+    f.owners.set(owner, { onProgress, cancel: cancelMine });
+    if (f.last) onProgress?.(...f.last);
+    return Promise.race([f.promise, mine]).finally(() => { f.owners.delete(owner); });
     // capture.captureScreenshots is stable (useCallback inside the hook);
     // the object around it is not, so depend on the function itself.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [capture.captureScreenshots, lat, lon]);
+  const cancelCaptureFor = useCallback((owner) => {
+    const f = inflight.current;
+    if (!f || !f.owners.has(owner)) return;
+    const o = f.owners.get(owner);
+    f.owners.delete(owner);
+    if (f.owners.size === 0) capture.cancel?.();
+    else o.cancel();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [capture.cancel]);
+  const captureGallery = useCallback((p) => captureOnce(p, 'gallery'), [captureOnce]);
+  const captureFull = useCallback((p) => captureOnce(p, 'full'), [captureOnce]);
+  const cancelGallery = useCallback(() => cancelCaptureFor('gallery'), [cancelCaptureFor]);
+  const cancelFull = useCallback(() => cancelCaptureFor('full'), [cancelCaptureFor]);
 
   /* ---------------- the site-visit checklist ----------------
      These rendered as squares that looked exactly like checkboxes and did
@@ -1091,34 +1163,45 @@ export default function ReportScreen({ view = 'verdict' }) {
   // open: the click set reportOpen and nothing appeared. The gallery run
   // only needs the map and the coordinates; the unit score it forwards is
   // optional, so this is safe before scores have landed.
-  const reportModal = reportOpen && (
+  // Folded bars stack from the corner up; the one full card sits above
+  // them. 46px = a 38px bar + gap.
+  const folded = reportsOpen.filter((t) => t !== reportFront);
+  const stackOffsetOf = (t) => (t === reportFront ? folded.length : folded.indexOf(t)) * 46;
+  const renderReport = (type) => (
       <ReportModal
-        /* Without a key React reuses this instance when the type changes,
-           so switching from the sun & shadow run to the full report kept
-           the finished gallery's state and simply relabelled it: "Your
-           report is ready - the full write-up", opening the gallery blob,
-           and saving the gallery under the full report's name. */
-        key={reportOpen}
+        /* One instance per report type, keyed by type, so starting the
+           full report never tears down a sun & shadow run in progress. */
+        key={type}
         lat={lat}
         lon={lon}
         tzOffset={TZ}
         address={address}
-        captureScreenshots={captureOnce}
-        cancelCapture={capture.cancel}
-        galleryOnly={reportOpen === 'gallery'}
+        captureScreenshots={type === 'gallery' ? captureGallery : captureFull}
+        cancelCapture={type === 'gallery' ? cancelGallery : cancelFull}
+        galleryOnly={type === 'gallery'}
         prefillFloor={floor}
         prefillFacing={facing}
         prefillActionItems={actionsForAI.length ? actionsForAI : undefined}
         unitScore={scores?.unit?.score}
         unitSubScores={scores?.unit?.subScores}
-        areaRecord={reportOpen === 'full' ? avRecord : undefined}
-        combinedScore={reportOpen === 'full' ? scores?.combined : undefined}
-        areaWeight={reportOpen === 'full' ? areaWeight : undefined}
-        unitWeight={reportOpen === 'full' ? 1 - areaWeight : undefined}
-        onBusyChange={setReportBusy}
-        onClose={() => { setReportOpen(null); setReportBusy(false); }}
+        areaRecord={type === 'full' ? avRecord : undefined}
+        combinedScore={type === 'full' ? scores?.combined : undefined}
+        areaWeight={type === 'full' ? areaWeight : undefined}
+        unitWeight={type === 'full' ? 1 - areaWeight : undefined}
+        onBusyChange={type === 'gallery' ? onGalleryBusy : onFullBusy}
+        minimized={reportFront !== type}
+        onMinimizedChange={(m) => setReportFront(m ? (reportFront === type ? null : reportFront) : type)}
+        stackOffset={stackOffsetOf(type)}
+        dockAware={fullMap}
+        onClose={() => { closeReport(type); (type === 'gallery' ? onGalleryBusy : onFullBusy)(false); }}
       />
     );
+  const reportModal = reportOpen && (
+    <>
+      {reportsOpen.includes('gallery') && renderReport('gallery')}
+      {reportsOpen.includes('full') && renderReport('full')}
+    </>
+  );
 
   // The map section, built once and rendered from two places: on its own
   // (the /report/locate step, which must not wait for scoring) and inside
@@ -1485,7 +1568,7 @@ export default function ReportScreen({ view = 'verdict' }) {
               becomes an invisible wrapper past it, where .bsr-dock and
               .bsr-mapcta each take their own spot -- see report.css. */}
           {fullMap && (
-            <div className="bsr-dockzone">
+            <div className="bsr-dockzone" ref={dockzoneRef}>
               <div className="bsr-dock">
                 {/* Attached to the card's own top edge, full width, instead
                     of a pill floating above its right corner -- it lines up
