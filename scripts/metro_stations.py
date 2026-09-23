@@ -115,7 +115,7 @@ DELHI_STATIONS = [
     ("Bahdurgarh City", 28.690785, 76.935485),
     ("Barakhamba", 28.630030, 77.224360),
     ("Bata Chowk", 28.385836, 77.313462),
-    ("Belvedere Towers", 28.493600, 77.093500),
+    ("Belvedere Towers", 28.491664, 77.088139),
     ("Bhikaji Cama Place", 28.567900, 77.187016),
     ("Botanical Garden", 28.563896, 77.334332),
     ("Brigadier Hoshiar Singh", 28.697460, 76.919203),
@@ -125,17 +125,17 @@ DELHI_STATIONS = [
     ("Chhattarpur", 28.506710, 77.174840),
     ("Chirag Delhi", 28.538141, 77.228069),
     ("Civil Lines", 28.676851, 77.225030),
-    ("Cyber City", 28.493600, 77.093500),
-    ("DLF Phase 1", 28.493600, 77.093500),
-    ("DLF Phase 2", 28.493600, 77.093500),
-    ("DLF Phase 3", 28.493600, 77.093500),
+    ("Cyber City", 28.497963, 77.089168),
+    ("DLF Phase 1", 28.471408, 77.093933),
+    ("DLF Phase 2", 28.487534, 77.092947),
+    ("DLF Phase 3", 28.493512, 77.093676),
     ("Dabri Mor - Janakpuri South", 28.615755, 77.085178),
     ("Dashrath Puri", 28.601875, 77.082356),
     ("Delhi Aerocity", 28.548810, 77.120920),
     ("Delhi Cantt", 28.593833, 77.134979),
     ("Delhi Gate", 28.639204, 77.240782),
-    ("Delta 1 Greater Noida", 28.474388, 77.503990),
-    ("Depot Greater Noida", 28.474388, 77.503990),
+    ("Delta 1 Greater Noida", 28.478448, 77.525704),
+    ("Depot Greater Noida", 28.488962, 77.543994),
     ("Dhaula Kuan", 28.591780, 77.161550),
     ("Dilli Haat INA", 28.574408, 77.210241),
     ("Dilshad Garden", 28.675920, 77.321420),
@@ -154,7 +154,7 @@ DELHI_STATIONS = [
     ("ESI BASAI DARAPUR", 28.658074, 77.127268),
     ("East Azad Nagar", 28.664696, 77.284881),
     ("Escorts Mujesar", 28.370234, 77.314920),
-    ("GNIDA Office", 28.474388, 77.503990),
+    ("GNIDA Office", 28.484600, 77.536500),
     ("Ghevra Metro station", 28.685238, 76.996159),
     ("Ghitorni", 28.493830, 77.149220),
     ("Gokulpuri", 28.702475, 77.286125),
@@ -230,12 +230,12 @@ DELHI_STATIONS = [
     ("Mohan Nagar", 28.606319, 77.106082),
     ("Moolchand", 28.564170, 77.234230),
     ("Moti Nagar", 28.657840, 77.142480),
-    ("Moulsari Avenue", 28.493600, 77.093500),
+    ("Moulsari Avenue", 28.500697, 77.094600),
     ("Mundka", 28.683210, 77.031330),
     ("Mundka Industrial Area (MIA)", 28.683449, 77.017133),
     ("Munirka", 28.554886, 77.171084),
     ("N.H.P.C. Chowk", 28.457690, 77.221939),
-    ("NSEZ Noida", 28.535517, 77.391029),
+    ("NSEZ Noida", 28.532300, 77.394800),
     ("Najafgarh", 28.612304, 76.982391),
     ("Nangli", 28.617300, 77.010437),
     ("Nangloi", 28.682310, 77.064710),
@@ -253,23 +253,23 @@ DELHI_STATIONS = [
     ("Noida City Center", 28.574660, 77.356080),
     ("Noida Sector 101", 28.556402, 77.384798),
     ("Noida Sector 137", 28.509079, 77.409015),
-    ("Noida Sector 142", 28.475835, 77.554479),
+    ("Noida Sector 142", 28.499084, 77.412611),
     ("Noida Sector 143", 28.502663, 77.426256),
-    ("Noida Sector 144", 28.408905, 76.915523),
-    ("Noida Sector 145", 28.408905, 76.915523),
+    ("Noida Sector 144", 28.486483, 77.432877),
+    ("Noida Sector 145", 28.479000, 77.442500),
     ("Noida Sector 146", 28.408229, 76.963024),
-    ("Noida Sector 147", 28.408905, 76.915523),
-    ("Noida Sector 148", 28.475835, 77.554479),
+    ("Noida Sector 147", 28.459502, 77.465914),
+    ("Noida Sector 148", 28.448100, 77.476600),
     ("Noida Sector 15", 28.585120, 77.311390),
     ("Noida Sector 16", 28.578190, 77.317570),
     ("Noida Sector 18", 28.570810, 77.326120),
-    ("Noida Sector 34", 28.480863, 77.084888),
-    ("Noida Sector 50", 28.535517, 77.391029),
+    ("Noida Sector 34", 28.580199, 77.363442),
+    ("Noida Sector 50", 28.574518, 77.377206),
     ("Noida Sector 51", 28.585700, 77.375300),
-    ("Noida Sector 52", 28.480863, 77.084888),
-    ("Noida Sector 59", 28.480863, 77.084888),
-    ("Noida Sector 61", 28.480863, 77.084888),
-    ("Noida Sector 62", 28.480863, 77.084888),
+    ("Noida Sector 52", 28.586700, 77.372839),
+    ("Noida Sector 59", 28.606493, 77.372726),
+    ("Noida Sector 61", 28.597631, 77.372299),
+    ("Noida Sector 62", 28.617000, 77.373600),
     ("Noida Sector 76", 28.568746, 77.382685),
     ("Noida Sector 81", 28.622575, 77.374315),
     ("Noida Sector 83", 28.524115, 77.397244),
@@ -277,7 +277,7 @@ DELHI_STATIONS = [
     ("Okhla Bird Sanctuary", 28.552942, 77.321595),
     ("Okhla NSIC", 28.554483, 77.264849),
     ("Okhla Vihar", 28.561300, 77.291930),
-    ("Old Faridabad", 28.480863, 77.084888),
+    ("Old Faridabad", 28.410800, 77.311400),
     ("Palam", 28.591893, 77.082824),
     ("Panchsheel Park", 28.543353, 77.214076),
     ("Pandit Shree Ram Sharma", 28.689281, 76.951199),
@@ -311,16 +311,16 @@ DELHI_STATIONS = [
     ("Saket", 28.520600, 77.201380),
     ("Samaypur Badli(First Station)", 28.744616, 77.138265),
     ("Sant Surdas - Sihi", 28.354651, 77.316226),
-    ("Sarai", 28.651718, 77.221939),
+    ("Sarai", 28.477682, 77.305003),
     ("Sarai Kale Khan Hazrat Nizamuddin", 28.588749, 77.257249),
     ("Sarita Vihar", 28.528780, 77.288260),
     ("Sarojini Nagar", 28.574157, 77.195370),
     ("Satguru Ram Singh Marg", 28.661990, 77.157480),
     ("Sector 28 Faridabad", 28.545257, 77.032576),
-    ("Sector 42-43", 28.493600, 77.093500),
-    ("Sector 53-54", 28.493600, 77.093500),
-    ("Sector 54 Chowk", 28.493600, 77.093500),
-    ("Sector 55-66", 28.493600, 77.093500),
+    ("Sector 42-43", 28.457392, 77.096895),
+    ("Sector 53-54", 28.446374, 77.100435),
+    ("Sector 54 Chowk", 28.432921, 77.104921),
+    ("Sector 55-56", 28.423278, 77.105221),
     ("Seelampur", 28.669890, 77.266700),
     ("Shadipur", 28.651600, 77.158240),
     ("Shahdara", 28.673450, 77.289620),
@@ -335,15 +335,15 @@ DELHI_STATIONS = [
     ("Shivaji Park", 28.674900, 77.130560),
     ("Shivaji Stadium", 28.629010, 77.211900),
     ("Shyam park", 28.698807, 28.698807),
-    ("Sikandarpur", 28.493600, 77.093500),
+    ("Sikandarpur", 28.481400, 77.093100),
     ("Sir Vishweshwaraiah Moti Bagh", 28.578533, 77.175741),
-    ("South Extension", 28.651718, 77.221939),
+    ("South Extension", 28.568611, 77.220265),
     ("Subhash Nagar", 28.640390, 77.104950),
     ("Sukhdev Vihar", 28.559748, 77.274900),
     ("Sultanpur", 28.499270, 77.161530),
     ("Supreme Court (Pragati Maidan)", 28.623420, 77.242500),
     ("Tagore Garden", 28.643790, 77.112840),
-    ("Terminal 1 IGI Airport", 28.577151, 77.111153),
+    ("Terminal 1 IGI Airport", 28.565300, 77.122300),
     ("Tikri Border", 28.688025, 76.964083),
     ("Tikri Kalan", 28.686866, 76.977207),
     ("Tilak Nagar", 28.636570, 77.096480),
@@ -583,3 +583,65 @@ HYDERABAD_STATIONS = [
     ("Narayanguda", 17.393865, 78.489825, "Green", "single"),
     ("Sultan Bazaar", 17.384293, 78.483818, "Green", "single"),
 ]
+
+# Ahmedabad Metro (Red Line + Blue Line), real operational stations with
+# real, individually-verified Wikipedia infobox coordinates -- the
+# centroid-radius join method (same as Delhi/Bangalore/Mumbai/Hyderabad),
+# NOT Chennai's hand-picked name-matched dict, which missed a real
+# station once (Thiruvottiyur) purely because of a spelling/transliteration
+# mismatch. Using real coordinates + haversine distance eliminates that
+# whole error class rather than trying to catch instances of it by hand.
+#
+# Each station's coordinate was cross-checked for internal consistency
+# (no two distinct stations sharing a near-identical coordinate, the
+# Mumbai/Hyderabad Wikipedia-infobox-copy-paste bug found in a prior
+# pass) and sanity-checked against Ahmedabad's real geographic bounds.
+# None of that class of error was found here.
+#
+# 3 real, named stations have NO reliable coordinate (Wikipedia's own
+# infobox was empty or the page repeatedly failed to resolve to a
+# distinct article) and are deliberately left OUT of this list rather
+# than estimated from a neighbouring station: Paldi, Thaltej Gam,
+# Kalupur Railway Station. All three are real, currently operational
+# stations -- excluded from the geo-join only, not disclaimed as
+# non-existent.
+#
+# "Sabarmati" and "Sabarmati Railway Station" are two distinct real Red
+# Line stations (~1.85km apart, each with its own separate, real
+# Wikipedia infobox coordinate) -- not a duplicate, both included.
+AHMEDABAD_STATIONS = [
+    # Red Line
+    ("AEC", 23.07511, 72.59321),
+    ("Gandhigram", 23.02667, 72.56890),
+    ("Jivraj Park", 23.00551, 72.53357),
+    ("Motera Stadium", 23.09654, 72.60071),
+    ("Rajiv Nagar", 23.00973, 72.53686),
+    ("Ranip", 23.06774, 72.57410),
+    ("Sabarmati", 23.08564, 72.59228),
+    ("Sabarmati Railway Station", 23.06979, 72.58777),
+    ("Shreyas", 23.01364, 72.54944),
+    ("Usmanpura", 23.04600, 72.56498),
+    ("Vadaj", 23.06766, 72.56580),
+    ("Vijay Nagar", 23.05618, 72.56239),
+    ("Old High Court", 23.03733, 72.56704),  # Red/Blue interchange, counted once
+    ("APMC", 22.99773, 72.53725),
+    # Blue Line
+    ("Amraiwadi", 23.00776, 72.62866),
+    ("Apparel Park", 23.01069, 72.61807),
+    ("Commerce Six Road", 23.04070, 72.55302),
+    ("Doordarshan Kendra", 23.04817, 72.52447),
+    ("Gheekanta", 23.02860, 72.58683),
+    ("Gujarat University", 23.04486, 72.54361),
+    ("Gurukul Road", 23.04587, 72.53493),
+    ("Kankaria East", 23.01520, 72.60442),
+    ("Nirant Cross Road", 22.99982, 72.65891),
+    ("Rabari Colony", 23.00553, 72.63545),
+    ("SP Stadium", 23.03987, 72.56164),
+    ("Shahpur", 23.03920, 72.58124),
+    ("Thaltej", 23.04974, 72.51621),
+    ("Vastral", 23.00360, 72.64761),
+    ("Vastral Gam", 22.99724, 72.66766),
+]
+# Paldi, Thaltej Gam, Kalupur Railway Station -- real, operational stations,
+# no reliable coordinate found this session. Not included above, not guessed.
+AHMEDABAD_STATIONS_UNREAD = ["Paldi", "Thaltej Gam", "Kalupur Railway Station"]

@@ -85,10 +85,10 @@ const SEARCH_PLACEHOLDER = 'Enter society name, landmark, or address...';
 // visitor is -- see lib/tryPlaces.js for the per-city lists and why each
 // entry is hardcoded rather than a query re-resolved on every click.
 const KIND_LABELS = { city: 'City', neighbourhood: 'Neighbourhood', address: 'Address' };
-// The 5 cities BlindSpot actually has neighbourhood-score coverage for --
+// The 7 cities BlindSpot actually has neighbourhood-score coverage for --
 // named here once, for the "not covered yet" message the city panel
 // shows when someone searches a city outside that set.
-const COVERED_CITY_NAMES = 'Bangalore, Delhi NCR, Mumbai, Hyderabad, Chandigarh and Chennai';
+const COVERED_CITY_NAMES = 'Bangalore, Delhi NCR, Mumbai, Hyderabad, Chandigarh, Chennai and Ahmedabad';
 
 export default function HeroLiveMapCanvas() {
   const router = useRouter();

@@ -1994,7 +1994,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                           : pinCode
                             ? `Pin ${pinCode} isn't in our neighbourhood records yet, so we won't guess at safety, water or schools here.`
                             : "We couldn't work out the pincode for this exact spot, so there's nothing to look the area up by."}
-                        {areaFailed ? '' : ' BlindSpot has records for Delhi NCR, Bangalore, Chandigarh, Hyderabad, Mumbai and Chennai.'}
+                        {areaFailed ? '' : ' BlindSpot has records for Delhi NCR, Bangalore, Chandigarh, Hyderabad, Mumbai, Chennai and Ahmedabad.'}
                       </p>
                       {areaFailed && (
                         <p style={{ marginTop: 10 }}>
