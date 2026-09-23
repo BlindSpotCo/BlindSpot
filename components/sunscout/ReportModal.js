@@ -82,6 +82,44 @@ const REPORT_TIPS = [
   'Visit at the time you will actually be home. A flat that is bright at noon can be in shade by four.',
 ];
 
+// The minimise control and the folded bar. Rendered in both states
+// (the bar returns early, without the card's own <style> block).
+const BAR_CSS = `
+  .rm-min{
+    flex:none; display:flex; align-items:center; justify-content:center;
+    width:26px; height:26px; margin:-4px -4px 0 0; padding:0; cursor:pointer;
+    border:1px solid rgba(28,24,18,.14); border-radius:50%;
+    background:#FFFDF8; color:#5A5140;
+    transition:background .15s ease, color .15s ease;
+  }
+  .rm-min:hover{ background:#F1E9DA; color:#1C1812; }
+  .rm-min:focus-visible{ outline:2px solid #AF5F30; outline-offset:2px; }
+  .rm-bar{
+    position:relative; overflow:hidden; pointer-events:auto;
+    display:flex; align-items:center; gap:9px; width:100%;
+    height:38px; padding:0 14px; cursor:pointer; text-align:left;
+    font:inherit; font-size:13px; font-weight:700; color:#1C1812;
+    background:#FFFDF8; border:1px solid rgba(28,24,18,.14); border-radius:999px;
+    box-shadow:0 8px 24px rgba(0,0,0,.18);
+    animation:rm-bar-in .2s ease-out;
+  }
+  .rm-bar:hover{ background:#F8F2E6; }
+  .rm-bar:focus-visible{ outline:2px solid #AF5F30; outline-offset:2px; }
+  .rm-bar.is-ready{ background:#AF5F30; color:#FFFDF8; border-color:#AF5F30; }
+  .rm-bar.is-ready:hover{ filter:brightness(.93); }
+  .rm-bar-text{ flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .rm-bar-go{ flex:none; font-size:12px; opacity:.8; }
+  .rm-bar-dot{ flex:none; width:8px; height:8px; border-radius:50%; background:#FFFDF8; }
+  .rm-bar-dot.is-live{ background:#AF5F30; animation:rm-bar-pulse 1.4s ease-out infinite; }
+  .rm-bar-fill{
+    position:absolute; left:0; bottom:0; height:3px; background:#AF5F30;
+    transition:width .6s ease;
+  }
+  @keyframes rm-bar-in{ from{ opacity:0; transform:translateY(6px) } to{ opacity:1; transform:none } }
+  @keyframes rm-bar-pulse{ 0%{ box-shadow:0 0 0 0 rgba(175,95,48,.55) } 100%{ box-shadow:0 0 0 7px rgba(175,95,48,0) } }
+  @media (prefers-reduced-motion:reduce){ .rm-bar, .rm-bar-dot.is-live, .rm-bar-fill{ animation:none; transition:none; } }
+`;
+
 export default function ReportModal({
   lat, lon, tzOffset, address, onClose, captureScreenshots, cancelCapture, onFloorFacingSubmit,
   // galleryOnly: this run was asked for the sun & shadow document -- the 12
@@ -167,6 +205,9 @@ export default function ReportModal({
   const cancelledRef = useRef(false);
   const abortRef = useRef(null);
   const [cancelling, setCancelling] = useState(false);
+  // The corner card can fold down to a thin bar so it stops covering the
+  // map/page while a run finishes. Folding never cancels anything.
+  const [minimized, setMinimized] = useState(false);
 
 
   // Floor + facing were already picked one step earlier, in UnitVerdict's
@@ -558,6 +599,11 @@ export default function ReportModal({
     return () => { document.body.style.overflow = previousOverflow; };
   }, [isBlockingStep]);
 
+  // An error needs reading -- never leave it folded away.
+  useEffect(() => { if (error) setMinimized(false); }, [error]);
+  const isCorner = !isBlockingStep;
+  const barMode = isCorner && minimized && !error;
+
   const overlayStyle = isBlockingStep
     ? { position:'fixed', inset:0, zIndex:1000, background:'rgba(10,5,0,0.6)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }
     : { position:'fixed', bottom:20, right:20, zIndex:1000, width:360, maxWidth:'calc(100vw - 40px)', pointerEvents:'none' };
@@ -568,14 +614,52 @@ export default function ReportModal({
 
   if (typeof document === 'undefined') return null;
 
+  // Folded: one thin bar in the same corner, with the progress running
+  // along its bottom edge. Click anywhere on it to open the card again.
+  if (barMode) {
+    const label = galleryOnly ? 'Sun & shadow report' : 'Full AI report';
+    return createPortal(
+      <div className="rm-corner-card rm-bar-wrap" style={overlayStyle}>
+        <button
+          type="button"
+          className={`rm-bar${reportUrl ? ' is-ready' : ''}`}
+          onClick={() => setMinimized(false)}
+          aria-label={reportUrl ? `${label} is ready - show it` : `${label} generating, ${shownProgress}% - show details`}
+        >
+          <span className={`rm-bar-dot${reportUrl ? '' : ' is-live'}`} aria-hidden="true" />
+          <span className="rm-bar-text">
+            {reportUrl ? `${label} ready` : `${label} · ${shownProgress}%`}
+          </span>
+          <span className="rm-bar-go" aria-hidden="true">{reportUrl ? 'Open ↑' : '↑'}</span>
+          {!reportUrl && <span className="rm-bar-fill" style={{ width:`${shownProgress}%` }} aria-hidden="true" />}
+        </button>
+        <style>{BAR_CSS}</style>
+      </div>,
+      document.body
+    );
+  }
+
   return createPortal(
     <div className={`modal-overlay${isBlockingStep ? '' : ' rm-corner-card'}`} style={overlayStyle}>
       <div style={cardStyle}>
       <div className="modal-body" style={{ padding: isBlockingStep ? 24 : 18 }}>
 
-        {!isBlockingStep && !reportUrl && (
-          <div className="mono" style={{ fontSize:10, fontWeight:600, color:ORG, letterSpacing:'.1em', textTransform:'uppercase', marginBottom:10 }}>
-            {galleryOnly ? 'Sun & shadow report' : 'Full AI report'} generating - feel free to keep browsing
+        {isCorner && (
+          <div style={{ display:'flex', alignItems:'flex-start', gap:10, marginBottom: reportUrl ? 0 : 10 }}>
+            <div className="mono" style={{ flex:1, fontSize:10, fontWeight:600, color:ORG, letterSpacing:'.1em', textTransform:'uppercase', lineHeight:1.5 }}>
+              {reportUrl ? '' : error ? (galleryOnly ? 'Sun & shadow report' : 'Full AI report') : `${galleryOnly ? 'Sun & shadow report' : 'Full AI report'} generating - feel free to keep browsing`}
+            </div>
+            {!error && (
+              <button
+                type="button"
+                className="rm-min"
+                onClick={() => setMinimized(true)}
+                aria-label="Minimise to a bar"
+                title="Minimise - keeps running"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+              </button>
+            )}
           </div>
         )}
 
@@ -864,6 +948,7 @@ export default function ReportModal({
           </div>
         )}
 
+        <style>{BAR_CSS}</style>
         <style>{`
           @keyframes rm-spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
           @keyframes rm-tip-in { from{ opacity:0; transform:translateY(4px) } to{ opacity:1; transform:none } }

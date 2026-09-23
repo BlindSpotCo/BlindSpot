@@ -21,7 +21,7 @@ import { FACTOR_LABELS, FACING_OPTS } from '@/lib/property-score/ui';
 import { getActionItems } from '@/lib/property-score/actionItems';
 import {
   ShieldCheck, GraduationCap, Wind, Droplets, Zap, Route, Building2, Waves,
-  Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake, Sofa, ArrowDown,
+  Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake, Sofa, ArrowDown, MapPin, Scale, FolderOpen,
 } from 'lucide-react';
 import RoomPhotoAnalyzer from './RoomPhotoAnalyzer';
 import './report.css';
@@ -1660,39 +1660,54 @@ export default function ReportScreen({ view = 'verdict' }) {
               exactly one top-level heading on the page, not two competing
               ones. */}
           <header className="bsr-head">
-            <div className="bsr-head-top">
-              <h1 className="bsr-title">Your BlindSpot report</h1>
-              <span className="bsr-head-links">
-                {/* First, not last. Someone reading a verdict on one flat is most
-                    likely to want the other two beside it -- that is a more common
-                    next step here than either of the other two links. */}
-                <a href="/compare" className="is-primary">Compare flats</a>
-                <a href="/floor-plan-analysis" className="is-primary">Furnish your home</a>
-                <a href="/my-reports">My reports</a>
-              </span>
+            {/* One row: which address this is on the left, the tools on
+                the right. Used to be a mono caption, a full-width grey
+                input-looking pill holding the whole geocoder string, and
+                three links of different styles floating above it. */}
+            <div className="bsr-head-row">
+              <div className="bsr-head-where">
+                <span className="bsr-head-pin" aria-hidden="true">
+                  <MapPin size={18} strokeWidth={2.2} />
+                </span>
+                <div className="bsr-head-text">
+                  <h1 className="bsr-title">Your BlindSpot report</h1>
+                  <p className="bsr-addr">
+                    {(() => {
+                      const full = address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                      const parts = full.replace(/,\s*India\s*$/i, '').split(',').map((x) => x.trim()).filter(Boolean);
+                      return (
+                        <span className="bsr-addr-text" title={full}>
+                          <strong>{parts[0]}</strong>
+                          {parts.length > 1 && <span className="bsr-addr-rest">{parts.slice(1).join(', ')}</span>}
+                        </span>
+                      );
+                    })()}
+                    <button
+                      type="button"
+                      className="bsr-addr-change"
+                      onClick={() => setAddrEditOpen((v) => !v)}
+                      aria-expanded={addrEditOpen}
+                    >
+                      {addrEditOpen ? 'Cancel' : 'Change'}
+                    </button>
+                  </p>
+                </div>
+              </div>
+              <nav className="bsr-head-links" aria-label="Report tools">
+                <a href="/compare" className="bsr-tool">
+                  <Scale size={16} strokeWidth={2} aria-hidden="true" />
+                  <span>Compare flats</span>
+                </a>
+                <a href="/floor-plan-analysis" className="bsr-tool">
+                  <Sofa size={16} strokeWidth={2} aria-hidden="true" />
+                  <span>Furnish your home</span>
+                </a>
+                <a href="/my-reports" className="bsr-tool is-quiet" title="My reports">
+                  <FolderOpen size={16} strokeWidth={2} aria-hidden="true" />
+                  <span>My reports</span>
+                </a>
+              </nav>
             </div>
-            <p className="bsr-addr">
-              <span className="bsr-pin" aria-hidden="true" />
-              {/* The pill ellipsis-truncates a long address to one line (see
-                  .bsr-addr-text in report.css) -- title gives back the full
-                  string on hover/long-press instead of it just vanishing. */}
-              <span className="bsr-addr-text" title={address || undefined}>
-                {address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}
-              </span>
-              {/* Used to be a plain link back to "/" -- moving the pin meant
-                  leaving the report entirely and starting over. This reveals
-                  the same search-or-coordinates form the map toolbar used to
-                  carry, right where the address itself is written, and closes
-                  itself again once moveTo() actually lands a new pin. */}
-              <button
-                type="button"
-                className="bsr-addr-change"
-                onClick={() => setAddrEditOpen((v) => !v)}
-                aria-expanded={addrEditOpen}
-              >
-                {addrEditOpen ? 'Cancel' : 'Change address'}
-              </button>
-            </p>
             {addrEditOpen && (
               <form className="bsr-addr-edit bsr-locbar" onSubmit={onSearchSubmit}>
                 <input
