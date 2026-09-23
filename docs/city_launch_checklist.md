@@ -24,7 +24,7 @@ Generated 2026-09-23 by `scripts/city_launch_checklist.py` — item 8 of the tru
 - **4. Resident feedback loop live**: widget + API shipped on 8/~30 fields; field_reports table not confirmed created
 - **5. Benchmark alignment (vs. circle-rate proxy)**: r=+0.83 vs. circle-rate proxy (not market price -- see script docstring)
 - **6. Confidence/abstention logic present**: 39/39 pins have a _provenance entry on at least one field
-- **7. Versioning & changelog in place**: CHANGELOG.md exists as of v1.4
+- **7. Versioning & changelog in place**: CHANGELOG.md exists, currently at v1.14
 
 ### Bangalore
 
@@ -34,7 +34,7 @@ Generated 2026-09-23 by `scripts/city_launch_checklist.py` — item 8 of the tru
 - **4. Resident feedback loop live**: widget + API shipped on 8/~30 fields; field_reports table not confirmed created
 - **5. Benchmark alignment (vs. circle-rate proxy)**: r=+0.81 vs. circle-rate proxy (not market price -- see script docstring)
 - **6. Confidence/abstention logic present**: 66/66 pins have a _provenance entry on at least one field
-- **7. Versioning & changelog in place**: CHANGELOG.md exists as of v1.4
+- **7. Versioning & changelog in place**: CHANGELOG.md exists, currently at v1.14
 
 ### Chandigarh
 
@@ -44,7 +44,7 @@ Generated 2026-09-23 by `scripts/city_launch_checklist.py` — item 8 of the tru
 - **4. Resident feedback loop live**: widget + API shipped on 8/~30 fields; field_reports table not confirmed created
 - **5. Benchmark alignment (vs. circle-rate proxy)**: only 1 distinct price band(s) -- proxy too coarse to check
 - **6. Confidence/abstention logic present**: 20/20 pins have a _provenance entry on at least one field
-- **7. Versioning & changelog in place**: CHANGELOG.md exists as of v1.4
+- **7. Versioning & changelog in place**: CHANGELOG.md exists, currently at v1.14
 
 ### Chennai
 
@@ -54,7 +54,7 @@ Generated 2026-09-23 by `scripts/city_launch_checklist.py` — item 8 of the tru
 - **4. Resident feedback loop live**: widget + API shipped on 8/~30 fields; field_reports table not confirmed created
 - **5. Benchmark alignment (vs. circle-rate proxy)**: r=+0.73 vs. circle-rate proxy (not market price -- see script docstring)
 - **6. Confidence/abstention logic present**: 1/34 pins have a _provenance entry on at least one field
-- **7. Versioning & changelog in place**: CHANGELOG.md exists as of v1.4
+- **7. Versioning & changelog in place**: CHANGELOG.md exists, currently at v1.14
 
 ### Delhi NCR
 
@@ -64,7 +64,7 @@ Generated 2026-09-23 by `scripts/city_launch_checklist.py` — item 8 of the tru
 - **4. Resident feedback loop live**: widget + API shipped on 8/~30 fields; field_reports table not confirmed created
 - **5. Benchmark alignment (vs. circle-rate proxy)**: r=+0.46 vs. circle-rate proxy (not market price -- see script docstring)
 - **6. Confidence/abstention logic present**: 86/86 pins have a _provenance entry on at least one field
-- **7. Versioning & changelog in place**: CHANGELOG.md exists as of v1.4
+- **7. Versioning & changelog in place**: CHANGELOG.md exists, currently at v1.14
 
 ### Hyderabad
 
@@ -74,7 +74,7 @@ Generated 2026-09-23 by `scripts/city_launch_checklist.py` — item 8 of the tru
 - **4. Resident feedback loop live**: widget + API shipped on 8/~30 fields; field_reports table not confirmed created
 - **5. Benchmark alignment (vs. circle-rate proxy)**: r=+0.49 vs. circle-rate proxy (not market price -- see script docstring)
 - **6. Confidence/abstention logic present**: 41/41 pins have a _provenance entry on at least one field
-- **7. Versioning & changelog in place**: CHANGELOG.md exists as of v1.4
+- **7. Versioning & changelog in place**: CHANGELOG.md exists, currently at v1.14
 
 ### Mumbai
 
@@ -84,5 +84,5 @@ Generated 2026-09-23 by `scripts/city_launch_checklist.py` — item 8 of the tru
 - **4. Resident feedback loop live**: widget + API shipped on 8/~30 fields; field_reports table not confirmed created
 - **5. Benchmark alignment (vs. circle-rate proxy)**: r=+0.57 vs. circle-rate proxy (not market price -- see script docstring)
 - **6. Confidence/abstention logic present**: 96/96 pins have a _provenance entry on at least one field
-- **7. Versioning & changelog in place**: CHANGELOG.md exists as of v1.4
+- **7. Versioning & changelog in place**: CHANGELOG.md exists, currently at v1.14
 

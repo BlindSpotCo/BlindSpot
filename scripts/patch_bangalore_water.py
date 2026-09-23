@@ -175,8 +175,14 @@ for e in nqi:
     e["nqi_composite"] = composite
 
     def grade_for(c):
-        return ("A" if c >= 80 else "B" if c >= 65 else "C" if c >= 50
-                else "D" if c >= 35 else "F")
+        # Canonical 6-band scale (matches build_chennai.py / build_hyderabad.py /
+        # build_mumbai.py / build_chandigarh.py). This script used to carry its own
+        # coarser 5-band inline version (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+),
+        # which silently corrupted 106 grade labels across Delhi NCR and Bangalore
+        # before scripts/patch_grade_labels.py fixed the data in v1.11. Fixed here too
+        # so a future re-run of this script can't reintroduce that bug.
+        return ("A" if c >= 80 else "B+" if c >= 70 else "B" if c >= 60
+                else "C+" if c >= 50 else "C" if c >= 40 else "D")
     e["grade"] = grade_for(composite)
     changed_nqi += 1
     water_diffs.append((pin, tier, old_water, new_water, old_composite, composite))
