@@ -215,7 +215,7 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
             background: `linear-gradient(165deg, color-mix(in srgb, ${scoreColor(nqi)} 12%, var(--paper)) 0%, var(--paper) 60%)`,
             boxShadow: `0 1px 2px rgba(28,24,18,.05), 0 20px 40px -28px color-mix(in srgb, ${scoreColor(nqi)} 45%, transparent)`,
           }}>
-            <p className="avsheet-label" style={{ color: 'var(--slate)', opacity: .75 }}>Verdict</p>
+            <p className="avsheet-label" style={{ color: 'var(--slate)', opacity: .75 }}>In short</p>
             <h2 className="avsheet-verdict-word" style={{ color: scoreColor(nqi) }}>{verdict.label}</h2>
             <p className="avsheet-verdict-why" style={{ color: 'var(--text-mute)' }}>{verdict.why}</p>
           </div>

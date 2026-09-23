@@ -21,7 +21,7 @@ import { FACTOR_LABELS, FACING_OPTS } from '@/lib/property-score/ui';
 import { getActionItems } from '@/lib/property-score/actionItems';
 import {
   ShieldCheck, GraduationCap, Wind, Droplets, Zap, Route, Building2, Waves,
-  Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake,
+  Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake, Sofa,
 } from 'lucide-react';
 import RoomPhotoAnalyzer from './RoomPhotoAnalyzer';
 import './report.css';
@@ -98,30 +98,75 @@ function toneOf(score) {
   if (score >= 40) return 'avg';
   return 'poor';
 }
-function headlineFor(score, hasArea) {
-  if (!hasArea) {
-    if (score >= 75) return 'This flat holds up on its own.';
-    if (score >= 50) return 'Workable - a few things to check in person.';
-    return 'Several things here need a closer look.';
+// The half-level rating word. Same bands as word(), but the bottom one
+// says what it means for a buyer -- "Poor" in big red type under a flat
+// read as us calling someone's prospective home bad, which is neither
+// kind nor what a single composite number can actually claim.
+function halfWord(score) {
+  if (typeof score !== 'number' || Number.isNaN(score)) return null;
+  if (score >= 80) return 'Excellent';
+  if (score >= 60) return 'Good';
+  if (score >= 40) return 'Average';
+  return 'Below average';
+}
+function halfTone(score) {
+  const t = toneOf(score);
+  return t === 'poor' ? 'avg' : t;
+}
+
+// The summary at the top of the report is built from the actual rows
+// below it, strengths first -- not a judgement on the whole home. Two
+// short noun forms per dimension: how it reads as a strength ("Strong on
+// schools and air quality") and as something to ask about ("Worth
+// asking about water supply").
+const SUMMARY_WORDS = {
+  crime: ['safety', 'safety after dark'],
+  schools: ['schools', 'schools nearby'],
+  air: ['air quality', 'air quality'],
+  water: ['water supply', 'water supply'],
+  power: ['power supply', 'power cuts'],
+  roads: ['roads', 'the approach roads'],
+  infrastructure: ['connectivity', 'nearby construction'],
+  sewerage: ['drainage', 'monsoon drainage'],
+  sun: ['natural light', 'natural light'],
+  shadeHeat: ['staying cool', 'summer heat'],
+  view: ['views', 'the view'],
+  privacy: ['privacy', 'privacy'],
+  wind: ['airflow', 'airflow'],
+  dampness: ['staying dry', 'monsoon damp'],
+  noise: ['quiet', 'street noise'],
+};
+function joinWords(list) {
+  if (list.length <= 1) return list[0] || '';
+  return `${list.slice(0, -1).join(', ')} and ${list[list.length - 1]}`;
+}
+function buildSummary(area, unit) {
+  const items = [];
+  if (area?.factors) {
+    for (const [k, v] of Object.entries(area.factors)) {
+      if (typeof v === 'number' && SUMMARY_WORDS[k]) items.push({ key: k, score: v });
+    }
   }
-  if (score >= 75) return 'Worth going ahead, with a few checks.';
-  if (score >= 58) return 'Worth a look - eyes open.';
-  return 'Worth a very close look before you commit.';
+  for (const sub of unit?.subScores || []) {
+    // Skip rows still loading, or showing a neutral placeholder because
+    // the live data wasn't there -- neither is a finding.
+    if (sub.pending || typeof sub.score !== 'number' || !SUMMARY_WORDS[sub.key]) continue;
+    if (/unavailable|neutral score/i.test(sub.summary || '')) continue;
+    items.push({ key: sub.key, score: sub.score });
+  }
+  const strengths = items.filter((i) => i.score >= 75).sort((a, b) => b.score - a.score).slice(0, 3);
+  const checks = items.filter((i) => i.score < 55).sort((a, b) => a.score - b.score).slice(0, 2);
+  const good = strengths.map((i) => SUMMARY_WORDS[i.key][0]);
+  const ask = checks.map((i) => SUMMARY_WORDS[i.key][1]);
+  const headline = good.length
+    ? `Strong on ${joinWords(good)}.`
+    : 'A balanced home, without one big standout.';
+  const line = ask.length
+    ? `Worth asking about ${joinWords(ask)} on your visit. Everything is broken down below.`
+    : 'Nothing stands out as a concern. One visit at rush hour and one after dark is still a good idea.';
+  return { headline, line, strengths, checks };
 }
-// The API's quadrant copy is written for us, not for a buyer ("Location
-// Play", "worth comparing other floors/facings"). Same logic, said
-// plainly -- and naming the actual factor (light, outlook, the streets
-// around it) rather than just judging "the flat" as a whole. One line
-// each: this sits directly under a 20px headline saying much the same
-// thing, and three lines of qualification there read as hedging.
-function verdictSay(areaScore, unitScore) {
-  const areaOk = areaScore >= 60;
-  const unitOk = unitScore >= 60;
-  if (areaOk && unitOk) return 'Locality and flat both hold up - that combination is the rare part.';
-  if (!areaOk && unitOk) return 'The flat holds up. The streets around it are the half you cannot change later.';
-  if (areaOk && !unitOk) return 'Good locality. It is this floor and facing that cost it - ask what else the tower has.';
-  return 'Both halves need seeing in person before you commit.';
-}
+
 function ord(n) {
   const s = ['th', 'st', 'nd', 'rd'];
   const v = n % 100;
@@ -1124,19 +1169,6 @@ export default function ReportScreen({ view = 'verdict' }) {
         </select>
       </label>
 
-      {fullMap && showUnitTip && assumed && (
-        <span className="bsr-maptip" role="note">
-          <span className="bsr-maptip-text">Set your floor and facing</span>
-          <button
-            type="button"
-            className="bsr-maptip-x"
-            onClick={() => setShowUnitTip(false)}
-            aria-label="Dismiss"
-          >
-            ×
-          </button>
-        </span>
-      )}
     </span>
   );
 
@@ -1280,7 +1312,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                   disabled={!solar?.pathData}
                   onClick={() => setReportOpen('gallery')}
                 >
-                  Build the sun report →
+                  <Sun size={15} strokeWidth={2.2} aria-hidden="true" /> Year-round sunlight report
                 </button>
               )}
             </div>
@@ -1320,7 +1352,7 @@ export default function ReportScreen({ view = 'verdict' }) {
               type="button"
               className="bsr-fullbar-close"
               onClick={confirmSpot}
-              aria-label="Close the map and see the verdict"
+              aria-label="Close the map and see your report"
               title="Close the map"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
@@ -1438,6 +1470,23 @@ export default function ReportScreen({ view = 'verdict' }) {
           {fullMap && (
             <div className="bsr-dockzone">
               <div className="bsr-dock">
+                {/* Attached to the card's own top edge, full width, instead
+                    of a pill floating above its right corner -- it lines up
+                    with the box it's about. */}
+                {showUnitTip && assumed && (
+                  <p className="bsr-docktip" role="note">
+                    <span className="bsr-docktip-dot" aria-hidden="true" />
+                    <span className="bsr-docktip-text">Set your floor and facing</span>
+                    <button
+                      type="button"
+                      className="bsr-docktip-x"
+                      onClick={() => setShowUnitTip(false)}
+                      aria-label="Dismiss"
+                    >
+                      ×
+                    </button>
+                  </p>
+                )}
                 <p className="bsr-dock-title">Pinpoint your unit</p>
                 <p className="bsr-set bsr-dock-fields">
                   {unitFieldsNode}
@@ -1455,8 +1504,24 @@ export default function ReportScreen({ view = 'verdict' }) {
                   ref={fullBackRef}
                   onClick={confirmSpot}
                 >
-                  {pinTouched ? 'See the verdict' : 'Continue without placing a pin'}
+                  {pinTouched ? 'See my report' : 'Continue without placing a pin'}
                   <span aria-hidden="true"> →</span>
+                </button>
+                {/* The sun & shadow run only needs the map, the pin and the
+                    floor/facing -- all of which are right here -- so it can
+                    start from this step too. Builds in the background and
+                    carries on if you continue to the report. */}
+                <button
+                  type="button"
+                  className="bsr-mapcta-sun"
+                  disabled={!solar?.pathData}
+                  onClick={() => setReportOpen('gallery')}
+                >
+                  <Sun size={16} strokeWidth={2.2} aria-hidden="true" />
+                  <span>
+                    <strong>Year-round sunlight report</strong>
+                    <span>Light and shadow on this unit across all four seasons</span>
+                  </span>
                 </button>
               </div>
             </div>
@@ -1528,7 +1593,6 @@ export default function ReportScreen({ view = 'verdict' }) {
   const unit = scores?.unit ?? { score: null, subScores: [] };
   const hasArea = Boolean(area);
   const topScore = hasArea ? scores?.combined : unit.score;
-  const topTone = toneOf(topScore);
 
   // One form, used from both the covered and the not-covered state. The
   // reverse lookup is a best guess -- it returns the pincode of whatever
@@ -1599,6 +1663,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                     likely to want the other two beside it -- that is a more common
                     next step here than either of the other two links. */}
                 <a href="/compare" className="is-primary">Compare flats</a>
+                <a href="/floor-plan-analysis" className="is-primary">Furnish your home</a>
                 <a href="/my-reports">My reports</a>
               </span>
             </div>
@@ -1643,37 +1708,48 @@ export default function ReportScreen({ view = 'verdict' }) {
             )}
           </header>
 
-          {/* ---------- the answer, before anything else ---------- */}
-          <section className={`bsr-answer is-${topTone}`} id="the-score" aria-live="polite">
-            <p className="bsr-big">
-              {/* Names what the number actually is before you see the number
-                  itself -- a bare "72 out of 100" with no label doesn't say
-                  what it's scoring or for what. */}
-              <span className="bsr-big-label">
-                {hasArea ? 'Neighbourhood + this flat, combined' : 'This flat, on its own'}
-              </span>
-              <span className="bsr-big-n">{topScore}</span>
-              <span className="bsr-big-of">out of 100</span>
-            </p>
+          {/* ---------- the summary, before anything else ----------
+              Used to open on a big traffic-light number and a one-line
+              judgement ("Worth a very close look before you commit").
+              For a lot of real homes that read as us calling the place
+              bad. Now: a quiet dial for the number, and a headline built
+              from what the flat and the area are actually strong on,
+              with the one or two things worth asking about after it. */}
+          {(() => {
+            const sum = buildSummary(hasArea ? area : null, unit);
+            const pct = Math.max(0, Math.min(100, Number(topScore) || 0));
+            return (
+          <section className="bsr-answer bsr-sum" id="the-score" aria-live="polite">
+            <div className="bsr-sum-dial" role="img" aria-label={`Overall ${topScore} out of 100`}>
+              <svg viewBox="0 0 120 120" aria-hidden="true">
+                <circle cx="60" cy="60" r="52" className="bsr-sum-track" />
+                <circle
+                  cx="60" cy="60" r="52" className="bsr-sum-arc"
+                  strokeDasharray={`${(pct / 100) * 326.7} 326.7`}
+                  transform="rotate(-90 60 60)"
+                />
+              </svg>
+              <span className="bsr-sum-n">{topScore}</span>
+              <span className="bsr-sum-of">/ 100</span>
+            </div>
             <div className="bsr-answer-say">
-              <h2>{headlineFor(topScore, hasArea)}</h2>
+              <p className="bsr-sum-eyebrow">
+                {hasArea ? 'At a glance · area + this flat' : 'At a glance · this flat'}
+              </p>
+              <h2>{sum.headline}</h2>
               <p>
                 {hasArea
-                  ? verdictSay(area.score, unit.score)
-                  : 'We don’t have neighbourhood records for this pin code yet, so this score is the flat on its own - sun, shade, view, privacy and airflow.'}
+                  ? sum.line
+                  : `${sum.line} We don\u2019t have neighbourhood records for this pincode yet, so this covers the flat itself.`}
               </p>
-              {/* This score's flat-half is only ever real once floor + facing
-                  are set below -- until then it's scored for a typical mid
-                  floor, South-East facing, and presenting it with no caveat
-                  read as if it were already this exact unit's verdict. Says
-                  so up here, where the number actually is, not only next to
-                  the inputs further down the page. */}
-              {/* The bigger caveat of the two, and it goes first. Shade,
-                  outlook, airflow and noise are all computed at the pin, and
-                  an untouched pin is wherever the geocoder put the address --
-                  typically the centre of the complex, not a building. Said
-                  here, next to the number it qualifies, with the way to fix
-                  it one click away. */}
+              {hasArea && (
+                <p className="bsr-sum-split">
+                  <span><i className="bsr-sum-dot is-av" aria-hidden="true" />Neighbourhood <strong>{area.score}</strong></span>
+                  <span><i className="bsr-sum-dot is-ss" aria-hidden="true" />This flat <strong>{unit.score}</strong></span>
+                </p>
+              )}
+              {/* The pin and the floor/facing caveats, next to the number
+                  they qualify, each one click from being fixed. */}
               {!pinTouched && (
                 <p className="bsr-assumed-note">
                   Scored at the centre of this address, not a specific building -{' '}
@@ -1690,8 +1766,9 @@ export default function ReportScreen({ view = 'verdict' }) {
                 </p>
               )}
             </div>
-
           </section>
+            );
+          })()}
 
           <div className="bsr-halves">
 
@@ -1726,7 +1803,7 @@ export default function ReportScreen({ view = 'verdict' }) {
               {hasArea ? (
                 <>
                   <p className="bsr-rating">
-                    <span className={`bsr-word is-${toneOf(area.score)}`}>{word(area.score)}</span>
+                    <span className={`bsr-word is-${halfTone(area.score)}`}>{halfWord(area.score)}</span>
                     <span className="bsr-outof">{area.score} out of 100 · grade {area.grade}</span>
                   </p>
 
@@ -1893,7 +1970,7 @@ export default function ReportScreen({ view = 'verdict' }) {
               </p>
 
               <p className="bsr-rating" aria-live="polite">
-                <span className={`bsr-word is-${toneOf(unit.score)}`}>{word(unit.score)}</span>
+                <span className={`bsr-word is-${halfTone(unit.score)}`}>{halfWord(unit.score)}</span>
                 <span className="bsr-outof">{unit.score} out of 100</span>
                 {busy ? <span className="bsr-busy">recalculating…</span> : null}
               </p>
@@ -1994,7 +2071,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                   disabled={!solar?.pathData}
                   onClick={() => setReportOpen('gallery')}
                 >
-                  Build the sun &amp; shadow report →
+                  Get the year-round sunlight report →
                 </button>
               </p>
             </section>
@@ -2116,8 +2193,8 @@ export default function ReportScreen({ view = 'verdict' }) {
             <h2>Every property has a <em>blindspot.</em></h2>
             <p>
               {hasArea
-                ? 'One written verdict on the area and the flat, with what to verify before you buy. PDF.'
-                : 'One written verdict on this flat - sun, heat, view and what to verify. No neighbourhood records for this pincode, so it covers the flat only. PDF.'}
+                ? 'A written summary of the area and the flat, with what to verify before you buy. PDF.'
+                : 'A written summary of this flat - sun, heat, view and what to verify. No neighbourhood records for this pincode, so it covers the flat only. PDF.'}
             </p>
             {/* Both reports are built from photographs of the map. With no map
                 there is nothing to photograph, and the run used to fail with
@@ -2136,9 +2213,14 @@ export default function ReportScreen({ view = 'verdict' }) {
                 ? 'About two minutes. Builds on this page - keep browsing.'
                 : 'Waiting for the 3D map to load - the report is built from it.'}
             </span>
-            <span className="bsr-also">
-              Already have the floor plan? <a href="/floor-plan-analysis">Get room-by-room furnishing advice →</a>
-            </span>
+            <a className="bsr-furnish" href="/floor-plan-analysis">
+              <span className="bsr-furnish-icon" aria-hidden="true"><Sofa size={20} strokeWidth={1.8} /></span>
+              <span className="bsr-furnish-body">
+                <strong>Furnish your home</strong>
+                <span>Upload the floor plan, get room-by-room furniture and layout ideas.</span>
+              </span>
+              <span className="bsr-furnish-go" aria-hidden="true">→</span>
+            </a>
           </section>
 
           {scores?.notes?.length ? <p className="bsr-foot">{scores.notes.join(' ')}</p> : null}

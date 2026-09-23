@@ -18,7 +18,7 @@ export const metadata = {
   robots: { index: false, follow: true },
   alternates: { canonical: null },
   title: 'Your BlindSpot report',
-  description: 'The neighbourhood, the flat, and one honest verdict for the two together.',
+  description: 'The neighbourhood, the flat, and one clear summary of the two together.',
 };
 
 // Renders nothing: the screen itself lives in app/report/layout.js so that

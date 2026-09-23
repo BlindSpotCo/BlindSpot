@@ -1772,3 +1772,133 @@ body.bsr-noscroll{overflow:hidden}
      .bsr-dock, so lift the badge clear of the fields. */
   .bsr-dock-fields .bsr-maptip{ top:-40px; right:4px }
 }
+
+/* ================= summary at the top (replaces the big number) =================
+   A quiet dial in the brand olive -- never red -- and a strengths-first
+   headline. The score is there for anyone who wants it; it just isn't
+   the loudest thing on the page any more. */
+.bsr-sum{
+  align-items:center;gap:26px;
+  margin-top:14px;padding:22px 26px;
+  border:1px solid var(--line-soft,rgba(28,24,18,.08));
+  border-radius:16px;
+  background:linear-gradient(135deg, rgba(173,168,70,.08), rgba(255,253,248,0) 60%), var(--paper,#FFFDF8);
+}
+.bsr-sum-dial{position:relative;flex:none;width:112px;height:112px;display:grid;place-items:center}
+.bsr-sum-dial svg{position:absolute;inset:0;width:100%;height:100%}
+.bsr-sum-track{fill:none;stroke:var(--line-soft,rgba(28,24,18,.08));stroke-width:7}
+.bsr-sum-arc{
+  fill:none;stroke:var(--brand,#3D4116);stroke-width:7;stroke-linecap:round;
+  transition:stroke-dasharray .6s ease;
+}
+.bsr-sum-n{
+  position:relative;font-size:36px;font-weight:700;letter-spacing:-.03em;line-height:1;
+  font-variant-numeric:tabular-nums;color:var(--text,#1C1812);margin-top:-8px;
+}
+.bsr-sum-of{
+  position:absolute;left:0;right:0;top:calc(50% + 14px);text-align:center;
+  font-size:11.5px;font-weight:600;color:var(--text-dim,#8A7F68);letter-spacing:.02em;
+}
+.bsr-sum-eyebrow{
+  font-family:'Geist Mono',monospace;font-weight:600;font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim,#8A7F68);
+  margin-bottom:6px !important;
+}
+.bsr-sum .bsr-answer-say h2{font-size:24px;font-weight:650;margin-bottom:4px}
+.bsr-sum .bsr-answer-say > p:not(.bsr-sum-eyebrow):not(.bsr-sum-split):not(.bsr-assumed-note){font-size:15px}
+.bsr-sum-split{
+  display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px !important;
+  font-size:13.5px;color:var(--text-mute,#5A5140);
+}
+.bsr-sum-split strong{color:var(--text,#1C1812);font-weight:700;font-variant-numeric:tabular-nums;margin-left:4px}
+.bsr-sum-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:1px}
+.bsr-sum-dot.is-av{background:var(--av,#6B2232)}
+.bsr-sum-dot.is-ss{background:var(--ss,#AF5F30)}
+@media (prefers-reduced-motion:reduce){ .bsr-sum-arc{transition:none} }
+@media (max-width:560px){
+  .bsr-sum{flex-direction:row;flex-wrap:nowrap;align-items:flex-start;gap:14px;padding:16px}
+  .bsr-sum-dial{width:78px;height:78px}
+  .bsr-sum-n{font-size:25px;margin-top:-6px}
+  .bsr-sum-of{top:calc(50% + 9px);font-size:10px}
+  .bsr-sum .bsr-answer-say{min-width:0}
+  .bsr-sum .bsr-answer-say h2{font-size:18.5px}
+}
+
+/* ================= map step: the floor/facing nudge =================
+   Attached to the top of the Pinpoint card, same width, same corners --
+   it used to be a pill floating off the card's right corner. */
+.bsr-docktip{
+  display:flex;align-items:center;gap:9px;
+  margin:-16px -18px 2px !important;
+  padding:9px 10px 9px 16px;
+  border-radius:16px 16px 0 0;
+  background:var(--brand,#3D4116);color:#FFFDF8;
+  font-size:12.5px;font-weight:600;line-height:1.3;
+  animation:bsr-docktip-in .22s ease-out;
+}
+.bsr-docktip-text{flex:1;min-width:0}
+.bsr-docktip-dot{
+  flex:none;width:7px;height:7px;border-radius:50%;background:var(--brand-fill,#ADA846);
+  box-shadow:0 0 0 0 rgba(173,168,70,.7);animation:bsr-docktip-pulse 1.8s ease-out infinite;
+}
+.bsr-docktip-x{
+  flex:none;display:flex;align-items:center;justify-content:center;
+  width:20px;height:20px;border-radius:50%;border:0;padding:0;cursor:pointer;
+  font-size:13px;line-height:1;color:#FFFDF8;background:rgba(255,253,248,.18);
+}
+.bsr-docktip-x:hover{background:rgba(255,253,248,.32)}
+@keyframes bsr-docktip-in{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+@keyframes bsr-docktip-pulse{0%{box-shadow:0 0 0 0 rgba(173,168,70,.7)}100%{box-shadow:0 0 0 7px rgba(173,168,70,0)}}
+@media (prefers-reduced-motion:reduce){.bsr-docktip,.bsr-docktip-dot{animation:none}}
+/* Below 900px the card chrome is on .bsr-dockzone (padding 16/18,
+   13/14 on small phones, 10/12 on the phone strip), so the banner
+   reaches out to those edges instead. */
+@media (max-width:899px){
+  .bsr-docktip{margin:-16px -18px 10px !important;border-radius:16px 16px 0 0}
+}
+@media (max-width:767px){
+  .bsr-docktip{margin:-10px -12px 8px !important;border-radius:12px 12px 0 0;font-size:12px;padding:7px 8px 7px 12px}
+}
+
+/* ================= map step: the sunlight report ================= */
+.bsr-mapcta-sun{
+  display:flex;align-items:flex-start;gap:10px;width:100%;
+  margin-top:2px;padding:11px 13px;text-align:left;cursor:pointer;
+  font:inherit;color:var(--text,#1C1812);
+  background:rgba(175,95,48,.07);
+  border:1px solid rgba(175,95,48,.35);border-radius:10px;
+  transition:background .15s ease,border-color .15s ease;
+}
+.bsr-mapcta-sun svg{flex:none;color:var(--ss,#AF5F30);margin-top:2px}
+.bsr-mapcta-sun > span{display:flex;flex-direction:column;gap:2px;min-width:0}
+.bsr-mapcta-sun strong{font-size:14px;font-weight:700;color:var(--ss,#AF5F30)}
+.bsr-mapcta-sun strong + span{font-size:12px;color:var(--text-mute,#5A5140);line-height:1.35}
+.bsr-mapcta-sun:hover:not(:disabled){background:rgba(175,95,48,.13);border-color:var(--ss,#AF5F30)}
+.bsr-mapcta-sun:disabled{opacity:.5;cursor:default}
+@media (max-width:767px){
+  .bsr-mapcta{gap:6px}
+  .bsr-mapcta-sun{padding:7px 10px;align-items:center}
+  .bsr-mapcta-sun strong{font-size:13px}
+  .bsr-mapcta-sun strong + span{display:none}
+}
+.bsr-mapbar-report svg{vertical-align:-2px;margin-right:4px}
+
+/* ================= furnishing: a real card, not a footnote link ================= */
+.bsr-furnish{
+  display:flex;align-items:center;gap:14px;
+  max-width:520px;margin:22px auto 0;padding:14px 18px;text-align:left;
+  border:1.5px solid var(--brand,#3D4116);border-radius:14px;
+  color:var(--text,#1C1812);text-decoration:none;
+  background:var(--paper,#FFFDF8);
+  transition:background .15s ease,transform .15s ease;
+}
+.bsr-furnish:hover{background:rgba(61,65,22,.06);transform:translateY(-1px)}
+.bsr-furnish-icon{
+  flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:10px;
+  background:var(--brand,#3D4116);color:#FFFDF8;
+}
+.bsr-furnish-body{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.bsr-furnish-body strong{font-size:15.5px;color:var(--brand,#3D4116)}
+.bsr-furnish-body span{font-size:13px;color:var(--text-mute,#5A5140)}
+.bsr-furnish-go{flex:none;font-size:18px;font-weight:700;color:var(--brand,#3D4116)}
+@media (prefers-reduced-motion:reduce){.bsr-furnish{transition:none}.bsr-furnish:hover{transform:none}}

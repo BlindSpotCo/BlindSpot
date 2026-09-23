@@ -94,7 +94,7 @@ export default async function ReportDetailPage({ params }) {
               <div style={{ display: 'flex', gap: 14, marginBottom: 28, flexWrap: 'wrap' }}>
                 {verdict.verdict && (
                   <div style={{ background: 'var(--bg-2)', border: '1px solid var(--line-soft)', padding: '14px 18px', flex: 1, minWidth: 140 }}>
-                    <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 4 }}>Overall Verdict</div>
+                    <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', marginBottom: 4 }}>Sunlight overall</div>
                     <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--sun)' }}>{verdict.verdict}</div>
                     {verdict.avgUsableHours != null && <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 2 }}>{verdict.avgUsableHours}h/day avg</div>}
                   </div>
