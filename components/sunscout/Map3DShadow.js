@@ -490,7 +490,27 @@ function pinRing(la,lo){var steps=20,rd=0.000035,ring=[];for(var i=0;i<=steps;i+
 // Move the pin without rebuilding this document. Rebuilding (a new srcDoc)
 // reloaded the whole 3D scene -- tiles, buildings, WebGL -- on every tap,
 // which was the main lag on the map, worst on phones.
+// The visible pin is the dot fixed at the centre of the map, so moving the
+// pin means gliding the map to put the new spot under it (the old rebuild
+// did this by re-centring the whole scene).
+var _glide=null;
+function glideTo(la,lo){
+  if(typeof map.setPosition!=='function') return;
+  var from=null; try{ var ps=map.getPosition&&map.getPosition(); if(ps&&ps.latitude!=null) from={la:ps.latitude,lo:ps.longitude}; }catch(e){}
+  if(!from) from={la:PIN_LAT,lo:PIN_LON};
+  if(_glide) cancelAnimationFrame(_glide);
+  var t0=null, DUR=280;
+  function step(ts){
+    if(t0===null) t0=ts;
+    var k=Math.min(1,(ts-t0)/DUR), e=1-Math.pow(1-k,3);
+    try{ map.setPosition({latitude:from.la+(la-from.la)*e, longitude:from.lo+(lo-from.lo)*e}); }catch(err){}
+    if(k<1) _glide=requestAnimationFrame(step); else { _glide=null; drawArc(); }
+  }
+  _glide=requestAnimationFrame(step);
+}
 function setPin(la,lo,hl){
+  var moved=Math.abs(la-PIN_LAT)>1e-7||Math.abs(lo-PIN_LON)>1e-7;
+  if(moved) glideTo(la,lo);
   PIN_LAT=la; PIN_LON=lo;
   try{ if(pinLayer) map.remove(pinLayer); }catch(e){}
   try{ pinLayer=map.addGeoJSON(pinRing(la,lo)); }catch(e){}
