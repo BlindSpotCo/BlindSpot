@@ -1025,7 +1025,7 @@
     "pin_code": "560051",
     "city": "Bangalore",
     "scores": {
-      "crime": 82,
+      "crime": 71,
       "infrastructure": 80,
       "air": 79,
       "power": 36,
@@ -1053,7 +1053,7 @@
     },
     "dimensions_scored": 7,
     "dimensions_total": 8,
-    "nqi_composite": 75,
+    "nqi_composite": 72,
     "grade": "B+",
     "scored_at": "2026-07-28T13:54:49.801258",
     "total_cognizable_crimes": 320,
@@ -1063,8 +1063,8 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 85,
-    "crime_tier": "Very Low",
+    "crime_percentile": 45,
+    "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
       "tier": 1,
@@ -1091,6 +1091,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (75) was already correct and is unchanged; only the derived letter grade is corrected here, from 'B' to 'B+'."
+      },
+      "crime": {
+        "value": 71,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=82 composite=75 grade='B+' percentile=85 tier='Very Low' -> new scores.crime=71 composite=72 grade='B+' percentile=45 tier='Moderate'."
       }
     }
   },
@@ -1098,7 +1106,7 @@
     "pin_code": "560003",
     "city": "Bangalore",
     "scores": {
-      "crime": 82,
+      "crime": 65,
       "infrastructure": 80,
       "air": 80,
       "power": 36,
@@ -1126,7 +1134,7 @@
     },
     "dimensions_scored": 7,
     "dimensions_total": 8,
-    "nqi_composite": 75,
+    "nqi_composite": 70,
     "grade": "B+",
     "scored_at": "2026-07-28T13:54:49.801316",
     "total_cognizable_crimes": 320,
@@ -1136,8 +1144,8 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 85,
-    "crime_tier": "Very Low",
+    "crime_percentile": 36,
+    "crime_tier": "High",
     "price_tier": 1,
     "price_context": {
       "tier": 1,
@@ -1164,6 +1172,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (75) was already correct and is unchanged; only the derived letter grade is corrected here, from 'B' to 'B+'."
+      },
+      "crime": {
+        "value": 65,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=82 composite=75 grade='B+' percentile=85 tier='Very Low' -> new scores.crime=65 composite=70 grade='B+' percentile=36 tier='High'."
       }
     }
   },
@@ -1171,7 +1187,7 @@
     "pin_code": "560008",
     "city": "Bangalore",
     "scores": {
-      "crime": 82,
+      "crime": 74,
       "infrastructure": 80,
       "air": 79,
       "power": 36,
@@ -1202,7 +1218,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 75,
+    "nqi_composite": 73,
     "grade": "B+",
     "scored_at": "2026-07-28T13:54:49.801469",
     "total_cognizable_crimes": 320,
@@ -1234,8 +1250,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 85,
-    "crime_tier": "Very Low",
+    "crime_percentile": 56,
+    "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
       "tier": 1,
@@ -1262,6 +1278,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (75) was already correct and is unchanged; only the derived letter grade is corrected here, from 'B' to 'B+'."
+      },
+      "crime": {
+        "value": 74,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=82 composite=75 grade='B+' percentile=85 tier='Very Low' -> new scores.crime=74 composite=73 grade='B+' percentile=56 tier='Moderate'."
       }
     }
   },
@@ -1269,7 +1293,7 @@
     "pin_code": "560095",
     "city": "Bangalore",
     "scores": {
-      "crime": 82,
+      "crime": 79,
       "infrastructure": 80,
       "air": 78,
       "power": 36,
@@ -1297,7 +1321,7 @@
     },
     "dimensions_scored": 7,
     "dimensions_total": 8,
-    "nqi_composite": 74,
+    "nqi_composite": 73,
     "grade": "B+",
     "scored_at": "2026-07-28T13:54:49.801652",
     "total_cognizable_crimes": 320,
@@ -1307,8 +1331,8 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 85,
-    "crime_tier": "Very Low",
+    "crime_percentile": 58,
+    "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
       "tier": 1,
@@ -1335,6 +1359,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (74) was already correct and is unchanged; only the derived letter grade is corrected here, from 'B' to 'B+'."
+      },
+      "crime": {
+        "value": 79,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=82 composite=74 grade='B+' percentile=85 tier='Very Low' -> new scores.crime=79 composite=73 grade='B+' percentile=58 tier='Moderate'."
       }
     }
   },
@@ -1342,7 +1374,7 @@
     "pin_code": "560004",
     "city": "Bangalore",
     "scores": {
-      "crime": 82,
+      "crime": 75,
       "infrastructure": 80,
       "air": 78,
       "power": 36,
@@ -1373,7 +1405,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 75,
+    "nqi_composite": 73,
     "grade": "B+",
     "scored_at": "2026-07-28T13:54:49.801718",
     "total_cognizable_crimes": 320,
@@ -1405,7 +1437,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 85,
+    "crime_percentile": 92,
     "crime_tier": "Very Low",
     "price_tier": 1,
     "price_context": {
@@ -1433,6 +1465,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (75) was already correct and is unchanged; only the derived letter grade is corrected here, from 'B' to 'B+'."
+      },
+      "crime": {
+        "value": 75,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=82 composite=75 grade='B+' percentile=85 tier='Very Low' -> new scores.crime=75 composite=73 grade='B+' percentile=92 tier='Very Low'."
       }
     }
   },
@@ -1440,7 +1480,7 @@
     "pin_code": "560041",
     "city": "Bangalore",
     "scores": {
-      "crime": 82,
+      "crime": 78,
       "infrastructure": 80,
       "air": 78,
       "power": 36,
@@ -1468,7 +1508,7 @@
     },
     "dimensions_scored": 7,
     "dimensions_total": 8,
-    "nqi_composite": 75,
+    "nqi_composite": 73,
     "grade": "B+",
     "scored_at": "2026-07-28T13:54:49.801739",
     "total_cognizable_crimes": 320,
@@ -1478,7 +1518,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 85,
+    "crime_percentile": 89,
     "crime_tier": "Very Low",
     "price_tier": 1,
     "price_context": {
@@ -1506,6 +1546,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (75) was already correct and is unchanged; only the derived letter grade is corrected here, from 'B' to 'B+'."
+      },
+      "crime": {
+        "value": 78,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=82 composite=75 grade='B+' percentile=85 tier='Very Low' -> new scores.crime=78 composite=73 grade='B+' percentile=89 tier='Very Low'."
       }
     }
   },
@@ -1720,7 +1768,7 @@
     "pin_code": "560025",
     "city": "Bangalore",
     "scores": {
-      "crime": 82,
+      "crime": 68,
       "infrastructure": 80,
       "air": 78,
       "power": 36,
@@ -1751,7 +1799,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 73,
+    "nqi_composite": 70,
     "grade": "B+",
     "scored_at": "2026-07-28T13:54:49.801247",
     "total_cognizable_crimes": 320,
@@ -1769,8 +1817,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 85,
-    "crime_tier": "Very Low",
+    "crime_percentile": 42,
+    "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
       "tier": 1,
@@ -1797,6 +1845,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (73) was already correct and is unchanged; only the derived letter grade is corrected here, from 'B' to 'B+'."
+      },
+      "crime": {
+        "value": 68,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=82 composite=73 grade='B+' percentile=85 tier='Very Low' -> new scores.crime=68 composite=70 grade='B+' percentile=42 tier='Moderate'."
       }
     }
   },
@@ -1804,7 +1860,7 @@
     "pin_code": "560038",
     "city": "Bangalore",
     "scores": {
-      "crime": 82,
+      "crime": 66,
       "infrastructure": 80,
       "air": 80,
       "power": 36,
@@ -1835,8 +1891,8 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 73,
-    "grade": "B+",
+    "nqi_composite": 69,
+    "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801480",
     "total_cognizable_crimes": 320,
     "schools_count": 1,
@@ -1853,8 +1909,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 85,
-    "crime_tier": "Very Low",
+    "crime_percentile": 48,
+    "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
       "tier": 1,
@@ -1881,6 +1937,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (73) was already correct and is unchanged; only the derived letter grade is corrected here, from 'B' to 'B+'."
+      },
+      "crime": {
+        "value": 66,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=82 composite=73 grade='B+' percentile=85 tier='Very Low' -> new scores.crime=66 composite=69 grade='B' percentile=48 tier='Moderate'."
       }
     }
   },
@@ -1888,7 +1952,7 @@
     "pin_code": "560102",
     "city": "Bangalore",
     "scores": {
-      "crime": 82,
+      "crime": 76,
       "infrastructure": 74,
       "air": 78,
       "power": 36,
@@ -1919,7 +1983,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 73,
+    "nqi_composite": 71,
     "grade": "B+",
     "scored_at": "2026-07-28T13:54:49.801662",
     "total_cognizable_crimes": 320,
@@ -1965,8 +2029,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 85,
-    "crime_tier": "Very Low",
+    "crime_percentile": 45,
+    "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
       "tier": 1,
@@ -1993,6 +2057,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (73) was already correct and is unchanged; only the derived letter grade is corrected here, from 'B' to 'B+'."
+      },
+      "crime": {
+        "value": 76,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=82 composite=73 grade='B+' percentile=85 tier='Very Low' -> new scores.crime=76 composite=71 grade='B+' percentile=45 tier='Moderate'."
       }
     }
   },
@@ -2000,7 +2072,7 @@
     "pin_code": "560011",
     "city": "Bangalore",
     "scores": {
-      "crime": 82,
+      "crime": 79,
       "infrastructure": 80,
       "air": 78,
       "power": 36,
@@ -2031,7 +2103,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 73,
+    "nqi_composite": 72,
     "grade": "B+",
     "scored_at": "2026-07-28T13:54:49.801729",
     "total_cognizable_crimes": 320,
@@ -2056,8 +2128,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 85,
-    "crime_tier": "Very Low",
+    "crime_percentile": 67,
+    "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
       "tier": 1,
@@ -2084,6 +2156,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (73) was already correct and is unchanged; only the derived letter grade is corrected here, from 'B' to 'B+'."
+      },
+      "crime": {
+        "value": 79,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=82 composite=73 grade='B+' percentile=85 tier='Very Low' -> new scores.crime=79 composite=72 grade='B+' percentile=67 tier='Low'."
       }
     }
   },
@@ -2754,7 +2834,7 @@
     "pin_code": "560034",
     "city": "Bangalore",
     "scores": {
-      "crime": 82,
+      "crime": 78,
       "infrastructure": 80,
       "air": 78,
       "power": 36,
@@ -2785,7 +2865,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 72,
+    "nqi_composite": 71,
     "grade": "B+",
     "scored_at": "2026-07-28T13:54:49.801641",
     "total_cognizable_crimes": 320,
@@ -2810,8 +2890,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 85,
-    "crime_tier": "Very Low",
+    "crime_percentile": 65,
+    "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
       "tier": 1,
@@ -2838,6 +2918,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (72) was already correct and is unchanged; only the derived letter grade is corrected here, from 'B' to 'B+'."
+      },
+      "crime": {
+        "value": 78,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=82 composite=72 grade='B+' percentile=85 tier='Very Low' -> new scores.crime=78 composite=71 grade='B+' percentile=65 tier='Low'."
       }
     }
   },
@@ -4249,7 +4337,7 @@
     "pin_code": "560010",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 69,
       "infrastructure": 68,
       "air": 85,
       "power": 36,
@@ -4280,8 +4368,8 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 70,
-    "grade": "B+",
+    "nqi_composite": 69,
+    "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801327",
     "total_cognizable_crimes": 360,
     "schools_count": 7,
@@ -4340,8 +4428,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 12,
+    "crime_tier": "Very High",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -4368,6 +4456,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (70) was already correct and is unchanged; only the derived letter grade is corrected here, from 'B' to 'B+'."
+      },
+      "crime": {
+        "value": 69,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=70 grade='B+' percentile=51 tier='Moderate' -> new scores.crime=69 composite=69 grade='B' percentile=12 tier='Very High'."
       }
     }
   },
@@ -4375,7 +4471,7 @@
     "pin_code": "560078",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 74,
       "infrastructure": 66,
       "air": 78,
       "power": 36,
@@ -4406,8 +4502,8 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 69,
-    "grade": "B",
+    "nqi_composite": 70,
+    "grade": "B+",
     "scored_at": "2026-07-28T13:54:49.801803",
     "total_cognizable_crimes": 360,
     "schools_count": 11,
@@ -4487,8 +4583,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 18,
+    "crime_tier": "Very High",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -4506,6 +4602,16 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 74,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=69 grade='B' percentile=51 tier='Moderate' -> new scores.crime=74 composite=70 grade='B+' percentile=18 tier='Very High'."
+      }
     }
   },
   {
@@ -4806,7 +4912,7 @@
     "pin_code": "560066",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 75,
       "infrastructure": 72,
       "air": 80,
       "power": 36,
@@ -4890,8 +4996,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 18,
+    "crime_tier": "Very High",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -4909,13 +5015,23 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 75,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=67 grade='B' percentile=51 tier='Moderate' -> new scores.crime=75 composite=67 grade='B' percentile=18 tier='Very High'."
+      }
     }
   },
   {
     "pin_code": "560022",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 74,
       "infrastructure": 68,
       "air": 82,
       "power": 36,
@@ -4946,7 +5062,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 65,
+    "nqi_composite": 66,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801359",
     "total_cognizable_crimes": 360,
@@ -4978,8 +5094,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 36,
+    "crime_tier": "High",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -4997,6 +5113,16 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 74,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=65 grade='B' percentile=51 tier='Moderate' -> new scores.crime=74 composite=66 grade='B' percentile=36 tier='High'."
+      }
     }
   },
   {
@@ -5059,8 +5185,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 32,
+    "crime_tier": "High",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -5087,6 +5213,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (64) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'B'."
+      },
+      "crime": {
+        "value": 72,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=64 grade='B' percentile=51 tier='Moderate' -> new scores.crime=72 composite=64 grade='B' percentile=32 tier='High'."
       }
     }
   },
@@ -5157,8 +5291,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 14,
+    "crime_tier": "Very High",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -5176,13 +5310,23 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 72,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=68 grade='B' percentile=51 tier='Moderate' -> new scores.crime=72 composite=68 grade='B' percentile=14 tier='Very High'."
+      }
     }
   },
   {
     "pin_code": "560046",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 76,
       "infrastructure": 68,
       "air": 78,
       "power": 36,
@@ -5210,7 +5354,7 @@
     },
     "dimensions_scored": 7,
     "dimensions_total": 8,
-    "nqi_composite": 67,
+    "nqi_composite": 68,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801491",
     "total_cognizable_crimes": 360,
@@ -5220,7 +5364,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
+    "crime_percentile": 58,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -5239,13 +5383,23 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 76,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=67 grade='B' percentile=51 tier='Moderate' -> new scores.crime=76 composite=68 grade='B' percentile=58 tier='Moderate'."
+      }
     }
   },
   {
     "pin_code": "560005",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 74,
       "infrastructure": 68,
       "air": 79,
       "power": 36,
@@ -5283,8 +5437,8 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 26,
+    "crime_tier": "High",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -5302,13 +5456,23 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 74,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=67 grade='B' percentile=51 tier='Moderate' -> new scores.crime=74 composite=67 grade='B' percentile=26 tier='High'."
+      }
     }
   },
   {
     "pin_code": "560017",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 73,
       "infrastructure": 68,
       "air": 80,
       "power": 36,
@@ -5378,8 +5542,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 26,
+    "crime_tier": "High",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -5397,13 +5561,23 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 73,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=68 grade='B' percentile=51 tier='Moderate' -> new scores.crime=73 composite=68 grade='B' percentile=26 tier='High'."
+      }
     }
   },
   {
     "pin_code": "560075",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 80,
       "infrastructure": 68,
       "air": 80,
       "power": 36,
@@ -5434,7 +5608,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 65,
+    "nqi_composite": 67,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801523",
     "total_cognizable_crimes": 360,
@@ -5473,8 +5647,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 91,
+    "crime_tier": "Very Low",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -5492,13 +5666,23 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 80,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=65 grade='B' percentile=51 tier='Moderate' -> new scores.crime=80 composite=67 grade='B' percentile=91 tier='Very Low'."
+      }
     }
   },
   {
     "pin_code": "560037",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 75,
       "infrastructure": 64,
       "air": 80,
       "power": 36,
@@ -5529,7 +5713,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 65,
+    "nqi_composite": 66,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801566",
     "total_cognizable_crimes": 360,
@@ -5589,8 +5773,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 80,
+    "crime_tier": "Very Low",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -5608,13 +5792,23 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 75,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=65 grade='B' percentile=51 tier='Moderate' -> new scores.crime=75 composite=66 grade='B' percentile=80 tier='Very Low'."
+      }
     }
   },
   {
     "pin_code": "560048",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 82,
       "infrastructure": 70,
       "air": 81,
       "power": 36,
@@ -5645,7 +5839,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 65,
+    "nqi_composite": 67,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801577",
     "total_cognizable_crimes": 360,
@@ -5677,8 +5871,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 95,
+    "crime_tier": "Very Low",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -5696,13 +5890,23 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 82,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=65 grade='B' percentile=51 tier='Moderate' -> new scores.crime=82 composite=67 grade='B' percentile=95 tier='Very Low'."
+      }
     }
   },
   {
     "pin_code": "560029",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 83,
       "infrastructure": 68,
       "air": 78,
       "power": 36,
@@ -5730,8 +5934,8 @@
     },
     "dimensions_scored": 7,
     "dimensions_total": 8,
-    "nqi_composite": 67,
-    "grade": "B",
+    "nqi_composite": 70,
+    "grade": "B+",
     "scored_at": "2026-07-28T13:54:49.801675",
     "total_cognizable_crimes": 360,
     "schools_count": 0,
@@ -5740,8 +5944,8 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 79,
+    "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -5759,13 +5963,23 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 83,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=67 grade='B' percentile=51 tier='Moderate' -> new scores.crime=83 composite=70 grade='B+' percentile=79 tier='Low'."
+      }
     }
   },
   {
     "pin_code": "560050",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 80,
       "infrastructure": 68,
       "air": 78,
       "power": 36,
@@ -5796,8 +6010,8 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 68,
-    "grade": "B",
+    "nqi_composite": 70,
+    "grade": "B+",
     "scored_at": "2026-07-28T13:54:49.801771",
     "total_cognizable_crimes": 360,
     "schools_count": 3,
@@ -5828,8 +6042,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 74,
+    "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -5847,13 +6061,23 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 80,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=68 grade='B' percentile=51 tier='Moderate' -> new scores.crime=80 composite=70 grade='B+' percentile=74 tier='Low'."
+      }
     }
   },
   {
     "pin_code": "560070",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 82,
       "infrastructure": 68,
       "air": 78,
       "power": 36,
@@ -5884,8 +6108,8 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 68,
-    "grade": "B",
+    "nqi_composite": 70,
+    "grade": "B+",
     "scored_at": "2026-07-28T13:54:49.801782",
     "total_cognizable_crimes": 360,
     "schools_count": 4,
@@ -5923,8 +6147,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 98,
+    "crime_tier": "Very Low",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -5942,13 +6166,23 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 82,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=68 grade='B' percentile=51 tier='Moderate' -> new scores.crime=82 composite=70 grade='B+' percentile=98 tier='Very Low'."
+      }
     }
   },
   {
     "pin_code": "560076",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 76,
       "infrastructure": 68,
       "air": 78,
       "power": 36,
@@ -5979,7 +6213,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 68,
+    "nqi_composite": 69,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801814",
     "total_cognizable_crimes": 360,
@@ -6025,8 +6259,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 85,
+    "crime_tier": "Very Low",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -6044,13 +6278,23 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 76,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=68 grade='B' percentile=51 tier='Moderate' -> new scores.crime=76 composite=69 grade='B' percentile=85 tier='Very Low'."
+      }
     }
   },
   {
     "pin_code": "560079",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 73,
       "infrastructure": 68,
       "air": 86,
       "power": 36,
@@ -6113,8 +6357,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 29,
+    "crime_tier": "High",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -6132,6 +6376,16 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 73,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=69 grade='B' percentile=51 tier='Moderate' -> new scores.crime=73 composite=69 grade='B' percentile=29 tier='High'."
+      }
     }
   },
   {
@@ -6426,7 +6680,7 @@
     "pin_code": "560052",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 70,
       "infrastructure": 68,
       "air": 79,
       "power": 36,
@@ -6475,7 +6729,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
+    "crime_percentile": 52,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -6494,13 +6748,23 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 70,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=66 grade='B' percentile=51 tier='Moderate' -> new scores.crime=70 composite=66 grade='B' percentile=52 tier='Moderate'."
+      }
     }
   },
   {
     "pin_code": "560020",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 70,
       "infrastructure": 68,
       "air": 80,
       "power": 36,
@@ -6549,8 +6813,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 5,
+    "crime_tier": "Very High",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -6568,13 +6832,23 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 70,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=66 grade='B' percentile=51 tier='Moderate' -> new scores.crime=70 composite=66 grade='B' percentile=5 tier='Very High'."
+      }
     }
   },
   {
     "pin_code": "560040",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 79,
       "infrastructure": 68,
       "air": 83,
       "power": 36,
@@ -6605,7 +6879,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 67,
+    "nqi_composite": 69,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801857",
     "total_cognizable_crimes": 360,
@@ -6623,8 +6897,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 85,
+    "crime_tier": "Very Low",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -6642,6 +6916,16 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 79,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=67 grade='B' percentile=51 tier='Moderate' -> new scores.crime=79 composite=69 grade='B' percentile=85 tier='Very Low'."
+      }
     }
   },
   {
@@ -7015,7 +7299,7 @@
     "pin_code": "560001",
     "city": "Bangalore",
     "scores": {
-      "crime": 45,
+      "crime": 62,
       "infrastructure": 80,
       "air": 78,
       "power": 36,
@@ -7046,7 +7330,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 64,
+    "nqi_composite": 68,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801234",
     "total_cognizable_crimes": 470,
@@ -7071,7 +7355,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 6,
+    "crime_percentile": 8,
     "crime_tier": "Very High",
     "price_tier": 1,
     "price_context": {
@@ -7099,6 +7383,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (64) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'B'."
+      },
+      "crime": {
+        "value": 62,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=45 composite=64 grade='B' percentile=6 tier='Very High' -> new scores.crime=62 composite=68 grade='B' percentile=8 tier='Very High'."
       }
     }
   },
@@ -7106,7 +7398,7 @@
     "pin_code": "560035",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 74,
       "infrastructure": 62,
       "air": 79,
       "power": 36,
@@ -7137,7 +7429,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 67,
+    "nqi_composite": 68,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801620",
     "total_cognizable_crimes": 360,
@@ -7190,7 +7482,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
+    "crime_percentile": 55,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -7209,6 +7501,16 @@
       "circle_rate_note": "Karnataka calls it 'guidance value' — the same instrument Delhi/UP call a circle rate and Haryana calls a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges. Set by the Dept. of Stamps & Registration (Kaveri).",
       "market_gap_note": "Actual market prices in Bengaluru typically run above the guidance value, with the gap widest in central and high-demand tech-corridor pockets. The guidance value is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
       "disclaimer": "Government minimum valuation, not market price. Figures are indicative Rs/sq ft bands unless marked exact, and a single PIN can span cheaper and pricier pockets. Not part of the NQI score."
+    },
+    "_provenance": {
+      "crime": {
+        "value": 74,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=67 grade='B' percentile=51 tier='Moderate' -> new scores.crime=74 composite=68 grade='B' percentile=55 tier='Moderate'."
+      }
     }
   },
   {
@@ -7741,7 +8043,7 @@
     "pin_code": "560103",
     "city": "Bangalore",
     "scores": {
-      "crime": 72,
+      "crime": 80,
       "infrastructure": 66,
       "air": 79,
       "power": 36,
@@ -7772,7 +8074,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 64,
+    "nqi_composite": 66,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801609",
     "total_cognizable_crimes": 360,
@@ -7797,8 +8099,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 51,
-    "crime_tier": "Moderate",
+    "crime_percentile": 73,
+    "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
       "tier": 2,
@@ -7825,6 +8127,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (64) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'B'."
+      },
+      "crime": {
+        "value": 80,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=72 composite=64 grade='B' percentile=51 tier='Moderate' -> new scores.crime=80 composite=66 grade='B' percentile=73 tier='Low'."
       }
     }
   },
@@ -7908,7 +8218,7 @@
     "pin_code": "560064",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 75,
       "infrastructure": 58,
       "air": 79,
       "power": 36,
@@ -7939,7 +8249,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 62,
+    "nqi_composite": 65,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801446",
     "total_cognizable_crimes": 410,
@@ -8020,8 +8330,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
-    "crime_tier": "High",
+    "crime_percentile": 77,
+    "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
       "tier": 3,
@@ -8048,6 +8358,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (62) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'B'."
+      },
+      "crime": {
+        "value": 75,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=62 grade='B' percentile=22 tier='High' -> new scores.crime=75 composite=65 grade='B' percentile=77 tier='Low'."
       }
     }
   },
@@ -8055,7 +8373,7 @@
     "pin_code": "560062",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 72,
       "infrastructure": 54,
       "air": 78,
       "power": 36,
@@ -8086,7 +8404,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 61,
+    "nqi_composite": 64,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801835",
     "total_cognizable_crimes": 410,
@@ -8167,8 +8485,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
-    "crime_tier": "High",
+    "crime_percentile": 42,
+    "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
       "tier": 3,
@@ -8195,6 +8513,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (61) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'B'."
+      },
+      "crime": {
+        "value": 72,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=61 grade='B' percentile=22 tier='High' -> new scores.crime=72 composite=64 grade='B' percentile=42 tier='Moderate'."
       }
     }
   },
@@ -8202,7 +8528,7 @@
     "pin_code": "560083",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 73,
       "infrastructure": 54,
       "air": 78,
       "power": 36,
@@ -8233,7 +8559,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 60,
+    "nqi_composite": 64,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801846",
     "total_cognizable_crimes": 410,
@@ -8314,7 +8640,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
+    "crime_percentile": 24,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -8342,6 +8668,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (60) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'B'."
+      },
+      "crime": {
+        "value": 73,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=60 grade='B' percentile=22 tier='High' -> new scores.crime=73 composite=64 grade='B' percentile=24 tier='High'."
       }
     }
   },
@@ -8577,7 +8911,7 @@
     "pin_code": "560097",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 75,
       "infrastructure": 54,
       "air": 79,
       "power": 36,
@@ -8608,7 +8942,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 60,
+    "nqi_composite": 64,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801425",
     "total_cognizable_crimes": 410,
@@ -8668,8 +9002,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
-    "crime_tier": "High",
+    "crime_percentile": 62,
+    "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
       "tier": 3,
@@ -8696,6 +9030,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (60) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'B'."
+      },
+      "crime": {
+        "value": 75,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=60 grade='B' percentile=22 tier='High' -> new scores.crime=75 composite=64 grade='B' percentile=62 tier='Low'."
       }
     }
   },
@@ -8703,7 +9045,7 @@
     "pin_code": "560093",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 70,
       "infrastructure": 58,
       "air": 81,
       "power": 36,
@@ -8734,7 +9076,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 62,
+    "nqi_composite": 65,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801533",
     "total_cognizable_crimes": 410,
@@ -8766,8 +9108,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
-    "crime_tier": "High",
+    "crime_percentile": 70,
+    "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
       "tier": 3,
@@ -8794,6 +9136,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (62) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'B'."
+      },
+      "crime": {
+        "value": 70,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=62 grade='B' percentile=22 tier='High' -> new scores.crime=70 composite=65 grade='B' percentile=70 tier='Low'."
       }
     }
   },
@@ -8938,7 +9288,7 @@
     "pin_code": "560024",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 66,
       "infrastructure": 54,
       "air": 77,
       "power": 36,
@@ -8969,7 +9319,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 61,
+    "nqi_composite": 63,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801370",
     "total_cognizable_crimes": 410,
@@ -9001,7 +9351,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
+    "crime_percentile": 21,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -9029,6 +9379,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (61) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'B'."
+      },
+      "crime": {
+        "value": 66,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=61 grade='B' percentile=22 tier='High' -> new scores.crime=66 composite=63 grade='B' percentile=21 tier='High'."
       }
     }
   },
@@ -9036,7 +9394,7 @@
     "pin_code": "560067",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 74,
       "infrastructure": 54,
       "air": 80,
       "power": 36,
@@ -9067,7 +9425,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 60,
+    "nqi_composite": 63,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801598",
     "total_cognizable_crimes": 410,
@@ -9120,7 +9478,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
+    "crime_percentile": 29,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -9148,6 +9506,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (60) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'B'."
+      },
+      "crime": {
+        "value": 74,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=60 grade='B' percentile=22 tier='High' -> new scores.crime=74 composite=63 grade='B' percentile=29 tier='High'."
       }
     }
   },
@@ -9155,7 +9521,7 @@
     "pin_code": "560068",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 77,
       "infrastructure": 54,
       "air": 78,
       "power": 36,
@@ -9186,8 +9552,8 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 59,
-    "grade": "C+",
+    "nqi_composite": 64,
+    "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801708",
     "total_cognizable_crimes": 410,
     "schools_count": 7,
@@ -9246,8 +9612,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
-    "crime_tier": "High",
+    "crime_percentile": 53,
+    "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
       "tier": 3,
@@ -9274,6 +9640,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (59) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'C+'."
+      },
+      "crime": {
+        "value": 77,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=59 grade='C+' percentile=22 tier='High' -> new scores.crime=77 composite=64 grade='B' percentile=53 tier='Moderate'."
       }
     }
   },
@@ -9281,7 +9655,7 @@
     "pin_code": "560085",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 71,
       "infrastructure": 54,
       "air": 78,
       "power": 36,
@@ -9312,8 +9686,8 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 59,
-    "grade": "C+",
+    "nqi_composite": 61,
+    "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801792",
     "total_cognizable_crimes": 410,
     "schools_count": 3,
@@ -9344,7 +9718,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
+    "crime_percentile": 33,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -9372,6 +9746,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (59) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'C+'."
+      },
+      "crime": {
+        "value": 71,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=59 grade='C+' percentile=22 tier='High' -> new scores.crime=71 composite=61 grade='B' percentile=33 tier='High'."
       }
     }
   },
@@ -9379,7 +9761,7 @@
     "pin_code": "560072",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 75,
       "infrastructure": 54,
       "air": 80,
       "power": 36,
@@ -9410,8 +9792,8 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 59,
-    "grade": "C+",
+    "nqi_composite": 63,
+    "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801878",
     "total_cognizable_crimes": 410,
     "schools_count": 3,
@@ -9442,8 +9824,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
-    "crime_tier": "High",
+    "crime_percentile": 41,
+    "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
       "tier": 3,
@@ -9470,6 +9852,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (59) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'C+'."
+      },
+      "crime": {
+        "value": 75,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=59 grade='C+' percentile=22 tier='High' -> new scores.crime=75 composite=63 grade='B' percentile=41 tier='Moderate'."
       }
     }
   },
@@ -9477,7 +9867,7 @@
     "pin_code": "560100",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 68,
       "infrastructure": 62,
       "air": 79,
       "power": 36,
@@ -9508,7 +9898,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 60,
+    "nqi_composite": 62,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801923",
     "total_cognizable_crimes": 410,
@@ -9540,8 +9930,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
-    "crime_tier": "High",
+    "crime_percentile": 64,
+    "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
       "tier": 3,
@@ -9568,6 +9958,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (60) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'B'."
+      },
+      "crime": {
+        "value": 68,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=60 grade='B' percentile=22 tier='High' -> new scores.crime=68 composite=62 grade='B' percentile=64 tier='Low'."
       }
     }
   },
@@ -10125,7 +10523,7 @@
     "pin_code": "560021",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 66,
       "infrastructure": 54,
       "air": 84,
       "power": 36,
@@ -10153,7 +10551,7 @@
     },
     "dimensions_scored": 7,
     "dimensions_total": 8,
-    "nqi_composite": 61,
+    "nqi_composite": 62,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801348",
     "total_cognizable_crimes": 410,
@@ -10163,8 +10561,8 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
-    "crime_tier": "High",
+    "crime_percentile": 2,
+    "crime_tier": "Very High",
     "price_tier": 3,
     "price_context": {
       "tier": 3,
@@ -10191,6 +10589,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (61) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'B'."
+      },
+      "crime": {
+        "value": 66,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=61 grade='B' percentile=22 tier='High' -> new scores.crime=66 composite=62 grade='B' percentile=2 tier='Very High'."
       }
     }
   },
@@ -10198,7 +10604,7 @@
     "pin_code": "560032",
     "city": "Bangalore",
     "scores": {
-      "crime": 55,
+      "crime": 69,
       "infrastructure": 54,
       "air": 77,
       "power": 36,
@@ -10229,7 +10635,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 60,
+    "nqi_composite": 63,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801380",
     "total_cognizable_crimes": 430,
@@ -10275,8 +10681,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 20,
-    "crime_tier": "High",
+    "crime_percentile": 5,
+    "crime_tier": "Very High",
     "price_tier": 3,
     "price_context": {
       "tier": 3,
@@ -10303,6 +10709,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (60) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'B'."
+      },
+      "crime": {
+        "value": 69,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=55 composite=60 grade='B' percentile=20 tier='High' -> new scores.crime=69 composite=63 grade='B' percentile=5 tier='Very High'."
       }
     }
   },
@@ -10310,7 +10724,7 @@
     "pin_code": "560065",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 74,
       "infrastructure": 54,
       "air": 79,
       "power": 36,
@@ -10338,8 +10752,8 @@
     },
     "dimensions_scored": 7,
     "dimensions_total": 8,
-    "nqi_composite": 57,
-    "grade": "C+",
+    "nqi_composite": 61,
+    "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801458",
     "total_cognizable_crimes": 410,
     "schools_count": 0,
@@ -10348,8 +10762,8 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
-    "crime_tier": "High",
+    "crime_percentile": 83,
+    "crime_tier": "Very Low",
     "price_tier": 3,
     "price_context": {
       "tier": 3,
@@ -10376,6 +10790,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (57) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'C+'."
+      },
+      "crime": {
+        "value": 74,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=57 grade='C+' percentile=22 tier='High' -> new scores.crime=74 composite=61 grade='B' percentile=83 tier='Very Low'."
       }
     }
   },
@@ -10383,7 +10805,7 @@
     "pin_code": "560027",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 63,
       "infrastructure": 54,
       "air": 78,
       "power": 36,
@@ -10411,7 +10833,7 @@
     },
     "dimensions_scored": 7,
     "dimensions_total": 8,
-    "nqi_composite": 60,
+    "nqi_composite": 61,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801685",
     "total_cognizable_crimes": 410,
@@ -10421,7 +10843,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
+    "crime_percentile": 36,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -10449,6 +10871,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (60) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'B'."
+      },
+      "crime": {
+        "value": 63,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=60 grade='B' percentile=22 tier='High' -> new scores.crime=63 composite=61 grade='B' percentile=36 tier='High'."
       }
     }
   },
@@ -10456,7 +10886,7 @@
     "pin_code": "560019",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 79,
       "infrastructure": 54,
       "air": 80,
       "power": 36,
@@ -10484,7 +10914,7 @@
     },
     "dimensions_scored": 7,
     "dimensions_total": 8,
-    "nqi_composite": 60,
+    "nqi_composite": 65,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801750",
     "total_cognizable_crimes": 410,
@@ -10494,8 +10924,8 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
-    "crime_tier": "High",
+    "crime_percentile": 74,
+    "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
       "tier": 3,
@@ -10522,6 +10952,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (60) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'B'."
+      },
+      "crime": {
+        "value": 79,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=60 grade='B' percentile=22 tier='High' -> new scores.crime=79 composite=65 grade='B' percentile=74 tier='Low'."
       }
     }
   },
@@ -10529,7 +10967,7 @@
     "pin_code": "560028",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 81,
       "infrastructure": 54,
       "air": 78,
       "power": 36,
@@ -10557,7 +10995,7 @@
     },
     "dimensions_scored": 7,
     "dimensions_total": 8,
-    "nqi_composite": 60,
+    "nqi_composite": 66,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801760",
     "total_cognizable_crimes": 410,
@@ -10567,8 +11005,8 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
-    "crime_tier": "High",
+    "crime_percentile": 58,
+    "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
       "tier": 3,
@@ -10595,6 +11033,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (60) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'B'."
+      },
+      "crime": {
+        "value": 81,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=60 grade='B' percentile=22 tier='High' -> new scores.crime=81 composite=66 grade='B' percentile=58 tier='Moderate'."
       }
     }
   },
@@ -10668,7 +11114,7 @@
     "pin_code": "560092",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 80,
       "infrastructure": 54,
       "air": 80,
       "power": 36,
@@ -10699,8 +11145,8 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 57,
-    "grade": "C+",
+    "nqi_composite": 62,
+    "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801404",
     "total_cognizable_crimes": 410,
     "schools_count": 2,
@@ -10724,8 +11170,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
-    "crime_tier": "High",
+    "crime_percentile": 97,
+    "crime_tier": "Very Low",
     "price_tier": 3,
     "price_context": {
       "tier": 3,
@@ -10752,6 +11198,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (57) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'C+'."
+      },
+      "crime": {
+        "value": 80,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=57 grade='C+' percentile=22 tier='High' -> new scores.crime=80 composite=62 grade='B' percentile=97 tier='Very Low'."
       }
     }
   },
@@ -10759,7 +11213,7 @@
     "pin_code": "560030",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 79,
       "infrastructure": 54,
       "air": 78,
       "power": 36,
@@ -10790,7 +11244,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 60,
+    "nqi_composite": 64,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801696",
     "total_cognizable_crimes": 410,
@@ -10808,8 +11262,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
-    "crime_tier": "High",
+    "crime_percentile": 94,
+    "crime_tier": "Very Low",
     "price_tier": 3,
     "price_context": {
       "tier": 3,
@@ -10836,6 +11290,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (60) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'B'."
+      },
+      "crime": {
+        "value": 79,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=60 grade='B' percentile=22 tier='High' -> new scores.crime=79 composite=64 grade='B' percentile=94 tier='Very Low'."
       }
     }
   },
@@ -10843,7 +11305,7 @@
     "pin_code": "560018",
     "city": "Bangalore",
     "scores": {
-      "crime": 60,
+      "crime": 69,
       "infrastructure": 54,
       "air": 80,
       "power": 36,
@@ -10874,7 +11336,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 60,
+    "nqi_composite": 62,
     "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801891",
     "total_cognizable_crimes": 410,
@@ -10892,8 +11354,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
-    "crime_tier": "High",
+    "crime_percentile": 15,
+    "crime_tier": "Very High",
     "price_tier": 3,
     "price_context": {
       "tier": 3,
@@ -10920,6 +11382,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (60) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'B'."
+      },
+      "crime": {
+        "value": 69,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=60 composite=60 grade='B' percentile=22 tier='High' -> new scores.crime=69 composite=62 grade='B' percentile=15 tier='Very High'."
       }
     }
   },
@@ -12528,7 +12998,7 @@
     "pin_code": "560091",
     "city": "Bangalore",
     "scores": {
-      "crime": 48,
+      "crime": 78,
       "infrastructure": 42,
       "air": 81,
       "power": 36,
@@ -12559,8 +13029,8 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 53,
-    "grade": "C+",
+    "nqi_composite": 61,
+    "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801902",
     "total_cognizable_crimes": 460,
     "schools_count": 13,
@@ -12640,8 +13110,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 8,
-    "crime_tier": "Very High",
+    "crime_percentile": 88,
+    "crime_tier": "Very Low",
     "price_tier": 4,
     "price_context": {
       "tier": 4,
@@ -12668,6 +13138,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (53) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'C+'."
+      },
+      "crime": {
+        "value": 78,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=48 composite=53 grade='C+' percentile=8 tier='Very High' -> new scores.crime=78 composite=61 grade='B' percentile=88 tier='Very Low'."
       }
     }
   },
@@ -13045,7 +13523,7 @@
     "pin_code": "560036",
     "city": "Bangalore",
     "scores": {
-      "crime": 48,
+      "crime": 62,
       "infrastructure": 42,
       "air": 81,
       "power": 36,
@@ -13076,7 +13554,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 55,
+    "nqi_composite": 59,
     "grade": "C+",
     "scored_at": "2026-07-28T13:54:49.801555",
     "total_cognizable_crimes": 460,
@@ -13136,7 +13614,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 8,
+    "crime_percentile": 9,
     "crime_tier": "Very High",
     "price_tier": 4,
     "price_context": {
@@ -13164,6 +13642,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (55) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'C+'."
+      },
+      "crime": {
+        "value": 62,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=48 composite=55 grade='C+' percentile=8 tier='Very High' -> new scores.crime=62 composite=59 grade='C+' percentile=9 tier='Very High'."
       }
     }
   },
@@ -13171,7 +13657,7 @@
     "pin_code": "560056",
     "city": "Bangalore",
     "scores": {
-      "crime": 48,
+      "crime": 69,
       "infrastructure": 42,
       "air": 78,
       "power": 36,
@@ -13202,7 +13688,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 52,
+    "nqi_composite": 57,
     "grade": "C+",
     "scored_at": "2026-07-28T13:54:49.801912",
     "total_cognizable_crimes": 460,
@@ -13269,7 +13755,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 8,
+    "crime_percentile": 11,
     "crime_tier": "Very High",
     "price_tier": 4,
     "price_context": {
@@ -13297,6 +13783,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (52) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'C+'."
+      },
+      "crime": {
+        "value": 69,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=48 composite=52 grade='C+' percentile=8 tier='Very High' -> new scores.crime=69 composite=57 grade='C+' percentile=11 tier='Very High'."
       }
     }
   },
@@ -13742,7 +14236,7 @@
     "pin_code": "560042",
     "city": "Bangalore",
     "scores": {
-      "crime": 32,
+      "crime": 61,
       "infrastructure": 54,
       "air": 79,
       "power": 36,
@@ -13773,8 +14267,8 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 53,
-    "grade": "C+",
+    "nqi_composite": 60,
+    "grade": "B",
     "scored_at": "2026-07-28T13:54:49.801280",
     "total_cognizable_crimes": 520,
     "schools_count": 2,
@@ -13798,8 +14292,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 3,
-    "crime_tier": "Very High",
+    "crime_percentile": 21,
+    "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
       "tier": 3,
@@ -13826,6 +14320,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (53) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'C+'."
+      },
+      "crime": {
+        "value": 61,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=32 composite=53 grade='C+' percentile=3 tier='Very High' -> new scores.crime=61 composite=60 grade='B' percentile=21 tier='High'."
       }
     }
   },
@@ -13833,7 +14335,7 @@
     "pin_code": "560016",
     "city": "Bangalore",
     "scores": {
-      "crime": 48,
+      "crime": 74,
       "infrastructure": 42,
       "air": 81,
       "power": 36,
@@ -13864,7 +14366,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 52,
+    "nqi_composite": 58,
     "grade": "C+",
     "scored_at": "2026-07-28T13:54:49.801544",
     "total_cognizable_crimes": 460,
@@ -13931,7 +14433,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 8,
+    "crime_percentile": 17,
     "crime_tier": "Very High",
     "price_tier": 4,
     "price_context": {
@@ -13959,6 +14461,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (52) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'C+'."
+      },
+      "crime": {
+        "value": 74,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=48 composite=52 grade='C+' percentile=8 tier='Very High' -> new scores.crime=74 composite=58 grade='C+' percentile=17 tier='Very High'."
       }
     }
   },
@@ -13966,7 +14476,7 @@
     "pin_code": "560087",
     "city": "Bangalore",
     "scores": {
-      "crime": 48,
+      "crime": 76,
       "infrastructure": 42,
       "air": 80,
       "power": 36,
@@ -13997,7 +14507,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 52,
+    "nqi_composite": 59,
     "grade": "C+",
     "scored_at": "2026-07-28T13:54:49.801631",
     "total_cognizable_crimes": 460,
@@ -14050,8 +14560,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 8,
-    "crime_tier": "Very High",
+    "crime_percentile": 82,
+    "crime_tier": "Very Low",
     "price_tier": 4,
     "price_context": {
       "tier": 4,
@@ -14078,6 +14588,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (52) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'C+'."
+      },
+      "crime": {
+        "value": 76,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=48 composite=52 grade='C+' percentile=8 tier='Very High' -> new scores.crime=76 composite=59 grade='C+' percentile=82 tier='Very Low'."
       }
     }
   },
@@ -14554,7 +15072,7 @@
     "pin_code": "560063",
     "city": "Bangalore",
     "scores": {
-      "crime": 48,
+      "crime": 76,
       "infrastructure": 42,
       "air": 80,
       "power": 36,
@@ -14585,7 +15103,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 51,
+    "nqi_composite": 58,
     "grade": "C+",
     "scored_at": "2026-07-28T13:54:49.801435",
     "total_cognizable_crimes": 460,
@@ -14617,8 +15135,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 8,
-    "crime_tier": "Very High",
+    "crime_percentile": 70,
+    "crime_tier": "Low",
     "price_tier": 4,
     "price_context": {
       "tier": 4,
@@ -14645,6 +15163,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (51) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'C+'."
+      },
+      "crime": {
+        "value": 76,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=48 composite=51 grade='C+' percentile=8 tier='Very High' -> new scores.crime=76 composite=58 grade='C+' percentile=70 tier='Low'."
       }
     }
   },
@@ -14652,7 +15178,7 @@
     "pin_code": "560061",
     "city": "Bangalore",
     "scores": {
-      "crime": 48,
+      "crime": 73,
       "infrastructure": 42,
       "air": 77,
       "power": 36,
@@ -14683,7 +15209,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 51,
+    "nqi_composite": 57,
     "grade": "C+",
     "scored_at": "2026-07-28T13:54:49.801824",
     "total_cognizable_crimes": 460,
@@ -14729,8 +15255,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 8,
-    "crime_tier": "Very High",
+    "crime_percentile": 33,
+    "crime_tier": "High",
     "price_tier": 4,
     "price_context": {
       "tier": 4,
@@ -14757,6 +15283,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (51) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'C+'."
+      },
+      "crime": {
+        "value": 73,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=48 composite=51 grade='C+' percentile=8 tier='Very High' -> new scores.crime=73 composite=57 grade='C+' percentile=33 tier='High'."
       }
     }
   },
@@ -14911,7 +15445,7 @@
     "pin_code": "560002",
     "city": "Bangalore",
     "scores": {
-      "crime": 28,
+      "crime": 58,
       "infrastructure": 54,
       "air": 79,
       "power": 36,
@@ -14939,7 +15473,7 @@
     },
     "dimensions_scored": 7,
     "dimensions_total": 8,
-    "nqi_composite": 51,
+    "nqi_composite": 59,
     "grade": "C+",
     "scored_at": "2026-07-28T13:54:49.801292",
     "total_cognizable_crimes": 540,
@@ -14949,7 +15483,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 2,
+    "crime_percentile": 3,
     "crime_tier": "Very High",
     "price_tier": 3,
     "price_context": {
@@ -14977,6 +15511,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (51) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'C+'."
+      },
+      "crime": {
+        "value": 58,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=28 composite=51 grade='C+' percentile=2 tier='Very High' -> new scores.crime=58 composite=59 grade='C+' percentile=3 tier='Very High'."
       }
     }
   },
@@ -14984,7 +15526,7 @@
     "pin_code": "560099",
     "city": "Bangalore",
     "scores": {
-      "crime": 48,
+      "crime": 68,
       "infrastructure": 42,
       "air": 79,
       "power": 36,
@@ -15015,8 +15557,8 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 49,
-    "grade": "C",
+    "nqi_composite": 54,
+    "grade": "C+",
     "scored_at": "2026-07-28T13:54:49.801934",
     "total_cognizable_crimes": 460,
     "schools_count": 1,
@@ -15033,8 +15575,8 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 8,
-    "crime_tier": "Very High",
+    "crime_percentile": 48,
+    "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
       "tier": 4,
@@ -15061,6 +15603,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (49) was already correct and is unchanged; only the derived letter grade is corrected here, from 'D' to 'C'."
+      },
+      "crime": {
+        "value": 68,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=48 composite=49 grade='C' percentile=8 tier='Very High' -> new scores.crime=68 composite=54 grade='C+' percentile=48 tier='Moderate'."
       }
     }
   },
@@ -15215,7 +15765,7 @@
     "pin_code": "560023",
     "city": "Bangalore",
     "scores": {
-      "crime": 22,
+      "crime": 59,
       "infrastructure": 54,
       "air": 78,
       "power": 36,
@@ -15246,7 +15796,7 @@
     },
     "dimensions_scored": 8,
     "dimensions_total": 8,
-    "nqi_composite": 50,
+    "nqi_composite": 59,
     "grade": "C+",
     "scored_at": "2026-07-28T13:54:49.801303",
     "total_cognizable_crimes": 560,
@@ -15292,6 +15842,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (50) was already correct and is unchanged; only the derived letter grade is corrected here, from 'C' to 'C+'."
+      },
+      "crime": {
+        "value": 59,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=22 composite=50 grade='C+' percentile=0 tier='Very High' -> new scores.crime=59 composite=59 grade='C+' percentile=0 tier='Very High'."
       }
     }
   },
@@ -16288,7 +16846,7 @@
     "pin_code": "560105",
     "city": "Bangalore",
     "scores": {
-      "crime": 38,
+      "crime": 75,
       "infrastructure": 32,
       "air": 80,
       "power": 36,
@@ -16316,8 +16874,8 @@
     },
     "dimensions_scored": 7,
     "dimensions_total": 8,
-    "nqi_composite": 43,
-    "grade": "C",
+    "nqi_composite": 53,
+    "grade": "C+",
     "scored_at": "2026-07-28T13:54:49.801946",
     "total_cognizable_crimes": 500,
     "schools_count": 0,
@@ -16326,8 +16884,8 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 5,
-    "crime_tier": "Very High",
+    "crime_percentile": 68,
+    "crime_tier": "Low",
     "price_tier": 5,
     "price_context": {
       "tier": 5,
@@ -16354,6 +16912,14 @@
         "as_of": "2026-09-23",
         "confidence": "high",
         "note": "Corrects a grade-label bug: this record's grade was last overwritten by a patch script (patch_delhi_power.py / patch_delhi_aqi.py / patch_bangalore_power.py / patch_bangalore_aqi.py / patch_bangalore_water.py) using an inconsistent inline grade_for() with coarser thresholds (A>=80, B>=65, C>=50, D>=35, F else, no B+/C+). nqi_composite (43) was already correct and is unchanged; only the derived letter grade is corrected here, from 'D' to 'C'."
+      },
+      "crime": {
+        "value": 75,
+        "source_id": "internal-model",
+        "method": "Same zone/zone_type-based model as total_cognizable_crimes above; this is the corresponding 0-100 safety score, now correlated with the crime count instead of decoupled from it.",
+        "as_of": "2026-09-23",
+        "confidence": "low",
+        "note": "Old scores.crime=38 composite=43 grade='C' percentile=5 tier='Very High' -> new scores.crime=75 composite=53 grade='C+' percentile=68 tier='Low'."
       }
     }
   },
