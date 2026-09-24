@@ -1508,17 +1508,12 @@ export default function ReportScreen({ view = 'verdict' }) {
               )}
             </p>
 
-            {/* Play/pause and the season used to live down in the dock
-                with Floor/Faces -- moved up here so the top bar carries
-                every control for what's being simulated, and the dock
-                below is just the unit (Floor/Faces) and the one action
-                this step exists for. Same state, same handlers as the
-                inline map's toolbar -- see playControlNode/seasonFieldNode
-                above mapbarNode. */}
-            {/* Pause/play sits right beside the address, quiet: it's a
-                viewing toggle, not something to act on. */}
-            <span className="bsr-fullbar-play">{playControlNode}</span>
-
+            {/* Play/pause used to live right here, beside the address --
+                moved onto the map itself (top-left, below this bar, see
+                .bsr-playfloat on .bsr-map) so it reads as a map viewing
+                toggle rather than another control competing for room in
+                an already-tight header strip. Season stays up here: it's
+                what you're setting, not just watching. */}
             <div className="bsr-fullbar-controls">
               <span className="bsr-fullbar-season">
                 {seasonFieldNode}
@@ -1571,6 +1566,14 @@ export default function ReportScreen({ view = 'verdict' }) {
           </div>
         )}
         <div className="bsr-map" onMouseLeave={() => setMapArmed(true)}>
+          {/* Pulled out of the top bar and onto the map itself -- top
+              left, clear of the "set view angle" pad the iframe draws
+              top-right (see Map3DShadow.js), and clear of .bsr-dockzone
+              which only ever anchors top-right or as a bottom sheet. A
+              quiet viewing toggle for the map, not a bar control. */}
+          {fullMap && (
+            <div className="bsr-playfloat">{playControlNode}</div>
+          )}
           {solar?.pathData ? (
             <Map3DShadow
               key={mapKey}
