@@ -1671,20 +1671,19 @@ export default function ReportScreen({ view = 'verdict' }) {
                     </button>
                   </p>
                 )}
-                {/* The whole map step as four plain steps (laptop/tablet; a
+                {/* The whole map step as three plain steps (laptop/tablet; a
                     phone shows just the current one in the yellow strip). */}
                 {(() => {
-                  const cur = !pinTouched ? 1 : assumed ? 3 : 4;
+                  const cur = !pinTouched ? 1 : assumed ? 2 : 3;
                   const steps = [
                     { n: 1, t: 'Tap your building', d: pinTouched ? 'Pin placed' : 'On the map, so we score your tower' },
-                    { n: 2, t: 'Turn to your view', d: 'Optional · the compass, top right', optional: true },
-                    { n: 3, t: 'Set floor and facing', d: 'Sun and heat change a lot with both' },
-                    { n: 4, t: 'See the analysis', d: 'Sun through the year + the neighbourhood' },
+                    { n: 2, t: 'Set floor and facing', d: 'Sun and heat change a lot with both' },
+                    { n: 3, t: 'See the analysis', d: 'Sun through the year + the neighbourhood' },
                   ];
                   return (
                     <ol className="bsr-steps" aria-label="Steps">
                       {steps.map((st) => {
-                        const done = (st.n === 1 && pinTouched) || (st.n === 3 && !assumed);
+                        const done = (st.n === 1 && pinTouched) || (st.n === 2 && !assumed);
                         return (
                           <li key={st.n} className={`${done ? 'is-done' : ''}${st.n === cur ? ' is-now' : ''}${st.optional ? ' is-opt' : ''}`} aria-current={st.n === cur ? 'step' : undefined}>
                             <span className="bsr-step-n" aria-hidden="true">{done ? '✓' : st.n}</span>
