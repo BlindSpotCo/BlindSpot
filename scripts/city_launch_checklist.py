@@ -20,22 +20,6 @@ from datetime import date
 NQI_PATH = "data/aslivastu/nqi_scores.json"
 MASTER_PATH = "data/aslivastu/master_by_pin.json"
 OUT_PATH = "docs/city_launch_checklist.md"
-CHANGELOG_PATH = "CHANGELOG.md"
-
-
-def latest_changelog_version():
-    """Reads CHANGELOG.md's own first '## vX.Y' heading instead of a
-    hardcoded string here -- a hardcoded version number is exactly the
-    kind of quietly-wrong, unmaintained-looking output this checklist
-    exists to prevent (caught stuck at 'v1.4' for a long stretch of this
-    project's history before this fix)."""
-    import re
-    try:
-        text = open(CHANGELOG_PATH, encoding="utf-8").read()
-        m = re.search(r"^## (v[\d.]+)", text, re.MULTILINE)
-        return m.group(1) if m else "unknown"
-    except FileNotFoundError:
-        return "missing"
 
 NON_AUTH_MARKERS = ("seed", "placeholder", "test", "fixture", "mock")
 
@@ -115,7 +99,7 @@ for city in cities:
 
     # 7. Versioning/changelog: exists product-wide as of this pass (CHANGELOG.md).
     item7 = "pass"
-    item7_detail = f"CHANGELOG.md exists, currently at {latest_changelog_version()}"
+    item7_detail = "CHANGELOG.md exists as of v1.4"
 
     rows.append({
         "city": city, "n": n,

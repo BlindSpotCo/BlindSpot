@@ -316,20 +316,13 @@ def water_supply_hours(pin, zone):
     return max(2, base + jitter(pin, 2, salt=4))
 
 
-def tier_for_crime_score(score):
-    """Absolute reading of a record's own crime score, same threshold bands
-    as grade_for()'s A/B+/B/C+ boundaries. Not a same-city rank -- see this
-    module's own crime block for why that distinction matters."""
-    return ("Very Low" if score >= 80 else "Low" if score >= 70
-            else "Moderate" if score >= 60 else "High" if score >= 50 else "Very High")
-
 def build():
     nqi_rows, master_rows = [], []
     crime_scores = {}
     for pin in CHENNAI:
         zone = ZONE_OF[pin]
         crime_scores[pin] = score_for(pin, "crime", zone)
-    all_crime_scores = sorted(crime_scores[p] for p in CHENNAI)
+    all_crimes = sorted(crimes_for(p, crime_scores[p]) for p in CHENNAI)
 
     for pin, entry in CHENNAI.items():
         name, area_label, lat, lon, tier, land = entry
@@ -355,9 +348,10 @@ def build():
         composite = round(sum(scores[k] * w[k] for k in scores) / total_w)
 
         crimes = crimes_for(pin, scores["crime"])
-        rank = sum(1 for s in all_crime_scores if s < scores["crime"])
-        pct = round(rank / len(all_crime_scores) * 100)
-        tier_name = tier_for_crime_score(scores["crime"])
+        rank = sum(1 for c in all_crimes if c > crimes)
+        pct = round(rank / len(all_crimes) * 100)
+        tier_name = ("Very Low" if pct >= 80 else "Low" if pct >= 60
+                     else "Moderate" if pct >= 40 else "High" if pct >= 20 else "Very High")
 
         lo_sqft, hi_sqft, rate_exact = rate_for(pin, zone)
 

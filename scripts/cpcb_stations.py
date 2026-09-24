@@ -329,29 +329,3 @@ CHENNAI_STATIONS = [
 # reading found this session. Not included above. See comment block.
 CHENNAI_STATIONS_UNREAD = ["Kathivakkam (TNPCB)", "Koyambedu (TNPCB)",
                            "Velachery (TNPCB)", "Alandur (TNPCB)"]
-
-# Ahmedabad: 6 real, named CPCB/GPCB stations found (aqicn.org's Ahmedabad
-# station list: Maninagar, Rakhial, Gyaspur, SVPI Airport Hansol, SAC ISRO
-# Satellite, Phase-4 GIDC Vatva). Only 3 gave a clean current single reading
-# (aqicn.org mostly returned "Not Available" for live values, with a
-# historical 2-day range shown instead for 2 more); Phase-4 GIDC Vatva's
-# exact page 404'd on direct fetch and was not chased further (a slug
-# guess, not the confirmed URL from the station-list page -- didn't
-# retry with a fabricated alternate).
-#
-# Real disambiguation trap caught here, same class as Chennai's Chetpet
-# case: Wikipedia's own "Gyaspur" article is a DIFFERENT Gyaspur in
-# Ghaziabad district, Uttar Pradesh, not Ahmedabad's. Confirmed the real
-# Ahmedabad Gyaspur via its postal directory pincode (382405, the same
-# PIN as Narol -- indiatvnews, mapsofindia, prokerala, dwello.in all
-# agree) before using its coordinates.
-AHMEDABAD_STATIONS = [
-    ("Maninagar (CPCB)",             22.99610, 72.60350, 108, "1 reading, page timestamp 23 Jun 2026 (aqicn.org)"),
-    ("Gyaspur (CPCB)",               22.95990, 72.61990,  72, "1 reading, page timestamp 23 Jun 2026 (aqicn.org)"),
-    ("SVPI Airport Hansol (CPCB)",   23.07722, 72.63472,  71, "1 reading, page timestamp 23 Jun 2026 (aqicn.org)"),
-    ("Rakhial (CPCB)",               23.03400, 72.61950,  82, "approximate, 2-day PM2.5 range 63-102 (aqicn.org), midpoint used"),
-    ("SAC ISRO Satellite (CPCB)",    23.02730, 72.51070,  98, "approximate, 2-day PM2.5 range 67-130 (aqicn.org), midpoint used"),
-]
-# Phase-4 GIDC Vatva -- real, named station, no reading found this session
-# (direct page fetch 404'd; not chased with a guessed alternate URL).
-AHMEDABAD_STATIONS_UNREAD = ["Phase-4 GIDC Vatva (CPCB)"]

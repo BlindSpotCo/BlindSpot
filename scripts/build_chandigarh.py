@@ -263,16 +263,6 @@ def grade_for(n):
     if n >= 40: return "C"
     return "D"
 
-def tier_for_crime_score(score):
-    """Absolute reading of this sector's own crime score, same threshold
-    bands as grade_for()'s A/B+/B/C+ boundaries -- not a same-city rank.
-    A within-city percentile stretches to fill 0-100 regardless of how
-    tightly real scores cluster (Chandigarh's own 20 sectors span only
-    63-88), which previously mislabelled a perfectly decent absolute score
-    as "High crime" purely because most other sectors scored even higher."""
-    return ("Very Low" if score >= 80 else "Low" if score >= 70
-            else "Moderate" if score >= 60 else "High" if score >= 50 else "Very High")
-
 def build():
     nqi_rows, master_rows = [], []
     tiers = sorted({p[5] for p in PINS})
@@ -295,13 +285,12 @@ def build():
 
         # Crime percentile within Chandigarh only -- explain() renders this
         # as "safer than N% of tracked <city> areas", so it must be
-        # city-relative, not national. Ranked on the crime SCORE, not the
-        # separately-authored crimes count -- see tier_for_crime_score()'s
-        # own comment for why the tier below must not be percentile-based.
-        all_crime_scores = sorted(PROFILE[q]["crime"] for q in PROFILE)
-        rank = sum(1 for s in all_crime_scores if s < p["crime"])
-        pct = round(rank / len(all_crime_scores) * 100)
-        tier_name = tier_for_crime_score(p["crime"])
+        # city-relative, not national.
+        all_crimes = sorted(PROFILE[q]["crimes"] for q in PROFILE)
+        rank = sum(1 for c in all_crimes if c > p["crimes"])
+        pct = round(rank / len(all_crimes) * 100)
+        tier_name = ("Very Low" if pct >= 80 else "Low" if pct >= 60
+                     else "Moderate" if pct >= 40 else "High" if pct >= 20 else "Very High")
 
         nqi_rows.append({
             "pin_code": pin,

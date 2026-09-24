@@ -419,6 +419,11 @@ export default function ReportScreen({ view = 'verdict' }) {
   const [failure, setFailure] = useState('');
   const [solar, setSolar] = useState(null);
   const [solarFailed, setSolarFailed] = useState(false);
+  // Retry for the 3D map: bumping these refetches the sun path and
+  // remounts the map document.
+  const [solarNonce, setSolarNonce] = useState(0);
+  const [mapKey, setMapKey] = useState(0);
+  const [mapSlow, setMapSlow] = useState(false);
   const [aqi, setAqi] = useState(null);
   const [busy, setBusy] = useState(false);
   // The sun & shadow report generates here, from the map already on this
@@ -607,7 +612,7 @@ export default function ReportScreen({ view = 'verdict' }) {
           area: null,
           unit: {
             score: unitScore, grade: json.grade, floor, facing,
-            subScores: json.subScores || [], thermalCost: json.thermalCost,
+            subScores: json.subScores || [], thermalCost: json.thermalCost, sunYear: json.sunYear,
           },
           combined: null,
           notes: json.dataNotes,
@@ -624,7 +629,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                 area: null,
                 unit: {
                   score: fullUnitScore, grade: full.grade, floor, facing,
-                  subScores: full.subScores || [], thermalCost: full.thermalCost,
+                  subScores: full.subScores || [], thermalCost: full.thermalCost, sunYear: full.sunYear,
                 },
                 combined: null,
                 notes: full.dataNotes,
@@ -773,6 +778,17 @@ export default function ReportScreen({ view = 'verdict' }) {
     fullToggleRef.current?.focus({ preventScroll: true });
   }, [fullMap]);
 
+  // The map is "loading" until the sun path is in AND the 3D document says
+  // it's up. Past 10s say so, and say it's fine to carry on without it.
+  const mapFailed = solarFailed || capture.failed;
+  const mapLoading = !mapFailed && (!solar?.pathData || !capture.ready);
+  useEffect(() => {
+    if (!mapLoading) { setMapSlow(false); return; }
+    const t = setTimeout(() => setMapSlow(true), 10000);
+    return () => clearTimeout(t);
+  }, [mapLoading, mapKey, solarNonce]);
+  const retryMap = () => { setMapSlow(false); setSolarFailed(false); setSolarNonce((n) => n + 1); setMapKey((k) => k + 1); };
+
   /* ---------------- sun path for the map ---------------- */
   useEffect(() => {
     if (!hasPlace) return;
@@ -792,7 +808,7 @@ export default function ReportScreen({ view = 'verdict' }) {
     // `minutes` re-runs this only while paused: with the animation on, the
     // iframe drives its own clock and a per-minute refetch would fight it.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasPlace, lat, lon, simDate, animating, animating ? null : minutes]);
+  }, [hasPlace, lat, lon, simDate, solarNonce, animating, animating ? null : minutes]);
 
   /* ---------------- the raw locality record, for the report ---------------- */
   useEffect(() => {
@@ -1499,6 +1515,10 @@ export default function ReportScreen({ view = 'verdict' }) {
                 confirmed the pin and moved on. "See the analysis" (or
                 Escape) is the one way forward. */}
 
+            <Link href="/" className="bsr-home" aria-label="BlindSpot home" title="Back to the home page">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/mark.png" alt="" width="22" height="22" />
+            </Link>
             <p className="bsr-fullbar-where">
               <span className="bsr-fullbar-addr">
                 {address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}
@@ -1578,6 +1598,7 @@ export default function ReportScreen({ view = 'verdict' }) {
         <div className="bsr-map" onMouseLeave={() => setMapArmed(true)}>
           {solar?.pathData ? (
             <Map3DShadow
+              key={mapKey}
               lat={lat}
               lon={lon}
               highlightId={picked && picked.lat === lat && picked.lon === lon ? picked.id : null}
@@ -1593,9 +1614,23 @@ export default function ReportScreen({ view = 'verdict' }) {
               debug={debug}
             />
           ) : (
-            <p className="bsr-map-wait">
-              {solarFailed ? 'The 3D view couldn’t load. The scores below are unaffected.' : 'Building the 3D view…'}
-            </p>
+            <span className="bsr-map-blank" />
+          )}
+          {(mapLoading || mapFailed) && (
+            <div className={`bsr-map-loading${mapSlow || mapFailed ? ' is-slow' : ''}${mapFailed ? ' is-failed' : ''}`} role="status" aria-live="polite">
+              {!mapFailed && <span className="bsr-map-sun" aria-hidden="true" />}
+              <p className="bsr-map-loading-h">
+                {mapFailed ? 'The 3D map didn’t load.' : mapSlow ? 'The 3D map is taking longer than usual…' : 'Loading the 3D map of the buildings around you…'}
+              </p>
+              {(mapSlow || mapFailed) && (
+                <p className="bsr-map-loading-p">
+                  {fullMap
+                    ? 'No need to wait: set your floor and facing and press “See the analysis”. The scores don’t depend on the map.'
+                    : 'Your scores below don’t depend on it.'}
+                  {' '}<button type="button" className="bsr-inline-link" onClick={retryMap}>Try again</button>
+                </p>
+              )}
+            </div>
           )}
           {/* The guard exists to stop the map eating the PAGE's scroll.
               Full screen there is no page scrolling behind it, so it is
@@ -1641,12 +1676,12 @@ export default function ReportScreen({ view = 'verdict' }) {
                     <span className="bsr-docktip-text">
                       {pinTouched ? (
                         <>
-                          <strong>Set your floor and facing</strong>
+                          <strong>Step 2 · Set your floor and facing</strong>
                           <span>Scores change a lot between floors</span>
                         </>
                       ) : (
                         <>
-                          <strong>Tap your building on the map</strong>
+                          <strong>Step 1 · Tap your building on the map</strong>
                           <span>{assumed ? 'Then set your floor and facing below' : 'So we score your exact tower'}</span>
                         </>
                       )}
@@ -1661,7 +1696,30 @@ export default function ReportScreen({ view = 'verdict' }) {
                     </button>
                   </p>
                 )}
-                <p className="bsr-dock-title">Pinpoint your unit</p>
+                {/* The whole map step as four plain steps (laptop/tablet; a
+                    phone shows just the current one in the yellow strip). */}
+                {(() => {
+                  const cur = !pinTouched ? 1 : assumed ? 3 : 4;
+                  const steps = [
+                    { n: 1, t: 'Tap your building', d: pinTouched ? 'Pin placed' : 'On the map, so we score your tower' },
+                    { n: 2, t: 'Turn to your view', d: 'Optional · the compass, top right', optional: true },
+                    { n: 3, t: 'Set floor and facing', d: 'Sun and heat change a lot with both' },
+                    { n: 4, t: 'See the analysis', d: 'Sun through the year + the neighbourhood' },
+                  ];
+                  return (
+                    <ol className="bsr-steps" aria-label="Steps">
+                      {steps.map((st) => {
+                        const done = (st.n === 1 && pinTouched) || (st.n === 3 && !assumed);
+                        return (
+                          <li key={st.n} className={`${done ? 'is-done' : ''}${st.n === cur ? ' is-now' : ''}${st.optional ? ' is-opt' : ''}`} aria-current={st.n === cur ? 'step' : undefined}>
+                            <span className="bsr-step-n" aria-hidden="true">{done ? '✓' : st.n}</span>
+                            <span className="bsr-step-t"><strong>{st.t}</strong><span>{st.d}</span></span>
+                          </li>
+                        );
+                      })}
+                    </ol>
+                  );
+                })()}
                 <p className="bsr-set bsr-dock-fields">
                   {unitFieldsNode}
                 </p>
@@ -1819,6 +1877,10 @@ export default function ReportScreen({ view = 'verdict' }) {
                 input-looking pill holding the whole geocoder string, and
                 three links of different styles floating above it. */}
             <div className="bsr-head-row">
+              <Link href="/" className="bsr-home is-head" aria-label="BlindSpot home" title="Back to the home page">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/mark.png" alt="" width="24" height="24" />
+              </Link>
               <div className="bsr-head-where">
                 <span className="bsr-head-pin" aria-hidden="true">
                   <MapPin size={18} strokeWidth={2.2} />
@@ -1970,6 +2032,82 @@ export default function ReportScreen({ view = 'verdict' }) {
               </span>
             </div>
           </section>
+            );
+          })()}
+
+          {/* ---------- quick analysis: the two answers at a glance ----------
+              The year-round sun picture used to be three clicks away (a
+              report to generate, or the map to scrub). It's already
+              computed for the score, so it's shown here as a year strip,
+              next to the neighbourhood in one line. */}
+          {(() => {
+            const yr = Array.isArray(unit.sunYear) ? unit.sunYear : [];
+            const maxH = Math.max(1, ...yr.map((m) => m.hours || 0));
+            const avg = yr.length ? Math.round((yr.reduce((t, m) => t + (m.hours || 0), 0) / yr.length) * 10) / 10 : null;
+            const best = yr.length ? yr.reduce((a, b) => (b.hours > a.hours ? b : a)) : null;
+            const worst = yr.length ? yr.reduce((a, b) => (b.hours < a.hours ? b : a)) : null;
+            const facts = hasArea ? Object.entries(area.factors || {}).filter(([, v]) => typeof v === 'number') : [];
+            const strong = facts.filter(([, v]) => v >= 75).sort((a, b) => b[1] - a[1]).slice(0, 3);
+            const weak = facts.filter(([, v]) => v < 55).sort((a, b) => a[1] - b[1]).slice(0, 2);
+            if (!yr.length && !hasArea) return null;
+            return (
+              <section className="bsr-quick" aria-label="Quick analysis">
+                {yr.length > 0 && (
+                  <div className="bsr-q is-sun">
+                    <p className="bsr-q-k"><Sun size={14} strokeWidth={2.4} aria-hidden="true" /> Sun through the year</p>
+                    <p className="bsr-q-big"><strong>{avg} h</strong> of direct sun a day, on average</p>
+                    <p className="bsr-q-sub">
+                      {assumed ? `For a typical ${ord(DEFAULT_FLOOR)} floor, south-east facing. ` : `Floor ${floor}, ${facing.toLowerCase()}-facing. `}
+                      {(() => {
+                        // Ties are common (months round to the same hour) --
+                        // name the run, not just its first month.
+                        const span = (h) => {
+                          const idx = yr.map((m, i) => (m.hours === h ? i : -1)).filter((i) => i >= 0);
+                          const L = yr.length;
+                          const has = (i) => idx.includes(((i % L) + L) % L);
+                          const starts = idx.filter((i) => !has(i - 1));
+                          const ends = idx.filter((i) => !has(i + 1));
+                          // one unbroken run, wrapping past December (Nov–Jan)
+                          if (idx.length > 1 && idx.length < L && starts.length === 1) return `${yr[starts[0]].month}–${yr[ends[0]].month}`;
+                          return yr[idx[0]].month;
+                        };
+                        return `Most in ${span(best.hours)}, least in ${span(worst.hours)}.`;
+                      })()}
+                    </p>
+                    <div className="bsr-q-bars" role="img" aria-label={yr.map((m) => `${m.month} ${m.hours} hours`).join(', ')}>
+                      {yr.map((m) => (
+                        <span key={m.month} className={`bsr-q-bar${m.hours === best.hours ? ' is-best' : ''}${m.hours === worst.hours ? ' is-worst' : ''}`} title={`${m.month}: ${m.hours} h of direct sun a day`}>
+                          <em>{m.hours}</em>
+                          <span className="bsr-q-track"><i style={{ height: `${Math.max(6, (m.hours / maxH) * 100)}%` }} /></span>
+                          <b>{m.month[0]}</b>
+                        </span>
+                      ))}
+                    </div>
+                    <p className="bsr-q-foot">
+                      <a href="#the-block">Watch it on the 3D map ↓</a>
+                      <button type="button" className="bsr-inline-link" onClick={requestSunReport}>Get the full sunlight report →</button>
+                    </p>
+                  </div>
+                )}
+                <div className="bsr-q is-area">
+                  <p className="bsr-q-k"><Building2 size={14} strokeWidth={2.4} aria-hidden="true" /> The neighbourhood</p>
+                  {hasArea ? (
+                    <>
+                      <p className="bsr-q-big"><strong>{area.score}</strong>/100 · {halfWord(area.score)}</p>
+                      <p className="bsr-q-sub">{area.name}, from government records for PIN {area.pinCode}.</p>
+                      {strong.length > 0 && (
+                        <p className="bsr-q-tags"><span className="bsr-q-tl">Strong</span>{strong.map(([k]) => <span key={k} className="bsr-q-tag is-good">{FACTOR_LABELS[k] || k}</span>)}</p>
+                      )}
+                      {weak.length > 0 && (
+                        <p className="bsr-q-tags"><span className="bsr-q-tl">Ask about</span>{weak.map(([k]) => <span key={k} className="bsr-q-tag is-ask">{FACTOR_LABELS[k] || k}</span>)}</p>
+                      )}
+                      <p className="bsr-q-foot"><a href={`/neighbourhood-report/${area.pinCode}`} target="_blank">Full area report →</a></p>
+                    </>
+                  ) : (
+                    <p className="bsr-q-sub">{pinPending ? 'Finding the pincode for this spot…' : 'No neighbourhood records for this pincode yet. The flat’s own scores are below.'}</p>
+                  )}
+                </div>
+              </section>
             );
           })()}
 

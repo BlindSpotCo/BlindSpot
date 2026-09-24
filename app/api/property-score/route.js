@@ -135,6 +135,7 @@ export async function GET(req) {
         weight: Math.round((weightUnit / totalWeight) * 100),
         subScores: ssResult.subScores,
         thermalCost: ssResult.thermalCost,
+        sunYear: ssResult.sunYear,
       },
       formula: `(${areaScore} × ${Math.round((weightArea/totalWeight)*100)}%) + (${unitScore} × ${Math.round((weightUnit/totalWeight)*100)}%) = ${combinedScore}`,
       dataNotes: [
