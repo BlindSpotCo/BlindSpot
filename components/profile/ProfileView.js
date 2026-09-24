@@ -238,6 +238,7 @@ export default function ProfileView({ profile, initialReports, folders, fetchFai
     <main className="pf">
       <div className="pf-wrap">
         {/* ---------------- who ---------------- */}
+        <p className="pf-kicker">Account</p>
         <header className="pf-top">
           <HomeMark seed={profile.id || profile.email} size={64} className="pf-mark" title="Your BlindSpot mark" />
           <div className="pf-top-text">

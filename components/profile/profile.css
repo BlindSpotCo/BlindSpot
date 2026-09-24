@@ -1,12 +1,20 @@
 /* components/profile/profile.css
-   A notebook, not a dashboard: type does the work, hairlines instead of
-   boxes, one accent (the site's olive), the Playfair italic the homepage
-   uses for its own accent words. */
+   Same tokens and card language as the rest of the app now: paper cards
+   on the app's --bg, --line hairlines only inside a card (not instead of
+   one), --brand olive as the one accent, the Playfair italic the
+   homepage still uses for its own accent words -- but not for numbers.
+   The report screen's own score (.bsr-sum-n) is bold Geist, plain ink,
+   not italic serif, so the one score on this page that used to stand
+   apart in Playfair now matches it. */
 
 .pf{ min-height:100vh; background:var(--bg,#FAF6EE); color:var(--text,#1C1812); padding:36px 0 80px }
 .pf-wrap{ max-width:880px; margin:0 auto; padding:0 clamp(16px,4vw,28px) }
 
 /* ---------- top ---------- */
+.pf-kicker{
+  margin:0 0 10px; font-family:'Geist Mono',monospace; font-size:11.5px; font-weight:600;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim,#57697F);
+}
 .pf-top{ display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:18px }
 .pf-mark{ display:block; border-radius:50%; box-shadow:0 0 0 1px rgba(28,24,18,.12) }
 .pf-top-text{ min-width:0 }
@@ -46,13 +54,19 @@
 
 /* ---------- top of the list ---------- */
 .pf-best{
-  display:flex; align-items:center; gap:18px; margin-top:18px; padding:14px 0;
-  border-top:1px solid var(--line,rgba(28,24,18,.14)); border-bottom:1px solid var(--line,rgba(28,24,18,.14));
+  display:flex; align-items:center; gap:18px; margin-top:18px; padding:18px 22px;
+  background:var(--paper,#FFFFFF); border:1px solid var(--line,#E2E8F0); border-radius:16px;
+  box-shadow:0 1px 2px rgba(15,23,42,.04), 0 10px 28px rgba(15,23,42,.05);
   text-decoration:none; color:inherit;
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+.pf-best:hover{
+  border-color:var(--brand,#3D4116);
+  box-shadow:0 1px 2px rgba(15,23,42,.04), 0 14px 32px rgba(61,65,22,.14);
 }
 .pf-best-score{
-  font-family:'Playfair Display',Georgia,serif; font-style:italic; font-weight:600;
-  font-size:46px; line-height:1; color:var(--brand,#3D4116); min-width:64px; font-variant-numeric:tabular-nums;
+  font-size:44px; line-height:1; font-weight:800; letter-spacing:-.01em;
+  color:var(--text,#0F172A); min-width:64px; font-variant-numeric:tabular-nums;
 }
 .pf-best-text{ display:flex; flex-direction:column; gap:1px; min-width:0; flex:1 }
 .pf-best-k{ font-size:12px; color:var(--text-dim,#8A7F68) }
@@ -109,11 +123,16 @@
 .pf-group{ margin-top:22px }
 .pf-group-h{ display:flex; align-items:baseline; gap:8px; margin:0; padding-bottom:6px; font-size:13px; font-weight:700; letter-spacing:.02em; color:var(--text,#1C1812) }
 .pf-group-h small{ font-size:12px; font-weight:600; color:var(--text-dim,#8A7F68) }
-.pf-ledger{ list-style:none; margin:0; padding:0; border-top:1px solid var(--line,rgba(28,24,18,.14)) }
+.pf-ledger{
+  list-style:none; margin:0; padding:2px 20px;
+  background:var(--paper,#FFFFFF); border:1px solid var(--line,#E2E8F0); border-radius:16px;
+  box-shadow:0 1px 2px rgba(15,23,42,.04), 0 10px 28px rgba(15,23,42,.05);
+}
 .pf-entry{
   display:grid; grid-template-columns:48px minmax(0,1fr) 88px 32px; align-items:center; gap:14px;
   padding:14px 0; border-bottom:1px solid var(--line-soft,rgba(28,24,18,.08));
 }
+.pf-entry:last-child{ border-bottom:none }
 .pf-date{ display:flex; flex-direction:column; align-items:flex-start; font-family:'Geist Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-dim,#8A7F68); line-height:1.2 }
 .pf-date b{ font-size:17px; font-weight:600; color:var(--text,#1C1812); letter-spacing:0 }
 .pf-entry-main{ display:flex; flex-direction:column; gap:2px; min-width:0; text-decoration:none; color:inherit }
@@ -137,8 +156,13 @@
 .pf-confirm{ display:flex; gap:10px; justify-content:flex-end; grid-column:4; white-space:nowrap }
 
 /* ---------- notes ---------- */
-.pf-notes{ display:flex; flex-direction:column }
+.pf-notes{
+  display:flex; flex-direction:column; padding:2px 20px;
+  background:var(--paper,#FFFFFF); border:1px solid var(--line,#E2E8F0); border-radius:16px;
+  box-shadow:0 1px 2px rgba(15,23,42,.04), 0 10px 28px rgba(15,23,42,.05);
+}
 .pf-noteset{ padding:16px 0; border-bottom:1px solid var(--line-soft,rgba(28,24,18,.08)) }
+.pf-noteset:last-child{ border-bottom:none }
 .pf-noteset header{ display:flex; align-items:baseline; gap:12px; flex-wrap:wrap }
 .pf-noteset h3{ margin:0; font-size:16px; font-weight:650 }
 .pf-noteset header > span{ font-size:13px; color:var(--text-dim,#8A7F68); flex:1 }
@@ -148,8 +172,13 @@
 .pf-noteset dd{ margin:0; font-size:14.5px; line-height:1.5; font-family:'Playfair Display',Georgia,serif; font-style:italic }
 
 /* ---------- account ---------- */
-.pf-account{ margin:0; border-top:1px solid var(--line,rgba(28,24,18,.14)) }
+.pf-account{
+  margin:0; padding:4px 20px;
+  background:var(--paper,#FFFFFF); border:1px solid var(--line,#E2E8F0); border-radius:16px;
+  box-shadow:0 1px 2px rgba(15,23,42,.04), 0 10px 28px rgba(15,23,42,.05);
+}
 .pf-account > div{ display:grid; grid-template-columns:160px 1fr; gap:16px; padding:13px 0; border-bottom:1px solid var(--line-soft,rgba(28,24,18,.08)) }
+.pf-account > div:last-child{ border-bottom:none }
 .pf-account dt{ font-size:13.5px; color:var(--text-dim,#8A7F68) }
 .pf-account dd{ margin:0; font-size:14.5px; display:flex; gap:12px; align-items:baseline; flex-wrap:wrap; min-width:0; word-break:break-word }
 
@@ -176,6 +205,10 @@
   .pf-filters{ gap:12px; flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none }
   .pf-filters::-webkit-scrollbar{ display:none }
   .pf-filter{ white-space:nowrap }
+  .pf-best{ padding:14px 16px }
+  .pf-ledger,
+  .pf-account,
+  .pf-notes{ padding-left:12px; padding-right:12px; border-radius:14px }
   .pf-entry{ grid-template-columns:38px minmax(0,1fr) 44px 26px; gap:10px; padding:12px 0 }
   .pf-date b{ font-size:15px }
   .pf-entry-main strong{ font-size:15px }
