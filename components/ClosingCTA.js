@@ -90,7 +90,7 @@ export default function ClosingCTA() {
             <div className="footer-links">
               <div className="footer-col">
                 <span className="footer-col-title">Get Started</span>
-                <a href="/#find" onClick={goToSearch}>Uncover Your BlindSpot</a>
+                <Link href="/#find" onClick={goToSearch}>Uncover Your BlindSpot</Link>
                 <a href="/signup">Create an account</a>
                 <a href="/login">Sign in</a>
               </div>

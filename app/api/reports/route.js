@@ -83,3 +83,23 @@ export async function POST(request) {
 
   return NextResponse.json({ id: report.id, folder_id });
 }
+
+// Removes one of the signed-in user's saved reports (the profile page's
+// delete button). RLS's "delete own reports" policy is what actually
+// guarantees nobody can remove someone else's; the user_id filter just
+// makes that explicit.
+export async function DELETE(request) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: 'not-signed-in' }, { status: 401 });
+  }
+  const id = new URL(request.url).searchParams.get('id');
+  if (!id) return NextResponse.json({ error: 'missing-id' }, { status: 400 });
+
+  const { error } = await supabase.from('reports').delete().eq('id', id).eq('user_id', user.id);
+  if (error) {
+    return NextResponse.json({ error: 'delete-failed', detail: error.message }, { status: 500 });
+  }
+  return NextResponse.json({ ok: true });
+}

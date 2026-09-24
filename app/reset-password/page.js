@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
@@ -40,17 +41,17 @@ export default function ResetPasswordPage() {
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 28 }}>
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 28 }}>
           <img src="/mark.png" alt="BlindSpot" style={{ height: 20 }} />
           <img src="/wordmark.png" alt="BlindSpot" style={{ height: 11 }} />
-        </a>
+        </Link>
         <h1>Set a new password</h1>
 
         {done ? (
           <>
             <p className="auth-success">Your password has been updated.</p>
             <div className="auth-links" style={{ marginTop: 20 }}>
-              <a href="/">Go to homepage</a>
+              <Link href="/">Go to homepage</Link>
             </div>
           </>
         ) : (

@@ -4,7 +4,7 @@
 // This is a self-contained srcDoc iframe -- same-origin to BlindSpot's own
 // page, not cross-origin -- so it needs no special permissions handling.
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 // Diagnostics for the parent<->iframe handshake. On in dev, silent in
 // production: this channel is invisible when it breaks, and a failure in it
@@ -34,14 +34,18 @@ export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTi
   // jumps far, i.e. a new address). Pin taps, the tapped-tower tint and a
   // new day's sun path are posted INTO the live document instead --
   // rebuilding it reloaded the whole 3D scene every time.
-  const docOrigin = useRef(null);
-  if (!docOrigin.current || Math.abs(docOrigin.current.lat - lat) > 0.004 || Math.abs(docOrigin.current.lon - lon) > 0.004) {
-    docOrigin.current = { lat, lon, key: `${lat},${lon}` };
+  // Derived-state pattern (setState during render when the input jumps),
+  // so nothing reads a ref while rendering.
+  const [docOrigin, setDocOrigin] = useState(() => ({ lat, lon }));
+  if (Math.abs(docOrigin.lat - lat) > 0.004 || Math.abs(docOrigin.lon - lon) > 0.004) {
+    setDocOrigin({ lat, lon });
   }
-  const docKey = docOrigin.current.key;
+  const docKey = `${docOrigin.lat},${docOrigin.lon}`;
   const latest = useRef({});
-  latest.current = { lat, lon, highlightId, pathData, sunTimes, simTime };
-  const pushLive = () => {
+  useEffect(() => {
+    latest.current = { lat, lon, highlightId, pathData, sunTimes, simTime };
+  });
+  const pushLive = useCallback(() => {
     const w = iframeRef.current?.contentWindow;
     if (!w) return;
     const l = latest.current;
@@ -51,15 +55,13 @@ export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTi
       pts: (l.pathData || []).map((p) => ({ lon: p.lon, lat: p.lat, el: Math.round(p.el * 100) / 100, az: Math.round(p.az * 100) / 100, time: p.time, iso: p.iso })),
       rise: l.sunTimes?.rise, set: l.sunTimes?.set, time: l.simTime,
     }, '*');
-  };
-  const pushLiveRef = useRef(pushLive);
-  pushLiveRef.current = pushLive;
+  }, []);
   const pathKey = pathData.length > 0 ? `${pathData[0].iso}|${pathData.length}` : '';
   useEffect(() => {
     const w = iframeRef.current?.contentWindow;
     w?.postMessage({ type: 'setPin', lat, lon, hl: highlightId ?? null }, '*');
   }, [lat, lon, highlightId]);
-  useEffect(() => { pushLiveRef.current(); }, [pathKey]);
+  useEffect(() => { pushLive(); }, [pathKey, pushLive]);
 
   const html = useMemo(() => {
     const allPtsJs = JSON.stringify(pathData.map(p => ({
@@ -820,7 +822,7 @@ notifyParent('map3d_ready');
       // rather than guessed from this component's mount -- see the
       // notifyParent comments in the srcDoc script.
       if (DEBUG && e.data?.type) console.log('[map3d] parent heard:', e.data.type);
-      if(e.data?.type==='map3d_ready') { pushLiveRef.current(); onStatus?.('ready'); }
+      if(e.data?.type==='map3d_ready') { pushLive(); onStatus?.('ready'); }
       if(e.data?.type==='map3d_failed') onStatus?.('failed', e.data.reason);
       // Non-fatal: something threw inside a map that is up and running.
       // Worth knowing about, not worth abandoning a capture over.
@@ -830,7 +832,7 @@ notifyParent('map3d_ready');
     if (DEBUG) console.log('[map3d] parent listening; iframe el:', !!iframeRef.current,
       'contentWindow:', !!iframeRef.current?.contentWindow);
     return () => window.removeEventListener('message', handler);
-  }, [onLocationSelect, onScreenshot, onStatus, DEBUG]);
+  }, [onLocationSelect, onScreenshot, onStatus, DEBUG, pushLive]);
 
   // A new srcDoc is a whole new document: it has to announce itself again
   // before anything may be posted into it. Without this, moving the pin

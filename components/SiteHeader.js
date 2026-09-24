@@ -54,19 +54,17 @@ export default function SiteHeader({ homeHref = '/' }) {
 
   const [user, setUser] = useState(null);
   const [checkedAuth, setCheckedAuth] = useState(false);
+  // The avatar chip that links to /profile: their Google photo if they
+  // signed in with Google, otherwise initials from their name or email.
+  const meta = user?.user_metadata || {};
+  const avatarUrl = meta.avatar_url || meta.picture || '';
+  const initials = (() => {
+    const src = (meta.full_name || meta.name || user?.email || '').trim();
+    if (!src) return '·';
+    const parts = src.split(/[\s@._-]+/).filter(Boolean);
+    return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase() || src[0].toUpperCase();
+  })();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  // Checked once on mount too (not just on scroll), in case the page loads
-  // already scrolled down (e.g. from an anchor link or browser scroll
-  // restore) -- otherwise the header would stay bare until the next scroll
-  // event even though the page isn't at the top.
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   // The homepage opens on the live-map hero -- a near-black field, not the
   // usual cream page background. The header's normal resting state (fully
@@ -168,7 +166,10 @@ export default function SiteHeader({ homeHref = '/' }) {
   // never crosses that threshold, so the nav (and with it, the only way
   // back to Tools/How It Works/home besides the browser's own back
   // button) just never appears for the whole time they're in the flow.
-  const revealNav = onFlow || (isHome ? heroCleared : scrolled);
+  // Only the homepage earns its nav by scrolling past the hero. Every
+  // other page shows it straight away -- /compare barely scrolls, so on it
+  // the nav (and the way home) never appeared at all.
+  const revealNav = onFlow || !isHome || heroCleared;
 
   return (
     <>
@@ -220,7 +221,12 @@ export default function SiteHeader({ homeHref = '/' }) {
               {checkedAuth && (
                 user ? (
                   <div className="nav-user">
-                    <Link href="/my-reports">My Reports</Link>
+                    <Link href="/profile" className="nav-avatar" title="Your profile and saved reports" aria-label="Your profile">
+                      {avatarUrl
+                        // eslint-disable-next-line @next/next/no-img-element
+                        ? <img src={avatarUrl} alt="" referrerPolicy="no-referrer" />
+                        : <span>{initials}</span>}
+                    </Link>
                     <button
                       onClick={handleSignOut}
                       style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', font: 'inherit', padding: 0 }}
@@ -257,7 +263,7 @@ export default function SiteHeader({ homeHref = '/' }) {
             {checkedAuth && (
               user ? (
                 <>
-                  <Link href="/my-reports" onClick={closeMobile}>My Reports</Link>
+                  <Link href="/profile" onClick={closeMobile}>Your profile</Link>
                   <button
                     onClick={() => { handleSignOut(); closeMobile(); }}
                     style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', font: 'inherit', padding: '12px 4px', textAlign: 'left' }}

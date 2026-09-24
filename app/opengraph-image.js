@@ -44,7 +44,7 @@ export default async function Image() {
               maxWidth: 980,
             }}
           >
-            See what listings don't tell you.
+            {"See what listings don't tell you."}
           </div>
           <div style={{ fontSize: 26, color: '#5A5140', maxWidth: 880, lineHeight: 1.4 }}>
             Neighbourhood Score and Home Comfort Score, data-backed property

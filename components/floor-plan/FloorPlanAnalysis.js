@@ -183,7 +183,7 @@ export default function FloorPlanAnalysis({ embedded = false }) {
         {status !== 'done' && (
           <>
             <div style={{ marginBottom: 24 }}>
-              <p className="kick" style={{ marginBottom: 14 }}>Tell Us What You Want, Everyone's Dream Home Is Different</p>
+              <p className="kick" style={{ marginBottom: 14 }}>Tell Us What You Want, Everyone&apos;s Dream Home Is Different</p>
               <BPF style={{ padding: '20px 22px' }}>
                 <div style={{ marginBottom: 18 }}>
                   <div style={{ fontSize: 12.5, fontWeight: 600, marginBottom: 8 }}>Home type</div>

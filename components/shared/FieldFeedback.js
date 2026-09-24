@@ -114,7 +114,7 @@ export default function FieldFeedback({ pinCode, city, fieldName, fieldLabel, cu
             </button>
           </div>
           {state === 'error' && (
-            <div style={{ fontSize: 10.5, color: '#b33' }}>Couldn't send that - try again in a moment.</div>
+            <div style={{ fontSize: 10.5, color: '#b33' }}>Couldn&apos;t send that - try again in a moment.</div>
           )}
         </form>
       )}
