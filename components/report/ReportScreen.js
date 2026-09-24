@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { createPortal } from 'react-dom';
 
 // components/report/ReportScreen.js
 //
@@ -1230,6 +1231,29 @@ export default function ReportScreen({ view = 'verdict' }) {
       return next;
     });
   }, []);
+
+  // Tapping the thumbnail opens it full size -- a 52px square is enough
+  // to recognise which item it's for, not enough to actually read a
+  // window or a meter. One shared overlay (rendered once below, not one
+  // per item) holds whichever photo is currently open; portalled to
+  // document.body the same way ReportModal is, so it isn't affected by
+  // any ancestor's own stacking context (.bsr-mapzone.is-full among
+  // them).
+  const [lightboxPhoto, setLightboxPhoto] = useState(null);
+  useEffect(() => {
+    if (!lightboxPhoto || typeof window === 'undefined') return;
+    const onKey = (e) => { if (e.key === 'Escape') setLightboxPhoto(null); };
+    window.addEventListener('keydown', onKey);
+    // Shares .bsr-noscroll with the full-screen map step (see fullMapLive
+    // above) -- safe because a photo can only be opened from the verdict
+    // page's checklist, never while the map owns the viewport, so the two
+    // never fight over the same class at once.
+    document.body.classList.add('bsr-noscroll');
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.classList.remove('bsr-noscroll');
+    };
+  }, [lightboxPhoto]);
 
   // Only count ticks against items actually on the list. The ticks are
   // stored per address, but the list is derived from the floor and facing --
@@ -2469,8 +2493,15 @@ export default function ReportScreen({ view = 'verdict' }) {
                             never saved across a reload. */}
                         {checkPhotos[a.key] ? (
                           <span className="bsr-todo-photo">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={checkPhotos[a.key]} alt={`Your photo for ${a.label}`} />
+                            <button
+                              type="button"
+                              className="bsr-todo-photo-view"
+                              onClick={() => setLightboxPhoto({ src: checkPhotos[a.key], label: a.label })}
+                              aria-label={`View the photo for ${a.label} full size`}
+                            >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={checkPhotos[a.key]} alt={`Your photo for ${a.label}`} />
+                            </button>
                             <button
                               type="button"
                               className="bsr-todo-photo-remove"
@@ -2512,6 +2543,40 @@ export default function ReportScreen({ view = 'verdict' }) {
               </p>
             )}
           </section>
+
+          {/* Portalled to document.body (see the lightboxPhoto effect
+              above) rather than rendered in place -- position:fixed here
+              would otherwise be at the mercy of whatever ancestor's own
+              stacking context it landed in. Click anywhere on the dim
+              backdrop, Escape, or the x to close; a click on the photo
+              itself is caught and stopped so it doesn't bubble to the
+              backdrop and close on its own image. */}
+          {lightboxPhoto && typeof document !== 'undefined' && createPortal(
+            <div
+              className="bsr-photolight"
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Photo for ${lightboxPhoto.label}`}
+              onClick={() => setLightboxPhoto(null)}
+            >
+              <button
+                type="button"
+                className="bsr-photolight-close"
+                onClick={() => setLightboxPhoto(null)}
+                aria-label="Close photo"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+              </button>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={lightboxPhoto.src}
+                alt={`Your photo for ${lightboxPhoto.label}`}
+                className="bsr-photolight-img"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>,
+            document.body
+          )}
 
           <RoomPhotoAnalyzer lat={lat} lon={lon} floor={floor} tzOffset={TZ} />
 

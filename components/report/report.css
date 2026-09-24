@@ -647,6 +647,14 @@
   border-radius:6px;overflow:hidden;
   border:1px solid var(--line,rgba(28,24,18,.18));
 }
+/* The thumbnail's own click target -- a real <button> around the <img>
+   (see the JSX) so it's reachable by keyboard/screen reader, not just a
+   div with an onClick. Fills the same 52px box the image always has,
+   so wrapping it in a button changes nothing about the box's size. */
+.bsr-todo-photo-view{
+  display:block;width:100%;height:100%;padding:0;margin:0;border:0;
+  background:none;cursor:pointer;
+}
 .bsr-todo-photo img{display:block;width:100%;height:100%;object-fit:cover}
 .bsr-todo-photo-remove{
   position:absolute;top:2px;right:2px;z-index:1;
@@ -655,6 +663,37 @@
   background:rgba(28,24,18,.62);color:#FFFDF8;
 }
 .bsr-todo-photo-remove:hover{background:rgba(28,24,18,.85)}
+
+/* ---- checklist photo, full size ----
+   A plain dim-backdrop lightbox, its own overlay rather than a share of
+   .modal-overlay (that class carries ReportModal's own corner-card/bar
+   breakpoints, which have nothing to do with this). Portalled to
+   document.body in the JSX, so these rules don't need to fight any
+   ancestor's padding, overflow or stacking context to reach the whole
+   viewport. */
+.bsr-photolight{
+  position:fixed;inset:0;z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  padding:32px;
+  background:rgba(20,17,12,.82);
+  cursor:zoom-out;
+}
+.bsr-photolight-img{
+  display:block;max-width:100%;max-height:100%;
+  border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.5);
+  cursor:default;
+}
+.bsr-photolight-close{
+  position:fixed;top:16px;right:16px;z-index:1;
+  width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+  padding:0;border:1px solid rgba(255,253,248,.3);border-radius:50%;cursor:pointer;
+  background:rgba(28,24,18,.55);color:#FFFDF8;
+}
+.bsr-photolight-close:hover{background:rgba(28,24,18,.8)}
+@media (max-width:600px){
+  .bsr-photolight{padding:16px}
+  .bsr-photolight-close{top:10px;right:10px;width:32px;height:32px}
+}
 
 /* Ticked rows recede rather than disappear -- you still need to be able to
    read what you already checked. */
