@@ -1119,6 +1119,12 @@ export default function ReportScreen({ view = 'verdict' }) {
         setNotes(parsed?.notes && typeof parsed.notes === 'object' ? parsed.notes : {});
       }
     } catch { setTicked(new Set()); setNotes({}); }
+    // A photo is a personal, on-this-visit reminder for an item -- not
+    // saved (see checkPhotos below) and keyed only by factor (sun, view,
+    // ...), not by address, so it has to be cleared by hand whenever the
+    // address itself changes -- otherwise a photo taken for one flat would
+    // still show up under the same-named item on the next one you look at.
+    setCheckPhotos({});
   }, [tickKey]);
 
   const persistChecklist = useCallback((nextTicked, nextNotes) => {
@@ -1186,6 +1192,41 @@ export default function ReportScreen({ view = 'verdict' }) {
       if (!prev.has(key)) return prev;
       const next = new Set(prev);
       next.delete(key);
+      return next;
+    });
+  }, []);
+
+  // One photo per checklist item, same shape as a note but never saved --
+  // this is a quick visual reminder for while you're standing in the flat
+  // ("is that the window I meant"), not text meant to survive a reload or
+  // feed the AI report the way a written note does (see actionsForAI
+  // below, which only ever reads notes). Downscaled client-side before it
+  // ever becomes a data URL so a phone photo at several thousand pixels
+  // wide doesn't balloon this component's own memory.
+  const [checkPhotos, setCheckPhotos] = useState(() => ({}));
+  const handleCheckPhoto = useCallback((key, file) => {
+    if (!file) return;
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const scale = Math.min(1, 640 / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale) || 1;
+      const h = Math.round(img.height * scale) || 1;
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      setCheckPhotos((prev) => ({ ...prev, [key]: canvas.toDataURL('image/jpeg', 0.85) }));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); };
+    img.src = url;
+  }, []);
+  const removeCheckPhoto = useCallback((key) => {
+    setCheckPhotos((prev) => {
+      if (!(key in prev)) return prev;
+      const next = { ...prev };
+      delete next[key];
       return next;
     });
   }, []);
@@ -2381,37 +2422,81 @@ export default function ReportScreen({ view = 'verdict' }) {
                         </span>
                       </label>
                       {/* Both sit outside the <label> on purpose -- clicking
-                          either must never toggle the checkbox above it. */}
-                      {showNote ? (
-                        <span className="bsr-todo-notewrap">
-                          <textarea
-                            className="bsr-todo-note"
-                            placeholder="Notes (optional)"
-                            aria-label={`What did you find - ${a.label}`}
-                            value={notes[a.key] || ''}
-                            onChange={(e) => updateNote(a.key, e.target.value)}
-                            rows={2}
-                            autoFocus={isTicked && !hasNote}
-                          />
-                          {/* Closing keeps whatever's already typed -- this
-                              only hides the field, ticking it again (or "+ Add
-                              a note") brings it right back with the text
-                              still there. */}
-                          <button
-                            type="button"
-                            className="bsr-todo-notehide"
-                            onClick={() => collapseNote(a.key)}
-                            aria-label={`Hide the note field for ${a.label}`}
-                            title="Hide this note field"
-                          >
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                          either must never toggle the checkbox above it. One
+                          shared row (.bsr-todo-extras) carries whichever note
+                          control applies plus the photo control, so "+ Add a
+                          note" and "+ Add a photo" read as one pair of quiet
+                          links, not a note slot with a photo bolted on
+                          somewhere else on the item. The note textarea is
+                          full width and forces a wrap (flex-wrap on the
+                          parent), so a photo already attached lands on its
+                          own line under it rather than fighting the hide (x)
+                          button for room. */}
+                      <span className="bsr-todo-extras">
+                        {showNote ? (
+                          <span className="bsr-todo-notewrap">
+                            <textarea
+                              className="bsr-todo-note"
+                              placeholder="Notes (optional)"
+                              aria-label={`What did you find - ${a.label}`}
+                              value={notes[a.key] || ''}
+                              onChange={(e) => updateNote(a.key, e.target.value)}
+                              rows={2}
+                              autoFocus={isTicked && !hasNote}
+                            />
+                            {/* Closing keeps whatever's already typed -- this
+                                only hides the field, ticking it again (or "+ Add
+                                a note") brings it right back with the text
+                                still there. */}
+                            <button
+                              type="button"
+                              className="bsr-todo-notehide"
+                              onClick={() => collapseNote(a.key)}
+                              aria-label={`Hide the note field for ${a.label}`}
+                              title="Hide this note field"
+                            >
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                            </button>
+                          </span>
+                        ) : (
+                          <button type="button" className="bsr-todo-addnote" onClick={() => revealNote(a.key)}>
+                            + Add a note
                           </button>
-                        </span>
-                      ) : (
-                        <button type="button" className="bsr-todo-addnote" onClick={() => revealNote(a.key)}>
-                          + Add a note
-                        </button>
-                      )}
+                        )}
+                        {/* One photo per item, same as one note per item --
+                            downscaled and held in memory only (see
+                            handleCheckPhoto), never uploaded anywhere and
+                            never saved across a reload. */}
+                        {checkPhotos[a.key] ? (
+                          <span className="bsr-todo-photo">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={checkPhotos[a.key]} alt={`Your photo for ${a.label}`} />
+                            <button
+                              type="button"
+                              className="bsr-todo-photo-remove"
+                              onClick={() => removeCheckPhoto(a.key)}
+                              aria-label={`Remove the photo for ${a.label}`}
+                              title="Remove this photo"
+                            >
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                            </button>
+                          </span>
+                        ) : (
+                          <label className="bsr-todo-addphoto" htmlFor={`bsr-ckphoto-${a.key}`}>
+                            + Add a photo
+                            <input
+                              id={`bsr-ckphoto-${a.key}`}
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                handleCheckPhoto(a.key, e.target.files?.[0]);
+                                e.target.value = '';
+                              }}
+                              hidden
+                            />
+                          </label>
+                        )}
+                      </span>
                     </li>
                   );
                 })

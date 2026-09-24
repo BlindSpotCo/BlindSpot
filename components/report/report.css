@@ -611,14 +611,50 @@
    gap = 28px) -- both are outside the <label> (see the JSX comment), and
    both are collapsed by default: a box for every item, all empty, is what
    read as a repeated wall in the first place. Only a ticked item, one
-   already holding a note, or "+ Add a note" itself shows the textarea. */
+   already holding a note, or "+ Add a note" itself shows the textarea.
+   The 28px indent and the row layout now live on the shared
+   .bsr-todo-extras wrapper below (it holds this plus the photo control),
+   not on this button itself. */
+.bsr-todo-extras{
+  display:flex;flex-wrap:wrap;align-items:flex-start;gap:6px 14px;
+  margin:0 0 5px 28px;
+}
 .bsr-todo-addnote{
-  display:block;margin:0 0 5px 28px;padding:0;
+  display:inline-block;margin:0;padding:0;
   font:inherit;font-size:12px;font-weight:600;color:var(--text-dim,#847C70);
   background:none;border:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px;
   text-decoration-style:dotted;
 }
 .bsr-todo-addnote:hover{color:var(--brand,#7A2E43)}
+/* Same quiet-link treatment as "+ Add a note", but it's a <label> for a
+   hidden file input rather than a button -- one input per item (its id is
+   the item's own key), so no shared ref/click() plumbing is needed for a
+   list that's only ever a handful of items long. */
+.bsr-todo-addphoto{
+  display:inline-block;margin:0;padding:0;
+  font:inherit;font-size:12px;font-weight:600;color:var(--text-dim,#847C70);
+  background:none;border:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px;
+  text-decoration-style:dotted;
+}
+.bsr-todo-addphoto:hover{color:var(--brand,#7A2E43)}
+/* The attached photo itself -- a small fixed thumbnail so one photo per
+   item never grows the row taller than the note textarea beside it, and
+   never disturbs the .bsr-todo column layout (columns:2 above; the list
+   item still just grows in the normal block-height sense .bsr-todo
+   already reflows around). */
+.bsr-todo-photo{
+  position:relative;flex:none;width:52px;height:52px;
+  border-radius:6px;overflow:hidden;
+  border:1px solid var(--line,rgba(28,24,18,.18));
+}
+.bsr-todo-photo img{display:block;width:100%;height:100%;object-fit:cover}
+.bsr-todo-photo-remove{
+  position:absolute;top:2px;right:2px;z-index:1;
+  width:16px;height:16px;display:flex;align-items:center;justify-content:center;
+  padding:0;border:0;border-radius:50%;cursor:pointer;
+  background:rgba(28,24,18,.62);color:#FFFDF8;
+}
+.bsr-todo-photo-remove:hover{background:rgba(28,24,18,.85)}
 
 /* Ticked rows recede rather than disappear -- you still need to be able to
    read what you already checked. */
@@ -632,7 +668,13 @@
    until it actually holds text, same reasoning as before -- it just no
    longer has five empty siblings doing the same thing at once. */
 .bsr-todo-notewrap{
-  display:block;position:relative;width:calc(100% - 28px);margin:0 0 5px 28px;
+  /* Was width:calc(100% - 28px);margin:0 0 5px 28px -- the indent and the
+     bottom margin now come from the shared .bsr-todo-extras wrapper above,
+     so this and the photo control line up under the same 28px edge
+     instead of each carrying their own copy of it. Still full width of
+     that row so it forces the photo control (rendered after it) onto its
+     own line below, clear of the notehide (x) button. */
+  display:block;position:relative;width:100%;margin:0;
 }
 .bsr-todo-note{
   display:block;width:100%;box-sizing:border-box;resize:vertical;
@@ -2243,7 +2285,10 @@ body.bsr-noscroll{overflow:hidden}
   .bsr-todo-row{ gap:8px; padding:5px 0 2px }
   .bsr-todo-title{ font-size:13.5px }
   .bsr-todo-text{ font-size:12.5px; line-height:1.4 }
-  .bsr-todo-addnote{ font-size:11.5px; margin-bottom:4px }
+  .bsr-todo-extras{ margin-bottom:4px; gap:4px 10px }
+  .bsr-todo-addnote{ font-size:11.5px }
+  .bsr-todo-addphoto{ font-size:11.5px }
+  .bsr-todo-photo{ width:44px; height:44px }
 
   /* Photo tool + closing */
   .bsr-roomphoto{ margin-top:12px !important; padding-top:12px !important }
