@@ -1103,6 +1103,7 @@ export default function ReportScreen({ view = 'verdict' }) {
      not a note that evaporates the moment you close the tab. */
   const [ticked, setTicked] = useState(() => new Set());
   const [notes, setNotes] = useState(() => ({}));
+  const [checkPhotos, setCheckPhotos] = useState(() => ({}));
   const tickKey = hasPlace ? `bs-checklist:${lat.toFixed(5)},${lon.toFixed(5)}` : '';
 
   useEffect(() => {
@@ -1204,7 +1205,6 @@ export default function ReportScreen({ view = 'verdict' }) {
   // below, which only ever reads notes). Downscaled client-side before it
   // ever becomes a data URL so a phone photo at several thousand pixels
   // wide doesn't balloon this component's own memory.
-  const [checkPhotos, setCheckPhotos] = useState(() => ({}));
   const handleCheckPhoto = useCallback((key, file) => {
     if (!file) return;
     const img = new Image();
@@ -2605,14 +2605,6 @@ export default function ReportScreen({ view = 'verdict' }) {
                 ? 'About two minutes. Builds on this page - keep browsing.'
                 : 'Waiting for the 3D map to load - the report is built from it.'}
             </span>
-            <a className="bsr-furnish" href="/floor-plan-analysis">
-              <span className="bsr-furnish-icon" aria-hidden="true"><Sofa size={20} strokeWidth={1.8} /></span>
-              <span className="bsr-furnish-body">
-                <strong>Furnish your home</strong>
-                <span>Upload the floor plan, get room-by-room furniture and layout ideas.</span>
-              </span>
-              <span className="bsr-furnish-go" aria-hidden="true">→</span>
-            </a>
           </section>
 
           {scores?.notes?.length ? <p className="bsr-foot">{scores.notes.join(' ')}</p> : null}
