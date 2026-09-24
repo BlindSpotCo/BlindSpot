@@ -31,8 +31,25 @@
 // field (e.g. an address or pin code) but stays editable.
 
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { createClient } from '@/lib/supabase/client';
 import { openSignInPopup } from '@/lib/auth/popupSignIn';
+
+// Folders are fetched once per tab and shared by every Save button, and
+// fetched as soon as we know someone is signed in -- not when the panel
+// opens -- so the dropdown is ready the moment it appears.
+let folderCache = null; // Promise<{ folders, failed }>
+function loadFoldersOnce(force = false) {
+  if (folderCache && !force) return folderCache;
+  const supabase = createClient();
+  folderCache = (typeof supabase.from === 'function'
+    ? supabase.from('folders').select('id, name').order('name', { ascending: true })
+        .then(({ data, error }) => ({ folders: error ? [] : (data || []), failed: !!error }))
+    : fetch('/api/folders').then((r) => r.json()).then((d) => ({ folders: d.folders || [], failed: false }))
+  ).catch(() => ({ folders: [], failed: true }));
+  return folderCache;
+}
+const LAST_FOLDER_KEY = 'bs-last-folder';
 
 export default function SaveReportButton({ source, data, defaultTitle = '', style, dark = false }) {
   const [open, setOpen] = useState(false);
@@ -63,40 +80,46 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
   const [saved, setSaved] = useState(false);
 
   const panelRef = useRef(null);
+  const sheetRef = useRef(null);
 
+  // getSession() reads the stored session -- no network call -- so the
+  // button is usable immediately. The database still checks the token on
+  // save (row-level security), so nothing is trusted on this alone.
   useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setSignedIn(!!user);
+    let live = true;
+    createClient().auth.getSession().then(({ data }) => {
+      if (!live) return;
+      const on = !!data?.session;
+      setSignedIn(on);
       setCheckingAuth(false);
-    });
+      if (on) loadFoldersOnce();
+    }).catch(() => live && setCheckingAuth(false));
+    return () => { live = false; };
   }, []);
 
   // Close the panel on an outside click, same pattern as other dropdowns
   // in this codebase (e.g. the mobile nav panel).
   useEffect(() => {
     if (!open) return;
-    const onClick = (e) => {
-      if (panelRef.current && !panelRef.current.contains(e.target)) setOpen(false);
-    };
-    document.addEventListener('mousedown', onClick);
-    return () => document.removeEventListener('mousedown', onClick);
+    // stopPropagation: Escape closes this sheet only, not the report card
+    // underneath (ReportModal listens on window).
+    const onKey = (e) => { if (e.key === 'Escape') { e.stopPropagation(); setOpen(false); } };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
   }, [open]);
 
-  const loadFolders = async () => {
-    setLoadingFolders(true);
-    setFoldersFailed(false);
+  const loadFolders = async (force = false) => {
+    setLoadingFolders(!folderCache || force);
+    const { folders: list, failed } = await loadFoldersOnce(force);
+    setFolders(list);
+    setFoldersFailed(failed);
+    setLoadingFolders(false);
+    // Default to the folder used last time, if it still exists -- most
+    // people save several reports about the same flat in a row.
     try {
-      const res = await fetch('/api/folders');
-      const d = await res.json();
-      setFolders(d.folders || []);
-      setFoldersFailed(false);
-    } catch {
-      setFolders([]);
-      setFoldersFailed(true);
-    } finally {
-      setLoadingFolders(false);
-    }
+      const last = window.localStorage.getItem(LAST_FOLDER_KEY);
+      if (last && list.some((f) => f.id === last)) setFolderChoice((c) => c || last);
+    } catch {}
   };
 
   const signIn = async () => {
@@ -106,6 +129,7 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
       const { access_token, refresh_token } = await openSignInPopup();
       await supabase.auth.setSession({ access_token, refresh_token });
       setSignedIn(true);
+      loadFoldersOnce(true);
       return true;
     } catch (e) {
       // Swallowing this made the button do nothing at all, forever, with no
@@ -143,27 +167,53 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
       : (folders.find(f => f.id === folderChoice)?.name || '');
 
     try {
-      const payload = JSON.stringify({ source, data, title: title.trim() || undefined, folderName: folderName || undefined });
+      const supabase = createClient();
+      const direct = typeof supabase.from === 'function';
+      if (direct) {
+        // Straight to the database (row-level security limits it to this
+        // user's own rows). Going through /api/reports uploaded the whole
+        // report twice -- browser to server, server to database -- and a
+        // sun & shadow report with its twelve images ran into the 4.5 MB
+        // limit on that first hop.
+        const { data: sess } = await supabase.auth.getSession();
+        const user = sess?.session?.user;
+        if (!user) throw new Error('not-signed-in');
 
-      // A sun & shadow report carries twelve JPEGs inline. Past roughly
-      // four megabytes the platform rejects the request before it ever
-      // reaches us, and the person saw a bare "save-failed-413" for a
-      // report that was perfectly fine. Catch it here and say what it is.
-      if (payload.length > 3_800_000) {
-        throw new Error('too-large');
-      }
-
-      const res = await fetch('/api/reports', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: payload,
-      });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.detail || body.error || `save-failed-${res.status}`);
+        let folder_id = folderChoice && folderChoice !== '__new' ? folderChoice : null;
+        if (folderChoice === '__new' && folderName) {
+          const hit = folders.find((f) => f.name.toLowerCase() === folderName.toLowerCase());
+          if (hit) folder_id = hit.id;
+          else {
+            const { data: made, error: fErr } = await supabase.from('folders')
+              .insert({ user_id: user.id, name: folderName }).select('id, name').single();
+            if (made) {
+              folder_id = made.id;
+              folderCache = Promise.resolve({ folders: [...folders, made].sort((a, b) => a.name.localeCompare(b.name)), failed: false });
+            } else if (fErr) {
+              // Most likely the same name was just made in another tab.
+              const { data: again } = await supabase.from('folders').select('id').eq('name', folderName).maybeSingle();
+              folder_id = again?.id ?? null;
+            }
+          }
+        }
+        const { error: rErr } = await supabase.from('reports')
+          .insert({ user_id: user.id, folder_id, source, title: title.trim() || null, data });
+        if (rErr) throw new Error(/jwt|auth/i.test(rErr.message || '') ? 'not-signed-in' : (rErr.message || 'save-failed'));
+        try {
+          if (folder_id) window.localStorage.setItem(LAST_FOLDER_KEY, folder_id);
+          else window.localStorage.removeItem(LAST_FOLDER_KEY);
+        } catch {}
+      } else {
+        const payload = JSON.stringify({ source, data, title: title.trim() || undefined, folderName: folderName || undefined });
+        if (payload.length > 3_800_000) throw new Error('too-large');
+        const res = await fetch('/api/reports', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload });
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body.detail || body.error || `save-failed-${res.status}`);
+        }
       }
       setSaved(true);
-      setTimeout(() => setOpen(false), 1200);
+      setTimeout(() => setOpen(false), 1600);
     } catch (e) {
       const m = String(e?.message || '');
       if (m === 'not-signed-in') setSignedIn(false); // the panel then offers a way back in
@@ -195,7 +245,7 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
         {signingIn ? 'Signing in…' : 'Save report'}
       </button>
 
-      {open && (
+      {open && typeof document !== 'undefined' && createPortal(
         <>
         {/* Mobile-only backdrop -- invisible and non-interactive on a wide
             screen (display:none is the base rule; the media query below
@@ -204,13 +254,15 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
         <div className="srb-backdrop" onClick={() => setOpen(false)} />
         <div
           className="srb-panel"
-          style={{
-            position: 'absolute', right: 0, top: 'calc(100% + 8px)', zIndex: 20,
-            width: 280, background: '#FFFBF5', color: 'var(--ink, #1A0A00)',
-            border: '1px solid var(--line-soft, rgba(26,10,0,0.15))', borderRadius: 8,
-            boxShadow: '0 12px 40px rgba(0,0,0,0.2)', padding: 16,
-          }}
+          ref={sheetRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Save this report"
         >
+          <div className="srb-head">
+            <strong>Save to your profile</strong>
+            <button type="button" className="srb-x" onClick={() => setOpen(false)} aria-label="Close">×</button>
+          </div>
           {saved ? (
             <p style={{ fontSize: 13, color: '#16a34a', fontWeight: 600, margin: 0, display: 'flex', alignItems: 'center' }}>
               <svg className="cta-check" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -250,7 +302,7 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
                   {foldersFailed && (
                     <p style={{ fontSize: 11.5, color: '#8A8A8A', margin: '0 0 8px', lineHeight: 1.5 }}>
                       We couldn&apos;t load your folders just now, so only a new one can be made here.
-                      Saving without a folder still works - you can file it later from My Reports.
+                      Saving without a folder still works - you can find it on your profile.
                     </p>
                   )}
                   {folderChoice === '__new' && (
@@ -296,7 +348,8 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
             </>
           )}
         </div>
-        </>
+        </>,
+        document.body
       )}
 
       <style>{`
@@ -320,24 +373,25 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
           .cta-check{ animation:none; }
         }
 
-        .srb-backdrop{ display:none }
-        @media (max-width:480px){
-          .srb-backdrop{
-            display:block; position:fixed; inset:0; background:rgba(10,5,0,0.45); z-index:1000;
-          }
-          /* Detached from the trigger entirely below 480px -- a fixed,
-             centred sheet instead of a box that opens relative to
-             whatever narrow flex slot the button happens to be sitting
-             in. Same panel, same fields, just positioned against the
-             viewport instead of the button. */
-          .srb-panel{
-            position: fixed !important; top: 50% !important; left: 50% !important; right: auto !important;
-            transform: translate(-50%, -50%) !important;
-            width: calc(100vw - 40px) !important; max-width: 340px !important;
-            max-height: 80vh !important; overflow-y: auto !important;
-            z-index: 1001 !important;
-          }
+        /* Always a centred sheet over everything, portalled to <body>.
+           Opening it inside the report-ready corner card (overflow:auto,
+           max-height 70vh) clipped it, and as a box anchored to the
+           button it ran off narrow cards. */
+        .srb-backdrop{ position:fixed; inset:0; background:rgba(10,5,0,0.38); z-index:1200; animation:srbFade .15s ease-out }
+        .srb-panel{
+          position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:1201;
+          width:calc(100vw - 32px); max-width:360px; max-height:calc(100vh - 32px); overflow-y:auto;
+          background:#FFFBF5; color:var(--ink, #1A0A00); border-radius:14px; padding:16px 18px 18px;
+          border:1px solid var(--line-soft, rgba(26,10,0,0.12)); box-shadow:0 24px 60px rgba(0,0,0,0.28);
+          font-family:inherit; animation:srbPop .18s ease-out;
         }
+        .srb-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px }
+        .srb-head strong{ font-size:15px }
+        .srb-x{ width:28px; height:28px; border-radius:50%; border:0; background:rgba(26,10,0,0.06); cursor:pointer; font-size:17px; line-height:1; color:#5A5140 }
+        .srb-x:hover{ background:rgba(26,10,0,0.12) }
+        @keyframes srbFade{ from{opacity:0} to{opacity:1} }
+        @keyframes srbPop{ from{opacity:0; transform:translate(-50%,-46%)} to{opacity:1; transform:translate(-50%,-50%)} }
+        @media (prefers-reduced-motion:reduce){ .srb-backdrop, .srb-panel{ animation:none } }
       `}</style>
     </div>
   );
