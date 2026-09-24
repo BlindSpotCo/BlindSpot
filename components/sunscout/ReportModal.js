@@ -754,7 +754,7 @@ export default function ReportModal({
             </div>
 
             <div style={{ marginBottom:20 }}>
-              <label style={LABEL_STYLE}>What's your goal?</label>
+              <label style={LABEL_STYLE}>What&apos;s your goal?</label>
               <OptionPills options={GOAL_OPTIONS} isOn={(k) => goal === k} onPick={(k) => setGoal(goal === k ? '' : k)} />
             </div>
 

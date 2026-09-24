@@ -27,6 +27,9 @@ export default function Error({ error, reset }) {
       </p>
       <p className="bs-errpage-actions">
         <button type="button" onClick={reset}>Try again</button>
+        {/* A hard reload on purpose: after a crash, a client-side navigation
+            can keep the same broken state around. */}
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a href="/">Back to the start</a>
       </p>
       {error?.digest ? <p className="bs-errpage-ref">Reference: {error.digest}</p> : null}

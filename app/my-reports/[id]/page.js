@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { redirect, notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import NeighbourhoodReport from '@/components/neighbourhood-report/NeighbourhoodReport';
@@ -56,9 +57,9 @@ export default async function ReportDetailPage({ params }) {
   return (
     <div className="reports-page">
       <div className="reports-inner">
-        <a href="/my-reports" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--text-mute)', textDecoration: 'none', fontSize: 13, marginBottom: 28 }}>
-          ← Back to My Reports
-        </a>
+        <Link href="/profile#saved" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--text-mute)', textDecoration: 'none', fontSize: 13, marginBottom: 28 }}>
+          ← Back to your profile
+        </Link>
 
         <h1>{report.title || 'Untitled report'}</h1>
         <p className="sub">

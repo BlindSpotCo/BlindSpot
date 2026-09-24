@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 
 // components/report/ReportScreen.js
 //
@@ -24,6 +25,7 @@ import {
   Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake, Sofa, ArrowDown, MapPin, Scale, FolderOpen, FileText,
 } from 'lucide-react';
 import RoomPhotoAnalyzer from './RoomPhotoAnalyzer';
+import { recordVisit } from '@/lib/profile/history';
 import './report.css';
 
 
@@ -649,6 +651,22 @@ export default function ReportScreen({ view = 'verdict' }) {
     return () => { cancelled = true; clearTimeout(startT); };
   }, [hasPlace, lat, lon, pinCode, floor, facing, areaWeight, scoreNonce]);
 
+  /* ---------------- this device's "homes you've looked at" ----------------
+     Written once the scores for this spot are in, so the profile page can
+     list the flats someone has checked and reopen them. Local only. */
+  useEffect(() => {
+    if (!hasPlace || !scores) return;
+    const unitScore = scores.unit?.score ?? null;
+    recordVisit({
+      lat, lon, pinCode: pinCode || '', address: address || '',
+      floor: floorSet ? floor : null, facing: facingSet ? facing : null,
+      pin: pinTouched,
+      score: scores.area ? scores.combined : unitScore,
+      area: scores.area?.score ?? null, areaName: scores.area?.name ?? null,
+      unit: unitScore,
+    });
+  }, [hasPlace, scores, lat, lon, pinCode, address, floor, facing, floorSet, facingSet, pinTouched]);
+
   /* ---------------- full-screen map housekeeping ----------------
      Locking the body while the map owns the viewport: without it a
      wheel gesture that misses the iframe scrolls the report underneath,
@@ -846,7 +864,7 @@ export default function ReportScreen({ view = 'verdict' }) {
   // pin elsewhere drops the tint on its own.
   const [picked, setPicked] = useState(null);
   const placeRef = useRef(null);
-  placeRef.current = hasPlace ? { lat, lon } : null;
+  useEffect(() => { placeRef.current = hasPlace ? { lat, lon } : null; }, [hasPlace, lat, lon]);
   const moveTo = useCallback((toLat, toLon, label) => {
     if (!Number.isFinite(toLat) || !Number.isFinite(toLon)) return;
     setLocError('');
@@ -1100,6 +1118,9 @@ export default function ReportScreen({ view = 'verdict' }) {
   // but re-ticking one whose note field was explicitly closed (see
   // collapseNote below) should reopen it too, not leave it stuck hidden
   // just because it was closed once before.
+  // Declared before toggleTick, which reopens a collapsed note on tick.
+  const [expandedNotes, setExpandedNotes] = useState(() => new Set());
+  const [collapsedNotes, setCollapsedNotes] = useState(() => new Set());
   const toggleTick = useCallback((key) => {
     const willTick = !ticked.has(key);
     setTicked((prev) => {
@@ -1134,8 +1155,6 @@ export default function ReportScreen({ view = 'verdict' }) {
   // overrides EVERY reason a field would otherwise show (ticked, has a
   // saved note, or expanded) -- without it there was no way to hide a
   // note field again once it opened, which is exactly what it's for.
-  const [expandedNotes, setExpandedNotes] = useState(() => new Set());
-  const [collapsedNotes, setCollapsedNotes] = useState(() => new Set());
   const revealNote = useCallback((key) => {
     setExpandedNotes((prev) => new Set(prev).add(key));
     setCollapsedNotes((prev) => {
@@ -1685,7 +1704,7 @@ export default function ReportScreen({ view = 'verdict' }) {
         <div className="bsr-empty">
           <h1>We need an address first.</h1>
           <p>Search one on the home page and this opens straight onto it.</p>
-          <a className="bsr-cta" href="/">Search an address</a>
+          <Link className="bsr-cta" href="/">Search an address</Link>
         </div>
       </div>
     );
@@ -1717,7 +1736,7 @@ export default function ReportScreen({ view = 'verdict' }) {
         <button type="button" onClick={() => { setFailure(''); setState('loading'); setScoreNonce((n) => n + 1); }}>
           Try again
         </button>
-        <a href="/">Start with another address</a>
+        <Link href="/">Start with another address</Link>
       </p>
     </div>
   );
@@ -1837,10 +1856,10 @@ export default function ReportScreen({ view = 'verdict' }) {
                   <Sofa size={16} strokeWidth={2} aria-hidden="true" />
                   <span>Furnish your home</span>
                 </a>
-                <a href="/my-reports" className="bsr-tool is-quiet" title="My reports">
+                <Link href="/profile" className="bsr-tool is-quiet" title="Your profile and saved reports">
                   <FolderOpen size={16} strokeWidth={2} aria-hidden="true" />
-                  <span>My reports</span>
-                </a>
+                  <span>Profile</span>
+                </Link>
               </nav>
             </div>
             {addrEditOpen && (

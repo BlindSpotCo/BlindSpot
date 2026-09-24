@@ -417,7 +417,7 @@ function PhotoCard({ photo, onBearing, onAnalyse, onChange, onRemove, canRemove,
               </ul>
 
               <p className="bsr-roomphoto-caveat">
-                Sun and heat figures are computed for this floor and each window's own direction. Arrows are illustrative, not to exact scale. Building/road mentions are a visual read of the photo, not checked against map data.
+                Sun and heat figures are computed for this floor and each window&apos;s own direction. Arrows are illustrative, not to exact scale. Building/road mentions are a visual read of the photo, not checked against map data.
               </p>
             </>
           )}
@@ -499,8 +499,8 @@ export default function RoomPhotoAnalyzer({ lat, lon, floor, tzOffset }) {
     <section className="bsr-roomphoto">
       <h2>See it on your own photo</h2>
       <p className="bsr-roomphoto-lede">
-        Add photos of any rooms — say which way you were facing in each one, and we'll draw where the sun
-        comes in and where the air moves, with real sun and heat data for each window's own direction.
+        Add photos of any rooms — say which way you were facing in each one, and we&apos;ll draw where the sun
+        comes in and where the air moves, with real sun and heat data for each window&apos;s own direction.
       </p>
 
       <div className="bsr-roomphoto-cards">

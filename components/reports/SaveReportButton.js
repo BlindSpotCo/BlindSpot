@@ -217,7 +217,7 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
                 strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
-              Saved to My Reports.
+              Saved to your profile.&nbsp;<a href="/profile#saved" style={{ color: 'inherit', textDecoration: 'underline' }}>View</a>
             </p>
           ) : (
             <>

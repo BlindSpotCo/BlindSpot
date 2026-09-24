@@ -1,3 +1,4 @@
+import Link from 'next/link';
 // app/not-found.js
 //
 // Reached by notFound() -- most often /neighbourhood-report/<pin> for a pin
@@ -12,10 +13,10 @@ export default function NotFound() {
       <h1>We don&apos;t have that one.</h1>
       <p>
         Either the page has moved, or it&apos;s an address outside our coverage. BlindSpot has
-        neighbourhood records for Delhi NCR, Bangalore, Chandigarh, Hyderabad, Mumbai, Chennai and Ahmedabad.
+        neighbourhood records for Delhi NCR, Bangalore, Chandigarh, Hyderabad, Mumbai and Chennai.
       </p>
       <p className="bs-404-actions">
-        <a href="/">Search another address</a>
+        <Link href="/">Search another address</Link>
       </p>
       <style>{`
         .bs-404 { max-width: 44rem; margin: 0 auto; padding: 96px 24px; text-align: center; color: var(--text, #1c1812); }
