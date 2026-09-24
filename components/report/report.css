@@ -2219,7 +2219,7 @@ body.bsr-noscroll{overflow:hidden}
   .bsr-foot{ font-size:11px }
 }
 
-/* ================= mentor round: map loading, home link, steps, quick analysis ================= */
+/* ================= map loading, home link, steps ================= */
 
 /* ---- map loading: say what's happening, and what to do if it's slow ----
    Sits over the (blank) map. Never blocks the dock or the toolbar -- the
@@ -2304,64 +2304,6 @@ body.bsr-noscroll{overflow:hidden}
   .bsr-step-t span{display:none}
 }
 
-/* ---- quick analysis: the year's sun + the neighbourhood, no clicks ---- */
-.bsr-quick{
-  display:grid;grid-template-columns:1.25fr 1fr;gap:14px;
-  margin:18px 0 6px;
-}
-.bsr-q{
-  display:flex;flex-direction:column;gap:6px;min-width:0;
-  padding:18px 20px;border-radius:14px;
-  background:var(--paper,#FFFDF8);border:1px solid var(--line,rgba(28,24,18,.14));
-}
-.bsr-q p{margin:0}
-.bsr-q-k{
-  display:flex;align-items:center;gap:6px;
-  font-family:'Geist Mono',monospace;font-size:11px;font-weight:600;
-  letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim,#8A7F68);
-}
-.bsr-q.is-sun .bsr-q-k svg{color:var(--ss,#AF5F30)}
-.bsr-q.is-area .bsr-q-k svg{color:var(--av,#6B2232)}
-.bsr-q-big{font-size:16px;color:var(--text,#1C1812);line-height:1.3}
-.bsr-q-big strong{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;margin-right:2px}
-.bsr-q-sub{font-size:13.5px;color:var(--text-mute,#5A5140);line-height:1.45}
-.bsr-q-bars{
-  display:grid;grid-template-columns:repeat(12,1fr);gap:5px;align-items:end;
-  height:108px;margin-top:8px;
-}
-.bsr-q-bar{display:flex;flex-direction:column;align-items:stretch;height:100%;gap:3px}
-.bsr-q-track{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:flex-end}
-.bsr-q-bar i{display:block;border-radius:4px 4px 1px 1px;background:rgba(175,95,48,.35)}
-.bsr-q-bar em{
-  flex:none;text-align:center;font-style:normal;font-variant-numeric:tabular-nums;
-  font-size:10.5px;font-weight:600;color:var(--text-mute,#5A5140);
-}
-.bsr-q-bar.is-best em{color:var(--ss,#AF5F30);font-weight:800}
-.bsr-q-bar.is-best i{background:var(--ss,#AF5F30)}
-.bsr-q-bar.is-worst i{background:rgba(28,24,18,.28)}
-.bsr-q-bar b{
-  flex:none;text-align:center;font-family:'Geist Mono',monospace;
-  font-size:10px;font-weight:600;color:var(--text-dim,#8A7F68);
-}
-.bsr-q-tags{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:4px !important}
-.bsr-q-tl{font-size:11.5px;font-weight:700;color:var(--text-dim,#8A7F68);min-width:62px}
-.bsr-q-tag{font-size:12.5px;font-weight:600;padding:3px 9px;border-radius:999px}
-.bsr-q-tag.is-good{background:rgba(61,65,22,.1);color:var(--brand,#3D4116)}
-.bsr-q-tag.is-ask{background:rgba(175,95,48,.12);color:#8A4A22}
-.bsr-q-foot{
-  display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:auto !important;padding-top:10px;
-  font-size:13.5px;
-}
-.bsr-q-foot a{font-weight:600;color:var(--brand,#3D4116);text-decoration:underline;text-underline-offset:3px}
-.bsr-q-foot .bsr-inline-link{font-size:13.5px;font-weight:600}
-@media (max-width:760px){
-  .bsr-quick{grid-template-columns:1fr;gap:10px;margin-top:12px}
-  .bsr-q{padding:14px 16px}
-  .bsr-q-big strong{font-size:21px}
-  .bsr-q-bars{height:84px;gap:3px}
-  .bsr-q-bar em{font-size:9px;letter-spacing:-.02em}
-  .bsr-q-bar:not(.is-best):not(.is-worst) em{visibility:hidden}
-}
 /* the logo takes the pin tile's place at the start of the header */
 .bsr-head-row > .bsr-home + .bsr-head-where .bsr-head-pin{display:none}
 .bsr-head-row > .bsr-home.is-head{margin-right:-8px}

@@ -1456,31 +1456,6 @@ export default function ReportScreen({ view = 'verdict' }) {
                   <span className="bsr-mapbar-full-label">Full screen</span>
                 </button>
               )}
-              {/* Generating the sun & shadow report used to be one click from
-                  a button up top, before anyone had watched the day animate
-                  over this exact block or nudged the pin to the right spot --
-                  so the report could be built from a location/floor/facing
-                  nobody had actually looked at yet. That link now just
-                  scrolls here (see .bsr-genlink below); this is the real
-                  "make the report" action, living where the thing it reports
-                  on is actually visible. The only solid-filled button in
-                  this bar -- Pause and Full screen are both outline/tinted,
-                  so this is unambiguously the one thing to press. */}
-              {/* Only on the verdict's inline map. The locate step
-                  (fullMap) already has its own one action lower down --
-                  "Continue to the verdict" / "Tap your building" -- so a
-                  second, competing CTA up here in the toolbar was one too
-                  many asks on a screen that just wants the pin placed. */}
-              {!fullMap && (
-                <button
-                  type="button"
-                  className="bsr-mapbar-report"
-                  disabled={!solar?.pathData}
-                  onClick={requestSunReport}
-                >
-                  <Sun size={15} strokeWidth={2.2} aria-hidden="true" /> Year-round sunlight report
-                </button>
-              )}
             </div>
           </div>
   );
@@ -2032,82 +2007,6 @@ export default function ReportScreen({ view = 'verdict' }) {
               </span>
             </div>
           </section>
-            );
-          })()}
-
-          {/* ---------- quick analysis: the two answers at a glance ----------
-              The year-round sun picture used to be three clicks away (a
-              report to generate, or the map to scrub). It's already
-              computed for the score, so it's shown here as a year strip,
-              next to the neighbourhood in one line. */}
-          {(() => {
-            const yr = Array.isArray(unit.sunYear) ? unit.sunYear : [];
-            const maxH = Math.max(1, ...yr.map((m) => m.hours || 0));
-            const avg = yr.length ? Math.round((yr.reduce((t, m) => t + (m.hours || 0), 0) / yr.length) * 10) / 10 : null;
-            const best = yr.length ? yr.reduce((a, b) => (b.hours > a.hours ? b : a)) : null;
-            const worst = yr.length ? yr.reduce((a, b) => (b.hours < a.hours ? b : a)) : null;
-            const facts = hasArea ? Object.entries(area.factors || {}).filter(([, v]) => typeof v === 'number') : [];
-            const strong = facts.filter(([, v]) => v >= 75).sort((a, b) => b[1] - a[1]).slice(0, 3);
-            const weak = facts.filter(([, v]) => v < 55).sort((a, b) => a[1] - b[1]).slice(0, 2);
-            if (!yr.length && !hasArea) return null;
-            return (
-              <section className="bsr-quick" aria-label="Quick analysis">
-                {yr.length > 0 && (
-                  <div className="bsr-q is-sun">
-                    <p className="bsr-q-k"><Sun size={14} strokeWidth={2.4} aria-hidden="true" /> Sun through the year</p>
-                    <p className="bsr-q-big"><strong>{avg} h</strong> of direct sun a day, on average</p>
-                    <p className="bsr-q-sub">
-                      {assumed ? `For a typical ${ord(DEFAULT_FLOOR)} floor, south-east facing. ` : `Floor ${floor}, ${facing.toLowerCase()}-facing. `}
-                      {(() => {
-                        // Ties are common (months round to the same hour) --
-                        // name the run, not just its first month.
-                        const span = (h) => {
-                          const idx = yr.map((m, i) => (m.hours === h ? i : -1)).filter((i) => i >= 0);
-                          const L = yr.length;
-                          const has = (i) => idx.includes(((i % L) + L) % L);
-                          const starts = idx.filter((i) => !has(i - 1));
-                          const ends = idx.filter((i) => !has(i + 1));
-                          // one unbroken run, wrapping past December (Nov–Jan)
-                          if (idx.length > 1 && idx.length < L && starts.length === 1) return `${yr[starts[0]].month}–${yr[ends[0]].month}`;
-                          return yr[idx[0]].month;
-                        };
-                        return `Most in ${span(best.hours)}, least in ${span(worst.hours)}.`;
-                      })()}
-                    </p>
-                    <div className="bsr-q-bars" role="img" aria-label={yr.map((m) => `${m.month} ${m.hours} hours`).join(', ')}>
-                      {yr.map((m) => (
-                        <span key={m.month} className={`bsr-q-bar${m.hours === best.hours ? ' is-best' : ''}${m.hours === worst.hours ? ' is-worst' : ''}`} title={`${m.month}: ${m.hours} h of direct sun a day`}>
-                          <em>{m.hours}</em>
-                          <span className="bsr-q-track"><i style={{ height: `${Math.max(6, (m.hours / maxH) * 100)}%` }} /></span>
-                          <b>{m.month[0]}</b>
-                        </span>
-                      ))}
-                    </div>
-                    <p className="bsr-q-foot">
-                      <a href="#the-block">Watch it on the 3D map ↓</a>
-                      <button type="button" className="bsr-inline-link" onClick={requestSunReport}>Get the full sunlight report →</button>
-                    </p>
-                  </div>
-                )}
-                <div className="bsr-q is-area">
-                  <p className="bsr-q-k"><Building2 size={14} strokeWidth={2.4} aria-hidden="true" /> The neighbourhood</p>
-                  {hasArea ? (
-                    <>
-                      <p className="bsr-q-big"><strong>{area.score}</strong>/100 · {halfWord(area.score)}</p>
-                      <p className="bsr-q-sub">{area.name}, from government records for PIN {area.pinCode}.</p>
-                      {strong.length > 0 && (
-                        <p className="bsr-q-tags"><span className="bsr-q-tl">Strong</span>{strong.map(([k]) => <span key={k} className="bsr-q-tag is-good">{FACTOR_LABELS[k] || k}</span>)}</p>
-                      )}
-                      {weak.length > 0 && (
-                        <p className="bsr-q-tags"><span className="bsr-q-tl">Ask about</span>{weak.map(([k]) => <span key={k} className="bsr-q-tag is-ask">{FACTOR_LABELS[k] || k}</span>)}</p>
-                      )}
-                      <p className="bsr-q-foot"><a href={`/neighbourhood-report/${area.pinCode}`} target="_blank">Full area report →</a></p>
-                    </>
-                  ) : (
-                    <p className="bsr-q-sub">{pinPending ? 'Finding the pincode for this spot…' : 'No neighbourhood records for this pincode yet. The flat’s own scores are below.'}</p>
-                  )}
-                </div>
-              </section>
             );
           })()}
 
