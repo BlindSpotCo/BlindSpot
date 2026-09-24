@@ -196,8 +196,18 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
             }
           }
         }
-        const { error: rErr } = await supabase.from('reports')
-          .insert({ user_id: user.id, folder_id, source, title: title.trim() || null, data });
+        // A few hundred bytes the profile page lists from, so it never has
+        // to read the whole report (see SUPABASE_SETUP.md section 6).
+        const d = data || {};
+        const summary = Object.fromEntries(Object.entries({
+          address: d.address, kind: d.kind, combined: d.combinedScore, unit: d.unitScore,
+          floor: d.floor, facing: d.facing, lat: d.lat, lon: d.lon,
+          nqi: d.nqi_composite, pin: d.pin_code, areaName: d.name, city: d.city,
+        }).filter(([, v]) => v != null && v !== ''));
+        const row = { user_id: user.id, folder_id, source, title: title.trim() || null, data };
+        let { error: rErr } = await supabase.from('reports').insert({ ...row, summary });
+        // Project without the `summary` column yet: save without it.
+        if (rErr && /summary/i.test(rErr.message || '')) ({ error: rErr } = await supabase.from('reports').insert(row));
         if (rErr) throw new Error(/jwt|auth/i.test(rErr.message || '') ? 'not-signed-in' : (rErr.message || 'save-failed'));
         try {
           if (folder_id) window.localStorage.setItem(LAST_FOLDER_KEY, folder_id);

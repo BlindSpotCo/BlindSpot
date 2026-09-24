@@ -28,6 +28,7 @@
 import { goToSearch } from '@/components/goToSearch';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import HomeMark from '@/components/profile/HomeMark';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { openSignInPopup } from '@/lib/auth/popupSignIn';
@@ -54,16 +55,6 @@ export default function SiteHeader({ homeHref = '/' }) {
 
   const [user, setUser] = useState(null);
   const [checkedAuth, setCheckedAuth] = useState(false);
-  // The avatar chip that links to /profile: their Google photo if they
-  // signed in with Google, otherwise initials from their name or email.
-  const meta = user?.user_metadata || {};
-  const avatarUrl = meta.avatar_url || meta.picture || '';
-  const initials = (() => {
-    const src = (meta.full_name || meta.name || user?.email || '').trim();
-    if (!src) return '·';
-    const parts = src.split(/[\s@._-]+/).filter(Boolean);
-    return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase() || src[0].toUpperCase();
-  })();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // The homepage opens on the live-map hero -- a near-black field, not the
@@ -222,10 +213,7 @@ export default function SiteHeader({ homeHref = '/' }) {
                 user ? (
                   <div className="nav-user">
                     <Link href="/profile" className="nav-avatar" title="Your profile and saved reports" aria-label="Your profile">
-                      {avatarUrl
-                        // eslint-disable-next-line @next/next/no-img-element
-                        ? <img src={avatarUrl} alt="" referrerPolicy="no-referrer" />
-                        : <span>{initials}</span>}
+                      <HomeMark seed={user.id || user.email} size={34} />
                     </Link>
                     <button
                       onClick={handleSignOut}

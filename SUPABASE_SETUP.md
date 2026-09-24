@@ -153,3 +153,34 @@ create policy "Anyone can submit a field report"
 - `status` - for manual triage: `open` (new) → `triaged` (looked at) → `corrected` (data was fixed because of it) or `dismissed`. Per the architecture doc: "Corrections weighted by corroboration (n independent reports on the same field → auto-flag → L2 gate)" - for now that corroboration check is a manual query (`group by pin_code, field_name having count(*) > 1`), not yet automated.
 
 Nothing here auto-applies a correction to `data/aslivastu/master_by_pin.json` - every report is a claim to review, not a write. That review step is what keeps this loop from becoming a new way to introduce bad data instead of catching it.
+
+## 6. Make the profile page fast (recommended)
+
+The profile page lists every saved report. Without this, Postgres has to read each report's full `data` (a sun & shadow report is a couple of megabytes of images) just to get its address and score. Run once in **SQL Editor**:
+
+```sql
+-- A small per-report summary the profile page reads instead of `data`.
+alter table reports add column if not exists summary jsonb;
+
+-- Fill it in for reports saved before this column existed.
+update reports set summary = jsonb_strip_nulls(jsonb_build_object(
+  'address',  data->>'address',
+  'kind',     data->>'kind',
+  'combined', data->'combinedScore',
+  'unit',     data->'unitScore',
+  'floor',    data->'floor',
+  'facing',   data->>'facing',
+  'lat',      data->'lat',
+  'lon',      data->'lon',
+  'nqi',      data->'nqi_composite',
+  'pin',      data->>'pin_code',
+  'areaName', data->>'name',
+  'city',     data->>'city'
+)) where summary is null;
+
+-- Look up a user's reports/folders without scanning the whole table.
+create index if not exists reports_user_created_idx on reports (user_id, created_at desc);
+create index if not exists folders_user_idx on folders (user_id);
+```
+
+New saves write `summary` automatically. Until this runs, everything still works, just slower.

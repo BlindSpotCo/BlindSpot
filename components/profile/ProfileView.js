@@ -9,10 +9,8 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  Sun, FileText, Building2, Sofa, Search, Trash2, Pencil, Check, X, LogOut,
-  MapPin, ClipboardCheck, FolderOpen, Clock, ArrowUpRight, Star, HardDrive,
-} from 'lucide-react';
+import { Search, Trash2, X, ArrowUpRight } from 'lucide-react';
+import HomeMark from './HomeMark';
 import { createClient } from '@/lib/supabase/client';
 import { readHistory, removeVisit, clearHistory, readChecklists } from '@/lib/profile/history';
 import './profile.css';
@@ -28,12 +26,12 @@ const TABS = [
 function typeOf(r) {
   if (r.source === 'ai-report') {
     return r.kind === 'sun-shadow'
-      ? { key: 'sun', label: 'Sun & shadow report', Icon: Sun }
-      : { key: 'full', label: 'Full BlindSpot report', Icon: FileText };
+      ? { key: 'sun', label: 'Sun & shadow' }
+      : { key: 'full', label: 'Full report' };
   }
-  if (r.source === 'neighbourhood' || r.source === 'aslivastu') return { key: 'area', label: 'Area report', Icon: Building2 };
-  if (r.source === 'furnishing') return { key: 'furnish', label: 'Furnishing plan', Icon: Sofa };
-  return { key: 'full', label: 'Home comfort report', Icon: FileText };
+  if (r.source === 'neighbourhood' || r.source === 'aslivastu') return { key: 'area', label: 'Area report' };
+  if (r.source === 'furnishing') return { key: 'furnish', label: 'Furnishing plan' };
+  return { key: 'full', label: 'Home comfort' };
 }
 const FILTERS = [
   { key: 'all', label: 'All' },
@@ -77,28 +75,22 @@ function reportHref(v) {
   return `/report?${q.toString()}`;
 }
 
-function Dial({ score, size = 52 }) {
-  const pct = Math.max(0, Math.min(100, score ?? 0));
-  const r = 20, c = 2 * Math.PI * r;
-  return (
-    <span className="pf-dial" style={{ width: size, height: size }} aria-label={score == null ? 'No score' : `Score ${score} out of 100`}>
-      <svg viewBox="0 0 48 48" aria-hidden="true">
-        <circle cx="24" cy="24" r={r} className="pf-dial-track" />
-        {score != null && (
-          <circle cx="24" cy="24" r={r} className="pf-dial-arc" strokeDasharray={`${(pct / 100) * c} ${c}`} transform="rotate(-90 24 24)" />
-        )}
-      </svg>
-      <span className="pf-dial-n">{score ?? '–'}</span>
-    </span>
-  );
+// Some older saves were titled with bare coordinates ("17.3347").
+const COORDS = /^\s*-?\d{1,3}\.\d+(\s*,\s*-?\d{1,3}\.\d+)?\s*$/;
+function titleFor(r) {
+  const parts = shortAddr(r.address || r.title);
+  const first = parts[0] || r.title || '';
+  if (!first || COORDS.test(first)) return { main: 'A pinned spot', coords: true };
+  // Typed all in lower case ("prestige park grove") -- show it titled.
+  const main = first === first.toLowerCase() ? first.replace(/\b\w/g, (c) => c.toUpperCase()) : first;
+  return { main, coords: false };
 }
-
-function initialsOf(name, email) {
-  const src = (name || email || '').trim();
-  if (!src) return '·';
-  const parts = src.split(/[\s@._-]+/).filter(Boolean);
-  return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase() || src[0].toUpperCase();
-}
+const dayMonth = (ts) => {
+  const d = new Date(ts);
+  return Number.isFinite(d.getTime())
+    ? { d: d.toLocaleDateString('en-IN', { day: '2-digit' }), m: d.toLocaleDateString('en-IN', { month: 'short' }) }
+    : { d: '', m: '' };
+};
 
 export default function ProfileView({ profile, initialReports, folders, fetchFailed }) {
   const router = useRouter();
@@ -169,7 +161,6 @@ export default function ProfileView({ profile, initialReports, folders, fetchFai
   }, [reports]);
 
   const ticksTotal = checklists.reduce((n, c) => n + c.ticked.length, 0);
-  const notesTotal = checklists.reduce((n, c) => n + c.notes.length, 0);
 
   // The best-scoring home they've looked at or saved -- a small
   // "so far" highlight, from whichever source has a score.
@@ -242,185 +233,133 @@ export default function ProfileView({ profile, initialReports, folders, fetchFai
   const displayName = name || (profile.email || '').split('@')[0];
 
   /* ---------- render ---------- */
+  const firstName = displayName.split(' ')[0];
   return (
     <main className="pf">
       <div className="pf-wrap">
         {/* ---------------- who ---------------- */}
-        <section className="pf-hero">
-          <div className="pf-id">
-            <span className="pf-avatar" aria-hidden="true">
-              {profile.avatar
-                // eslint-disable-next-line @next/next/no-img-element
-                ? <img src={profile.avatar} alt="" referrerPolicy="no-referrer" />
-                : initialsOf(name, profile.email)}
-            </span>
-            <div className="pf-id-text">
-              <p className="pf-eyebrow">Your BlindSpot profile</p>
-              {editingName ? (
-                <form className="pf-name-edit" onSubmit={(e) => { e.preventDefault(); saveName(); }}>
-                  <input
-                    value={nameDraft}
-                    onChange={(e) => setNameDraft(e.target.value)}
-                    placeholder="Your name"
-                    aria-label="Your name"
-                    maxLength={60}
-                    autoFocus
-                  />
-                  <button type="submit" className="pf-icon-btn is-go" aria-label="Save name" disabled={nameState === 'saving'}><Check size={16} /></button>
-                  <button type="button" className="pf-icon-btn" aria-label="Cancel" onClick={() => { setEditingName(false); setNameDraft(name); setNameState(''); }}><X size={16} /></button>
-                </form>
-              ) : (
-                <h1 className="pf-name">
-                  {displayName}
-                  <button type="button" className="pf-icon-btn" onClick={() => { setNameDraft(name); setEditingName(true); }} aria-label="Edit your name" title="Edit your name">
-                    <Pencil size={14} />
-                  </button>
-                </h1>
-              )}
-              {nameState === 'error' && <p className="pf-err">Couldn’t save your name. Try again.</p>}
-              <p className="pf-sub">
-                {profile.email}
-                {memberSince && <> · Member since {memberSince}</>}
-                {' · '}Signs in with {providerLabel}
-              </p>
-            </div>
+        <header className="pf-top">
+          <HomeMark seed={profile.id || profile.email} size={64} className="pf-mark" title="Your BlindSpot mark" />
+          <div className="pf-top-text">
+            {editingName ? (
+              <form className="pf-name-edit" onSubmit={(e) => { e.preventDefault(); saveName(); }}>
+                <input value={nameDraft} onChange={(e) => setNameDraft(e.target.value)} placeholder="Your name" aria-label="Your name" maxLength={60} autoFocus />
+                <button type="submit" className="pf-tlink" disabled={nameState === 'saving'}>{nameState === 'saving' ? 'Saving…' : 'Save'}</button>
+                <button type="button" className="pf-tlink is-quiet" onClick={() => { setEditingName(false); setNameDraft(name); setNameState(''); }}>Cancel</button>
+              </form>
+            ) : (
+              <h1 className="pf-title">{firstName}&rsquo;s <em>shortlist.</em></h1>
+            )}
+            {nameState === 'error' && <p className="pf-err">Couldn&rsquo;t save your name. Try again.</p>}
+            <p className="pf-meta">
+              <span>{profile.email}</span>
+              {memberSince && <span>since {memberSince}</span>}
+              {!editingName && <button type="button" className="pf-tlink" onClick={() => { setNameDraft(name); setEditingName(true); }}>Edit name</button>}
+              <button type="button" className="pf-tlink" onClick={signOut} disabled={signingOut}>{signingOut ? 'Signing out…' : 'Sign out'}</button>
+            </p>
           </div>
-          <div className="pf-hero-actions">
-            <Link href="/#find" className="pf-btn is-primary"><Search size={16} aria-hidden="true" /> Check a new home</Link>
-            <button type="button" className="pf-btn is-ghost" onClick={signOut} disabled={signingOut}>
-              <LogOut size={16} aria-hidden="true" /> {signingOut ? 'Signing out…' : 'Sign out'}
-            </button>
-          </div>
-        </section>
+          <Link href="/#find" className="pf-new">Check a new home <ArrowUpRight size={16} aria-hidden="true" /></Link>
+        </header>
 
-        {/* ---------------- at a glance ---------------- */}
-        <section className="pf-stats" aria-label="At a glance">
-          <button type="button" className="pf-stat" onClick={() => pickTab('saved')}>
-            <FileText size={18} aria-hidden="true" />
-            <strong>{reports.length}</strong><span>Saved reports</span>
-          </button>
-          <button type="button" className="pf-stat" onClick={() => pickTab('saved')}>
-            <FolderOpen size={18} aria-hidden="true" />
-            <strong>{(folders || []).length}</strong><span>Property folders</span>
-          </button>
-          <button type="button" className="pf-stat" onClick={() => pickTab('recent')}>
-            <MapPin size={18} aria-hidden="true" />
-            <strong>{history.length}</strong><span>Homes checked</span>
-          </button>
-          <button type="button" className="pf-stat" onClick={() => pickTab('notes')}>
-            <ClipboardCheck size={18} aria-hidden="true" />
-            <strong>{ticksTotal}</strong><span>Checks ticked{notesTotal ? ` · ${notesTotal} notes` : ''}</span>
-          </button>
-          {best && (
-            <Link href={best.href} className="pf-best">
-              <Dial score={best.score} size={58} />
-              <span className="pf-best-text">
-                <span className="pf-best-eyebrow"><Star size={12} aria-hidden="true" /> Best match so far</span>
-                <strong>{shortAddr(best.address)[0] || 'A home you checked'}</strong>
-                <span>{[best.floor && `Floor ${best.floor}`, best.facing && `${best.facing}-facing`].filter(Boolean).join(' · ') || ago(best.when)}</span>
-              </span>
-              <ArrowUpRight size={16} className="pf-best-go" aria-hidden="true" />
-            </Link>
-          )}
-        </section>
+        {/* ---------------- the numbers, as a sentence ---------------- */}
+        <p className="pf-line">
+          <strong>{reports.length}</strong> {reports.length === 1 ? 'report' : 'reports'} saved
+          {(folders || []).length > 0 && <> in <strong>{folders.length}</strong> {folders.length === 1 ? 'folder' : 'folders'}</>}
+          {history.length > 0 && <>, <strong>{history.length}</strong> {history.length === 1 ? 'home' : 'homes'} checked on this device</>}
+          {ticksTotal > 0 && <>, <strong>{ticksTotal}</strong> site-visit {ticksTotal === 1 ? 'check' : 'checks'} ticked</>}.
+        </p>
+
+        {best && (
+          <Link href={best.href} className="pf-best">
+            <span className="pf-best-score">{best.score}</span>
+            <span className="pf-best-text">
+              <span className="pf-best-k">Top of your list</span>
+              <strong>{shortAddr(best.address)[0] || 'A home you checked'}</strong>
+              <span>{[best.floor && `floor ${best.floor}`, best.facing && `${best.facing.toLowerCase()}-facing`].filter(Boolean).join(', ') || ago(best.when)}</span>
+            </span>
+            <span className="pf-best-go">Open <ArrowUpRight size={15} aria-hidden="true" /></span>
+          </Link>
+        )}
 
         {/* ---------------- tabs ---------------- */}
         <nav className="pf-tabs" role="tablist" aria-label="Profile sections">
           {TABS.map((t) => (
-            <button
-              key={t.key}
-              type="button"
-              role="tab"
-              aria-selected={tab === t.key}
-              className={`pf-tab${tab === t.key ? ' is-on' : ''}`}
-              onClick={() => pickTab(t.key)}
-            >
+            <button key={t.key} type="button" role="tab" aria-selected={tab === t.key}
+              className={`pf-tab${tab === t.key ? ' is-on' : ''}`} onClick={() => pickTab(t.key)}>
               {t.label}
-              {t.key === 'saved' && reports.length > 0 && <span className="pf-tab-n">{reports.length}</span>}
-              {t.key === 'recent' && history.length > 0 && <span className="pf-tab-n">{history.length}</span>}
+              {t.key === 'saved' && reports.length > 0 && <sup>{reports.length}</sup>}
+              {t.key === 'recent' && history.length > 0 && <sup>{history.length}</sup>}
             </button>
           ))}
         </nav>
 
-        {/* ---------------- saved reports ---------------- */}
+        {/* ---------------- saved ---------------- */}
         {tab === 'saved' && (
           <section className="pf-panel" id="saved" role="tabpanel">
-            {fetchFailed && (
-              <p className="pf-empty">We couldn’t load your saved reports just now. That’s on our side, not your account — refresh in a moment.</p>
-            )}
+            {fetchFailed && <p className="pf-empty">We couldn&rsquo;t load your saved reports just now. That&rsquo;s on our side, not your account. Refresh in a moment.</p>}
             {!fetchFailed && reports.length === 0 ? (
               <div className="pf-empty">
-                <FileText size={26} aria-hidden="true" />
-                <strong>Nothing saved yet</strong>
-                <p>Generate a full report, a sun &amp; shadow report or a furnishing plan and hit “Save report”. File a few under the same folder (say, “Flat 402”) to keep everything about one home together.</p>
-                <Link href="/#find" className="pf-btn is-primary">Check a home</Link>
+                <p><strong>Nothing saved yet.</strong> Generate a full report, a sun &amp; shadow report or a furnishing plan and press &ldquo;Save report&rdquo;. Put a few under one folder, say &ldquo;Flat 402&rdquo;, to keep a home&rsquo;s reports together.</p>
+                <Link href="/#find" className="pf-tlink">Check a home &rarr;</Link>
               </div>
             ) : !fetchFailed && (
               <>
                 <div className="pf-tools">
                   <label className="pf-search">
                     <Search size={15} aria-hidden="true" />
-                    <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search your reports" aria-label="Search your reports" />
+                    <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search" aria-label="Search your reports" />
                   </label>
-                  <div className="pf-chips" role="group" aria-label="Filter by type">
+                  <div className="pf-filters" role="group" aria-label="Filter by type">
                     {FILTERS.filter((f) => f.key === 'all' || counts[f.key]).map((f) => (
-                      <button key={f.key} type="button" className={`pf-chip${filter === f.key ? ' is-on' : ''}`} onClick={() => setFilter(f.key)} aria-pressed={filter === f.key}>
-                        {f.label}<span>{counts[f.key] || 0}</span>
+                      <button key={f.key} type="button" className={`pf-filter${filter === f.key ? ' is-on' : ''}`} onClick={() => setFilter(f.key)} aria-pressed={filter === f.key}>
+                        {f.label} <span>{counts[f.key] || 0}</span>
                       </button>
                     ))}
                   </div>
                   <label className="pf-sort">
-                    <span>Sort</span>
-                    <select value={sort} onChange={(e) => setSort(e.target.value)}>
-                      <option value="new">Newest</option>
-                      <option value="score">Best score</option>
+                    <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Sort">
+                      <option value="new">Newest first</option>
+                      <option value="score">Best score first</option>
                     </select>
                   </label>
                 </div>
 
                 {delError && <p className="pf-err" role="alert">{delError}</p>}
-                {visible.length === 0 && <p className="pf-empty is-slim">No saved reports match that.</p>}
+                {visible.length === 0 && <p className="pf-empty">Nothing matches that.</p>}
 
                 {groups.map((g) => (
                   <div className="pf-group" key={g.id}>
-                    {g.name && (
-                      <h2 className="pf-group-h">
-                        <FolderOpen size={15} aria-hidden="true" /> {g.name}
-                        <span>{g.list.length} {g.list.length === 1 ? 'report' : 'reports'}</span>
-                      </h2>
-                    )}
-                    <ul className="pf-list">
+                    {g.name && <h2 className="pf-group-h"><span>{g.name}</span><small>{g.list.length}</small></h2>}
+                    <ol className="pf-ledger">
                       {g.list.map((r) => {
                         const t = typeOf(r);
                         const sc = scoreOf(r);
-                        const parts = shortAddr(r.address || r.title);
-                        const unitBits = [r.floor && `Floor ${r.floor}`, r.facing && `${r.facing}-facing`, r.areaName, r.pin && `PIN ${r.pin}`].filter(Boolean);
+                        const tt = titleFor(r);
+                        const dm = dayMonth(r.created_at);
+                        const bits = [r.floor && `Floor ${r.floor}`, r.facing, r.areaName && !tt.main.includes(r.areaName) && r.areaName, r.pin && `PIN ${r.pin}`,
+                          tt.coords && r.lat && `${num(r.lat * 100) / 100}, ${num(r.lon * 100) / 100}`].filter(Boolean);
                         return (
-                          <li key={r.id} className={`pf-row is-${t.key}`}>
-                            <span className="pf-type" aria-hidden="true"><t.Icon size={17} /></span>
-                            <Link href={`/my-reports/${r.id}`} className="pf-row-main">
-                              <span className="pf-row-kind">{t.label}</span>
-                              <strong>{parts[0] || r.title || 'Untitled report'}</strong>
-                              <span className="pf-row-meta">
-                                {[...unitBits.slice(0, 2), ago(r.created_at)].filter(Boolean).join(' · ')}
-                              </span>
+                          <li key={r.id} className={`pf-entry is-${t.key}`}>
+                            <span className="pf-date"><b>{dm.d}</b>{dm.m}</span>
+                            <Link href={`/my-reports/${r.id}`} className="pf-entry-main">
+                              <strong>{tt.main}</strong>
+                              <span><i className="pf-dot" aria-hidden="true" />{t.label}{bits.length ? ` · ${bits.slice(0, 3).join(' · ')}` : ''}</span>
                             </Link>
-                            {sc != null && <span className="pf-score" title="Score when saved">{sc}</span>}
+                            <span className="pf-num" title={sc != null ? 'Score when saved' : undefined}>
+                              {sc != null ? <>{sc}<i aria-hidden="true"><b style={{ width: `${sc}%` }} /></i></> : <span className="pf-num-none">–</span>}
+                            </span>
                             {confirmDel === r.id ? (
                               <span className="pf-confirm">
-                                <span>Delete?</span>
-                                <button type="button" className="pf-link is-danger" onClick={() => deleteReport(r.id)}>Yes</button>
-                                <button type="button" className="pf-link" onClick={() => setConfirmDel(null)}>No</button>
+                                <button type="button" className="pf-tlink is-danger" onClick={() => deleteReport(r.id)}>Delete</button>
+                                <button type="button" className="pf-tlink is-quiet" onClick={() => setConfirmDel(null)}>Keep</button>
                               </span>
                             ) : (
-                              <button type="button" className="pf-icon-btn is-quiet" onClick={() => setConfirmDel(r.id)} aria-label={`Delete ${t.label}`} title="Delete">
-                                <Trash2 size={15} />
-                              </button>
+                              <button type="button" className="pf-del" onClick={() => setConfirmDel(r.id)} aria-label={`Delete ${tt.main}`} title="Delete"><Trash2 size={15} /></button>
                             )}
                           </li>
                         );
                       })}
-                    </ul>
+                    </ol>
                   </div>
                 ))}
               </>
@@ -431,87 +370,66 @@ export default function ProfileView({ profile, initialReports, folders, fetchFai
         {/* ---------------- recently viewed ---------------- */}
         {tab === 'recent' && (
           <section className="pf-panel" id="recent" role="tabpanel">
-            <p className="pf-note"><HardDrive size={14} aria-hidden="true" /> Kept on this device only — the homes you’ve opened a report for.</p>
+            <p className="pf-aside">Kept in this browser only.</p>
             {history.length === 0 ? (
-              <div className="pf-empty">
-                <MapPin size={26} aria-hidden="true" />
-                <strong>No homes checked on this device yet</strong>
-                <p>Every address you open a report for shows up here, with its score, so you can jump back in.</p>
-                <Link href="/#find" className="pf-btn is-primary">Check a home</Link>
-              </div>
+              <div className="pf-empty"><p><strong>No homes checked here yet.</strong> Every address you open a report for lands here with its score, so you can jump back in.</p><Link href="/#find" className="pf-tlink">Check a home &rarr;</Link></div>
             ) : (
               <>
-                <ul className="pf-cards">
+                <ol className="pf-ledger">
                   {history.map((h) => {
                     const parts = shortAddr(h.address);
+                    const sc = num(h.score);
+                    const dm = dayMonth(h.ts);
+                    const bits = [h.areaName || parts[1], h.floor && `Floor ${h.floor}`, h.facing, h.area != null && `area ${num(h.area)}`, h.unit != null && `flat ${num(h.unit)}`].filter(Boolean);
                     return (
-                      <li key={`${h.lat},${h.lon}`} className="pf-card">
-                        <button type="button" className="pf-card-x" onClick={() => forgetVisit(h)} aria-label="Remove from this list" title="Remove"><X size={14} /></button>
-                        <div className="pf-card-top">
-                          <Dial score={num(h.score)} />
-                          <div className="pf-card-text">
-                            <strong>{parts[0] || `${h.lat.toFixed(4)}, ${h.lon.toFixed(4)}`}</strong>
-                            <span>{h.areaName || parts.slice(1, 3).join(', ')}</span>
-                          </div>
-                        </div>
-                        <div className="pf-card-bits">
-                          {h.area != null && <span className="pf-bit is-av">Area {num(h.area)}</span>}
-                          {h.unit != null && <span className="pf-bit is-ss">Flat {num(h.unit)}</span>}
-                          {h.floor && <span className="pf-bit">Floor {h.floor}</span>}
-                          {h.facing && <span className="pf-bit">{h.facing}</span>}
-                        </div>
-                        <div className="pf-card-foot">
-                          <span><Clock size={12} aria-hidden="true" /> {ago(h.ts)}</span>
-                          <Link href={reportHref(h)} className="pf-link">Reopen <ArrowUpRight size={13} aria-hidden="true" /></Link>
-                        </div>
+                      <li key={`${h.lat},${h.lon}`} className="pf-entry">
+                        <span className="pf-date"><b>{dm.d}</b>{dm.m}</span>
+                        <Link href={reportHref(h)} className="pf-entry-main">
+                          <strong>{parts[0] || 'A pinned spot'}</strong>
+                          <span>{bits.join(' · ')}</span>
+                        </Link>
+                        <span className="pf-num">{sc != null ? <>{sc}<i aria-hidden="true"><b style={{ width: `${sc}%` }} /></i></> : <span className="pf-num-none">–</span>}</span>
+                        <button type="button" className="pf-del" onClick={() => forgetVisit(h)} aria-label="Remove from this list" title="Remove"><X size={15} /></button>
                       </li>
                     );
                   })}
-                </ul>
-                <p className="pf-foot-actions">
-                  <Link href="/compare" className="pf-link">Compare flats side by side <ArrowUpRight size={13} aria-hidden="true" /></Link>
-                  <button type="button" className="pf-link is-quiet" onClick={forgetAll}>Clear this list</button>
+                </ol>
+                <p className="pf-foot">
+                  <Link href="/compare" className="pf-tlink">Compare flats side by side &rarr;</Link>
+                  <button type="button" className="pf-tlink is-quiet" onClick={forgetAll}>Clear this list</button>
                 </p>
               </>
             )}
           </section>
         )}
 
-        {/* ---------------- site-visit notes ---------------- */}
+        {/* ---------------- notes ---------------- */}
         {tab === 'notes' && (
           <section className="pf-panel" id="notes" role="tabpanel">
-            <p className="pf-note"><HardDrive size={14} aria-hidden="true" /> Your “What to check before you decide” ticks and notes, from this device.</p>
+            <p className="pf-aside">Your &ldquo;what to check before you decide&rdquo; ticks and notes, from this browser.</p>
             {checklists.length === 0 ? (
-              <div className="pf-empty">
-                <ClipboardCheck size={26} aria-hidden="true" />
-                <strong>No site-visit notes yet</strong>
-                <p>On any report, tick items off the checklist as you walk around a flat and jot down what you found. They collect here.</p>
-              </div>
+              <div className="pf-empty"><p><strong>No site-visit notes yet.</strong> On any report, tick things off the checklist as you walk round a flat and write down what you found. They collect here.</p></div>
             ) : (
-              <ul className="pf-notes">
+              <div className="pf-notes">
                 {checklists.map((c) => {
                   const h = addrFor(c.lat, c.lon);
                   const parts = shortAddr(h?.address);
                   return (
-                    <li key={`${c.lat},${c.lon}`} className="pf-noteset">
-                      <div className="pf-noteset-head">
-                        <div>
-                          <strong>{parts[0] || `${c.lat.toFixed(4)}, ${c.lon.toFixed(4)}`}</strong>
-                          <span>{c.ticked.length} checked{c.notes.length ? ` · ${c.notes.length} ${c.notes.length === 1 ? 'note' : 'notes'}` : ''}</span>
-                        </div>
-                        <Link href={`${reportHref(h || { lat: c.lat, lon: c.lon })}#the-visit`} className="pf-link">Open checklist <ArrowUpRight size={13} aria-hidden="true" /></Link>
-                      </div>
+                    <article key={`${c.lat},${c.lon}`} className="pf-noteset">
+                      <header>
+                        <h3>{parts[0] || 'A pinned spot'}</h3>
+                        <span>{c.ticked.length} checked{c.notes.length ? `, ${c.notes.length} ${c.notes.length === 1 ? 'note' : 'notes'}` : ''}</span>
+                        <Link href={`${reportHref(h || { lat: c.lat, lon: c.lon })}#the-visit`} className="pf-tlink">Open checklist &rarr;</Link>
+                      </header>
                       {c.notes.length > 0 && (
-                        <ul className="pf-notes-list">
-                          {c.notes.map(([k, v]) => (
-                            <li key={k}><span className="pf-note-k">{CHECK_LABELS[k] || k}</span>{v}</li>
-                          ))}
-                        </ul>
+                        <dl>
+                          {c.notes.map(([k, v]) => (<div key={k}><dt>{CHECK_LABELS[k] || k}</dt><dd>{v}</dd></div>))}
+                        </dl>
                       )}
-                    </li>
+                    </article>
                   );
                 })}
-              </ul>
+              </div>
             )}
           </section>
         )}
@@ -520,22 +438,14 @@ export default function ProfileView({ profile, initialReports, folders, fetchFai
         {tab === 'account' && (
           <section className="pf-panel" id="account" role="tabpanel">
             <dl className="pf-account">
-              <div><dt>Name</dt><dd>{name || <span className="pf-dim">Not set</span>} <button type="button" className="pf-link" onClick={() => { setNameDraft(name); setEditingName(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>Edit</button></dd></div>
+              <div><dt>Name</dt><dd>{name || <span className="pf-dim">Not set</span>}<button type="button" className="pf-tlink" onClick={() => { setNameDraft(name); setEditingName(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>Edit</button></dd></div>
               <div><dt>Email</dt><dd>{profile.email}</dd></div>
               <div><dt>Signs in with</dt><dd>{providerLabel}</dd></div>
               {memberSince && <div><dt>Member since</dt><dd>{memberSince}</dd></div>}
               {profile.lastSignIn && <div><dt>Last signed in</dt><dd>{ago(profile.lastSignIn)}</dd></div>}
+              <div><dt>In this browser</dt><dd>{history.length} homes checked, {checklists.length} checklists. Not synced to your account.<button type="button" className="pf-tlink is-quiet" onClick={forgetAll} disabled={!history.length}>Clear</button></dd></div>
             </dl>
-            <div className="pf-account-box">
-              <strong>On this device</strong>
-              <p>{history.length} homes checked and {checklists.length} site-visit checklists are stored in this browser only. They aren’t part of your account and don’t sync to other devices.</p>
-              <button type="button" className="pf-btn is-ghost" onClick={forgetAll} disabled={!history.length}>Clear recently viewed</button>
-            </div>
-            <div className="pf-account-box">
-              <strong>Sign out</strong>
-              <p>Your saved reports stay in your account.</p>
-              <button type="button" className="pf-btn is-ghost" onClick={signOut} disabled={signingOut}><LogOut size={16} aria-hidden="true" /> {signingOut ? 'Signing out…' : 'Sign out'}</button>
-            </div>
+            <p className="pf-foot"><button type="button" className="pf-tlink" onClick={signOut} disabled={signingOut}>{signingOut ? 'Signing out…' : 'Sign out'}</button></p>
           </section>
         )}
       </div>

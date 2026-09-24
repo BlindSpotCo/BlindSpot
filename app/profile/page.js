@@ -26,40 +26,55 @@ const LIGHT_COLUMNS = [
   'nqi:data->>nqi_composite', 'pin:data->>pin_code', 'areaName:data->>name', 'city:data->>city',
 ].join(', ');
 
+// The same fields, from the small `summary` column (see SUPABASE_SETUP.md
+// section 6). Reading `data->>x` makes Postgres load each row's whole
+// report -- a sun & shadow save is a couple of megabytes of images -- just
+// to pull out an address; `summary` is a few hundred bytes.
+const SUMMARY_KEYS = ['address', 'kind', 'combined', 'unit', 'floor', 'facing', 'lat', 'lon', 'nqi', 'pin', 'areaName', 'city'];
+const flatten = (row) => {
+  const { summary, ...rest } = row;
+  const out = { ...rest };
+  if (summary && typeof summary === 'object') SUMMARY_KEYS.forEach((k) => { if (summary[k] != null) out[k] = summary[k]; });
+  return out;
+};
+
 export default async function ProfilePage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+
+  // Everything at once. Row-level security already limits both tables to
+  // the signed-in user, so the queries don't have to wait for getUser().
+  const [{ data: { user } }, reportRes, folderRes] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.from('reports').select('id, folder_id, source, title, created_at, summary').order('created_at', { ascending: false }),
+    supabase.from('folders').select('id, name, created_at').order('name', { ascending: true }),
+  ]);
   if (!user) redirect('/login?next=/profile');
 
   let reports = [];
-  let folders = [];
   let fetchFailed = false;
   try {
-    let { data: reportData, error: reportErr } = await supabase
-      .from('reports')
-      .select(LIGHT_COLUMNS)
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-    if (reportErr) {
-      // Older rows or an older PostgREST without JSON paths -- fall back
-      // to the plain columns rather than show nothing.
-      ({ data: reportData, error: reportErr } = await supabase
-        .from('reports')
-        .select('id, folder_id, source, title, created_at')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false }));
+    if (!reportRes.error) {
+      reports = (reportRes.data ?? []).map(flatten);
+      // Rows saved before `summary` existed: fetch just their fields.
+      const missing = (reportRes.data ?? []).filter((r) => !r.summary).map((r) => r.id);
+      if (missing.length) {
+        const { data: old } = await supabase.from('reports').select(LIGHT_COLUMNS).in('id', missing);
+        const byId = new Map((old ?? []).map((r) => [r.id, r]));
+        reports = reports.map((r) => (byId.has(r.id) ? { ...r, ...byId.get(r.id) } : r));
+      }
+    } else {
+      // No `summary` column yet -- the JSON-path read, then plain columns.
+      let { data, error } = await supabase.from('reports').select(LIGHT_COLUMNS).order('created_at', { ascending: false });
+      if (error) {
+        ({ data, error } = await supabase.from('reports').select('id, folder_id, source, title, created_at').order('created_at', { ascending: false }));
+      }
+      if (error) throw error;
+      reports = data ?? [];
     }
-    const { data: folderData, error: folderErr } = await supabase
-      .from('folders')
-      .select('id, name, created_at')
-      .eq('user_id', user.id)
-      .order('name', { ascending: true });
-    if (reportErr) throw reportErr;
-    reports = reportData ?? [];
-    folders = folderErr ? [] : (folderData ?? []);
   } catch {
     fetchFailed = true;
   }
+  const folders = folderRes.error ? [] : (folderRes.data ?? []);
 
   const meta = user.user_metadata || {};
   const profile = {

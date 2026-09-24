@@ -2859,11 +2859,11 @@ header.header-on-dark .brand-word-img{
 .nav-avatar{
   display:inline-grid; place-items:center; width:34px; height:34px; border-radius:50%;
   overflow:hidden; flex:none; text-decoration:none;
-  background:var(--brand,#3D4116); color:#FFFDF8;
+  background:none; color:inherit;
   font-size:12.5px; font-weight:700; letter-spacing:.02em;
-  box-shadow:0 0 0 2px var(--paper,#FFFDF8), 0 0 0 3.5px rgba(61,65,22,.35);
+  box-shadow:0 0 0 1px rgba(28,24,18,.14);
   transition:transform .15s ease, box-shadow .15s ease;
 }
-.nav-avatar:hover{ transform:translateY(-1px); box-shadow:0 0 0 2px var(--paper,#FFFDF8), 0 0 0 3.5px var(--brand,#3D4116) }
+.nav-avatar:hover{ transform:translateY(-1px); box-shadow:0 0 0 2px var(--brand,#3D4116) }
 .nav-avatar img{ width:100%; height:100%; object-fit:cover; display:block }
 @media (prefers-reduced-motion:reduce){ .nav-avatar{ transition:none } .nav-avatar:hover{ transform:none } }
