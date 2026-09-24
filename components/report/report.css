@@ -461,7 +461,7 @@
    children of .bsr-map any more, even past 900px where .bsr-dockzone
    itself renders no box -- see .bsr-dockzone's own rules below), so
    this selector only needs to name the wrapper. */
-.bsr-map > *:not(.bsr-mapbar):not(.bsr-dockzone){width:100%;height:100%}
+.bsr-map > *:not(.bsr-mapbar):not(.bsr-dockzone):not(.bsr-playfloat){width:100%;height:100%}
 .bsr-map-wait{
   display:flex;align-items:center;justify-content:center;text-align:center;
   height:100%;padding:0 24px;color:var(--text-mute,#5A5140);font-size:16px;
@@ -1718,6 +1718,10 @@ body.bsr-noscroll{overflow:hidden}
    spot nothing else already claims. */
 .bsr-playfloat{
   position:absolute; top:14px; left:14px; z-index:14;
+  /* must stay its own size: .bsr-map stretches its other children to
+     100% x 100%, which turned this into an invisible layer over the
+     whole map that swallowed every tap */
+  width:auto; height:auto;
 }
 .bsr-playfloat .bsr-mapbar-time{ margin:0; display:flex; align-items:center; gap:6px }
 .bsr-playfloat .bsr-play,
