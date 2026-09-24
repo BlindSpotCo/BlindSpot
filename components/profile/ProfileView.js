@@ -197,8 +197,16 @@ export default function ProfileView({ profile, initialReports, folders, fetchFai
     setReports((list) => list.filter((r) => r.id !== id));
     setConfirmDel(null);
     try {
-      const res = await fetch(`/api/reports?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error();
+      // Straight to the database (RLS: own rows only); the API route is the
+      // fallback when the browser client isn't configured.
+      const supabase = createClient();
+      if (typeof supabase.from === 'function') {
+        const { error } = await supabase.from('reports').delete().eq('id', id);
+        if (error) throw error;
+      } else {
+        const res = await fetch(`/api/reports?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error();
+      }
     } catch {
       setReports(prev);
       setDelError('Couldn’t delete that report just now. Try again in a moment.');
