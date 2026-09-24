@@ -1718,34 +1718,34 @@ body.bsr-noscroll{overflow:hidden}
    spot nothing else already claims. */
 .bsr-playfloat{
   position:absolute; top:14px; left:14px; z-index:14;
-  background:rgba(255,253,248,.97);
-  border:1px solid var(--line,rgba(28,24,18,.14));
-  border-radius:10px;
-  padding:5px 7px;
-  box-shadow:0 6px 20px rgba(28,24,18,.16);
 }
 .bsr-playfloat .bsr-mapbar-time{ margin:0; display:flex; align-items:center; gap:6px }
 .bsr-playfloat .bsr-play,
 .bsr-playfloat .bsr-play.is-on{
-  font-size:12px; font-weight:600; min-height:30px; padding:0 11px; border-radius:7px;
-  background:var(--paper,#FFFDF8); border:1px solid var(--line,rgba(28,24,18,.16));
-  color:var(--text,#1C1812);
+  font-size:11.5px; font-weight:600; min-height:26px; padding:0 10px; border-radius:999px;
+  background:rgba(255,253,248,.94); border:1px solid var(--line,rgba(28,24,18,.16));
+  color:var(--text-dim,#8A7F68);
+  box-shadow:0 2px 10px rgba(28,24,18,.14);
 }
 .bsr-playfloat .bsr-play.is-on{
-  background:color-mix(in srgb, var(--brand,#3D4116) 12%, var(--paper,#FFFDF8));
+  background:color-mix(in srgb, var(--brand,#3D4116) 10%, rgba(255,253,248,.94));
   border-color:var(--brand,#3D4116); color:var(--brand,#3D4116);
 }
 .bsr-playfloat .bsr-play:hover{
   filter:none; border-color:var(--brand,#3D4116); color:var(--brand,#3D4116);
 }
 .bsr-playfloat .bsr-mapbar-time input[type=range]{
-  height:30px; width:90px; accent-color:var(--brand,#3D4116);
+  height:26px; width:76px; accent-color:var(--brand,#3D4116);
 }
-.bsr-playfloat .bsr-clock{ font-size:11.5px; min-width:40px; color:var(--text-mute,#5A5140) }
+.bsr-playfloat .bsr-clock{
+  font-size:11px; min-width:36px; color:var(--text-mute,#5A5140);
+  background:rgba(255,253,248,.94); padding:2px 7px; border-radius:999px;
+  box-shadow:0 2px 10px rgba(28,24,18,.1);
+}
 @media (max-width:767px){
-  .bsr-playfloat{ top:10px; left:10px; padding:4px 6px }
-  .bsr-playfloat .bsr-play{ font-size:11px; min-height:27px; padding:0 8px }
-  .bsr-playfloat .bsr-mapbar-time input[type=range]{ height:27px; width:70px }
+  .bsr-playfloat{ top:10px; left:10px }
+  .bsr-playfloat .bsr-play{ font-size:10.5px; min-height:24px; padding:0 8px }
+  .bsr-playfloat .bsr-mapbar-time input[type=range]{ height:24px; width:64px }
 }
 
 /* ---- phone: the unit panel is a two-line strip, not half the screen ----
