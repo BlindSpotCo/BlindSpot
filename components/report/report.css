@@ -1239,6 +1239,16 @@ body.bsr-noscroll{overflow:hidden}
 }
 .bsr-fullbar-where{
   margin:0;min-width:0;flex:1 1 180px;
+  /* Capped, not just allowed to shrink: a flex item set to grow still
+     claims whatever's left on its own line before anything is forced to
+     wrap, so an uncapped address (Nominatim's raw display_name can run
+     well past 100 characters) grew wide enough to push the sunlight-
+     report button and "Not this address?" onto their own second row --
+     which is what made the header tall enough to squeeze the map's own
+     Floor/Facing card in the first place. A hard ceiling means the
+     ellipsis below always has a reason to engage, so the rest of the
+     bar always has room and never wraps. */
+  max-width:clamp(160px, 34vw, 420px);
   display:flex;flex-direction:column;gap:1px;
 }
 .bsr-fullbar-addr{
@@ -1333,15 +1343,6 @@ body.bsr-noscroll{overflow:hidden}
     left:auto; right:20px; bottom:auto; top:256px;
     width:min(300px, calc(100% - 40px));
     background:none; border:none; box-shadow:none; padding:0;
-    /* CSS fallback for the JS-measured clamp below (see dockzoneRef's
-       effect in ReportScreen.js): a long address wraps .bsr-fullbar to
-       two lines, which pushes this card's top further down without
-       shrinking its own height, so it can run past the bottom of
-       .bsr-map and get clipped by that box's own overflow:hidden. The
-       JS sets a precise inline max-height; this is only what shows
-       before that effect runs or if it's ever skipped. */
-    max-height:calc(100vh - 256px - 20px);
-    overflow-y:auto;
   }
   .bsr-dock{
     width:100%;

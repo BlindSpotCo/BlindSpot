@@ -12,6 +12,37 @@
 // service answered" from "answered, and this pin has no postcode".
 import { NextResponse } from 'next/server';
 
+// Nominatim's display_name is a flat comma-join of its whole address
+// hierarchy, and Indian admin boundaries routinely repeat a name (or a
+// word of it) across two adjacent levels -- "Hauz Khas Village Road,
+// Hauz Khas Village, Hauz Khas, South, Delhi, South Delhi, Delhi" is the
+// raw shape it hands back for a real Hauz Khas pin, not a bug in what
+// we're asking for. One mechanical, order-preserving pass: a segment
+// that adds no word the nearest still-kept segment doesn't already have
+// is dropped, and a segment that says an earlier one more fully replaces
+// it. Never a fuzzy similarity guess -- only a real word-for-word subset
+// gets touched, so two genuinely different places sharing one word (say,
+// two colonies both named "... Vihar") are never merged into each other.
+function cleanAddressLabel(name) {
+  if (!name) return name;
+  const parts = name.split(',').map((s) => s.trim()).filter(Boolean);
+  const wordsOf = (s) => new Set(s.toLowerCase().split(/\s+/).filter(Boolean));
+  const isSubset = (a, b) => a.size > 0 && [...a].every((w) => b.has(w));
+
+  const out = [];
+  const outWords = [];
+  for (const part of parts) {
+    const partWords = wordsOf(part);
+    let absorbed = false;
+    for (let i = 0; i < out.length; i++) {
+      if (isSubset(partWords, outWords[i])) { absorbed = true; break; }
+      if (isSubset(outWords[i], partWords)) { out[i] = part; outWords[i] = partWords; absorbed = true; break; }
+    }
+    if (!absorbed) { out.push(part); outWords.push(partWords); }
+  }
+  return out.join(', ');
+}
+
 async function viaNominatim(lat, lon) {
   const r = await fetch(
     `https://nominatim.openstreetmap.org/reverse?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&format=json&addressdetails=1&zoom=18`,
@@ -26,7 +57,7 @@ async function viaNominatim(lat, lon) {
   const a = data.address || {};
   return {
     postcode: a.postcode || null,
-    displayName: data.display_name || null,
+    displayName: cleanAddressLabel(data.display_name) || null,
     locality: a.suburb || a.neighbourhood || a.city_district || a.town || a.village || null,
     city: a.city || a.state_district || a.state || null,
   };
@@ -45,7 +76,7 @@ async function viaPhoton(lat, lon) {
     .filter(Boolean).join(', ');
   return {
     postcode: p.postcode || null,
-    displayName: name || null,
+    displayName: cleanAddressLabel(name) || null,
     locality: p.district || p.city || null,
     city: p.city || p.state || null,
   };

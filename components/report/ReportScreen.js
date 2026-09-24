@@ -729,36 +729,18 @@ export default function ReportScreen({ view = 'verdict' }) {
     if (!fullMap || !el) { root.style.removeProperty('--bsr-dock-h'); return; }
     const mq = window.matchMedia('(max-width: 899px)');
     const update = () => {
-      if (mq.matches) {
-        root.style.setProperty('--bsr-dock-h', `${Math.ceil(el.getBoundingClientRect().height) + 10}px`);
-        el.style.removeProperty('max-height');
-        return;
-      }
-      root.style.setProperty('--bsr-dock-h', '0px');
-      // Past 900px this card is anchored by a fixed top offset (see
-      // .bsr-dockzone in report.css), clear of the map's own view-angle
-      // pad -- but a long address wraps .bsr-fullbar to two lines,
-      // which pushes that fixed offset further down the screen without
-      // the card getting any shorter, so "See the analysis" could run
-      // past the bottom of .bsr-map and get clipped by its own
-      // overflow:hidden. Clamp to whatever room is actually left so the
-      // card scrolls internally instead.
-      const available = window.innerHeight - el.getBoundingClientRect().top - 20;
-      el.style.maxHeight = `${Math.max(160, Math.floor(available))}px`;
+      root.style.setProperty('--bsr-dock-h', mq.matches ? `${Math.ceil(el.getBoundingClientRect().height) + 10}px` : '0px');
     };
     update();
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(update) : null;
     ro?.observe(el);
-    window.addEventListener('resize', update);
     mq.addEventListener?.('change', update);
     return () => {
       ro?.disconnect();
-      window.removeEventListener('resize', update);
       mq.removeEventListener?.('change', update);
       root.style.removeProperty('--bsr-dock-h');
-      el.style.removeProperty('max-height');
     };
-  }, [fullMap, address]);
+  }, [fullMap]);
 
   // The moment either control is touched, the tip has said what it had to
   // say -- leaving it up would be pointing at something already answered.
