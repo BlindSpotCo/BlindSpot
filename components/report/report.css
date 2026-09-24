@@ -1333,6 +1333,15 @@ body.bsr-noscroll{overflow:hidden}
     left:auto; right:20px; bottom:auto; top:256px;
     width:min(300px, calc(100% - 40px));
     background:none; border:none; box-shadow:none; padding:0;
+    /* CSS fallback for the JS-measured clamp below (see dockzoneRef's
+       effect in ReportScreen.js): a long address wraps .bsr-fullbar to
+       two lines, which pushes this card's top further down without
+       shrinking its own height, so it can run past the bottom of
+       .bsr-map and get clipped by that box's own overflow:hidden. The
+       JS sets a precise inline max-height; this is only what shows
+       before that effect runs or if it's ever skipped. */
+    max-height:calc(100vh - 256px - 20px);
+    overflow-y:auto;
   }
   .bsr-dock{
     width:100%;
