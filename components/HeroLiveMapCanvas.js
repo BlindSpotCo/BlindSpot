@@ -85,10 +85,10 @@ const SEARCH_PLACEHOLDER = 'Enter society name, landmark, or address...';
 // visitor is -- see lib/tryPlaces.js for the per-city lists and why each
 // entry is hardcoded rather than a query re-resolved on every click.
 const KIND_LABELS = { city: 'City', neighbourhood: 'Neighbourhood', address: 'Address' };
-// The 7 cities BlindSpot actually has neighbourhood-score coverage for --
+// The 5 cities BlindSpot actually has neighbourhood-score coverage for --
 // named here once, for the "not covered yet" message the city panel
 // shows when someone searches a city outside that set.
-const COVERED_CITY_NAMES = 'Bangalore, Delhi NCR, Mumbai, Hyderabad, Chandigarh, Chennai and Ahmedabad';
+const COVERED_CITY_NAMES = 'Bangalore, Delhi NCR, Mumbai, Hyderabad, Chandigarh and Chennai';
 
 export default function HeroLiveMapCanvas() {
   const router = useRouter();
@@ -446,14 +446,21 @@ export default function HeroLiveMapCanvas() {
         <video
           ref={heroVideoRef}
           className="hlm-video"
-          src={HERO_VIDEO_SRC}
+          poster="/hero-poster.jpg"
           autoPlay
           muted
           loop
           playsInline
           preload="auto"
           aria-hidden="true"
-        />
+        >
+          {/* Phones get a 960px encode (~0.55MB instead of 2.2MB) -- it sits
+              under a dark scrim, so the full 1920px was wasted bytes on the
+              first thing a phone loads. The poster paints instantly while
+              either one buffers. */}
+          <source src="/hero-solar-960.mp4" type="video/mp4" media="(max-width: 900px)" />
+          <source src={HERO_VIDEO_SRC} type="video/mp4" />
+        </video>
       </div>
 
       <div className="hlm-glow" aria-hidden="true" />

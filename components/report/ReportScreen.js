@@ -21,7 +21,7 @@ import { FACTOR_LABELS, FACING_OPTS } from '@/lib/property-score/ui';
 import { getActionItems } from '@/lib/property-score/actionItems';
 import {
   ShieldCheck, GraduationCap, Wind, Droplets, Zap, Route, Building2, Waves,
-  Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake, Sofa, ArrowDown, MapPin, Scale, FolderOpen,
+  Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake, Sofa, ArrowDown, MapPin, Scale, FolderOpen, FileText,
 } from 'lucide-react';
 import RoomPhotoAnalyzer from './RoomPhotoAnalyzer';
 import './report.css';
@@ -321,10 +321,6 @@ export default function ReportScreen({ view = 'verdict' }) {
   // already work, so standing a dialog in front of them to collect the
   // same two values was a second copy of a thing that wasn't broken.
   const [showUnitTip, setShowUnitTip] = useState(() => view === 'map');
-  // Asked for the sunlight report before floor/facing were set -- a small
-  // popup asks for both first instead of quietly building it for a
-  // default 5th floor, south-east.
-  const [unitAsk, setUnitAsk] = useState(null); // null | { floor: '', facing: '' }
 
   // The address, the unit and whether a pin was placed -- everything the
   // other screen needs to open on exactly what this one is showing.
@@ -437,9 +433,33 @@ export default function ReportScreen({ view = 'verdict' }) {
     setReportsOpen((list) => (list.includes(type) ? list : [...list, type]));
     setReportFront(type);
   }, []);
-  const requestSunReport = () => {
+  // Asked for the sunlight report before floor/facing were set: no new
+  // popup -- point at the Floor/Facing fields already on screen nearest
+  // the button (shake them, outline the empty ones, focus the first), so
+  // it isn't quietly built for a default 5th floor, south-east.
+  const nudgeTimer = useRef(null);
+  const requestSunReport = (e) => {
     if (floorSet && facingSet) { setReportOpen('gallery'); return; }
-    setUnitAsk({ floor: floorSet ? String(floor) : '', facing: facingSet ? facing : '' });
+    const btn = e?.currentTarget;
+    let target = null;
+    if (btn?.closest('.bsr-fullbar')) {
+      target = document.querySelector('.bsr-dock');
+      setShowUnitTip(true);
+    } else if (btn?.closest('.bsr-mapbar')) {
+      target = btn.closest('.bsr-mapbar').querySelector('.bsr-set-unit');
+    } else {
+      target = document.querySelector('#the-flat .bsr-set');
+    }
+    if (!target) return;
+    const r = target.getBoundingClientRect();
+    if (r.top < 80 || r.bottom > window.innerHeight) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    target.classList.remove('bsr-nudge');
+    void target.offsetWidth; // restart the animation on a second tap
+    target.classList.add('bsr-nudge');
+    const empty = target.querySelector('.is-unset input, .is-unset select');
+    empty?.focus({ preventScroll: true });
+    if (nudgeTimer.current) clearTimeout(nudgeTimer.current);
+    nudgeTimer.current = setTimeout(() => target.classList.remove('bsr-nudge'), 2600);
   };
   const closeReport = useCallback((type) => {
     setReportsOpen((list) => list.filter((t) => t !== type));
@@ -502,6 +522,7 @@ export default function ReportScreen({ view = 'verdict' }) {
   const pinAsked = useRef('');
 
   /* ---------------- scores ---------------- */
+  const lastScored = useRef(null);
   useEffect(() => {
     if (!hasPlace) { setState('error'); setFailure('no-place'); return; }
     // Scoring runs from the moment there is a pin, including while the
@@ -615,8 +636,17 @@ export default function ReportScreen({ view = 'verdict' }) {
         setFailure('scoring');
       }
     }
-    run().finally(() => { if (!cancelled && id === scoreReq.current) setBusy(false); });
-    return () => { cancelled = true; };
+    // Typing a floor ("1" on the way to "12") or flicking through facings
+    // used to fire two scoring requests per keystroke (fast pass + live
+    // noise). Only the unit changed -> wait a beat; anything else -> now.
+    const prev = lastScored.current;
+    const unitOnly = prev && prev.lat === lat && prev.lon === lon && prev.pinCode === pinCode
+      && (prev.floor !== floor || prev.facing !== facing);
+    lastScored.current = { lat, lon, pinCode, floor, facing };
+    const startT = setTimeout(() => {
+      run().finally(() => { if (!cancelled && id === scoreReq.current) setBusy(false); });
+    }, unitOnly ? 320 : 0);
+    return () => { cancelled = true; clearTimeout(startT); };
   }, [hasPlace, lat, lon, pinCode, floor, facing, areaWeight, scoreNonce]);
 
   /* ---------------- full-screen map housekeeping ----------------
@@ -691,7 +721,7 @@ export default function ReportScreen({ view = 'verdict' }) {
 
   // The moment either control is touched, the tip has said what it had to
   // say -- leaving it up would be pointing at something already answered.
-  useEffect(() => { if (!assumed) setShowUnitTip(false); }, [assumed]);
+  useEffect(() => { if (!assumed && pinTouched) setShowUnitTip(false); }, [assumed, pinTouched]);
 
   // A half-typed address search shouldn't still be sitting open the next
   // time full screen is entered.
@@ -815,13 +845,23 @@ export default function ReportScreen({ view = 'verdict' }) {
   // spot it was tapped at, so a search or "my location" that moves the
   // pin elsewhere drops the tint on its own.
   const [picked, setPicked] = useState(null);
+  const placeRef = useRef(null);
+  placeRef.current = hasPlace ? { lat, lon } : null;
   const moveTo = useCallback((toLat, toLon, label) => {
     if (!Number.isFinite(toLat) || !Number.isFinite(toLon)) return;
     setLocError('');
     setAddrEditOpen(false);
     setMapSearchOpen(false);
-    setSolar(null); setSolarFailed(false); setAqi(null);
-    setPlace({ lat: toLat, lon: toLon, pinCode: '', address: label || '' });
+    // A tap on a nearby tower keeps the 3D map up (the pin is moved inside
+    // it); clearing the sun path here unmounted the map and reloaded the
+    // whole scene on every tap. Only a jump to somewhere else resets it.
+    const here = placeRef.current;
+    const far = !here || Math.abs(here.lat - toLat) > 0.004 || Math.abs(here.lon - toLon) > 0.004;
+    if (far) { setSolar(null); setSolarFailed(false); }
+    setAqi(null);
+    // Same neighbourhood: keep the pincode we have until the reverse lookup
+    // answers, instead of blanking the area half for a moment on every tap.
+    setPlace((p) => ({ lat: toLat, lon: toLon, pinCode: far ? '' : p.pinCode, address: label || (far ? '' : p.address) }));
     pinAsked.current = `${toLat},${toLon}`;
     fetch(`/api/sunscout/reverse-geocode?lat=${toLat}&lon=${toLon}`)
       .then((r) => r.json())
@@ -1572,12 +1612,25 @@ export default function ReportScreen({ view = 'verdict' }) {
                 {/* Attached to the card's own top edge, full width, instead
                     of a pill floating above its right corner -- it lines up
                     with the box it's about. */}
-                {showUnitTip && assumed && (
+                {/* One yellow strip, one step at a time: pick the building
+                    first, then floor and facing. */}
+                {showUnitTip && (!pinTouched || assumed) && (
                   <p className="bsr-docktip" role="note">
-                    <span className="bsr-docktip-icon" aria-hidden="true"><ArrowDown size={15} strokeWidth={2.6} /></span>
+                    <span className="bsr-docktip-icon" aria-hidden="true">
+                      {pinTouched ? <ArrowDown size={15} strokeWidth={2.6} /> : <MapPin size={15} strokeWidth={2.6} />}
+                    </span>
                     <span className="bsr-docktip-text">
-                      <strong>Set your floor and facing</strong>
-                      <span>Scores change a lot between floors</span>
+                      {pinTouched ? (
+                        <>
+                          <strong>Set your floor and facing</strong>
+                          <span>Scores change a lot between floors</span>
+                        </>
+                      ) : (
+                        <>
+                          <strong>Tap your building on the map</strong>
+                          <span>{assumed ? 'Then set your floor and facing below' : 'So we score your exact tower'}</span>
+                        </>
+                      )}
                     </span>
                     <button
                       type="button"
@@ -1598,7 +1651,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                 <p className="bsr-mapcta-say">
                   {pinTouched
                     ? 'Pin placed - every score below is for this exact spot.'
-                    : 'Tap your building on the map. The address alone lands on the centre of the complex.'}
+                    : 'Without a pin, scores use the centre of the complex.'}
                 </p>
                 <button
                   type="button"
@@ -1616,7 +1669,7 @@ export default function ReportScreen({ view = 'verdict' }) {
           {!fullMap && mapbarNode}
         </div>
         {!fullMap && (
-          <p className="bsr-maphint">
+          <p className={`bsr-maphint${reportRunning ? ' is-locked' : ''}`}>
             {reportRunning
               ? 'The pin is locked while the report is built from this spot - moving it now would mix two blocks into one report.'
               : 'Click again to move the pin to another building.'}
@@ -1821,13 +1874,20 @@ export default function ReportScreen({ view = 'verdict' }) {
             const pct = Math.max(0, Math.min(100, Number(topScore) || 0));
             return (
           <section className="bsr-answer bsr-sum" id="the-score" aria-live="polite">
-            <div className="bsr-sum-dial" role="img" aria-label={`Overall ${topScore} out of 100`}>
-              <svg viewBox="0 0 120 120" aria-hidden="true">
-                <circle cx="60" cy="60" r="52" className="bsr-sum-track" />
+            <div className="bsr-sum-dial" role="img" aria-label={`Property score ${topScore} out of 100`}>
+              <svg viewBox="0 0 150 150" aria-hidden="true">
+                <defs>
+                  <path id="bsr-sum-label-arc" d="M 13 75 A 62 62 0 0 1 137 75" />
+                </defs>
+                {/* The name of the number, set along the top of the ring. */}
+                <text className="bsr-sum-label" textAnchor="middle">
+                  <textPath href="#bsr-sum-label-arc" startOffset="50%">PROPERTY SCORE</textPath>
+                </text>
+                <circle cx="75" cy="75" r="48" className="bsr-sum-track" />
                 <circle
-                  cx="60" cy="60" r="52" className="bsr-sum-arc"
-                  strokeDasharray={`${(pct / 100) * 326.7} 326.7`}
-                  transform="rotate(-90 60 60)"
+                  cx="75" cy="75" r="48" className="bsr-sum-arc"
+                  strokeDasharray={`${(pct / 100) * 301.6} 301.6`}
+                  transform="rotate(-90 75 75)"
                 />
               </svg>
               <span className="bsr-sum-n">{topScore}</span>
@@ -1835,7 +1895,9 @@ export default function ReportScreen({ view = 'verdict' }) {
             </div>
             <div className="bsr-answer-say">
               <p className="bsr-sum-eyebrow">
-                {hasArea ? 'At a glance · area + this flat' : 'At a glance · this flat'}
+                <span className="bsr-sum-eyebrow-full">{hasArea ? 'At a glance · area + this flat' : 'At a glance · this flat'}</span>
+                {/* Phone: the dial is too small for the curved label, so it's said here. */}
+                <span className="bsr-sum-eyebrow-ph">Property score</span>
               </p>
               <h2>{sum.headline}</h2>
               <p>
@@ -1866,6 +1928,27 @@ export default function ReportScreen({ view = 'verdict' }) {
                   unit - <a href="#the-flat" onClick={scrollToUnitSet}>set the actual floor and facing</a> to score this specific flat.
                 </p>
               )}
+            </div>
+            {/* The full report is one of the main things BlindSpot does --
+                it used to live only at the very bottom of the page. */}
+            <div className="bsr-sum-cta">
+              <p className="bsr-sum-cta-title"><FileText size={16} strokeWidth={2.2} aria-hidden="true" /> The full BlindSpot report</p>
+              <p className="bsr-sum-cta-sub">
+                {hasArea
+                  ? 'Area + this flat, written up with what to verify before you buy.'
+                  : 'This flat, written up with what to verify before you buy.'}
+              </p>
+              <button
+                type="button"
+                className="bsr-sum-cta-go"
+                disabled={!solar?.pathData}
+                onClick={() => setReportOpen('full')}
+              >
+                Generate full report <span aria-hidden="true">→</span>
+              </button>
+              <span className="bsr-sum-cta-note">
+                {solar?.pathData ? 'About two minutes · keep browsing' : 'Waiting for the 3D map to load'}
+              </span>
             </div>
           </section>
             );
@@ -1994,7 +2077,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                           : pinCode
                             ? `Pin ${pinCode} isn't in our neighbourhood records yet, so we won't guess at safety, water or schools here.`
                             : "We couldn't work out the pincode for this exact spot, so there's nothing to look the area up by."}
-                        {areaFailed ? '' : ' BlindSpot has records for Delhi NCR, Bangalore, Chandigarh, Hyderabad, Mumbai, Chennai and Ahmedabad.'}
+                        {areaFailed ? '' : ' BlindSpot has records for Delhi NCR, Bangalore, Chandigarh, Hyderabad, Mumbai and Chennai.'}
                       </p>
                       {areaFailed && (
                         <p style={{ marginTop: 10 }}>
@@ -2030,7 +2113,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                   work for nudging, and the value is only clamped when you leave
                   the field, so typing "1" on the way to "12" isn't fought. */}
               <p className="bsr-set" ref={unitSetRef}>
-                <label className="bsr-set-field">
+                <label className={`bsr-set-field${floorSet ? '' : ' is-unset'}`}>
                   <span>Floor</span>
                   <input
                     type="text"
@@ -2057,7 +2140,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                     aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
                   />
                 </label>
-                <label className="bsr-set-field">
+                <label className={`bsr-set-field${facingSet ? '' : ' is-unset'}`}>
                   <span>Faces</span>
                   <select
                     value={facingSet ? facing : ''}
@@ -2328,60 +2411,6 @@ export default function ReportScreen({ view = 'verdict' }) {
         </>
       )}
       {reportModal}
-      {unitAsk && (() => {
-        const n = parseInt(unitAsk.floor, 10);
-        const floorOk = Number.isFinite(n) && n >= 1 && n <= MAX_FLOOR;
-        const ok = floorOk && Boolean(unitAsk.facing);
-        const go = (e) => {
-          e.preventDefault();
-          if (!ok) return;
-          setFloor(n); setFloorText(String(n)); setFloorSet(true);
-          setFacing(unitAsk.facing); setFacingSet(true);
-          setUnitAsk(null);
-          setReportOpen('gallery');
-        };
-        return (
-          <div className="bsr-ask" role="dialog" aria-modal="true" aria-labelledby="bsr-ask-title" onMouseDown={(e) => { if (e.target === e.currentTarget) setUnitAsk(null); }}>
-            <form className="bsr-ask-card" onSubmit={go} onKeyDown={(e) => { if (e.key === 'Escape') setUnitAsk(null); }}>
-              <button type="button" className="bsr-ask-x" onClick={() => setUnitAsk(null)} aria-label="Close">×</button>
-              <p className="bsr-ask-eyebrow"><Sun size={14} strokeWidth={2.2} aria-hidden="true" /> Year-round sunlight report</p>
-              <h2 id="bsr-ask-title">Which floor, and which way does it face?</h2>
-              <p className="bsr-ask-sub">Sunlight changes a lot between floors and facings, so the report is built for your exact unit.</p>
-              <label className="bsr-ask-floor">
-                <span>Floor</span>
-                <input
-                  type="text" inputMode="numeric" pattern="[0-9]*" maxLength={2} autoFocus
-                  placeholder="e.g. 12"
-                  value={unitAsk.floor}
-                  onChange={(e) => setUnitAsk((u) => ({ ...u, floor: e.target.value.replace(/[^\d]/g, '').slice(0, 2) }))}
-                  aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
-                />
-              </label>
-              <fieldset className="bsr-ask-facing">
-                <legend>Balcony / main window faces</legend>
-                <div className="bsr-ask-grid">
-                  {['North-West', 'North', 'North-East', 'West', null, 'East', 'South-West', 'South', 'South-East'].map((f, i) => (
-                    f ? (
-                      <button
-                        key={f} type="button"
-                        className={`bsr-ask-dir${unitAsk.facing === f ? ' is-on' : ''}`}
-                        aria-pressed={unitAsk.facing === f}
-                        title={f}
-                        onClick={() => setUnitAsk((u) => ({ ...u, facing: f }))}
-                      >
-                        {FACING_SHORT[f]}
-                      </button>
-                    ) : <span key={`c${i}`} className="bsr-ask-centre" aria-hidden="true" />
-                  ))}
-                </div>
-              </fieldset>
-              <button type="submit" className="bsr-ask-go" disabled={!ok}>
-                Build the sunlight report
-              </button>
-            </form>
-          </div>
-        );
-      })()}
     </div>
   );
 }

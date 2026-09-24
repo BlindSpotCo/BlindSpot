@@ -30,6 +30,37 @@ export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTi
     }
   }, [onReady]);
 
+  // The document is built once per address (and rebuilt only if the pin
+  // jumps far, i.e. a new address). Pin taps, the tapped-tower tint and a
+  // new day's sun path are posted INTO the live document instead --
+  // rebuilding it reloaded the whole 3D scene every time.
+  const docOrigin = useRef(null);
+  if (!docOrigin.current || Math.abs(docOrigin.current.lat - lat) > 0.004 || Math.abs(docOrigin.current.lon - lon) > 0.004) {
+    docOrigin.current = { lat, lon, key: `${lat},${lon}` };
+  }
+  const docKey = docOrigin.current.key;
+  const latest = useRef({});
+  latest.current = { lat, lon, highlightId, pathData, sunTimes, simTime };
+  const pushLive = () => {
+    const w = iframeRef.current?.contentWindow;
+    if (!w) return;
+    const l = latest.current;
+    w.postMessage({ type: 'setPin', lat: l.lat, lon: l.lon, hl: l.highlightId ?? null }, '*');
+    w.postMessage({
+      type: 'setPath',
+      pts: (l.pathData || []).map((p) => ({ lon: p.lon, lat: p.lat, el: Math.round(p.el * 100) / 100, az: Math.round(p.az * 100) / 100, time: p.time, iso: p.iso })),
+      rise: l.sunTimes?.rise, set: l.sunTimes?.set, time: l.simTime,
+    }, '*');
+  };
+  const pushLiveRef = useRef(pushLive);
+  pushLiveRef.current = pushLive;
+  const pathKey = pathData.length > 0 ? `${pathData[0].iso}|${pathData.length}` : '';
+  useEffect(() => {
+    const w = iframeRef.current?.contentWindow;
+    w?.postMessage({ type: 'setPin', lat, lon, hl: highlightId ?? null }, '*');
+  }, [lat, lon, highlightId]);
+  useEffect(() => { pushLiveRef.current(); }, [pathKey]);
+
   const html = useMemo(() => {
     const allPtsJs = JSON.stringify(pathData.map(p => ({
       lon: p.lon, lat: p.lat, shlat: p.shlat, shlon: p.shlon,
@@ -195,8 +226,18 @@ window.addEventListener('message',function(e){
     notifyParent(ok?'map3d_ready':'map3d_failed', ok?null:'no-canvas');
     return;
   }
-  if(e.data.type==='setAnimating'){isAnimating=e.data.value;if(isAnimating)startAnim();else stopAnim();}
+  if(e.data.type==='setAnimating'){restoreLive();isAnimating=e.data.value;if(isAnimating)startAnim();else stopAnim();}
+  if(e.data.type==='setPin'){ try{ setPin(e.data.lat,e.data.lon,e.data.hl); }catch(err){} return; }
+  if(e.data.type==='setPath'&&Array.isArray(e.data.pts)&&e.data.pts.length){
+    livePts=e.data.pts; allPts=livePts;
+    if(e.data.rise) RISE=e.data.rise; if(e.data.set) SET=e.data.set;
+    var nowT=e.data.time||(allPts[ai]&&allPts[ai].time)||'12:00', np=nowT.split(':'), nm=parseInt(np[0])*60+parseInt(np[1]), bi=0, bdd=99999;
+    for(var q=0;q<allPts.length;q++){var tq=allPts[q].time.split(':'),dq=Math.abs(parseInt(tq[0])*60+parseInt(tq[1])-nm);if(dq<bdd){bdd=dq;bi=q;}}
+    ai=bi; animStartT=null; updateView(allPts[bi]); drawArc();
+    return;
+  }
   if(e.data.type==='seekTime'&&!isAnimating){
+    restoreLive();
     var parts=e.data.time.split(':'),mins=parseInt(parts[0])*60+parseInt(parts[1]),best=0,bd=99999;
     for(var j=0;j<allPts.length;j++){var t=allPts[j].time.split(':'),d=Math.abs(parseInt(t[0])*60+parseInt(t[1])-mins);if(d<bd){bd=d;best=j;}}
     ai=best;updateView(allPts[best]);drawArc();
@@ -209,6 +250,12 @@ window.addEventListener('message',function(e){
     stopAnim();
     if(capDate){
       try{ map.setDate(new Date(capDate+'T'+capTime+':00')); }catch(err){}
+      // updateView() below sets the map's date from the path point it's
+      // given. With the LIVE path that was today's (or the picked season's)
+      // date, so every "Summer/Winter/Spring/Autumn" frame was really the
+      // same day's shadows at three times. Use this date's own path.
+      var capPts=buildPath(capDate);
+      if(capPts.length) allPts=capPts;
     }
     var parts2=capTime.split(':'),mins2=parseInt(parts2[0])*60+parseInt(parts2[1]),best2=0,bd2=99999;
     for(var k=0;k<allPts.length;k++){var t2=allPts[k].time.split(':'),d2=Math.abs(parseInt(t2[0])*60+parseInt(t2[1])-mins2);if(d2<bd2){bd2=d2;best2=k;}}
@@ -436,7 +483,62 @@ function applyHL(){
 (function waitForTiles(n){ if(patchTint()){ applyHL(); return; } if(n<60) setTimeout(function(){ waitForTiles(n+1); },250); })(0);
 tL=map.addMapTiles(TILES.s);
 map.addGeoJSONTiles('https://{s}.data.osmbuildings.org/0.2/59fcc2e8/tile/{z}/{x}/{y}.json');
-map.addGeoJSON(${obsGj});
+var PIN_LAT=${lat}, PIN_LON=${lon};
+var TZ_SUFFIX='+05:30'; // every time on this page is IST (tzOffset 330)
+var pinLayer=map.addGeoJSON(${obsGj});
+function pinRing(la,lo){var steps=20,rd=0.000035,ring=[];for(var i=0;i<=steps;i++){var a=2*Math.PI*i/steps;ring.push([lo+rd*Math.cos(a)/Math.cos(la*Math.PI/180),la+rd*Math.sin(a)]);}return {type:'FeatureCollection',features:[{type:'Feature',properties:{color:'#D1901F',height:0.6,minHeight:0},geometry:{type:'Polygon',coordinates:[ring]}}]};}
+// Move the pin without rebuilding this document. Rebuilding (a new srcDoc)
+// reloaded the whole 3D scene -- tiles, buildings, WebGL -- on every tap,
+// which was the main lag on the map, worst on phones.
+// The visible pin is the dot fixed at the centre of the map, so moving the
+// pin means gliding the map to put the new spot under it (the old rebuild
+// did this by re-centring the whole scene).
+var _glide=null;
+function glideTo(la,lo){
+  if(typeof map.setPosition!=='function') return;
+  var from=null; try{ var ps=map.getPosition&&map.getPosition(); if(ps&&ps.latitude!=null) from={la:ps.latitude,lo:ps.longitude}; }catch(e){}
+  if(!from) from={la:PIN_LAT,lo:PIN_LON};
+  if(_glide) cancelAnimationFrame(_glide);
+  var t0=null, DUR=280;
+  function step(ts){
+    if(t0===null) t0=ts;
+    var k=Math.min(1,(ts-t0)/DUR), e=1-Math.pow(1-k,3);
+    try{ map.setPosition({latitude:from.la+(la-from.la)*e, longitude:from.lo+(lo-from.lo)*e}); }catch(err){}
+    if(k<1) _glide=requestAnimationFrame(step); else { _glide=null; drawArc(); }
+  }
+  _glide=requestAnimationFrame(step);
+}
+function setPin(la,lo,hl){
+  var moved=Math.abs(la-PIN_LAT)>1e-7||Math.abs(lo-PIN_LON)>1e-7;
+  if(moved) glideTo(la,lo);
+  PIN_LAT=la; PIN_LON=lo;
+  try{ if(pinLayer) map.remove(pinLayer); }catch(e){}
+  try{ pinLayer=map.addGeoJSON(pinRing(la,lo)); }catch(e){}
+  if(hl!==undefined){ HL_ID=hl?String(hl):null; applyHL(); }
+}
+// Sun position for any date (SunCalc's formulae), so season captures can
+// place the sun and the day's arc for THAT date rather than today's.
+var _R=Math.PI/180,_E=_R*23.4397;
+function _days(d){return d.valueOf()/864e5-0.5+2440588-2451545;}
+function sunPos(date,la,lo){
+  var d=_days(date),M=_R*(357.5291+0.98560028*d),C=_R*(1.9148*Math.sin(M)+0.02*Math.sin(2*M)+0.0003*Math.sin(3*M)),L=M+C+_R*102.9372+Math.PI;
+  var dec=Math.asin(Math.sin(L)*Math.sin(_E)),ra=Math.atan2(Math.sin(L)*Math.cos(_E),Math.cos(L));
+  var phi=_R*la, H=_R*(280.16+360.9856235*d)+_R*lo-ra;
+  var az=Math.atan2(Math.sin(H),Math.cos(H)*Math.sin(phi)-Math.tan(dec)*Math.cos(phi));
+  var alt=Math.asin(Math.sin(phi)*Math.sin(dec)+Math.cos(phi)*Math.cos(dec)*Math.cos(H));
+  return {az:((az/_R)+180+360)%360, el:alt/_R};
+}
+function buildPath(dateStr){
+  var out=[];
+  for(var m=5*60;m<=19*60+30;m+=15){
+    var hh=String(Math.floor(m/60)).padStart(2,'0'), mm=String(m%60).padStart(2,'0');
+    var dt=new Date(dateStr+'T'+hh+':'+mm+':00'+TZ_SUFFIX);
+    if(isNaN(dt)) continue;
+    var sp=sunPos(dt,PIN_LAT,PIN_LON);
+    out.push({az:Math.round(sp.az*100)/100, el:Math.round(sp.el*100)/100, time:hh+':'+mm, iso:dt.toISOString()});
+  }
+  return out;
+}
 
 // Always read the map's OWN current tilt/rotation right before saving,
 // rather than trusting curTilt/curRot - those only got updated by the +/-
@@ -454,7 +556,10 @@ function saveCamera(){
 }
 function setT(m){if(m===curT)return;curT=m;if(tL)map.remove(tL);tL=map.addMapTiles(TILES[m]);document.getElementById('bs').className='tile-btn'+(m==='s'?' on':'');document.getElementById('bsat').className='tile-btn'+(m==='sat'?' on':'');}
 
-const allPts=${allPtsJs};
+var allPts=${allPtsJs};
+var livePts=allPts;
+var RISE='${sunTimes.rise}', SET='${sunTimes.set}';
+function restoreLive(){ if(allPts!==livePts){ allPts=livePts; drawArc(); } }
 const sunEl=document.getElementById('sun');
 const arcSvg=document.getElementById('arc-svg');
 let curEl=${mel}, curAz=${maz};
@@ -503,7 +608,8 @@ function drawArc(){
   arc.setAttribute('fill','none');arc.setAttribute('stroke','#AF5F30');arc.setAttribute('stroke-width','2.5');arc.setAttribute('stroke-dasharray','6 9');arc.setAttribute('opacity','0.85');
   arcSvg.appendChild(arc);
   ab.forEach(function(p,i){if(i%3!==0)return;const s=projectToScreen(p.az,p.el);const d=document.createElementNS('http://www.w3.org/2000/svg','circle');d.setAttribute('cx',s[0].toFixed(1));d.setAttribute('cy',s[1].toFixed(1));d.setAttribute('r','2.5');d.setAttribute('fill','#FFD23C');d.setAttribute('opacity','0.85');arcSvg.appendChild(d);});
-  var riseLabel='Rise ' + '${sunTimes.rise}', setLabel='Set ' + '${sunTimes.set}';
+  var live=(allPts===livePts);
+  var riseLabel='Rise ' + (live?RISE:ab[0].time), setLabel='Set ' + (live?SET:ab[ab.length-1].time);
   [{pt:sc[0],txt:riseLabel,anchor:'end'},{pt:sc[sc.length-1],txt:setLabel,anchor:'start'}].forEach(function(lbl){
     const ci=document.createElementNS('http://www.w3.org/2000/svg','circle');ci.setAttribute('cx',lbl.pt[0].toFixed(1));ci.setAttribute('cy',lbl.pt[1].toFixed(1));ci.setAttribute('r','4.5');ci.setAttribute('fill','#AF5F30');arcSvg.appendChild(ci);
     const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',(lbl.pt[0]+(lbl.anchor==='end'?-10:10)).toFixed(1));t.setAttribute('y',(lbl.pt[1]-8).toFixed(1));t.setAttribute('fill','#1C1812');t.setAttribute('font-size','13');t.setAttribute('font-family',"'Geist Mono',monospace");t.setAttribute('font-weight','600');t.setAttribute('text-anchor',lbl.anchor);t.setAttribute('opacity','0.9');t.textContent=lbl.txt;arcSvg.appendChild(t);
@@ -581,7 +687,8 @@ mapEl.addEventListener('touchend',function(e){
   reportPick(touch.clientX, touch.clientY);
 });
 
-map.on('change',function(){try{var z=map.position?map.position.zoom:initZoom;if(z)initZoom=z;}catch(e){}saveCamera();});
+var _camT=null;
+map.on('change',function(){try{var z=map.position?map.position.zoom:initZoom;if(z)initZoom=z;}catch(e){} clearTimeout(_camT); _camT=setTimeout(saveCamera,300);});
 document.getElementById('map').addEventListener('wheel', function(){
   setTimeout(function(){
     try{
@@ -672,7 +779,8 @@ function animTick(ts){
   try{map.setDate(interpDate(p0.iso,p1.iso,t));}catch(e){}
   var stm=document.getElementById('stm');if(stm)stm.textContent=p0.time;
   var st2=document.getElementById('sun-time');if(st2)st2.textContent=p0.time;
-  drawArc();
+  // The arc is the same all day -- it was being torn down and rebuilt
+  // (~100 SVG nodes) on every frame. It's redrawn on rotate/tilt/resize.
   if(t>=1){ai=(ai+1)%allPts.length;animStartT=ts;}
   animFrame=requestAnimationFrame(animTick);
 }
@@ -698,7 +806,7 @@ mapIsUp = true;
 notifyParent('map3d_ready');
 </script></body></html>`;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lat, lon, highlightId, pathData.length > 0 ? pathData[0].iso.slice(0,10) : '']);
+  }, [docKey]);
 
   useEffect(() => {
     const handler = (e) => {
@@ -712,7 +820,7 @@ notifyParent('map3d_ready');
       // rather than guessed from this component's mount -- see the
       // notifyParent comments in the srcDoc script.
       if (DEBUG && e.data?.type) console.log('[map3d] parent heard:', e.data.type);
-      if(e.data?.type==='map3d_ready') onStatus?.('ready');
+      if(e.data?.type==='map3d_ready') { pushLiveRef.current(); onStatus?.('ready'); }
       if(e.data?.type==='map3d_failed') onStatus?.('failed', e.data.reason);
       // Non-fatal: something threw inside a map that is up and running.
       // Worth knowing about, not worth abandoning a capture over.

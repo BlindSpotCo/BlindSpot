@@ -41,7 +41,11 @@ import { useRouter } from 'next/navigation';
 // made it feel abrupt. If you retune the CSS delays, keep NAV_AT_MS
 // greater than the last animation's end time.
 const TOTAL_MS = 1560;
-const NAV_AT_MS = 1560;  // ~1400ms of animation + ~160ms hold on the resolved frame
+// Navigation starts well before the animation ends -- the report route is
+// already prefetched, and making people watch 1.5s of transition before
+// anything loaded was the first lag of the whole flow. The overlay keeps
+// playing until the new page replaces it.
+const NAV_AT_MS = 650;
 const REDUCED_MS = 320;  // reduced-motion: brief fade, then go
 
 export default function PinDropTransition({ href = '/#find', className, children, autoStart = false, hidden = false }) {
@@ -92,7 +96,9 @@ export default function PinDropTransition({ href = '/#find', className, children
       // same-page destination. A short buffer past the nav itself, so
       // it clears just after the new content is in rather than
       // mid-navigation.
-      timers.current.push(setTimeout(() => setPlaying(false), 400));
+      // Long enough that the overlay is still up when the new route paints
+      // (navigation now starts mid-animation).
+      timers.current.push(setTimeout(() => setPlaying(false), 2500));
     }, navAt));
   }, [playing, router, href]);
 
