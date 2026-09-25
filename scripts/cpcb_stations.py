@@ -355,3 +355,30 @@ AHMEDABAD_STATIONS = [
 # Phase-4 GIDC Vatva -- real, named station, no reading found this session
 # (direct page fetch 404'd; not chased with a guessed alternate URL).
 AHMEDABAD_STATIONS_UNREAD = ["Phase-4 GIDC Vatva (CPCB)"]
+
+# Kolkata (WBPCB / CPCB). Only 2 stations had genuinely clean, distinct,
+# dated readings this pass -- Jadavpur and Rabindra Sarobar's IQAir pages
+# returned values/timestamps IDENTICAL to Victoria's (same AQI, same
+# pollutant breakdown, same weather fields), which reads as a
+# station-data-unavailable fallback rather than two independent live
+# readings -- excluded rather than used, since using them would trip the
+# same zero-variance/placeholder-data smell the project's own validator
+# checks for. Fort William, Bidhannagar (Salt Lake ATI), and Rabindra
+# Bharati University are real named WBPCB stations with coordinates but
+# no usable dated reading found. Presidency University showed a reading
+# (75) but only via the same aggregator page that also carried a
+# confirmed-wrong "Flora Fountain, Kolkata" entry (Flora Fountain is
+# actually in Mumbai, not Kolkata -- excluded entirely, not even listed
+# here) -- not independently re-confirmed, so left unread rather than
+# trusted on a single compromised source. With only 2 usable stations,
+# IDW interpolation will be coarse across this city -- same disclosure
+# as Chandigarh's 3-station case.
+KOLKATA_STATIONS = [
+    ("Victoria (WBPCB)",       22.54480, 88.34040, 49, "US AQI, PM2.5 8.8ug/m3, 19:30 IST 25 Sep 2026 (IQAir)"),
+    ("BITM / Ballygunge (WBPCB)", 22.53680, 88.36380, 65, "US AQI, PM2.5 16.6ug/m3, 09:30 IST 2 Jul 2026 (IQAir)"),
+]
+KOLKATA_STATIONS_UNREAD = [
+    "Jadavpur (WBPCB)", "Rabindra Sarobar (WBPCB)", "Fort William (WBPCB)",
+    "Bidhannagar / Salt Lake ATI (WBPCB)", "Rabindra Bharati University B.T. Road (WBPCB)",
+    "Presidency University (WBPCB)",
+]

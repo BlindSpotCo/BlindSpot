@@ -34627,5 +34627,3541 @@
       "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
       "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
     }
+  },
+  {
+    "pin_code": "700001",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 56,
+      "infrastructure": 70,
+      "air": 87,
+      "power": 78,
+      "schools": 68,
+      "water": 47,
+      "roads": 48,
+      "sewerage": 49
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 65,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 280,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Shree Jain Vidyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 5,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        3000,
+        6000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "BBD Bagh -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700003",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 58,
+      "infrastructure": 72,
+      "air": 87,
+      "power": 78,
+      "schools": 57,
+      "water": 49,
+      "roads": 50,
+      "sewerage": 38
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 65,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 329,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "Ramakrishna Sarada Mission Sister Nivedita Girls' School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Bagbazar High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 9,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        3000,
+        6000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Baghbazar -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700004",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 59,
+      "infrastructure": 65,
+      "air": 87,
+      "power": 78,
+      "schools": 58,
+      "water": 50,
+      "roads": 51,
+      "sewerage": 39
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 64,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 313,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Sailendra Sircar Vidyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 11,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        3000,
+        6000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Shyambazar -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700006",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 61,
+      "infrastructure": 75,
+      "air": 87,
+      "power": 78,
+      "schools": 60,
+      "water": 52,
+      "roads": 53,
+      "sewerage": 41
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 67,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 281,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "The Oriental Seminary for Girls",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Scottish Church Collegiate School",
+        "address": null,
+        "board": "WBBSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Maheshwari Girls' School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 23,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        3000,
+        6000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Jorasanko -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700007",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 62,
+      "infrastructure": 65,
+      "air": 87,
+      "power": 78,
+      "schools": 61,
+      "water": 53,
+      "roads": 54,
+      "sewerage": 42
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 66,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 265,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "Marwari Balika Vidyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "SVS English School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 32,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        3000,
+        6000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Barabazar -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700009",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 64,
+      "infrastructure": 67,
+      "air": 87,
+      "power": 78,
+      "schools": 63,
+      "water": 55,
+      "roads": 43,
+      "sewerage": 44
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 66,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 314,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Brahmo Girls School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Taki Government Sponsored Boys School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Bodhi Peet School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 45,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        3000,
+        6000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Sovabazar -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700037",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 65,
+      "infrastructure": 57,
+      "air": 87,
+      "power": 78,
+      "schools": 64,
+      "water": 56,
+      "roads": 44,
+      "sewerage": 45
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 65,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 301,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "Central Modern School",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sri Ramkrishna Sarada Sangha Balika Vidyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 50,
+    "crime_tier": "Moderate",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        3000,
+        6000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Belgachia -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700013",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 63,
+      "infrastructure": 77,
+      "air": 87,
+      "power": 78,
+      "schools": 54,
+      "water": 58,
+      "roads": 59,
+      "sewerage": 47
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 69,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 321,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "Union Chapel School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Lee Memorial Mission School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 39,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        7000,
+        13000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Dharmatala -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700016",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 66,
+      "infrastructure": 80,
+      "air": 88,
+      "power": 78,
+      "schools": 57,
+      "water": 61,
+      "roads": 62,
+      "sewerage": 50
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 71,
+    "grade": "B+",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 273,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Apeejay School (Park Street)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "All Saints Day School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "National Collegiate School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 55,
+    "crime_tier": "Moderate",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        12500,
+        12500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Park Street -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing",
+      "source": "West Bengal Directorate of Registration and Stamp Revenue ('Market Value') via squareyards.com locality listing",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700017",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 67,
+      "infrastructure": 57,
+      "air": 85,
+      "power": 78,
+      "schools": 58,
+      "water": 62,
+      "roads": 50,
+      "sewerage": 51
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 66,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 257,
+    "schools_count": 5,
+    "schools_list": [
+      {
+        "name": "Park Circus High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Don Bosco School (Park Circus)",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "La Martiniere for Girls",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "La Martiniere for Boys",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Birla High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 57,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        7000,
+        13000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Park Circus -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700069",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 61,
+      "infrastructure": 78,
+      "air": 87,
+      "power": 78,
+      "schools": 52,
+      "water": 56,
+      "roads": 57,
+      "sewerage": 58
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 68,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 269,
+    "schools_count": 0,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "schools_sourced": false,
+    "crime_percentile": 23,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        7000,
+        13000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Esplanade -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700071",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 67,
+      "infrastructure": 80,
+      "air": 87,
+      "power": 78,
+      "schools": 58,
+      "water": 62,
+      "roads": 50,
+      "sewerage": 51
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 70,
+    "grade": "B+",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 263,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "Loreto House",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sakhawat Memorial Govt. Girls' High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 57,
+    "crime_tier": "Moderate",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        7000,
+        13000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Middleton Row -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700087",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 61,
+      "infrastructure": 74,
+      "air": 87,
+      "power": 78,
+      "schools": 52,
+      "water": 56,
+      "roads": 57,
+      "sewerage": 58
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 67,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 325,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "St Thomas' Day School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "National Boy School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 23,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        7000,
+        13000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "New Market -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700019",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 75,
+      "infrastructure": 51,
+      "air": 85,
+      "power": 78,
+      "schools": 76,
+      "water": 72,
+      "roads": 62,
+      "sewerage": 59
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 70,
+    "grade": "B+",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 195,
+    "schools_count": 4,
+    "schools_list": [
+      {
+        "name": "Modern High School for Girls",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Army Public School (Ballygunge)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Ballygunge Government High School",
+        "address": null,
+        "board": "WBBSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Kendriya Vidyalaya (Ballygunge)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 91,
+    "crime_tier": "Low",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        6500,
+        20000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Ballygunge -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700020",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 67,
+      "infrastructure": 76,
+      "air": 87,
+      "power": 78,
+      "schools": 68,
+      "water": 64,
+      "roads": 67,
+      "sewerage": 64
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 73,
+    "grade": "B+",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 270,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "Julien Day School",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Ashok Hall Girls' Higher Secondary School",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 57,
+    "crime_tier": "Moderate",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        6500,
+        20000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Elgin -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700025",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 72,
+      "infrastructure": 81,
+      "air": 87,
+      "power": 78,
+      "schools": 73,
+      "water": 69,
+      "roads": 72,
+      "sewerage": 56
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 76,
+    "grade": "B+",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 271,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Chakraberia High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Ramesh Mitra Girls School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "South Suburban High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 77,
+    "crime_tier": "Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        6500,
+        20000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Bhowanipore -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700026",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 73,
+      "infrastructure": 74,
+      "air": 87,
+      "power": 78,
+      "schools": 74,
+      "water": 70,
+      "roads": 60,
+      "sewerage": 57
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 74,
+    "grade": "B+",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 255,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "The Cambridge School (Kalighat)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Mattrix Modern School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "GSS Girls School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 82,
+    "crime_tier": "Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        6500,
+        20000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Kalighat -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700027",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 74,
+      "infrastructure": 67,
+      "air": 88,
+      "power": 78,
+      "schools": 75,
+      "water": 71,
+      "roads": 61,
+      "sewerage": 58
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 73,
+    "grade": "B+",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 239,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Loyola High School (Alipore)",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Kendriya Vidyalaya (Alipore)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Chetla Boys High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 89,
+    "crime_tier": "Low",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        6500,
+        20000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Alipore -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700029",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 76,
+      "infrastructure": 58,
+      "air": 86,
+      "power": 78,
+      "schools": 77,
+      "water": 73,
+      "roads": 63,
+      "sewerage": 60
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 72,
+    "grade": "B+",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 207,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "Tirthapati Institution",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Muralidhar Girls' School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 93,
+    "crime_tier": "Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        6500,
+        20000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Rashbehari -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700053",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 73,
+      "infrastructure": 76,
+      "air": 87,
+      "power": 78,
+      "schools": 74,
+      "water": 70,
+      "roads": 60,
+      "sewerage": 57
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 74,
+    "grade": "B+",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 258,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "National Public School (New Alipore)",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "New Alipore Multipurpose School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 82,
+    "crime_tier": "Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        6500,
+        20000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "New Alipore -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700032",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 64,
+      "infrastructure": 42,
+      "air": 86,
+      "power": 78,
+      "schools": 59,
+      "water": 57,
+      "roads": 60,
+      "sewerage": 46
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 62,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 280,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "Jadavpur Vidyapith",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Tulip Hall School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 45,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        4500,
+        9000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Jadavpur -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700033",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 65,
+      "infrastructure": 51,
+      "air": 87,
+      "power": 78,
+      "schools": 60,
+      "water": 58,
+      "roads": 61,
+      "sewerage": 47
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 65,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 264,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "St. Frank High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Tollygunge Girls High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 50,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        4500,
+        9000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Tollygunge -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700045",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 68,
+      "infrastructure": 60,
+      "air": 87,
+      "power": 78,
+      "schools": 63,
+      "water": 61,
+      "roads": 51,
+      "sewerage": 50
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 67,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 244,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "A.K. Ghosh School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 68,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        4500,
+        9000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Lake Gardens -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700047",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 70,
+      "infrastructure": 62,
+      "air": 87,
+      "power": 78,
+      "schools": 65,
+      "water": 63,
+      "roads": 53,
+      "sewerage": 52
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 69,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 212,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "Khanpur High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Riverdale High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 73,
+    "crime_tier": "Low",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        4500,
+        9000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Garia -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700068",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 60,
+      "infrastructure": 45,
+      "air": 86,
+      "power": 78,
+      "schools": 68,
+      "water": 53,
+      "roads": 56,
+      "sewerage": 55
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 62,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 285,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "Jodhpur Park Girls' High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Jodhpur Park Boys School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 18,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        4500,
+        9000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Jodhpur Park -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700094",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 59,
+      "infrastructure": 73,
+      "air": 86,
+      "power": 78,
+      "schools": 67,
+      "water": 52,
+      "roads": 55,
+      "sewerage": 54
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 67,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 304,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Welland Gouldsmith School (Panchasayar)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Panchasayar Siksha Niketan",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Indus Valley World School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 11,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        4500,
+        9000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Panchasayar -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700008",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 61,
+      "infrastructure": 42,
+      "air": 87,
+      "power": 78,
+      "schools": 54,
+      "water": 52,
+      "roads": 42,
+      "sewerage": 41
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 59,
+    "grade": "C+",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 259,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "Barisha High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Barisha Girls' High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 23,
+    "crime_tier": "Moderate",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        3300,
+        9090
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Barisha -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700034",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 60,
+      "infrastructure": 62,
+      "air": 87,
+      "power": 78,
+      "schools": 53,
+      "water": 51,
+      "roads": 54,
+      "sewerage": 40
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 63,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 278,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Behala Girls High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "K E Carmel School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Oxford High School (Behala)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 18,
+    "crime_tier": "Moderate",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        3300,
+        9090
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Behala -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700060",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 59,
+      "infrastructure": 58,
+      "air": 87,
+      "power": 78,
+      "schools": 52,
+      "water": 50,
+      "roads": 53,
+      "sewerage": 39
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 62,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 297,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Behala Parnasree Bidyamandir",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Holy Cross Mission School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Parnasree Satiprasanna Vidyapith",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 11,
+    "crime_tier": "High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        3300,
+        9090
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Parnasree -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700063",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 62,
+      "infrastructure": 58,
+      "air": 87,
+      "power": 78,
+      "schools": 55,
+      "water": 53,
+      "roads": 43,
+      "sewerage": 42
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 63,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 330,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "Gournagar High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "St Elizabeth Girl's School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 32,
+    "crime_tier": "Moderate",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        3300,
+        9090
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Thakurpukur -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700023",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 48,
+      "infrastructure": 44,
+      "air": 88,
+      "power": 78,
+      "schools": 41,
+      "water": 41,
+      "roads": 42,
+      "sewerage": 30
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 54,
+    "grade": "C+",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 332,
+    "schools_count": 4,
+    "schools_list": [
+      {
+        "name": "Modern Day School (Khidderpore)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Lajpat Balika Vidyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Morning Glory Primary & Nursery School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "St. Teresa's Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 0,
+    "crime_tier": "Very High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        2000,
+        4000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Khidderpore -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700024",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 49,
+      "infrastructure": 37,
+      "air": 87,
+      "power": 78,
+      "schools": 42,
+      "water": 42,
+      "roads": 43,
+      "sewerage": 31
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 53,
+    "grade": "C+",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 316,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "Guru Nanak Modern English School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Little Star English School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 2,
+    "crime_tier": "Very High",
+    "price_tier": 5,
+    "price_context": {
+      "tier": 5,
+      "label": "Budget",
+      "rate_sqft": [
+        2000,
+        4000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Garden Reach -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700015",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 63,
+      "infrastructure": 55,
+      "air": 86,
+      "power": 78,
+      "schools": 54,
+      "water": 56,
+      "roads": 63,
+      "sewerage": 45
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 64,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 299,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "Khanna High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "St. Sebastian's School",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 39,
+    "crime_tier": "Moderate",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        4000,
+        8500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Tangra -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700039",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 56,
+      "infrastructure": 49,
+      "air": 85,
+      "power": 78,
+      "schools": 60,
+      "water": 62,
+      "roads": 56,
+      "sewerage": 51
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 62,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 324,
+    "schools_count": 4,
+    "schools_list": [
+      {
+        "name": "Tiljala High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Bijoy Nagar High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Prince English School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Marian Co-educational School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 5,
+    "crime_tier": "High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        4000,
+        8500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Tiljala -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700042",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 63,
+      "infrastructure": 41,
+      "air": 86,
+      "power": 78,
+      "schools": 54,
+      "water": 56,
+      "roads": 63,
+      "sewerage": 45
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 61,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 302,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "Chittaranjan High School (Kasba)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Kasba Chittaranjan High School for Girls",
+        "address": null,
+        "board": "WBBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 39,
+    "crime_tier": "Moderate",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        4000,
+        8500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Kasba -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700046",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 67,
+      "infrastructure": 61,
+      "air": 86,
+      "power": 78,
+      "schools": 58,
+      "water": 60,
+      "roads": 54,
+      "sewerage": 49
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 66,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 238,
+    "schools_count": 4,
+    "schools_list": [
+      {
+        "name": "Grace Ling Liang English School",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Harvard House High School",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Genius National School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Narayana E-Techno School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 57,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        4000,
+        8500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Gobinda Khatick Road -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700099",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 62,
+      "infrastructure": 67,
+      "air": 86,
+      "power": 78,
+      "schools": 53,
+      "water": 55,
+      "roads": 62,
+      "sewerage": 44
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 66,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 315,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "Calcutta Public School (Mukundapur)",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Birla High School (Mukundapur)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 32,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        4000,
+        8500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Mukundapur -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700064",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 77,
+      "infrastructure": 69,
+      "air": 87,
+      "power": 58,
+      "schools": 70,
+      "water": 70,
+      "roads": 64,
+      "sewerage": 61
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 72,
+    "grade": "B+",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 244,
+    "schools_count": 0,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "schools_sourced": false,
+    "crime_percentile": 95,
+    "crime_tier": "Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        5000,
+        16000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Salt Lake Sector I -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700091",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 77,
+      "infrastructure": 74,
+      "air": 87,
+      "power": 58,
+      "schools": 70,
+      "water": 70,
+      "roads": 64,
+      "sewerage": 61
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 73,
+    "grade": "B+",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 247,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "IEM Public School, Secondary Section",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 95,
+    "crime_tier": "Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        5000,
+        16000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Salt Lake Sector III -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700102",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 67,
+      "infrastructure": 50,
+      "air": 87,
+      "power": 58,
+      "schools": 73,
+      "water": 60,
+      "roads": 67,
+      "sewerage": 64
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 66,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 254,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Scottish Church Collegiate School (Kestopur campus)",
+        "address": null,
+        "board": "WBBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 57,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        5000,
+        16000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Kestopur -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700106",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 71,
+      "infrastructure": 59,
+      "air": 87,
+      "power": 58,
+      "schools": 64,
+      "water": 64,
+      "roads": 71,
+      "sewerage": 55
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 68,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 271,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "Bidhannagar Municipal School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "IEM Public School, Primary Section",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 75,
+    "crime_tier": "Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        5000,
+        16000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Salt Lake Sector V -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700156",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 72,
+      "infrastructure": 43,
+      "air": 87,
+      "power": 66,
+      "schools": 59,
+      "water": 65,
+      "roads": 59,
+      "sewerage": 56
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 64,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 270,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Narayana School (New Town)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 77,
+    "crime_tier": "Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        7850,
+        7850
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "New Town -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing",
+      "source": "West Bengal Directorate of Registration and Stamp Revenue ('Market Value') via squareyards.com locality listing",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700157",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 73,
+      "infrastructure": 44,
+      "air": 87,
+      "power": 58,
+      "schools": 60,
+      "water": 66,
+      "roads": 60,
+      "sewerage": 57
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 64,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 254,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Jack & Jill Montessori School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Holy Child K.G. School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Mohanta Public School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 82,
+    "crime_tier": "Low",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        5500,
+        9000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Hatiara -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "700161",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 68,
+      "infrastructure": 37,
+      "air": 87,
+      "power": 66,
+      "schools": 55,
+      "water": 61,
+      "roads": 68,
+      "sewerage": 52
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 62,
+    "grade": "B",
+    "scored_at": "2026-09-25T00:00:00",
+    "total_cognizable_crimes": 281,
+    "schools_count": 0,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "schools_sourced": false,
+    "crime_percentile": 68,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        5500,
+        9000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "New Town Action Area II -- West Bengal Directorate of Registration and Stamp Revenue 'Market Value', per squareyards.com's locality listing (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real Housing.com listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
   }
 ]

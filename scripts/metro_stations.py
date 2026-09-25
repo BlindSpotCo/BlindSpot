@@ -645,3 +645,53 @@ AHMEDABAD_STATIONS = [
 # Paldi, Thaltej Gam, Kalupur Railway Station -- real, operational stations,
 # no reliable coordinate found this session. Not included above, not guessed.
 AHMEDABAD_STATIONS_UNREAD = ["Paldi", "Thaltej Gam", "Kalupur Railway Station"]
+
+# Kolkata Metro. 58 stations operational as of the Aug 22 2025 network
+# expansion (confirmed via multiple news sources), across 5 lines. Blue
+# Line services periodically run temporarily truncated (reported as
+# recently as Jan 2026) -- an operational-hours caveat, not a "station
+# doesn't exist" issue, so all 26 Blue Line stations are still listed as
+# real infrastructure. Coordinates are Wikipedia-infobox DMS-to-decimal
+# conversions, spot-checked against 4 individual station pages (Beleghata,
+# Jai Hind, Majerhat, Howrah Maidan) which matched within ~150m -- good
+# enough for the 1.5km geo-join radius, not survey-grade. Under-
+# construction stations (Purple Line's Mominpur/Khidirpur/Victoria/Park
+# Street-Purple/Esplanade-Purple/Eden Gardens branch, and the Orange
+# Line's planned northern extension toward the airport) are real, named,
+# but NOT operational -- deliberately excluded from this list.
+KOLKATA_STATIONS = [
+    # Blue Line (Line 1) -- Dakshineswar to Kavi Subhash
+    ("Dakshineswar", 22.6539, 88.3636), ("Baranagar", 22.6536, 88.3789),
+    ("Noapara", 22.6397, 88.3939), ("Dum Dum", 22.6211, 88.3928),
+    ("Belgachhia", 22.6058, 88.3864), ("Shyambazar", 22.6014, 88.3725),
+    ("Shobhabazar Sutanuti", 22.5961, 88.3653), ("Girish Park", 22.5872, 88.3631),
+    ("Mahatma Gandhi Road", 22.5808, 88.3614), ("Central", 22.5725, 88.3589),
+    ("Chandni Chowk", 22.5667, 88.3542), ("Esplanade", 22.5644, 88.3517),
+    ("Park Street", 22.5550, 88.3503), ("Maidan", 22.5494, 88.3489),
+    ("Rabindra Sadan", 22.5414, 88.3472), ("Netaji Bhavan", 22.5333, 88.3461),
+    ("Jatin Das Park", 22.5242, 88.3464), ("Kalighat", 22.5167, 88.3461),
+    ("Mahanayak Uttam Kumar (Tollygunge)", 22.4947, 88.3450), ("Netaji", 22.4811, 88.3461),
+    ("Masterda Surya Sen", 22.4736, 88.3608), ("Gitanjali", 22.4667, 88.3617),
+    ("Kavi Nazrul", 22.4783, 88.3344), ("Shahid Khudiram", 22.4658, 88.3917),
+    ("Kavi Subhash (New Garia)", 22.4720, 88.3981),
+    # Green Line -- Howrah Maidan to Salt Lake Sector V (via under-Hooghly Howrah stn)
+    ("Howrah Maidan", 22.5838, 88.3340), ("Howrah", 22.5845, 88.3407),
+    ("Mahakaran", 22.5711, 88.3500), ("Sealdah", 22.5673, 88.3714),
+    ("Phoolbagan", 22.5722, 88.3903), ("Salt Lake Stadium", 22.5731, 88.4031),
+    ("Bengal Chemical", 22.5800, 88.4014), ("City Center", 22.5814, 88.4078),
+    ("Central Park", 22.5906, 88.4156), ("Karunamoyee", 22.5864, 88.4214),
+    ("Salt Lake Sector-V", 22.5814, 88.4297),
+    # Purple Line -- Joka to Majerhat
+    ("Joka", 22.4522, 88.3017), ("Thakurpukur", 22.4642, 88.3075),
+    ("Behala Sakherbazar", 22.4747, 88.3100), ("Behala Chowrasta", 22.4875, 88.3133),
+    ("Behala Bazar", 22.4989, 88.3172), ("Taratala", 22.5081, 88.3206),
+    ("Majerhat", 22.5192, 88.3233),
+    # Orange Line -- Kavi Subhash to Beleghata
+    ("Satyajit Ray", 22.4850, 88.3925), ("Jyotirindra Nandi", 22.4958, 88.3986),
+    ("Kavi Sukanta", 22.5053, 88.4011), ("Hemanta Mukhopadhyay (Ruby)", 22.5147, 88.4014),
+    ("VIP Bazar", 22.5256, 88.3958), ("Ritwik Ghatak", 22.5328, 88.3958),
+    ("Barun Sengupta", 22.5439, 88.3392), ("Beleghata", 22.5507, 88.4041),
+    # Yellow Line -- Noapara to Jai Hind (Airport)
+    ("Dum Dum Cantonment", 22.6381, 88.4122), ("Jessore Road", 22.6394, 88.4297),
+    ("Jai Hind (Airport)", 22.6462, 88.4359),
+]
