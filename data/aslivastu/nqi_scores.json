@@ -31260,5 +31260,3372 @@
       "market_gap_note": "Actual market prices in Chennai typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session, unlike Hyderabad's confirmed 43-59% figure.",
       "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
     }
+  },
+  {
+    "pin_code": "380001",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 54,
+      "infrastructure": 60,
+      "air": 79,
+      "power": 88,
+      "schools": 59,
+      "water": 55,
+      "roads": 45,
+      "sewerage": 49
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 62,
+    "grade": "B",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 370,
+    "schools_count": 4,
+    "schools_list": [
+      {
+        "name": "Madhavbag School No 1",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Al Falah Islamic School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Tutorial High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Cadila High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 26,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        3500,
+        6000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Kalupur -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380002",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 55,
+      "infrastructure": 53,
+      "air": 79,
+      "power": 88,
+      "schools": 60,
+      "water": 56,
+      "roads": 46,
+      "sewerage": 50
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 61,
+    "grade": "B",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 354,
+    "schools_count": 0,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "schools_sourced": false,
+    "crime_percentile": 31,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        3500,
+        6000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Revdi Bazar -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380004",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 57,
+      "infrastructure": 63,
+      "air": 80,
+      "power": 88,
+      "schools": 62,
+      "water": 58,
+      "roads": 48,
+      "sewerage": 52
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 64,
+    "grade": "B",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 322,
+    "schools_count": 5,
+    "schools_list": [
+      {
+        "name": "Rachana School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "The H. B. Kapadia New High School (Shahibaug)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Amrut School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Rajasthan School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Girdharnagar Shahibaug Madhyamik Shala",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 44,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        3500,
+        6000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Shahibag -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380006",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 59,
+      "infrastructure": 46,
+      "air": 77,
+      "power": 88,
+      "schools": 64,
+      "water": 60,
+      "roads": 50,
+      "sewerage": 54
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 62,
+    "grade": "B",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 290,
+    "schools_count": 4,
+    "schools_list": [
+      {
+        "name": "Mahatma Gandhi International School",
+        "address": null,
+        "board": "IB",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Amrit Jyoti Primary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Ellisbridge School No 26",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sheth Chimanlal Nagindas Vidyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 49,
+    "crime_tier": "High",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        3500,
+        6000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Ellisbridge -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380009",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 62,
+      "infrastructure": 65,
+      "air": 78,
+      "power": 88,
+      "schools": 54,
+      "water": 50,
+      "roads": 53,
+      "sewerage": 44
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 64,
+    "grade": "B",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 323,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Navrang School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "AES -- AG Higher Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "St. Kabir School (Navrangpura)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 67,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        3500,
+        6000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Navrangpura -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380016",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 60,
+      "infrastructure": 37,
+      "air": 81,
+      "power": 88,
+      "schools": 65,
+      "water": 61,
+      "roads": 51,
+      "sewerage": 42
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 60,
+    "grade": "B",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 302,
+    "schools_count": 4,
+    "schools_list": [
+      {
+        "name": "Asharva School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Asarwa Public School No-2",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Asarwa Vidhyalay",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Shree Sahjanand Gurukul",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 56,
+    "crime_tier": "Moderate",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        3500,
+        6000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Asarwa -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380007",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 70,
+      "infrastructure": 59,
+      "air": 77,
+      "power": 88,
+      "schools": 77,
+      "water": 73,
+      "roads": 73,
+      "sewerage": 54
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 71,
+    "grade": "B+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 224,
+    "schools_count": 4,
+    "schools_list": [
+      {
+        "name": "Divan Ballubhai Secondary School (English Medium)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Nirman High School (Vasna)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Vasna English Public School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Divine Life English School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 92,
+    "crime_tier": "Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        5000,
+        9000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Paldi -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380013",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 67,
+      "infrastructure": 81,
+      "air": 78,
+      "power": 88,
+      "schools": 74,
+      "water": 70,
+      "roads": 70,
+      "sewerage": 64
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 75,
+    "grade": "B+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 300,
+    "schools_count": 4,
+    "schools_list": [
+      {
+        "name": "St. Xavier's High School, Loyola Hall",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Tapovan Vidhyalay",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Mayur High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Swastik School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 87,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        5000,
+        9000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Naranpura -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380015",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 69,
+      "infrastructure": 59,
+      "air": 77,
+      "power": 88,
+      "schools": 76,
+      "water": 72,
+      "roads": 72,
+      "sewerage": 66
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 71,
+    "grade": "B+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 268,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "Nirman High School (Vastrapur)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Kendriya Vidyalaya (Vastrapur)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 90,
+    "crime_tier": "Moderate",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        6850,
+        6850
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Satellite -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026)",
+      "source": "Gujarat Revenue Department (Jantri rate) via squareyards.com locality listing, updated 4 June 2026",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380054",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 72,
+      "infrastructure": 54,
+      "air": 77,
+      "power": 88,
+      "schools": 66,
+      "water": 62,
+      "roads": 75,
+      "sewerage": 56
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 69,
+    "grade": "B",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 251,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Ahmedabad International School",
+        "address": null,
+        "board": "IB",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Prakash Higher Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Bodakdev School For Children",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 97,
+    "crime_tier": "Low",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        7300,
+        7300
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Bodakdev -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026)",
+      "source": "Gujarat Revenue Department (Jantri rate) via squareyards.com locality listing, updated 4 June 2026",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380059",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 64,
+      "infrastructure": 75,
+      "air": 77,
+      "power": 88,
+      "schools": 71,
+      "water": 67,
+      "roads": 67,
+      "sewerage": 61
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 72,
+    "grade": "B+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 317,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Udgam School For Children",
+        "address": null,
+        "board": "IB",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 79,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        5600,
+        5600
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Thaltej -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026)",
+      "source": "Gujarat Revenue Department (Jantri rate) via squareyards.com locality listing, updated 4 June 2026",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380061",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 70,
+      "infrastructure": 50,
+      "air": 79,
+      "power": 88,
+      "schools": 77,
+      "water": 73,
+      "roads": 73,
+      "sewerage": 54
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 70,
+    "grade": "B+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 230,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Kuldeep English School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "MB Patel Primary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Jyoti Prathmik Shala",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 92,
+    "crime_tier": "Low",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        5000,
+        9000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Ghatlodia -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380058",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 63,
+      "infrastructure": 58,
+      "air": 77,
+      "power": 88,
+      "schools": 70,
+      "water": 66,
+      "roads": 66,
+      "sewerage": 60
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 68,
+    "grade": "B",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 252,
+    "schools_count": 4,
+    "schools_list": [
+      {
+        "name": "Delhi Public School, Bopal",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Shanti Asiatic School (Shela)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Anand Niketan School -- Shilaj Campus",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Divya Jyot School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 74,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        4600,
+        4600
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Bopal -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026)",
+      "source": "Gujarat Revenue Department (Jantri rate) via squareyards.com locality listing, updated 4 June 2026",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380018",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 54,
+      "infrastructure": 49,
+      "air": 80,
+      "power": 88,
+      "schools": 42,
+      "water": 44,
+      "roads": 47,
+      "sewerage": 36
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 57,
+    "grade": "C+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 310,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Saraspur Municipal School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Saraswati Vidya Mandal",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Faizan English School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 26,
+    "crime_tier": "High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        1800,
+        3200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Saraspur -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380019",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 55,
+      "infrastructure": 34,
+      "air": 81,
+      "power": 88,
+      "schools": 43,
+      "water": 45,
+      "roads": 48,
+      "sewerage": 37
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 55,
+    "grade": "C+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 294,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "New Gayatri Higher Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 31,
+    "crime_tier": "High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        1800,
+        3200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "D Cabin -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380021",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 48,
+      "infrastructure": 60,
+      "air": 80,
+      "power": 88,
+      "schools": 49,
+      "water": 51,
+      "roads": 41,
+      "sewerage": 43
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 59,
+    "grade": "C+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 353,
+    "schools_count": 4,
+    "schools_list": [
+      {
+        "name": "Gomtipur Gujarati School No 4",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Jivan Prakash High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "S G Patel High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sheth C L Hindi High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 3,
+    "crime_tier": "Very High",
+    "price_tier": 5,
+    "price_context": {
+      "tier": 5,
+      "label": "Budget",
+      "rate_sqft": [
+        1800,
+        3200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Gomtipur -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380023",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 50,
+      "infrastructure": 38,
+      "air": 81,
+      "power": 88,
+      "schools": 51,
+      "water": 53,
+      "roads": 43,
+      "sewerage": 45
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 56,
+    "grade": "C+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 321,
+    "schools_count": 2,
+    "schools_list": [
+      {
+        "name": "The Al Karim Primary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Vinay Vidhya Vihar School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 13,
+    "crime_tier": "High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        1800,
+        3200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Rakhial -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380024",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 51,
+      "infrastructure": 39,
+      "air": 81,
+      "power": 88,
+      "schools": 52,
+      "water": 54,
+      "roads": 44,
+      "sewerage": 46
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 56,
+    "grade": "C+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 305,
+    "schools_count": 4,
+    "schools_list": [
+      {
+        "name": "Ranjan High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Shruti High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Hosanna Mission Higher Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Vidhyanagar High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 18,
+    "crime_tier": "High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        1800,
+        3200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Bapunagar -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380026",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 53,
+      "infrastructure": 65,
+      "air": 78,
+      "power": 88,
+      "schools": 54,
+      "water": 56,
+      "roads": 46,
+      "sewerage": 35
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 62,
+    "grade": "B",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 354,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Shanti Niketan School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Vivekanand Hindi High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Jyoti Vidhyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 23,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        1800,
+        3200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Amraiwadi -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "382350",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 50,
+      "infrastructure": 38,
+      "air": 81,
+      "power": 88,
+      "schools": 50,
+      "water": 52,
+      "roads": 43,
+      "sewerage": 45
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 55,
+    "grade": "C+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 322,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Saint Paul English School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Devasya International Public School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Dipak School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 13,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        1800,
+        3200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Nikol -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "382415",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 45,
+      "infrastructure": 33,
+      "air": 80,
+      "power": 88,
+      "schools": 43,
+      "water": 45,
+      "roads": 38,
+      "sewerage": 40
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 51,
+    "grade": "C+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 377,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Odhav Gidc Hindi School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "St. Paul Public School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Gujarati Shala No 1",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 0,
+    "crime_tier": "Very High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        1800,
+        3200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Odhav -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "382418",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 48,
+      "infrastructure": 60,
+      "air": 79,
+      "power": 88,
+      "schools": 46,
+      "water": 48,
+      "roads": 41,
+      "sewerage": 43
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 58,
+    "grade": "C+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 329,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Shanti Asiatic School -- Vastral",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "New Thomas English School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Devasya International School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 3,
+    "crime_tier": "Very High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        1800,
+        3200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Vastral -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "382445",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 52,
+      "infrastructure": 41,
+      "air": 81,
+      "power": 88,
+      "schools": 46,
+      "water": 48,
+      "roads": 45,
+      "sewerage": 34
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 55,
+    "grade": "C+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 312,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Asmi High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Rajaram Vidhya Vihar Higher Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Nutan Vidhyalay High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 21,
+    "crime_tier": "High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        1800,
+        3200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Vatva -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "382330",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 48,
+      "infrastructure": 40,
+      "air": 83,
+      "power": 88,
+      "schools": 48,
+      "water": 50,
+      "roads": 41,
+      "sewerage": 43
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 55,
+    "grade": "C+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 379,
+    "schools_count": 4,
+    "schools_list": [
+      {
+        "name": "Aditya School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "New Noble School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "N V Patel Vidya Mandir",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Navyug Public School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 3,
+    "crime_tier": "Very High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        1800,
+        3200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Naroda -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380008",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 65,
+      "infrastructure": 38,
+      "air": 75,
+      "power": 88,
+      "schools": 66,
+      "water": 66,
+      "roads": 60,
+      "sewerage": 47
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 62,
+    "grade": "B",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 238,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Anand Niketan School (Maninagar)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Shree Swaminarayan High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sardar Patel High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 85,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        2500,
+        4500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Maninagar -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380050",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 62,
+      "infrastructure": 36,
+      "air": 77,
+      "power": 88,
+      "schools": 63,
+      "water": 63,
+      "roads": 57,
+      "sewerage": 57
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 61,
+    "grade": "B",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 264,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Ahmedabad Kerala Samajam English Medium High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Academic Heights Public School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Shri Swaminarayan Vidhyamandir High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 67,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        2500,
+        4500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Ghodasar -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "382405",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 56,
+      "infrastructure": 38,
+      "air": 83,
+      "power": 88,
+      "schools": 54,
+      "water": 54,
+      "roads": 64,
+      "sewerage": 51
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 60,
+    "grade": "B",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 305,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Vande Matram School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Rahe Public School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Shreeji Kaila Vidyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 41,
+    "crime_tier": "High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        2500,
+        4500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Narol -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "382443",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 62,
+      "infrastructure": 43,
+      "air": 80,
+      "power": 88,
+      "schools": 56,
+      "water": 56,
+      "roads": 57,
+      "sewerage": 57
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 62,
+    "grade": "B",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 284,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "National English School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "The Lotus High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Shree Muktajivan Vidhyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 67,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        2500,
+        4500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Isanpur -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380005",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 60,
+      "infrastructure": 63,
+      "air": 82,
+      "power": 88,
+      "schools": 61,
+      "water": 61,
+      "roads": 63,
+      "sewerage": 59
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 67,
+    "grade": "B",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 296,
+    "schools_count": 4,
+    "schools_list": [
+      {
+        "name": "Little Angel School (Motera)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "IDP School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Kendriya Vidyalaya Sabarmati",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "St Ann's High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 56,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        3000,
+        5500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Sabarmati -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380027",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 64,
+      "infrastructure": 55,
+      "air": 80,
+      "power": 88,
+      "schools": 52,
+      "water": 52,
+      "roads": 67,
+      "sewerage": 50
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 64,
+    "grade": "B",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 288,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Sabarmati Hindi Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sabarmati School No. 5",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sabarmati Jail Primary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 79,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        3000,
+        5500
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Gandhi Ashram -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "382424",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 55,
+      "infrastructure": 39,
+      "air": 82,
+      "power": 88,
+      "schools": 53,
+      "water": 53,
+      "roads": 58,
+      "sewerage": 54
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 59,
+    "grade": "C+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 355,
+    "schools_count": 4,
+    "schools_list": [
+      {
+        "name": "H B Kapadia School (Chandkheda)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Kendriya Vidyalaya ONGC Chandkheda",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "New Gaytri School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Mount Carmel School (Sughad)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 31,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        4300,
+        4300
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Chandkheda -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026)",
+      "source": "Gujarat Revenue Department (Jantri rate) via squareyards.com locality listing, updated 4 June 2026",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380052",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 60,
+      "infrastructure": 54,
+      "air": 78,
+      "power": 88,
+      "schools": 63,
+      "water": 59,
+      "roads": 57,
+      "sewerage": 42
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 63,
+    "grade": "B",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 333,
+    "schools_count": 4,
+    "schools_list": [
+      {
+        "name": "St Kabir School (Memnagar)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "The H. B. Kapadia New High School (Memnagar)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Maharaja Agrasen Vidyalaya",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sharda Vidya Mandir",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 56,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        3200,
+        5200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Memnagar -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "382481",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 60,
+      "infrastructure": 37,
+      "air": 81,
+      "power": 88,
+      "schools": 56,
+      "water": 52,
+      "roads": 57,
+      "sewerage": 42
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 59,
+    "grade": "C+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 303,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "SGVP International School",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 56,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        4300,
+        4300
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Chandlodia -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026)",
+      "source": "Gujarat Revenue Department (Jantri rate) via squareyards.com locality listing, updated 4 June 2026",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "382470",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 58,
+      "infrastructure": 37,
+      "air": 81,
+      "power": 88,
+      "schools": 54,
+      "water": 50,
+      "roads": 55,
+      "sewerage": 53
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 59,
+    "grade": "C+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 307,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Apollo International School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 46,
+    "crime_tier": "High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        3200,
+        5200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Tragad -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "382480",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 59,
+      "infrastructure": 36,
+      "air": 81,
+      "power": 88,
+      "schools": 55,
+      "water": 51,
+      "roads": 56,
+      "sewerage": 54
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 59,
+    "grade": "C+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 319,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Ranip Sarvajanik School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Suraj Primary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "H3 World School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 49,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        3200,
+        5200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Ranip -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "382421",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 63,
+      "infrastructure": 43,
+      "air": 80,
+      "power": 88,
+      "schools": 63,
+      "water": 59,
+      "roads": 60,
+      "sewerage": 45
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 63,
+    "grade": "B",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 267,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Global Indian International School (GIIS) Ahmedabad",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "GEMS Genesis International School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "SGVP International School (Chharodi)",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 74,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": [
+        3200,
+        5200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Vaishnodevi -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380051",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 55,
+      "infrastructure": 59,
+      "air": 77,
+      "power": 88,
+      "schools": 54,
+      "water": 48,
+      "roads": 42,
+      "sewerage": 44
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 60,
+    "grade": "B",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 288,
+    "schools_count": 4,
+    "schools_list": [
+      {
+        "name": "Zydus School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Chandra Bhanu School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "DAV Public School (Makarba)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Adani Vidya Mandir",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 31,
+    "crime_tier": "High",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper-mid",
+      "rate_sqft": [
+        2200,
+        4200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Vejalpur -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "380055",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 59,
+      "infrastructure": 39,
+      "air": 78,
+      "power": 88,
+      "schools": 45,
+      "water": 19,
+      "roads": 46,
+      "sewerage": 35
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 54,
+    "grade": "C+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 305,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "F D High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Ahmedabad School Of Education Campus",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sanklitnagar Primary School No 2",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 49,
+    "crime_tier": "High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        2200,
+        4200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Juhapura -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "382210",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 48,
+      "infrastructure": 43,
+      "air": 77,
+      "power": 88,
+      "schools": 47,
+      "water": 41,
+      "roads": 48,
+      "sewerage": 37
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 54,
+    "grade": "C+",
+    "scored_at": "2026-09-23T00:00:00",
+    "total_cognizable_crimes": 386,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Pranam Higher Secondary School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Sarvjanik High School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Diamond International School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 3,
+    "crime_tier": "Very High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Affordable",
+      "rate_sqft": [
+        2200,
+        4200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Sarkhej -- Gujarat Revenue Dept. Jantri rate, per squareyards.com's locality listing (updated 4 June 2026) (zone-interpolated from sourced neighbouring localities, not a locality-specific figure)",
+      "source": "Zone-interpolated from Jantri-rate-sourced neighbouring localities in the same zone; no locality-specific figure found this session",
+      "circle_rate_note": "Gujarat calls this the 'Jantri rate' -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, Tamil Nadu a guideline value: the government's minimum property value for stamp duty and registration.",
+      "market_gap_note": "Actual market prices in Ahmedabad typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
   }
 ]
