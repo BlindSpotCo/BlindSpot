@@ -96,9 +96,16 @@ def canonical_grade_for(n):
     return "D"
 
 
-def tier_for(pct):
-    return ("Very Low" if pct >= 80 else "Low" if pct >= 60
-            else "Moderate" if pct >= 40 else "High" if pct >= 20 else "Very High")
+def tier_for_crime_score(score):
+    """Absolute reading of this pincode's own crime score, same threshold
+    bands as canonical_grade_for()'s A/B+/B/C+ boundaries -- not a same-city
+    percentile rank. A within-city percentile stretches to fill 0-100
+    regardless of how tightly real scores cluster, which is exactly what
+    mislabelled Whitefield (560066)'s perfectly decent score as "Very High
+    crime" the first time this script ran -- see
+    patch_crime_percentile_consistency.py's docstring for the full story."""
+    return ("Very Low" if score >= 80 else "Low" if score >= 70
+            else "Moderate" if score >= 60 else "High" if score >= 50 else "Very High")
 
 
 for path in (MASTER_PATH, NQI_PATH):
@@ -137,6 +144,7 @@ for r in blr_master:
     crime_scores[r["pin_code"]] = crime_score_for(r["pin_code"], r.get("zone"), r.get("zone_type"))
 crimes_by_pin = {pin: crimes_for(pin, s) for pin, s in crime_scores.items()}
 all_crimes = sorted(crimes_by_pin.values())
+all_crime_scores = sorted(crime_scores.values())
 
 crime_changed = []
 for r in blr_master:
@@ -170,10 +178,10 @@ for r in blr_master:
     old_tier = n.get("crime_tier")
 
     n["scores"]["crime"] = crime_scores[pin]
-    rank = sum(1 for c in all_crimes if c > new_crimes)
-    pct = round(rank / len(all_crimes) * 100)
+    rank = sum(1 for s in all_crime_scores if s < crime_scores[pin])
+    pct = round(rank / len(all_crime_scores) * 100)
     n["crime_percentile"] = pct
-    n["crime_tier"] = tier_for(pct)
+    n["crime_tier"] = tier_for_crime_score(crime_scores[pin])
 
     w = n["weights_applied"]
     composite = round(sum(n["scores"][k] * w[k] for k in n["scores"] if k in w))

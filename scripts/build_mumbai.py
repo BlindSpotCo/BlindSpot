@@ -285,13 +285,20 @@ def crimes_for(pin, crime_score):
     return round(600 - crime_score * 5 + jitter(pin, 40, salt=5))
 
 
+def tier_for_crime_score(score):
+    """Absolute reading of a record's own crime score, same threshold bands
+    as grade_for()'s A/B+/B/C+ boundaries. Not a same-city rank -- see this
+    module's own crime block for why that distinction matters."""
+    return ("Very Low" if score >= 80 else "Low" if score >= 70
+            else "Moderate" if score >= 60 else "High" if score >= 50 else "Very High")
+
 def build():
     nqi_rows, master_rows = [], []
     crime_scores = {}
     for pin in MUMBAI:
         zone = ZONE_OF[pin]
         crime_scores[pin] = score_for(pin, "crime", zone)
-    all_crimes = sorted(crimes_for(p, crime_scores[p]) for p in MUMBAI)
+    all_crime_scores = sorted(crime_scores[p] for p in MUMBAI)
 
     for pin, entry in MUMBAI.items():
         name, ward_area, lat, lon, ward, tier, land = entry
@@ -313,10 +320,9 @@ def build():
         composite = round(sum(scores[k] * w[k] for k in scores) / total_w)
 
         crimes = crimes_for(pin, scores["crime"])
-        rank = sum(1 for c in all_crimes if c > crimes)
-        pct = round(rank / len(all_crimes) * 100)
-        tier_name = ("Very Low" if pct >= 80 else "Low" if pct >= 60
-                     else "Moderate" if pct >= 40 else "High" if pct >= 20 else "Very High")
+        rank = sum(1 for s in all_crime_scores if s < scores["crime"])
+        pct = round(rank / len(all_crime_scores) * 100)
+        tier_name = tier_for_crime_score(scores["crime"])
 
         lo_sqm, hi_sqm = RRR_SQM_BY_TIER[tier]
         lo_sqft, hi_sqft = sqm_to_sqft(lo_sqm), sqm_to_sqft(hi_sqm)
