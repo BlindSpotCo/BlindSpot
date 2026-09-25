@@ -796,8 +796,11 @@ button.bsr-cta{font:inherit;font-weight:700;border:0;cursor:pointer;-webkit-appe
 }
 
 .bsr-foot{
-  margin-top:14px;text-align:center;font-size:12px;line-height:1.5;
-  color:var(--text-mute,#5A5140);
+  /* the fine print, clearly apart from the report CTA above it */
+  margin:44px auto 0 !important;padding-top:14px;max-width:780px;
+  border-top:1px solid var(--line-soft,rgba(28,24,18,.1));
+  text-align:center;font-size:11.5px;line-height:1.55;
+  color:var(--text-dim,#8A7F68);
 }
 
 /* ---------------- focus, always ---------------- */
@@ -2339,7 +2342,7 @@ body.bsr-noscroll{overflow:hidden}
   .bsr-furnish-icon{ width:34px; height:34px }
   .bsr-furnish-body strong{ font-size:14px }
   .bsr-furnish-body span{ font-size:12px }
-  .bsr-foot{ font-size:11px }
+  .bsr-foot{ font-size:11px; margin-top:28px !important }
 }
 
 /* ================= map loading, home link, steps ================= */
