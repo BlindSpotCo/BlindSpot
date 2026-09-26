@@ -382,3 +382,31 @@ KOLKATA_STATIONS_UNREAD = [
     "Bidhannagar / Salt Lake ATI (WBPCB)", "Rabindra Bharati University B.T. Road (WBPCB)",
     "Presidency University (WBPCB)",
 ]
+# Pune (city 9). Real finding this session: EVERY individually-fetched
+# aqicn.org station page for Pune (Karve Road, Bhosari, Pashan,
+# Hadapsar, Katraj, Shivajinagar, Lohegaon, Bhumkar Chowk/Nigdi) showed
+# a frozen placeholder timestamp with no live dated reading -- the same
+# "known infrastructure, no usable reading" pattern excluded everywhere
+# else in this dataset. The best NAMED, DATED alternative found was
+# IQAir's Pune page (12 CPCB-network stations, timestamped 27 Sep 2026),
+# but ALL TEN of its individual station readings collapse to just two
+# repeated values (64 for Alandi/Bhosari, 58 for the other eight) --
+# a strong signal of a bucketed/regional-average value being duplicated
+# across "different" stations rather than genuine independent per-
+# station sensor readings, not the kind of real spatial signal IDW
+# interpolation is supposed to run on. Rather than fabricate spatial
+# precision the underlying data doesn't actually have, ALL of them are
+# listed as unread/excluded below, and build_pune.py instead uses the
+# real, dated CPCB city-level bulletin aggregate (AQI 84, "Satisfactory",
+# 15 May 2025, cpcb.nic.in/aqi_report.php, "10/13 stations" contributing)
+# as a single flat, honestly-disclosed city-wide value -- coarser than
+# every other covered city's AQI dimension, and flagged as such rather
+# than silently presented at the same granularity.
+PUNE_STATIONS = []
+PUNE_STATIONS_UNREAD = [
+    "Alandi (IITM/CPCB)", "Bhosari (IITM/CPCB)", "Bhumkar Nagar / Nigdi (IITM/CPCB)",
+    "Dhankawadi (IITM/CPCB)", "Hadapsar (IITM/CPCB)", "Karve Road (MPCB)",
+    "Katraj Dairy (MPCB)", "MIT-Kothrud (IITM/CPCB)", "Panchawati / Pashan (IITM/CPCB)",
+    "Revenue Colony-Shivajinagar (IITM/CPCB)",
+]
+PUNE_CITY_AQI_FALLBACK = {"value": 84, "category": "Satisfactory", "as_of": "2025-05-15", "source": "CPCB AQI Bulletin, cpcb.nic.in/aqi_report.php"}

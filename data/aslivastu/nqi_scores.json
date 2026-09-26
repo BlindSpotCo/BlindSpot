@@ -41649,5 +41649,2483 @@
       "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
       "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
     }
+  },
+  {
+    "pin_code": "411002",
+    "city": "Pune",
+    "scores": {
+      "crime": 62,
+      "infrastructure": 81,
+      "air": 80,
+      "power": 62,
+      "schools": 62,
+      "water": 55,
+      "roads": 47,
+      "sewerage": 52
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 66,
+    "grade": "B",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 312,
+    "schools_count": 0,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "schools_sourced": false,
+    "crime_percentile": 60,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        9000,
+        16000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Shukrawar Peth -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411005",
+    "city": "Pune",
+    "scores": {
+      "crime": 52,
+      "infrastructure": 73,
+      "air": 80,
+      "power": 62,
+      "schools": 65,
+      "water": 58,
+      "roads": 50,
+      "sewerage": 42
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 63,
+    "grade": "B",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 329,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Pune Police Public School",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 3,
+    "crime_tier": "High",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        9000,
+        16000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Shivajinagar -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411011",
+    "city": "Pune",
+    "scores": {
+      "crime": 62,
+      "infrastructure": 79,
+      "air": 80,
+      "power": 62,
+      "schools": 62,
+      "water": 55,
+      "roads": 47,
+      "sewerage": 52
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 66,
+    "grade": "B",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 259,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Agarkar High School for Girls",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 60,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        9000,
+        16000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Kasba Peth -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411001",
+    "city": "Pune",
+    "scores": {
+      "crime": 69,
+      "infrastructure": 54,
+      "air": 80,
+      "power": 62,
+      "schools": 70,
+      "water": 62,
+      "roads": 58,
+      "sewerage": 57
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 65,
+    "grade": "B",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 288,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "The Bishop's School (Camp)",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 86,
+    "crime_tier": "Moderate",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        15700,
+        15700
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Camp -- real market listing price, dated 2025/2026 (see build_pune.py)",
+      "source": "squareyards.com / buyinpune.com / hexahome.in / nobroker.in locality listing, dated 2025-2026",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411040",
+    "city": "Pune",
+    "scores": {
+      "crime": 72,
+      "infrastructure": 49,
+      "air": 80,
+      "power": 62,
+      "schools": 60,
+      "water": 65,
+      "roads": 61,
+      "sewerage": 60
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 64,
+    "grade": "B",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 271,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "City International School (Wanowrie)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 91,
+    "crime_tier": "Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        4000,
+        12000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Wanowrie -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411004",
+    "city": "Pune",
+    "scores": {
+      "crime": 74,
+      "infrastructure": 77,
+      "air": 80,
+      "power": 62,
+      "schools": 68,
+      "water": 67,
+      "roads": 63,
+      "sewerage": 62
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 72,
+    "grade": "B+",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 230,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Sevasadan English Medium School",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 94,
+    "crime_tier": "Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        23250,
+        23250
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Deccan Gymkhana -- real market listing price, dated 2025/2026 (see build_pune.py)",
+      "source": "squareyards.com / buyinpune.com / hexahome.in / nobroker.in locality listing, dated 2025-2026",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411038",
+    "city": "Pune",
+    "scores": {
+      "crime": 68,
+      "infrastructure": 59,
+      "air": 80,
+      "power": 62,
+      "schools": 75,
+      "water": 61,
+      "roads": 70,
+      "sewerage": 56
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 67,
+    "grade": "B",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 267,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "City International School (Kothrud)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 80,
+    "crime_tier": "Moderate",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        11000,
+        18000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Kothrud -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411058",
+    "city": "Pune",
+    "scores": {
+      "crime": 70,
+      "infrastructure": 60,
+      "air": 80,
+      "power": 62,
+      "schools": 77,
+      "water": 63,
+      "roads": 59,
+      "sewerage": 58
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 67,
+    "grade": "B",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 210,
+    "schools_count": 0,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "schools_sourced": false,
+    "crime_percentile": 89,
+    "crime_tier": "Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        11000,
+        18000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Warje -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411052",
+    "city": "Pune",
+    "scores": {
+      "crime": 64,
+      "infrastructure": 46,
+      "air": 80,
+      "power": 62,
+      "schools": 71,
+      "water": 70,
+      "roads": 66,
+      "sewerage": 52
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 63,
+    "grade": "B",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 306,
+    "schools_count": 0,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "schools_sourced": false,
+    "crime_percentile": 69,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        11000,
+        18000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Karve Nagar -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411028",
+    "city": "Pune",
+    "scores": {
+      "crime": 59,
+      "infrastructure": 40,
+      "air": 80,
+      "power": 62,
+      "schools": 60,
+      "water": 48,
+      "roads": 59,
+      "sewerage": 47
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 57,
+    "grade": "C+",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 295,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Wisdom World School",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 40,
+    "crime_tier": "High",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        14950,
+        14950
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Hadapsar -- real market listing price, dated 2025/2026 (see build_pune.py)",
+      "source": "squareyards.com / buyinpune.com / hexahome.in / nobroker.in locality listing, dated 2025-2026",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411013",
+    "city": "Pune",
+    "scores": {
+      "crime": 66,
+      "infrastructure": 47,
+      "air": 80,
+      "power": 62,
+      "schools": 54,
+      "water": 55,
+      "roads": 53,
+      "sewerage": 54
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 60,
+    "grade": "B",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 298,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Vidya Pratishthan's Magarpatta City Public School",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 71,
+    "crime_tier": "Moderate",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        8000,
+        15000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Magarpatta -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411048",
+    "city": "Pune",
+    "scores": {
+      "crime": 61,
+      "infrastructure": 49,
+      "air": 80,
+      "power": 62,
+      "schools": 62,
+      "water": 50,
+      "roads": 48,
+      "sewerage": 49
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 59,
+    "grade": "C+",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 319,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "LEADS High School (Kondhwa)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 51,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        10750,
+        10750
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Kondhwa -- real market listing price, dated 2025/2026 (see build_pune.py)",
+      "source": "squareyards.com / buyinpune.com / hexahome.in / nobroker.in locality listing, dated 2025-2026",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411037",
+    "city": "Pune",
+    "scores": {
+      "crime": 59,
+      "infrastructure": 49,
+      "air": 80,
+      "power": 62,
+      "schools": 60,
+      "water": 48,
+      "roads": 59,
+      "sewerage": 47
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 59,
+    "grade": "C+",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 323,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Aaryans World School",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 40,
+    "crime_tier": "High",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        8000,
+        15000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Bibwewadi -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411046",
+    "city": "Pune",
+    "scores": {
+      "crime": 59,
+      "infrastructure": 47,
+      "air": 80,
+      "power": 62,
+      "schools": 60,
+      "water": 48,
+      "roads": 59,
+      "sewerage": 47
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 59,
+    "grade": "C+",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 270,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "New Poona English Medium School",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 40,
+    "crime_tier": "High",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        8000,
+        15000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Katraj -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411043",
+    "city": "Pune",
+    "scores": {
+      "crime": 56,
+      "infrastructure": 44,
+      "air": 80,
+      "power": 62,
+      "schools": 57,
+      "water": 58,
+      "roads": 56,
+      "sewerage": 44
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 57,
+    "grade": "C+",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 318,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Bharati Vidyapeeth English Medium High School",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 34,
+    "crime_tier": "High",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        8000,
+        15000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Dhankawadi -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411007",
+    "city": "Pune",
+    "scores": {
+      "crime": 66,
+      "infrastructure": 47,
+      "air": 80,
+      "power": 62,
+      "schools": 69,
+      "water": 72,
+      "roads": 68,
+      "sewerage": 54
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 64,
+    "grade": "B",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 237,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "DAV Public School (Aundh)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 71,
+    "crime_tier": "Moderate",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        9000,
+        16000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Aundh -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411045",
+    "city": "Pune",
+    "scores": {
+      "crime": 68,
+      "infrastructure": 52,
+      "air": 80,
+      "power": 62,
+      "schools": 71,
+      "water": 74,
+      "roads": 70,
+      "sewerage": 56
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 66,
+    "grade": "B",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 236,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "The Orchid School (Baner)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 80,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        11200,
+        11200
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Baner -- real market listing price, dated 2025/2026 (see build_pune.py)",
+      "source": "squareyards.com / buyinpune.com / hexahome.in / nobroker.in locality listing, dated 2025-2026",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411021",
+    "city": "Pune",
+    "scores": {
+      "crime": 75,
+      "infrastructure": 50,
+      "air": 80,
+      "power": 62,
+      "schools": 65,
+      "water": 68,
+      "roads": 64,
+      "sewerage": 63
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 67,
+    "grade": "B",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 211,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Suryadatta National School",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 97,
+    "crime_tier": "Low",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        9000,
+        16000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Bavdhan -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411008",
+    "city": "Pune",
+    "scores": {
+      "crime": 67,
+      "infrastructure": 48,
+      "air": 80,
+      "power": 62,
+      "schools": 70,
+      "water": 73,
+      "roads": 69,
+      "sewerage": 55
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 65,
+    "grade": "B",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 302,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "St. Joseph High School (Pashan)",
+        "address": null,
+        "board": null,
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 77,
+    "crime_tier": "Moderate",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        9000,
+        16000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Pashan -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411057",
+    "city": "Pune",
+    "scores": {
+      "crime": 63,
+      "infrastructure": 45,
+      "air": 80,
+      "power": 62,
+      "schools": 60,
+      "water": 44,
+      "roads": 36,
+      "sewerage": 39
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 57,
+    "grade": "C+",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 256,
+    "schools_count": 3,
+    "schools_list": [
+      {
+        "name": "Indira National School (Wakad)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "EuroSchool (Wakad)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      },
+      {
+        "name": "Podar International School (Hinjewadi)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 66,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        12700,
+        12700
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Wakad -- real market listing price, dated 2025/2026 (see build_pune.py)",
+      "source": "squareyards.com / buyinpune.com / hexahome.in / nobroker.in locality listing, dated 2025-2026",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411014",
+    "city": "Pune",
+    "scores": {
+      "crime": 60,
+      "infrastructure": 60,
+      "air": 80,
+      "power": 62,
+      "schools": 61,
+      "water": 64,
+      "roads": 60,
+      "sewerage": 46
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 63,
+    "grade": "B",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 317,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Symbiosis International School (Viman Nagar)",
+        "address": null,
+        "board": "IB",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 49,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        14950,
+        14950
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Viman Nagar -- real market listing price, dated 2025/2026 (see build_pune.py)",
+      "source": "squareyards.com / buyinpune.com / hexahome.in / nobroker.in locality listing, dated 2025-2026",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411006",
+    "city": "Pune",
+    "scores": {
+      "crime": 61,
+      "infrastructure": 52,
+      "air": 80,
+      "power": 62,
+      "schools": 62,
+      "water": 65,
+      "roads": 61,
+      "sewerage": 47
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 62,
+    "grade": "B",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 273,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "The Bishop's School (Kalyani Nagar / Yerawada)",
+        "address": null,
+        "board": "ICSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 51,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        16300,
+        16300
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Kalyani Nagar -- real market listing price, dated 2025/2026 (see build_pune.py)",
+      "source": "squareyards.com / buyinpune.com / hexahome.in / nobroker.in locality listing, dated 2025-2026",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411018",
+    "city": "Pune",
+    "scores": {
+      "crime": 54,
+      "infrastructure": 41,
+      "air": 80,
+      "power": 62,
+      "schools": 55,
+      "water": 58,
+      "roads": 54,
+      "sewerage": 42
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 56,
+    "grade": "C+",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 303,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Vidya Niketan English Medium School (Pimpri)",
+        "address": null,
+        "board": "SSC",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 26,
+    "crime_tier": "High",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        8000,
+        15000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Pimpri -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411019",
+    "city": "Pune",
+    "scores": {
+      "crime": 55,
+      "infrastructure": 58,
+      "air": 80,
+      "power": 62,
+      "schools": 56,
+      "water": 46,
+      "roads": 55,
+      "sewerage": 43
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 59,
+    "grade": "C+",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 287,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "ASM's Empros International School",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 31,
+    "crime_tier": "High",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": [
+        15000,
+        15000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Chinchwad -- real market listing price, dated 2025/2026 (see build_pune.py)",
+      "source": "squareyards.com / buyinpune.com / hexahome.in / nobroker.in locality listing, dated 2025-2026",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411044",
+    "city": "Pune",
+    "scores": {
+      "crime": 53,
+      "infrastructure": 61,
+      "air": 80,
+      "power": 62,
+      "schools": 54,
+      "water": 57,
+      "roads": 53,
+      "sewerage": 41
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 59,
+    "grade": "C+",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 322,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "City Pride School (Nigdi)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 11,
+    "crime_tier": "High",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        8000,
+        15000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Nigdi -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411035",
+    "city": "Pune",
+    "scores": {
+      "crime": 53,
+      "infrastructure": 47,
+      "air": 80,
+      "power": 62,
+      "schools": 54,
+      "water": 57,
+      "roads": 53,
+      "sewerage": 41
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 57,
+    "grade": "C+",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 375,
+    "schools_count": 0,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "schools_sourced": false,
+    "crime_percentile": 11,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Affordable",
+      "rate_sqft": [
+        8000,
+        15000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Akurdi -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411026",
+    "city": "Pune",
+    "scores": {
+      "crime": 53,
+      "infrastructure": 49,
+      "air": 80,
+      "power": 62,
+      "schools": 54,
+      "water": 57,
+      "roads": 53,
+      "sewerage": 41
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 57,
+    "grade": "C+",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 347,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Priyadarshani School (Bhosari)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 11,
+    "crime_tier": "High",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        8000,
+        15000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Bhosari -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411062",
+    "city": "Pune",
+    "scores": {
+      "crime": 53,
+      "infrastructure": 41,
+      "air": 80,
+      "power": 62,
+      "schools": 54,
+      "water": 57,
+      "roads": 53,
+      "sewerage": 41
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 55,
+    "grade": "C+",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 297,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Ganesh International School (Chikhali)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 11,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Affordable",
+      "rate_sqft": [
+        8000,
+        15000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Chikhali -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411027",
+    "city": "Pune",
+    "scores": {
+      "crime": 54,
+      "infrastructure": 39,
+      "air": 80,
+      "power": 62,
+      "schools": 55,
+      "water": 58,
+      "roads": 54,
+      "sewerage": 42
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 56,
+    "grade": "C+",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 331,
+    "schools_count": 0,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "schools_sourced": false,
+    "crime_percentile": 26,
+    "crime_tier": "High",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        12400,
+        12400
+      ],
+      "rate_type": "apartment",
+      "rate_exact": true,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Pimple Saudagar -- real market listing price, dated 2025/2026 (see build_pune.py)",
+      "source": "squareyards.com / buyinpune.com / hexahome.in / nobroker.in locality listing, dated 2025-2026",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411012",
+    "city": "Pune",
+    "scores": {
+      "crime": 61,
+      "infrastructure": 62,
+      "air": 80,
+      "power": 62,
+      "schools": 49,
+      "water": 52,
+      "roads": 48,
+      "sewerage": 49
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 61,
+    "grade": "B",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 334,
+    "schools_count": 0,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "schools_sourced": false,
+    "crime_percentile": 51,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        8000,
+        15000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Dapodi -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411034",
+    "city": "Pune",
+    "scores": {
+      "crime": 52,
+      "infrastructure": 70,
+      "air": 80,
+      "power": 62,
+      "schools": 53,
+      "water": 56,
+      "roads": 52,
+      "sewerage": 40
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 61,
+    "grade": "B",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 310,
+    "schools_count": 0,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "schools_sourced": false,
+    "crime_percentile": 3,
+    "crime_tier": "High",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        8000,
+        15000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Kasarwadi -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411033",
+    "city": "Pune",
+    "scores": {
+      "crime": 51,
+      "infrastructure": 45,
+      "air": 80,
+      "power": 62,
+      "schools": 52,
+      "water": 55,
+      "roads": 51,
+      "sewerage": 39
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 55,
+    "grade": "C+",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 326,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Podar International School (Tathawade)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 0,
+    "crime_tier": "High",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        8000,
+        15000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Tathawade -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "412101",
+    "city": "Pune",
+    "scores": {
+      "crime": 56,
+      "infrastructure": 43,
+      "air": 80,
+      "power": 62,
+      "schools": 57,
+      "water": 47,
+      "roads": 56,
+      "sewerage": 44
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 56,
+    "grade": "C+",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 332,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "City Pride School (Ravet)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 34,
+    "crime_tier": "High",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        8000,
+        15000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Ravet -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411061",
+    "city": "Pune",
+    "scores": {
+      "crime": 52,
+      "infrastructure": 56,
+      "air": 80,
+      "power": 62,
+      "schools": 53,
+      "water": 56,
+      "roads": 52,
+      "sewerage": 40
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 58,
+    "grade": "C+",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 313,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "Divine English Medium School (Pimple Gurav)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 3,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Affordable",
+      "rate_sqft": [
+        8000,
+        15000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Pimple Gurav -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "411017",
+    "city": "Pune",
+    "scores": {
+      "crime": 53,
+      "infrastructure": 40,
+      "air": 80,
+      "power": 62,
+      "schools": 54,
+      "water": 57,
+      "roads": 53,
+      "sewerage": 41
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 55,
+    "grade": "C+",
+    "scored_at": "2026-09-26T00:00:00",
+    "total_cognizable_crimes": 319,
+    "schools_count": 1,
+    "schools_list": [
+      {
+        "name": "SNBP International School (Rahatani)",
+        "address": null,
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": null
+      }
+    ],
+    "schools_avg_pass": null,
+    "schools_sourced": true,
+    "crime_percentile": 11,
+    "crime_tier": "High",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Mid",
+      "rate_sqft": [
+        8000,
+        15000
+      ],
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Rahatani -- real market listing price, dated 2025/2026 (see build_pune.py) (zone-interpolated, bounded by real listing-price data in the same zone, not a locality-specific figure)",
+      "source": "Zone-interpolated, bounded by real market listing-price ranges for nearby localities; no clean single locality-specific figure found this session",
+      "circle_rate_note": "Maharashtra's Directorate of Registration officially calls its government-assessed minimum property valuation the 'Ready Reckoner Rate' (same term used for Mumbai) -- the actual per-locality Ready Reckoner numeric tables were JS-rendered and not extractable this session, a disclosed gap; the figures here are real market listing prices instead, which this dataset already treats as sitting above that government floor for every city.",
+      "market_gap_note": "Actual market prices in Pune typically run above the government Ready Reckoner Rate -- exact city-wide gap percentage not independently sourced this session.",
+      "disclaimer": "Real market listing price, not the government Ready Reckoner minimum valuation. Zone-interpolated estimate, not a locality-specific figure. Not part of the NQI score."
+    }
   }
 ]

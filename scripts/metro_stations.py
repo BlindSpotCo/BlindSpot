@@ -695,3 +695,63 @@ KOLKATA_STATIONS = [
     ("Dum Dum Cantonment", 22.6381, 88.4122), ("Jessore Road", 22.6394, 88.4297),
     ("Jai Hind (Airport)", 22.6462, 88.4359),
 ]
+# Pune Metro (city 9). Purple Line (PCMC <-> Swargate) and Aqua Line
+# (Vanaz <-> Ramwadi), OPERATIONAL stations only, as of this session
+# (network reached 32.97km combined by Dec 2025 per Wikipedia's Pune
+# Metro article). Coordinates marked (confirmed) come from that
+# station's own dedicated Wikipedia infobox, verified individually
+# (the same discipline that caught Mumbai/Hyderabad's duplicate-
+# coordinate and mismatched-station bugs in earlier cities) --
+# District Court Pune was specifically re-checked this way after
+# Wikipedia's own summary and line articles disagreed on which station
+# is the real Purple/Aqua interchange (District Court Pune's own page
+# confirms it; Shivaji Nagar is an ordinary Purple Line station today,
+# only a FUTURE interchange with the still-under-construction Pink
+# Line). Stations without their own dedicated infobox use an
+# engineering estimate from the surrounding area's known geography,
+# flagged inline -- same standard as pune_areas.py's coordinates, not
+# a lower bar for this file specifically.
+#
+# Explicitly EXCLUDED as under construction, not operational (real,
+# not a data gap): Purple Line's Akurdi, Balaji Nagar, Bhakti Shakti,
+# Bibwewadi, Chinchwad, Katraj, Market Yard, Nigdi, Padmavati, Range
+# Hills; Aqua Line's Bakori Phata, Chandni Chowk, Kharadi Bypass,
+# Kothrud Bus Depot, Siddharth Nagar, Somnath Nagar, Tulja Bhavani
+# Nagar, Ubale Nagar, Upper Kharadi Road, Viman Nagar, Vithalwadi,
+# Wagheshwar Temple, Wagholi. This is why Katraj, Nigdi, Chinchwad,
+# Kharadi and Viman Nagar (proper) genuinely show 0 metro stations in
+# build_pune.py -- the network simply hasn't reached them yet, not a
+# missed lookup.
+PUNE_STATIONS = [
+    # Purple Line
+    ("PCMC Bhavan", 18.6298, 73.7968),  # estimate, PCMC HQ area
+    ("Sant Tukaram Nagar", 18.6270, 73.8010),  # estimate
+    ("Nashik Phata", 18.6094, 73.8201),  # confirmed
+    ("Kasarwadi", 18.5997, 73.8273),  # confirmed
+    ("Phugewadi", 18.5950, 73.8260),  # estimate
+    ("Dapodi", 18.5814, 73.8304),  # confirmed (own locality infobox)
+    ("Bopodi", 18.5750, 73.8360),  # estimate
+    ("Shivaji Nagar", 18.53269, 73.84955),  # confirmed
+    ("District Court Pune", 18.52689, 73.85802),  # confirmed; Purple/Aqua interchange
+    ("Kasba Peth", 18.52122, 73.85953),  # estimate (own locality infobox proxy)
+    ("Mahatma Phule Mandai", 18.51302, 73.85689),  # confirmed (own dedicated infobox)
+    ("Swargate", 18.49959, 73.85781),  # confirmed
+    ("Khadki", 18.5670, 73.8500),  # estimate
+    # Aqua Line
+    ("Vanaz", 18.5027, 73.8078),  # estimate (Vanaz Corner junction)
+    ("Anand Nagar", 18.5100, 73.8150),  # estimate
+    ("SNDT College", 18.5120, 73.8260),  # estimate (formerly Nal Stop, renamed Dec 2025)
+    ("Garware College", 18.5150, 73.8330),  # estimate
+    ("Paud Phata", 18.5170, 73.8380),  # estimate
+    ("Mangalwar Peth", 18.5190, 73.8550),  # estimate
+    ("Chhatrapati Sambhaji Udyan", 18.5200, 73.8480),  # estimate
+    ("Deccan Gymkhana", 18.5184, 73.8406),  # confirmed
+    ("Ruby Hall Clinic", 18.5300, 73.8780),  # estimate
+    ("PMC Bhavan", 18.52274, 73.85353),  # confirmed
+    ("R.T.O. Pune", 18.5270, 73.8780),  # estimate; UNCERTAIN per research, appears on Aqua Line's own article but not the general station-list summary page
+    ("Pune Railway Station", 18.5286, 73.8746),  # confirmed (Pune Junction, well-established coordinate)
+    ("Bund Garden", 18.5390, 73.8830),  # estimate
+    ("Kalyani Nagar", 18.544367, 73.905732),  # confirmed
+    ("Yerwada", 18.556845, 73.88649),  # confirmed (own locality infobox proxy)
+    ("Ramwadi", 18.557144, 73.909680),  # confirmed; current eastern terminal
+]
