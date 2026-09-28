@@ -486,7 +486,11 @@ function applyHL(){
 tL=map.addMapTiles(TILES.s);
 // Via our own proxy (see app/api/sunscout/buildings-tile/route.js): the
 // direct data.osmbuildings.org URL is CORS-locked to registered domains.
-map.addGeoJSONTiles('/api/sunscout/buildings-tile?z={z}&x={x}&y={y}');
+// Must be absolute: OSMBuildings fetches GeoJSON tiles inside a blob: Web
+// Worker, where a relative '/api/...' is an invalid URL. This iframe is a
+// same-origin srcdoc, so the parent's origin is the site's own origin.
+var SITE_ORIGIN=(function(){try{return window.parent.location.origin;}catch(e){}try{if(location.origin&&location.origin!=='null')return location.origin;}catch(e){}return '';})();
+map.addGeoJSONTiles(SITE_ORIGIN+'/api/sunscout/buildings-tile?z={z}&x={x}&y={y}');
 var PIN_LAT=${lat}, PIN_LON=${lon};
 var TZ_SUFFIX='+05:30'; // every time on this page is IST (tzOffset 330)
 var pinLayer=map.addGeoJSON(${obsGj});
