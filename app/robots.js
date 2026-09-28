@@ -13,6 +13,6 @@ export default function robots() {
         '/api/',
       ],
     },
-    sitemap: 'https://blindspotco.net/sitemap.xml',
+    sitemap: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.blindspot.properties'}/sitemap.xml`,
   };
 }

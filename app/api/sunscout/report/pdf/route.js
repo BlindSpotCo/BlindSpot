@@ -295,7 +295,7 @@ async function buildReport(req) {
     <div class="print-addr">${safeAddress}</div>
   </div></div>
   <div class="print-only print-foot"><div class="print-bar">
-    <span class="print-small">blindspotco.net</span>
+    <span class="print-small">blindspot.properties</span>
     <span class="print-small">Prepared ${date} &middot; Floor ${safeFloor}, facing ${safeFacing}</span>
   </div></div>
   <table class="pframe" role="presentation">

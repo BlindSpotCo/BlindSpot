@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const SITE_URL = 'https://blindspotco.net';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.blindspot.properties';
 
 export default function sitemap() {
   const staticRoutes = [

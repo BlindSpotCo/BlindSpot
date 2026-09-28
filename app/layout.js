@@ -2,7 +2,7 @@ import './globals.css';
 import Script from 'next/script';
 import { Analytics } from '@vercel/analytics/next';
 
-const SITE_URL = 'https://blindspotco.net';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.blindspot.properties';
 
 // Next's App Router splits viewport out of `metadata` (a `viewport` key
 // inside metadata is ignored with a build warning as of Next 14+) -- this

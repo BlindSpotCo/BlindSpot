@@ -11,13 +11,13 @@ import { createClient } from '@/lib/supabase/client';
 // AsliVastu's -- lib/auth/popupSignIn.js opens this same popup flow for
 // same-domain sign-in (e.g. from the header, or a "Save report" button),
 // so a person can sign in without the calling tab ever navigating away.
-const ALLOWED_ORIGINS = ['https://sun-scout.com', 'https://aslivastu.com', 'https://blindspotco.net', 'https://www.blindspotco.net', 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'];
+const ALLOWED_ORIGINS = ['https://sun-scout.com', 'https://www.sun-scout.com', 'https://aslivastu.com', 'https://www.aslivastu.com', 'https://blindspot.properties', 'https://www.blindspot.properties', 'https://blindspotco.net', 'https://www.blindspotco.net', 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'];
 
 // Same-domain BlindSpot origins specifically -- these can (and do) use
 // BroadcastChannel below, which SunScout/AsliVastu (genuinely different
 // domains) can't, since a broadcast channel only reaches tabs on the
 // exact same origin.
-const SAME_ORIGIN = ['https://blindspotco.net', 'https://www.blindspotco.net', 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'];
+const SAME_ORIGIN = ['https://blindspot.properties', 'https://www.blindspot.properties', 'https://blindspotco.net', 'https://www.blindspotco.net', 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'];
 
 export default function PopupComplete() {
   const [message, setMessage] = useState('Finishing sign-in…');
@@ -25,7 +25,11 @@ export default function PopupComplete() {
   useEffect(() => {
     (async () => {
       const origin = new URLSearchParams(window.location.search).get('origin');
-      if (!origin || !ALLOWED_ORIGINS.includes(origin)) {
+      // The popup's own origin is always trusted: the same-domain flow
+      // (lib/auth/popupSignIn.js) passes window.location.origin, so this
+      // keeps working on whatever domain BlindSpot is served from.
+      const isSelf = origin === window.location.origin;
+      if (!origin || (!isSelf && !ALLOWED_ORIGINS.includes(origin))) {
         setMessage('Sign-in complete. You can close this window.');
         return;
       }
@@ -48,7 +52,7 @@ export default function PopupComplete() {
       // behavior on Google's end, not something this code can prevent) --
       // postMessage-to-opener silently has nothing to send to after that,
       // which is why the opening tab never picked up the session.
-      if (SAME_ORIGIN.includes(origin) && typeof BroadcastChannel !== 'undefined') {
+      if ((isSelf || SAME_ORIGIN.includes(origin)) && typeof BroadcastChannel !== 'undefined') {
         try {
           const bc = new BroadcastChannel('blindspot-auth');
           bc.postMessage(payload);
