@@ -484,7 +484,9 @@ function applyHL(){
 // exists to take the buffer class from, then new tiles use the patch.
 (function waitForTiles(n){ if(patchTint()){ applyHL(); return; } if(n<60) setTimeout(function(){ waitForTiles(n+1); },250); })(0);
 tL=map.addMapTiles(TILES.s);
-map.addGeoJSONTiles('https://{s}.data.osmbuildings.org/0.2/59fcc2e8/tile/{z}/{x}/{y}.json');
+// Via our own proxy (see app/api/sunscout/buildings-tile/route.js): the
+// direct data.osmbuildings.org URL is CORS-locked to registered domains.
+map.addGeoJSONTiles('/api/sunscout/buildings-tile?z={z}&x={x}&y={y}');
 var PIN_LAT=${lat}, PIN_LON=${lon};
 var TZ_SUFFIX='+05:30'; // every time on this page is IST (tzOffset 330)
 var pinLayer=map.addGeoJSON(${obsGj});
