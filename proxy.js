@@ -7,6 +7,25 @@ import { NextResponse } from 'next/server';
 // renamed this file convention and now runs it on the Node.js runtime
 // by default instead of Edge.
 export async function proxy(request) {
+  // Safety net for OAuth / email-link sign-in. When Supabase doesn't
+  // recognise the redirectTo URL (e.g. a new domain not yet added under
+  // Auth -> URL Configuration -> Redirect URLs), it falls back to the Site
+  // URL and drops the one-time ?code= on the homepage, where nothing
+  // exchanges it -- the person lands back on the landing page signed out.
+  // Catch a stray ?code= on any non-auth path and forward it to the real
+  // callback, restoring where they were headed from the cookie the login
+  // page set just before leaving for Google.
+  const { pathname, searchParams } = request.nextUrl;
+  if (searchParams.has('code') && !pathname.startsWith('/auth/')) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/auth/callback';
+    if (!url.searchParams.has('next')) {
+      const saved = request.cookies.get('bs_auth_next')?.value;
+      url.searchParams.set('next', saved ? decodeURIComponent(saved) : '/');
+    }
+    return NextResponse.redirect(url);
+  }
+
   let response = NextResponse.next({ request });
 
   // Without the Supabase env vars, createServerClient throws -- and because

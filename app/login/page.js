@@ -98,6 +98,9 @@ export default function LoginPage() {
     setError('');
     const supabase = createClient();
     const next = encodeURIComponent(safeNext(getNextParam()));
+    // Backup copy of where to go after sign-in, read by proxy.js /
+    // auth/callback if Supabase drops the ?next= from redirectTo.
+    document.cookie = `bs_auth_next=${next}; path=/; max-age=600; samesite=lax${window.location.protocol === 'https:' ? '; secure' : ''}`;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {

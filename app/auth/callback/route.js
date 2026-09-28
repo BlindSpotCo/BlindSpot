@@ -8,7 +8,10 @@ import { createClient } from '@/lib/supabase/server';
 export async function GET(request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
-  const rawNext = searchParams.get('next') || '/';
+  // `next` normally rides along on the redirectTo URL; if Supabase dropped
+  // it (Site URL fallback), use the copy the login page saved in a cookie.
+  const savedNext = request.cookies.get('bs_auth_next')?.value;
+  const rawNext = searchParams.get('next') || (savedNext ? decodeURIComponent(savedNext) : '/');
 
   // Supabase sends the reason here when the link itself is the problem --
   // an expired or already-used reset link, a cancelled consent screen.
