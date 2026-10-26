@@ -135,6 +135,13 @@ export default function SiteHeader({ homeHref = '/' }) {
   const handleSignInClick = async (e) => {
     e.preventDefault();
     if (signingIn) return;
+    // Only the multi-step flow pages hold unsaved React state worth the
+    // popup. Everywhere else, a plain full-page redirect is smoother.
+    const needsPopup = onFlow || pathname?.startsWith('/property-score');
+    if (!needsPopup) {
+      window.location.href = `/login?next=${encodeURIComponent(pathname || '/')}`;
+      return;
+    }
     setSigningIn(true);
     try {
       const supabase = createClient();
