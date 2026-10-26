@@ -27,11 +27,16 @@ export default function SignupPage() {
 
     setSending(true);
     const supabase = createClient();
+    // ?next= (set by the sign-in sheet) brings the confirmation link back to
+    // the page they signed up from. Same-site paths only: anything else is
+    // dropped, so this can't be used to bounce people to another domain.
+    const rawNext = new URLSearchParams(window.location.search).get('next') || '';
+    const next = rawNext.startsWith('/') && !rawNext.startsWith('//') && !rawNext.startsWith('/\\') ? rawNext : '';
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${window.location.origin}/auth/callback${next ? `?next=${encodeURIComponent(next)}` : ''}`,
       },
     });
     setSending(false);

@@ -104,7 +104,11 @@ export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTi
 }
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Geist',sans-serif;}
 html,body{background:var(--bg-2);overflow:hidden;}
-#map{width:100%;height:100vh;}
+#map{width:100%;height:100vh;touch-action:none;}
+/* Pinching the 3D map on a phone used to zoom the whole page instead
+   (and leave it zoomed). touch-action:none hands every gesture on the map
+   to the map itself. */
+html,body{touch-action:none;overscroll-behavior:none;}
 .tbadge{position:absolute;top:14px;left:14px;z-index:25;background:rgba(255,253,248,0.94);border:1px solid var(--line);border-radius:var(--radius-md);padding:7px 14px;color:var(--ss);font-size:13px;font-weight:600;font-family:'Geist Mono',monospace;letter-spacing:.04em;pointer-events:none;}
 .hint{position:absolute;bottom:12px;left:14px;z-index:25;color:var(--text-mute);font-size:11px;pointer-events:none;font-family:'Geist Mono',monospace;background:rgba(255,253,248,.92);border:1px solid var(--line);padding:5px 14px;border-radius:20px;white-space:nowrap;}
 /* Was top:14px;left:14px -- the SAME corner the parent page's own

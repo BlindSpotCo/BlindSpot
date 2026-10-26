@@ -31,7 +31,7 @@ import Link from 'next/link';
 import HomeMark from '@/components/profile/HomeMark';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { openSignInPopup } from '@/lib/auth/popupSignIn';
+import SignInSheet from '@/components/auth/SignInSheet';
 
 export default function SiteHeader({ homeHref = '/' }) {
   // The CTA is an entry point into the report -- pointing at the page
@@ -119,39 +119,16 @@ export default function SiteHeader({ homeHref = '/' }) {
   };
 
   // Signing in used to be a plain <Link href="/login">, which navigated
-  // the whole tab away -- fine on most pages, but PropertyScoreFlow keeps
-  // its step (locality/address picked, unit floor/facing, generated
-  // verdict...) in plain React state with nothing in the URL. Landing back
-  // on /property-score after sign-in was a fresh page load, so that state
-  // was gone and the person was back at step 1 -- "once I sign in on the
-  // 2nd page it takes me back to first."
-  //
-  // Signing in via a popup (same /login page, same email+Google flow --
-  // see lib/auth/popupSignIn.js) means this tab never navigates, so
-  // whatever page/step someone was on is untouched. Falls back to a normal
-  // full-page redirect (with ?next= back to this exact page) if the popup
-  // gets blocked.
-  const [signingIn, setSigningIn] = useState(false);
-  const handleSignInClick = async (e) => {
+  // the whole tab away and lost whatever step of the report you were on.
+  // Then it was a popup window -- which on phones was a second tab left
+  // behind after sign-in, and with Google it also bounced THIS tab to
+  // /login (see components/auth/SignInSheet.js for why). Now it's a sheet
+  // over the current page: email sign-in never leaves it, and Google comes
+  // straight back to this exact URL.
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const handleSignInClick = (e) => {
     e.preventDefault();
-    if (signingIn) return;
-    // Only the multi-step flow pages hold unsaved React state worth the
-    // popup. Everywhere else, a plain full-page redirect is smoother.
-    const needsPopup = onFlow || pathname?.startsWith('/property-score');
-    if (!needsPopup) {
-      window.location.href = `/login?next=${encodeURIComponent(pathname || '/')}`;
-      return;
-    }
-    setSigningIn(true);
-    try {
-      const supabase = createClient();
-      const { access_token, refresh_token } = await openSignInPopup();
-      await supabase.auth.setSession({ access_token, refresh_token });
-    } catch {
-      window.location.href = `/login?next=${encodeURIComponent(pathname || '/')}`;
-    } finally {
-      setSigningIn(false);
-    }
+    setSheetOpen(true);
   };
 
   const closeMobile = () => setMobileOpen(false);
@@ -230,7 +207,7 @@ export default function SiteHeader({ homeHref = '/' }) {
                     </button>
                   </div>
                 ) : (
-                  <a href="/login" onClick={handleSignInClick} className="btn btn-auth">{signingIn ? 'Signing in…' : 'Sign in'}</a>
+                  <a href="/login" onClick={handleSignInClick} className="btn btn-auth">Sign in</a>
                 )
               )}
               <button
@@ -267,13 +244,14 @@ export default function SiteHeader({ homeHref = '/' }) {
                   </button>
                 </>
               ) : (
-                <a href="/login" onClick={(e) => { handleSignInClick(e); closeMobile(); }}>{signingIn ? 'Signing in…' : 'Sign in'}</a>
+                <a href="/login" onClick={(e) => { handleSignInClick(e); closeMobile(); }}>Sign in</a>
               )
             )}
           </div>
         </div>
       )}
       </header>
+      <SignInSheet open={sheetOpen} onClose={() => setSheetOpen(false)} />
     </>
   );
 }

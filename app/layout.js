@@ -1,6 +1,7 @@
 import './globals.css';
 import Script from 'next/script';
 import { Analytics } from '@vercel/analytics/next';
+import PendingSaveResume from '@/components/auth/PendingSaveResume';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.blindspot.properties';
 
@@ -110,7 +111,11 @@ const jsonLd = [
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    // data-scroll-behavior: globals.css sets scroll-behavior:smooth on
+    // <html>. Without this attribute Next 16 leaves it on during page
+    // changes, so every navigation visibly scrolled the new page up from
+    // wherever the old one was -- the "page glitch" on moving between pages.
+    <html lang="en" data-scroll-behavior="smooth">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -126,6 +131,7 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         {children}
+        <PendingSaveResume />
         <Analytics />
       </body>
     </html>

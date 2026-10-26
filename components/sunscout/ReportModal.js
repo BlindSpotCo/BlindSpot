@@ -10,6 +10,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import SaveReportButton from '@/components/reports/SaveReportButton';
+import { loadTrends } from '@/lib/trends/useTrends';
 import { SHOTS } from '@/lib/sunscout/useMapCapture';
 import { answersToRequest, GOAL_OPTIONS, HORIZON_OPTIONS, PRIORITY_OPTIONS, MAX_PRIORITIES } from '@/lib/reportQuestions';
 
@@ -129,6 +130,12 @@ const BAR_CSS = `
       bottom:calc(10px + var(--rm-stack, 0px) + var(--bsr-dock-h, 0px)) !important;
     }
     .rm-corner-card > div{ max-height:calc(100vh - 140px - var(--bsr-dock-h, 0px)) !important; }
+    /* 100vh on iOS is the height with Safari's toolbar hidden, so the
+       bottom of this card (Save / Open report) sat under the toolbar. */
+    @supports (height:100dvh){
+      .rm-corner-card > div{ max-height:calc(100dvh - 140px - var(--bsr-dock-h, 0px)) !important; }
+    }
+    .rm-corner-card{ bottom:calc(10px + var(--rm-stack, 0px) + var(--bsr-dock-h, 0px) + env(safe-area-inset-bottom, 0px)) !important; }
   }
 `;
 
@@ -356,6 +363,11 @@ export default function ReportModal({
       throw new Error(`${label}-failed`);
     };
 
+    // Past-trend charts for the written report. Started now so it loads
+    // while the map is being photographed; a failure just leaves the
+    // section out.
+    const trendsP = galleryOnly ? Promise.resolve(null) : loadTrends(lat, lon).catch(() => null);
+
     try {
       const screenshots = await capture();
 
@@ -429,6 +441,7 @@ export default function ReportModal({
       // server gets a short token per frame and the real images go back in
       // here.
       const shotToken = (i) => `__BS_SHOT_${i}__`;
+      const trends = await trendsP;
       const { mainHtml: mainTpl, galleryHtml: galleryTpl } = await postJson('/api/sunscout/report/pdf', {
         lat, lon, tzOffset, address: addr, floor, facing,
         screenshots: screenshots.map((sc, i) => ({ label: sc.label, base64: shotToken(i) })),
@@ -439,6 +452,7 @@ export default function ReportModal({
         unitSubScores, verdictLabel,
         aiUnavailable: Boolean(aiUnavailable) && !galleryOnly,
         galleryOnly: Boolean(galleryOnly),
+        trends: trends || undefined,
       }, 'pdf');
 
       const fillShots = (html) => screenshots.reduce((h, sc, i) => h.split(shotToken(i)).join(sc.base64), html || '');
