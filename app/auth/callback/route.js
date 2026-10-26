@@ -18,23 +18,39 @@ export async function GET(request) {
   // This used to be ignored entirely: the person was redirected to the
   // homepage as though it had worked, and only found out it hadn't when
   // the next signed-in thing they tried said they were signed out.
-  const authError = searchParams.get('error_description') || searchParams.get('error');
-  if (authError) {
+  // Where a failed sign-in sends people: back to /login WITH the page they
+  // were heading to, so signing in again there still returns them to it.
+  // (It used to drop `next`, so a failed Google round trip from a report
+  // ended on the homepage after the retry.) Same-site paths only.
+  const sameSiteNext = rawNext.startsWith('/') && !rawNext.startsWith('//') && !rawNext.startsWith('/\\') ? rawNext : '';
+  const toLogin = (message) => {
     const back = new URL('/login', origin);
-    back.searchParams.set('error', authError);
+    back.searchParams.set('error', message);
+    if (sameSiteNext && sameSiteNext !== '/') back.searchParams.set('next', sameSiteNext);
     return NextResponse.redirect(back.toString());
-  }
+  };
+
+  // Supabase sends the reason here when the link itself is the problem --
+  // an expired or already-used reset link, a cancelled consent screen.
+  const authError = searchParams.get('error_description') || searchParams.get('error');
+  if (authError) return toLogin(authError);
 
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-    // Same failure, one step later: a code that cannot be exchanged (already
-    // spent, wrong project, clock skew) left no session behind, so carrying
-    // on to `next` silently landed a signed-out person on a signed-in page.
     if (error) {
-      const back = new URL('/login', origin);
-      back.searchParams.set('error', error.message || 'sign-in-failed');
-      return NextResponse.redirect(back.toString());
+      // The same callback URL can be requested twice (a browser retrying
+      // the redirect, a double tap). The first request signs the person in
+      // and uses up the one-time verifier; the second then fails with "PKCE
+      // code verifier not found" -- and used to send someone who WAS signed
+      // in to an error page. If a session exists, it worked: carry on.
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        const pkce = /code verifier|pkce|flow state/i.test(error.message || '');
+        return toLogin(pkce
+          ? 'Sign-in didn\u2019t finish in this browser. This happens if Google opened in a different browser or app (for example from inside Instagram or WhatsApp). Open blindspot.properties in Chrome or Safari and try again.'
+          : (error.message || 'sign-in-failed'));
+      }
     }
   }
 
@@ -66,5 +82,8 @@ export async function GET(request) {
   const target = new URL(rawNext, origin);
   const next = target.origin === origin ? target.pathname + target.search + target.hash : '/';
 
-  return NextResponse.redirect(`${origin}${next}`);
+  const res = NextResponse.redirect(`${origin}${next}`);
+  // Used up: a stale copy must not steer a later, unrelated sign-in.
+  res.cookies.set('bs_auth_next', '', { path: '/', maxAge: 0 });
+  return res;
 }

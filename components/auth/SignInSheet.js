@@ -100,12 +100,15 @@ export default function SignInSheet({ open, onClose, onSignedIn, heading = 'Sign
     if (!(await holdPending())) return;
     setLeaving(true);
     const next = encodeURIComponent(hereUrl());
-    // Backup copy of where to come back to, read by proxy.js and
-    // /auth/callback if Supabase drops ?next= from the redirect.
-    document.cookie = `bs_auth_next=${next}; path=/; max-age=600; samesite=lax${window.location.protocol === 'https:' ? '; secure' : ''}`;
+    // Where to come back to. Carried in a cookie, not on redirectTo: a
+    // plain /auth/callback is the URL most likely to match Supabase's
+    // allowed-redirect list exactly, and when one doesn't match, Supabase
+    // silently falls back to the Site URL and the page you came from was
+    // lost. Read by /auth/callback (and proxy.js for that fallback).
+    document.cookie = `bs_auth_next=${next}; path=/; max-age=1800; samesite=lax${window.location.protocol === 'https:' ? '; secure' : ''}`;
     const { error: err } = await createClient().auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=${next}` },
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
     if (err) { setLeaving(false); setError(err.message); }
   };
