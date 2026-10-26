@@ -26,6 +26,9 @@ import {
   Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake, Sofa, ArrowDown, MapPin, Scale, FolderOpen, FileText,
 } from 'lucide-react';
 import RoomPhotoAnalyzer from './RoomPhotoAnalyzer';
+import { useTrends } from '@/lib/trends/useTrends';
+import { TREND_FOR_FACTOR, TREND_FOR_SUBSCORE } from '@/lib/trends/series';
+import { Sparkline, TrendChart } from '@/components/trends/TrendChart';
 import { recordVisit } from '@/lib/profile/history';
 import './report.css';
 
@@ -378,6 +381,37 @@ export default function ReportScreen({ view = 'verdict' }) {
   // bsr-half-detail) so collapsing the breakdown never hides them.
   const [halfOpen, setHalfOpen] = useState({ area: false, unit: false });
   const toggleHalf = (key) => setHalfOpen((prev) => ({ ...prev, [key]: !prev[key] }));
+
+  // Past data behind each weight score (see /api/trends). One row's chart
+  // open at a time; rows without a record behind them show nothing extra.
+  const trends = useTrends(lat, lon);
+  const [openTrend, setOpenTrend] = useState(null);
+  const trendBits = (rowKey, seriesKey, color) => {
+    const series = trends?.series?.[seriesKey];
+    if (!series) return { button: null, panel: null };
+    const isOpen = openTrend === rowKey;
+    const panelId = `bsr-trend-${rowKey}`;
+    return {
+      button: (
+        <button
+          type="button"
+          className="bsr-trend-btn"
+          aria-expanded={isOpen}
+          aria-controls={panelId}
+          aria-label={`${isOpen ? 'Hide' : 'Show'} past trend: ${series.label}`}
+          onClick={() => setOpenTrend(isOpen ? null : rowKey)}
+        >
+          <Sparkline series={series} color={color} />
+          <span className="bsr-trend-btn-word">Past</span>
+        </button>
+      ),
+      panel: isOpen ? (
+        <div className="bsr-trend-panel" id={panelId}>
+          <TrendChart series={series} color={color} />
+        </div>
+      ) : null,
+    };
+  };
   // Default open at 768px+, not a standing CSS override -- a person who
   // then collapses a half on their own laptop stays collapsed. This used
   // to be a mount-only check, so someone who opened the page narrow (or
@@ -2134,28 +2168,38 @@ export default function ReportScreen({ view = 'verdict' }) {
                   <ul className="bsr-rows">
                     {factorKeys.map((k) => {
                       const RowIcon = FACTOR_ICONS[k];
+                      const t = trendBits(`area-${k}`, TREND_FOR_FACTOR[k], 'var(--av, #6B2232)');
                       return (
-                      <li key={k}>
+                      <li key={k} className={t.button ? 'has-trend' : undefined}>
                         {RowIcon ? <RowIcon className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" /> : null}
                         <span className="bsr-row-what">
                           {FACTOR_LABELS[k] || k}
                           {FACTOR_MEANS[k] ? <span className="bsr-row-note">{FACTOR_MEANS[k]}</span> : null}
                         </span>
+                        {t.button}
                         <span className={`bsr-tag is-${toneOf(area.factors[k])}`}>{word(area.factors[k])}</span>
+                        {t.panel}
                       </li>
                       );
                     })}
 
-                    {aqi != null && (
-                      <li>
+                    {aqi != null && (() => {
+                      // Only when the records have no 'air' factor row of
+                      // their own -- otherwise the trend already sits there.
+                      const t = factorKeys.includes('air') ? { button: null, panel: null } : trendBits('area-aqi', 'pm25', 'var(--av, #6B2232)');
+                      return (
+                      <li className={t.button ? 'has-trend' : undefined}>
                         <Wind className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" />
                         <span className="bsr-row-what">
                           Air quality today
                           <span className="bsr-row-note">Live reading, AQI {aqi}</span>
                         </span>
+                        {t.button}
                         <span className={`bsr-tag is-${aqi <= 100 ? 'good' : aqi <= 200 ? 'avg' : 'poor'}`}>{aqiWord(aqi)}</span>
+                        {t.panel}
                       </li>
-                    )}
+                      );
+                    })()}
 
                     {missingKeys.filter((k) => !(k === 'air' && aqi != null)).map((k) => {
                       const RowIcon = FACTOR_ICONS[k];
@@ -2172,6 +2216,11 @@ export default function ReportScreen({ view = 'verdict' }) {
                     })}
                   </ul>
 
+                  {trends && (
+                    <p className="bsr-trend-note">
+                      Rows with a small line chart have a past record behind them. Tap it to see how that has changed over the years. Past data only, not a forecast.
+                    </p>
+                  )}
                   <p className="bsr-methodology-note">
                     Scores use a zone-level model, so nearby pincodes can score identically. School names in the full report are the one part sourced locality by locality.
                   </p>
@@ -2308,13 +2357,19 @@ export default function ReportScreen({ view = 'verdict' }) {
                 Worked out from the sun&apos;s real path over the buildings around this one.{' '}
                 <a href="#the-block">See the block in 3D ↓</a>
               </p>
+              {trends && !hasArea && (
+                <p className="bsr-trend-note">
+                  Rows with a small line chart have a past record behind them. Tap it to see how that has changed over the years. Past data only, not a forecast.
+                </p>
+              )}
 
 
               <ul className="bsr-rows">
                 {(unit.subScores || []).map((s) => {
                   const RowIcon = SUBSCORE_ICONS[s.key];
+                  const t = trendBits(`unit-${s.key}`, TREND_FOR_SUBSCORE[s.key], 'var(--ss, #AF5F30)');
                   return (
-                  <li key={s.key}>
+                  <li key={s.key} className={t.button ? 'has-trend' : undefined}>
                     {RowIcon ? <RowIcon className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" /> : null}
                     <span className="bsr-row-what">
                       {s.label}
@@ -2328,11 +2383,13 @@ export default function ReportScreen({ view = 'verdict' }) {
                         it gets its own quiet in-progress pill instead. It
                         swaps for the real tag in place once the background
                         fetch resolves (see the scores effect above). */}
+                    {t.button}
                     {s.pending ? (
                       <span className="bsr-tag is-pending">Checking…</span>
                     ) : (
                       <span className={`bsr-tag is-${toneOf(s.score)}`}>{word(s.score)}</span>
                     )}
+                    {t.panel}
                   </li>
                   );
                 })}

@@ -2867,3 +2867,82 @@ header.header-on-dark .brand-word-img{
 .nav-avatar:hover{ transform:translateY(-1px); box-shadow:0 0 0 2px var(--brand,#3D4116) }
 .nav-avatar img{ width:100%; height:100%; object-fit:cover; display:block }
 @media (prefers-reduced-motion:reduce){ .nav-avatar{ transition:none } .nav-avatar:hover{ transform:none } }
+
+/* ===== Phone fit & zoom fixes =====
+   1. iOS Safari zooms the page in whenever a text field under 16px gets
+      focus, and never zooms back out on its own -- every form on the site
+      had 13-15px inputs (search, floor, folder name, login), so tapping any
+      of them left the page stuck zoomed. 16px on touch screens stops it;
+      !important because most of these fields set font-size inline.
+   2. touch-action:manipulation turns off double-tap-to-zoom (quick taps on
+      buttons were zooming the page) while keeping pinch-zoom for anyone
+      who wants it.
+   3. text-size-adjust stops iOS inflating text when the phone rotates to
+      landscape, which also didn't undo itself on rotating back.
+   4. overflow-x:clip on <html> stops anything a few px too wide from
+      letting the whole page pan sideways. clip, not hidden: it doesn't
+      make a scroll container, so position:sticky keeps working. */
+html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; touch-action:manipulation; overflow-x:clip }
+@media (pointer:coarse){
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]):not([type="button"]):not([type="submit"]),
+  select, textarea{ font-size:16px !important }
+}
+/* Fixed sheets sized off 100vh run under Safari's bottom toolbar (100vh is
+   the height with the toolbar hidden). dvh is the height you can actually
+   see; browsers without it keep the vh line above. */
+@supports (height:100dvh){
+  .auth-page{ min-height:100dvh }
+}
+
+/* ===== In-place sign-in sheet (components/auth/SignInSheet.js) =====
+   Bottom sheet on phones, centred card on wider screens. */
+.sis-backdrop{ position:fixed; inset:0; background:rgba(10,5,0,0.42); z-index:1300; animation:sisFade .15s ease-out }
+.sis-panel{
+  position:fixed; z-index:1301; left:0; right:0; bottom:0;
+  max-height:92vh; max-height:92dvh; overflow-y:auto; overscroll-behavior:contain;
+  background:var(--paper); color:var(--ink);
+  border-radius:16px 16px 0 0; border:1px solid var(--line-soft);
+  padding:18px 20px calc(22px + env(safe-area-inset-bottom, 0px));
+  box-shadow:0 -18px 50px rgba(0,0,0,.22);
+  animation:sisUp .2s ease-out;
+}
+@media (min-width:640px){
+  .sis-panel{
+    left:50%; right:auto; bottom:auto; top:50%; transform:translate(-50%,-50%);
+    width:380px; border-radius:14px; padding:24px 26px 26px; animation:sisPop .18s ease-out;
+    box-shadow:0 24px 60px rgba(0,0,0,.28);
+  }
+}
+.sis-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:6px }
+.sis-head h2{ font-size:19px; font-weight:600; color:var(--ink) }
+.sis-x{ width:32px; height:32px; flex:none; border-radius:50%; border:0; background:rgba(26,10,0,0.06); cursor:pointer; font-size:18px; line-height:1; color:var(--text-mute) }
+.sis-x:hover{ background:rgba(26,10,0,0.12) }
+.sis-blurb{ font-size:14px; color:var(--text-mute); line-height:1.55; margin:0 0 16px }
+.sis-google{
+  width:100%; display:flex; align-items:center; justify-content:center; gap:10px; margin-top:10px;
+  padding:12px; border-radius:var(--radius); border:1px solid var(--line); background:#fff; color:#1a1a1a;
+  font:inherit; font-weight:600; font-size:14.5px; cursor:pointer;
+}
+.sis-google:disabled{ opacity:.6; cursor:default }
+.sis-or{ display:flex; align-items:center; gap:12px; margin:16px 0; color:var(--text-dim); font-size:12px }
+.sis-or span{ flex:1; height:1px; background:var(--line-soft) }
+.sis-links{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-top:16px }
+.sis-links a{ font-size:13.5px; color:var(--text-mute); text-decoration:none; border-bottom:1px solid var(--line) }
+.sis-links a:hover{ color:var(--ink); border-color:var(--ink) }
+@keyframes sisFade{ from{opacity:0} to{opacity:1} }
+@keyframes sisUp{ from{transform:translateY(24px); opacity:0} to{transform:none; opacity:1} }
+@keyframes sisPop{ from{opacity:0; transform:translate(-50%,-46%)} to{opacity:1; transform:translate(-50%,-50%)} }
+@media (prefers-reduced-motion:reduce){ .sis-backdrop, .sis-panel{ animation:none } }
+
+/* Toast shown when a report saved after a sign-in round trip lands. */
+.psr-toast{
+  position:fixed; z-index:1400; left:12px; right:12px; bottom:calc(14px + env(safe-area-inset-bottom, 0px));
+  display:flex; align-items:center; gap:12px; padding:12px 12px 12px 16px;
+  background:var(--ink); color:var(--paper); border-radius:10px; box-shadow:0 12px 30px rgba(0,0,0,.25);
+  font-size:14px; line-height:1.45; animation:sisUp .2s ease-out;
+}
+@media (min-width:640px){ .psr-toast{ left:auto; right:20px; bottom:20px; max-width:420px } }
+.psr-toast.is-bad{ background:#7a1d1d }
+.psr-toast span{ flex:1; min-width:0 }
+.psr-toast a{ color:inherit; font-weight:700; text-decoration:underline; flex:none }
+.psr-toast button{ flex:none; width:28px; height:28px; border:0; border-radius:50%; background:rgba(255,255,255,.14); color:inherit; font-size:16px; cursor:pointer }

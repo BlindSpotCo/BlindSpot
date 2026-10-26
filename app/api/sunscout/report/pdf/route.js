@@ -28,6 +28,7 @@
 // directly instead of the html2pdf.js wrapper, for that per-section control.
 
 import { NextResponse } from 'next/server';
+import { TREND_ORDER, fmt as fmtNum } from '@/lib/trends/series';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -228,6 +229,9 @@ async function buildReport(req) {
     // so the gallery is the artifact, not an appendix to a report that
     // exists in another tab.
     galleryOnly,
+    // Past-trend series from /api/trends, fetched by the browser while the
+    // map was being photographed. Optional: absent means no section.
+    trends,
      // optional short label/nickname for the report, e.g. "Skyline Residences · Unit 502"
   } = await req.json();
 
@@ -889,11 +893,71 @@ async function buildReport(req) {
   // The first section on a fresh page doesn't need a divider above it.
   const stripLeadRule = (html) => (html || '').replace(`<div style="${RULE}"></div>`, '');
 
+  // "Past trends": one small chart per record behind the scores. What has
+  // happened here, from public records -- never a projection, and not
+  // written by the model (the numbers and sentences come from
+  // lib/trends/*, computed). Everything posted is escaped: it comes back
+  // through the browser, so it's treated like any other request input.
+  const trendSection = (() => {
+    const series = trends && typeof trends === 'object' ? trends.series : null;
+    if (!series || typeof series !== 'object') return '';
+    const list = TREND_ORDER.map((k) => series[k]).filter((t) =>
+      t && Array.isArray(t.points) && t.points.length >= 2 && t.points.length <= 120
+      && t.points.every((pt) => Number.isFinite(Number(pt?.v))));
+    if (!list.length) return '';
+    const chart = (t) => {
+      const pts = t.points.map((pt) => ({ x: escapeHtml(String(pt.x).slice(0, 12)), v: Number(pt.v) }));
+      const d = Number.isInteger(t.decimals) ? Math.min(3, Math.max(0, t.decimals)) : 0;
+      const ref = t.reference && Number.isFinite(Number(t.reference.v)) ? { v: Number(t.reference.v), label: escapeHtml(String(t.reference.label || '').slice(0, 60)) } : null;
+      const W = 330, H = 92, L = 6, R = 6, T = 16, B = 16;
+      let lo = Math.min(...pts.map((pt) => pt.v)), hi = Math.max(...pts.map((pt) => pt.v));
+      if (ref) { lo = Math.min(lo, ref.v); hi = Math.max(hi, ref.v); }
+      const padV = Math.max((hi - lo) * 0.25, Math.abs(hi) * 0.03, 0.5);
+      lo -= padV; hi += padV; if (Math.min(...pts.map((pt) => pt.v)) >= 0 && lo < 0) lo = 0;
+      const x = (i) => L + (i / (pts.length - 1)) * (W - L - R);
+      const y = (v) => T + (1 - (v - lo) / (hi - lo || 1)) * (H - T - B);
+      const last = pts.length - 1;
+      const line = pts.map((pt, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(pt.v).toFixed(1)}`).join(' ');
+      return `
+        <svg width="100%" viewBox="0 0 ${W} ${H}" style="display:block;overflow:visible;">
+          <line x1="${L}" x2="${W - R}" y1="${H - B}" y2="${H - B}" stroke="${LINE}" stroke-width="1"/>
+          ${ref ? `<line x1="${L}" x2="${W - R}" y1="${y(ref.v).toFixed(1)}" y2="${y(ref.v).toFixed(1)}" stroke="${DIM}" stroke-width="1" stroke-dasharray="3 3"/>
+          <text x="${L}" y="${(y(ref.v) - 3).toFixed(1)}" font-size="8" fill="${DIM}">${ref.label}</text>` : ''}
+          <path d="${line}" fill="none" stroke="${SUN}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+          <circle cx="${x(0).toFixed(1)}" cy="${y(pts[0].v).toFixed(1)}" r="2.6" fill="${SUN}"/>
+          <circle cx="${x(last).toFixed(1)}" cy="${y(pts[last].v).toFixed(1)}" r="3" fill="${SUN}"/>
+          <text x="${x(0).toFixed(1)}" y="${(y(pts[0].v) - 6).toFixed(1)}" font-size="9" fill="${MUTE}">${fmtNum(pts[0].v, d)}</text>
+          <text x="${x(last).toFixed(1)}" y="${(y(pts[last].v) - 6).toFixed(1)}" font-size="9" font-weight="700" fill="${INK}" text-anchor="end">${fmtNum(pts[last].v, d)}</text>
+          <text x="${L}" y="${H - 3}" font-size="8.5" fill="${DIM}">${pts[0].x}</text>
+          <text x="${W - R}" y="${H - 3}" font-size="8.5" fill="${DIM}" text-anchor="end">${pts[last].x}</text>
+        </svg>`;
+    };
+    const cards = list.map((t) => `
+      <div style="border:1px solid ${LINE_SOFT};border-radius:8px;padding:12px 14px;break-inside:avoid;page-break-inside:avoid;">
+        <div style="font-size:12.5px;font-weight:700;color:${INK};">${escapeHtml(String(t.label || ''))} <span style="font-weight:500;color:${DIM};">(${escapeHtml(String(t.unit || ''))})</span></div>
+        <div style="font-size:10.5px;color:${DIM};margin:2px 0 6px;">${escapeHtml(String(t.caption || ''))}</div>
+        ${chart(t)}
+        ${t.summary ? `<p style="font-size:11.5px;line-height:1.5;color:${MUTE};margin-top:6px;">${escapeHtml(String(t.summary))}</p>` : ''}
+      </div>`).join('');
+    const sources = [...new Set(list.map((t) => escapeHtml(String(t.source || ''))).filter(Boolean))].join('; ');
+    return `
+    <div style="${RULE}"></div>
+    <div style="margin-bottom:22px;">
+      <div style="${H2}">Past Trends</div>
+      <p style="font-size:12.5px;color:${MUTE};line-height:1.6;margin-bottom:12px;max-width:72ch;">How the records behind these scores have moved over the past years. This is what has already happened here, not a prediction of what will. Climate figures cover the surrounding region, not this building alone.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;">${cards}</div>
+      <p style="font-size:10.5px;color:${DIM};margin-top:10px;">Sources: ${sources}.</p>
+    </div>`;
+  })();
+
   const mainChrome = printChrome(hasNeighbourhood ? 'Property report' : 'Home comfort report');
   const mainHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
+  <!-- Was missing, so phones laid this report out at a 980px desktop
+       width and shrank it to fit: tiny text you had to pinch to read. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>${hasNeighbourhood ? 'BlindSpot Report' : 'Home Comfort Report'} - ${safeAddress}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@700;800&display=swap" rel="stylesheet">
@@ -906,10 +970,22 @@ async function buildReport(req) {
       img{max-width:100%;}
     }
     ${mainChrome.css}
+    html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+    /* Phones: the three floating buttons used to sit on top of the title.
+       They become a bar across the top that scrolls away with the page,
+       and the page padding shrinks so the content gets the width. */
+    @media screen and (max-width:640px){
+      .rpt-toolbar{position:sticky!important;top:0!important;right:auto!important;left:0;width:100%;justify-content:flex-end;flex-wrap:wrap;padding:8px 12px;background:rgba(255,255,255,.96);border-bottom:1px solid ${LINE_SOFT};}
+      .rpt-toolbar button{padding:8px 12px!important;font-size:12.5px!important}
+      .rpt-toolbar #pdf-status{flex-basis:100%;max-width:none!important;order:9}
+      .pdf-page{padding-left:16px!important;padding-right:16px!important}
+      .pdf-page h1{font-size:20px!important}
+      .pdf-page table{display:block;overflow-x:auto}
+    }
   </style>
 </head>
 <body>${mainChrome.open}
-  <div class="no-print" style="position:fixed;top:20px;right:20px;z-index:100;display:flex;gap:10px;align-items:center;">
+  <div class="no-print rpt-toolbar" style="position:fixed;top:20px;right:20px;z-index:100;display:flex;gap:10px;align-items:center;">
     <span id="pdf-status" style="font-size:12px;color:${DIM};max-width:260px;text-align:right;"></span>
     <!-- Was two buttons here: this one and a plain onclick="window.close()"
          "Close" beside Download PDF. That second one was never anything
@@ -968,6 +1044,11 @@ async function buildReport(req) {
     </div>
 
 
+    ${trendSection ? `
+    <div class="pdf-page" style="padding:14px 32px 20px;">
+      ${stripLeadRule(trendSection)}
+    </div>` : ''}
+
     <!-- Final page: what to verify, methodology, footer -->
     <div class="pdf-page" style="padding:14px 32px 32px;">
       ${stripLeadRule(checkSection)}
@@ -981,6 +1062,7 @@ async function buildReport(req) {
           <li>Floor clearance uses a generic urban-obstruction estimate, not a measurement of this property's specific neighboring buildings.</li>
           ${summary?.buildingHeightNote ? `<li>${summary.buildingHeightNote.sentence}</li>` : ''}
           ${safeFacingAssumptionNote ? `<li>${safeFacingAssumptionNote}</li>` : ''}
+          ${trendSection ? `<li>Past Trends are computed from public climate and air-quality records for the surrounding area. Past data only, not a forecast, and not AI-generated.</li>` : ''}
           <li>The written sections use AI to interpret the numbers above. It is given them as fact and told not to estimate its own.</li>
           <li>The ${shotCount || 12} map images this is read from, and the description of each, are in the separate Sun &amp; Shadow document.</li>
         </ul>

@@ -21,9 +21,10 @@
 // (.srb-panel / .srb-backdrop below), so it no longer matters how wide
 // or how narrow the thing that opened it is.
 //
-// If the person isn't signed in yet, clicking Save opens the popup
-// sign-in flow (lib/auth/popupSignIn.js) instead of losing whatever
-// report they're looking at -- same fix as the header's Sign in link.
+// If the person isn't signed in yet, clicking Save opens the in-place
+// sign-in sheet (components/auth/SignInSheet.js). Email sign-in keeps the
+// report on screen; Google leaves the page, so the report is held across
+// the trip and saved on the way back (components/auth/PendingSaveResume.js).
 //
 // `source` is one of 'neighbourhood' | 'ai-report' | 'furnishing'.
 // `data` is the JSON blob to store -- shaped however that report type
@@ -33,7 +34,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { createClient } from '@/lib/supabase/client';
-import { openSignInPopup } from '@/lib/auth/popupSignIn';
+import SignInSheet from '@/components/auth/SignInSheet';
+import { insertReport } from '@/lib/reports/insertReport';
 
 // Folders are fetched once per tab and shared by every Save button, and
 // fetched as soon as we know someone is signed in -- not when the panel
@@ -55,7 +57,7 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
   const [open, setOpen] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [signedIn, setSignedIn] = useState(false);
-  const [signingIn, setSigningIn] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const [folders, setFolders] = useState([]);
   const [loadingFolders, setLoadingFolders] = useState(false);
@@ -122,39 +124,19 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
     } catch {}
   };
 
-  const signIn = async () => {
-    setSigningIn(true);
-    try {
-      const supabase = createClient();
-      const { access_token, refresh_token } = await openSignInPopup();
-      await supabase.auth.setSession({ access_token, refresh_token });
-      setSignedIn(true);
-      loadFoldersOnce(true);
-      return true;
-    } catch (e) {
-      // Swallowing this made the button do nothing at all, forever, with no
-      // message: popups are blocked by default in several browsers and by
-      // most corporate policies, so "click Save, watch nothing happen" was
-      // a whole category of user hitting a dead end in silence.
-      setError(
-        String(e?.message || '') === 'popup-blocked'
-          ? 'Your browser blocked the sign-in window. Allow pop-ups for this site and press Save again - or open the report and use your browser’s Save as PDF instead.'
-          : 'Sign-in didn’t complete, so there’s nothing to save this to yet. Press Save to try again.'
-      );
-      setOpen(true); // show the panel so the message has somewhere to appear
-      return false;
-    } finally {
-      setSigningIn(false);
-    }
+  // Called once the sheet has signed someone in without leaving the page.
+  const afterSignIn = () => {
+    setSignedIn(true);
+    setError('');
+    setOpen(true);
+    loadFolders(true);
   };
+  const signIn = () => { setOpen(false); setSheetOpen(true); };
 
-  const handleOpen = async () => {
+  const handleOpen = () => {
     setError('');
     setSaved(false);
-    if (!signedIn) {
-      const ok = await signIn();
-      if (!ok) return;
-    }
+    if (!signedIn) { signIn(); return; }
     setOpen(true);
     loadFolders();
   };
@@ -196,19 +178,7 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
             }
           }
         }
-        // A few hundred bytes the profile page lists from, so it never has
-        // to read the whole report (see SUPABASE_SETUP.md section 6).
-        const d = data || {};
-        const summary = Object.fromEntries(Object.entries({
-          address: d.address, kind: d.kind, combined: d.combinedScore, unit: d.unitScore,
-          floor: d.floor, facing: d.facing, lat: d.lat, lon: d.lon,
-          nqi: d.nqi_composite, pin: d.pin_code, areaName: d.name, city: d.city,
-        }).filter(([, v]) => v != null && v !== ''));
-        const row = { user_id: user.id, folder_id, source, title: title.trim() || null, data };
-        let { error: rErr } = await supabase.from('reports').insert({ ...row, summary });
-        // Project without the `summary` column yet: save without it.
-        if (rErr && /summary/i.test(rErr.message || '')) ({ error: rErr } = await supabase.from('reports').insert(row));
-        if (rErr) throw new Error(/jwt|auth/i.test(rErr.message || '') ? 'not-signed-in' : (rErr.message || 'save-failed'));
+        await insertReport(supabase, { userId: user.id, source, data, title, folderId: folder_id });
         try {
           if (folder_id) window.localStorage.setItem(LAST_FOLDER_KEY, folder_id);
           else window.localStorage.removeItem(LAST_FOLDER_KEY);
@@ -251,9 +221,17 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
 
   return (
     <div style={{ position: 'relative', display: 'inline-block', ...style }} ref={panelRef}>
-      <button onClick={handleOpen} disabled={checkingAuth || signingIn} style={{ ...btnBase, flex: style?.flex ? 1 : undefined }}>
-        {signingIn ? 'Signing in…' : 'Save report'}
+      <button onClick={handleOpen} disabled={checkingAuth} style={{ ...btnBase, flex: style?.flex ? 1 : undefined }}>
+        Save report
       </button>
+      <SignInSheet
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        onSignedIn={afterSignIn}
+        heading="Sign in to save"
+        blurb="Saved reports live in your account, so you can open them on any device."
+        pendingSave={{ source, data, title: title.trim() || defaultTitle }}
+      />
 
       {open && typeof document !== 'undefined' && createPortal(
         <>
@@ -332,13 +310,12 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
               {!signedIn && (
                 <button
                   onClick={signIn}
-                  disabled={signingIn}
                   style={{
                     width: '100%', padding: '10px', fontSize: 13, fontWeight: 700, border: '1px solid #1A0A00',
                     borderRadius: 4, background: 'transparent', color: '#1A0A00', cursor: 'pointer', marginBottom: 8,
                   }}
                 >
-                  {signingIn ? 'Signing in…' : 'Sign in'}
+                  Sign in
                 </button>
               )}
 
@@ -390,7 +367,7 @@ export default function SaveReportButton({ source, data, defaultTitle = '', styl
         .srb-backdrop{ position:fixed; inset:0; background:rgba(10,5,0,0.38); z-index:1200; animation:srbFade .15s ease-out }
         .srb-panel{
           position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:1201;
-          width:calc(100vw - 32px); max-width:360px; max-height:calc(100vh - 32px); overflow-y:auto;
+          width:calc(100vw - 32px); max-width:360px; max-height:calc(100vh - 32px); max-height:calc(100dvh - 32px); overflow-y:auto; overscroll-behavior:contain;
           background:#FFFBF5; color:var(--ink, #1A0A00); border-radius:14px; padding:16px 18px 18px;
           border:1px solid var(--line-soft, rgba(26,10,0,0.12)); box-shadow:0 24px 60px rgba(0,0,0,0.28);
           font-family:inherit; animation:srbPop .18s ease-out;

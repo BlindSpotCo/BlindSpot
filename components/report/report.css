@@ -2433,3 +2433,65 @@ body.bsr-noscroll{overflow:hidden}
 /* the logo takes the pin tile's place at the start of the header */
 .bsr-head-row > .bsr-home + .bsr-head-where .bsr-head-pin{display:none}
 .bsr-head-row > .bsr-home.is-head{margin-right:-8px}
+
+/* ---------------- trends: past data behind a score ----------------
+   A small sparkline button at the end of a score row; tapping it opens
+   the full chart under the row. Past records only (see /api/trends). */
+.bsr-rows li.has-trend{flex-wrap:wrap}
+.bsr-trend-btn{
+  flex:none;display:inline-flex;align-items:center;gap:4px;align-self:center;
+  min-height:32px;padding:2px 6px;margin:-4px 0;border-radius:6px;
+  border:1px solid transparent;background:none;cursor:pointer;color:var(--text-mute,#5A5140);
+  font:inherit;font-size:11px;font-weight:600;letter-spacing:.02em;
+}
+.bsr-trend-btn:hover,.bsr-trend-btn[aria-expanded="true"]{border-color:var(--line,rgba(28,24,18,.14));background:var(--bg-2,#F1E9DA)}
+.bsr-trend-btn:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+.bsr-trend-btn .trend-spark{display:block}
+.bsr-trend-panel{flex-basis:100%;margin:6px 0 4px 26px;min-width:0}
+@media (max-width:520px){
+  .bsr-trend-btn-word{display:none}
+  .bsr-trend-panel{margin-left:0}
+}
+
+.trend-chart{margin:0;position:relative}
+.trend-cap{font-size:12.5px;font-weight:600;color:var(--text,#1C1812);margin-bottom:6px}
+.trend-plot{position:relative;height:150px;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.trend-plot svg{display:block;width:100%;height:100%;overflow:visible;cursor:crosshair}
+.trend-axis{stroke:var(--line,rgba(28,24,18,.14));stroke-width:1;vector-effect:non-scaling-stroke}
+.trend-ref{stroke:var(--text-dim,#57697F);stroke-width:1;stroke-dasharray:4 4;vector-effect:non-scaling-stroke;opacity:.7}
+.trend-cross{stroke:var(--text-dim,#57697F);stroke-width:1;vector-effect:non-scaling-stroke;opacity:.5}
+.trend-dot{
+  position:absolute;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;
+  box-shadow:0 0 0 2px var(--paper,#fff);pointer-events:none;
+}
+.trend-dot.is-active{width:10px;height:10px;margin:-5px 0 0 -5px}
+.trend-val{
+  position:absolute;transform:translate(-50%,calc(-100% - 7px));
+  font-size:11px;font-weight:600;color:var(--text-mute,#5A5140);
+  font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none;
+}
+.trend-val.is-last{transform:translate(-100%,calc(-100% - 7px))}
+.trend-val.is-first{transform:translate(0,calc(-100% - 7px))}
+.trend-tip{
+  position:absolute;top:-4px;transform:translateX(-50%);
+  background:var(--ink,#0F172A);color:var(--paper,#fff);border-radius:5px;padding:2px 8px;
+  font-size:11.5px;white-space:nowrap;pointer-events:none;font-variant-numeric:tabular-nums;z-index:2;
+}
+.trend-tip.is-left{transform:translateX(-100%)}
+.trend-tip.is-right{transform:none}
+.trend-ref-label{
+  position:absolute;left:0;transform:translateY(-120%);
+  font-size:10.5px;color:var(--text-dim,#57697F);pointer-events:none;white-space:nowrap;
+}
+.trend-tick{
+  position:absolute;bottom:0;transform:translateX(-50%);
+  font-size:11px;color:var(--text-dim,#57697F);white-space:nowrap;pointer-events:none;
+}
+.trend-tick.is-first{transform:none}
+.trend-tick.is-last{transform:translateX(-100%)}
+.trend-words{margin-top:8px}
+.trend-words p{font-size:13px;line-height:1.5;color:var(--text,#1C1812);margin:0 0 4px}
+.trend-words .trend-detail{color:var(--text-mute,#5A5140)}
+.trend-words .trend-src{font-size:11.5px;color:var(--text-dim,#57697F)}
+.trend-sr{position:absolute;left:0;top:0;display:block;width:1px;height:1px;max-width:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+.bsr-trend-note{font-size:12px;color:var(--text-dim,#57697F);margin:8px 0 0;line-height:1.45}
