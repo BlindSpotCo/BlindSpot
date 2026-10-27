@@ -44,6 +44,7 @@
 
 import { goToSearch } from '@/components/goToSearch';
 import Link from 'next/link';
+import FooterFeedback from '@/components/FooterFeedback';
 
 const TEAM = [
   { name: 'Arushri Gangji', linkedin: 'https://www.linkedin.com/in/arushri-gangji-056108381/' },
@@ -106,6 +107,8 @@ export default function ClosingCTA() {
                 ))}
               </div>
             </div>
+
+            <FooterFeedback />
           </div>
 
           <div className="footer-bottom">

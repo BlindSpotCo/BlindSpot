@@ -2954,3 +2954,42 @@ html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; touch-action:manipul
 /* The wordmark PNG is white (it's made for the dark header); on the
    light sign-in cards it was invisible. Same tint the site header uses. */
 .auth-wordmark{ filter:invert(1) brightness(0.15) }
+
+/* ---------- Footer feedback (components/FooterFeedback.js) ----------
+   A third footer column: one line (box + Send) until someone clicks in,
+   then the type chips and the email box appear. Full width on phones. */
+.ff{ flex:0 1 300px; max-width:320px; display:flex; flex-direction:column; gap:8px; color:#FFFDF8 }
+@media (max-width:900px){ .ff{ max-width:none; flex-basis:100% } }
+/* 16px on phones stops iOS zooming in when the box is tapped */
+@media (max-width:900px){ .ff textarea, .ff input[type="email"]{ font-size:16px } }
+.ff-row{ display:flex; gap:6px; align-items:stretch }
+.ff-kinds{ display:flex; flex-wrap:wrap; gap:4px }
+.ff-kind{
+  min-height:26px; padding:0 9px; border-radius:999px; cursor:pointer;
+  font:inherit; font-size:11.5px; font-weight:600;
+  color:rgba(255,253,248,0.75); background:transparent; border:1px solid rgba(255,253,248,0.22);
+}
+.ff-kind:hover{ border-color:rgba(255,253,248,0.5) }
+.ff-kind.is-on{ background:#FFFDF8; color:var(--brand,#3D4116); border-color:#FFFDF8 }
+.ff-kind:focus-visible, .ff-send:focus-visible, .ff-again:focus-visible{ outline:2px solid #F0C36B; outline-offset:2px }
+.ff textarea, .ff input[type="email"]{
+  font:inherit; font-size:13.5px;
+  color:#FFFDF8; background:rgba(255,253,248,0.08);
+  border:1px solid rgba(255,253,248,0.2); border-radius:8px; padding:6px 10px; width:100%; min-width:0;
+}
+.ff textarea{ flex:1; resize:none; line-height:1.4; min-height:34px; white-space:pre-wrap }
+.ff textarea::placeholder, .ff input[type="email"]::placeholder{ color:rgba(255,253,248,0.45) }
+.ff textarea:focus, .ff input[type="email"]:focus{ outline:none; border-color:#F0C36B }
+.ff-trap{ position:absolute !important; left:-10000px; width:1px; height:1px; opacity:0 }
+.ff-error{ margin:0; font-size:12.5px; color:#FFB4A3 }
+.ff-send{
+  flex:none; min-height:34px; padding:0 14px; border-radius:8px; border:0; cursor:pointer;
+  font:inherit; font-size:13px; font-weight:700; color:var(--brand,#3D4116); background:#F0C36B;
+}
+.ff-send:hover:not(:disabled){ filter:brightness(1.05) }
+.ff-send:disabled{ opacity:.6; cursor:default }
+.ff-done{ margin:0; font-size:13px; color:rgba(255,253,248,0.75); line-height:1.5 }
+.ff-again{
+  background:none; border:0; padding:0; cursor:pointer; font:inherit; font-size:13px; font-weight:600;
+  color:#F0C36B; text-decoration:underline; text-underline-offset:3px;
+}
