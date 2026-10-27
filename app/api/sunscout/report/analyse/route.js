@@ -342,7 +342,7 @@ Be concrete about what you can actually see. Never end mid-sentence. If an image
 }
 
 export async function POST(req) {
-  const { screenshots, lat, lon, address, floor, facing, tzOffset, avRecord, combinedScore, unitScore, areaWeight, unitWeight, personaId, customNote, purpose, horizon, priorities, actionItems, skipAi, captionsOnly } = await req.json();
+  const { screenshots, lat, lon, address, floor, facing, tzOffset, avRecord, combinedScore, unitScore, areaWeight, unitWeight, personaId, customNote, purpose, horizon, priorities, actionItems, skipAi, captionsOnly, narrativeOnly } = await req.json();
   const persona = personaId ? (await import('@/lib/personas')).getPersona(personaId) : null;
 
   // purpose/horizon/priorities (and personaId above) come from the verdict
@@ -599,7 +599,7 @@ ${groundTruthText}
 ${neighbourhoodGroundTruth}
 ${combinedGroundTruth}
 
-You also have ${screenshots.length} screenshots of the actual 3D map at this location. They are described one by one elsewhere, in a separate gallery -- do NOT write per-image descriptions here. The orange circle/dot marks the exact property location; darker areas are rendered shadows from OpenStreetMap building data. Use these images ONLY for narrative color and visual confirmation (e.g. "as the images show, a taller block sits to the southeast") - do NOT estimate hours of sun, shadow duration, or building heights from the images; use the ground-truth numbers above for all figures. If a screenshot looks blank, black, or unreadable, say so explicitly rather than guessing what it would show.
+You also have a few screenshots of the actual 3D map at this location. They are described one by one elsewhere, in a separate gallery -- do NOT write per-image descriptions here. The orange circle/dot marks the exact property location; darker areas are rendered shadows from OpenStreetMap building data. Use these images ONLY for narrative color and visual confirmation (e.g. "as the images show, a taller block sits to the southeast") - do NOT estimate hours of sun, shadow duration, or building heights from the images; use the ground-truth numbers above for all figures. If a screenshot looks blank, black, or unreadable, say so explicitly rather than guessing what it would show.
 
 Write personally, not clinically - like a knowledgeable friend giving honest advice, not a data report reciting fields. Address the reader as "you" where it reads naturally. Be concise and specific, not padded - every sentence should carry a new fact or a new implication; if a sentence could be cut without losing information, cut it. This report is a defensible artifact a buyer will rely on, not an exhaustive one - make each point once, well, in the section it belongs to, and never explain the same fact, score or implication a second time in a different section.
 Plain language throughout, not just the verdict's opening lines: explain any real-estate or technical term the first time it appears (azimuth, NQI, feasibility band, etc.) in a short clause rather than assuming the reader already knows it, and prefer the everyday word over the technical one wherever both say the same thing.
@@ -636,11 +636,20 @@ Say each of these once, plainly - don't restate one bullet's point while coverin
   }
 
   try {
-    const labelLine = screenshots
+    // The written report gets three frames, not twelve. The prompt only uses
+    // them for colour -- every figure comes from the solar ground truth --
+    // and the per-image descriptions are a separate job (describeImages).
+    // Twelve images plus model "thinking" was taking 70s+ per attempt, which
+    // ran the route out of time and shipped reports with no written text.
+    const NARRATIVE_FRAMES = 3;
+    const noon = screenshots.filter((s) => /noon/i.test(s.label || ''));
+    const narrativeShots = (noon.length ? noon : screenshots).slice(0, NARRATIVE_FRAMES);
+
+    const labelLine = narrativeShots
       .map((s, i) => `Image ${i + 1}: ${s.label}`)
       .join('\n');
 
-    const imageParts = screenshots.map((s) => {
+    const imageParts = narrativeShots.map((s) => {
       const match = s.base64.match(/^data:(image\/\w+);base64,(.+)$/);
       return {
         inlineData: {
@@ -661,7 +670,12 @@ Say each of these once, plainly - don't restate one bullet's point while coverin
     // words out. It gets most of the route's 120s (captions run alongside
     // on their own, smaller budget) and up to 70s for a single attempt --
     // the current Flash model can need well over the old 40s ceiling.
-    const { call: callGemini, left, state: aiState } = geminiCaller({ budgetMs: 88_000, attemptMs: 70_000 });
+    // Minimal thinking: this is writing from facts already given, not a
+    // reasoning problem, and thinking time was most of the wait.
+    const { call: callGemini, left, state: aiState } = geminiCaller({
+      budgetMs: narrativeOnly ? 100_000 : 88_000, attemptMs: 60_000,
+      generationConfig: { thinkingConfig: { thinkingBudget: 0 } },
+    });
 
     // The twelve image descriptions are their own batched job now, started
     // here so it runs alongside the narrative rather than after it. Asking
@@ -670,7 +684,9 @@ Say each of these once, plainly - don't restate one bullet's point while coverin
     // Staggered, not simultaneous. Both this and the narrative call go to
     // the same key and the same per-minute quota; starting them in the same
     // instant is how a burst turns into a 429 that neither of them needed.
-    const captionsPromise = new Promise((r) => setTimeout(r, 1_500))
+    // narrativeOnly: the browser is retrying just the written text after a
+    // first run came back without it -- captions already arrived then.
+    const captionsPromise = narrativeOnly ? Promise.resolve({ captions: {}, count: 0 }) : new Promise((r) => setTimeout(r, 1_500))
       .then(() => describeImages({
         // Runs alongside the written report, inside the route's 120s.
         screenshots, groundTruthText, floorN, facing: safeFacingInput, budgetMs: 80_000,

@@ -40,15 +40,15 @@
 }
 .pf-edit[aria-pressed="true"]{ color:#A10E0E }
 
-.pf-cards{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr; gap:18px }
-@media (min-width:640px){ .pf-cards{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px } }
-@media (min-width:980px){ .pf-cards{ grid-template-columns:repeat(3,minmax(0,1fr)) } }
+.pf-cards{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px }
+@media (min-width:640px){ .pf-cards{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px } }
+@media (min-width:980px){ .pf-cards{ grid-template-columns:repeat(4,minmax(0,1fr)) } }
 
 .pf-card{
-  display:flex; flex-direction:column; background:var(--pf-card); border-radius:22px; overflow:hidden;
+  display:flex; flex-direction:column; background:var(--pf-card); border-radius:18px; overflow:hidden;
   box-shadow:0 1px 0 var(--pf-line), 0 14px 34px rgba(60,45,20,.10);
 }
-.pf-card-hit{ position:relative; display:block; aspect-ratio:16/11; color:inherit }
+.pf-card-hit{ position:relative; display:block; aspect-ratio:4/3; color:inherit }
 .pf-card-hit:focus-visible{ outline:3px solid var(--pf-olive); outline-offset:-3px }
 .pf-card-shade{
   position:absolute; inset:0; pointer-events:none;
@@ -74,52 +74,62 @@
 
 /* Score ring, top right of the picture */
 .pf-ring{
-  position:absolute; top:12px; right:12px; width:62px; height:62px; display:grid; place-items:center;
+  position:absolute; top:8px; right:8px; width:50px; height:50px; display:grid; place-items:center;
   background:rgba(255,253,248,.95); border-radius:50%; box-shadow:0 6px 16px rgba(0,0,0,.25);
 }
-.pf-ring svg{ position:absolute; inset:5px; width:52px; height:52px; transform:rotate(-90deg) }
+.pf-ring svg{ position:absolute; inset:3px; width:44px; height:44px; transform:rotate(-90deg) }
 .pf-ring-bg{ fill:none; stroke:rgba(28,24,18,.1); stroke-width:4.5 }
 .pf-ring-fg{ fill:none; stroke-width:4.5; stroke-linecap:round }
 .pf-ring.is-good .pf-ring-fg{ stroke:var(--pf-good) }
 .pf-ring.is-avg .pf-ring-fg{ stroke:var(--pf-avg) }
 .pf-ring.is-poor .pf-ring-fg{ stroke:var(--pf-poor) }
-.pf-ring b{ position:relative; font-size:21px; font-weight:800; letter-spacing:-.03em; color:var(--pf-ink); font-variant-numeric:tabular-nums }
+.pf-ring b{ position:relative; font-size:17px; font-weight:800; letter-spacing:-.03em; color:var(--pf-ink); font-variant-numeric:tabular-nums }
 
-.pf-best-tag{
-  position:absolute; top:14px; left:14px; padding:6px 11px; border-radius:999px;
-  background:var(--pf-olive); color:#FFFDF8; font-size:12.5px; font-weight:700;
-  box-shadow:0 4px 12px rgba(0,0,0,.25);
-}
-
-.pf-card-body{ padding:16px 18px 18px; display:flex; flex-direction:column; flex:1 }
+.pf-card-body{ padding:12px 14px 14px; display:flex; flex-direction:column; flex:1 }
 .pf-card-label{ margin:0 0 3px; font-size:12.5px; font-weight:650; color:var(--pf-rust) }
-.pf-card-name{ margin:0; font-size:19px; line-height:1.25; font-weight:750; letter-spacing:-.015em }
+.pf-card-name{ margin:0; font-size:15.5px; line-height:1.3; font-weight:750; letter-spacing:-.01em; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden }
 .pf-card-name a{ color:inherit; text-decoration:none }
 .pf-card-name a:hover{ text-decoration:underline; text-underline-offset:4px; text-decoration-thickness:1.5px }
-.pf-card-detail{ margin:4px 0 0; font-size:14px; color:var(--pf-mute) }
+.pf-card-detail{ margin:3px 0 0; font-size:13px; color:var(--pf-mute) }
+.pf-card-detail:empty{ display:none }
 
-.pf-docs{ display:flex; flex-wrap:wrap; gap:7px; margin-top:auto; padding-top:14px }
-.pf-doc{
-  display:inline-flex; align-items:center; gap:6px; min-height:32px; padding:0 12px; border-radius:999px;
-  font:inherit; font-size:13px; font-weight:650; text-decoration:none; color:var(--pf-ink);
-  background:var(--pf-paper); border:0; cursor:pointer;
+/* ---------- folders ---------- */
+.pf-folder{ margin-top:28px }
+.pf-folder:first-of-type{ margin-top:4px }
+.pf-folder-h{
+  display:flex; align-items:center; gap:8px; margin:0 0 12px; font-size:18px; font-weight:750; letter-spacing:-.01em;
 }
-.pf-doc:hover{ background:#EAE2D2 }
-.pf-doc:focus-visible{ outline:2px solid var(--pf-olive); outline-offset:2px }
-.pf-doc.is-full svg{ color:var(--pf-olive) }
-.pf-doc.is-sun svg{ color:var(--pf-rust) }
-.pf-doc.is-area svg{ color:var(--pf-wine) }
-.pf-doc.is-furnish svg, .pf-doc.is-check svg{ color:var(--pf-mute) }
-.pf-doc.is-del{ background:#FBEDEA; color:#A10E0E }
-.pf-doc.is-del svg{ color:#A10E0E }
-.pf-doc.is-del:hover{ background:#F6DCD6 }
-.pf-doc.is-confirm{ background:#A10E0E; color:#fff; gap:4px; padding:0 4px 0 12px; cursor:default }
-.pf-doc-yes, .pf-doc-no{ border:0; cursor:pointer; font:inherit; font-size:12.5px; font-weight:700; border-radius:999px; padding:5px 10px }
-.pf-doc-yes{ background:#fff; color:#A10E0E }
-.pf-doc-no{ background:transparent; color:#fff }
+.pf-folder-h svg{ color:var(--pf-rust); flex:none }
+.pf-folder-h span{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.pf-folder-h small{ flex:none; font-size:13px; font-weight:600; color:var(--pf-dim) }
+.pf-folder-empty{
+  margin:0; padding:16px 18px; border-radius:16px; border:1.5px dashed var(--pf-line);
+  font-size:14px; color:var(--pf-mute);
+}
 
-/* The best one gets the olive outline. */
-.pf-card.is-best{ box-shadow:0 0 0 2.5px var(--pf-olive), 0 18px 40px rgba(61,65,22,.2) }
+/* Report type, bottom left of the picture */
+.pf-type{
+  position:absolute; left:10px; bottom:10px; display:inline-flex; align-items:center; gap:5px;
+  padding:5px 10px; border-radius:999px; font-size:12px; font-weight:700;
+  background:rgba(255,253,248,.95); color:var(--pf-ink); box-shadow:0 3px 10px rgba(0,0,0,.2);
+}
+.pf-type.is-full svg{ color:var(--pf-olive) }
+.pf-type.is-sun svg{ color:var(--pf-rust) }
+.pf-type.is-area svg{ color:var(--pf-wine) }
+.pf-type.is-furnish svg{ color:var(--pf-mute) }
+.pf-card-date{ margin:auto 0 0; padding-top:10px; font-size:12.5px; font-weight:600; color:var(--pf-dim) }
+
+.pf-del{
+  align-self:flex-start; display:inline-flex; align-items:center; gap:6px; margin-top:10px;
+  min-height:32px; padding:0 12px; border-radius:999px; border:0; cursor:pointer;
+  font:inherit; font-size:13px; font-weight:700; background:#FBEDEA; color:#A10E0E;
+}
+.pf-del:hover{ background:#F6DCD6 }
+.pf-del.is-confirm{ background:#A10E0E; color:#fff; gap:4px; padding:0 4px 0 12px; cursor:default }
+.pf-del-yes, .pf-del-no{ border:0; cursor:pointer; font:inherit; font-size:12.5px; font-weight:700; border-radius:999px; padding:5px 10px }
+.pf-del-yes{ background:#fff; color:#A10E0E }
+.pf-del-no{ background:transparent; color:#fff }
+.pf-card.is-editing .pf-card-hit{ pointer-events:none; opacity:.85 }
 
 /* ---------- empty ---------- */
 .pf-empty{
@@ -198,6 +208,10 @@
   .pf-head{ flex-wrap:wrap }
   .pf-mark{ width:40px; height:40px }
   .pf-head .pf-new{ order:3; width:100% }
-  .pf-card-hit{ aspect-ratio:16/9 }
-  .pf-card-name{ font-size:18px }
+  .pf-card-name{ font-size:14.5px }
+  .pf-ring{ width:42px; height:42px; top:6px; right:6px }
+  .pf-ring svg{ width:36px; height:36px }
+  .pf-ring b{ font-size:14.5px }
+  .pf-type{ left:6px; bottom:6px; padding:4px 8px; font-size:11px }
+  .pf-card-body{ padding:10px 11px 12px }
 }

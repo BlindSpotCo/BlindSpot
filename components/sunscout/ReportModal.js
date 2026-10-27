@@ -401,7 +401,7 @@ export default function ReportModal({
       });
       const aiShots = await Promise.all(screenshots.map(async (sc) => ({ ...sc, base64: await shrink(sc.base64) })));
 
-      const analysed = await postJson('/api/sunscout/report/analyse', {
+      const analyseBody = {
         screenshots: aiShots, lat, lon, address: addr, floor, facing, tzOffset,
         avRecord: areaRecord || undefined, combinedScore, unitScore, areaWeight, unitWeight,
         personaId: effectivePersonaId, customNote: safeCustomNote,
@@ -413,9 +413,32 @@ export default function ReportModal({
         // nothing else -- not the eight-section combined report it used to
         // ask for and then throw away all but a twelfth of.
         captionsOnly: Boolean(galleryOnly),
-      }, 'analysis');
+      };
+      const analysed = await postJson('/api/sunscout/report/analyse', analyseBody, 'analysis');
 
-      const { analysis, captions, summary, aiUnavailable, aiReason, captionedCount, captionError } = analysed || {};
+      let { analysis, aiUnavailable, aiReason } = analysed || {};
+      const { captions, summary, captionedCount, captionError } = analysed || {};
+      // The written report is the point of the full report. If it didn't come
+      // back (the model was slow or busy), ask once more for the text alone --
+      // three frames, no captions -- rather than ship a report with no words.
+      if (!galleryOnly && (aiUnavailable || !String(analysis || '').trim())) {
+        console.warn('[report] written analysis missing, retrying once:', aiReason || 'empty');
+        setStep('analysing');
+        try {
+          const noon = aiShots.filter((sc) => /noon/i.test(sc.label || ''));
+          const retry = await postJson('/api/sunscout/report/analyse', {
+            ...analyseBody, screenshots: (noon.length ? noon : aiShots).slice(0, 3), narrativeOnly: true,
+          }, 'analysis');
+          if (retry?.analysis && String(retry.analysis).trim()) {
+            analysis = retry.analysis; aiUnavailable = false; aiReason = undefined;
+          } else if (retry?.aiReason) {
+            aiReason = retry.aiReason;
+          }
+        } catch (retryErr) {
+          if (cancelledRef.current) throw retryErr;
+          console.warn('[report] retry for the written analysis failed:', retryErr?.message || retryErr);
+        }
+      }
       // The report leaves the written sections out quietly when the model
       // doesn't answer, so the reason goes to the console instead.
       if (aiUnavailable) console.warn('[report] written analysis unavailable:', aiReason || 'unknown');

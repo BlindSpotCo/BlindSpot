@@ -1,23 +1,23 @@
 'use client';
 // components/profile/ProfileView.js
 //
-// The profile page: the homes you're deciding between, as big cards with a
-// satellite view of each one and its score. Tap a card to reopen that home;
-// tap a report on it to open what you saved. Homes you checked but never
-// saved sit in a smaller strip underneath. Account details are a footer.
+// The profile page: every saved report as a picture card (a satellite view
+// of the spot, its score, the date it was saved), newest first, inside the
+// folder it was saved into. Homes checked but never saved sit in a small
+// strip underneath. Account details are a footer.
 //
-// Server-fetched: the account and every saved report (light columns only).
-// Read from this browser: homes looked at (lib/profile/history.js) and the
-// site-visit checklists, which have always lived per device.
+// Server-fetched: the account, folders and every saved report (light
+// columns only). Read from this browser: homes looked at
+// (lib/profile/history.js).
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, Plus, FileText, Sun, Sofa, MapPin, ClipboardCheck } from 'lucide-react';
+import { X, Plus, FileText, Sun, Sofa, MapPin, Folder, Trash2 } from 'lucide-react';
 import HomeMark from './HomeMark';
 import MapThumb from './MapThumb';
 import { createClient } from '@/lib/supabase/client';
-import { readHistory, removeVisit, readChecklists } from '@/lib/profile/history';
+import { readHistory, removeVisit } from '@/lib/profile/history';
 import './profile.css';
 
 function typeOf(r) {
@@ -56,44 +56,44 @@ function reportHref(v) {
   return `/report?${q.toString()}`;
 }
 
-// Saved reports -> homes: a folder is one home; otherwise every save at the
-// same spot (or with the same name, when it has no coordinates) is one home.
-function buildHomes(reports, folderName, history, checklists) {
-  const map = new Map();
-  for (const r of reports) {
-    const key = r.folder_id && folderName[r.folder_id]
-      ? `f:${r.folder_id}`
-      : spotKey(r.lat, r.lon) ? `s:${spotKey(r.lat, r.lon)}` : `n:${nameFor(r.address || r.areaName || r.title).toLowerCase()}`;
-    if (!map.has(key)) map.set(key, { key, folder: r.folder_id ? folderName[r.folder_id] : null, reports: [] });
-    map.get(key).reports.push(r);
-  }
-  const homes = [...map.values()].map((h) => {
-    const rs = h.reports;
-    const lead = rs.find((r) => num(r.combined) != null) || rs.find((r) => num(r.unit) != null) || rs.find((r) => num(r.nqi) != null) || rs[0];
-    const spot = rs.find((r) => r.lat && r.lon) || null;
-    const seen = spot ? history.find((x) => spotKey(x.lat, x.lon) === spotKey(spot.lat, spot.lon)) : null;
-    const lat = spot?.lat ?? seen?.lat, lon = spot?.lon ?? seen?.lon;
-    const check = spot ? checklists.find((c) => spotKey(c.lat, c.lon) === spotKey(spot.lat, spot.lon)) : null;
-    const name = nameFor(lead.address || lead.areaName || lead.title);
-    const isArea = rs.every((r) => typeOf(r).key === 'area');
-    return {
-      ...h,
-      name,
-      label: h.folder && h.folder.toLowerCase() !== name.toLowerCase() ? h.folder : null,
-      detail: isArea
-        ? [lead.city, lead.pin && `PIN ${lead.pin}`].filter(Boolean).join(', ') || 'Area'
-        : [lead.floor && `Floor ${lead.floor}`, lead.facing && `${lead.facing}-facing`].filter(Boolean).join(', ') || shortAddr(lead.address)[1] || '',
-      score: num(lead.combined) ?? num(seen?.score) ?? num(lead.unit) ?? num(lead.nqi),
-      lat, lon, check,
-      when: Math.max(...rs.map((r) => Date.parse(r.created_at) || 0)),
-      href: lat != null && lon != null
-        ? reportHref({ lat, lon, address: lead.address || seen?.address, floor: lead.floor, facing: lead.facing, pinCode: lead.pin, pin: true })
-        : `/my-reports/${lead.id}`,
-    };
-  });
-  homes.sort((a, b) => (b.score ?? -1) - (a.score ?? -1) || b.when - a.when);
-  return homes;
+// Saved reports, newest first, grouped by the folder they were saved into.
+// Every folder shows, even an empty one; reports not in a folder come last.
+function buildFolders(reports, folders, history) {
+  const sorted = [...reports].sort((a, b) => (Date.parse(b.created_at) || 0) - (Date.parse(a.created_at) || 0));
+  const byFolder = new Map((folders || []).map((f) => [f.id, { id: f.id, name: f.name, items: [] }]));
+  const loose = { id: 'none', name: null, items: [] };
+  // A report saved without coordinates (a furnishing plan, say) borrows
+  // them from another report in the same folder, for its picture.
+  for (const r of sorted) (byFolder.get(r.folder_id) || loose).items.push(r);
+  const decorate = (g) => {
+    const spot = g.items.find((r) => r.lat && r.lon);
+    g.items = g.items.map((r) => {
+      const seen = r.lat && r.lon ? history.find((x) => spotKey(x.lat, x.lon) === spotKey(r.lat, r.lon)) : null;
+      return {
+        ...r,
+        name: nameFor(r.address || r.areaName || r.title),
+        score: num(r.combined) ?? num(seen?.score) ?? num(r.unit) ?? num(r.nqi),
+        pLat: r.lat ?? (g.id !== 'none' ? spot?.lat : null),
+        pLon: r.lon ?? (g.id !== 'none' ? spot?.lon : null),
+      };
+    });
+    g.latest = g.items.length ? Date.parse(g.items[0].created_at) || 0 : 0;
+    return g;
+  };
+  const out = [...byFolder.values()].map(decorate);
+  out.sort((a, b) => b.latest - a.latest || a.name.localeCompare(b.name));
+  if (loose.items.length) out.push(decorate(loose));
+  return out;
 }
+
+const savedOn = (ts) => {
+  const d = new Date(ts);
+  if (!Number.isFinite(d.getTime())) return '';
+  const days = Math.floor((Date.now() - d.getTime()) / 86400000);
+  if (days < 1) return 'Saved today';
+  if (days < 2) return 'Saved yesterday';
+  return `Saved ${d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', ...(d.getFullYear() !== new Date().getFullYear() ? { year: 'numeric' } : {}) })}`;
+};
 
 function ScoreRing({ score }) {
   if (score == null) return null;
@@ -113,7 +113,6 @@ export default function ProfileView({ profile, initialReports, folders, fetchFai
   const router = useRouter();
   const [reports, setReports] = useState(initialReports || []);
   const [history, setHistory] = useState([]);
-  const [checklists, setChecklists] = useState([]);
   const [editing, setEditing] = useState(false);
   const [confirmDel, setConfirmDel] = useState(null);
   const [delError, setDelError] = useState('');
@@ -126,19 +125,17 @@ export default function ProfileView({ profile, initialReports, folders, fetchFai
   useEffect(() => {
     const t = setTimeout(() => {
       setHistory(readHistory());
-      setChecklists(readChecklists());
       const h = window.location.hash.replace('#', '');
       if (h) setTimeout(() => document.getElementById(h)?.scrollIntoView({ block: 'start' }), 60);
     }, 0);
     return () => clearTimeout(t);
   }, []);
 
-  const folderName = useMemo(() => Object.fromEntries((folders || []).map((f) => [f.id, f.name])), [folders]);
-  const homes = useMemo(() => buildHomes(reports, folderName, history, checklists), [reports, folderName, history, checklists]);
+  const groups = useMemo(() => buildFolders(reports, folders, history), [reports, folders, history]);
   const savedSpots = useMemo(() => new Set(reports.map((r) => spotKey(r.lat, r.lon)).filter(Boolean)), [reports]);
   // A home counts as saved if a saved report is at the same spot or has
   // the same name -- a pin moved a few metres shouldn't list it twice.
-  const savedNames = useMemo(() => new Set(homes.map((h) => h.name.toLowerCase())), [homes]);
+  const savedNames = useMemo(() => new Set(reports.map((r) => nameFor(r.address || r.areaName || r.title).toLowerCase())), [reports]);
   const unsaved = history
     .filter((h) => !savedSpots.has(spotKey(h.lat, h.lon)) && !savedNames.has(nameFor(h.address).toLowerCase()))
     .slice(0, 8);
@@ -188,80 +185,84 @@ export default function ProfileView({ profile, initialReports, folders, fetchFai
         <header className="pf-head">
           <HomeMark seed={profile.id || profile.email} size={48} className="pf-mark" title="Your BlindSpot mark" />
           <h1 className="pf-hello">
-            {homes.length > 0 ? `${firstName}'s homes` : `Hi ${firstName}`}
+            {reports.length > 0 ? `${firstName}'s reports` : `Hi ${firstName}`}
           </h1>
-          {homes.length > 0 && (
-            <Link href="/#find" className="pf-new"><Plus size={18} strokeWidth={2.4} aria-hidden="true" /><span>Add a home</span></Link>
+          {reports.length > 0 && (
+            <Link href="/#find" className="pf-new"><Plus size={18} strokeWidth={2.4} aria-hidden="true" /><span>New report</span></Link>
           )}
         </header>
 
-        {/* ---------------- homes ---------------- */}
-        <section id="saved" className="pf-homes-sec" aria-label="Your saved homes">
-          {fetchFailed && <p className="pf-msg is-bad">Your saved homes didn&rsquo;t load. Refresh the page; if it keeps happening, sign out and back in.</p>}
+        {/* ---------------- saved reports, by folder ---------------- */}
+        <section id="saved" className="pf-homes-sec" aria-label="Your saved reports">
+          {fetchFailed && <p className="pf-msg is-bad">Your saved reports didn&rsquo;t load. Refresh the page; if it keeps happening, sign out and back in.</p>}
           {delError && <p className="pf-msg is-bad" role="alert">{delError}</p>}
 
-          {!fetchFailed && homes.length === 0 && (
+          {!fetchFailed && reports.length === 0 && (
             <div className="pf-empty">
               <div className="pf-empty-art" aria-hidden="true"><Plus size={28} strokeWidth={2} /></div>
-              <h2>Save your first home</h2>
-              <p>Look up a flat, set its floor and facing, then press <strong>Save report</strong>. It&rsquo;ll show up here with its score.</p>
+              <h2>Save your first report</h2>
+              <p>Look up a flat, set its floor and facing, generate a report and press <strong>Save report</strong>. Put a home&rsquo;s reports in one folder, like &ldquo;Flat 402&rdquo;, to keep them together.</p>
               <Link href="/#find" className="pf-new is-big">Look up a flat</Link>
             </div>
           )}
 
-          {homes.length > 0 && (
+          {reports.length > 0 && (
             <>
               <div className="pf-bar">
-                <p>{homes.length} saved{homes.length > 1 ? ', best score first' : ''}</p>
+                <p>{reports.length} {reports.length === 1 ? 'report' : 'reports'}{(folders || []).length ? ` in ${folders.length} ${folders.length === 1 ? 'folder' : 'folders'}` : ''}, newest first</p>
                 <button type="button" className="pf-edit" onClick={() => { setEditing((v) => !v); setConfirmDel(null); }} aria-pressed={editing}>
                   {editing ? 'Done' : 'Edit'}
                 </button>
               </div>
-              <ul className="pf-cards">
-                {homes.map((h, i) => (
-                  <li key={h.key} className={`pf-card${i === 0 && homes.length > 1 && h.score != null ? ' is-best' : ''}`}>
-                    <Link href={h.href} className="pf-card-hit" aria-label={`Open ${h.name}`}>
-                      <MapThumb lat={h.lat} lon={h.lon} />
-                      <span className="pf-card-shade" />
-                      {i === 0 && homes.length > 1 && h.score != null && <span className="pf-best-tag">Best so far</span>}
-                      <ScoreRing score={h.score} />
-                    </Link>
-                    <div className="pf-card-body">
-                      {h.label && <p className="pf-card-label">{h.label}</p>}
-                      <h2 className="pf-card-name"><Link href={h.href}>{h.name}</Link></h2>
-                      {h.detail && <p className="pf-card-detail">{h.detail}</p>}
-                      <div className="pf-docs">
-                        {h.reports.map((r) => {
-                          const t = typeOf(r);
-                          if (editing && confirmDel === r.id) {
-                            return (
-                              <span key={r.id} className="pf-doc is-confirm">
-                                Delete?
-                                <button type="button" onClick={() => deleteReport(r.id)} className="pf-doc-yes">Yes</button>
-                                <button type="button" onClick={() => setConfirmDel(null)} className="pf-doc-no">No</button>
-                              </span>
-                            );
-                          }
-                          return editing ? (
-                            <button key={r.id} type="button" className={`pf-doc is-${t.key} is-del`} onClick={() => setConfirmDel(r.id)} aria-label={`Delete ${t.label}`}>
-                              <t.Icon size={14} strokeWidth={2.2} aria-hidden="true" />{t.label}<X size={14} strokeWidth={2.6} aria-hidden="true" />
-                            </button>
-                          ) : (
-                            <Link key={r.id} href={`/my-reports/${r.id}`} className={`pf-doc is-${t.key}`}>
-                              <t.Icon size={14} strokeWidth={2.2} aria-hidden="true" />{t.label}
+              {groups.map((g) => (
+                <section key={g.id} className="pf-folder" aria-label={g.name || 'Not in a folder'}>
+                  <h2 className="pf-folder-h">
+                    {g.name ? <Folder size={18} strokeWidth={2.2} aria-hidden="true" /> : null}
+                    <span>{g.name || 'Not in a folder'}</span>
+                    <small>{g.items.length} {g.items.length === 1 ? 'report' : 'reports'}</small>
+                  </h2>
+                  {g.items.length === 0 ? (
+                    <p className="pf-folder-empty">Empty. Choose this folder when you save a report.</p>
+                  ) : (
+                    <ul className="pf-cards">
+                      {g.items.map((r) => {
+                        const t = typeOf(r);
+                        const confirming = editing && confirmDel === r.id;
+                        return (
+                          <li key={r.id} className={`pf-card${editing ? ' is-editing' : ''}`}>
+                            <Link href={`/my-reports/${r.id}`} className="pf-card-hit" aria-label={`Open ${t.label} for ${r.name}`} tabIndex={editing ? -1 : undefined}>
+                              <MapThumb lat={r.pLat} lon={r.pLon} />
+                              <span className="pf-card-shade" />
+                              <ScoreRing score={r.score} />
+                              <span className={`pf-type is-${t.key}`}><t.Icon size={13} strokeWidth={2.4} aria-hidden="true" />{t.label}</span>
                             </Link>
-                          );
-                        })}
-                        {!editing && h.check && (
-                          <Link href={`${h.href}#the-visit`} className="pf-doc is-check">
-                            <ClipboardCheck size={14} strokeWidth={2.2} aria-hidden="true" />{h.check.ticked.length} checked
-                          </Link>
-                        )}
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                            <div className="pf-card-body">
+                              <h3 className="pf-card-name"><Link href={`/my-reports/${r.id}`}>{r.name}</Link></h3>
+                              <p className="pf-card-detail">
+                                {[r.floor && `Floor ${r.floor}`, r.facing && `${r.facing}-facing`].filter(Boolean).join(', ')}
+                              </p>
+                              <p className="pf-card-date">{savedOn(r.created_at)}</p>
+                              {editing && (
+                                confirming ? (
+                                  <span className="pf-del is-confirm">
+                                    Delete?
+                                    <button type="button" onClick={() => deleteReport(r.id)} className="pf-del-yes">Yes</button>
+                                    <button type="button" onClick={() => setConfirmDel(null)} className="pf-del-no">No</button>
+                                  </span>
+                                ) : (
+                                  <button type="button" className="pf-del" onClick={() => setConfirmDel(r.id)}>
+                                    <Trash2 size={14} strokeWidth={2.2} aria-hidden="true" /> Delete
+                                  </button>
+                                )
+                              )}
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </section>
+              ))}
             </>
           )}
         </section>

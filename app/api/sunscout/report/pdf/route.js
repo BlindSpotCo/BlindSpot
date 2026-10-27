@@ -1027,6 +1027,10 @@ async function buildReport(req) {
         </p>
       </div>
 
+      ${aiUnavailable && !galleryOnly ? `
+      <div style="margin:0 0 20px;padding:14px 16px;border-radius:8px;background:#FEF3C7;border:1px solid #F5D78A;color:#6B4600;font-size:13px;line-height:1.55;">
+        <strong>The written analysis didn&rsquo;t generate this time.</strong> The scores, sunlight figures and area data below are complete. Close this and press Generate again to get the written sections.
+      </div>` : ''}
       ${openingSection}
       ${strengthsSection}
       ${livingSection}
