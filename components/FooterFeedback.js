@@ -8,16 +8,16 @@
 import { useState } from 'react';
 
 const KINDS = [
-  { key: 'bug', label: 'Something’s broken' },
-  { key: 'idea', label: 'An idea' },
+  { key: 'bug', label: 'Bug' },
+  { key: 'idea', label: 'Idea' },
   { key: 'data', label: 'Wrong data' },
   { key: 'other', label: 'Other' },
 ];
 
 const PLACEHOLDER = {
-  bug: 'What happened, and on which page? e.g. “Save report did nothing on my phone.”',
-  idea: 'What would make BlindSpot more useful to you?',
-  data: 'Which address or area, and what’s wrong? e.g. “560066 says no metro, there’s one 500 m away.”',
+  bug: 'What broke, and on which page?',
+  idea: 'What would make it more useful?',
+  data: 'Which address, and what’s wrong?',
   other: 'Anything you want us to know.',
 };
 
@@ -28,6 +28,9 @@ export default function FooterFeedback() {
   const [trap, setTrap] = useState('');
   const [state, setState] = useState('idle'); // idle | sending | sent | error
   const [error, setError] = useState('');
+  // Collapsed to one line until someone clicks in; then the type chips and
+  // the email box slide in.
+  const [open, setOpen] = useState(false);
 
   const send = async (e) => {
     e.preventDefault();
@@ -44,6 +47,7 @@ export default function FooterFeedback() {
       if (!res.ok) throw new Error(data.message || 'Couldn’t send that just now. Try again in a minute.');
       setState('sent');
       setMessage('');
+      setOpen(false);
     } catch (err) {
       setError(err.message);
       setState('error');
@@ -53,58 +57,59 @@ export default function FooterFeedback() {
   if (state === 'sent') {
     return (
       <div className="ff ff-sent" role="status">
-        <p className="ff-title">Thanks, that’s sent.</p>
-        <p className="ff-sub">The two of us read every message.{email ? ' We’ll reply by email if we need more.' : ''}</p>
-        <button type="button" className="ff-again" onClick={() => setState('idle')}>Send another</button>
+        <span className="footer-col-title">Feedback</span>
+        <p className="ff-done">Thanks, that’s sent.{email ? ' We’ll reply by email if we need more.' : ''}{' '}
+          <button type="button" className="ff-again" onClick={() => setState('idle')}>Send another</button>
+        </p>
       </div>
     );
   }
 
   return (
-    <form className="ff" onSubmit={send} aria-labelledby="ff-title">
-      <p className="ff-title" id="ff-title">Send us feedback</p>
-      <p className="ff-sub">Bugs, ideas, numbers that look wrong. We read every one.</p>
+    <form className={`ff${open ? ' is-open' : ''}`} onSubmit={send} aria-labelledby="ff-title">
+      <span className="footer-col-title" id="ff-title">Feedback</span>
 
-      <div className="ff-kinds" role="radiogroup" aria-label="What kind of feedback">
-        {KINDS.map((k) => (
-          <button
-            key={k.key}
-            type="button"
-            role="radio"
-            aria-checked={kind === k.key}
-            className={`ff-kind${kind === k.key ? ' is-on' : ''}`}
-            onClick={() => setKind(k.key)}
-          >
-            {k.label}
-          </button>
-        ))}
-      </div>
+      {open && (
+        <div className="ff-kinds" role="radiogroup" aria-label="What kind of feedback">
+          {KINDS.map((k) => (
+            <button
+              key={k.key}
+              type="button"
+              role="radio"
+              aria-checked={kind === k.key}
+              className={`ff-kind${kind === k.key ? ' is-on' : ''}`}
+              onClick={() => setKind(k.key)}
+            >
+              {k.label}
+            </button>
+          ))}
+        </div>
+      )}
 
-      <label className="ff-field">
-        <span className="ff-label">Message</span>
+      <div className="ff-row">
         <textarea
+          aria-label="Your feedback"
           value={message}
+          onFocus={() => setOpen(true)}
           onChange={(e) => { setMessage(e.target.value); if (state === 'error') setState('idle'); }}
-          placeholder={PLACEHOLDER[kind]}
-          rows={3}
+          placeholder={open ? PLACEHOLDER[kind] : 'Bug, idea, wrong number?'}
+          rows={open ? 2 : 1}
           maxLength={3000}
           required
         />
-      </label>
+        <button type="submit" className="ff-send" disabled={state === 'sending'}>
+          {state === 'sending' ? 'Sending…' : 'Send'}
+        </button>
+      </div>
 
-      <label className="ff-field">
-        <span className="ff-label">Email <span className="ff-opt">(optional, if you’d like a reply)</span></span>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" autoComplete="email" />
-      </label>
+      {open && (
+        <input type="email" aria-label="Email (optional, for a reply)" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email for a reply (optional)" autoComplete="email" />
+      )}
 
       {/* Honeypot: hidden from people and screen readers; bots fill it. */}
       <input type="text" name="website" value={trap} onChange={(e) => setTrap(e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" className="ff-trap" />
 
       {state === 'error' && <p className="ff-error" role="alert">{error}</p>}
-
-      <button type="submit" className="ff-send" disabled={state === 'sending'}>
-        {state === 'sending' ? 'Sending…' : 'Send feedback'}
-      </button>
     </form>
   );
 }
