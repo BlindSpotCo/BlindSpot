@@ -167,6 +167,10 @@ export default function LoginPage() {
           </button>
         </form>
 
+        <p className="auth-legal">
+          By continuing you agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy policy</a>.
+        </p>
+
         <div className="auth-links">
           <a href="/forgot-password">Forgot password?</a>
           <a href="/signup">Don&apos;t have an account? Sign up</a>

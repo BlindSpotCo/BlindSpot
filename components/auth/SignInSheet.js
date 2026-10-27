@@ -170,6 +170,9 @@ export default function SignInSheet({ open, onClose, onSignedIn, heading = 'Sign
           <a href="/forgot-password" onClick={(e) => { e.preventDefault(); goTo('/forgot-password'); }}>Forgot password?</a>
           <a href="/signup" onClick={(e) => { e.preventDefault(); goTo('/signup'); }}>No account? Sign up</a>
         </div>
+        <p className="auth-legal">
+          By continuing you agree to our <a href="/terms" target="_blank" rel="noopener">Terms</a> and <a href="/privacy" target="_blank" rel="noopener">Privacy policy</a>.
+        </p>
       </div>
     </>,
     document.body

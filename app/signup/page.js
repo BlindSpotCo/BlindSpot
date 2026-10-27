@@ -102,6 +102,10 @@ export default function SignupPage() {
           </form>
         )}
 
+        <p className="auth-legal">
+          By creating an account you agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy policy</a>.
+        </p>
+
         <div className="auth-links">
           <a href="/login">Already have an account? Sign in</a>
         </div>

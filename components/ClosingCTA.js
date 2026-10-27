@@ -113,6 +113,10 @@ export default function ClosingCTA() {
 
           <div className="footer-bottom">
             <span className="footer-copyright">© 2026 BlindSpot</span>
+            <nav className="footer-legal" aria-label="Legal">
+              <Link href="/privacy">Privacy</Link>
+              <Link href="/terms">Terms</Link>
+            </nav>
 
           </div>
         </div>
