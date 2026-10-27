@@ -184,3 +184,39 @@ create index if not exists folders_user_idx on folders (user_id);
 ```
 
 New saves write `summary` automatically. Until this runs, everything still works, just slower.
+
+
+## 7. Create the `site_feedback` table (footer feedback box)
+
+The "Send us feedback" box in the homepage footer (`components/FooterFeedback.js`, posting to `app/api/feedback/route.js`). Until this table exists, messages are saved into `field_reports` instead (with `pin_code = 'site'`), so nothing is lost; once it exists, new messages land here.
+
+In **SQL Editor**, run:
+
+```sql
+create table site_feedback (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete set null,
+  kind text not null default 'other' check (kind in ('bug', 'idea', 'data', 'other')),
+  message text not null,
+  email text,
+  page_url text,
+  user_agent text,
+  status text not null default 'new' check (status in ('new', 'read', 'done', 'ignored')),
+  created_at timestamptz default now()
+);
+
+alter table site_feedback enable row level security;
+
+-- Anyone can send feedback, signed in or not. Nobody can read it back
+-- through the site; read it in the Supabase table editor.
+create policy "Anyone can send feedback"
+  on site_feedback for insert
+  with check (true);
+```
+
+To read what came in while the table didn't exist yet:
+
+```sql
+select created_at, field_name, note, page_url from field_reports
+where pin_code = 'site' order by created_at desc;
+```
