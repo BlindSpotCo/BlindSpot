@@ -182,7 +182,7 @@ export default function ProfileView({ profile, initialReports, folders, fetchFai
   return (
     <main className="pf">
       <div className="pf-wrap">
-        <header className="pf-head">
+        <div className="pf-head">
           <HomeMark seed={profile.id || profile.email} size={48} className="pf-mark" title="Your BlindSpot mark" />
           <h1 className="pf-hello">
             {reports.length > 0 ? `${firstName}'s reports` : `Hi ${firstName}`}
@@ -190,7 +190,7 @@ export default function ProfileView({ profile, initialReports, folders, fetchFai
           {reports.length > 0 && (
             <Link href="/#find" className="pf-new"><Plus size={18} strokeWidth={2.4} aria-hidden="true" /><span>New report</span></Link>
           )}
-        </header>
+        </div>
 
         {/* ---------------- saved reports, by folder ---------------- */}
         <section id="saved" className="pf-homes-sec" aria-label="Your saved reports">

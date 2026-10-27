@@ -14,7 +14,9 @@
 @media (min-width:768px){ .pf{ padding-top:44px } .pf-wrap{ padding:0 28px } }
 
 /* ---------- head ---------- */
-.pf-head{ display:flex; align-items:center; gap:14px }
+/* A div, not a <header>: globals.css makes every <header> sticky at the
+   top (meant for the site nav), which pinned this row over the nav. */
+.pf-head{ position:static; display:flex; align-items:center; gap:14px }
 .pf-mark{ display:block; flex:none; border-radius:50%; box-shadow:0 0 0 3px var(--pf-card), 0 0 0 4px var(--pf-line) }
 .pf-hello{ margin:0; flex:1; min-width:0; font-size:clamp(28px,5vw,40px); line-height:1.05; font-weight:750; letter-spacing:-.03em; overflow-wrap:anywhere }
 .pf-new{
