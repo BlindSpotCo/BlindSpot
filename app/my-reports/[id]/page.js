@@ -151,9 +151,15 @@ export default async function ReportDetailPage({ params }) {
                  save route stores without inspecting. Nothing in a report
                  needs to run script or reach the session; it is a document.
                  allow-popups keeps the gallery link working. */
+              /* allow-scripts WITHOUT allow-same-origin: the report's own
+                 Print and Download PDF buttons need script, and without
+                 it they were dead here. Lacking allow-same-origin, the
+                 frame runs as an opaque origin -- no cookies, no storage,
+                 no session -- so it still can't reach the account. Close
+                 can't work in a frame, so it's hidden. */
               <iframe
-                srcDoc={d.mainHtml.replaceAll('__GALLERY_URL__', '#')}
-                sandbox="allow-popups allow-popups-to-escape-sandbox"
+                srcDoc={d.mainHtml.replaceAll('__GALLERY_URL__', '#').replace('</head>', '<style>#back-to-sunscout-btn,button[onclick*=\"close()\"]{display:none!important}</style></head>')}
+                sandbox="allow-scripts allow-modals allow-downloads allow-popups allow-popups-to-escape-sandbox"
                 style={{ width: '100%', height: '85vh', border: '1px solid var(--line-soft)', borderRadius: 4 }}
                 title="Saved report"
               />

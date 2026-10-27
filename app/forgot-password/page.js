@@ -34,7 +34,7 @@ export default function ForgotPasswordPage() {
       <div className="auth-card">
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 28 }}>
           <img src="/mark.png" alt="BlindSpot" style={{ height: 20 }} />
-          <img src="/wordmark.png" alt="BlindSpot" style={{ height: 11 }} />
+          <img src="/wordmark.png" alt="BlindSpot" className="auth-wordmark" style={{ height: 11 }} />
         </Link>
         <h1>Reset your password</h1>
         <p>Enter your email and we&apos;ll send you a link to set a new password.</p>

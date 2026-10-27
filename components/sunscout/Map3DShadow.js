@@ -109,7 +109,7 @@ html,body{background:var(--bg-2);overflow:hidden;}
    seconds of a black box on a slow phone. Faded in once it has drawn. */
 #map canvas{opacity:0;transition:opacity .35s ease;}
 #map.has-tiles canvas{opacity:1;}
-#map-loading{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;pointer-events:none;color:var(--text-mute);font-size:13px;font-family:'Geist Mono',monospace;letter-spacing:.04em;}
+#map-loading{position:absolute;left:0;right:0;top:calc(50% + 28px);z-index:5;display:flex;justify-content:center;pointer-events:none;color:var(--text-mute);font-size:13px;font-family:'Geist Mono',monospace;letter-spacing:.04em;}
 #map.has-tiles ~ #map-loading{display:none;}
 /* Phones: the page's bottom card sits over this corner, and the hint
    showed through it as ghost text. */

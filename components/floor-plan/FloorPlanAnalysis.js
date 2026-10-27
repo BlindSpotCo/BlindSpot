@@ -122,18 +122,53 @@ export default function FloorPlanAnalysis({ embedded = false }) {
     setMustHaves(prev => prev.includes(opt) ? prev.filter(x => x !== opt) : [...prev, opt]);
   }
 
-  async function handleFile(file) {
-    if (!file) return;
+  // Phone photos of a plan are often 5-12 MB, over the ~4.5 MB a request to
+  // the server can carry -- the upload failed with an unreadable error.
+  // Images are shrunk here first (2000px on the long side is plenty to read
+  // a plan); PDFs can't be, so an oversized one gets a plain message.
+  const MAX_BYTES = 4 * 1024 * 1024;
+  async function shrinkImage(file) {
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type) || file.size < 1.5 * 1024 * 1024) return file;
+    try {
+      const bmp = await createImageBitmap(file);
+      const k = Math.min(1, 2000 / Math.max(bmp.width, bmp.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+      const g = c.getContext('2d');
+      g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); // PNG transparency -> white, not black
+      g.drawImage(bmp, 0, 0, c.width, c.height);
+      const blob = await new Promise((r) => c.toBlob(r, 'image/jpeg', 0.85));
+      return blob ? new File([blob], file.name.replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' }) : file;
+    } catch {
+      return file;
+    }
+  }
+
+  async function handleFile(rawFile) {
+    if (!rawFile) return;
     setStatus('loading');
     setError(null);
     setResult(null);
     setActiveRoom(null);
     try {
+      const file = await shrinkImage(rawFile);
+      if (file.size > MAX_BYTES) {
+        throw new Error(file.type === 'application/pdf'
+          ? 'That PDF is over 4 MB. Export just the floor-plan page, or take a screenshot of it and upload that instead.'
+          : 'That file is over 4 MB. Try a smaller image or a screenshot of the plan.');
+      }
       const formData = new FormData();
       formData.append('file', file);
       formData.append('preferences', JSON.stringify({ homeType, style, spaceFeel, mustHaves, notes }));
       const res = await fetch('/api/floor-plan/analyze', { method: 'POST', body: formData });
-      const data = await res.json();
+      // The platform answers some failures (too large, timed out) with a
+      // plain-text page, not JSON; reading it as JSON threw a parser error
+      // at the person instead of saying what happened.
+      const data = await res.json().catch(() => ({
+        error: res.status === 413 ? 'That file is too large to upload. Try a smaller image or a screenshot of the plan.'
+          : res.status === 504 ? 'Reading the plan took too long. Try again, or upload a clearer, smaller image.'
+          : 'Something went wrong reading that plan. Try again in a moment.',
+      }));
       if (!res.ok) throw new Error(data.error || 'Analysis failed.');
       setResult(data);
       setStatus('done');

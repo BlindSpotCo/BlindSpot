@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import SiteHeader from '@/components/SiteHeader';
 // app/not-found.js
 //
 // Reached by notFound() -- most often /neighbourhood-report/<pin> for a pin
@@ -8,7 +9,10 @@ import Link from 'next/link';
 export const metadata = { title: 'Not found' };
 
 export default function NotFound() {
+  // The site menu, so a wrong link isn't a dead end with one button.
   return (
+    <>
+    <SiteHeader />
     <div className="bs-404">
       <h1>We don&apos;t have that one.</h1>
       <p>
@@ -27,5 +31,6 @@ export default function NotFound() {
         .bs-404-actions a:hover { background: #95502a; }
       `}</style>
     </div>
+    </>
   );
 }

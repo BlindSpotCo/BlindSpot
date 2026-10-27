@@ -2135,7 +2135,9 @@ header.header-on-dark .brand-word-img{
   box-shadow:0 10px 30px rgba(0,0,0,0.09);
 }
 .ts4-sample-tag{
-  position:absolute; top:var(--space-7); right:var(--space-7);
+  /* Floated on the "Score 1" line instead of pinned to the corner: pinned,
+     it sat on top of the card title on phones ("Neighbourhood Sc[EXAMPLE]"). */
+  float:right; margin:-3px 0 0 10px;
   font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
   color:var(--text-dim); background:var(--bg); border:1px solid #E2E8F0; border-radius:20px;
   padding:4px 10px;
@@ -2327,8 +2329,10 @@ header.header-on-dark .brand-word-img{
   .hiw3-step{ display:flex; flex-direction:column; align-items:center; text-align:center }
   .hiw3-step:not(:last-child)::after{
     content:'';
+    /* Only in the gap between steps. Running it from the badge down
+       through the step drew the line straight through the centred text. */
     position:absolute; left:50%; transform:translateX(-50%);
-    top:48px; bottom:calc(-1 * var(--space-6));
+    top:calc(100% + 8px); height:calc(var(--space-6) - 16px);
     width:2px; background:var(--line);
   }
 }
@@ -2946,3 +2950,7 @@ html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; touch-action:manipul
 .psr-toast span{ flex:1; min-width:0 }
 .psr-toast a{ color:inherit; font-weight:700; text-decoration:underline; flex:none }
 .psr-toast button{ flex:none; width:28px; height:28px; border:0; border-radius:50%; background:rgba(255,255,255,.14); color:inherit; font-size:16px; cursor:pointer }
+
+/* The wordmark PNG is white (it's made for the dark header); on the
+   light sign-in cards it was invisible. Same tint the site header uses. */
+.auth-wordmark{ filter:invert(1) brightness(0.15) }

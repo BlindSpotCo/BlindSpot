@@ -56,7 +56,8 @@
   font-weight:600;color:var(--brand,#3D4116);text-decoration:underline;text-underline-offset:4px;
 }
 
-.bsr-empty h1{font-size:30px;margin-bottom:10px}
+.bsr-empty h1{font-size:30px;margin-bottom:10px;color:var(--text,#1C1812)}
+.bsr-empty-home{display:inline-flex;margin:20px 0 0;padding:8px}
 .bsr-empty p{max-width:46ch;margin:0 auto 22px;font-size:17px}
 
 /* ---------------- title + address bar ----------------

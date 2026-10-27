@@ -921,8 +921,20 @@ export default function ReportScreen({ view = 'verdict' }) {
   const [picked, setPicked] = useState(null);
   const placeRef = useRef(null);
   useEffect(() => { placeRef.current = hasPlace ? { lat, lon } : null; }, [hasPlace, lat, lon]);
+  // The place they searched for, by name. Tapping a tower inside it used to
+  // swap "Prestige Park Grove" for whatever the reverse lookup called that
+  // exact spot ("Chikkabanahalli, Seegehalli, 560067") -- the society name
+  // they searched for, gone from the report title. Within ~600 m of a named
+  // search, the name stays; only the pincode follows the pin.
+  const namedRef = useRef(null);
+  useEffect(() => {
+    if (!namedRef.current && hasPlace && address) namedRef.current = { lat, lon, address };
+  }, [hasPlace, lat, lon, address]);
   const moveTo = useCallback((toLat, toLon, label) => {
     if (!Number.isFinite(toLat) || !Number.isFinite(toLon)) return;
+    if (label) namedRef.current = { lat: toLat, lon: toLon, address: label };
+    const named = namedRef.current;
+    const keepName = !label && named && Math.abs(named.lat - toLat) < 0.006 && Math.abs(named.lon - toLon) < 0.006;
     setLocError('');
     setAddrEditOpen(false);
     setMapSearchOpen(false);
@@ -935,7 +947,7 @@ export default function ReportScreen({ view = 'verdict' }) {
     setAqi(null);
     // Same neighbourhood: keep the pincode we have until the reverse lookup
     // answers, instead of blanking the area half for a moment on every tap.
-    setPlace((p) => ({ lat: toLat, lon: toLon, pinCode: far ? '' : p.pinCode, address: label || (far ? '' : p.address) }));
+    setPlace((p) => ({ lat: toLat, lon: toLon, pinCode: far ? '' : p.pinCode, address: label || (keepName ? named.address : (far ? '' : p.address)) }));
     pinAsked.current = `${toLat},${toLon}`;
     fetch(`/api/sunscout/reverse-geocode?lat=${toLat}&lon=${toLon}`)
       .then((r) => r.json())
@@ -943,7 +955,7 @@ export default function ReportScreen({ view = 'verdict' }) {
         const res = j?.result;
         if (!res) return;
         setPlace((p) => (p.lat === toLat && p.lon === toLon
-          ? { ...p, pinCode: res.postcode || '', address: label || res.displayName || p.address }
+          ? { ...p, pinCode: res.postcode || '', address: label || (keepName ? named.address : (res.displayName || p.address)) }
           : p));
       })
       .catch(() => {});
@@ -1840,6 +1852,11 @@ export default function ReportScreen({ view = 'verdict' }) {
   if (!hasPlace) {
     return (
       <div className="bsr">
+        {/* Logo back home -- this state had no way out but its one button. */}
+        <Link href="/" className="bsr-empty-home" aria-label="BlindSpot home">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/mark.png" alt="" width={22} height={24} />
+        </Link>
         <div className="bsr-empty">
           <h1>We need an address first.</h1>
           <p>Search one on the home page and this opens straight onto it.</p>
@@ -2103,15 +2120,19 @@ export default function ReportScreen({ view = 'verdict' }) {
               <button
                 type="button"
                 className={`bsr-sum-cta-go${assumed ? ' is-needs-unit' : ''}`}
-                disabled={!solar?.pathData}
+                disabled={!solar?.pathData || reportBusy.full}
                 onClick={requestFullReport}
               >
-                {assumed
-                  ? <>Set floor &amp; facing first <span aria-hidden="true">↓</span></>
-                  : <>Generate full report <span aria-hidden="true">→</span></>}
+                {reportBusy.full
+                  ? 'Writing your report…'
+                  : assumed
+                    ? <>Set floor &amp; facing first <span aria-hidden="true">↓</span></>
+                    : <>Generate full report <span aria-hidden="true">→</span></>}
               </button>
               <span className="bsr-sum-cta-note">
-                {!solar?.pathData
+                {reportBusy.full
+                  ? 'Usually about two minutes. Keep browsing; it carries on.'
+                  : !solar?.pathData
                   ? 'Waiting for the 3D map to load'
                   : assumed
                     ? 'The report is written for your exact flat, so it needs both.'
@@ -2663,10 +2684,10 @@ export default function ReportScreen({ view = 'verdict' }) {
             <button
               type="button"
               className={`bsr-cta${assumed ? ' is-needs-unit' : ''}`}
-              disabled={!solar?.pathData}
+              disabled={!solar?.pathData || reportBusy.full}
               onClick={requestFullReport}
             >
-              {assumed
+              {reportBusy.full ? 'Writing your report…' : assumed
                 ? 'Set floor & facing first'
                 : hasArea ? 'Generate the full report' : 'Generate the full flat report'}
             </button>
