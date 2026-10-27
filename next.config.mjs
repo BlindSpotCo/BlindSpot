@@ -9,6 +9,12 @@ const nextConfig = {
   // runtime — see the comment in lib/floorplan/toImage.js for why.
   serverExternalPackages: ['@napi-rs/canvas', 'unpdf'],
 
+  // The report route reads this logo off disk at runtime; listing it makes
+  // sure Vercel ships it with the function rather than relying on tracing.
+  outputFileTracingIncludes: {
+    '/api/sunscout/report/pdf': ['./public/mark-report.png'],
+  },
+
   // Next.js's dev server only trusts requests from localhost/127.0.0.1 by
   // default -- a request coming in via a LAN IP (e.g. testing on a phone on
   // the same WiFi) gets silently blocked otherwise, which looks like a hung

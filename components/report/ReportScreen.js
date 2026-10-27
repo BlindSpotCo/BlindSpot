@@ -480,8 +480,11 @@ export default function ReportScreen({ view = 'verdict' }) {
   // the button (shake them, outline the empty ones, focus the first), so
   // it isn't quietly built for a default 5th floor, south-east.
   const nudgeTimer = useRef(null);
-  const requestSunReport = (e) => {
-    if (floorSet && facingSet) { setReportOpen('gallery'); return; }
+  // Both reports go through here. The full report used to open straight
+  // away with floor/facing unset and was quietly written up for a default
+  // 5th floor, south-east -- a whole report about a flat nobody chose.
+  const requestReport = (type, e) => {
+    if (floorSet && facingSet) { setReportOpen(type); return; }
     const btn = e?.currentTarget;
     let target = null;
     if (btn?.closest('.bsr-fullbar')) {
@@ -503,6 +506,8 @@ export default function ReportScreen({ view = 'verdict' }) {
     if (nudgeTimer.current) clearTimeout(nudgeTimer.current);
     nudgeTimer.current = setTimeout(() => target.classList.remove('bsr-nudge'), 2600);
   };
+  const requestSunReport = (e) => requestReport('gallery', e);
+  const requestFullReport = (e) => requestReport('full', e);
   const closeReport = useCallback((type) => {
     setReportsOpen((list) => list.filter((t) => t !== type));
     setReportFront((f) => (f === type ? null : f));
@@ -2097,14 +2102,20 @@ export default function ReportScreen({ view = 'verdict' }) {
               </p>
               <button
                 type="button"
-                className="bsr-sum-cta-go"
+                className={`bsr-sum-cta-go${assumed ? ' is-needs-unit' : ''}`}
                 disabled={!solar?.pathData}
-                onClick={() => setReportOpen('full')}
+                onClick={requestFullReport}
               >
-                Generate full report <span aria-hidden="true">→</span>
+                {assumed
+                  ? <>Set floor &amp; facing first <span aria-hidden="true">↓</span></>
+                  : <>Generate full report <span aria-hidden="true">→</span></>}
               </button>
               <span className="bsr-sum-cta-note">
-                {solar?.pathData ? 'About two minutes · keep browsing' : 'Waiting for the 3D map to load'}
+                {!solar?.pathData
+                  ? 'Waiting for the 3D map to load'
+                  : assumed
+                    ? 'The report is written for your exact flat, so it needs both.'
+                    : 'About two minutes · keep browsing'}
               </span>
             </div>
           </section>
@@ -2651,16 +2662,20 @@ export default function ReportScreen({ view = 'verdict' }) {
                 nor actionable. Say the real reason before they click. */}
             <button
               type="button"
-              className="bsr-cta"
+              className={`bsr-cta${assumed ? ' is-needs-unit' : ''}`}
               disabled={!solar?.pathData}
-              onClick={() => setReportOpen('full')}
+              onClick={requestFullReport}
             >
-              {hasArea ? 'Generate the full report' : 'Generate the full flat report'}
+              {assumed
+                ? 'Set floor & facing first'
+                : hasArea ? 'Generate the full report' : 'Generate the full flat report'}
             </button>
             <span className="bsr-free">
-              {solar?.pathData
-                ? 'About two minutes. Builds on this page - keep browsing.'
-                : 'Waiting for the 3D map to load - the report is built from it.'}
+              {!solar?.pathData
+                ? 'Waiting for the 3D map to load - the report is built from it.'
+                : assumed
+                  ? 'The report is written for your exact flat. Set its floor and facing above, then come back here.'
+                  : 'About two minutes. Builds on this page - keep browsing.'}
             </span>
           </section>
 

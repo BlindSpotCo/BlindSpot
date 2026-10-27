@@ -43,12 +43,41 @@ function cleanAddressLabel(name) {
   return out.join(', ');
 }
 
+// The label shown as the report's title. Nominatim's display_name leads
+// with whatever named thing the pin landed on -- tapping a building in
+// Indiranagar titled the report "Sri Manjunatha Luxury Ladies PG", the
+// paying-guest next door, followed by "Bengaluru Central City Corporation,
+// Bangalore North, Bengaluru Urban, Karnataka, India". A business, clinic
+// or shop is somebody else's name, not the flat's, so it's dropped. A
+// named residential building or society ("Prestige Shantiniketan") IS what
+// people call their home, so that's kept.
+const RESIDENTIAL_NAME = new Set(['building', 'place', 'landuse']);
+// building=yes is left out on purpose: it's how most shops, clinics and PGs
+// are tagged too, so its name tells us nothing about whose home it is.
+const RESIDENTIAL_TYPES = new Set(['residential', 'apartments', 'house', 'neighbourhood', 'suburb', 'quarter']);
+function addressLabel(data) {
+  const a = data.address || {};
+  const isHome = RESIDENTIAL_NAME.has(data.class) && RESIDENTIAL_TYPES.has(data.type);
+  const name = isHome && data.name ? data.name : null;
+  const street = [a.house_number, a.road].filter(Boolean).join(' ') || null;
+  // Both, when there are both: "Subedar Garden" alone means little; with
+  // "Indiranagar" after it, anyone in Bengaluru knows where that is.
+  const area = [...new Set([a.neighbourhood || a.quarter, a.suburb || a.city_district].filter(Boolean))].join(', ') || null;
+  const city = a.city || a.town || a.village || a.state_district || null;
+  const parts = [name, street, area, city, a.postcode].filter(Boolean);
+  return parts.length >= 2 ? parts.join(', ') : data.display_name;
+}
+
 async function viaNominatim(lat, lon) {
   const r = await fetch(
     `https://nominatim.openstreetmap.org/reverse?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&format=json&addressdetails=1&zoom=18`,
     {
-      headers: { 'User-Agent': 'BlindSpot_NextJS/1.0 (+https://blindspotco.net)' },
+      headers: { 'User-Agent': 'BlindSpot_NextJS/1.0 (+https://www.blindspot.properties)' },
       signal: AbortSignal.timeout(6000),
+      // A day's cache per exact spot: tapping the same tower again (or the
+      // map step handing over to the report) shouldn't hit Nominatim twice
+      // -- its usage policy is one request a second for the whole site.
+      next: { revalidate: 86400 },
     },
   );
   if (!r.ok) throw new Error(`nominatim-${r.status}`);
@@ -57,7 +86,7 @@ async function viaNominatim(lat, lon) {
   const a = data.address || {};
   return {
     postcode: a.postcode || null,
-    displayName: cleanAddressLabel(data.display_name) || null,
+    displayName: cleanAddressLabel(addressLabel(data)) || null,
     locality: a.suburb || a.neighbourhood || a.city_district || a.town || a.village || null,
     city: a.city || a.state_district || a.state || null,
   };
@@ -66,13 +95,17 @@ async function viaNominatim(lat, lon) {
 async function viaPhoton(lat, lon) {
   const r = await fetch(
     `https://photon.komoot.io/reverse?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&limit=1&lang=en`,
-    { signal: AbortSignal.timeout(6000) },
+    { signal: AbortSignal.timeout(6000), next: { revalidate: 86400 } },
   );
   if (!r.ok) throw new Error(`photon-${r.status}`);
   const data = await r.json();
   const p = data?.features?.[0]?.properties;
   if (!p) return null;
-  const name = [p.name, p.street, p.district, p.city, p.state, p.postcode]
+  // Same rule as addressLabel above: a business's name isn't the flat's.
+  const homeName = ['building', 'place', 'landuse'].includes(p.osm_key)
+    && ['residential', 'apartments', 'house', 'neighbourhood', 'suburb', 'quarter'].includes(p.osm_value) ? p.name : null;
+  const street = [p.housenumber, p.street].filter(Boolean).join(' ') || null;
+  const name = [homeName, street, p.district || p.locality, p.city, p.postcode]
     .filter(Boolean).join(', ');
   return {
     postcode: p.postcode || null,

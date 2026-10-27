@@ -140,9 +140,18 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
   // there's no opener either way and the browser silently refuses to close
   // it - so fall back to telling the person to close the tab themselves
   // instead of a dead button.
+  // When the browser won't close it, go somewhere useful instead of
+  // leaving a dead button: back, if there's somewhere to go back to (a
+  // saved report opened from the profile), otherwise the homepage. The
+  // hint is the last resort, for a tab with no history at all.
   function handleClose() {
     window.close();
-    setTimeout(() => setCloseHint(true), 300);
+    setTimeout(() => {
+      if (window.closed) return;
+      if (window.history.length > 1) { window.history.back(); return; }
+      if (document.referrer && new URL(document.referrer).origin === window.location.origin) { window.location.href = document.referrer; return; }
+      setCloseHint(true);
+    }, 250);
   }
 
   return (

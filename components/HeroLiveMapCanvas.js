@@ -80,7 +80,9 @@ const BLINDSPOT_EXAMPLES = [
 // AND address results together (see geocode-suggest's own `kind` field),
 // and this is just the label each suggestion in the dropdown wears so
 // it's clear what you're about to pick.
-const SEARCH_PLACEHOLDER = 'Enter society name, landmark, or address...';
+// Short enough to fit a phone-width box; the long form was cut off at
+// "Enter society name, landmark, or a...".
+const SEARCH_PLACEHOLDER = 'Society, landmark or address';
 // One-click examples under the search box. Which ones depends on where the
 // visitor is -- see lib/tryPlaces.js for the per-city lists and why each
 // entry is hardcoded rather than a query re-resolved on every click.
@@ -609,7 +611,10 @@ export default function HeroLiveMapCanvas() {
           {/* One tap to a real result, for anyone who'd rather see what
               this does before typing their own address. Hidden while the
               city panel is open -- it grows downward into this space. */}
-          {!cityPanel && (
+          {/* Also hidden while suggestions are showing: the list opened
+              below the chips, so on a phone there was a row of example
+              places between what you typed and what matched it. */}
+          {!cityPanel && !(open && results.length > 0) && (
             <div className="hlm-try" aria-label="Example places">
               <span className="hlm-try-label">{homeCity ? `Try in ${CITY_CENTRES[homeCity].label}` : 'Try'}</span>
               {tryPlaces.map((t) => (

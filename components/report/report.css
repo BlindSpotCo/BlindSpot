@@ -2495,3 +2495,14 @@ body.bsr-noscroll{overflow:hidden}
 .trend-words .trend-src{font-size:11.5px;color:var(--text-dim,#57697F)}
 .trend-sr{position:absolute;left:0;top:0;display:block;width:1px;height:1px;max-width:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 .bsr-trend-note{font-size:12px;color:var(--text-dim,#57697F);margin:8px 0 0;line-height:1.45}
+
+/* Full-report buttons before floor + facing are set: outlined, so they
+   read as "do this first", not as the report itself. A tap scrolls to the
+   Floor / Faces row and nudges it (requestReport in ReportScreen). */
+.bsr-sum-cta-go.is-needs-unit,
+button.bsr-cta.is-needs-unit{
+  background:transparent;color:var(--brand,#3D4116);
+  box-shadow:inset 0 0 0 1.5px var(--brand,#3D4116);
+}
+.bsr-sum-cta-go.is-needs-unit:hover:not(:disabled),
+button.bsr-cta.is-needs-unit:hover:not(:disabled){background:rgba(61,65,22,.07);filter:none}

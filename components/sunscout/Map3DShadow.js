@@ -104,7 +104,16 @@ export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTi
 }
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Geist',sans-serif;}
 html,body{background:var(--bg-2);overflow:hidden;}
-#map{width:100%;height:100vh;touch-action:none;}
+#map{width:100%;height:100vh;touch-action:none;background:var(--bg-2);}
+/* The WebGL canvas starts black until the first tiles arrive -- two
+   seconds of a black box on a slow phone. Faded in once it has drawn. */
+#map canvas{opacity:0;transition:opacity .35s ease;}
+#map.has-tiles canvas{opacity:1;}
+#map-loading{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;pointer-events:none;color:var(--text-mute);font-size:13px;font-family:'Geist Mono',monospace;letter-spacing:.04em;}
+#map.has-tiles ~ #map-loading{display:none;}
+/* Phones: the page's bottom card sits over this corner, and the hint
+   showed through it as ghost text. */
+@media(max-width:767px){.hint{display:none;}}
 /* Pinching the 3D map on a phone used to zoom the whole page instead
    (and leave it zoomed). touch-action:none hands every gesture on the map
    to the map itself. */
@@ -136,6 +145,7 @@ html,body{touch-action:none;overscroll-behavior:none;}
 </div>
 <div style="position:relative;width:100%;height:100vh;">
   <div id="map"></div>
+  <div id="map-loading">Loading the 3D block…</div>
   <div class="tile-row">
     <button class="tile-btn on" id="bs" onclick="setT('s')">Street</button>
     <button class="tile-btn" id="bsat" onclick="setT('sat')">Satellite</button>
@@ -321,9 +331,15 @@ window.addEventListener('message',function(e){
         var liveW=window.innerWidth, liveH=window.innerHeight;
         var CAP_W=960, CAP_H=640;
 
+        // Drawn at the screen's real pixel density (up to 3x), not CSS
+        // pixels: on a phone the map is ~340px wide, and a 1x copy of it
+        // blown up to 960px came out soft. Everything below still draws in
+        // CSS-pixel coordinates; the scale takes care of the rest.
+        var K=Math.max(1, Math.min(3, window.devicePixelRatio||1));
         var raw=document.createElement('canvas');
-        raw.width=liveW; raw.height=liveH;
+        raw.width=Math.round(liveW*K); raw.height=Math.round(liveH*K);
         var rctx=raw.getContext('2d');
+        rctx.scale(K,K);
         rctx.fillStyle='#F1E9DA';
         rctx.fillRect(0,0,liveW,liveH);
         try{
@@ -348,9 +364,28 @@ window.addEventListener('message',function(e){
           var out=document.createElement('canvas');
           out.width=CAP_W; out.height=CAP_H;
           var octx=out.getContext('2d');
-          octx.drawImage(raw,0,0,liveW,liveH,0,0,CAP_W,CAP_H);
+          // Centre-crop to the frame's 3:2 shape instead of stretching. On a
+          // phone the map is portrait (~340x470) and squashing that into a
+          // landscape 960x640 frame stretched every building sideways in
+          // the report.
+          var A=CAP_W/CAP_H, sw=raw.width, sh=raw.height;
+          if(sw/sh>A){ sw=sh*A; } else { sh=sw/A; }
+          octx.drawImage(raw,(raw.width-sw)/2,(raw.height-sh)/2,sw,sh,0,0,CAP_W,CAP_H);
+          // The season label goes on after the crop so it can't be cut off.
+          octx.font='bold 22px monospace';
+          var tw=octx.measureText(lbl).width;
+          octx.fillStyle='rgba(255,253,248,0.9)';
+          octx.fillRect(14,14,tw+20,34);
+          octx.fillStyle='rgba(175,95,48,1)';
+          octx.fillText(lbl,24,39);
           try{
-            var dataUrl=out.toDataURL('image/jpeg',0.85);
+            // WebP where the browser can encode it (Chrome, Edge, Firefox,
+            // recent Safari): roughly a third smaller than the old JPEG at
+            // the same look, and twelve of these are what a sun & shadow
+            // save has to upload. A browser that can't encode WebP hands
+            // back a PNG instead, so that case falls back to JPEG.
+            var dataUrl=out.toDataURL('image/webp',0.78);
+            if(dataUrl.indexOf('data:image/webp')!==0) dataUrl=out.toDataURL('image/jpeg',0.8);
             window.parent.postMessage({type:'screenshotReady',label:lbl,data:dataUrl},'*');
           }catch(err){
             console.error('[Map3DShadow iframe] toDataURL failed (tainted canvas) for "'+lbl+'":', err);
@@ -379,9 +414,6 @@ window.addEventListener('message',function(e){
             rctx.beginPath();rctx.arc(0,0,12,0,Math.PI*2);rctx.fill();
             rctx.restore();
           }
-          rctx.fillStyle='rgba(175,95,48,0.9)';
-          rctx.font='bold 16px monospace';
-          rctx.fillText(lbl,20,40);
           finish();
         };
         svgImg.onerror=function(){
@@ -631,6 +663,17 @@ function drawArc(){
 function placeSunXY(x,y,visible){
   if(!visible){sunEl.style.display='none';return;}
   sunEl.style.display='block';sunEl.style.left=x+'px';sunEl.style.top=y+'px';
+  // The time chip under the sun is centred on it, so near sunrise/sunset
+  // (sun at the screen edge) half of it ran off the map: "8:01" for 18:01.
+  // Slide it back inside instead.
+  var stEl=document.getElementById('sun-time');
+  if(stEl){
+    var half=(stEl.offsetWidth||52)/2, W=window.innerWidth, pad=6;
+    var shift=0;
+    if(x-half<pad) shift=pad-(x-half);
+    else if(x+half>W-pad) shift=(W-pad)-(x+half);
+    stEl.style.transform='translate(calc(-50% + '+shift+'px),0)';
+  }
 }
 function moveSun(az,el){
   if(el<-5){placeSunXY(0,0,false);return;}
@@ -816,6 +859,29 @@ if(isAnimating)startAnim();
 // document with no listener and waited on them forever.
 mapIsUp = true;
 notifyParent('map3d_ready');
+// Reveal the canvas once it has actually drawn something that isn't the
+// black WebGL clear colour (see #map canvas in the style block). Six
+// seconds is the ceiling either way, so a scene that really is dark can't
+// stay hidden.
+(function revealWhenDrawn(){
+  var mapEl=document.getElementById('map'), t0=Date.now();
+  var probe=document.createElement('canvas'); probe.width=8; probe.height=8;
+  var pc=probe.getContext('2d',{willReadFrequently:true});
+  function check(){
+    if(Date.now()-t0>6000){ mapEl.classList.add('has-tiles'); return; }
+    try{
+      var gl=document.querySelector('#map canvas');
+      if(gl){
+        pc.drawImage(gl,0,0,8,8);
+        var d=pc.getImageData(0,0,8,8).data, lit=0;
+        for(var i=0;i<d.length;i+=4){ if(d[i]+d[i+1]+d[i+2]>90) lit++; }
+        if(lit>8){ mapEl.classList.add('has-tiles'); return; }
+      }
+    }catch(e){ mapEl.classList.add('has-tiles'); return; }
+    setTimeout(check,200);
+  }
+  check();
+})();
 </script></body></html>`;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [docKey]);

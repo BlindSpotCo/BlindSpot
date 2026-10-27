@@ -234,9 +234,16 @@ export async function GET(req) {
     // (best-ranked) occurrence.
     const seen = new Set();
     const deduped = [];
+    // Also by label: "Indiranagar, Bengaluru, Karnataka" came back twice,
+    // once as an address and once as a neighbourhood, a few hundred metres
+    // apart -- the same row twice in the dropdown. Same words within ~2 km
+    // is the same place to the person reading the list.
+    const labelOf = (m) => (m.displayName || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
     for (const m of merged) {
       const key = `${m.lat.toFixed(4)},${m.lon.toFixed(4)}`;
       if (seen.has(key)) continue;
+      const label = labelOf(m);
+      if (label && deduped.some((d) => labelOf(d) === label && haversineKm(d.lat, d.lon, m.lat, m.lon) < 2)) continue;
       seen.add(key);
       deduped.push(m);
     }

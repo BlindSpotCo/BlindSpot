@@ -55,7 +55,11 @@ let MARK_BASE64 = null;
 function getMarkDataUri() {
   if (MARK_BASE64) return MARK_BASE64;
   try {
-    const buf = fs.readFileSync(path.join(process.cwd(), 'public', 'mark.png'));
+    // A 96px copy, made for this. The logo shows at 12-18px in the report,
+    // and the full-size mark.png was 136 KB as base64 -- embedded three
+    // times, it was 408 KB of a 436 KB report, and the bulk of what every
+    // "Save report" had to upload.
+    const buf = fs.readFileSync(path.join(process.cwd(), 'public', 'mark-report.png'));
     MARK_BASE64 = `data:image/png;base64,${buf.toString('base64')}`;
   } catch {
     MARK_BASE64 = '';
