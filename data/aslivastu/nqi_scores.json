@@ -1143,7 +1143,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 30,
+    "crime_percentile": 34,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -1240,7 +1240,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 9,
+    "crime_percentile": 14,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -1362,7 +1362,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 44,
+    "crime_percentile": 47,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -1459,7 +1459,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 80,
+    "crime_percentile": 81,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -1581,7 +1581,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 56,
+    "crime_percentile": 59,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -1678,7 +1678,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 76,
+    "crime_percentile": 77,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -2011,7 +2011,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 15,
+    "crime_percentile": 20,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -2119,7 +2119,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 11,
+    "crime_percentile": 16,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -2255,7 +2255,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 67,
+    "crime_percentile": 69,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -2370,7 +2370,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 80,
+    "crime_percentile": 81,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -3200,7 +3200,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 76,
+    "crime_percentile": 77,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -4836,7 +4836,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 20,
+    "crime_percentile": 24,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -5007,7 +5007,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 44,
+    "crime_percentile": 47,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -5452,7 +5452,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 56,
+    "crime_percentile": 59,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -5566,7 +5566,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 44,
+    "crime_percentile": 47,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -5673,7 +5673,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 33,
+    "crime_percentile": 37,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -5795,7 +5795,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 33,
+    "crime_percentile": 37,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -5884,7 +5884,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 67,
+    "crime_percentile": 69,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -5973,7 +5973,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 44,
+    "crime_percentile": 47,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -6094,7 +6094,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 38,
+    "crime_percentile": 41,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -6215,7 +6215,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 88,
+    "crime_percentile": 89,
     "crime_tier": "Very Low",
     "price_tier": 2,
     "price_context": {
@@ -6357,7 +6357,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 56,
+    "crime_percentile": 59,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -6471,7 +6471,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 95,
+    "crime_percentile": 96,
     "crime_tier": "Very Low",
     "price_tier": 2,
     "price_context": {
@@ -6552,7 +6552,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 98,
+    "crime_percentile": 99,
     "crime_tier": "Very Low",
     "price_tier": 2,
     "price_context": {
@@ -6666,7 +6666,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 88,
+    "crime_percentile": 89,
     "crime_tier": "Very Low",
     "price_tier": 2,
     "price_context": {
@@ -6787,7 +6787,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 95,
+    "crime_percentile": 96,
     "crime_tier": "Very Low",
     "price_tier": 2,
     "price_context": {
@@ -6915,7 +6915,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 67,
+    "crime_percentile": 69,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -7029,7 +7029,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 38,
+    "crime_percentile": 41,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -7433,7 +7433,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 26,
+    "crime_percentile": 30,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -7533,7 +7533,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 26,
+    "crime_percentile": 30,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -7633,7 +7633,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 80,
+    "crime_percentile": 81,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -8131,7 +8131,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 5,
+    "crime_percentile": 10,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -8274,7 +8274,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 44,
+    "crime_percentile": 47,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -8939,7 +8939,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 88,
+    "crime_percentile": 89,
     "crime_tier": "Very Low",
     "price_tier": 2,
     "price_context": {
@@ -9194,7 +9194,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 56,
+    "crime_percentile": 59,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -9365,7 +9365,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 33,
+    "crime_percentile": 37,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -9536,7 +9536,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 38,
+    "crime_percentile": 41,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -9930,7 +9930,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 56,
+    "crime_percentile": 59,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -10052,7 +10052,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 26,
+    "crime_percentile": 30,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -10321,7 +10321,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 11,
+    "crime_percentile": 16,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -10464,7 +10464,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 44,
+    "crime_percentile": 47,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -10614,7 +10614,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 74,
+    "crime_percentile": 76,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -10736,7 +10736,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 30,
+    "crime_percentile": 34,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -10858,7 +10858,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 56,
+    "crime_percentile": 59,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -10980,7 +10980,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 15,
+    "crime_percentile": 20,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -11675,7 +11675,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 11,
+    "crime_percentile": 16,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -11811,7 +11811,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 20,
+    "crime_percentile": 24,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -11908,7 +11908,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 44,
+    "crime_percentile": 47,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -12005,7 +12005,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 8,
+    "crime_percentile": 13,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -12102,7 +12102,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 80,
+    "crime_percentile": 81,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -12390,7 +12390,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 88,
+    "crime_percentile": 89,
     "crime_tier": "Very Low",
     "price_tier": 3,
     "price_context": {
@@ -12498,7 +12498,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 80,
+    "crime_percentile": 81,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -12606,7 +12606,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 20,
+    "crime_percentile": 24,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -14480,7 +14480,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 76,
+    "crime_percentile": 77,
     "crime_tier": "Low",
     "price_tier": 4,
     "price_context": {
@@ -15008,7 +15008,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 5,
+    "crime_percentile": 10,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -15165,7 +15165,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 20,
+    "crime_percentile": 24,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -15742,7 +15742,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 3,
+    "crime_percentile": 9,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -15899,7 +15899,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 44,
+    "crime_percentile": 47,
     "crime_tier": "Low",
     "price_tier": 4,
     "price_context": {
@@ -16042,7 +16042,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 67,
+    "crime_percentile": 69,
     "crime_tier": "Low",
     "price_tier": 4,
     "price_context": {
@@ -16633,7 +16633,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 67,
+    "crime_percentile": 69,
     "crime_tier": "Low",
     "price_tier": 4,
     "price_context": {
@@ -16769,7 +16769,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 38,
+    "crime_percentile": 41,
     "crime_tier": "Low",
     "price_tier": 4,
     "price_context": {
@@ -17021,7 +17021,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 0,
+    "crime_percentile": 1,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -17129,7 +17129,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 15,
+    "crime_percentile": 20,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -17384,7 +17384,7 @@
       }
     ],
     "schools_avg_pass": null,
-    "crime_percentile": 2,
+    "crime_percentile": 6,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -18494,7 +18494,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 56,
+    "crime_percentile": 59,
     "crime_tier": "Low",
     "price_tier": 5,
     "price_context": {
@@ -18964,7 +18964,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 24,
+    "crime_percentile": 32,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -19040,7 +19040,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 30,
+    "crime_percentile": 39,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -19116,7 +19116,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 39,
+    "crime_percentile": 46,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -19192,7 +19192,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 49,
+    "crime_percentile": 55,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -19268,7 +19268,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 58,
+    "crime_percentile": 64,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -19344,7 +19344,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 66,
+    "crime_percentile": 70,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -19420,7 +19420,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 73,
+    "crime_percentile": 76,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -19496,7 +19496,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 79,
+    "crime_percentile": 82,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -19648,7 +19648,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 24,
+    "crime_percentile": 32,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -19724,7 +19724,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 30,
+    "crime_percentile": 39,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -19800,7 +19800,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 39,
+    "crime_percentile": 46,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -19876,7 +19876,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 49,
+    "crime_percentile": 55,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -19952,7 +19952,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 58,
+    "crime_percentile": 64,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -20028,7 +20028,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 66,
+    "crime_percentile": 70,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -20104,7 +20104,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 73,
+    "crime_percentile": 76,
     "crime_tier": "Low",
     "price_tier": 4,
     "price_context": {
@@ -20180,7 +20180,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 79,
+    "crime_percentile": 82,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -20256,7 +20256,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 86,
+    "crime_percentile": 88,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -20332,7 +20332,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 24,
+    "crime_percentile": 32,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -20408,7 +20408,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 30,
+    "crime_percentile": 39,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -20484,7 +20484,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 39,
+    "crime_percentile": 46,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -20560,7 +20560,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 49,
+    "crime_percentile": 55,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -20636,7 +20636,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 58,
+    "crime_percentile": 64,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -20712,7 +20712,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 66,
+    "crime_percentile": 70,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -20788,7 +20788,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 73,
+    "crime_percentile": 76,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -20864,7 +20864,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 79,
+    "crime_percentile": 82,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -20940,7 +20940,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 86,
+    "crime_percentile": 88,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -21016,7 +21016,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 93,
+    "crime_percentile": 94,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -21092,7 +21092,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 30,
+    "crime_percentile": 39,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -21168,7 +21168,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 39,
+    "crime_percentile": 46,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -21244,7 +21244,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 49,
+    "crime_percentile": 55,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -21320,7 +21320,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 58,
+    "crime_percentile": 64,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -21396,7 +21396,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 66,
+    "crime_percentile": 70,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -21472,7 +21472,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 73,
+    "crime_percentile": 76,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -21548,7 +21548,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 79,
+    "crime_percentile": 82,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -21624,7 +21624,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 86,
+    "crime_percentile": 88,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -21700,7 +21700,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 93,
+    "crime_percentile": 94,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -21852,7 +21852,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 86,
+    "crime_percentile": 88,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -21928,7 +21928,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 24,
+    "crime_percentile": 32,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -22004,7 +22004,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 30,
+    "crime_percentile": 39,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -22080,7 +22080,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 39,
+    "crime_percentile": 46,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -22156,7 +22156,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 49,
+    "crime_percentile": 55,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -22232,7 +22232,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 58,
+    "crime_percentile": 64,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -22308,7 +22308,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 66,
+    "crime_percentile": 70,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -22384,7 +22384,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 73,
+    "crime_percentile": 76,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -22460,7 +22460,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 79,
+    "crime_percentile": 82,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -22536,7 +22536,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 86,
+    "crime_percentile": 88,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -22612,7 +22612,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 93,
+    "crime_percentile": 94,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -22688,7 +22688,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 30,
+    "crime_percentile": 39,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -22764,7 +22764,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 39,
+    "crime_percentile": 46,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -22840,7 +22840,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 49,
+    "crime_percentile": 55,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -22916,7 +22916,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 58,
+    "crime_percentile": 64,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -22992,7 +22992,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 66,
+    "crime_percentile": 70,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -23068,7 +23068,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 73,
+    "crime_percentile": 76,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -23144,7 +23144,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 79,
+    "crime_percentile": 82,
     "crime_tier": "Low",
     "price_tier": 4,
     "price_context": {
@@ -23220,7 +23220,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 86,
+    "crime_percentile": 88,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -23296,7 +23296,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 93,
+    "crime_percentile": 94,
     "crime_tier": "Low",
     "price_tier": 4,
     "price_context": {
@@ -23372,7 +23372,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 12,
+    "crime_percentile": 22,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -23448,7 +23448,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 39,
+    "crime_percentile": 46,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -23524,7 +23524,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 49,
+    "crime_percentile": 55,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -23600,7 +23600,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 58,
+    "crime_percentile": 64,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -23676,7 +23676,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 66,
+    "crime_percentile": 70,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -23752,7 +23752,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 79,
+    "crime_percentile": 82,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -23828,7 +23828,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 5,
+    "crime_percentile": 15,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -23904,7 +23904,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 8,
+    "crime_percentile": 18,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -23980,7 +23980,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 12,
+    "crime_percentile": 22,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -24056,7 +24056,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 18,
+    "crime_percentile": 26,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -24132,7 +24132,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 5,
+    "crime_percentile": 15,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -24208,7 +24208,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 8,
+    "crime_percentile": 18,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -24284,7 +24284,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 12,
+    "crime_percentile": 22,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -24360,7 +24360,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 18,
+    "crime_percentile": 26,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -24436,7 +24436,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 8,
+    "crime_percentile": 18,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -24512,7 +24512,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 12,
+    "crime_percentile": 22,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -24588,7 +24588,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 18,
+    "crime_percentile": 26,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -24664,7 +24664,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
+    "crime_percentile": 30,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -24740,7 +24740,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 24,
+    "crime_percentile": 32,
     "crime_tier": "Moderate",
     "price_tier": 5,
     "price_context": {
@@ -24816,7 +24816,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 30,
+    "crime_percentile": 39,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -24892,7 +24892,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 39,
+    "crime_percentile": 46,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -24968,7 +24968,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 49,
+    "crime_percentile": 55,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -25044,7 +25044,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 0,
+    "crime_percentile": 7,
     "crime_tier": "High",
     "price_tier": 4,
     "price_context": {
@@ -25120,7 +25120,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 2,
+    "crime_percentile": 9,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -25196,7 +25196,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 12,
+    "crime_percentile": 22,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -25272,7 +25272,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 18,
+    "crime_percentile": 26,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -25348,7 +25348,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 22,
+    "crime_percentile": 30,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -25424,7 +25424,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 24,
+    "crime_percentile": 32,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -25500,7 +25500,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 30,
+    "crime_percentile": 39,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -25576,7 +25576,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 39,
+    "crime_percentile": 46,
     "crime_tier": "Low",
     "price_tier": 4,
     "price_context": {
@@ -25652,7 +25652,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 39,
+    "crime_percentile": 46,
     "crime_tier": "Low",
     "price_tier": 4,
     "price_context": {
@@ -25728,7 +25728,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 5,
+    "crime_percentile": 15,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -25804,7 +25804,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 49,
+    "crime_percentile": 55,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -25880,7 +25880,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 0,
+    "crime_percentile": 7,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -25956,7 +25956,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 2,
+    "crime_percentile": 9,
     "crime_tier": "Moderate",
     "price_tier": 5,
     "price_context": {
@@ -26032,7 +26032,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 4,
+    "crime_percentile": 13,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -26108,7 +26108,7 @@
     "schools_state": 0,
     "schools_list": [],
     "schools_avg_pass": null,
-    "crime_percentile": 8,
+    "crime_percentile": 18,
     "crime_tier": "Moderate",
     "price_tier": 5,
     "price_context": {
@@ -26218,7 +26218,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 76,
+    "crime_percentile": 77,
     "crime_tier": "Moderate",
     "price_tier": 5,
     "price_context": {
@@ -26307,7 +26307,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 20,
+    "crime_percentile": 23,
     "crime_tier": "Moderate",
     "price_tier": 5,
     "price_context": {
@@ -26381,7 +26381,7 @@
     "schools_list": [],
     "schools_avg_pass": null,
     "schools_sourced": false,
-    "crime_percentile": 5,
+    "crime_percentile": 9,
     "crime_tier": "High",
     "price_tier": 5,
     "price_context": {
@@ -26484,7 +26484,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 32,
+    "crime_percentile": 35,
     "crime_tier": "Moderate",
     "price_tier": 5,
     "price_context": {
@@ -26558,7 +26558,7 @@
     "schools_list": [],
     "schools_avg_pass": null,
     "schools_sourced": false,
-    "crime_percentile": 44,
+    "crime_percentile": 47,
     "crime_tier": "Moderate",
     "price_tier": 5,
     "price_context": {
@@ -26640,7 +26640,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 61,
+    "crime_percentile": 63,
     "crime_tier": "Moderate",
     "price_tier": 5,
     "price_context": {
@@ -26729,7 +26729,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 66,
+    "crime_percentile": 67,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -26825,7 +26825,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 2,
+    "crime_percentile": 7,
     "crime_tier": "High",
     "price_tier": 4,
     "price_context": {
@@ -26914,7 +26914,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 7,
+    "crime_percentile": 12,
     "crime_tier": "High",
     "price_tier": 4,
     "price_context": {
@@ -27017,7 +27017,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 76,
+    "crime_percentile": 77,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -27106,7 +27106,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 66,
+    "crime_percentile": 67,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -27195,7 +27195,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 85,
+    "crime_percentile": 86,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -27379,7 +27379,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 56,
+    "crime_percentile": 58,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -27465,7 +27465,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 85,
+    "crime_percentile": 86,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -27613,7 +27613,7 @@
     "schools_list": [],
     "schools_avg_pass": null,
     "schools_sourced": false,
-    "crime_percentile": 85,
+    "crime_percentile": 86,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -27723,7 +27723,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 17,
+    "crime_percentile": 21,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -27833,7 +27833,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 44,
+    "crime_percentile": 47,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -27943,7 +27943,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 66,
+    "crime_percentile": 67,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -28046,7 +28046,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 7,
+    "crime_percentile": 12,
     "crime_tier": "High",
     "price_tier": 2,
     "price_context": {
@@ -28156,7 +28156,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 44,
+    "crime_percentile": 47,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -28259,7 +28259,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 32,
+    "crime_percentile": 35,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -28362,7 +28362,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 44,
+    "crime_percentile": 47,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -28436,7 +28436,7 @@
     "schools_list": [],
     "schools_avg_pass": null,
     "schools_sourced": false,
-    "crime_percentile": 22,
+    "crime_percentile": 26,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -28539,7 +28539,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 76,
+    "crime_percentile": 77,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -28649,7 +28649,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 22,
+    "crime_percentile": 26,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -28841,7 +28841,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 66,
+    "crime_percentile": 67,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -28944,7 +28944,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 61,
+    "crime_percentile": 63,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -29047,7 +29047,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 56,
+    "crime_percentile": 58,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -29129,7 +29129,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 83,
+    "crime_percentile": 84,
     "crime_tier": "Low",
     "price_tier": 4,
     "price_context": {
@@ -29225,7 +29225,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 22,
+    "crime_percentile": 26,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -29328,7 +29328,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 44,
+    "crime_percentile": 47,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -29424,7 +29424,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 0,
+    "crime_percentile": 2,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -29527,7 +29527,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 7,
+    "crime_percentile": 12,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -29623,7 +29623,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 22,
+    "crime_percentile": 26,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -29733,7 +29733,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 32,
+    "crime_percentile": 35,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -29836,7 +29836,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 7,
+    "crime_percentile": 12,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -29939,7 +29939,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 32,
+    "crime_percentile": 35,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -30049,7 +30049,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 32,
+    "crime_percentile": 35,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -31611,7 +31611,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 35,
+    "crime_percentile": 37,
     "crime_tier": "Moderate",
     "price_tier": 5,
     "price_context": {
@@ -31693,7 +31693,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 24,
+    "crime_percentile": 26,
     "crime_tier": "High",
     "price_tier": 5,
     "price_context": {
@@ -32077,7 +32077,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 76,
+    "crime_percentile": 77,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -32365,7 +32365,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 41,
+    "crime_percentile": 43,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -32475,7 +32475,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 41,
+    "crime_percentile": 43,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -32557,7 +32557,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 62,
+    "crime_percentile": 63,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -32646,7 +32646,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 56,
+    "crime_percentile": 57,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -32735,7 +32735,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 41,
+    "crime_percentile": 43,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -32845,7 +32845,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 88,
+    "crime_percentile": 89,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -32955,7 +32955,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 76,
+    "crime_percentile": 77,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -33065,7 +33065,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 62,
+    "crime_percentile": 63,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -33257,7 +33257,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 82,
+    "crime_percentile": 83,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -33339,7 +33339,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 85,
+    "crime_percentile": 86,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -33510,7 +33510,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 62,
+    "crime_percentile": 63,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -33620,7 +33620,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 18,
+    "crime_percentile": 17,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -33730,7 +33730,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 41,
+    "crime_percentile": 43,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -33819,7 +33819,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 62,
+    "crime_percentile": 63,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -33908,7 +33908,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 24,
+    "crime_percentile": 26,
     "crime_tier": "High",
     "price_tier": 4,
     "price_context": {
@@ -33990,7 +33990,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 41,
+    "crime_percentile": 43,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -34154,7 +34154,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 32,
+    "crime_percentile": 34,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -34346,7 +34346,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 56,
+    "crime_percentile": 57,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -34456,7 +34456,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 24,
+    "crime_percentile": 26,
     "crime_tier": "High",
     "price_tier": 4,
     "price_context": {
@@ -34552,7 +34552,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 18,
+    "crime_percentile": 17,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -34716,7 +34716,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 35,
+    "crime_percentile": 37,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -34819,7 +34819,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 26,
+    "crime_percentile": 24,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -34883,7 +34883,7 @@
     "schools_list": [],
     "schools_avg_pass": null,
     "schools_sourced": false,
-    "crime_percentile": 31,
+    "crime_percentile": 29,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -34983,7 +34983,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 44,
+    "crime_percentile": 41,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -35076,7 +35076,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 49,
+    "crime_percentile": 46,
     "crime_tier": "High",
     "price_tier": 2,
     "price_context": {
@@ -35162,7 +35162,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 67,
+    "crime_percentile": 63,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -35255,7 +35255,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 56,
+    "crime_percentile": 54,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -35348,7 +35348,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 92,
+    "crime_percentile": 93,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -35441,7 +35441,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 87,
+    "crime_percentile": 85,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -35606,7 +35606,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 97,
+    "crime_percentile": 98,
     "crime_tier": "Low",
     "price_tier": 1,
     "price_context": {
@@ -35678,7 +35678,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 79,
+    "crime_percentile": 76,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -35764,7 +35764,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 92,
+    "crime_percentile": 93,
     "crime_tier": "Low",
     "price_tier": 3,
     "price_context": {
@@ -35857,7 +35857,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 74,
+    "crime_percentile": 71,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -35943,7 +35943,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 26,
+    "crime_percentile": 24,
     "crime_tier": "High",
     "price_tier": 4,
     "price_context": {
@@ -36015,7 +36015,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 31,
+    "crime_percentile": 29,
     "crime_tier": "High",
     "price_tier": 4,
     "price_context": {
@@ -36108,7 +36108,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 3,
+    "crime_percentile": 2,
     "crime_tier": "Very High",
     "price_tier": 5,
     "price_context": {
@@ -36187,7 +36187,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 13,
+    "crime_percentile": 12,
     "crime_tier": "High",
     "price_tier": 4,
     "price_context": {
@@ -36280,7 +36280,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 18,
+    "crime_percentile": 17,
     "crime_tier": "High",
     "price_tier": 4,
     "price_context": {
@@ -36366,7 +36366,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 23,
+    "crime_percentile": 22,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -36452,7 +36452,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 13,
+    "crime_percentile": 12,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -36624,7 +36624,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 3,
+    "crime_percentile": 2,
     "crime_tier": "Very High",
     "price_tier": 3,
     "price_context": {
@@ -36710,7 +36710,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 21,
+    "crime_percentile": 20,
     "crime_tier": "High",
     "price_tier": 4,
     "price_context": {
@@ -36803,7 +36803,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 3,
+    "crime_percentile": 2,
     "crime_tier": "Very High",
     "price_tier": 4,
     "price_context": {
@@ -36889,7 +36889,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 85,
+    "crime_percentile": 80,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -36975,7 +36975,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 67,
+    "crime_percentile": 63,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -37061,7 +37061,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 41,
+    "crime_percentile": 39,
     "crime_tier": "High",
     "price_tier": 4,
     "price_context": {
@@ -37147,7 +37147,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 67,
+    "crime_percentile": 63,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -37240,7 +37240,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 56,
+    "crime_percentile": 54,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -37326,7 +37326,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 79,
+    "crime_percentile": 76,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -37419,7 +37419,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 31,
+    "crime_percentile": 29,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -37512,7 +37512,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 56,
+    "crime_percentile": 54,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -37584,7 +37584,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 56,
+    "crime_percentile": 54,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -37656,7 +37656,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 46,
+    "crime_percentile": 44,
     "crime_tier": "High",
     "price_tier": 4,
     "price_context": {
@@ -37742,7 +37742,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 49,
+    "crime_percentile": 46,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -37828,7 +37828,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 74,
+    "crime_percentile": 71,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -37921,7 +37921,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 31,
+    "crime_percentile": 29,
     "crime_tier": "High",
     "price_tier": 2,
     "price_context": {
@@ -38007,7 +38007,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 49,
+    "crime_percentile": 46,
     "crime_tier": "High",
     "price_tier": 4,
     "price_context": {
@@ -38093,7 +38093,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 3,
+    "crime_percentile": 2,
     "crime_tier": "Very High",
     "price_tier": 4,
     "price_context": {
@@ -38165,7 +38165,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 5,
+    "crime_percentile": 7,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -38244,7 +38244,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 9,
+    "crime_percentile": 11,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -38316,7 +38316,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 11,
+    "crime_percentile": 13,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -38402,7 +38402,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 23,
+    "crime_percentile": 24,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -38481,7 +38481,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 32,
+    "crime_percentile": 33,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -38567,7 +38567,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 45,
+    "crime_percentile": 47,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -38646,7 +38646,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 50,
+    "crime_percentile": 51,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -38725,7 +38725,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 39,
+    "crime_percentile": 40,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -38811,7 +38811,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 55,
+    "crime_percentile": 56,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -38911,7 +38911,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 57,
+    "crime_percentile": 58,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -38975,7 +38975,7 @@
     "schools_list": [],
     "schools_avg_pass": null,
     "schools_sourced": false,
-    "crime_percentile": 23,
+    "crime_percentile": 24,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -39054,7 +39054,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 57,
+    "crime_percentile": 58,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -39133,7 +39133,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 23,
+    "crime_percentile": 24,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -39305,7 +39305,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 57,
+    "crime_percentile": 58,
     "crime_tier": "Moderate",
     "price_tier": 1,
     "price_context": {
@@ -39391,7 +39391,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 77,
+    "crime_percentile": 78,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -39800,7 +39800,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 45,
+    "crime_percentile": 47,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -39879,7 +39879,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 50,
+    "crime_percentile": 51,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -39951,7 +39951,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 68,
+    "crime_percentile": 69,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -40109,7 +40109,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 18,
+    "crime_percentile": 20,
     "crime_tier": "Moderate",
     "price_tier": 2,
     "price_context": {
@@ -40195,7 +40195,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 11,
+    "crime_percentile": 13,
     "crime_tier": "High",
     "price_tier": 3,
     "price_context": {
@@ -40274,7 +40274,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 23,
+    "crime_percentile": 24,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -40360,7 +40360,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 18,
+    "crime_percentile": 20,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -40446,7 +40446,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 11,
+    "crime_percentile": 13,
     "crime_tier": "High",
     "price_tier": 4,
     "price_context": {
@@ -40525,7 +40525,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 32,
+    "crime_percentile": 33,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -40776,7 +40776,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 39,
+    "crime_percentile": 40,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -40869,7 +40869,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 5,
+    "crime_percentile": 7,
     "crime_tier": "High",
     "price_tier": 4,
     "price_context": {
@@ -40948,7 +40948,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 39,
+    "crime_percentile": 40,
     "crime_tier": "Moderate",
     "price_tier": 4,
     "price_context": {
@@ -41041,7 +41041,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 57,
+    "crime_percentile": 58,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -41120,7 +41120,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 32,
+    "crime_percentile": 33,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -41184,7 +41184,7 @@
     "schools_list": [],
     "schools_avg_pass": null,
     "schools_sourced": false,
-    "crime_percentile": 95,
+    "crime_percentile": 96,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -41256,7 +41256,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 95,
+    "crime_percentile": 96,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -41328,7 +41328,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 57,
+    "crime_percentile": 58,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -41407,7 +41407,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 75,
+    "crime_percentile": 76,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -41479,7 +41479,7 @@
     ],
     "schools_avg_pass": null,
     "schools_sourced": true,
-    "crime_percentile": 77,
+    "crime_percentile": 78,
     "crime_tier": "Low",
     "price_tier": 2,
     "price_context": {
@@ -41629,7 +41629,7 @@
     "schools_list": [],
     "schools_avg_pass": null,
     "schools_sourced": false,
-    "crime_percentile": 68,
+    "crime_percentile": 69,
     "crime_tier": "Moderate",
     "price_tier": 3,
     "price_context": {
@@ -41648,6 +41648,1656 @@
       "circle_rate_note": "West Bengal's Directorate of Registration and Stamp Revenue officially calls this 'Market Value' (confirmed via a primary government document, not the 'circle rate' term many secondary sites use) -- the government's minimum property value for stamp duty and registration.",
       "market_gap_note": "Actual market prices in Kolkata typically run above this government minimum -- exact city-wide gap percentage not independently sourced this session.",
       "disclaimer": "Government minimum valuation, not market price. Zone-interpolated estimate, not a locality-specific notified rate. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "400703",
+    "city": "Mumbai",
+    "scores": {
+      "crime": 68,
+      "infrastructure": 63,
+      "air": 67,
+      "power": 17,
+      "schools": 70,
+      "water": 75,
+      "roads": 72,
+      "sewerage": 68
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 63,
+    "grade": "B",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 260,
+    "schools_count": 1,
+    "schools_sourced": true,
+    "schools_list": [
+      {
+        "name": "Vivekanand International School",
+        "address": "Plot 7, opp. Railway Colony, Kopri, Sector 26, Vashi, 400703",
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": 0.5
+      }
+    ],
+    "schools_avg_pass": null,
+    "crime_percentile": 32,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Navi Mumbai (CIDCO Node 1) -- qualitative tier placement, not pinned to a cited Ready Reckoner Rate figure this pass",
+      "source": "Dept. of Registration & Stamps, Government of Maharashtra (IGR Maharashtra) -- Ready Reckoner Rate, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Maharashtra calls it the 'Ready Reckoner Rate' (RRR) or Annual Statement of Rates (ASR) -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, and Karnataka a guidance value: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the Ready Reckoner Rate. The RRR is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement (see module docstring), not yet pinned to a cited per-sqm RRR figure the way build_mumbai.py's own BMC rows are. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "400706",
+    "city": "Mumbai",
+    "scores": {
+      "crime": 68,
+      "infrastructure": 62,
+      "air": 67,
+      "power": 17,
+      "schools": 70,
+      "water": 75,
+      "roads": 72,
+      "sewerage": 68
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 63,
+    "grade": "B",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 260,
+    "schools_count": 1,
+    "schools_sourced": true,
+    "schools_list": [
+      {
+        "name": "Podar International School, Nerul",
+        "address": "Plot 30, Sector 36, near HP Petrol Pump, Palm Beach Road, Nerul, 400706",
+        "board": "CBSE / CISCE / Cambridge",
+        "pass_pct": null,
+        "distance_km": 0.8
+      }
+    ],
+    "schools_avg_pass": null,
+    "crime_percentile": 32,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Navi Mumbai (CIDCO Node) -- qualitative tier placement, not pinned to a cited Ready Reckoner Rate figure this pass",
+      "source": "Dept. of Registration & Stamps, Government of Maharashtra (IGR Maharashtra) -- Ready Reckoner Rate, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Maharashtra calls it the 'Ready Reckoner Rate' (RRR) or Annual Statement of Rates (ASR) -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, and Karnataka a guidance value: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the Ready Reckoner Rate. The RRR is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement (see module docstring), not yet pinned to a cited per-sqm RRR figure the way build_mumbai.py's own BMC rows are. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "401107",
+    "city": "Mumbai",
+    "scores": {
+      "crime": 58,
+      "infrastructure": 55,
+      "air": 65,
+      "power": 17,
+      "schools": 58,
+      "water": 55,
+      "roads": 53,
+      "sewerage": 52
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 53,
+    "grade": "C+",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 310,
+    "schools_count": 2,
+    "schools_sourced": true,
+    "schools_list": [
+      {
+        "name": "Seven Square Academy",
+        "address": "Ideal Park, Deepak Hospital Lane, Mira Road East, 401107",
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": 0.6
+      },
+      {
+        "name": "Cosmopolitan High School",
+        "address": "Sheetal Nagar, Mira Road East, 401107",
+        "board": "State (Maharashtra)",
+        "pass_pct": null,
+        "distance_km": 1.0
+      }
+    ],
+    "schools_avg_pass": null,
+    "crime_percentile": 5,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "North Mira-Bhayandar -- qualitative tier placement, not pinned to a cited Ready Reckoner Rate figure this pass",
+      "source": "Dept. of Registration & Stamps, Government of Maharashtra (IGR Maharashtra) -- Ready Reckoner Rate, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Maharashtra calls it the 'Ready Reckoner Rate' (RRR) or Annual Statement of Rates (ASR) -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, and Karnataka a guidance value: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the Ready Reckoner Rate. The RRR is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement (see module docstring), not yet pinned to a cited per-sqm RRR figure the way build_mumbai.py's own BMC rows are. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "401101",
+    "city": "Mumbai",
+    "scores": {
+      "crime": 58,
+      "infrastructure": 55,
+      "air": 65,
+      "power": 17,
+      "schools": 50,
+      "water": 55,
+      "roads": 53,
+      "sewerage": 52
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 53,
+    "grade": "C+",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 310,
+    "schools_count": 2,
+    "schools_sourced": false,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "crime_percentile": 5,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "South Mira-Bhayandar -- qualitative tier placement, not pinned to a cited Ready Reckoner Rate figure this pass",
+      "source": "Dept. of Registration & Stamps, Government of Maharashtra (IGR Maharashtra) -- Ready Reckoner Rate, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Maharashtra calls it the 'Ready Reckoner Rate' (RRR) or Annual Statement of Rates (ASR) -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, and Karnataka a guidance value: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the Ready Reckoner Rate. The RRR is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement (see module docstring), not yet pinned to a cited per-sqm RRR figure the way build_mumbai.py's own BMC rows are. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "401105",
+    "city": "Mumbai",
+    "scores": {
+      "crime": 58,
+      "infrastructure": 55,
+      "air": 65,
+      "power": 17,
+      "schools": 50,
+      "water": 55,
+      "roads": 53,
+      "sewerage": 52
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 53,
+    "grade": "C+",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 310,
+    "schools_count": 2,
+    "schools_sourced": false,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "crime_percentile": 5,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "South Mira-Bhayandar -- qualitative tier placement, not pinned to a cited Ready Reckoner Rate figure this pass",
+      "source": "Dept. of Registration & Stamps, Government of Maharashtra (IGR Maharashtra) -- Ready Reckoner Rate, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Maharashtra calls it the 'Ready Reckoner Rate' (RRR) or Annual Statement of Rates (ASR) -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, and Karnataka a guidance value: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the Ready Reckoner Rate. The RRR is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement (see module docstring), not yet pinned to a cited per-sqm RRR figure the way build_mumbai.py's own BMC rows are. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "421301",
+    "city": "Mumbai",
+    "scores": {
+      "crime": 52,
+      "infrastructure": 57,
+      "air": 62,
+      "power": 17,
+      "schools": 58,
+      "water": 48,
+      "roads": 50,
+      "sewerage": 48
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 51,
+    "grade": "C+",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 340,
+    "schools_count": 2,
+    "schools_sourced": true,
+    "schools_list": [
+      {
+        "name": "Podar International School, Kalyan",
+        "address": "Wyale Nagar, Gandhar Village, Kalyan West, 421301",
+        "board": "CBSE (affiliation #1130776)",
+        "pass_pct": null,
+        "distance_km": 1.2
+      },
+      {
+        "name": "Central Railway Secondary English Medium School",
+        "address": "Murbad Road, Kalyan West, 421301",
+        "board": "CBSE / MSBSHSE",
+        "pass_pct": null,
+        "distance_km": 0.9
+      }
+    ],
+    "schools_avg_pass": null,
+    "crime_percentile": 0,
+    "crime_tier": "High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Modest",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "West Kalyan -- qualitative tier placement, not pinned to a cited Ready Reckoner Rate figure this pass",
+      "source": "Dept. of Registration & Stamps, Government of Maharashtra (IGR Maharashtra) -- Ready Reckoner Rate, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Maharashtra calls it the 'Ready Reckoner Rate' (RRR) or Annual Statement of Rates (ASR) -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, and Karnataka a guidance value: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the Ready Reckoner Rate. The RRR is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement (see module docstring), not yet pinned to a cited per-sqm RRR figure the way build_mumbai.py's own BMC rows are. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "421304",
+    "city": "Mumbai",
+    "scores": {
+      "crime": 52,
+      "infrastructure": 57,
+      "air": 62,
+      "power": 17,
+      "schools": 50,
+      "water": 48,
+      "roads": 50,
+      "sewerage": 48
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 50,
+    "grade": "C+",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 340,
+    "schools_count": 2,
+    "schools_sourced": false,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "crime_percentile": 0,
+    "crime_tier": "High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Modest",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Central Kalyan -- qualitative tier placement, not pinned to a cited Ready Reckoner Rate figure this pass",
+      "source": "Dept. of Registration & Stamps, Government of Maharashtra (IGR Maharashtra) -- Ready Reckoner Rate, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Maharashtra calls it the 'Ready Reckoner Rate' (RRR) or Annual Statement of Rates (ASR) -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, and Karnataka a guidance value: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the Ready Reckoner Rate. The RRR is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement (see module docstring), not yet pinned to a cited per-sqm RRR figure the way build_mumbai.py's own BMC rows are. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "421306",
+    "city": "Mumbai",
+    "scores": {
+      "crime": 52,
+      "infrastructure": 57,
+      "air": 62,
+      "power": 17,
+      "schools": 50,
+      "water": 48,
+      "roads": 50,
+      "sewerage": 48
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 50,
+    "grade": "C+",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 340,
+    "schools_count": 2,
+    "schools_sourced": false,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "crime_percentile": 0,
+    "crime_tier": "High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Modest",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "East Kalyan -- qualitative tier placement, not pinned to a cited Ready Reckoner Rate figure this pass",
+      "source": "Dept. of Registration & Stamps, Government of Maharashtra (IGR Maharashtra) -- Ready Reckoner Rate, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Maharashtra calls it the 'Ready Reckoner Rate' (RRR) or Annual Statement of Rates (ASR) -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, and Karnataka a guidance value: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the Ready Reckoner Rate. The RRR is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement (see module docstring), not yet pinned to a cited per-sqm RRR figure the way build_mumbai.py's own BMC rows are. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "421203",
+    "city": "Mumbai",
+    "scores": {
+      "crime": 52,
+      "infrastructure": 57,
+      "air": 61,
+      "power": 17,
+      "schools": 58,
+      "water": 46,
+      "roads": 48,
+      "sewerage": 46
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 50,
+    "grade": "C+",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 340,
+    "schools_count": 1,
+    "schools_sourced": true,
+    "schools_list": [
+      {
+        "name": "Omkar English Medium School",
+        "address": "P-74, near Mamata Hospital, MIDC Residential Zone, Dombivli East, 421203",
+        "board": "CBSE (affiliation #1130508)",
+        "pass_pct": null,
+        "distance_km": 0.7
+      }
+    ],
+    "schools_avg_pass": null,
+    "crime_percentile": 0,
+    "crime_tier": "High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Modest",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "North Dombivli -- qualitative tier placement, not pinned to a cited Ready Reckoner Rate figure this pass",
+      "source": "Dept. of Registration & Stamps, Government of Maharashtra (IGR Maharashtra) -- Ready Reckoner Rate, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Maharashtra calls it the 'Ready Reckoner Rate' (RRR) or Annual Statement of Rates (ASR) -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, and Karnataka a guidance value: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the Ready Reckoner Rate. The RRR is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement (see module docstring), not yet pinned to a cited per-sqm RRR figure the way build_mumbai.py's own BMC rows are. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "421204",
+    "city": "Mumbai",
+    "scores": {
+      "crime": 55,
+      "infrastructure": 57,
+      "air": 62,
+      "power": 17,
+      "schools": 60,
+      "water": 50,
+      "roads": 52,
+      "sewerage": 50
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 52,
+    "grade": "C+",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 325,
+    "schools_count": 1,
+    "schools_sourced": true,
+    "schools_list": [
+      {
+        "name": "Lodha World School, Dombivli East",
+        "address": "Kalyan-Shilphata Road / Palava, Dombivli East, 421204",
+        "board": "CBSE / CISCE",
+        "pass_pct": null,
+        "distance_km": 1.5
+      }
+    ],
+    "schools_avg_pass": null,
+    "crime_percentile": 4,
+    "crime_tier": "High",
+    "price_tier": 4,
+    "price_context": {
+      "tier": 4,
+      "label": "Modest",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "East Dombivli / Palava -- qualitative tier placement, not pinned to a cited Ready Reckoner Rate figure this pass",
+      "source": "Dept. of Registration & Stamps, Government of Maharashtra (IGR Maharashtra) -- Ready Reckoner Rate, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Maharashtra calls it the 'Ready Reckoner Rate' (RRR) or Annual Statement of Rates (ASR) -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, and Karnataka a guidance value: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the Ready Reckoner Rate. The RRR is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement (see module docstring), not yet pinned to a cited per-sqm RRR figure the way build_mumbai.py's own BMC rows are. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "400601",
+    "city": "Mumbai",
+    "scores": {
+      "crime": 60,
+      "infrastructure": 58,
+      "air": 63,
+      "power": 17,
+      "schools": 50,
+      "water": 55,
+      "roads": 58,
+      "sewerage": 55
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 54,
+    "grade": "C+",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 300,
+    "schools_count": 2,
+    "schools_sourced": false,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "crime_percentile": 9,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Central Thane -- qualitative tier placement, not pinned to a cited Ready Reckoner Rate figure this pass",
+      "source": "Dept. of Registration & Stamps, Government of Maharashtra (IGR Maharashtra) -- Ready Reckoner Rate, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Maharashtra calls it the 'Ready Reckoner Rate' (RRR) or Annual Statement of Rates (ASR) -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, and Karnataka a guidance value: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the Ready Reckoner Rate. The RRR is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement (see module docstring), not yet pinned to a cited per-sqm RRR figure the way build_mumbai.py's own BMC rows are. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "400602",
+    "city": "Mumbai",
+    "scores": {
+      "crime": 60,
+      "infrastructure": 57,
+      "air": 63,
+      "power": 17,
+      "schools": 50,
+      "water": 55,
+      "roads": 58,
+      "sewerage": 55
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 54,
+    "grade": "C+",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 300,
+    "schools_count": 2,
+    "schools_sourced": false,
+    "schools_list": [],
+    "schools_avg_pass": null,
+    "crime_percentile": 9,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Central Thane -- qualitative tier placement, not pinned to a cited Ready Reckoner Rate figure this pass",
+      "source": "Dept. of Registration & Stamps, Government of Maharashtra (IGR Maharashtra) -- Ready Reckoner Rate, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Maharashtra calls it the 'Ready Reckoner Rate' (RRR) or Annual Statement of Rates (ASR) -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, and Karnataka a guidance value: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the Ready Reckoner Rate. The RRR is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement (see module docstring), not yet pinned to a cited per-sqm RRR figure the way build_mumbai.py's own BMC rows are. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "400606",
+    "city": "Mumbai",
+    "scores": {
+      "crime": 62,
+      "infrastructure": 57,
+      "air": 64,
+      "power": 17,
+      "schools": 66,
+      "water": 55,
+      "roads": 58,
+      "sewerage": 55
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 56,
+    "grade": "C+",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 290,
+    "schools_count": 3,
+    "schools_sourced": true,
+    "schools_list": [
+      {
+        "name": "Sulochana Devi Singhania High School",
+        "address": "Jekegram, Thane, 400606",
+        "board": "ICSE / ISC / IB",
+        "pass_pct": null,
+        "distance_km": 1.0
+      },
+      {
+        "name": "Little Flower High School, Thane",
+        "address": "Pokhran Road No. 2, near Upvan Lake, Thane, 400606",
+        "board": "State (Maharashtra SSC) -- inferred from course description, not stated outright",
+        "pass_pct": null,
+        "distance_km": 1.3
+      },
+      {
+        "name": "Brahman Vidyalaya Marathi",
+        "address": "Prabag No. 40, Thane, 400606",
+        "board": "State (Maharashtra, Marathi medium)",
+        "pass_pct": null,
+        "distance_km": 0.8
+      }
+    ],
+    "schools_avg_pass": null,
+    "crime_percentile": 14,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "West Thane -- qualitative tier placement, not pinned to a cited Ready Reckoner Rate figure this pass",
+      "source": "Dept. of Registration & Stamps, Government of Maharashtra (IGR Maharashtra) -- Ready Reckoner Rate, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Maharashtra calls it the 'Ready Reckoner Rate' (RRR) or Annual Statement of Rates (ASR) -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, and Karnataka a guidance value: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the Ready Reckoner Rate. The RRR is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement (see module docstring), not yet pinned to a cited per-sqm RRR figure the way build_mumbai.py's own BMC rows are. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "410206",
+    "city": "Mumbai",
+    "scores": {
+      "crime": 62,
+      "infrastructure": 62,
+      "air": 66,
+      "power": 17,
+      "schools": 64,
+      "water": 60,
+      "roads": 62,
+      "sewerage": 58
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 58,
+    "grade": "C+",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 290,
+    "schools_count": 2,
+    "schools_sourced": true,
+    "schools_list": [
+      {
+        "name": "D.A.V. Public School, New Panvel",
+        "address": "Plot 267-268, Sector 10, New Panvel, 410206",
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": 1.0
+      },
+      {
+        "name": "New Horizon Public School",
+        "address": "Sector 13, Khanda Colony, New Panvel West, 410206",
+        "board": "CBSE (affiliation #1130164)",
+        "pass_pct": null,
+        "distance_km": 1.4
+      }
+    ],
+    "schools_avg_pass": null,
+    "crime_percentile": 14,
+    "crime_tier": "Moderate",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Panvel -- qualitative tier placement, not pinned to a cited Ready Reckoner Rate figure this pass",
+      "source": "Dept. of Registration & Stamps, Government of Maharashtra (IGR Maharashtra) -- Ready Reckoner Rate, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Maharashtra calls it the 'Ready Reckoner Rate' (RRR) or Annual Statement of Rates (ASR) -- the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, and Karnataka a guidance value: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the Ready Reckoner Rate. The RRR is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement (see module docstring), not yet pinned to a cited per-sqm RRR figure the way build_mumbai.py's own BMC rows are. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "562110",
+    "city": "Bangalore",
+    "scores": {
+      "crime": 60,
+      "infrastructure": 65,
+      "air": 70,
+      "power": 36,
+      "schools": 60,
+      "water": 45,
+      "roads": 65,
+      "sewerage": 50
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 59,
+    "grade": "C+",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 300,
+    "schools_count": 1,
+    "schools_sourced": true,
+    "schools_list": [
+      {
+        "name": "Akash International School",
+        "address": "Prasannahalli Road, Devanahalli, 562110",
+        "board": "CBSE / ICSE / Cambridge (CBSE affiliation #830419)",
+        "pass_pct": null,
+        "distance_km": 1.0
+      }
+    ],
+    "schools_avg_pass": null,
+    "crime_percentile": 7,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "North Bengaluru (Kempegowda Int'l Airport) -- qualitative tier placement, not pinned to a cited guidance-value figure this pass",
+      "source": "Dept. of Stamps & Registration, Karnataka (Kaveri) -- guidance value, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Karnataka calls it the 'guidance value', the same instrument Delhi/UP call a circle rate and Haryana/Chandigarh a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the guidance value. The guidance value is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement, not yet pinned to a cited guidance-value figure the way Bangalore's own BBMP rows may be. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "562114",
+    "city": "Bangalore",
+    "scores": {
+      "crime": 58,
+      "infrastructure": 56,
+      "air": 69,
+      "power": 36,
+      "schools": 55,
+      "water": 58,
+      "roads": 55,
+      "sewerage": 50
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 56,
+    "grade": "C+",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 310,
+    "schools_count": 1,
+    "schools_sourced": true,
+    "schools_list": [
+      {
+        "name": "Capstone High School",
+        "address": "164 NH-4 Kolar Highway, opp. MVJ Medical College, Kammavari Pete, Hoskote, 562114",
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": 1.2
+      }
+    ],
+    "schools_avg_pass": null,
+    "crime_percentile": 1,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "East Bengaluru (NH75 corridor) -- qualitative tier placement, not pinned to a cited guidance-value figure this pass",
+      "source": "Dept. of Stamps & Registration, Karnataka (Kaveri) -- guidance value, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Karnataka calls it the 'guidance value', the same instrument Delhi/UP call a circle rate and Haryana/Chandigarh a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the guidance value. The guidance value is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement, not yet pinned to a cited guidance-value figure the way Bangalore's own BBMP rows may be. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "562106",
+    "city": "Bangalore",
+    "scores": {
+      "crime": 55,
+      "infrastructure": 49,
+      "air": 69,
+      "power": 36,
+      "schools": 60,
+      "water": 48,
+      "roads": 55,
+      "sewerage": 48
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 54,
+    "grade": "C+",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 325,
+    "schools_count": 2,
+    "schools_sourced": true,
+    "schools_list": [
+      {
+        "name": "Green Dot International School",
+        "address": "Bandapura Road, Anekal, 562106",
+        "board": "ICSE / CISCE",
+        "pass_pct": null,
+        "distance_km": 1.5
+      },
+      {
+        "name": "Rishi Public School",
+        "address": "Vinayaka Nagar, Anekal, 562106",
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": 0.8
+      }
+    ],
+    "schools_avg_pass": null,
+    "crime_percentile": 0,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "South Bengaluru (Electronic City extension / Jigani) -- qualitative tier placement, not pinned to a cited guidance-value figure this pass",
+      "source": "Dept. of Stamps & Registration, Karnataka (Kaveri) -- guidance value, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Karnataka calls it the 'guidance value', the same instrument Delhi/UP call a circle rate and Haryana/Chandigarh a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the guidance value. The guidance value is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement, not yet pinned to a cited guidance-value figure the way Bangalore's own BBMP rows may be. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "562123",
+    "city": "Bangalore",
+    "scores": {
+      "crime": 58,
+      "infrastructure": 60,
+      "air": 70,
+      "power": 36,
+      "schools": 58,
+      "water": 42,
+      "roads": 58,
+      "sewerage": 48
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 56,
+    "grade": "C+",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 310,
+    "schools_count": 1,
+    "schools_sourced": true,
+    "schools_list": [
+      {
+        "name": "Kanva Public School",
+        "address": "Dhanojipalya / Arasinakunte, Nelamangala, 562123",
+        "board": "ICSE / CISCE",
+        "pass_pct": null,
+        "distance_km": 1.3
+      }
+    ],
+    "schools_avg_pass": null,
+    "crime_percentile": 1,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Northwest Bengaluru (NH48 junction) -- qualitative tier placement, not pinned to a cited guidance-value figure this pass",
+      "source": "Dept. of Stamps & Registration, Karnataka (Kaveri) -- guidance value, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Karnataka calls it the 'guidance value', the same instrument Delhi/UP call a circle rate and Haryana/Chandigarh a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the guidance value. The guidance value is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement, not yet pinned to a cited guidance-value figure the way Bangalore's own BBMP rows may be. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "501218",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 55,
+      "infrastructure": 65,
+      "air": 60,
+      "power": 44,
+      "schools": 62,
+      "water": 38,
+      "roads": 60,
+      "sewerage": 35
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 55,
+    "grade": "C+",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 325,
+    "schools_count": 1,
+    "schools_sourced": true,
+    "schools_list": [
+      {
+        "name": "Delhi Public School, Aerocity",
+        "address": "Survey No 191/1, 191/2, 191/3 & 192, Rajiv Gandhi International Airport Road, Mamidipally, Shamshabad, 501218",
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": 2.0
+      }
+    ],
+    "schools_avg_pass": null,
+    "crime_percentile": 2,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "South Hyderabad (Rajiv Gandhi International Airport) -- qualitative tier placement, not pinned to a cited circle-rate figure this pass",
+      "source": "Telangana Registration & Stamps Dept. -- market value (circle rate), not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Telangana calls it the 'market value', the same instrument Delhi/UP call a circle rate and Haryana/Chandigarh a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the market value. The market value is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement, not yet pinned to a cited circle-rate figure the way Hyderabad's own GHMC-area rows may be. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "501401",
+    "city": "Hyderabad",
+    "scores": {
+      "crime": 52,
+      "infrastructure": 60,
+      "air": 26,
+      "power": 44,
+      "schools": 58,
+      "water": 35,
+      "roads": 55,
+      "sewerage": 45
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 48,
+    "grade": "C",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 340,
+    "schools_count": 1,
+    "schools_sourced": true,
+    "schools_list": [
+      {
+        "name": "Sanskar Innovative School",
+        "address": "Plot No. 889, Survey No. 341, Railway Colony, Medchal, 501401",
+        "board": "CBSE (affiliation #3630208)",
+        "pass_pct": null,
+        "distance_km": 1.0
+      }
+    ],
+    "schools_avg_pass": null,
+    "crime_percentile": 0,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "North Hyderabad (Medchal-Malkajgiri district HQ) -- qualitative tier placement, not pinned to a cited circle-rate figure this pass",
+      "source": "Telangana Registration & Stamps Dept. -- market value (circle rate), not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Telangana calls it the 'market value', the same instrument Delhi/UP call a circle rate and Haryana/Chandigarh a collector rate: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the market value. The market value is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement, not yet pinned to a cited circle-rate figure the way Hyderabad's own GHMC-area rows may be. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "382010",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 65,
+      "infrastructure": 66,
+      "air": 70,
+      "power": 60,
+      "schools": 60,
+      "water": 70,
+      "roads": 68,
+      "sewerage": 58
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 65,
+    "grade": "B",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 275,
+    "schools_count": 1,
+    "schools_sourced": true,
+    "schools_list": [
+      {
+        "name": "Kendriya Vidyalaya No 1, Gandhinagar",
+        "address": "Sector 30, Gandhinagar, 382030",
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": 3.0
+      }
+    ],
+    "schools_avg_pass": null,
+    "crime_percentile": 80,
+    "crime_tier": "Moderate",
+    "price_tier": 2,
+    "price_context": {
+      "tier": 2,
+      "label": "Upper",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Gujarat state capital (Gandhinagar Municipal Corporation) -- qualitative tier placement, not pinned to a cited Jantri-rate figure this pass",
+      "source": "Gujarat Revenue Dept. (Jantri) -- government valuation, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Gujarat calls it the 'Jantri rate', the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, and Telangana a market value: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices in Gandhinagar/GIFT City typically run above the Jantri rate. The Jantri rate is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement, not yet pinned to a cited Jantri-rate figure the way Ahmedabad's own AMC-area rows may be. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "382050",
+    "city": "Ahmedabad",
+    "scores": {
+      "crime": 68,
+      "infrastructure": 65,
+      "air": 71,
+      "power": 64,
+      "schools": 62,
+      "water": 58,
+      "roads": 72,
+      "sewerage": 60
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 66,
+    "grade": "B",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 260,
+    "schools_count": 1,
+    "schools_sourced": true,
+    "schools_list": [
+      {
+        "name": "Jamnabai Narsee School, GIFT City",
+        "address": "Block 40-A, Shram Marg, Zone-IV, GIFT City, Gandhinagar, 382050",
+        "board": "CISCE",
+        "pass_pct": null,
+        "distance_km": 0.3
+      }
+    ],
+    "schools_avg_pass": null,
+    "crime_percentile": 88,
+    "crime_tier": "Moderate",
+    "price_tier": 1,
+    "price_context": {
+      "tier": 1,
+      "label": "Premium",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Gujarat International Finance Tec-City (SEZ + DTA financial district) -- qualitative tier placement, not pinned to a cited Jantri-rate figure this pass",
+      "source": "Gujarat Revenue Dept. (Jantri) -- government valuation, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Gujarat calls it the 'Jantri rate', the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, Karnataka a guidance value, and Telangana a market value: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices in Gandhinagar/GIFT City typically run above the Jantri rate. The Jantri rate is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement, not yet pinned to a cited Jantri-rate figure the way Ahmedabad's own AMC-area rows may be. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "711101",
+    "city": "Kolkata",
+    "scores": {
+      "crime": 52,
+      "infrastructure": 60,
+      "air": 79,
+      "power": 78,
+      "schools": 55,
+      "water": 48,
+      "roads": 52,
+      "sewerage": 45
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 60,
+    "grade": "B",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 340,
+    "schools_count": 1,
+    "schools_sourced": true,
+    "schools_list": [
+      {
+        "name": "Delhi Public School, Howrah",
+        "address": "Vill+P.O+P.S: Domjur, Howrah-Amta Road, Howrah, 711405",
+        "board": "CBSE (affiliation #2430186)",
+        "pass_pct": null,
+        "distance_km": 10.0
+      }
+    ],
+    "schools_avg_pass": null,
+    "crime_percentile": 4,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "Howrah city core (twin city across the Hooghly) -- qualitative tier placement, not pinned to a cited guideline-value figure this pass",
+      "source": "West Bengal Directorate of Registration & Stamp Revenue -- government valuation, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "West Bengal uses a government minimum property valuation, the same instrument Delhi/UP call a circle rate: used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the government valuation. That valuation is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement, not yet pinned to a cited figure the way Kolkata's own KMC-area rows may be. Not part of the NQI score."
+    }
+  },
+  {
+    "pin_code": "602105",
+    "city": "Chennai",
+    "scores": {
+      "crime": 58,
+      "infrastructure": 56,
+      "air": 38,
+      "power": 50,
+      "schools": 52,
+      "water": 45,
+      "roads": 62,
+      "sewerage": 42
+    },
+    "weights_base": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "weights_applied": {
+      "crime": 0.25,
+      "infrastructure": 0.2,
+      "air": 0.15,
+      "power": 0.1,
+      "schools": 0.1,
+      "water": 0.08,
+      "roads": 0.07,
+      "sewerage": 0.05
+    },
+    "dimensions_scored": 8,
+    "dimensions_total": 8,
+    "nqi_composite": 52,
+    "grade": "C+",
+    "scored_at": "2026-10-27T00:00:00",
+    "total_cognizable_crimes": 310,
+    "schools_count": 1,
+    "schools_sourced": true,
+    "schools_list": [
+      {
+        "name": "Ryan International School, Sriperumbudur",
+        "address": "ETA Globevill, Mambakkam Village, Sriperumbudur Taluk, Kanchipuram District, 602106",
+        "board": "CBSE",
+        "pass_pct": null,
+        "distance_km": 4.0
+      }
+    ],
+    "schools_avg_pass": null,
+    "crime_percentile": 17,
+    "crime_tier": "High",
+    "price_tier": 3,
+    "price_context": {
+      "tier": 3,
+      "label": "Mid",
+      "rate_sqft": null,
+      "rate_type": "apartment",
+      "rate_exact": false,
+      "land_sqft": null,
+      "land_exact": false,
+      "basis": "West Chennai industrial corridor (Kanchipuram district, SIPCOT auto/electronics hub) -- qualitative tier placement, not pinned to a cited guideline-value figure this pass",
+      "source": "Tamil Nadu Registration Dept. -- guideline value, not yet pulled per-pincode for this tranche",
+      "circle_rate_note": "Tamil Nadu calls it the 'guideline value', the same instrument Delhi/UP call a circle rate, Karnataka a guidance value: the government's minimum property value, used to calculate stamp duty and registration charges.",
+      "market_gap_note": "Actual market prices typically run above the guideline value. The guideline value is only the legal floor for stamp duty -- budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+      "disclaimer": "Government minimum valuation, not market price. This pincode's price_tier is a qualitative placement, not yet pinned to a cited figure the way Chennai's own GCC-area rows may be. Not part of the NQI score."
     }
   }
 ]
