@@ -8,9 +8,8 @@
 import Link from 'next/link';
 import SiteHeader from '@/components/SiteHeader';
 
-// The business name used on both pages. Change it here if the registered
-// company name should appear instead.
-export const COMPANY = 'BlindSpot';
+// The registered business name, used on both pages.
+export const COMPANY = 'BlindSpot LLP';
 export const CONTACT_EMAIL = 'agblindspot@gmail.com';
 export const EFFECTIVE = '28 October 2026';
 
