@@ -21,9 +21,10 @@ import ReportModal from '@/components/sunscout/ReportModal';
 import useMapCapture, { SHOTS } from '@/lib/sunscout/useMapCapture';
 import { FACTOR_LABELS, FACING_OPTS } from '@/lib/property-score/ui';
 import { getActionItems } from '@/lib/property-score/actionItems';
+import { encodeSlots } from '@/lib/compare/derive';
 import {
   ShieldCheck, GraduationCap, Wind, Droplets, Zap, Route, Building2, Waves,
-  Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake, Sofa, ArrowDown, MapPin, Scale, FolderOpen, FileText,
+  Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake, Sofa, ArrowDown, MapPin, Scale, FileText,
 } from 'lucide-react';
 import RoomPhotoAnalyzer from './RoomPhotoAnalyzer';
 import { useTrends } from '@/lib/trends/useTrends';
@@ -1908,6 +1909,16 @@ export default function ReportScreen({ view = 'verdict' }) {
   const hasArea = Boolean(area);
   const topScore = hasArea ? scores?.combined : unit.score;
 
+  // Compare already reads a prefilled flat straight out of its own URL
+  // (lib/compare/derive.js), and everything it wants -- address, lat, lon,
+  // pin, floor, facing -- is exactly what this report already has once a
+  // score exists. So "compare this one" costs nothing to wire up; it just
+  // has to wait until there's a real scored flat to hand off. Plain const,
+  // not useMemo -- this sits below the component's own early-return guard
+  // (see `if (!hasPlace)` above), where a hook can't legally live.
+  const compareSlot = encodeSlots([{ name: address || '', lat, lon, pin: pinCode || '', floor, facing }]);
+  const compareHref = compareSlot ? `/compare?c=${compareSlot}` : '/compare';
+
   // One form, used from both the covered and the not-covered state. The
   // reverse lookup is a best guess -- it returns the pincode of whatever
   // OSM object sits nearest the pin, which on a boundary is the one next
@@ -2007,20 +2018,12 @@ export default function ReportScreen({ view = 'verdict' }) {
                   </p>
                 </div>
               </div>
-              <nav className="bsr-head-links" aria-label="Report tools">
-                <a href="/compare" className="bsr-tool">
-                  <Scale size={16} strokeWidth={2} aria-hidden="true" />
-                  <span>Compare flats</span>
-                </a>
-                <a href="/floor-plan-analysis" className="bsr-tool">
-                  <Sofa size={16} strokeWidth={2} aria-hidden="true" />
-                  <span>Furnish your home</span>
-                </a>
-                <Link href="/profile" className="bsr-tool is-quiet" title="Your profile and saved reports">
-                  <FolderOpen size={16} strokeWidth={2} aria-hidden="true" />
-                  <span>Profile</span>
-                </Link>
-              </nav>
+              {/* Compare / Furnish / Profile used to live here, right beside
+                  the address, before a single score had rendered -- three
+                  exits offered before any payoff. Profile is already one tap
+                  away from the avatar in the global nav, so it doesn't need a
+                  second copy here. Compare and Furnish now show up below,
+                  once there's an actual scored flat to act on. */}
             </div>
             {addrEditOpen && (
               <form className="bsr-addr-edit bsr-locbar" onSubmit={onSearchSubmit}>
@@ -2698,6 +2701,10 @@ export default function ReportScreen({ view = 'verdict' }) {
                   ? 'The report is written for your exact flat. Set its floor and facing above, then come back here.'
                   : 'About two minutes. Builds on this page - keep browsing.'}
             </span>
+            <p className="bsr-also">
+              Comparing this against another flat? <a href={compareHref}>See them side by side</a>.{' '}
+              Already sure, and thinking about the inside? <a href="/floor-plan-analysis">Get furnishing suggestions</a>.
+            </p>
           </section>
 
           {scores?.notes?.length ? <p className="bsr-foot">{scores.notes.join(' ')}</p> : null}

@@ -168,20 +168,27 @@ export default function SiteHeader({ homeHref = '/' }) {
               <Link href="/#team">The Team</Link>
             </div>
             <div className="nav-cta">
-              {/* Compare sits with the buttons, not among the nav links.
-                  .nav-links is display:none below 860px, so as a link it
-                  vanished on every laptop-width window and tablet -- and a
-                  tool you use does not belong in a row of page anchors
-                  anyway. Outlined so it reads as a second action without
-                  competing with the primary one. */}
-              <Link href="/compare" className="btn-compare">
-                <span className="btn-compare-full">Compare flats</span>
-                <span className="btn-compare-short">Compare</span>
-              </Link>
-              <Link href="/floor-plan-analysis" className="btn-compare btn-furnish">
-                <span className="btn-compare-full">Furnish your home</span>
-                <span className="btn-compare-short">Furnish</span>
-              </Link>
+              {/* Compare and Furnish are niche tools, not something every
+                  visitor needs reachable at all times -- and showing them
+                  mid-flow (same as the main CTA just below) dangled two
+                  unrelated exits in front of someone who hadn't gotten
+                  their score yet. Hidden on /report and /floor-plan-analysis
+                  the same way the main CTA already is; they get a proper,
+                  earned home once there's an actual flat to act on (the
+                  report's own post-verdict links, the homepage Tools
+                  section, the footer). */}
+              {!onFlow && (
+                <>
+                  <Link href="/compare" className="btn-compare">
+                    <span className="btn-compare-full">Compare flats</span>
+                    <span className="btn-compare-short">Compare</span>
+                  </Link>
+                  <Link href="/floor-plan-analysis" className="btn-compare btn-furnish">
+                    <span className="btn-compare-full">Furnish your home</span>
+                    <span className="btn-compare-short">Furnish</span>
+                  </Link>
+                </>
+              )}
               {!onFlow && (
                 <Link href="/#find" className="btn-cta-sm" onClick={goToSearch}>
                   <span className="btn-cta-full">Uncover Your BlindSpot</span>
@@ -228,8 +235,8 @@ export default function SiteHeader({ homeHref = '/' }) {
           <div className="wrap" style={{ display: 'flex', flexDirection: 'column' }}>
             <Link href="/#how-it-works" onClick={closeMobile}>How It Works</Link>
             <Link href="/#products" onClick={closeMobile}>Tools</Link>
-            <Link href="/compare" onClick={closeMobile}>Compare</Link>
-            <Link href="/floor-plan-analysis" onClick={closeMobile}>Furnish your home</Link>
+            {!onFlow && <Link href="/compare" onClick={closeMobile}>Compare</Link>}
+            {!onFlow && <Link href="/floor-plan-analysis" onClick={closeMobile}>Furnish your home</Link>}
             <Link href="/#team" onClick={closeMobile}>The Team</Link>
             {!onFlow && <Link href="/#find" onClick={(e) => { closeMobile(); goToSearch(e); }}>Uncover Your BlindSpot</Link>}
             {checkedAuth && (

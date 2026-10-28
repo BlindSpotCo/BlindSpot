@@ -13,11 +13,12 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, Plus, FileText, Sun, Sofa, MapPin, Folder, Trash2 } from 'lucide-react';
+import { X, Plus, FileText, Sun, Sofa, MapPin, Folder, Trash2, Scale } from 'lucide-react';
 import HomeMark from './HomeMark';
 import MapThumb from './MapThumb';
 import { createClient } from '@/lib/supabase/client';
 import { readHistory, removeVisit } from '@/lib/profile/history';
+import { encodeSlots } from '@/lib/compare/derive';
 import './profile.css';
 
 function typeOf(r) {
@@ -54,6 +55,14 @@ function reportHref(v) {
   if (v.facing) q.set('facing', v.facing);
   if (v.pin) q.set('pin', '1');
   return `/report?${q.toString()}`;
+}
+
+function compareHrefFor(r) {
+  const lat = r.lat ?? r.pLat;
+  const lon = r.lon ?? r.pLon;
+  if (lat == null || lon == null) return null;
+  const encoded = encodeSlots([{ name: r.address || r.name || '', lat, lon, pin: r.pin || '', floor: r.floor || '', facing: r.facing || '' }]);
+  return encoded ? `/compare?c=${encoded}` : null;
 }
 
 // Saved reports, newest first, grouped by the folder they were saved into.
@@ -242,6 +251,11 @@ export default function ProfileView({ profile, initialReports, folders, fetchFai
                                 {[r.floor && `Floor ${r.floor}`, r.facing && `${r.facing}-facing`].filter(Boolean).join(', ')}
                               </p>
                               <p className="pf-card-date">{savedOn(r.created_at)}</p>
+                              {!editing && compareHrefFor(r) && (
+                                <Link href={compareHrefFor(r)} className="pf-compare">
+                                  <Scale size={13} strokeWidth={2.2} aria-hidden="true" /> Compare
+                                </Link>
+                              )}
                               {editing && (
                                 confirming ? (
                                   <span className="pf-del is-confirm">

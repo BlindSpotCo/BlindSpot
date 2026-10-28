@@ -131,6 +131,18 @@
 .pf-del-yes, .pf-del-no{ border:0; cursor:pointer; font:inherit; font-size:12.5px; font-weight:700; border-radius:999px; padding:5px 10px }
 .pf-del-yes{ background:#fff; color:#A10E0E }
 .pf-del-no{ background:transparent; color:#fff }
+
+/* A real flat, already measured -- so "compare it" is one tap, prefilled,
+   not a cold link into an empty tool. Quiet on purpose: this card's own
+   job (open the report) stays the one bold thing on it. */
+.pf-compare{
+  align-self:flex-start; display:inline-flex; align-items:center; gap:6px; margin-top:10px;
+  min-height:32px; padding:0 12px; border-radius:999px; border:1.5px solid var(--pf-line);
+  font:inherit; font-size:13px; font-weight:700; color:var(--pf-ink); text-decoration:none;
+  background:transparent;
+}
+.pf-compare:hover{ background:var(--pf-line) }
+.pf-compare svg{ color:var(--pf-olive); flex:none }
 .pf-card.is-editing .pf-card-hit{ pointer-events:none; opacity:.85 }
 
 /* ---------- empty ---------- */
