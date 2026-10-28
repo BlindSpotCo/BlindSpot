@@ -8,21 +8,16 @@ Turn it off with `NEXT_PUBLIC_PAYWALL=off`. Hide the "Simulate successful paymen
 
 People open BlindSpot when they have 3–5 flats shortlisted and need to pick one. That's one decision, not a monthly habit, so it's pay-per-property, not a subscription.
 
-| Rule | Keys |
-|---|---|
-| First report on a property | 2 |
-| Each extra report on that property (another floor, facing, or report type) | 1 |
+Flat price: **2 Keys per report**, every time. No discount for a second floor, facing or report on the same property.
 
-A "property" is the pin rounded to ~11 m (`propertyKey` in `lib/paywall/config.js`), so two pins on the same tower count once.
+| Pack | Keys | Price | Per Key | Per report | Reports |
+|---|---|---|---|---|---|
+| Basic | 6 | ₹299 | ₹49.83 | ₹99.67 | 3 |
+| Explorer | 18 | ₹799 | ₹44.39 | ₹88.78 | 9 |
+| Investor | 30 | ₹1,199 | ₹39.97 | ₹79.93 | 15 |
+| Pro | 50 | ₹1,999 | ₹39.98 | ₹79.96 | 25 |
 
-| Pack | Keys | Price | Per Key | Sized for |
-|---|---|---|---|---|
-| Basic | 6 | ₹299 | ₹49.83 | 2 properties × 2 flats |
-| Explorer | 18 | ₹799 | ₹44.39 | ~6 properties |
-| Investor | 30 | ₹1,199 | ₹39.97 | ~10 properties (broker) |
-| Pro | 50 | ₹1,999 | ₹39.98 | ~16 properties |
-
-Shortlist fit: 2 towers × 2 flats = 2+1+2+1 = 6 Keys (Basic, exactly). A broker with 10 listings × 2 flats = 30 Keys (Investor, exactly).
+Unlocks are still remembered per property (pin rounded to ~11 m, `propertyKey`) so a report you've paid for opens again for free.
 
 ## Free vs paid
 
@@ -37,24 +32,26 @@ The line follows cost: what triggers AI generation costs Keys, what we compute o
 
 ## Unit economics (internal, not on /pricing)
 
-Assumes ~₹50 to generate a report and every Key gets used (the worst case). "Typical" = each property gets a first report + one extra (3 Keys → 2 reports). Before gateway fees and GST.
+Assumes ~₹50 to generate a report and every Key gets used (the worst case). Before gateway fees and GST.
 
-| Pack | Margin, first report (2 Keys) | Margin, extra report (1 Key) | Typical reports | Pack margin |
-|---|---|---|---|---|
-| Basic | +₹49.67 | −₹0.17 | 4 | ₹99 (33%) |
-| Explorer | +₹38.78 | −₹5.61 | 12 | ₹199 (25%) |
-| Investor | +₹29.93 | −₹10.03 | 20 | ₹199 (17%) |
-| Pro | +₹29.96 | −₹10.02 | 33 | ₹349 (17%) |
+| Pack | Margin per report | Reports | Pack margin |
+|---|---|---|---|
+| Basic | +₹49.67 | 3 | ₹149 (50%) |
+| Explorer | +₹38.78 | 9 | ₹349 (44%) |
+| Investor | +₹29.93 | 15 | ₹449 (37%) |
+| Pro | +₹29.96 | 25 | ₹749 (37%) |
+
+Every report now makes money on every pack (the old 1-Key extra report lost ₹5–10 on the bigger packs).
 
 Flags:
-1. **Extra reports lose money on bigger packs.** First reports carry the margin. If an extra report reuses the neighbourhood write-up and only regenerates the flat section, its real cost is probably under ₹50. Measure before repricing.
+1. **Comparing flats costs more for buyers.** 4 flats in 2 towers is now 8 Keys, more than Basic's 6. Basic covers 3 reports.
 2. **Pro isn't cheaper per Key than Investor** (₹39.98 vs ₹39.97). For a small step down: Pro at ₹1,899 = ₹37.98/Key.
 3. Unused Keys are pure margin and aren't counted above.
 
 ## What the UI does
 
-- **Before clicking:** every paid button/link shows a lock + Key cost (`KeyCostTag`), or "Unlocked". The full-report card says "First report on this property: 2 Keys…" with a link to /pricing.
-- **On click, enough Keys:** confirm dialog (cost, why, balance after) → "Use 2 Keys" → the existing report flow opens.
+- **Before clicking:** every paid button/link shows a lock + Key cost (`KeyCostTag`), or "Unlocked". The full-report card says "Each report is 2 Keys." with a link to /pricing.
+- **On click, enough Keys:** confirm dialog (cost, balance after) → "Use 2 Keys" → the existing report flow opens.
 - **On click, not enough:** Key packs with "You need N more Keys" → checkout (Razorpay button disabled, "Payments aren't live yet") → simulated payment → back to the confirm step for the report you clicked.
 - **Floor/facing unset:** nothing is charged; the old nudge to set them still runs first.
 - **Header:** Key balance chip (opens wallet: balance, unlocked reports, history) on the report page; "Pricing" in the site nav.

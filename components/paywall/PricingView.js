@@ -8,9 +8,9 @@ import './paywall.css';
 import './pricing.css';
 
 const EXAMPLES = [
-  { who: 'First home', what: '4 flats shortlisted across 2 towers', math: '2 + 1 + 2 + 1', keys: 6, pack: 'Basic' },
-  { who: 'Comparing towers', what: 'One flat each in 3 different towers', math: '2 + 2 + 2', keys: 6, pack: 'Basic' },
-  { who: 'A broker', what: '10 listings, 2 flats each to show buyers', math: '10 × (2 + 1)', keys: 30, pack: 'Investor' },
+  { who: 'Down to the final few', what: 'Full report on 3 shortlisted flats', math: '3 × 2', keys: 6, pack: 'Basic' },
+  { who: 'A full house hunt', what: 'Full report on 9 flats across a few towers', math: '9 × 2', keys: 18, pack: 'Explorer' },
+  { who: 'A broker', what: '15 listings, one full report each', math: '15 × 2', keys: 30, pack: 'Investor' },
 ];
 
 export default function PricingView() {
@@ -32,8 +32,7 @@ export default function PricingView() {
         <section className="pr-sec">
           <h2>How Keys get spent</h2>
           <div className="pw-rules">
-            <div><strong>{KEY_COST.first} Keys</strong>First report on a property</div>
-            <div><strong>{KEY_COST.extra} Key</strong>Each extra floor, facing or report on that property</div>
+            <div><strong>{KEY_COST.report} Keys</strong>Per report, for any flat, floor or facing</div>
             <div><strong>Any city</strong>Keys aren&apos;t tied to one address</div>
           </div>
           <p className="pr-p">

@@ -14,7 +14,7 @@
 .pw-cost.is-open{background:var(--bsr-good-bg,#D1FAE5);color:var(--bsr-good,#045C3D)}
 .pw-cost.is-open.is-onfill{background:rgba(255,255,255,.22);color:#fff}
 
-/* ---- "first report on this property" hint ---- */
+/* ---- per-report price hint ---- */
 .pw-hint{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12.5px;color:var(--text-mute,#64748B);margin:6px 0 0}
 .pw-hint a{color:var(--brand,#3D4116);font-weight:600}
 

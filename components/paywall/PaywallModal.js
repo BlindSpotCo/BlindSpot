@@ -8,7 +8,7 @@ import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { Lock, X, Check } from 'lucide-react';
-import { KEY_COST, PACKS, PAYWALL_MOCK, REPORT_TYPES, inr, inr2, keysWord, perKey } from '@/lib/paywall/config';
+import { PACKS, PAYWALL_MOCK, REPORT_TYPES, inr, inr2, keysWord, perKey } from '@/lib/paywall/config';
 import './paywall.css';
 
 export default function PaywallModal({ modal, setModal, balance, unlocks, ledger, costFor, onConfirm, onCredit, onReset }) {
@@ -38,7 +38,6 @@ export default function PaywallModal({ modal, setModal, balance, unlocks, ledger
         <p className="pw-scope">{req.scope}</p>
         <dl className="pw-sum">
           <div><dt>Cost</dt><dd>{keysWord(cost)}</dd></div>
-          <div><dt>Why</dt><dd className="pw-sum-why">{cost === KEY_COST.extra ? "Extra report on a property you've already unlocked" : 'First report on this property'}</dd></div>
           <div><dt>Balance after</dt><dd>{keysWord(after)}</dd></div>
         </dl>
         {req.type === 'full' && <p className="pw-note">Includes the neighbourhood report and the sunlight report for this flat.</p>}
@@ -112,8 +111,7 @@ export default function PaywallModal({ modal, setModal, balance, unlocks, ledger
           <p className="pw-need">You need <strong>{keysWord(need)}</strong> more to unlock the {t.label.toLowerCase()} for {req.scope}.</p>
         )}
         <div className="pw-rules">
-          <div><strong>2 Keys</strong>First report on a property</div>
-          <div><strong>1 Key</strong>Each extra floor, facing or report there</div>
+          <div><strong>2 Keys</strong>Per report, any floor or facing</div>
           <div><strong>Any city</strong>Use Keys anywhere we cover</div>
         </div>
         <div className="pw-packs">

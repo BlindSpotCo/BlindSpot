@@ -2168,9 +2168,7 @@ export default function ReportScreen({ view = 'verdict' }) {
               </span>
               {keys.enabled && !reportUnlocked('full') && (
                 <p className="pw-hint">
-                  {keyCost === 2
-                    ? 'First report on this property: 2 Keys. Each extra floor, facing or report here: 1 Key.'
-                    : 'You have a report on this property, so this one is 1 Key.'}
+                  Each report is {keyCost} Keys.
                   {' '}<a href="/pricing" target="_blank">How Keys work</a>
                 </p>
               )}
