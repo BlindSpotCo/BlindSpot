@@ -2507,3 +2507,38 @@ button.bsr-cta.is-needs-unit{
 }
 .bsr-sum-cta-go.is-needs-unit:hover:not(:disabled),
 button.bsr-cta.is-needs-unit:hover:not(:disabled){background:rgba(61,65,22,.07);filter:none}
+
+/* ================= the full report, after the area + the flat =================
+   Moved out of the top summary card (where it was a third column beside
+   the dial). One wide band under the two halves: what it is on the left,
+   the button on the right; stacked on a phone. Keeps .bsr-sum-cta-go on
+   the button itself so the olive fill and the outlined "set floor &
+   facing first" state both carry over unchanged. */
+.bsr-rband{
+  display:flex;align-items:center;justify-content:space-between;gap:20px 32px;
+  margin-top:26px;padding:20px 24px;border-radius:16px;
+  background:linear-gradient(135deg, rgba(173,168,70,.10), rgba(255,253,248,0) 65%), var(--paper,#FFFDF8);
+  border:1px solid color-mix(in srgb, var(--brand,#3D4116) 22%, transparent);
+  box-shadow:0 4px 14px rgba(28,24,18,.05);
+}
+.bsr-rband-say{min-width:0;flex:1 1 auto}
+.bsr-rband-title{
+  display:flex;align-items:center;gap:8px;margin:0;
+  font-size:18px;font-weight:750;color:var(--text,#1C1812);letter-spacing:-.01em;
+}
+.bsr-rband-title svg{color:var(--brand,#3D4116);flex:none}
+.bsr-rband-sub{margin:4px 0 0;font-size:14px;line-height:1.5;color:var(--text-mute,#5A5140);max-width:60ch}
+.bsr-rband-act{flex:0 0 280px;display:flex;flex-direction:column;align-items:stretch;gap:6px}
+.bsr-rband-note{font-size:11.5px;color:var(--text-dim,#8A7F68);text-align:center}
+@media (max-width:700px){
+  .bsr-rband{flex-direction:column;align-items:stretch;gap:14px;padding:16px;margin-top:18px}
+  .bsr-rband-act{flex-basis:auto}
+  .bsr-rband-title{font-size:16px}
+  .bsr-rband-sub{font-size:13px}
+}
+
+/* "Change location" in the area card -- sits after "Wrong pincode?" on
+   the same line, with a pin so the two read as different things. */
+.bsr-loclink{display:inline-flex;align-items:center;gap:4px;margin-left:6px;vertical-align:baseline}
+.bsr-loclink svg{flex:none;transform:translateY(1px)}
+.bsr-rband-act .pw-hint{justify-content:center}

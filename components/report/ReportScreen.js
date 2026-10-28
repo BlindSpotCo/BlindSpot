@@ -584,6 +584,18 @@ export default function ReportScreen({ view = 'verdict' }) {
   // search box used to live permanently in the map toolbar; now it's a
   // rare action tucked next to the address itself, revealed on demand.
   const [addrEditOpen, setAddrEditOpen] = useState(false);
+  const addrInputRef = useRef(null);
+  // "Change location" from further down the page (the area card) opens
+  // the same address search the header's "Change" does. The header is
+  // sticky on a laptop, so the field opens in view; on a phone it scrolls
+  // away with the page, so bring it back first.
+  const openAddrEdit = useCallback(() => {
+    setAddrEditOpen(true);
+    const head = document.querySelector('.bsr-head');
+    if (head && head.getBoundingClientRect().top < 0) window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Already open: autoFocus won't fire a second time.
+    requestAnimationFrame(() => addrInputRef.current?.focus({ preventScroll: true }));
+  }, []);
 
   // Bumped by the retry button, so the scores effect can be re-run without
   // changing the address it is scoring.
@@ -820,6 +832,7 @@ export default function ReportScreen({ view = 'verdict' }) {
   // full screen walks the report hidden underneath it.
   const fullBackRef = useRef(null);
   const fullToggleRef = useRef(null);
+  const see3dRef = useRef(null);
   useEffect(() => {
     if (fullMapLive) fullBackRef.current?.focus({ preventScroll: true });
   }, [fullMapLive]);
@@ -841,7 +854,9 @@ export default function ReportScreen({ view = 'verdict' }) {
     // unmounted, which drops focus to the body and sends the next Tab
     // to the top of the document. Hand it to the control that now does
     // the same job -- the toolbar's full-screen toggle.
-    fullToggleRef.current?.focus({ preventScroll: true });
+    // The map's own toggle is parked offscreen on the verdict now, so the
+    // way back in is the flat card's "See the block in 3D".
+    (see3dRef.current || fullToggleRef.current)?.focus({ preventScroll: true });
   }, [fullMap]);
 
   // The map is "loading" until the sun path is in AND the 3D document says
@@ -1602,11 +1617,22 @@ export default function ReportScreen({ view = 'verdict' }) {
           </div>
   );
 
+  // On the verdict the map is parked offscreen, not shown inline. Every
+  // score in the flat card already comes from it, "See the block in 3D"
+  // opens it full screen with all its controls, and an inline copy under
+  // the two halves was a second, smaller version of the same thing. It
+  // still has to stay mounted and drawing (not display:none): both PDF
+  // reports are built from photographs of this exact WebGL scene, and
+  // the full-screen step is the same instance re-styled. The one
+  // exception is a failed verdict, where the map is all there is.
+  const mapParked = !fullMap && state !== 'error';
   const mapZone = (
       <section
-        className={`bsr-mapzone${fullMap ? ' is-full' : ''}${!fullMap && !scores && state !== 'error' ? ' is-parked' : ''}`}
+        className={`bsr-mapzone${fullMap ? ' is-full' : ''}${mapParked ? ' is-parked' : ''}`}
         id="the-block"
         aria-label="The block in 3D"
+        aria-hidden={mapParked || undefined}
+        inert={mapParked || undefined}
       >
         {/* Full screen only: the SunScout-style header strip. Search,
             the live score for whatever the toolbar below is currently
@@ -2053,6 +2079,7 @@ export default function ReportScreen({ view = 'verdict' }) {
             {addrEditOpen && (
               <form className="bsr-addr-edit bsr-locbar" onSubmit={onSearchSubmit}>
                 <input
+                  ref={addrInputRef}
                   type="search"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -2136,43 +2163,6 @@ export default function ReportScreen({ view = 'verdict' }) {
                 </p>
               )}
             </div>
-            {/* The full report is one of the main things BlindSpot does --
-                it used to live only at the very bottom of the page. */}
-            <div className="bsr-sum-cta">
-              <p className="bsr-sum-cta-title"><FileText size={16} strokeWidth={2.2} aria-hidden="true" /> The full BlindSpot report</p>
-              <p className="bsr-sum-cta-sub">
-                {hasArea
-                  ? 'Area + this flat, written up with what to verify before you buy.'
-                  : 'This flat, written up with what to verify before you buy.'}
-              </p>
-              <button
-                type="button"
-                className={`bsr-sum-cta-go${assumed ? ' is-needs-unit' : ''}`}
-                disabled={!solar?.pathData || reportBusy.full}
-                onClick={requestFullReport}
-              >
-                {reportBusy.full
-                  ? 'Writing your report…'
-                  : assumed
-                    ? <>Set floor &amp; facing first <span aria-hidden="true">↓</span></>
-                    : <>Generate full report <span aria-hidden="true">→</span>{keys.enabled && <KeyCostTag tone="onfill" cost={keyCost} unlocked={reportUnlocked('full')} />}</>}
-              </button>
-              <span className="bsr-sum-cta-note">
-                {reportBusy.full
-                  ? 'Usually about two minutes. Keep browsing; it carries on.'
-                  : !solar?.pathData
-                  ? 'Waiting for the 3D map to load'
-                  : assumed
-                    ? 'The report is written for your exact flat, so it needs both.'
-                    : 'About two minutes · keep browsing'}
-              </span>
-              {keys.enabled && !reportUnlocked('full') && (
-                <p className="pw-hint">
-                  Each report is {keyCost} Keys.
-                  {' '}<a href="/pricing" target="_blank">How Keys work</a>
-                </p>
-              )}
-            </div>
           </section>
             );
           })()}
@@ -2199,6 +2189,13 @@ export default function ReportScreen({ view = 'verdict' }) {
                     </button>
                   </>
                 )}
+                {/* Wrong pincode only swaps the records; this moves the pin
+                    itself -- a different address, building or city. */}
+                {' '}
+                <button type="button" className="bsr-pinlink bsr-loclink" onClick={openAddrEdit}>
+                  <MapPin size={13} strokeWidth={2.4} aria-hidden="true" />
+                  Change location
+                </button>
               </p>
 
               {/* The lookup lands on a neighbouring pincode often enough that
@@ -2443,7 +2440,9 @@ export default function ReportScreen({ view = 'verdict' }) {
                   they read as seven numbers from nowhere. */}
               <p className="bsr-source">
                 Worked out from the sun&apos;s real path over the buildings around this one.{' '}
-                <a href="#the-block">See the block in 3D ↓</a>
+                <button type="button" className="bsr-inline-link" ref={see3dRef} onClick={openLocate}>
+                  See the block in 3D →
+                </button>
               </p>
               {trends && !hasArea && (
                 <p className="bsr-trend-note">
@@ -2529,6 +2528,53 @@ export default function ReportScreen({ view = 'verdict' }) {
               </p>
             </section>
           </div>
+
+          {/* ---------- the full report, once both halves have been read ----------
+              Used to sit in the summary card at the very top, as a third
+              column beside the dial and the headline -- asking for the
+              write-up before anyone had seen what it would be about, and
+              before floor/facing were set in the flat card below it. Here
+              it lands right after the area and the flat, where "now get
+              this written up" is the natural next step. */}
+          <section className="bsr-rband" aria-label="The full BlindSpot report">
+            <div className="bsr-rband-say">
+              <p className="bsr-rband-title"><FileText size={18} strokeWidth={2.2} aria-hidden="true" /> The full BlindSpot report</p>
+              <p className="bsr-rband-sub">
+                {hasArea
+                  ? 'Everything above - the area and this flat - written up as a PDF, with what to verify before you buy.'
+                  : 'This flat written up as a PDF, with what to verify before you buy.'}
+              </p>
+            </div>
+            <div className="bsr-rband-act">
+              <button
+                type="button"
+                className={`bsr-sum-cta-go bsr-rband-go${assumed ? ' is-needs-unit' : ''}`}
+                disabled={!solar?.pathData || reportBusy.full}
+                onClick={requestFullReport}
+              >
+                {reportBusy.full
+                  ? 'Writing your report…'
+                  : assumed
+                    ? <>Set floor &amp; facing first <span aria-hidden="true">↑</span></>
+                    : <>Generate full report <span aria-hidden="true">→</span>{keys.enabled && <KeyCostTag tone="onfill" cost={keyCost} unlocked={reportUnlocked('full')} />}</>}
+              </button>
+              <span className="bsr-rband-note">
+                {reportBusy.full
+                  ? 'Usually about two minutes. Keep browsing; it carries on.'
+                  : !solar?.pathData
+                  ? 'Waiting for the 3D model to load'
+                  : assumed
+                    ? 'The report is written for your exact flat, so it needs both.'
+                    : 'About two minutes · keep browsing'}
+              </span>
+              {keys.enabled && !reportUnlocked('full') && (
+                <p className="pw-hint">
+                  Each report is {keyCost} Keys.
+                  {' '}<a href="/pricing" target="_blank">How Keys work</a>
+                </p>
+              )}
+            </div>
+          </section>
           {/* ---------- the map, full width ----------
               It lived inside the flat's card until the card's ~500px made
               Map3DShadow hide its own view-angle pad (its stylesheet drops
