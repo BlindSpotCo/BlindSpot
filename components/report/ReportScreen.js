@@ -175,8 +175,8 @@ function buildSummary(area, unit) {
     ? `Strong on ${joinWords(good)}.`
     : 'A balanced home, without one big standout.';
   const line = ask.length
-    ? `Worth asking about ${joinWords(ask)} on your visit. Everything is broken down below.`
-    : 'Nothing stands out as a concern. One visit at rush hour and one after dark is still a good idea.';
+    ? `Worth asking about ${joinWords(ask)} on your visit.`
+    : 'Nothing stands out as a concern.';
   return { headline, line, strengths, checks };
 }
 
@@ -2271,7 +2271,7 @@ export default function ReportScreen({ view = 'verdict' }) {
               <h2>{hasArea ? area.name : 'This locality'}</h2>
               <p className="bsr-sub">
                 {hasArea
-                  ? `Government records for pin ${area.pinCode}.`
+                  ? `Pin ${area.pinCode}`
                   : pinPending
                     ? 'Finding the pincode for this pin\u2026'
                     : areaFailed
@@ -2331,9 +2331,8 @@ export default function ReportScreen({ view = 'verdict' }) {
                       return (
                       <li key={k} className={t.button ? 'has-trend' : undefined}>
                         {RowIcon ? <RowIcon className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" /> : null}
-                        <span className="bsr-row-what">
+                        <span className="bsr-row-what" title={FACTOR_MEANS[k]}>
                           {FACTOR_LABELS[k] || k}
-                          {FACTOR_MEANS[k] ? <span className="bsr-row-note">{FACTOR_MEANS[k]}</span> : null}
                         </span>
                         {t.button}
                         <span className={`bsr-tag is-${toneOf(area.factors[k])}`}>{word(area.factors[k])}</span>
@@ -2375,14 +2374,6 @@ export default function ReportScreen({ view = 'verdict' }) {
                     })}
                   </ul>
 
-                  {trends && (
-                    <p className="bsr-trend-note">
-                      Rows with a small line chart have a past record behind them. Tap it to see how that has changed over the years. Past data only, not a forecast.
-                    </p>
-                  )}
-                  <p className="bsr-methodology-note">
-                    Scores use a zone-level model, so nearby pincodes can score identically. School names in the full report are the one part sourced locality by locality.
-                  </p>
                   </div>
 
                   {/* Outside bsr-half-detail on purpose -- "see the detailed
@@ -2546,16 +2537,10 @@ export default function ReportScreen({ view = 'verdict' }) {
                   from live OSM road/rail proximity). Without saying so
                   they read as seven numbers from nowhere. */}
               <p className="bsr-source">
-                Worked out from the sun&apos;s real path over the buildings around this one.{' '}
                 <button type="button" className="bsr-inline-link" ref={see3dRef} onClick={openLocate}>
                   See the block in 3D →
                 </button>
               </p>
-              {trends && !hasArea && (
-                <p className="bsr-trend-note">
-                  Rows with a small line chart have a past record behind them. Tap it to see how that has changed over the years. Past data only, not a forecast.
-                </p>
-              )}
 
 
               <ul className="bsr-rows">
@@ -2598,7 +2583,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                     <span className="bsr-row-what">
                       Est. summer AC cost
                       <span className="bsr-row-note" title={unit.thermalCost.methodology}>
-                        Standard 1.5-ton AC, typical summer use - an estimate to compare units, not a bill.
+                        Estimate for a 1.5-ton AC
                       </span>
                     </span>
                     <span className="bsr-tag is-none">
@@ -2686,14 +2671,12 @@ export default function ReportScreen({ view = 'verdict' }) {
                   : assumed
                     ? 'Needs your floor and facing.'
                     : '~2 min'}
-              {keys.enabled && !assumed && !reportUnlocked('full') && (
-                <> {' \u00b7 '}<a href="/pricing" target="_blank">How Keys work</a></>
-              )}
             </p>
             {!assumed && (
               <p className="bsr-also">
-                Comparing this against another flat? <a href={compareHref}>See them side by side</a>.{' '}
-                Already sure, and thinking about the inside? <a href="/floor-plan-analysis">Get furnishing suggestions</a>.
+                <a href={compareHref}>Compare with another flat</a>
+                <span aria-hidden="true"> · </span>
+                <a href="/floor-plan-analysis">Furnishing ideas</a>
               </p>
             )}
           </section>
@@ -2874,7 +2857,6 @@ export default function ReportScreen({ view = 'verdict' }) {
 
 
 
-          {scores?.notes?.length ? <p className="bsr-foot">{scores.notes.join(' ')}</p> : null}
         </>
       )}
       {/* The "go here next" bar. Pops up right after a step is finished

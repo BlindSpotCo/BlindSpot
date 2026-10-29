@@ -499,8 +499,7 @@ export default function RoomPhotoAnalyzer({ lat, lon, floor, tzOffset }) {
     <section className="bsr-roomphoto">
       <h2>See it on your own photo</h2>
       <p className="bsr-roomphoto-lede">
-        Add photos of any rooms — say which way you were facing in each one, and we&apos;ll draw where the sun
-        comes in and where the air moves, with real sun and heat data for each window&apos;s own direction.
+        Add a room photo and we&apos;ll draw where the sun and air come in.
       </p>
 
       <div className="bsr-roomphoto-cards">

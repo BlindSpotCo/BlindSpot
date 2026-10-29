@@ -2714,3 +2714,7 @@ button.bsr-cta.is-needs-unit:hover:not(:disabled){background:rgba(61,65,22,.07);
   .bsr-sum{justify-content:center}
   .bsr-sum .bsr-answer-say{flex:0 1 auto;max-width:640px}
 }
+
+/* Area rows are one line now (what each factor means is in its tooltip):
+   no need for the two-line floor height. */
+.bsr-area .bsr-rows li{min-height:44px;align-items:center;padding:8px 0}
