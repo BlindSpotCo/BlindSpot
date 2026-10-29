@@ -166,6 +166,7 @@ export default function SiteHeader({ homeHref = '/' }) {
               <Link href="/#how-it-works">How It Works</Link>
               <Link href="/#products">Tools</Link>
               <Link href="/#team">The Team</Link>
+              <Link href="/pricing">Pricing</Link>
             </div>
             <div className="nav-cta">
               {/* Compare and Furnish are niche tools, not something every
@@ -238,6 +239,7 @@ export default function SiteHeader({ homeHref = '/' }) {
             {!onFlow && <Link href="/compare" onClick={closeMobile}>Compare</Link>}
             {!onFlow && <Link href="/floor-plan-analysis" onClick={closeMobile}>Furnish your home</Link>}
             <Link href="/#team" onClick={closeMobile}>The Team</Link>
+            <Link href="/pricing" onClick={closeMobile}>Pricing</Link>
             {!onFlow && <Link href="/#find" onClick={(e) => { closeMobile(); goToSearch(e); }}>Uncover Your BlindSpot</Link>}
             {checkedAuth && (
               user ? (

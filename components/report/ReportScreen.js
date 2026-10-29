@@ -24,13 +24,17 @@ import { getActionItems } from '@/lib/property-score/actionItems';
 import { encodeSlots } from '@/lib/compare/derive';
 import {
   ShieldCheck, GraduationCap, Wind, Droplets, Zap, Route, Building2, Waves,
-  Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake, Sofa, ArrowDown, MapPin, Scale, FileText,
+  Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake, Sofa, ArrowDown, MapPin, Scale, FileText, Check, X,
 } from 'lucide-react';
 import RoomPhotoAnalyzer from './RoomPhotoAnalyzer';
 import { useTrends } from '@/lib/trends/useTrends';
 import { TREND_FOR_FACTOR, TREND_FOR_SUBSCORE } from '@/lib/trends/series';
 import { Sparkline, TrendChart } from '@/components/trends/TrendChart';
 import { recordVisit } from '@/lib/profile/history';
+import { useKeys } from '@/lib/paywall/KeysProvider';
+import { propertyKey } from '@/lib/paywall/config';
+import KeyBalance from '@/components/paywall/KeyBalance';
+import { KeyCostTag } from '@/components/paywall/PaywallModal';
 import './report.css';
 
 
@@ -82,6 +86,8 @@ const MAX_FLOOR = 60;
 
 const TZ = 330;
 const DEFAULT_FLOOR = 5;
+// Where each step of the report page's guide lives (see guideStep).
+const GUIDE_SEL = { 1: '#the-flat .bsr-set', 2: '#the-report' };
 const DEFAULT_FACING = 'South-East';
 
 // Compact labels for the unitgate popup's 8-chip compass grid -- same
@@ -472,7 +478,11 @@ export default function ReportScreen({ view = 'verdict' }) {
   const [reportsOpen, setReportsOpen] = useState([]);
   const [reportFront, setReportFront] = useState(null);
   const reportOpen = reportsOpen.length > 0;
+  // Step 2 of the guide below is done once the full report has been
+  // started at least once on this page.
+  const [fullAsked, setFullAsked] = useState(false);
   const setReportOpen = useCallback((type) => {
+    if (type === 'full') setFullAsked(true);
     setReportsOpen((list) => (list.includes(type) ? list : [...list, type]));
     setReportFront(type);
   }, []);
@@ -484,8 +494,30 @@ export default function ReportScreen({ view = 'verdict' }) {
   // Both reports go through here. The full report used to open straight
   // away with floor/facing unset and was quietly written up for a default
   // 5th floor, south-east -- a whole report about a flat nobody chose.
+  // Paywall (lib/paywall): every paid report goes through keys.request,
+  // which opens it straight away if it's already unlocked and otherwise
+  // shows the unlock / Key-pack pop-up first. Floor and facing still have
+  // to be set before anything is charged -- a report on a default flat
+  // nobody chose shouldn't cost a Key.
+  const keys = useKeys();
+  const propKey = propertyKey(Number(lat), Number(lon));
+  const unitVariant = `${floor}:${facing}`;
+  const shortAddr = (address || '').replace(/,\s*India\s*$/i, '').split(',')[0].trim() || 'This property';
+  const unitScope = `${shortAddr} · ${ord(floor)} floor, ${String(facing).toLowerCase()}-facing`;
+  const keyCost = keys.costFor(propKey);
+  const paidType = (type) => (type === 'gallery' ? 'sun' : 'full');
+  const reportUnlocked = (type) => keys.isUnlocked(propKey, paidType(type), unitVariant);
   const requestReport = (type, e) => {
-    if (floorSet && facingSet) { setReportOpen(type); return; }
+    if (floorSet && facingSet) {
+      keys.request({
+        prop: propKey,
+        type: paidType(type),
+        variant: unitVariant,
+        scope: unitScope,
+        onUnlocked: () => setReportOpen(type),
+      });
+      return;
+    }
     const btn = e?.currentTarget;
     let target = null;
     if (btn?.closest('.bsr-fullbar')) {
@@ -509,6 +541,100 @@ export default function ReportScreen({ view = 'verdict' }) {
   };
   const requestSunReport = (e) => requestReport('gallery', e);
   const requestFullReport = (e) => requestReport('full', e);
+
+  /* ---------------- the guide: three steps, one at a time ----------------
+     The page used to show every action at once (two paid reports, the full
+     report twice, a "set the floor" link) with nothing saying which came
+     first. Now there is always exactly one next step: the tracker in the
+     summary card says where you are, the step's own section is lit up, and
+     a bar pops up from the bottom whenever you finish one (or scroll away
+     from the current one) pointing at the next. */
+  const guideStep = assumed ? 1 : (fullAsked || reportUnlocked('full') ? 0 : 2);
+  const GUIDE = [
+    null,
+    { title: 'Set your floor & facing', sel: GUIDE_SEL[1] },
+    { title: 'Generate your full report', sel: GUIDE_SEL[2] },
+  ];
+  const curStep = GUIDE[guideStep] || GUIDE[2];
+  const goToStep = useCallback((n) => {
+    const el = document.querySelector(GUIDE_SEL[n]);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.remove('bsr-spot');
+    void el.offsetWidth;
+    el.classList.add('bsr-spot');
+    setTimeout(() => el.classList.remove('bsr-spot'), 2200);
+    if (n === 1) {
+      const empty = el.querySelector('.is-unset input, .is-unset select') || el.querySelector('input, select');
+      setTimeout(() => empty?.focus({ preventScroll: true }), 450);
+    }
+  }, []);
+  // "Nice, next:" -- shown for a few seconds right after a step is finished.
+  const [justDone, setJustDone] = useState(0);
+  const prevStep = useRef(guideStep);
+  useEffect(() => {
+    if (prevStep.current === 1 && guideStep === 2) {
+      setJustDone(prevStep.current);
+      const t = setTimeout(() => setJustDone(0), 6000);
+      prevStep.current = guideStep;
+      return () => clearTimeout(t);
+    }
+    prevStep.current = guideStep;
+  }, [guideStep]);
+  // Is the current step's section on screen? If it is, there's nothing to
+  // point at -- the bar only appears when it's out of view.
+  const [stepInView, setStepInView] = useState(true);
+  const [guideHidden, setGuideHidden] = useState(false);
+  // The corner pill points at the full-report box until it's on screen.
+  const [boxInView, setBoxInView] = useState(false);
+  useEffect(() => {
+    if (fullMap || !scores) return undefined;
+    const el = document.getElementById('the-report');
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(([en]) => setBoxInView(en.isIntersecting), { threshold: 0.2 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [fullMap, scores, assumed]);
+  // Reading progress toward the report: which halves you've reached, and
+  // how far down the page you are relative to the report box.
+  const [readProg, setReadProg] = useState(0);
+  const [seenArea, setSeenArea] = useState(false);
+  const [seenFlat, setSeenFlat] = useState(false);
+  useEffect(() => {
+    if (fullMap || !scores) return undefined;
+    let raf = 0;
+    const measure = () => {
+      raf = 0;
+      const vh = window.innerHeight;
+      const box = document.getElementById('the-report');
+      const areaEl = document.querySelector('.bsr-half.bsr-area');
+      const flatEl = document.getElementById('the-flat');
+      if (areaEl && areaEl.getBoundingClientRect().top < vh * 0.6) setSeenArea(true);
+      if (flatEl && flatEl.getBoundingClientRect().top < vh * 0.6) setSeenFlat(true);
+      if (box) {
+        const boxTop = box.getBoundingClientRect().top + window.scrollY;
+        const end = Math.max(1, boxTop - vh * 0.6);
+        setReadProg(Math.round(Math.min(1, Math.max(0, window.scrollY / end)) * 50) / 50);
+      }
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(measure); };
+    measure();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [fullMap, scores]);
+  useEffect(() => {
+    if (fullMap || !scores || !guideStep) return undefined;
+    const el = document.querySelector(curStep.sel);
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(([en]) => setStepInView(en.isIntersecting), { threshold: 0.35 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [curStep.sel, fullMap, scores, guideStep]);
   const closeReport = useCallback((type) => {
     setReportsOpen((list) => list.filter((t) => t !== type));
     setReportFront((f) => (f === type ? null : f));
@@ -559,6 +685,18 @@ export default function ReportScreen({ view = 'verdict' }) {
   // search box used to live permanently in the map toolbar; now it's a
   // rare action tucked next to the address itself, revealed on demand.
   const [addrEditOpen, setAddrEditOpen] = useState(false);
+  const addrInputRef = useRef(null);
+  // "Change location" from further down the page (the area card) opens
+  // the same address search the header's "Change" does. The header is
+  // sticky on a laptop, so the field opens in view; on a phone it scrolls
+  // away with the page, so bring it back first.
+  const openAddrEdit = useCallback(() => {
+    setAddrEditOpen(true);
+    const head = document.querySelector('.bsr-head');
+    if (head && head.getBoundingClientRect().top < 0) window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Already open: autoFocus won't fire a second time.
+    requestAnimationFrame(() => addrInputRef.current?.focus({ preventScroll: true }));
+  }, []);
 
   // Bumped by the retry button, so the scores effect can be re-run without
   // changing the address it is scoring.
@@ -795,6 +933,7 @@ export default function ReportScreen({ view = 'verdict' }) {
   // full screen walks the report hidden underneath it.
   const fullBackRef = useRef(null);
   const fullToggleRef = useRef(null);
+  const see3dRef = useRef(null);
   useEffect(() => {
     if (fullMapLive) fullBackRef.current?.focus({ preventScroll: true });
   }, [fullMapLive]);
@@ -816,7 +955,9 @@ export default function ReportScreen({ view = 'verdict' }) {
     // unmounted, which drops focus to the body and sends the next Tab
     // to the top of the document. Hand it to the control that now does
     // the same job -- the toolbar's full-screen toggle.
-    fullToggleRef.current?.focus({ preventScroll: true });
+    // The map's own toggle is parked offscreen on the verdict now, so the
+    // way back in is the flat card's "See the block in 3D".
+    (see3dRef.current || fullToggleRef.current)?.focus({ preventScroll: true });
   }, [fullMap]);
 
   // The map is "loading" until the sun path is in AND the 3D document says
@@ -1577,11 +1718,22 @@ export default function ReportScreen({ view = 'verdict' }) {
           </div>
   );
 
+  // On the verdict the map is parked offscreen, not shown inline. Every
+  // score in the flat card already comes from it, "See the block in 3D"
+  // opens it full screen with all its controls, and an inline copy under
+  // the two halves was a second, smaller version of the same thing. It
+  // still has to stay mounted and drawing (not display:none): both PDF
+  // reports are built from photographs of this exact WebGL scene, and
+  // the full-screen step is the same instance re-styled. The one
+  // exception is a failed verdict, where the map is all there is.
+  const mapParked = !fullMap && state !== 'error';
   const mapZone = (
       <section
-        className={`bsr-mapzone${fullMap ? ' is-full' : ''}${!fullMap && !scores && state !== 'error' ? ' is-parked' : ''}`}
+        className={`bsr-mapzone${fullMap ? ' is-full' : ''}${mapParked ? ' is-parked' : ''}`}
         id="the-block"
         aria-label="The block in 3D"
+        aria-hidden={mapParked || undefined}
+        inert={mapParked || undefined}
       >
         {/* Full screen only: the SunScout-style header strip. Search,
             the live score for whatever the toolbar below is currently
@@ -1652,6 +1804,7 @@ export default function ReportScreen({ view = 'verdict' }) {
               <Sun size={16} strokeWidth={2.2} aria-hidden="true" />
               <span className="bsr-fullbar-sun-full">Year-round sunlight report</span>
               <span className="bsr-fullbar-sun-short">Sunlight report</span>
+              {keys.enabled && !assumed && <KeyCostTag tone="onfill" cost={keyCost} unlocked={reportUnlocked('gallery')} />}
             </button>
 
             <button
@@ -2023,11 +2176,16 @@ export default function ReportScreen({ view = 'verdict' }) {
                   exits offered before any payoff. Profile is already one tap
                   away from the avatar in the global nav, so it doesn't need a
                   second copy here. Compare and Furnish now show up below,
-                  once there's an actual scored flat to act on. */}
+                  once there's an actual scored flat to act on. The Key
+                  balance stays: it's what the paid buttons below spend. */}
+              <nav className="bsr-head-links" aria-label="Your Keys">
+                <KeyBalance />
+              </nav>
             </div>
             {addrEditOpen && (
               <form className="bsr-addr-edit bsr-locbar" onSubmit={onSearchSubmit}>
                 <input
+                  ref={addrInputRef}
                   type="search"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -2111,37 +2269,6 @@ export default function ReportScreen({ view = 'verdict' }) {
                 </p>
               )}
             </div>
-            {/* The full report is one of the main things BlindSpot does --
-                it used to live only at the very bottom of the page. */}
-            <div className="bsr-sum-cta">
-              <p className="bsr-sum-cta-title"><FileText size={16} strokeWidth={2.2} aria-hidden="true" /> The full BlindSpot report</p>
-              <p className="bsr-sum-cta-sub">
-                {hasArea
-                  ? 'Area + this flat, written up with what to verify before you buy.'
-                  : 'This flat, written up with what to verify before you buy.'}
-              </p>
-              <button
-                type="button"
-                className={`bsr-sum-cta-go${assumed ? ' is-needs-unit' : ''}`}
-                disabled={!solar?.pathData || reportBusy.full}
-                onClick={requestFullReport}
-              >
-                {reportBusy.full
-                  ? 'Writing your report…'
-                  : assumed
-                    ? <>Set floor &amp; facing first <span aria-hidden="true">↓</span></>
-                    : <>Generate full report <span aria-hidden="true">→</span></>}
-              </button>
-              <span className="bsr-sum-cta-note">
-                {reportBusy.full
-                  ? 'Usually about two minutes. Keep browsing; it carries on.'
-                  : !solar?.pathData
-                  ? 'Waiting for the 3D map to load'
-                  : assumed
-                    ? 'The report is written for your exact flat, so it needs both.'
-                    : 'About two minutes · keep browsing'}
-              </span>
-            </div>
           </section>
             );
           })()}
@@ -2168,6 +2295,13 @@ export default function ReportScreen({ view = 'verdict' }) {
                     </button>
                   </>
                 )}
+                {/* Wrong pincode only swaps the records; this moves the pin
+                    itself -- a different address, building or city. */}
+                {' '}
+                <button type="button" className="bsr-pinlink bsr-loclink" onClick={openAddrEdit}>
+                  <MapPin size={13} strokeWidth={2.4} aria-hidden="true" />
+                  Change location
+                </button>
               </p>
 
               {/* The lookup lands on a neighbouring pincode often enough that
@@ -2269,7 +2403,29 @@ export default function ReportScreen({ view = 'verdict' }) {
                       is window.close(), which the browser refuses without an
                       opener. Same call AVAreaCard's link makes. */}
                   <p className="bsr-more bsr-more-cta">
-                    <a href={`/neighbourhood-report/${area.pinCode}`} target="_blank">See the detailed area report →</a>
+                    {/* Paid: opens only once unlocked. window.open (not
+                        noopener) for the same window.close() reason above;
+                        it runs inside the unlock click, so it isn't
+                        popup-blocked. */}
+                    <a
+                      href={`/neighbourhood-report/${area.pinCode}`}
+                      target="_blank"
+                      onClick={(e) => {
+                        if (!keys.enabled || keys.isUnlocked(propKey, 'neighbourhood')) return;
+                        e.preventDefault();
+                        const url = `/neighbourhood-report/${area.pinCode}`;
+                        keys.request({
+                          prop: propKey,
+                          type: 'neighbourhood',
+                          pin: area.pinCode,
+                          scope: `${area.name} (${area.pinCode})`,
+                          onUnlocked: () => window.open(url, '_blank'),
+                        });
+                      }}
+                    >
+                      See the detailed area report →
+                      {keys.enabled && <KeyCostTag tone="onfill" cost={keyCost} unlocked={keys.isUnlocked(propKey, 'neighbourhood')} />}
+                    </a>
                   </p>
                 </>
               ) : (
@@ -2319,7 +2475,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                   they know their floor and want to type it. The arrows still
                   work for nudging, and the value is only clamped when you leave
                   the field, so typing "1" on the way to "12" isn't fought. */}
-              <p className="bsr-set" ref={unitSetRef}>
+              <p className={`bsr-set${guideStep === 1 ? ' is-step' : ''}`} ref={unitSetRef}>
                 <label className={`bsr-set-field${floorSet ? '' : ' is-unset'}`}>
                   <span>Floor</span>
                   <input
@@ -2346,6 +2502,11 @@ export default function ReportScreen({ view = 'verdict' }) {
                     }}
                     aria-label={`Floor number, 1 to ${MAX_FLOOR}`}
                   />
+                  {!floorSet && (
+                    <mark className="bsr-coach" role="note">
+                      <b>Start here</b> Type your floor number
+                    </mark>
+                  )}
                 </label>
                 <label className={`bsr-set-field${facingSet ? '' : ' is-unset'}`}>
                   <span>Faces</span>
@@ -2357,6 +2518,11 @@ export default function ReportScreen({ view = 'verdict' }) {
                     {!facingSet && <option value="" disabled>Select</option>}
                     {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
                   </select>
+                  {floorSet && !facingSet && (
+                    <mark className="bsr-coach" role="note">
+                      <b>Nice. Now this</b> Which way does the balcony face?
+                    </mark>
+                  )}
                 </label>
               </p>
 
@@ -2365,6 +2531,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                 <span className="bsr-outof">{unit.score} out of 100</span>
                 {busy ? <span className="bsr-busy">recalculating…</span> : null}
               </p>
+
 
               {/* Same collapse-at-every-width pattern as "the area" above --
                   the sub-score breakdown is one tap away. Floor/facing inputs
@@ -2390,7 +2557,9 @@ export default function ReportScreen({ view = 'verdict' }) {
                   they read as seven numbers from nowhere. */}
               <p className="bsr-source">
                 Worked out from the sun&apos;s real path over the buildings around this one.{' '}
-                <a href="#the-block">See the block in 3D ↓</a>
+                <button type="button" className="bsr-inline-link" ref={see3dRef} onClick={openLocate}>
+                  See the block in 3D →
+                </button>
               </p>
               {trends && !hasArea && (
                 <p className="bsr-trend-note">
@@ -2450,20 +2619,9 @@ export default function ReportScreen({ view = 'verdict' }) {
               </ul>
               </div>
 
-              {/* Outside bsr-half-detail on purpose -- stays visible whether
-                  the breakdown above is open or collapsed, same as the area
-                  half's report link opposite it. Used to be a plain scroll
-                  link ("generating straight from here is backwards -- you'd
-                  get a report for whatever the defaults happened to be"),
-                  because floor/facing then lived only on the map toolbar
-                  below. They're set right above in this same card now (see
-                  the Floor/Faces fields at the top of this section), so
-                  that objection doesn't apply here any more -- this button
-                  generates from exactly the floor/facing already showing on
-                  this card, the same as .bsr-mapbar-report on the map
-                  toolbar does, and gives the flat half the same weight of
-                  CTA the area half has opposite it instead of a quiet
-                  scroll-down link with nothing to match. */}
+              {/* The sunlight report is its own thing (sun and shadow only) and
+                  stays with the flat it's about. The full report is one box at
+                  the bottom of the page. */}
               <p className="bsr-more bsr-more-cta">
                 <button
                   type="button"
@@ -2471,10 +2629,12 @@ export default function ReportScreen({ view = 'verdict' }) {
                   onClick={requestSunReport}
                 >
                   Get the year-round sunlight report →
+                  {keys.enabled && !assumed && <KeyCostTag tone="onfill" cost={keyCost} unlocked={reportUnlocked('gallery')} />}
                 </button>
               </p>
             </section>
           </div>
+
           {/* ---------- the map, full width ----------
               It lived inside the flat's card until the card's ~500px made
               Map3DShadow hide its own view-angle pad (its stylesheet drops
@@ -2497,6 +2657,58 @@ export default function ReportScreen({ view = 'verdict' }) {
       {mapZone}
       {verdictMode === 'ready' && (
         <>
+
+          {/* ---------- the full report: one box, right after the area + flat ----------
+              Then "see it on your own photo", then the visit checklist. Glows
+              once floor and facing are set (it's ready to write); before
+              that it's dimmed, and its button takes you back up to set them. */}
+          <section
+            className={`bsr-fullbox${assumed ? ' is-locked' : ' is-ready'}`}
+            id="the-report"
+            aria-label="The full BlindSpot report"
+            key={assumed ? 'locked' : `ready-${floor}-${facing}`}
+          >
+            <h2 className="bsr-fullbox-h">
+              <FileText size={22} strokeWidth={2.2} aria-hidden="true" />
+              Your full BlindSpot report
+            </h2>
+            <p className="bsr-fullbox-sub">
+              {hasArea ? 'Area + this flat' : 'This flat'}, as a PDF.
+            </p>
+            <button
+              type="button"
+              className="bsr-fullbox-go"
+              disabled={!solar?.pathData || reportBusy.full}
+              onClick={requestFullReport}
+            >
+              {reportBusy.full
+                ? 'Writing your report\u2026'
+                : assumed
+                  ? <>Set floor &amp; facing first <span aria-hidden="true">↑</span></>
+                  : <>Generate full report <span aria-hidden="true">→</span></>}
+              {keys.enabled && !assumed && !reportBusy.full && <KeyCostTag tone="onfill" cost={keyCost} unlocked={reportUnlocked('full')} />}
+            </button>
+            <p className="bsr-fullbox-note">
+              {reportBusy.full
+                ? 'About two minutes. Keep browsing.'
+                : !solar?.pathData
+                  ? 'Waiting for the 3D model to load'
+                  : assumed
+                    ? 'Needs your floor and facing.'
+                    : '~2 min'}
+              {keys.enabled && !assumed && !reportUnlocked('full') && (
+                <> {' \u00b7 '}<a href="/pricing" target="_blank">How Keys work</a></>
+              )}
+            </p>
+            {!assumed && (
+              <p className="bsr-also">
+                Comparing this against another flat? <a href={compareHref}>See them side by side</a>.{' '}
+                Already sure, and thinking about the inside? <a href="/floor-plan-analysis">Get furnishing suggestions</a>.
+              </p>
+            )}
+          </section>
+
+          <RoomPhotoAnalyzer lat={lat} lon={lon} floor={floor} tzOffset={TZ} />
 
           <section className="bsr-visit" id="the-visit">
             <h2>What to check before you decide</h2>
@@ -2670,45 +2882,78 @@ export default function ReportScreen({ view = 'verdict' }) {
             document.body
           )}
 
-          <RoomPhotoAnalyzer lat={lat} lon={lon} floor={floor} tzOffset={TZ} />
 
-          {/* ---------- the written verdict ---------- */}
-          <section className="bsr-close">
-            <h2>Every property has a <em>blindspot.</em></h2>
-            <p>
-              {hasArea
-                ? 'A written summary of the area and the flat, with what to verify before you buy. PDF.'
-                : 'A written summary of this flat - sun, heat, view and what to verify. No neighbourhood records for this pincode, so it covers the flat only. PDF.'}
-            </p>
-            {/* Both reports are built from photographs of the map. With no map
-                there is nothing to photograph, and the run used to fail with
-                "something went wrong, things are busy" -- which is neither true
-                nor actionable. Say the real reason before they click. */}
-            <button
-              type="button"
-              className={`bsr-cta${assumed ? ' is-needs-unit' : ''}`}
-              disabled={!solar?.pathData || reportBusy.full}
-              onClick={requestFullReport}
-            >
-              {reportBusy.full ? 'Writing your report…' : assumed
-                ? 'Set floor & facing first'
-                : hasArea ? 'Generate the full report' : 'Generate the full flat report'}
-            </button>
-            <span className="bsr-free">
-              {!solar?.pathData
-                ? 'Waiting for the 3D map to load - the report is built from it.'
-                : assumed
-                  ? 'The report is written for your exact flat. Set its floor and facing above, then come back here.'
-                  : 'About two minutes. Builds on this page - keep browsing.'}
-            </span>
-            <p className="bsr-also">
-              Comparing this against another flat? <a href={compareHref}>See them side by side</a>.{' '}
-              Already sure, and thinking about the inside? <a href="/floor-plan-analysis">Get furnishing suggestions</a>.
-            </p>
-          </section>
 
           {scores?.notes?.length ? <p className="bsr-foot">{scores.notes.join(' ')}</p> : null}
         </>
+      )}
+      {/* The "go here next" bar. Pops up right after a step is finished
+          ("Nice -- next: ...") and whenever the current step is scrolled
+          out of view. Never over the report card, never on the map step. */}
+      {/* Corner pill: the full report is one box at the very bottom, so
+          this is how you know it's there from anywhere on the page. Bottom
+          right, small, out of the way of the buttons in the cards; gone
+          once the box itself is on screen. */}
+      {verdictMode === 'ready' && !fullMap && !reportOpen && !(justDone === 1 && !guideHidden) && (
+        boxInView ? (
+          // At the end: the pill lights up and becomes the action itself.
+          <button
+            type="button"
+            className={`bsr-fullpill is-end${assumed ? ' is-locked' : ''}`}
+            onClick={assumed ? () => goToStep(1) : requestFullReport}
+            disabled={!assumed && (!solar?.pathData || reportBusy.full)}
+          >
+            <FileText size={16} strokeWidth={2.4} aria-hidden="true" />
+            <span>{reportBusy.full ? 'Writing your report\u2026' : assumed ? 'Set floor & facing first' : 'Generate full report'}</span>
+            <span aria-hidden="true">{assumed ? '↑' : '→'}</span>
+          </button>
+        ) : (
+          // On the way: ticks off the area and the flat as you reach them,
+          // and fills up toward the report at the bottom.
+          <button
+            type="button"
+            className="bsr-fullpill is-progress"
+            style={{ '--p': readProg }}
+            onClick={() => goToStep(2)}
+            aria-label="Jump to the full report"
+          >
+            <span className="bsr-pp-fill" aria-hidden="true" />
+            {hasArea && (
+              <>
+                <span className={`bsr-pp-seg${seenArea ? ' is-seen' : ''}`}>
+                  {seenArea && <Check size={13} strokeWidth={3} aria-hidden="true" />}Area
+                </span>
+                <span className="bsr-pp-dot" aria-hidden="true" />
+              </>
+            )}
+            <span className={`bsr-pp-seg${seenFlat ? ' is-seen' : ''}`}>
+              {seenFlat && <Check size={13} strokeWidth={3} aria-hidden="true" />}Flat
+            </span>
+            <span className="bsr-pp-dot" aria-hidden="true" />
+            <span className="bsr-pp-seg is-report">
+              <FileText size={14} strokeWidth={2.4} aria-hidden="true" />Report <span aria-hidden="true">↓</span>
+            </span>
+          </button>
+        )
+      )}
+      {verdictMode === 'ready' && !fullMap && !reportOpen && !guideHidden && guideStep === 2 && justDone === 1 && !stepInView && (
+        <div className="bsr-nextbar is-cheer" role="status" aria-live="polite" key={`${guideStep}-${justDone}`}>
+          <span className="bsr-nextbar-n" aria-hidden="true">
+            <Check size={16} strokeWidth={3} />
+          </span>
+          <span className="bsr-nextbar-text">
+            <span className="bsr-nextbar-kicker">
+              {`Scores now match your ${ord(floor)} floor, ${String(facing).toLowerCase()}-facing flat`}
+            </span>
+            <strong>Next: {curStep.title}</strong>
+          </span>
+          <button type="button" className="bsr-nextbar-go" onClick={() => { setJustDone(0); goToStep(guideStep); }}>
+            Go <span aria-hidden="true">↓</span>
+          </button>
+          <button type="button" className="bsr-nextbar-x" onClick={() => { setJustDone(0); setGuideHidden(true); }} aria-label="Hide this">
+            <X size={15} strokeWidth={2.4} />
+          </button>
+        </div>
       )}
       {reportModal}
     </div>
