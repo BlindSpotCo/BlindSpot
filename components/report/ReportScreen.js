@@ -585,16 +585,6 @@ export default function ReportScreen({ view = 'verdict' }) {
   // point at -- the bar only appears when it's out of view.
   const [stepInView, setStepInView] = useState(true);
   const [guideHidden, setGuideHidden] = useState(false);
-  // The corner pill points at the full-report box until it's on screen.
-  const [boxInView, setBoxInView] = useState(false);
-  useEffect(() => {
-    if (fullMap || !scores) return undefined;
-    const el = document.getElementById('the-report');
-    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
-    const io = new IntersectionObserver(([en]) => setBoxInView(en.isIntersecting), { threshold: 0.2 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, [fullMap, scores, assumed]);
   // Reading progress toward the report: which halves you've reached, and
   // how far down the page you are relative to the report box.
   const [readProg, setReadProg] = useState(0);
@@ -2895,21 +2885,8 @@ export default function ReportScreen({ view = 'verdict' }) {
           right, small, out of the way of the buttons in the cards; gone
           once the box itself is on screen. */}
       {verdictMode === 'ready' && !fullMap && !reportOpen && !(justDone === 1 && !guideHidden) && (
-        boxInView ? (
-          // At the end: the pill lights up and becomes the action itself.
-          <button
-            type="button"
-            className={`bsr-fullpill is-end${assumed ? ' is-locked' : ''}`}
-            onClick={assumed ? () => goToStep(1) : requestFullReport}
-            disabled={!assumed && (!solar?.pathData || reportBusy.full)}
-          >
-            <FileText size={16} strokeWidth={2.4} aria-hidden="true" />
-            <span>{reportBusy.full ? 'Writing your report\u2026' : assumed ? 'Set floor & facing first' : 'Generate full report'}</span>
-            <span aria-hidden="true">{assumed ? '↑' : '→'}</span>
-          </button>
-        ) : (
-          // On the way: ticks off the area and the flat as you reach them,
-          // and fills up toward the report at the bottom.
+          // Ticks off the area and the flat as you reach them, and fills up
+          // toward the report box. Same pill all the way down.
           <button
             type="button"
             className="bsr-fullpill is-progress"
@@ -2934,7 +2911,6 @@ export default function ReportScreen({ view = 'verdict' }) {
               <FileText size={14} strokeWidth={2.4} aria-hidden="true" />Report <span aria-hidden="true">↓</span>
             </span>
           </button>
-        )
       )}
       {verdictMode === 'ready' && !fullMap && !reportOpen && !guideHidden && guideStep === 2 && justDone === 1 && !stepInView && (
         <div className="bsr-nextbar is-cheer" role="status" aria-live="polite" key={`${guideStep}-${justDone}`}>

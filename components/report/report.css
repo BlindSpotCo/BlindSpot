@@ -2691,22 +2691,11 @@ button.bsr-cta.is-needs-unit:hover:not(:disabled){background:rgba(61,65,22,.07);
 .bsr-pp-seg.is-report{color:var(--brand,#3D4116);font-weight:800}
 .bsr-pp-dot{position:relative;width:4px;height:4px;border-radius:50%;background:currentColor;opacity:.4;flex:none}
 
-.bsr-fullpill.is-end{
-  background:#E8C547;color:#262A0E;font-size:15px;font-weight:800;padding:0 20px;
-  animation:bsr-coachin .45s cubic-bezier(.34,1.56,.64,1) both, bsr-pillglow 2.4s ease-in-out .5s infinite;
-}
-.bsr-fullpill.is-end.is-locked{background:var(--paper,#FFFDF8);color:var(--brand,#3D4116);animation:bsr-coachin .45s cubic-bezier(.34,1.56,.64,1) both;box-shadow:inset 0 0 0 1.5px var(--brand,#3D4116), 0 10px 26px rgba(28,24,18,.16)}
-.bsr-fullpill:disabled{opacity:.6;cursor:default}
-@keyframes bsr-pillglow{
-  0%,100%{box-shadow:0 10px 26px rgba(201,162,39,.35), 0 0 0 0 rgba(232,197,71,0)}
-  50%{box-shadow:0 10px 26px rgba(201,162,39,.45), 0 0 0 7px rgba(232,197,71,.35)}
-}
 @media (max-width:560px){
   .bsr-fullpill{right:12px;bottom:12px;height:42px;padding:0 14px;font-size:13px;gap:6px}
-  .bsr-fullpill.is-end{font-size:14px}
 }
 @media (prefers-reduced-motion:reduce){
-  .bsr-fullpill,.bsr-fullpill.is-end,.bsr-pp-seg.is-seen svg{animation:none}
+  .bsr-fullpill,.bsr-pp-seg.is-seen svg{animation:none}
   .bsr-pp-fill{transition:none}
 }
 
