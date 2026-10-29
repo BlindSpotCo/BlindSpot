@@ -2329,10 +2329,11 @@ export default function ReportScreen({ view = 'verdict' }) {
                       const RowIcon = FACTOR_ICONS[k];
                       const t = trendBits(`area-${k}`, TREND_FOR_FACTOR[k], 'var(--av, #6B2232)');
                       return (
-                      <li key={k} className={t.button ? 'has-trend' : undefined}>
+                      <li key={k} className={t.button ? 'has-trend' : undefined} tabIndex={0}>
                         {RowIcon ? <RowIcon className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" /> : null}
-                        <span className="bsr-row-what" title={FACTOR_MEANS[k]}>
+                        <span className="bsr-row-what">
                           {FACTOR_LABELS[k] || k}
+                          {FACTOR_MEANS[k] ? <span className="bsr-row-note">{FACTOR_MEANS[k]}</span> : null}
                         </span>
                         {t.button}
                         <span className={`bsr-tag is-${toneOf(area.factors[k])}`}>{word(area.factors[k])}</span>
@@ -2548,7 +2549,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                   const RowIcon = SUBSCORE_ICONS[s.key];
                   const t = trendBits(`unit-${s.key}`, TREND_FOR_SUBSCORE[s.key], 'var(--ss, #AF5F30)');
                   return (
-                  <li key={s.key} className={t.button ? 'has-trend' : undefined}>
+                  <li key={s.key} className={t.button ? 'has-trend' : undefined} tabIndex={0}>
                     {RowIcon ? <RowIcon className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" /> : null}
                     <span className="bsr-row-what">
                       {s.label}

@@ -2715,6 +2715,21 @@ button.bsr-cta.is-needs-unit:hover:not(:disabled){background:rgba(61,65,22,.07);
   .bsr-sum .bsr-answer-say{flex:0 1 auto;max-width:640px}
 }
 
-/* Area rows are one line now (what each factor means is in its tooltip):
-   no need for the two-line floor height. */
-.bsr-area .bsr-rows li{min-height:44px;align-items:center;padding:8px 0}
+
+/* ---- row notes on hover ----
+   Each row (area and flat) shows just its name and rating. The line that
+   explains it opens underneath on hover, or on tap / keyboard focus on
+   touch screens, where there's no hover. */
+.bsr-half .bsr-rows li{cursor:default}
+.bsr-half .bsr-rows .bsr-row-what{display:flex;flex-direction:column}
+.bsr-half .bsr-rows .bsr-row-note{
+  display:block;max-height:0;opacity:0;overflow:hidden;margin-top:0;
+  transition:max-height .22s ease, opacity .18s ease, margin-top .22s ease;
+}
+.bsr-half .bsr-rows li:hover .bsr-row-note,
+.bsr-half .bsr-rows li:focus-within .bsr-row-note{max-height:6em;opacity:1;margin-top:3px}
+.bsr-half .bsr-rows li:hover{background:color-mix(in srgb, var(--brand,#3D4116) 4%, transparent)}
+/* Every row is one line now, both sides. */
+.bsr-half .bsr-rows li{min-height:44px;align-items:center;padding:8px 6px;margin:0 -6px}
+@media (prefers-reduced-motion:reduce){ .bsr-half .bsr-rows .bsr-row-note{transition:none} }
+.bsr-half .bsr-rows li:focus-visible{outline:2px solid var(--brand,#3D4116);outline-offset:-2px;border-radius:6px}
