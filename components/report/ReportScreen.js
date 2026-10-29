@@ -585,38 +585,6 @@ export default function ReportScreen({ view = 'verdict' }) {
   // point at -- the bar only appears when it's out of view.
   const [stepInView, setStepInView] = useState(true);
   const [guideHidden, setGuideHidden] = useState(false);
-  // Reading progress toward the report: which halves you've reached, and
-  // how far down the page you are relative to the report box.
-  const [readProg, setReadProg] = useState(0);
-  const [seenArea, setSeenArea] = useState(false);
-  const [seenFlat, setSeenFlat] = useState(false);
-  useEffect(() => {
-    if (fullMap || !scores) return undefined;
-    let raf = 0;
-    const measure = () => {
-      raf = 0;
-      const vh = window.innerHeight;
-      const box = document.getElementById('the-report');
-      const areaEl = document.querySelector('.bsr-half.bsr-area');
-      const flatEl = document.getElementById('the-flat');
-      if (areaEl && areaEl.getBoundingClientRect().top < vh * 0.6) setSeenArea(true);
-      if (flatEl && flatEl.getBoundingClientRect().top < vh * 0.6) setSeenFlat(true);
-      if (box) {
-        const boxTop = box.getBoundingClientRect().top + window.scrollY;
-        const end = Math.max(1, boxTop - vh * 0.6);
-        setReadProg(Math.round(Math.min(1, Math.max(0, window.scrollY / end)) * 50) / 50);
-      }
-    };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(measure); };
-    measure();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, [fullMap, scores]);
   useEffect(() => {
     if (fullMap || !scores || !guideStep) return undefined;
     const el = document.querySelector(curStep.sel);
@@ -2863,38 +2831,6 @@ export default function ReportScreen({ view = 'verdict' }) {
       {/* The "go here next" bar. Pops up right after a step is finished
           ("Nice -- next: ...") and whenever the current step is scrolled
           out of view. Never over the report card, never on the map step. */}
-      {/* Corner pill: the full report is one box at the very bottom, so
-          this is how you know it's there from anywhere on the page. Bottom
-          right, small, out of the way of the buttons in the cards; gone
-          once the box itself is on screen. */}
-      {verdictMode === 'ready' && !fullMap && !reportOpen && !(justDone === 1 && !guideHidden) && (
-          // Ticks off the area and the flat as you reach them, and fills up
-          // toward the report box. Same pill all the way down.
-          <button
-            type="button"
-            className="bsr-fullpill is-progress"
-            style={{ '--p': readProg }}
-            onClick={() => goToStep(2)}
-            aria-label="Jump to the full report"
-          >
-            <span className="bsr-pp-fill" aria-hidden="true" />
-            {hasArea && (
-              <>
-                <span className={`bsr-pp-seg${seenArea ? ' is-seen' : ''}`}>
-                  {seenArea && <Check size={13} strokeWidth={3} aria-hidden="true" />}Area
-                </span>
-                <span className="bsr-pp-dot" aria-hidden="true" />
-              </>
-            )}
-            <span className={`bsr-pp-seg${seenFlat ? ' is-seen' : ''}`}>
-              {seenFlat && <Check size={13} strokeWidth={3} aria-hidden="true" />}Flat
-            </span>
-            <span className="bsr-pp-dot" aria-hidden="true" />
-            <span className="bsr-pp-seg is-report">
-              <FileText size={14} strokeWidth={2.4} aria-hidden="true" />Report <span aria-hidden="true">↓</span>
-            </span>
-          </button>
-      )}
       {verdictMode === 'ready' && !fullMap && !reportOpen && !guideHidden && guideStep === 2 && justDone === 1 && !stepInView && (
         <div className="bsr-nextbar is-cheer" role="status" aria-live="polite" key={`${guideStep}-${justDone}`}>
           <span className="bsr-nextbar-n" aria-hidden="true">

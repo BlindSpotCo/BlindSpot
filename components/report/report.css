@@ -2665,39 +2665,6 @@ button.bsr-cta.is-needs-unit:hover:not(:disabled){background:rgba(61,65,22,.07);
 }
 @media (prefers-reduced-motion:reduce){ .bsr-fullbox.is-ready{animation:none;box-shadow:0 0 0 4px color-mix(in srgb, var(--brand,#3D4116) 12%, transparent)} }
 
-/* -- corner progress pill: Area -> Flat -> Report, then the action itself -- */
-.bsr-fullpill{
-  position:fixed;right:20px;bottom:20px;z-index:55;overflow:hidden;
-  display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 18px;border:0;border-radius:999px;cursor:pointer;
-  font:inherit;font-size:14px;font-weight:700;
-  animation:bsr-coachin .45s cubic-bezier(.34,1.56,.64,1) both;
-  transition:transform .15s ease, filter .15s ease;
-}
-.bsr-fullpill:hover:not(:disabled){transform:translateY(-2px)}
-.bsr-fullpill:focus-visible{outline:2px solid var(--brand,#3D4116);outline-offset:3px}
-
-.bsr-fullpill.is-progress{
-  background:var(--paper,#FFFDF8);color:var(--text-dim,#8A7F68);
-  box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--brand,#3D4116) 45%, transparent), 0 10px 26px rgba(28,24,18,.16);
-}
-.bsr-pp-fill{
-  position:absolute;inset:0 auto 0 0;width:calc(var(--p, 0) * 100%);
-  background:linear-gradient(90deg, color-mix(in srgb, var(--brand,#3D4116) 10%, transparent), color-mix(in srgb, #E8C547 38%, transparent));
-  transition:width .25s ease-out;pointer-events:none;
-}
-.bsr-pp-seg{position:relative;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;transition:color .25s ease}
-.bsr-pp-seg.is-seen{color:var(--brand,#3D4116)}
-.bsr-pp-seg.is-seen svg{animation:bsr-pop .4s cubic-bezier(.34,1.56,.64,1) both}
-.bsr-pp-seg.is-report{color:var(--brand,#3D4116);font-weight:800}
-.bsr-pp-dot{position:relative;width:4px;height:4px;border-radius:50%;background:currentColor;opacity:.4;flex:none}
-
-@media (max-width:560px){
-  .bsr-fullpill{right:12px;bottom:12px;height:42px;padding:0 14px;font-size:13px;gap:6px}
-}
-@media (prefers-reduced-motion:reduce){
-  .bsr-fullpill,.bsr-pp-seg.is-seen svg{animation:none}
-  .bsr-pp-fill{transition:none}
-}
 
 /* Each half's report button centred under its own column. */
 .bsr-half .bsr-more.bsr-more-cta{align-items:center;text-align:center}
