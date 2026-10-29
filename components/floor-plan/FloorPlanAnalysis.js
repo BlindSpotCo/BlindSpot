@@ -201,7 +201,7 @@ export default function FloorPlanAnalysis({ embedded = false }) {
             `leave` above for why this is no longer a window.close(). */}
         {!embedded && (
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 28, paddingBottom: 18, borderBottom: '1px solid color-mix(in srgb, var(--sun) 55%, transparent)' }}>
-            <p className="kick" style={{ fontSize: 12 }}>Unit Intelligence · Floor Plan Furnishing Advisor</p>
+            <p className="kick" style={{ fontSize: 12 }}>Furnishing advisor</p>
             <button onClick={leave} style={{ fontSize: 12.5, fontWeight: 600, border: '1px solid color-mix(in srgb, var(--sun) 45%, transparent)', borderRadius: 3, padding: '9px 16px', color: 'var(--text-mute)', background: 'transparent', cursor: 'pointer' }}>← Back</button>
           </div>
         )}
@@ -218,7 +218,7 @@ export default function FloorPlanAnalysis({ embedded = false }) {
         {status !== 'done' && (
           <>
             <div style={{ marginBottom: 24 }}>
-              <p className="kick" style={{ marginBottom: 14 }}>Tell Us What You Want, Everyone&apos;s Dream Home Is Different</p>
+              <p className="kick" style={{ marginBottom: 14 }}>What do you want from this home?</p>
               <BPF style={{ padding: '20px 22px' }}>
                 <div style={{ marginBottom: 18 }}>
                   <div style={{ fontSize: 12.5, fontWeight: 600, marginBottom: 8 }}>Home type</div>

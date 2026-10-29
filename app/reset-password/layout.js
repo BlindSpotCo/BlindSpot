@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Reset Password',
+  title: 'Set a new password',
   robots: { index: false, follow: false },
 };
 

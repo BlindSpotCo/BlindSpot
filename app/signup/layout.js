@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Signup',
+  title: 'Create an account',
   robots: { index: false, follow: false },
 };
 

@@ -85,7 +85,6 @@ export default function TypewriterCycle({
       cancelled = true;
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items, typeSpeed, deleteSpeed, holdTime, pauseBeforeNext]);
 
   return (

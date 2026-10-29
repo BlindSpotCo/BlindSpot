@@ -108,7 +108,7 @@ export default function PaywallModal({ modal, setModal, balance, unlocks, ledger
         <p className="pw-eyebrow">Get Keys</p>
         <h2 className="pw-h">Pay per property, not per month</h2>
         {req && need > 0 && (
-          <p className="pw-need">You need <strong>{keysWord(need)}</strong> more to unlock the {t.label.toLowerCase()} for {req.scope}.</p>
+          <p className="pw-need">You need <strong>{need} more {need === 1 ? 'Key' : 'Keys'}</strong> to unlock the {t.label.replace(/^\w/, (c) => c.toLowerCase())} for {req.scope}.</p>
         )}
         <div className="pw-rules">
           <div><strong>2 Keys</strong>Per report, any floor or facing</div>

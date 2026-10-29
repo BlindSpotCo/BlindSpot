@@ -56,7 +56,7 @@ function useFaqItems() {
   return [
     {
       q: 'Is BlindSpot free?',
-      a: 'Yes. Sign in only if you want to save a report.',
+      a: 'The scores, the 3D sun map, the checklist and comparing flats are free. The detailed written reports cost Keys. See Pricing.',
     },
     {
       q: 'Where does the data come from?',

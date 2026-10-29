@@ -82,6 +82,7 @@ export default function PricingView() {
               <li>The score breakdowns and trends</li>
               <li>Your checklist of what to verify</li>
               <li>Saving properties to your profile</li>
+              <li>Comparing flats side by side</li>
             </ul>
           </div>
           <div className="pr-col is-paid">

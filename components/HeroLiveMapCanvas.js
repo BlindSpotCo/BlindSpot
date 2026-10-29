@@ -161,7 +161,6 @@ export default function HeroLiveMapCanvas() {
       } finally {
         if (reqId === requestIdRef.current) setLoading(false);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, 280);
   }, [center.lat, center.lon]);
 

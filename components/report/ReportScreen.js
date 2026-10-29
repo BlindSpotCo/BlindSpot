@@ -2572,7 +2572,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                   disabled={!solar?.pathData}
                   onClick={requestSunReport}
                 >
-                  Get the year-round sunlight report →
+                  Get the <span className="bsr-cta-long">year-round </span>sunlight report →
                   {keys.enabled && !assumed && <KeyCostTag tone="onfill" cost={keyCost} unlocked={reportUnlocked('gallery')} />}
                 </button>
               </p>

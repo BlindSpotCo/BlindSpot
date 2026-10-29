@@ -89,7 +89,8 @@ html.pw-lock{overflow:hidden}
 .pw-pack-price{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
 .pw-pack-per{font-size:12.5px;color:var(--text-mute,#64748B);font-variant-numeric:tabular-nums}
 .pw-pack-fits{font-size:13px;color:var(--text-mute,#64748B);min-height:2.8em}
-.pw-pack .pw-btn{margin-top:8px}
+.pw-pack .pw-btn{margin-top:auto}
+.pw-pack-fits{margin-bottom:8px}
 
 .pw-list{list-style:none;margin:6px 0 0;padding:0}
 .pw-list li{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:9px 0;border-bottom:1px solid var(--line,#E2E8F0);font-size:14px}

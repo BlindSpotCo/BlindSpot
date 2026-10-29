@@ -2,10 +2,10 @@ import SiteHeader from '@/components/SiteHeader';
 import FloorPlanAnalysis from '@/components/floor-plan/FloorPlanAnalysis';
 
 export const metadata = {
-  title: 'Furnishing Advisor',
+  title: 'Furnish your home',
   description: 'Upload a floor plan and get room-by-room furniture and placement suggestions.',
   alternates: { canonical: '/floor-plan-analysis' },
-  openGraph: { title: 'Furnishing Advisor | BlindSpot', description: 'Upload a floor plan and get room-by-room furniture and placement suggestions.' },
+  openGraph: { title: 'Furnish your home | BlindSpot', description: 'Upload a floor plan and get room-by-room furniture and placement suggestions.' },
 };
 
 // SiteHeader, same as every other page. This one was the exception, and

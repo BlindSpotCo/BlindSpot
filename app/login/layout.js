@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Login',
+  title: 'Sign in',
   robots: { index: false, follow: false },
 };
 

@@ -4,7 +4,7 @@ import CompareStudio from '@/components/compare/CompareStudio';
 import { decodeSlots } from '@/lib/compare/derive';
 
 export const metadata = {
-  title: 'Compare flats · BlindSpot',
+  title: 'Compare flats',
   description:
     'Two or three flats side by side: the sun each one actually gets, the neighbourhood around it, and what the price difference really buys.',
 };

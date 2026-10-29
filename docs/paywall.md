@@ -1,4 +1,4 @@
-# Paywall (branch `paywall-ui`)
+# Paywall
 
 UI for the paid version of BlindSpot, built on the Oct 2026 Keys scheme. Everything except taking money: no payment provider, no server wallet. Keys are kept in the browser (localStorage) so the flow can be clicked through end to end.
 
@@ -23,7 +23,7 @@ Unlocks are still remembered per property (pin rounded to ~11 m, `propertyKey`) 
 
 The line follows cost: what triggers AI generation costs Keys, what we compute ourselves stays free.
 
-**Free:** 3D sun & shadow map, Neighbourhood Score, Home Comfort Score, both score breakdowns, trends, the verify checklist, saving to profile, Compare, Furnish.
+**Free:** 3D sun & shadow map, Neighbourhood Score, Home Comfort Score, both score breakdowns, trends, the verify checklist, saving to profile, Compare, Furnish, room-photo analysis.
 
 **Costs Keys:**
 - Detailed neighbourhood report (`/neighbourhood-report/[pin]`, opened from "See the detailed area report")
@@ -50,11 +50,12 @@ Flags:
 
 ## What the UI does
 
-- **Before clicking:** every paid button/link shows a lock + Key cost (`KeyCostTag`), or "Unlocked". The full-report card says "Each report is 2 Keys." with a link to /pricing.
+- **Before clicking:** every paid button/link shows a lock + Key cost (`KeyCostTag`), or "Unlocked".
+- **Report page layout:** area card ends on "See the detailed area report", flat card on "Get the year-round sunlight report"; the full report is one glowing box under both cards, then room photo, then the visit checklist.
 - **On click, enough Keys:** confirm dialog (cost, balance after) → "Use 2 Keys" → the existing report flow opens.
 - **On click, not enough:** Key packs with "You need N more Keys" → checkout (Razorpay button disabled, "Payments aren't live yet") → simulated payment → back to the confirm step for the report you clicked.
 - **Floor/facing unset:** nothing is charged; the old nudge to set them still runs first.
-- **Header:** Key balance chip (opens wallet: balance, unlocked reports, history) on the report page; "Pricing" in the site nav.
+- **Header:** Key balance chip (opens wallet: balance, unlocked reports, history) on the report page; "Pricing" in the site nav. Compare / Furnish links sit inside the full-report box.
 - **/pricing:** rules, packs, shortlist examples, free vs paid.
 
 ## Files

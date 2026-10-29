@@ -17,7 +17,7 @@ export const metadata = {
   // to be somewhere else.
   robots: { index: false, follow: true },
   alternates: { canonical: null },
-  title: 'Your BlindSpot report',
+  title: 'Your report',
   description: 'The neighbourhood, the flat, and one clear summary of the two together.',
 };
 

@@ -26,7 +26,7 @@ export default function NotFound() {
         .bs-404 { max-width: 44rem; margin: 0 auto; padding: 96px 24px; text-align: center; color: var(--text, #1c1812); }
         .bs-404 h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 12px; text-wrap: balance; }
         .bs-404 p { margin: 0 auto; max-width: 52ch; font-size: 17px; line-height: 1.6; color: var(--text-mute, #5a5140); }
-        .bs-404-actions { margin-top: 26px; }
+        .bs-404 .bs-404-actions { margin-top: 26px; }
         .bs-404-actions a { display: inline-block; font-weight: 700; min-height: 50px; padding: 14px 28px; border-radius: 4px; background: var(--ss, #af5f30); color: #fffdf8; text-decoration: none; }
         .bs-404-actions a:hover { background: #95502a; }
       `}</style>

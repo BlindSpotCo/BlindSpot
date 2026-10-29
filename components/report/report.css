@@ -2673,7 +2673,7 @@ button.bsr-cta.is-needs-unit:hover:not(:disabled){background:rgba(61,65,22,.07);
 .bsr-halves > .bsr-half > .bsr-more.bsr-more-cta{margin-top:auto !important;padding-top:18px}
 @media (min-width:561px){
   .bsr-half .bsr-more.bsr-more-cta a,
-  .bsr-half .bsr-more.bsr-more-cta button{width:min(380px,100%);min-height:48px}
+  .bsr-half .bsr-more.bsr-more-cta button{width:min(440px,100%);min-height:48px;white-space:nowrap}
 }
 
 /* Top score card: dial + verdict sit as one centred group. */
@@ -2700,3 +2700,10 @@ button.bsr-cta.is-needs-unit:hover:not(:disabled){background:rgba(61,65,22,.07);
 .bsr-half .bsr-rows li{min-height:44px;align-items:center;padding:8px 6px;margin:0 -6px}
 @media (prefers-reduced-motion:reduce){ .bsr-half .bsr-rows .bsr-row-note{transition:none} }
 .bsr-half .bsr-rows li:focus-visible{outline:2px solid var(--brand,#3D4116);outline-offset:-2px;border-radius:6px}
+
+/* Phone: both report buttons on one line, same height. */
+@media (max-width:560px){
+  .bsr-half .bsr-more.bsr-more-cta a,
+  .bsr-half .bsr-more.bsr-more-cta button{width:100%;white-space:nowrap;font-size:14px;padding:0 14px}
+  .bsr-cta-long{display:none}
+}
