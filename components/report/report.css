@@ -2707,3 +2707,87 @@ button.bsr-cta.is-needs-unit:hover:not(:disabled){background:rgba(61,65,22,.07);
   .bsr-half .bsr-more.bsr-more-cta button{width:100%;white-space:nowrap;font-size:14px;padding:0 14px}
   .bsr-cta-long{display:none}
 }
+
+/* ================= map step on a phone: thin bars, more map =================
+   Top: one 52px row (logo, address, season, sunlight icon, search icon).
+   Bottom: one row (floor, faces, go). The map gets the rest. */
+.bsr-mapcta-short,.bsr-fullbar-search-ico{display:none}
+@media (max-width:560px){
+  .bsr .bsr-mapzone.is-full .bsr-fullbar{
+    display:flex !important;flex-wrap:wrap;align-items:center;gap:6px;
+    padding:8px 10px !important;min-height:0;grid-template-columns:none;
+  }
+  .bsr-mapzone.is-full .bsr-fullbar > *{margin:0 !important}
+  .bsr-mapzone.is-full .bsr-fullbar::after{display:none !important}
+  .bsr-mapzone.is-full .bsr-fullbar .bsr-home{width:36px;height:36px;flex:none;order:0}
+  .bsr-mapzone.is-full .bsr-fullbar-where{flex:1 1 0;min-width:0;order:1}
+  .bsr-mapzone.is-full .bsr-fullbar-addr{display:block;font-size:14px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bsr-mapzone.is-full .bsr-fullbar-controls{flex:none;order:2;width:auto !important}
+  .bsr-mapzone.is-full .bsr-fullbar-season .bsr-set-field > span{display:none}
+  .bsr-mapzone.is-full .bsr-fullbar-season select{height:36px;min-height:36px !important;max-width:96px;font-size:14px !important;padding:0 24px 0 10px !important}
+  .bsr-mapzone.is-full .bsr-fullbar-sun,
+  .bsr-mapzone.is-full .bsr-fullbar-search-toggle{
+    flex:none;width:36px !important;height:36px !important;min-height:36px !important;padding:0 !important;
+    border-radius:10px !important;display:grid !important;place-items:center;gap:0;
+  }
+  .bsr-mapzone.is-full .bsr-fullbar-sun{order:3;box-shadow:none !important}
+  .bsr-mapzone.is-full .bsr-fullbar-search-toggle{order:4}
+  .bsr-mapzone.is-full .bsr-fullbar-sun > :not(svg),
+  .bsr-mapzone.is-full .bsr-fullbar-search-label{display:none !important}
+  .bsr-mapzone.is-full .bsr-fullbar-search-ico{display:block}
+  .bsr-mapzone.is-full .bsr-fullbar-search{order:5;flex:1 1 100%}
+  .bsr-mapzone.is-full .bsr-fullbar-unit{display:block;font-size:11.5px}
+
+  /* bottom: one row */
+  .bsr-mapzone.is-full .bsr-dockzone{
+    display:flex !important;flex-direction:row !important;flex-wrap:wrap;align-items:flex-end !important;gap:8px;
+    left:8px !important;right:8px !important;bottom:8px !important;padding:8px 10px !important;border-radius:14px !important;
+  }
+  .bsr-mapzone.is-full .bsr-dock{display:contents}
+  .bsr-mapzone.is-full .bsr-docktip{flex:1 1 100%;order:0;margin:0 !important;padding:6px 8px !important;border-radius:9px}
+  .bsr-mapzone.is-full .bsr-docktip-text span{display:none}
+  .bsr-mapzone.is-full .bsr-dock-fields{order:1;flex:1 1 auto;min-width:0;margin:0 !important;padding:0 !important;min-height:0 !important}
+  .bsr-mapzone.is-full .bsr-dock-fields .bsr-set-unit{display:flex;gap:8px;align-items:flex-end;flex-wrap:nowrap}
+  .bsr-mapzone.is-full .bsr-dock-fields .bsr-set-field{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0}
+  .bsr-mapzone.is-full .bsr-dock-fields .bsr-set-field > span{font-size:10.5px !important;letter-spacing:.04em;text-transform:uppercase}
+  .bsr-mapzone.is-full .bsr-dock-fields input{width:46px !important;height:38px;min-height:38px !important;font-size:16px !important;padding:0 6px !important;text-align:center}
+  .bsr-mapzone.is-full .bsr-dock-fields select{height:38px;min-height:38px !important;font-size:15px !important;max-width:118px;padding:0 22px 0 8px !important}
+  .bsr-long-only{display:none}
+  .bsr-mapzone.is-full .bsr-mapcta{order:2;flex:none;display:block;margin:0 !important;padding:0 !important;border:0 !important;box-shadow:none !important;background:none !important}
+  .bsr-mapzone.is-full .bsr-mapcta-say{display:none}
+  .bsr-mapzone.is-full .bsr-mapcta-go{
+    height:38px;min-height:38px !important;padding:0 14px !important;font-size:14.5px !important;white-space:nowrap;
+    border-radius:10px !important;width:auto !important;
+  }
+  .bsr-mapzone.is-full .bsr-mapcta-long{display:none}
+  .bsr-mapzone.is-full .bsr-mapcta-short{display:inline}
+}
+
+/* ---- checklist: title only until you hover / focus / tick ----
+   Same pattern as the area and flat rows. The tip and the note/photo
+   links open on hover or keyboard focus, and stay open once an item is
+   ticked or has a note or photo. On touch screens (no hover) the tip
+   stays visible -- it's what you read on the visit -- and only the
+   note/photo links wait for a tick. */
+.bsr-todo .bsr-todo-text,
+.bsr-todo .bsr-todo-extras{
+  max-height:0;opacity:0;overflow:hidden;margin-top:0;margin-bottom:0;
+  transition:max-height .22s ease, opacity .18s ease;
+}
+.bsr-todo li:hover .bsr-todo-text,
+.bsr-todo li:focus-within .bsr-todo-text,
+.bsr-todo li.is-done .bsr-todo-text,
+.bsr-todo li.is-open .bsr-todo-text{max-height:8em;opacity:1;margin-top:2px}
+.bsr-todo li:hover .bsr-todo-extras,
+.bsr-todo li:focus-within .bsr-todo-extras,
+.bsr-todo li.is-done .bsr-todo-extras,
+.bsr-todo li.is-open .bsr-todo-extras{max-height:30em;opacity:1;overflow:visible;margin-top:4px}
+@media (hover:none){
+  .bsr-todo .bsr-todo-text{max-height:none;opacity:1;margin-top:2px}
+}
+@media (prefers-reduced-motion:reduce){ .bsr-todo .bsr-todo-text,.bsr-todo .bsr-todo-extras{transition:none} }
+.bsr-todo li.bsr-todo-plain .bsr-todo-text{max-height:none;opacity:1}
+/* Two-column grid, not CSS columns: with columns, opening one item
+   reflowed the rest from one column into the other. */
+.bsr-todo{columns:auto !important;display:grid;grid-template-columns:1fr 1fr;column-gap:48px;align-items:start}
+@media (max-width:900px){ .bsr-todo{grid-template-columns:1fr} }

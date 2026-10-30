@@ -24,7 +24,7 @@ import { getActionItems } from '@/lib/property-score/actionItems';
 import { encodeSlots } from '@/lib/compare/derive';
 import {
   ShieldCheck, GraduationCap, Wind, Droplets, Zap, Route, Building2, Waves,
-  Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake, Sofa, ArrowDown, MapPin, Scale, FileText, Check, X,
+  Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake, Sofa, ArrowDown, MapPin, Scale, FileText, Check, X, Search,
 } from 'lucide-react';
 import RoomPhotoAnalyzer from './RoomPhotoAnalyzer';
 import { useTrends } from '@/lib/trends/useTrends';
@@ -1540,7 +1540,7 @@ export default function ReportScreen({ view = 'verdict' }) {
         />
       </label>
       <label className={`bsr-set-field${facingSet ? '' : ' is-unset'}`}>
-        <span>Balcony faces</span>
+        <span><span className="bsr-long-only">Balcony </span>faces</span>
         <select
           value={facingSet ? facing : ''}
           onChange={(e) => { if (!e.target.value) return; setFacingSet(true); setFacing(e.target.value); }}
@@ -1757,6 +1757,7 @@ export default function ReportScreen({ view = 'verdict' }) {
               className="bsr-fullbar-sun"
               disabled={!solar?.pathData}
               onClick={requestSunReport}
+              aria-label="Year-round sunlight report"
               title="Light and shadow on this unit across all four seasons"
             >
               <Sun size={16} strokeWidth={2.2} aria-hidden="true" />
@@ -1771,7 +1772,10 @@ export default function ReportScreen({ view = 'verdict' }) {
               onClick={() => setMapSearchOpen((v) => !v)}
               aria-expanded={mapSearchOpen}
             >
-              {mapSearchOpen ? 'Cancel' : 'Not this address?'}
+              {mapSearchOpen
+                ? <X className="bsr-fullbar-search-ico" size={17} strokeWidth={2.4} aria-hidden="true" />
+                : <Search className="bsr-fullbar-search-ico" size={17} strokeWidth={2.4} aria-hidden="true" />}
+              <span className="bsr-fullbar-search-label">{mapSearchOpen ? 'Cancel' : 'Not this address?'}</span>
             </button>
 
             {mapSearchOpen && (
@@ -1941,7 +1945,8 @@ export default function ReportScreen({ view = 'verdict' }) {
                   ref={fullBackRef}
                   onClick={confirmSpot}
                 >
-                  {pinTouched ? 'See the analysis' : 'Continue without placing a pin'}
+                  <span className="bsr-mapcta-long">{pinTouched ? 'See the analysis' : 'Continue without placing a pin'}</span>
+                  <span className="bsr-mapcta-short">{pinTouched ? 'See analysis' : 'Skip pin'}</span>
                   <span aria-hidden="true"> →</span>
                 </button>
               </div>
@@ -2572,7 +2577,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                   disabled={!solar?.pathData}
                   onClick={requestSunReport}
                 >
-                  Get the <span className="bsr-cta-long">year-round </span>sunlight report →
+                  <span>Get the <span className="bsr-cta-long">year-round </span>sunlight report →</span>
                   {keys.enabled && !assumed && <KeyCostTag tone="onfill" cost={keyCost} unlocked={reportUnlocked('gallery')} />}
                 </button>
               </p>
@@ -2678,7 +2683,10 @@ export default function ReportScreen({ view = 'verdict' }) {
                   // no way back to "+ Add a note" at all.
                   const showNote = !collapsedNotes.has(a.key) && (isTicked || hasNote || expandedNotes.has(a.key));
                   return (
-                    <li key={a.key} className={isTicked ? 'is-done' : undefined}>
+                    <li
+                      key={a.key}
+                      className={[isTicked && 'is-done', (showNote || checkPhotos[a.key]) && 'is-open'].filter(Boolean).join(' ') || undefined}
+                    >
                       <label className="bsr-todo-row">
                         <input
                           type="checkbox"
