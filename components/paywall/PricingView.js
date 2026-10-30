@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 // components/paywall/PricingView.js -- the /pricing page body.
 
 import { useKeys } from '@/lib/paywall/KeysProvider';
@@ -94,6 +95,11 @@ export default function PricingView() {
             </ul>
           </div>
         </section>
+        <p className="pr-p pr-fine">
+          Prices in Indian rupees. Payments by Razorpay. No subscription. Unused Keys can be
+          refunded within 7 days: see <Link href="/refunds">Cancellation &amp; refunds</Link>.
+          Keys and reports are delivered online, instantly (<Link href="/shipping">delivery</Link>).
+        </p>
       </div>
     </main>
   );

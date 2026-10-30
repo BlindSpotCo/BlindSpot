@@ -53,6 +53,12 @@ const sections = [
           These are sent to Google&apos;s Gemini AI to work out rooms, windows and light. Don&apos;t
           upload photos of people, documents or anything private you wouldn&apos;t want analysed.
         </p>
+        <h3>Purchases and Keys</h3>
+        <p>
+          When you buy Keys, we keep a record of the purchase (pack, amount, date, Razorpay payment
+          ID), your Key balance, and which reports you&apos;ve unlocked. We need this for receipts,
+          refunds and tax records. Your card, UPI or bank details go to Razorpay, not to us.
+        </p>
         <h3>Feedback you send</h3>
         <p>
           The footer feedback box and the small &quot;report&quot; buttons next to numbers in a report store your message,
@@ -97,6 +103,7 @@ const sections = [
         <ul>
           <li><strong>Supabase</strong> stores accounts, saved reports, folders and feedback.</li>
           <li><strong>Vercel</strong> hosts the website and counts visits.</li>
+          <li><strong>Razorpay</strong> processes payments for Keys. It receives your payment details and the email and phone you give at checkout. We only receive the payment ID, the amount and whether it succeeded, never your full card or bank details.</li>
           <li><strong>Google</strong> handles Google sign-in, writes report text and analyses uploaded photos and floor plans (Gemini), and provides air quality readings for a location.</li>
           <li><strong>Map and weather providers</strong> receive the location being looked up: OpenStreetMap&apos;s Nominatim and Komoot&apos;s Photon (address search), Esri and CARTO (map pictures), OSM Buildings (building heights), and Open-Meteo (weather and air). Some map pictures load straight from these providers, so they see your IP address like any website you visit.</li>
         </ul>
@@ -131,7 +138,7 @@ const sections = [
         </p>
         <p>
           You can delete saved reports and folders yourself from your profile. For anything else,
-          including deleting your whole account, email {mail} from the email address on your
+          including deleting your whole account, email {mail}{' '}from the email address on your
           account. We&apos;ll reply within 30 days.
         </p>
         <p>
@@ -189,7 +196,7 @@ export default function PrivacyPage() {
       title="Privacy policy"
       intro="What BlindSpot collects when you use it, why, who else handles it, and how to get it deleted."
       sections={sections}
-      other={{ href: '/terms', label: 'Terms of use' }}
+      current="/privacy"
     />
   );
 }

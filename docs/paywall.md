@@ -15,7 +15,7 @@ Flat price: **2 Keys per report**, every time. No discount for a second floor, f
 | Basic | 6 | ₹299 | ₹49.83 | ₹99.67 | 3 |
 | Explorer | 18 | ₹799 | ₹44.39 | ₹88.78 | 9 |
 | Investor | 30 | ₹1,199 | ₹39.97 | ₹79.93 | 15 |
-| Pro | 50 | ₹1,999 | ₹39.98 | ₹79.96 | 25 |
+| Pro | 50 | ₹1,899 | ₹37.98 | ₹75.96 | 25 |
 
 Unlocks are still remembered per property (pin rounded to ~11 m, `propertyKey`) so a report you've paid for opens again for free.
 
@@ -39,13 +39,13 @@ Assumes ~₹50 to generate a report and every Key gets used (the worst case). Be
 | Basic | +₹49.67 | 3 | ₹149 (50%) |
 | Explorer | +₹38.78 | 9 | ₹349 (44%) |
 | Investor | +₹29.93 | 15 | ₹449 (37%) |
-| Pro | +₹29.96 | 25 | ₹749 (37%) |
+| Pro | +₹25.96 | 25 | ₹649 (34%) |
 
 Every report now makes money on every pack (the old 1-Key extra report lost ₹5–10 on the bigger packs).
 
 Flags:
 1. **Comparing flats costs more for buyers.** 4 flats in 2 towers is now 8 Keys, more than Basic's 6. Basic covers 3 reports.
-2. **Pro isn't cheaper per Key than Investor** (₹39.98 vs ₹39.97). For a small step down: Pro at ₹1,899 = ₹37.98/Key.
+2. Pro is now ₹1,899 (₹37.98 a Key), the cheapest per Key of the four packs.
 3. Unused Keys are pure margin and aren't counted above.
 
 ## What the UI does

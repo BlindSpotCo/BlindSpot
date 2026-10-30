@@ -19,3 +19,4 @@
 .pr-col.is-paid{border-color:var(--brand,#3D4116)}
 .pr-col h3{margin:0 0 8px;font-size:16px}
 .pr-col ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px;font-size:14px}
+.pr-fine{font-size:13.5px !important;color:var(--text-mute,#64748B) !important}.pr-fine a{color:var(--brand,#3D4116);font-weight:600}

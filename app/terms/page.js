@@ -34,7 +34,7 @@ const sections = [
           and the buildings around a flat. Some of the report text is written by AI.
         </p>
         <p>
-          <strong>It&apos;s a research aid, not professional advice.</strong> A report is not a
+          <strong>It&apos;s a research aid, not professional advice.</strong>{' '}A report is not a
           property survey, structural inspection, legal or title check, valuation, or financial
           advice. Government data can be out of date or incomplete. Sun and heat numbers are
           estimates that don&apos;t include daily weather, and AI-written text can get things wrong.
@@ -67,7 +67,7 @@ const sections = [
         <ul>
           <li>scrape, bulk-download or automate requests to the site or its data;</li>
           <li>copy, resell or republish our scores or reports as a dataset or competing service;</li>
-          <li>try to break, overload, or get around the limits and security of the site;</li>
+          <li>try to break, overload, or get around the limits and security of the site, including its payments and Keys;</li>
           <li>upload anything illegal, or photos you don&apos;t have the right to share, such as photos of other people or their private documents;</li>
           <li>use BlindSpot to mislead others, for example by passing off an edited report as ours.</li>
         </ul>
@@ -101,13 +101,26 @@ const sections = [
   },
   {
     id: 'price',
-    title: 'Price',
+    title: 'Prices, Keys and payment',
     body: (
-      <p>
-        BlindSpot is free to use today. We may add paid features later. If we do, we&apos;ll show
-        you the price before you pay, and we&apos;ll never charge you for something you didn&apos;t
-        choose to buy.
-      </p>
+      <>
+        <p>
+          Searching, both scores, the 3D sun map, the visit checklist and comparing flats are
+          free. Detailed written reports cost Keys, which you buy in packs. Current packs and the
+          Key cost of each report are on the <Link href="/pricing">Pricing</Link> page.
+        </p>
+        <ul>
+          <li>Prices are in Indian rupees and shown before you pay. Every paid button shows its Key cost, and nothing is spent until you confirm.</li>
+          <li>Payments are processed by Razorpay. We never see or store your full card or bank details.</li>
+          <li>Keys are a credit for BlindSpot reports only. They aren&apos;t money, can&apos;t be transferred, sold or exchanged for cash, and don&apos;t expire while your account is open.</li>
+          <li>A report you&apos;ve unlocked opens again for free. There&apos;s no subscription and no automatic charge.</li>
+          <li>Refunds follow our <Link href="/refunds">Cancellation &amp; refunds</Link> policy.</li>
+        </ul>
+        <p>
+          We may change prices or packs. A change never affects Keys you&apos;ve already bought.
+          Keys obtained through a bug, a fraudulent payment or a chargeback may be removed.
+        </p>
+      </>
     ),
   },
   {
@@ -179,7 +192,7 @@ export default function TermsPage() {
       title="Terms of use"
       intro="The rules for using BlindSpot, and what our reports can and can’t tell you."
       sections={sections}
-      other={{ href: '/privacy', label: 'Privacy policy' }}
+      current="/terms"
     />
   );
 }

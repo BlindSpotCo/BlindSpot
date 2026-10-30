@@ -2995,7 +2995,7 @@ html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; touch-action:manipul
 }
 
 /* ---------- Footer legal links + sign-up agreement line ---------- */
-.footer-legal{ display:flex; gap:16px }
+.footer-legal{ display:flex; flex-wrap:wrap; gap:6px 16px }
 .footer-legal a{
   font-family:'Geist Mono',monospace; font-size:10.5px; letter-spacing:.05em;
   color:rgba(255,253,248,0.55); text-decoration:none;
@@ -3023,3 +3023,10 @@ html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; touch-action:manipul
 .legal li{ margin:0 0 6px }
 .legal a{ color:var(--ss,#af5f30) }
 .legal-foot{ margin-top:48px !important; padding-top:20px; border-top:1px solid var(--line-soft,rgba(28,24,18,.12)); color:var(--text-mute,#5a5140) }
+.legal-links{ display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:8px; font-size:14px }
+.legal-links a{ color:var(--text-mute,#5a5140); text-decoration:underline; text-underline-offset:3px }
+.legal-links a:hover{ color:var(--text,#1c1812) }
+.legal-contact{ margin:0 0 12px; padding:0; list-style:none }
+.legal-contact li{ display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--line-soft,rgba(28,24,18,.1)) }
+.legal-contact li span:first-child{ flex:0 0 7.5rem; color:var(--text-mute,#5a5140) }
+@media (max-width:560px){ .legal-contact li{ flex-direction:column; gap:2px } .legal-contact li span:first-child{ flex:none } }
