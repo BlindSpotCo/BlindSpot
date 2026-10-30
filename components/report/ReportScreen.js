@@ -1295,6 +1295,12 @@ export default function ReportScreen({ view = 'verdict' }) {
   // just because it was closed once before.
   // Declared before toggleTick, which reopens a collapsed note on tick.
   const [expandedNotes, setExpandedNotes] = useState(() => new Set());
+  // Checklist tips open on hover (desktop) or a tap on the title (phone,
+  // where there's no hover). The checkbox alone does the ticking.
+  const [openTips, setOpenTips] = useState(() => new Set());
+  const toggleTip = useCallback((key) => {
+    setOpenTips((prev) => { const n = new Set(prev); if (n.has(key)) n.delete(key); else n.add(key); return n; });
+  }, []);
   const [collapsedNotes, setCollapsedNotes] = useState(() => new Set());
   const toggleTick = useCallback((key) => {
     const willTick = !ticked.has(key);
@@ -2685,7 +2691,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                   return (
                     <li
                       key={a.key}
-                      className={[isTicked && 'is-done', (showNote || checkPhotos[a.key]) && 'is-open'].filter(Boolean).join(' ') || undefined}
+                      className={[isTicked && 'is-done', (showNote || checkPhotos[a.key] || openTips.has(a.key)) && 'is-open'].filter(Boolean).join(' ') || undefined}
                     >
                       <label className="bsr-todo-row">
                         <input
@@ -2694,8 +2700,14 @@ export default function ReportScreen({ view = 'verdict' }) {
                           checked={isTicked}
                           onChange={() => toggleTick(a.key)}
                         />
-                        <span className="bsr-todo-body">
-                          <strong className="bsr-todo-title">{a.label} - {String(word(a.score)).toLowerCase()} ({a.score})</strong>
+                        <span
+                          className="bsr-todo-body"
+                          onClick={(e) => { e.preventDefault(); toggleTip(a.key); }}
+                        >
+                          <strong className="bsr-todo-title">
+                            {a.label} - {String(word(a.score)).toLowerCase()} ({a.score})
+                            <span className={`bsr-todo-chev${openTips.has(a.key) ? ' is-open' : ''}`} aria-hidden="true">▾</span>
+                          </strong>
                           <span className="bsr-todo-text">{a.action}</span>
                         </span>
                       </label>

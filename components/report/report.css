@@ -2782,12 +2782,20 @@ button.bsr-cta.is-needs-unit:hover:not(:disabled){background:rgba(61,65,22,.07);
 .bsr-todo li:focus-within .bsr-todo-extras,
 .bsr-todo li.is-done .bsr-todo-extras,
 .bsr-todo li.is-open .bsr-todo-extras{max-height:30em;opacity:1;overflow:visible;margin-top:4px}
-@media (hover:none){
-  .bsr-todo .bsr-todo-text{max-height:none;opacity:1;margin-top:2px}
-}
+/* Tapping the title opens the tip; only the box ticks. */
+.bsr-todo-body{cursor:pointer}
+.bsr-todo-chev{display:inline-block;margin-left:6px;font-size:11px;color:var(--text-dim,#8A7F68);transition:transform .2s ease}
+.bsr-todo li:hover .bsr-todo-chev,.bsr-todo-chev.is-open{transform:rotate(180deg)}
 @media (prefers-reduced-motion:reduce){ .bsr-todo .bsr-todo-text,.bsr-todo .bsr-todo-extras{transition:none} }
 .bsr-todo li.bsr-todo-plain .bsr-todo-text{max-height:none;opacity:1}
 /* Two-column grid, not CSS columns: with columns, opening one item
    reflowed the rest from one column into the other. */
 .bsr-todo{columns:auto !important;display:grid;grid-template-columns:1fr 1fr;column-gap:48px;align-items:start}
 @media (max-width:900px){ .bsr-todo{grid-template-columns:1fr} }
+/* Touch screens: a tap leaves a sticky :hover behind, so only the tap
+   state (.is-open), a tick, or a note decides what's open. */
+@media (hover:none){
+  .bsr-todo li:not(.is-open):not(.is-done):hover .bsr-todo-text,
+  .bsr-todo li:not(.is-open):not(.is-done):hover .bsr-todo-extras{max-height:0;opacity:0;margin-top:0;overflow:hidden}
+  .bsr-todo li:hover .bsr-todo-chev:not(.is-open){transform:none}
+}
