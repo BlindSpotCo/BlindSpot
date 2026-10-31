@@ -9,12 +9,12 @@
 // One page, four views:
 //   page   -- the 3D map full width at the top, one sentence from the sun
 //             model, then "Where it scores high" and "Ask about on your
-//             visit", then the full-report band.
+//             visit". "Your reports" (neighbourhood, sun, full) sits
+//             right under the headline.
 //   item   -- one row opened: what our data shows, where this pincode sits
 //             among the city's pincodes we cover, and what to check.
 //   sun    -- the same 3D map, larger, with season / play / time and the
 //             month-by-month hours.
-//   report -- what the full report contains, and the button that starts it.
 //
 // Wording: no verdict words (good / poor / strong / weak / risk). Every line
 // says where it comes from -- "in our data", "our sun model" -- because we
@@ -253,6 +253,57 @@ export default function PhoneReport({
   const openItem = (id) => { setItemId(id); setView('item'); };
   const startReport = (type) => { setView('page'); onRequestReport(type); };
 
+  // The three reports, in one place. Neighbourhood opens the existing
+  // page for this pincode; Sun and Full start the existing report flow.
+  const busy = reportBusy || {};
+  const reportsBlock = (
+    <section className="bsrp-reports" aria-labelledby="bsrp-reports-h">
+      <h2 id="bsrp-reports-h" className="bsrp-h2">Your reports</h2>
+      <ul>
+        {hasArea && (
+          <li>
+            <a className="bsrp-rep" href={`/neighbourhood-report/${area.pinCode}`} target="_blank" rel="opener">
+              <span className="bsrp-rep-text">
+                <strong>Neighbourhood report</strong>
+                <span>Every area item for pin {area.pinCode}, with sources</span>
+              </span>
+              <span className="bsrp-rep-go">Open</span>
+            </a>
+          </li>
+        )}
+        <li>
+          <button type="button" className="bsrp-rep" disabled={!mapReady || busy.gallery} onClick={() => startReport('gallery')}>
+            <span className="bsrp-rep-text">
+              <strong>Sun report</strong>
+              <span>{busy.gallery ? 'Building it now…' : 'Your flat’s light in every season, as a PDF'}</span>
+            </span>
+            <span className="bsrp-rep-go">{busy.gallery ? '…' : 'Get'}</span>
+          </button>
+        </li>
+        <li>
+          {unitSet ? (
+            <button type="button" className="bsrp-rep is-main" disabled={!mapReady || busy.full} onClick={() => startReport('full')}>
+              <span className="bsrp-rep-text">
+                <strong>Full report</strong>
+                <span>{busy.full ? 'Writing it now, about two minutes…' : 'Area and flat together, with what to check, as a PDF'}</span>
+              </span>
+              <span className="bsrp-rep-go">{busy.full ? '…' : 'Get'}</span>
+            </button>
+          ) : (
+            <button type="button" className="bsrp-rep is-main" onClick={onChangeFlat}>
+              <span className="bsrp-rep-text">
+                <strong>Full report</strong>
+                <span>Set your floor and facing first, it’s written for one flat</span>
+              </span>
+              <span className="bsrp-rep-go">Set</span>
+            </button>
+          )}
+        </li>
+      </ul>
+      <p className="bsrp-small">{mapReady ? 'Free for now.' : 'Sun and Full reports unlock once the 3D map has loaded.'}</p>
+    </section>
+  );
+
   const dec = sun?.by?.December?.hours;
   const jun = sun?.by?.June?.hours;
   const headline = sun && typeof dec === 'number' && typeof jun === 'number'
@@ -320,9 +371,15 @@ export default function PhoneReport({
             <p className="bsrp-quote">{check}</p>
           </>
         )}
-        <button type="button" className="bsrp-text-link" onClick={() => setView('report')}>
-          The full report goes deeper on this <ChevronRight size={16} strokeWidth={2.2} aria-hidden="true" />
-        </button>
+        {item.kind === 'area' && hasArea ? (
+          <a className="bsrp-text-link" href={`/neighbourhood-report/${area.pinCode}`} target="_blank" rel="opener">
+            Open the neighbourhood report <ChevronRight size={16} strokeWidth={2.2} aria-hidden="true" />
+          </a>
+        ) : (
+          <button type="button" className="bsrp-text-link" onClick={() => setView('page')}>
+            See your reports <ChevronRight size={16} strokeWidth={2.2} aria-hidden="true" />
+          </button>
+        )}
 
         <div className="bsrp-sheet-foot">
           <button type="button" className="bsrp-text-btn" onClick={() => setView('page')}>Back</button>
@@ -331,53 +388,6 @@ export default function PhoneReport({
               Next: {next.name} <ChevronRight size={16} strokeWidth={2.2} aria-hidden="true" />
             </button>
           )}
-        </div>
-      </div>
-    );
-  }
-
-  /* ---------------- report ---------------- */
-  if (view === 'report') {
-    const busy = reportBusy?.full;
-    return (
-      <div className="bsrp-sheet is-report" role="dialog" aria-modal="true" aria-labelledby="bsrp-rep-h">
-        <div className="bsrp-rep-top">
-          <button type="button" className="bsrp-icon-btn is-light" onClick={() => setView('page')} aria-label="Back">
-            <ArrowLeft size={22} strokeWidth={2} />
-          </button>
-          <p className="bsrp-kicker is-light">Full report · {ord(floor)} floor · faces {String(facing).toLowerCase()}</p>
-          <h2 id="bsrp-rep-h" className="bsrp-rep-h">Everything on this page, in detail, for this flat.</h2>
-          <div className="bsrp-paper" aria-hidden="true">
-            <span className="bsrp-paper-k">Summary for your flat</span>
-            <span className="bsrp-paper-l" /><span className="bsrp-paper-l" /><span className="bsrp-paper-l is-short" />
-            <span className="bsrp-paper-k">The area, item by item</span>
-            <span className="bsrp-paper-l" /><span className="bsrp-paper-l is-short" />
-            <span className="bsrp-paper-k">Sunlight through the year</span>
-            <span className="bsrp-paper-bars"><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /></span>
-          </div>
-        </div>
-        <div className="bsrp-rep-body">
-          <h3 className="bsrp-h2">What’s inside</h3>
-          <ol className="bsrp-contents">
-            <li><span>1</span><div><strong>A summary for your flat</strong><p>The area and this flat, together, in plain words</p></div></li>
-            {hasArea && <li><span>2</span><div><strong>The area, item by item</strong><p>What the data shows and how it has moved over the years</p></div></li>}
-            <li><span>{hasArea ? 3 : 2}</span><div><strong>Sunlight through the year</strong><p>Month by month, with pictures from the 3D model</p></div></li>
-            <li><span>{hasArea ? 4 : 3}</span><div><strong>Your floor and facing</strong><p>Sun, view, privacy and airflow estimates for this unit</p></div></li>
-            <li><span>{hasArea ? 5 : 4}</span><div><strong>Questions for your visit</strong><p>What to ask the builder or society before you pay a token</p></div></li>
-          </ol>
-          <p className="bsrp-small">Built from the same data as this page. Estimates, not an inspection or advice.</p>
-        </div>
-        <div className="bsrp-rep-bar">
-          {!unitSet ? (
-            <button type="button" className="bsrp-cta" onClick={onChangeFlat}>Set floor and facing first</button>
-          ) : (
-            <button type="button" className="bsrp-cta" disabled={busy || !mapReady} onClick={() => startReport('full')}>
-              {busy ? 'Writing your report…' : 'Create my full report'}
-            </button>
-          )}
-          <span className="bsrp-small is-center">
-            {!unitSet ? 'The report is written for one exact flat.' : !mapReady ? 'Waiting for the 3D map to load' : 'Free for now · about two minutes · PDF to keep'}
-          </span>
         </div>
       </div>
     );
@@ -453,9 +463,8 @@ export default function PhoneReport({
             </>
           )}
 
-          <button type="button" className="bsrp-text-link" disabled={!mapReady || reportBusy?.gallery} onClick={() => startReport('gallery')}>
-            {reportBusy?.gallery ? 'Building the sunlight report…' : 'Get pictures for every season, as a PDF'}
-            <ChevronRight size={16} strokeWidth={2.2} aria-hidden="true" />
+          <button type="button" className="bsrp-cta" disabled={!mapReady || reportBusy?.gallery} onClick={() => startReport('gallery')}>
+            {reportBusy?.gallery ? 'Building the sun report…' : 'Get the sun report (PDF)'}
           </button>
         </div>
       </div>
@@ -493,6 +502,8 @@ export default function PhoneReport({
         <p className="bsrp-small">Our sun model’s estimate for this floor and facing.</p>
       </div>
 
+      {reportsBlock}
+
       {high.length > 0 && (
         <section className="bsrp-sec" aria-labelledby="bsrp-high">
           <div className="bsrp-sec-head"><h2 id="bsrp-high" className="bsrp-h2">{HIGH_TITLE}</h2><span>{high.length}</span></div>
@@ -520,12 +531,6 @@ export default function PhoneReport({
         </p>
       )}
 
-      <button type="button" className="bsrp-band" onClick={() => setView('report')}>
-        <span className="bsrp-kicker is-light">Full report</span>
-        <span className="bsrp-band-h">Everything above, in detail, for this flat.</span>
-        <span className="bsrp-band-p">What to check on your visit, sunlight month by month, and a PDF to share with family.</span>
-        <span className="bsrp-band-go">See what’s inside <ChevronRight size={18} strokeWidth={2.2} aria-hidden="true" /></span>
-      </button>
 
       <div className="bsrp-foot">
         <p>

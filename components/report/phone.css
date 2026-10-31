@@ -13,7 +13,7 @@
   --p-area:#6B2232;
   --p-flat:#8A4A22;
   --p-sun:#E9A94A;
-  --p-hero:58vh;
+  --p-hero:44vh;
   position:relative;
   padding:0;
   max-width:none;
@@ -21,7 +21,7 @@
   color:var(--p-ink);
   min-height:100vh;
 }
-@supports (height:1svh){ .bsr.is-phone{ --p-hero:58svh } }
+@supports (height:1svh){ .bsr.is-phone{ --p-hero:44svh } }
 
 /* ---------- the live 3D map, full width at the top ----------
    The same Map3DShadow instance as everywhere else (the PDF reports
@@ -70,9 +70,9 @@
 }
 .bsrp-hero-chip svg{ color:var(--p-sun) }
 
-.bsrp-intro{ padding:24px 22px 0 }
+.bsrp-intro{ padding:16px 18px 0 }
 .bsrp-kicker{
-  margin:0 0 10px; font-size:12px; letter-spacing:.12em; text-transform:uppercase;
+  margin:0 0 6px; font-size:12px; letter-spacing:.1em; text-transform:uppercase;
   font-weight:600; color:var(--p-flat);
 }
 .bsrp-kicker.is-warn{ color:var(--bsr-avg,#6B4600); text-transform:none; letter-spacing:0; font-size:14px }
@@ -83,31 +83,31 @@
   min-height:32px;
 }
 .bsrp-h1{
-  margin:0 0 8px; font-family:'Playfair Display', Georgia, serif; font-weight:500;
-  font-size:30px; line-height:1.18; letter-spacing:0;
+  margin:0 0 4px; font-weight:700;
+  font-size:22px; line-height:1.25; letter-spacing:-.01em;
 }
 .bsrp-h2{
-  margin:0; font-family:'Playfair Display', Georgia, serif; font-weight:500;
-  font-size:24px; line-height:1.2;
+  margin:0; font-weight:700;
+  font-size:18px; line-height:1.3;
 }
-.bsrp-h3{ margin:32px 0 8px; font-size:15px; font-weight:600 }
+.bsrp-h3{ margin:22px 0 6px; font-size:15px; font-weight:600 }
 .bsrp-small{ margin:6px 0 0; font-size:13px; line-height:1.5; color:var(--p-faint) }
 .bsrp-small.is-center{ text-align:center }
-.bsrp .bsrp-label, .bsrp-sheet .bsrp-label{ margin:30px 0 6px; font-size:14px; color:var(--p-mute) }
+.bsrp .bsrp-label, .bsrp-sheet .bsrp-label{ margin:20px 0 4px; font-size:14px; color:var(--p-mute) }
 
-.bsrp-sec{ padding:38px 22px 0 }
+.bsrp-sec{ padding:22px 18px 0 }
 .bsrp-sec-head{ display:flex; align-items:baseline; justify-content:space-between }
 .bsrp-sec-head > span{ font-size:14px; color:var(--p-faint) }
-.bsrp-list{ list-style:none; margin:6px 0 0; padding:0 }
+.bsrp-list{ list-style:none; margin:2px 0 0; padding:0 }
 .bsrp-list li + li .bsrp-row{ border-top:1px solid var(--p-line) }
 .bsrp-row{
   width:100%; display:flex; align-items:center; gap:14px;
-  padding:17px 0; border:0; background:none; text-align:left;
+  padding:11px 0; border:0; background:none; text-align:left;
   font:inherit; color:var(--p-ink); cursor:pointer;
 }
 .bsrp-row > svg{ color:#8A8A7E; flex:none }
-.bsrp-row-text{ flex:1; min-width:0; display:flex; flex-direction:column; gap:3px }
-.bsrp-row-text strong{ font-size:17px; font-weight:600 }
+.bsrp-row-text{ flex:1; min-width:0; display:flex; flex-direction:column; gap:1px }
+.bsrp-row-text strong{ font-size:16px; font-weight:600 }
 .bsrp-row-line{ font-size:14px; line-height:1.4; color:var(--p-mute) }
 .bsrp-tag{
   font-size:11px; letter-spacing:.12em; text-transform:uppercase; font-weight:700;
@@ -121,20 +121,9 @@
   display:flex; align-items:center;
 }
 .bsrp-rest > summary::-webkit-details-marker{ display:none }
-.bsrp-note{ margin:28px 22px 0; font-size:14px; color:var(--p-mute) }
+.bsrp-note{ margin:18px 18px 0; font-size:14px; color:var(--p-mute) }
 
-.bsrp-band{
-  display:flex; flex-direction:column; gap:12px; width:100%;
-  margin-top:44px; padding:34px 22px 38px; border:0; text-align:left;
-  background:var(--p-olive); color:var(--p-cream); font:inherit; cursor:pointer;
-}
-.bsrp-band .bsrp-kicker{ margin:0 }
-.bsrp-band-h{ font-family:'Playfair Display', Georgia, serif; font-size:27px; line-height:1.2 }
-.bsrp-band-p{ font-size:15px; line-height:1.5; color:#E4E0C8 }
-.bsrp-band-go{ display:inline-flex; align-items:center; gap:4px; font-size:16px; font-weight:600; color:#F2D29A }
-.bsrp-band:focus-visible{ outline:3px solid #F2D29A; outline-offset:-6px }
-
-.bsrp-foot{ padding:22px 22px 36px; font-size:12px; line-height:1.5; color:var(--p-faint) }
+.bsrp-foot{ padding:24px 18px 30px; font-size:12px; line-height:1.5; color:var(--p-faint) }
 .bsrp-foot p{ margin:0 0 6px }
 .bsrp-foot .bsrp-kicker-btn{ color:var(--p-olive); font-size:13px }
 
@@ -142,7 +131,7 @@
 .bsrp-sheet{
   position:fixed; inset:0; z-index:70; overflow-y:auto; -webkit-overflow-scrolling:touch;
   background:var(--p-cream,#FBF8F1); color:var(--p-ink,#1C1C17);
-  padding:10px 22px 28px; display:flex; flex-direction:column;
+  padding:8px 18px 24px; display:flex; flex-direction:column;
 }
 .bsrp-sheet-top{ display:flex; align-items:center; justify-content:space-between; min-height:48px }
 .bsrp-icon-btn{
@@ -155,16 +144,16 @@
   background:rgba(251,248,241,.94); color:var(--p-ink);
 }
 .bsrp-item-h{
-  margin:14px 0 0; font-family:'Playfair Display', Georgia, serif; font-weight:500;
-  font-size:38px; line-height:1.08;
+  margin:8px 0 0; font-weight:700;
+  font-size:26px; line-height:1.2;
 }
-.bsrp-item-p{ margin:16px 0 0; font-size:17px; line-height:1.55 }
+.bsrp-item-p{ margin:10px 0 0; font-size:16px; line-height:1.5 }
 .bsrp-quote{
-  margin:0; font-family:'Playfair Display', Georgia, serif; font-style:italic;
-  font-size:20px; line-height:1.45; color:var(--p-olive);
+  margin:0; font-size:16px; line-height:1.5; color:var(--p-ink);
+  padding-left:12px; border-left:3px solid var(--p-olive);
 }
 .bsrp-text-link{
-  margin-top:22px; align-self:flex-start; display:inline-flex; align-items:center; gap:4px;
+  margin-top:14px; align-self:flex-start; display:inline-flex; align-items:center; gap:4px;
   border:0; background:none; padding:0; min-height:44px; font:inherit; font-size:15px; font-weight:600;
   color:var(--p-olive); cursor:pointer; text-decoration:underline; text-underline-offset:3px;
 }
@@ -201,49 +190,8 @@
 .bsrp-scale.is-flat .bsrp-scale-tag{ color:var(--p-flat) }
 .bsrp-scale-ends{ display:flex; justify-content:space-between; font-size:13px; color:var(--p-faint) }
 
-/* report view */
-.bsrp-sheet.is-report{ padding:0 }
-.bsrp-rep-top{
-  background:var(--p-olive); color:var(--p-cream);
-  padding:10px 22px 0; height:420px; position:relative; flex:none;
-}
-.bsrp-rep-top .bsrp-kicker{ margin:6px 0 10px }
-.bsrp-rep-h{
-  margin:0; max-width:300px; font-family:'Playfair Display', Georgia, serif; font-weight:500;
-  font-size:27px; line-height:1.18; color:var(--p-cream);
-}
-.bsrp-paper{
-  position:absolute; left:32px; right:32px; top:200px; height:300px;
-  background:#FFFFFF; box-shadow:0 18px 40px rgba(0,0,0,.25);
-  padding:22px 20px; display:flex; flex-direction:column; gap:9px; box-sizing:border-box;
-}
-.bsrp-paper-k{ font-size:10px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:var(--p-olive); margin-top:6px }
-.bsrp-paper-l{ height:8px; background:#E7E2D4 }
-.bsrp-paper-l.is-short{ width:70% }
-.bsrp-paper-bars{ display:flex; align-items:flex-end; gap:4px; height:40px }
-.bsrp-paper-bars i{ flex:1; background:var(--p-sun) }
-.bsrp-paper-bars i:nth-child(1),.bsrp-paper-bars i:nth-child(12){ height:90% }
-.bsrp-paper-bars i:nth-child(2),.bsrp-paper-bars i:nth-child(11){ height:78% }
-.bsrp-paper-bars i:nth-child(3),.bsrp-paper-bars i:nth-child(10){ height:62% }
-.bsrp-paper-bars i:nth-child(4),.bsrp-paper-bars i:nth-child(9){ height:46% }
-.bsrp-paper-bars i:nth-child(5),.bsrp-paper-bars i:nth-child(8){ height:34% }
-.bsrp-paper-bars i:nth-child(6),.bsrp-paper-bars i:nth-child(7){ height:28% }
-.bsrp-rep-body{ padding:110px 22px 150px }
-.bsrp-contents{ list-style:none; margin:8px 0 18px; padding:0 }
-.bsrp-contents li{ display:flex; gap:16px; padding:16px 0 }
-.bsrp-contents li + li{ border-top:1px solid var(--p-line) }
-.bsrp-contents li > span{
-  font-family:'Playfair Display', Georgia, serif; font-size:22px; width:22px; color:var(--p-olive); flex:none;
-}
-.bsrp-contents strong{ font-size:16px; font-weight:600 }
-.bsrp-contents p{ margin:3px 0 0; font-size:14px; line-height:1.45; color:var(--p-mute) }
-.bsrp-rep-bar{
-  position:fixed; left:0; right:0; bottom:0; z-index:71;
-  background:var(--p-cream); border-top:1px solid var(--p-line);
-  padding:14px 22px calc(18px + env(safe-area-inset-bottom)); display:flex; flex-direction:column; gap:6px;
-}
 .bsrp-cta{
-  height:54px; border:0; border-radius:999px; background:var(--p-ink); color:var(--p-cream);
+  width:100%; margin-top:22px; height:52px; border:0; border-radius:999px; background:var(--p-ink); color:var(--p-cream);
   font:inherit; font-size:17px; font-weight:600; cursor:pointer;
 }
 .bsrp-cta:disabled{ opacity:.55; cursor:default }
@@ -255,14 +203,14 @@
   padding-top:48vh;
 }
 @supports (height:1svh){ .bsrp-sun{ padding-top:48svh } }
-.bsrp-sun-body{ padding:0 22px 40px }
+.bsrp-sun-body{ padding:0 18px 32px }
 .bsrp-seasons{ display:flex; gap:20px; border-bottom:1px solid var(--p-line) }
 .bsrp-seasons button{
   height:50px; border:0; border-bottom:2.5px solid transparent; background:none; padding:0;
   font:inherit; font-size:16px; color:var(--p-faint); cursor:pointer;
 }
 .bsrp-seasons button[aria-pressed="true"]{ border-bottom-color:var(--p-ink); color:var(--p-ink); font-weight:600 }
-.bsrp-time{ display:flex; align-items:center; gap:14px; margin-top:18px; min-height:44px }
+.bsrp-time{ display:flex; align-items:center; gap:14px; margin-top:12px; min-height:44px }
 .bsrp-play{
   width:44px; height:44px; flex:none; border:0; border-radius:50%;
   background:var(--p-ink); color:var(--p-sun); display:inline-flex; align-items:center; justify-content:center; cursor:pointer;
@@ -271,12 +219,12 @@
 .bsrp-slider input{ flex:1; accent-color:var(--p-ink) }
 .bsrp-slider strong{ font-size:14px; min-width:64px; text-align:right }
 .bsrp-sun-say{
-  margin:20px 0 0; font-family:'Playfair Display', Georgia, serif; font-weight:500;
-  font-size:22px; line-height:1.35;
+  margin:14px 0 0; font-weight:700;
+  font-size:18px; line-height:1.35;
 }
 .bsrp-bars{
   display:grid; grid-template-columns:repeat(12, minmax(0,1fr)); gap:5px;
-  height:130px; align-items:end; border-bottom:1px solid var(--p-ink); padding-bottom:0;
+  height:110px; align-items:end; border-bottom:1px solid var(--p-ink); padding-bottom:0;
 }
 .bsrp-bars span{ height:100%; display:flex; flex-direction:column; justify-content:flex-end; position:relative }
 .bsrp-bars i{ display:block; background:var(--p-sun) }
@@ -294,3 +242,24 @@
 @media (prefers-reduced-motion: reduce){
   .bsrp-row, .bsrp-band{ transition:none }
 }
+
+/* ---------- your reports: three plain buttons ---------- */
+.bsrp-reports{ padding:18px 18px 0 }
+.bsrp-reports ul{ list-style:none; margin:8px 0 0; padding:0; display:flex; flex-direction:column; gap:8px }
+.bsrp-rep{
+  width:100%; display:flex; align-items:center; gap:12px; box-sizing:border-box;
+  padding:12px 14px; border:1px solid var(--p-line); border-radius:12px;
+  background:#FFFFFF; color:var(--p-ink); text-decoration:none; text-align:left;
+  font:inherit; cursor:pointer;
+}
+.bsrp-rep.is-main{ background:var(--p-olive); border-color:var(--p-olive); color:var(--p-cream) }
+.bsrp-rep:disabled{ opacity:.55; cursor:default }
+.bsrp-rep-text{ flex:1; min-width:0; display:flex; flex-direction:column; gap:1px }
+.bsrp-rep-text strong{ font-size:16px; font-weight:700 }
+.bsrp-rep-text span{ font-size:13px; line-height:1.35; color:var(--p-mute) }
+.bsrp-rep.is-main .bsrp-rep-text span{ color:#E4E0C8 }
+.bsrp-rep-go{
+  flex:none; min-width:52px; text-align:center; padding:7px 12px; border-radius:999px;
+  background:var(--p-ink); color:var(--p-cream); font-size:14px; font-weight:600;
+}
+.bsrp-rep.is-main .bsrp-rep-go{ background:#F2D29A; color:var(--p-ink) }
