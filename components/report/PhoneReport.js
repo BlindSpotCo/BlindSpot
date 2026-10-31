@@ -20,7 +20,7 @@
 // can rank against our own records and estimate from our model, and that
 // is all we can claim.
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import {
   ArrowLeft, ChevronRight, X, Play, Pause, MapPin, Sun, FileText, Map as MapIcon,
   ShieldCheck, GraduationCap, Wind, Droplets, Zap, Route, Building2, Waves,
@@ -259,6 +259,21 @@ export default function PhoneReport({
     if (view === 'item' && !all.some((x) => x.id === itemId)) setView('page');
   }, [view, itemId, all, setView]);
 
+  // The report progress strip (ReportModal) sits at the bottom of the
+  // screen on phones; lift it above the report bar the same way the map
+  // step lifts it above its own bottom sheet (--bsr-dock-h).
+  const dockRef = useRef(null);
+  useEffect(() => {
+    const el = dockRef.current;
+    const root = document.documentElement;
+    if (view !== 'page' || !el) return undefined;
+    const update = () => root.style.setProperty('--bsr-dock-h', `${Math.ceil(el.getBoundingClientRect().height)}px`);
+    update();
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(update) : null;
+    ro?.observe(el);
+    return () => { ro?.disconnect(); root.style.removeProperty('--bsr-dock-h'); };
+  }, [view]);
+
   const openItem = (id) => { setItemId(id); setView('item'); };
   const startReport = (type) => { setView('page'); onRequestReport(type); };
 
@@ -267,7 +282,7 @@ export default function PhoneReport({
   // existing report flow (both need the 3D map, which they photograph).
   const busy = reportBusy || {};
   const reportBar = (
-    <nav className="bsrp-dock" aria-label="Your reports">
+    <nav className="bsrp-dock" aria-label="Your reports" ref={dockRef}>
       {hasArea ? (
         <a className="bsrp-dock-btn" href={`/neighbourhood-report/${area.pinCode}`} target="_blank" rel="opener">
           <MapIcon size={18} strokeWidth={2} aria-hidden="true" />
