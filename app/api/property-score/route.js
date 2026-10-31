@@ -108,6 +108,38 @@ export async function GET(req) {
     const areaGrade = gradeFor(areaScore);
     const unitScore = ssResult.liveScore;
 
+    // Where this pincode sits among the other pincodes we cover in the same
+    // city, per factor: the share of them scoring lower. Lets the phone
+    // report say "scores lower than most Bengaluru pincodes we cover"
+    // (a ranking against our own data) instead of a verdict word.
+    const sameCity = avRecords.filter((r) => r.city === avRecord.city);
+    const cityRank = {};
+    for (const [k, v] of Object.entries(avRecord.scores || {})) {
+      if (typeof v !== 'number') continue;
+      const others = sameCity.map((r) => r.scores?.[k]).filter((x) => typeof x === 'number');
+      if (others.length < 5) continue;
+      cityRank[k] = {
+        lower: others.filter((x) => x < v).length,
+        higher: others.filter((x) => x > v).length,
+        total: others.length,
+      };
+    }
+    // When each factor was last updated and whether it is a modelled
+    // estimate, from the record's own provenance; plus the school list
+    // counts, which are the one factor with plain countable facts.
+    const prov = avRecord._provenance || {};
+    const facts = {};
+    for (const k of Object.keys(avRecord.scores || {})) {
+      const p = prov[k];
+      facts[k] = p ? { asOf: p.as_of || null, modelled: p.confidence === 'low' } : {};
+    }
+    if (facts.schools && typeof avRecord.schools_count === 'number') {
+      facts.schools.count = avRecord.schools_count;
+      facts.schools.boards = {
+        CBSE: avRecord.schools_cbse || 0, ICSE: avRecord.schools_icse || 0, State: avRecord.schools_state || 0,
+      };
+    }
+
     const weighted = (areaScore * weightArea + unitScore * weightUnit) / totalWeight;
     const combinedScore = Math.round(weighted);
     const verdict = quadrant(areaScore, unitScore);
@@ -125,6 +157,8 @@ export async function GET(req) {
         grade: areaGrade,
         weight: Math.round((weightArea / totalWeight) * 100),
         factors: avRecord.scores,
+        cityRank,
+        facts,
       },
       unit: {
         source: 'Home Comfort Score',

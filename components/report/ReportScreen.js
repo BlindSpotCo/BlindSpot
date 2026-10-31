@@ -27,6 +27,8 @@ import {
   Sun, Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Snowflake, Sofa, ArrowDown, MapPin, Scale, FileText, Check, X, Search,
 } from 'lucide-react';
 import RoomPhotoAnalyzer from './RoomPhotoAnalyzer';
+import PhoneReport from './PhoneReport';
+import useIsPhone from '@/lib/useIsPhone';
 import { useTrends } from '@/lib/trends/useTrends';
 import { TREND_FOR_FACTOR, TREND_FOR_SUBSCORE } from '@/lib/trends/series';
 import { Sparkline, TrendChart } from '@/components/trends/TrendChart';
@@ -477,6 +479,12 @@ export default function ReportScreen({ view = 'verdict' }) {
   // Step 2 of the guide below is done once the full report has been
   // started at least once on this page.
   const [fullAsked, setFullAsked] = useState(false);
+  // Phones get their own report layout (PhoneReport.js); desktop is
+  // unchanged. phoneView: page | item | sun | report.
+  const isPhone = useIsPhone();
+  const [phoneView, setPhoneView] = useState('page');
+  const [phoneItem, setPhoneItem] = useState(null);
+  useEffect(() => { if (fullMap || !isPhone) setPhoneView('page'); }, [fullMap, isPhone]);
   const setReportOpen = useCallback((type) => {
     if (type === 'full') setFullAsked(true);
     setReportsOpen((list) => (list.includes(type) ? list : [...list, type]));
@@ -1664,10 +1672,13 @@ export default function ReportScreen({ view = 'verdict' }) {
   // reports are built from photographs of this exact WebGL scene, and
   // the full-screen step is the same instance re-styled. The one
   // exception is a failed verdict, where the map is all there is.
-  const mapParked = !fullMap && state !== 'error';
+  // On a phone the verdict shows the live map full width at the top
+  // (and larger in the sun view) instead of parking it offscreen.
+  const phoneHero = isPhone && !fullMap && state !== 'error' && Boolean(scores);
+  const mapParked = !fullMap && state !== 'error' && !phoneHero;
   const mapZone = (
       <section
-        className={`bsr-mapzone${fullMap ? ' is-full' : ''}${mapParked ? ' is-parked' : ''}`}
+        className={`bsr-mapzone${fullMap ? ' is-full' : ''}${mapParked ? ' is-parked' : ''}${phoneHero ? (phoneView === 'sun' ? ' is-phone-sun' : ' is-phone-hero') : ''}`}
         id="the-block"
         aria-label="The block in 3D"
         aria-hidden={mapParked || undefined}
@@ -2053,7 +2064,7 @@ export default function ReportScreen({ view = 'verdict' }) {
     : [];
 
   return (
-    <div className="bsr">
+    <div className={`bsr${isPhone && !fullMap ? ' is-phone' : ''}`}>
       {/* Fixed slots, and the order matters more than it looks. This one
           component serves both /report/locate and /report, and the two
           screens are the same tree with different parts switched on --
@@ -2065,7 +2076,35 @@ export default function ReportScreen({ view = 'verdict' }) {
           middle of photographing it would lose its camera. With the
           slots fixed, going from the map to the verdict mid-report just
           re-styles the same map and lets the report carry on. */}
-      {verdictMode === 'ready' && (
+      {verdictMode === 'ready' && phoneHero && (
+        <PhoneReport
+          view={phoneView}
+          setView={setPhoneView}
+          itemId={phoneItem}
+          setItemId={setPhoneItem}
+          area={area}
+          unit={unit}
+          address={address}
+          floor={floor}
+          facing={facing}
+          unitSet={floorSet && facingSet}
+          onChangeFlat={openLocate}
+          onRequestReport={(type) => requestReport(type)}
+          reportBusy={reportBusy}
+          pinFixForm={pinFixForm}
+          pinFixOpen={pinFixOpen}
+          setPinFixOpen={setPinFixOpen}
+          seasonKey={seasonKey}
+          setSeasonKey={setSeasonKey}
+          animating={animating}
+          setAnimating={setAnimating}
+          minutes={minutes}
+          setMinutes={setMinutes}
+          clock={clock}
+          mapReady={!mapLoading && !mapFailed}
+        />
+      )}
+      {verdictMode === 'ready' && !phoneHero && (
         <>
 
           {/* ---------- the page's own title, then which address this is ----------
@@ -2556,7 +2595,7 @@ export default function ReportScreen({ view = 'verdict' }) {
       {verdictMode === 'boot' && bootNode}
       {verdictMode === 'error' && errorNode}
       {mapZone}
-      {verdictMode === 'ready' && (
+      {verdictMode === 'ready' && !phoneHero && (
         <>
 
           {/* ---------- the full report: one box, right after the area + flat ----------
@@ -2796,7 +2835,7 @@ export default function ReportScreen({ view = 'verdict' }) {
       {/* The "go here next" bar. Pops up right after a step is finished
           ("Nice -- next: ...") and whenever the current step is scrolled
           out of view. Never over the report card, never on the map step. */}
-      {verdictMode === 'ready' && !fullMap && !reportOpen && !guideHidden && guideStep === 2 && justDone === 1 && !stepInView && (
+      {verdictMode === 'ready' && !fullMap && !phoneHero && !reportOpen && !guideHidden && guideStep === 2 && justDone === 1 && !stepInView && (
         <div className="bsr-nextbar is-cheer" role="status" aria-live="polite" key={`${guideStep}-${justDone}`}>
           <span className="bsr-nextbar-n" aria-hidden="true">
             <Check size={16} strokeWidth={3} />
