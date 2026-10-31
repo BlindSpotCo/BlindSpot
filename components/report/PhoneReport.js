@@ -8,8 +8,9 @@
 //
 // One page, four views:
 //   page   -- the 3D map full width at the top, one sentence from the sun
-//             model, then two short groups of bars (the area, your flat),
-//             lowest first. The three reports sit in a bar at the bottom.
+//             model, then "Worth looking into" (what our data shows and why
+//             it matters, in words) and "Where it does better". No scores on
+//             the page. The three reports sit in a bar at the bottom.
 //   item   -- one row opened: what our data shows, where this pincode sits
 //             among the city's pincodes we cover, and what to check.
 //   sun    -- the same 3D map, larger, with season / play / time and the
@@ -70,6 +71,26 @@ const FLAT_NAMES = {
   noise: 'Road & rail noise',
 };
 
+// Why an item matters, in general terms -- what it can mean for living
+// there. Shown under items worth looking into.
+const WHY = {
+  water: 'Fewer supply hours can mean relying on storage tanks or paid tankers in summer.',
+  power: 'Frequent cuts make power backup matter, and backup usually adds to maintenance.',
+  roads: 'Road condition shapes the daily commute, and how lanes hold up in the monsoon.',
+  infrastructure: 'Fewer metro and highway links can mean longer, less predictable commutes.',
+  sewerage: 'Drainage gaps can mean waterlogged lanes nearby during heavy rain.',
+  crime: 'Recorded crime is one input on how comfortable the area feels day and night.',
+  schools: 'Matters most if you have, or plan for, school-going children.',
+  air: 'Air quality is what you breathe at home every day, and it often dips in winter.',
+  sun: 'Less direct sun can mean darker rooms and slower-drying corners.',
+  shadeHeat: 'More summer sun on this side can mean warmer rooms and more AC use.',
+  view: 'Lower floors more often look straight onto nearby buildings.',
+  privacy: 'Lower floors are easier to see into from nearby buildings and the street.',
+  wind: 'Less airflow can make rooms feel stuffy on still summer days.',
+  dampness: 'This side meets more monsoon rain, which can show up as seepage on walls.',
+  noise: 'Roads or rail close by can mean more noise indoors, mostly at rush hour.',
+};
+
 const CITY_NAMES = { Bangalore: 'Bengaluru' };
 
 const SEASON_TABS = [
@@ -119,15 +140,15 @@ function rankLine(rank, city) {
   return `Around the middle of the ${c} pincodes we cover`;
 }
 
-function flatLine(key, sun) {
+function flatLine(key, sun, low) {
   switch (key) {
     case 'sun': return sun ? `About ${hrs(sun.avg)} of direct sun a day, averaged over the year` : 'From our sun model';
     case 'shadeHeat': return sun ? `About ${hrs(sun.summer)} of direct sun a day from April to June` : 'From our sun model';
-    case 'view': return 'Estimated from your floor, not this building';
-    case 'privacy': return 'Estimated from your floor, not this building';
-    case 'wind': return 'From today’s wind forecast and your floor height';
-    case 'dampness': return 'From how this side faces the monsoon rain';
-    case 'noise': return 'From roads and rail lines mapped nearby';
+    case 'view': return low ? 'Our estimate for this floor is on the lower side' : 'Our estimate for this floor is on the higher side';
+    case 'privacy': return low ? 'Our estimate for this floor is on the lower side' : 'Our estimate for this floor is on the higher side';
+    case 'wind': return low ? 'Our airflow estimate for this floor is on the lower side' : 'Our airflow estimate for this floor is on the higher side';
+    case 'dampness': return low ? 'Our model has more monsoon rain reaching this side than most' : 'Our model has this side fairly sheltered from monsoon rain';
+    case 'noise': return low ? 'Roads or rail lines are mapped close to this spot' : 'No major roads or rail lines mapped close by';
     default: return '';
   }
 }
@@ -158,53 +179,53 @@ function flatDetail(key, { sun, floor, facing }) {
   }
 }
 
-// The rows: area and flat in two groups, lowest score first so what to ask
-// about is at the top of each. An item is flagged "ask on your visit" when
-// it is low on our 0-100 scale or lower than most of its city.
+// Rows, in words. Look into: low in our data (or lower than most of the
+// city). Does better: high in our data (and, for the area, higher than most
+// of the city). Everything else is folded away.
 function buildItems({ area, unit, sun }) {
-  const areaRows = [];
+  const c = CITY_NAMES[area?.city] || area?.city || 'the city';
+  const rows = [];
   if (area?.factors) {
     for (const key of AREA_ORDER) {
       const score = area.factors[key];
       if (typeof score !== 'number') continue;
       const rank = area.cityRank?.[key] || null;
-      areaRows.push({
-        id: `a-${key}`, kind: 'area', key, score, name: AREA_NAMES[key],
-        rank, band: rankBand(rank), median: rank?.median ?? null,
-        line: rankLine(rank, area.city), facts: area.facts?.[key] || {},
-      });
+      const band = rankBand(rank);
+      const low = score < 55 || band === 'low';
+      const finding = band === 'low' ? `Lower than most ${c} pincodes we cover.`
+        : band === 'high' ? `Higher than most ${c} pincodes we cover.`
+        : band === 'mid' ? (low ? `Around the middle for ${c}, and on the lower side in our data.` : `Around the middle of the ${c} pincodes we cover.`)
+        : (low ? 'On the lower side in our data.' : 'On the higher side in our data.');
+      rows.push({ id: `a-${key}`, kind: 'area', key, score, name: AREA_NAMES[key], rank, band, low, high: !low && score >= 75 && band !== 'mid' && band !== 'low', finding, facts: area.facts?.[key] || {} });
     }
   }
-  const flatRows = [];
   for (const s of unit?.subScores || []) {
     if (s.pending || typeof s.score !== 'number' || !FLAT_NAMES[s.key]) continue;
     if (/unavailable|neutral score/i.test(s.summary || '')) continue;
-    flatRows.push({ id: `f-${s.key}`, kind: 'flat', key: s.key, score: s.score, name: FLAT_NAMES[s.key], line: flatLine(s.key, sun) });
+    const low = s.score < 55;
+    rows.push({ id: `f-${s.key}`, kind: 'flat', key: s.key, score: s.score, name: FLAT_NAMES[s.key], low, high: !low && s.score >= 75, finding: `${flatLine(s.key, sun, low)}.` });
   }
-  const flag = (i) => ({ ...i, ask: i.score < 55 || i.band === 'low' });
   const byScore = (a, b) => a.score - b.score;
-  const A = areaRows.map(flag).sort(byScore);
-  const F = flatRows.map(flag).sort(byScore);
-  return { areaRows: A, flatRows: F, all: [...A, ...F] };
+  const look = rows.filter((r) => r.low).sort(byScore);
+  const better = rows.filter((r) => r.high).sort((a, b) => b.score - a.score);
+  const rest = rows.filter((r) => !r.low && !r.high).sort((a, b) => a.name.localeCompare(b.name));
+  return { look, better, rest, all: [...look, ...better, ...rest] };
 }
 
-function BarRow({ item, onOpen, showMid }) {
+function FindingRow({ item, onOpen, why }) {
   const Icon = ICONS[item.key];
   return (
     <li>
-      <button type="button" className="bsrp-bar" onClick={() => onOpen(item.id)}>
+      <button type="button" className="bsrp-find" onClick={() => onOpen(item.id)}>
         <span className="bsrp-bar-icon" aria-hidden="true">{Icon ? <Icon size={18} strokeWidth={2} /> : null}</span>
-        <span className="bsrp-bar-main">
-          <span className="bsrp-bar-top">
+        <span className="bsrp-find-main">
+          <span className="bsrp-find-top">
             <strong>{item.name}</strong>
-            {item.ask && <span className="bsrp-ask">Ask on visit</span>}
+            <span className={`bsrp-find-kind is-${item.kind}`}>{item.kind === 'area' ? 'Area' : 'Your flat'}</span>
           </span>
-          <span className="bsrp-bar-track" aria-hidden="true">
-            <i style={{ width: `${Math.max(3, item.score)}%` }} />
-            {showMid && typeof item.median === 'number' && <b style={{ left: `${item.median}%` }} />}
-          </span>
+          <span className="bsrp-find-what">{item.finding}</span>
+          {why && WHY[item.key] && <span className="bsrp-find-why">{WHY[item.key]}</span>}
         </span>
-        <span className="bsrp-bar-n" aria-label={`${item.score} out of 100`}>{item.score}</span>
         <ChevronRight size={16} strokeWidth={2} aria-hidden="true" />
       </button>
     </li>
@@ -233,7 +254,7 @@ export default function PhoneReport({
 }) {
   const hasArea = Boolean(area);
   const sun = useMemo(() => sunStats(unit?.sunYear), [unit?.sunYear]);
-  const { areaRows, flatRows, all } = useMemo(() => buildItems({ area, unit, sun }), [area, unit, sun]);
+  const { look, better, rest, all } = useMemo(() => buildItems({ area, unit, sun }), [area, unit, sun]);
   const place = (address || '').replace(/,\s*India\s*$/i, '').split(',').slice(0, 2).join(',').trim() || 'This address';
   const city = CITY_NAMES[area?.city] || area?.city;
 
@@ -329,7 +350,7 @@ export default function PhoneReport({
       : (typeof UNIT_ACTIONS[item.key] === 'function' ? UNIT_ACTIONS[item.key](facing) : UNIT_ACTIONS[item.key]);
     let detail = '';
     if (item.kind === 'area') {
-      detail = `${AREA_MEASURES[item.key]} This pincode scores ${item.score} out of 100 on our scale.`;
+      detail = `${AREA_MEASURES[item.key]} ${item.finding}`;
       if (item.key === 'schools' && typeof item.facts.count === 'number') {
         const b = Object.entries(item.facts.boards || {}).filter(([, n]) => n > 0).map(([k, n]) => `${n} ${k}`).join(', ');
         detail += ` ${item.facts.count} schools are listed in this pincode in our data${b ? ` (${b})` : ''}.`;
@@ -358,10 +379,11 @@ export default function PhoneReport({
             <Scale pos={(rk.lower + 0.5 * (rk.total - rk.lower - rk.higher)) / rk.total} label="This pincode" />
             <p className="bsrp-small">{rk.higher} of {rk.total} score higher, {rk.lower} score lower.</p>
           </>
-        ) : (
+        ) : null}
+        {WHY[item.key] && (
           <>
-            <p className="bsrp-label">On our 0–100 scale</p>
-            <Scale pos={item.score / 100} label={`${item.score}`} kind={item.kind} />
+            <h3 className="bsrp-h3">Why it matters</h3>
+            <p className="bsrp-item-why">{WHY[item.key]}</p>
           </>
         )}
         {(updated || item.facts?.modelled) && (
@@ -503,45 +525,41 @@ export default function PhoneReport({
         )}
       </div>
 
-      {hasArea && (
-        <section className="bsrp-sec" aria-labelledby="bsrp-area-h">
-          <div className="bsrp-sec-head">
-            <h2 id="bsrp-area-h" className="bsrp-h2">The area</h2>
-            <span>
-              Pin {area.pinCode} ·{' '}
-              <button type="button" className="bsrp-link" onClick={() => setPinFixOpen(!pinFixOpen)} aria-expanded={pinFixOpen}>
-                {pinFixOpen ? 'Never mind' : 'Wrong pin?'}
-              </button>
-            </span>
-          </div>
-          {pinFixOpen && pinFixForm}
-          <p className="bsrp-legend">
-            Out of 100 on our scale. <b aria-hidden="true" /> marks the middle of the {city} pincodes we cover.
-          </p>
-          <ul className="bsrp-bars-list">
-            {areaRows.map((it) => <BarRow key={it.id} item={it} onOpen={openItem} showMid />)}
+      {look.length > 0 && (
+        <section className="bsrp-sec" aria-labelledby="bsrp-look-h">
+          <h2 id="bsrp-look-h" className="bsrp-h2">Worth looking into</h2>
+          <ul className="bsrp-find-list">
+            {look.map((it) => <FindingRow key={it.id} item={it} onOpen={openItem} why />)}
           </ul>
         </section>
       )}
 
-      {flatRows.length > 0 && (
-        <section className="bsrp-sec" aria-labelledby="bsrp-flat-h">
-          <div className="bsrp-sec-head">
-            <h2 id="bsrp-flat-h" className="bsrp-h2">Your flat</h2>
-            <span>
-              {ord(floor)} floor · {String(facing).toLowerCase()} ·{' '}
-              <button type="button" className="bsrp-link" onClick={onChangeFlat}>Change</button>
-            </span>
-          </div>
-          <p className="bsrp-legend">Out of 100 on our scale, estimated for this floor and facing.</p>
-          <ul className="bsrp-bars-list">
-            {flatRows.map((it) => <BarRow key={it.id} item={it} onOpen={openItem} />)}
+      {better.length > 0 && (
+        <section className="bsrp-sec" aria-labelledby="bsrp-better-h">
+          <h2 id="bsrp-better-h" className="bsrp-h2">Where it does better</h2>
+          <ul className="bsrp-find-list">
+            {better.map((it) => <FindingRow key={it.id} item={it} onOpen={openItem} />)}
           </ul>
-          <button type="button" className="bsrp-link is-go" onClick={() => setView('sun')}>
-            See the sun through the year <ChevronRight size={16} strokeWidth={2.2} aria-hidden="true" />
-          </button>
         </section>
       )}
+
+      {rest.length > 0 && (
+        <details className="bsrp-sec bsrp-rest">
+          <summary>{rest.length} more, around the middle</summary>
+          <ul className="bsrp-find-list">
+            {rest.map((it) => <FindingRow key={it.id} item={it} onOpen={openItem} />)}
+          </ul>
+        </details>
+      )}
+
+      <p className="bsrp-meta">
+        {hasArea && <>Pin {area.pinCode} · <button type="button" className="bsrp-link" onClick={() => setPinFixOpen(!pinFixOpen)} aria-expanded={pinFixOpen}>{pinFixOpen ? 'Never mind' : 'Wrong pin?'}</button> · </>}
+        {ord(floor)} floor, {String(facing).toLowerCase()} · <button type="button" className="bsrp-link" onClick={onChangeFlat}>Change</button>
+      </p>
+      {hasArea && pinFixOpen && <div className="bsrp-meta-form">{pinFixForm}</div>}
+      <button type="button" className="bsrp-link is-go bsrp-sun-link" onClick={() => setView('sun')}>
+        See the sun through the year <ChevronRight size={16} strokeWidth={2.2} aria-hidden="true" />
+      </button>
 
       {!hasArea && (
         <div className="bsrp-note">
