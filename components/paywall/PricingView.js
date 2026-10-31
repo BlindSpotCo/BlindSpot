@@ -2,9 +2,7 @@
 import Link from 'next/link';
 // components/paywall/PricingView.js -- the /pricing page body.
 
-import { useKeys } from '@/lib/paywall/KeysProvider';
 import { KEY_COST, PACKS, inr, inr2, perKey } from '@/lib/paywall/config';
-import KeyBalance from './KeyBalance';
 import './paywall.css';
 import './pricing.css';
 
@@ -15,7 +13,6 @@ const EXAMPLES = [
 ];
 
 export default function PricingView() {
-  const { openPacks, enabled } = useKeys();
   return (
     <main className="pr-page">
       <div className="pr-wrap">
@@ -27,7 +24,7 @@ export default function PricingView() {
             not a subscription. Buy Keys, spend them on the reports you want, and use them on any
             property in any city we cover.
           </p>
-          {enabled && <div className="pr-hero-actions"><KeyBalance /></div>}
+          <p className="pr-sub"><b>Keys aren&apos;t on sale yet. Every report is free while we set up payments.</b></p>
         </header>
 
         <section className="pr-sec">
@@ -38,8 +35,7 @@ export default function PricingView() {
           </div>
           <p className="pr-p">
             Three reports cost Keys: the <b>detailed neighbourhood report</b>, the <b>year-round sunlight report</b> for
-            a flat, and the <b>full BlindSpot report</b>, which includes both. Every paid button shows a lock and its
-            Key cost before you click, and nothing is charged until you confirm.
+            a flat, and the <b>full BlindSpot report</b>, which includes both.
           </p>
         </section>
 
@@ -54,7 +50,6 @@ export default function PricingView() {
                 <span className="pw-pack-price">{inr(p.price)}</span>
                 <span className="pw-pack-per">{inr2(perKey(p))} per Key</span>
                 <span className="pw-pack-fits">{p.fits}</span>
-                {enabled && <button type="button" className="pw-btn" onClick={openPacks}>Choose {p.name}</button>}
               </div>
             ))}
           </div>

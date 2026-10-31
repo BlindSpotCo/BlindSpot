@@ -31,10 +31,6 @@ import { useTrends } from '@/lib/trends/useTrends';
 import { TREND_FOR_FACTOR, TREND_FOR_SUBSCORE } from '@/lib/trends/series';
 import { Sparkline, TrendChart } from '@/components/trends/TrendChart';
 import { recordVisit } from '@/lib/profile/history';
-import { useKeys } from '@/lib/paywall/KeysProvider';
-import { propertyKey } from '@/lib/paywall/config';
-import KeyBalance from '@/components/paywall/KeyBalance';
-import { KeyCostTag } from '@/components/paywall/PaywallModal';
 import './report.css';
 
 
@@ -494,30 +490,8 @@ export default function ReportScreen({ view = 'verdict' }) {
   // Both reports go through here. The full report used to open straight
   // away with floor/facing unset and was quietly written up for a default
   // 5th floor, south-east -- a whole report about a flat nobody chose.
-  // Paywall (lib/paywall): every paid report goes through keys.request,
-  // which opens it straight away if it's already unlocked and otherwise
-  // shows the unlock / Key-pack pop-up first. Floor and facing still have
-  // to be set before anything is charged -- a report on a default flat
-  // nobody chose shouldn't cost a Key.
-  const keys = useKeys();
-  const propKey = propertyKey(Number(lat), Number(lon));
-  const unitVariant = `${floor}:${facing}`;
-  const shortAddr = (address || '').replace(/,\s*India\s*$/i, '').split(',')[0].trim() || 'This property';
-  const unitScope = `${shortAddr} · ${ord(floor)} floor, ${String(facing).toLowerCase()}-facing`;
-  const keyCost = keys.costFor(propKey);
-  const paidType = (type) => (type === 'gallery' ? 'sun' : 'full');
-  const reportUnlocked = (type) => keys.isUnlocked(propKey, paidType(type), unitVariant);
   const requestReport = (type, e) => {
-    if (floorSet && facingSet) {
-      keys.request({
-        prop: propKey,
-        type: paidType(type),
-        variant: unitVariant,
-        scope: unitScope,
-        onUnlocked: () => setReportOpen(type),
-      });
-      return;
-    }
+    if (floorSet && facingSet) { setReportOpen(type); return; }
     const btn = e?.currentTarget;
     let target = null;
     if (btn?.closest('.bsr-fullbar')) {
@@ -549,7 +523,7 @@ export default function ReportScreen({ view = 'verdict' }) {
      summary card says where you are, the step's own section is lit up, and
      a bar pops up from the bottom whenever you finish one (or scroll away
      from the current one) pointing at the next. */
-  const guideStep = assumed ? 1 : (fullAsked || reportUnlocked('full') ? 0 : 2);
+  const guideStep = assumed ? 1 : (fullAsked ? 0 : 2);
   const GUIDE = [
     null,
     { title: 'Set your floor & facing', sel: GUIDE_SEL[1] },
@@ -1769,7 +1743,6 @@ export default function ReportScreen({ view = 'verdict' }) {
               <Sun size={16} strokeWidth={2.2} aria-hidden="true" />
               <span className="bsr-fullbar-sun-full">Year-round sunlight report</span>
               <span className="bsr-fullbar-sun-short">Sunlight report</span>
-              {keys.enabled && !assumed && <KeyCostTag tone="onfill" cost={keyCost} unlocked={reportUnlocked('gallery')} />}
             </button>
 
             <button
@@ -2145,11 +2118,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                   exits offered before any payoff. Profile is already one tap
                   away from the avatar in the global nav, so it doesn't need a
                   second copy here. Compare and Furnish now show up below,
-                  once there's an actual scored flat to act on. The Key
-                  balance stays: it's what the paid buttons below spend. */}
-              <nav className="bsr-head-links" aria-label="Your Keys">
-                <KeyBalance />
-              </nav>
+                  once there's an actual scored flat to act on. */}
             </div>
             {addrEditOpen && (
               <form className="bsr-addr-edit bsr-locbar" onSubmit={onSearchSubmit}>
@@ -2364,29 +2333,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                       is window.close(), which the browser refuses without an
                       opener. Same call AVAreaCard's link makes. */}
                   <p className="bsr-more bsr-more-cta">
-                    {/* Paid: opens only once unlocked. window.open (not
-                        noopener) for the same window.close() reason above;
-                        it runs inside the unlock click, so it isn't
-                        popup-blocked. */}
-                    <a
-                      href={`/neighbourhood-report/${area.pinCode}`}
-                      target="_blank"
-                      onClick={(e) => {
-                        if (!keys.enabled || keys.isUnlocked(propKey, 'neighbourhood')) return;
-                        e.preventDefault();
-                        const url = `/neighbourhood-report/${area.pinCode}`;
-                        keys.request({
-                          prop: propKey,
-                          type: 'neighbourhood',
-                          pin: area.pinCode,
-                          scope: `${area.name} (${area.pinCode})`,
-                          onUnlocked: () => window.open(url, '_blank'),
-                        });
-                      }}
-                    >
-                      See the detailed area report →
-                      {keys.enabled && <KeyCostTag tone="onfill" cost={keyCost} unlocked={keys.isUnlocked(propKey, 'neighbourhood')} />}
-                    </a>
+                    <a href={`/neighbourhood-report/${area.pinCode}`} target="_blank">See the detailed area report →</a>
                   </p>
                 </>
               ) : (
@@ -2584,8 +2531,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                   onClick={requestSunReport}
                 >
                   <span>Get the <span className="bsr-cta-long">year-round </span>sunlight report →</span>
-                  {keys.enabled && !assumed && <KeyCostTag tone="onfill" cost={keyCost} unlocked={reportUnlocked('gallery')} />}
-                </button>
+                    </button>
               </p>
             </section>
           </div>
@@ -2641,7 +2587,6 @@ export default function ReportScreen({ view = 'verdict' }) {
                 : assumed
                   ? <>Set floor &amp; facing first <span aria-hidden="true">↑</span></>
                   : <>Generate full report <span aria-hidden="true">→</span></>}
-              {keys.enabled && !assumed && !reportBusy.full && <KeyCostTag tone="onfill" cost={keyCost} unlocked={reportUnlocked('full')} />}
             </button>
             <p className="bsr-fullbox-note">
               {reportBusy.full

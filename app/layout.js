@@ -2,7 +2,6 @@ import './globals.css';
 import Script from 'next/script';
 import { Analytics } from '@vercel/analytics/next';
 import PendingSaveResume from '@/components/auth/PendingSaveResume';
-import { KeysProvider } from '@/lib/paywall/KeysProvider';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.blindspot.properties';
 
@@ -131,11 +130,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
-        {/* Key wallet + paywall pop-ups (lib/paywall). Mock on the
-            paywall-ui branch; NEXT_PUBLIC_PAYWALL=off turns it all off. */}
-        <KeysProvider>
-          {children}
-        </KeysProvider>
+        {children}
         <PendingSaveResume />
         <Analytics />
       </body>
