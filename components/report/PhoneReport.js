@@ -8,9 +8,8 @@
 //
 // One page, four views:
 //   page   -- the 3D map full width at the top, one sentence from the sun
-//             model, then "Where it scores high" and "Ask about on your
-//             visit". "Your reports" (neighbourhood, sun, full) sits
-//             right under the headline.
+//             model, then two short groups of bars (the area, your flat),
+//             lowest first. The three reports sit in a bar at the bottom.
 //   item   -- one row opened: what our data shows, where this pincode sits
 //             among the city's pincodes we cover, and what to check.
 //   sun    -- the same 3D map, larger, with season / play / time and the
@@ -22,13 +21,19 @@
 // is all we can claim.
 
 import { useEffect, useMemo } from 'react';
-import { ArrowLeft, ChevronRight, X, Play, Pause, MapPin } from 'lucide-react';
+import {
+  ArrowLeft, ChevronRight, X, Play, Pause, MapPin, Sun, FileText, Map as MapIcon,
+  ShieldCheck, GraduationCap, Wind, Droplets, Zap, Route, Building2, Waves,
+  Thermometer, Eye, Lock, Fan, CloudRain, Volume2,
+} from 'lucide-react';
 import { AREA_ACTIONS, UNIT_ACTIONS } from '@/lib/property-score/actionItems';
 import './phone.css';
 
-// Section names. Kept here so they're easy to change.
-export const HIGH_TITLE = 'Where it scores high';
-export const ASK_TITLE = 'Ask about on your visit';
+const ICONS = {
+  crime: ShieldCheck, schools: GraduationCap, air: Wind, water: Droplets, power: Zap,
+  roads: Route, infrastructure: Building2, sewerage: Waves,
+  sun: Sun, shadeHeat: Thermometer, view: Eye, privacy: Lock, wind: Fan, dampness: CloudRain, noise: Volume2,
+};
 
 const AREA_ORDER = ['crime', 'schools', 'air', 'water', 'power', 'roads', 'infrastructure', 'sewerage'];
 
@@ -39,7 +44,7 @@ const AREA_NAMES = {
   water: 'Water supply',
   power: 'Power supply',
   roads: 'Roads',
-  infrastructure: 'Transport and infrastructure',
+  infrastructure: 'Transport',
   sewerage: 'Drainage',
 };
 
@@ -56,13 +61,13 @@ const AREA_MEASURES = {
 };
 
 const FLAT_NAMES = {
-  sun: 'Direct sunlight',
-  shadeHeat: 'Summer sun on this side',
-  view: 'Open view from this floor',
-  privacy: 'Privacy from this floor',
+  sun: 'Sunlight',
+  shadeHeat: 'Summer sun',
+  view: 'View',
+  privacy: 'Privacy',
   wind: 'Airflow',
-  dampness: 'Monsoon damp on this side',
-  noise: 'Roads and rail nearby',
+  dampness: 'Monsoon damp',
+  noise: 'Road & rail noise',
 };
 
 const CITY_NAMES = { Bangalore: 'Bengaluru' };
@@ -153,50 +158,54 @@ function flatDetail(key, { sun, floor, facing }) {
   }
 }
 
-// Every row on the page, in one list, with the section it lands in.
+// The rows: area and flat in two groups, lowest score first so what to ask
+// about is at the top of each. An item is flagged "ask on your visit" when
+// it is low on our 0-100 scale or lower than most of its city.
 function buildItems({ area, unit, sun }) {
-  const items = [];
+  const areaRows = [];
   if (area?.factors) {
     for (const key of AREA_ORDER) {
       const score = area.factors[key];
       if (typeof score !== 'number') continue;
-      items.push({
-        id: `a-${key}`, kind: 'area', key, score,
-        name: AREA_NAMES[key],
-        line: `${score} out of 100${rankLine(area.cityRank?.[key], area.city) ? ` · ${rankLine(area.cityRank?.[key], area.city)}` : ' on our scale'}`,
-        band: rankBand(area.cityRank?.[key]),
-        rank: area.cityRank?.[key] || null,
-        facts: area.facts?.[key] || {},
+      const rank = area.cityRank?.[key] || null;
+      areaRows.push({
+        id: `a-${key}`, kind: 'area', key, score, name: AREA_NAMES[key],
+        rank, band: rankBand(rank), median: rank?.median ?? null,
+        line: rankLine(rank, area.city), facts: area.facts?.[key] || {},
       });
     }
   }
+  const flatRows = [];
   for (const s of unit?.subScores || []) {
     if (s.pending || typeof s.score !== 'number' || !FLAT_NAMES[s.key]) continue;
     if (/unavailable|neutral score/i.test(s.summary || '')) continue;
-    items.push({ id: `f-${s.key}`, kind: 'flat', key: s.key, score: s.score, name: FLAT_NAMES[s.key], line: flatLine(s.key, sun) });
+    flatRows.push({ id: `f-${s.key}`, kind: 'flat', key: s.key, score: s.score, name: FLAT_NAMES[s.key], line: flatLine(s.key, sun) });
   }
-  // Ask about: anything low on our 0-100 scale, or an area item lower than
-  // most of its city. Scores high: 75+ on our scale, and for area items
-  // also higher than most of its city -- so a row never says "around the
-  // middle" under a heading that says it scores high.
-  const isAsk = (i) => i.score < 55 || i.band === 'low';
-  const isHigh = (i) => !isAsk(i) && i.score >= 75 && (i.kind === 'flat' || !i.band || i.band === 'high');
-  const high = items.filter(isHigh).sort((a, b) => b.score - a.score);
-  const ask = items.filter(isAsk).sort((a, b) => a.score - b.score);
-  const rest = items.filter((i) => !isAsk(i) && !isHigh(i)).sort((a, b) => a.name.localeCompare(b.name));
-  return { high, ask, rest, all: [...high, ...ask, ...rest] };
+  const flag = (i) => ({ ...i, ask: i.score < 55 || i.band === 'low' });
+  const byScore = (a, b) => a.score - b.score;
+  const A = areaRows.map(flag).sort(byScore);
+  const F = flatRows.map(flag).sort(byScore);
+  return { areaRows: A, flatRows: F, all: [...A, ...F] };
 }
 
-function Row({ item, onOpen }) {
+function BarRow({ item, onOpen, showMid }) {
+  const Icon = ICONS[item.key];
   return (
     <li>
-      <button type="button" className="bsrp-row" onClick={() => onOpen(item.id)}>
-        <span className="bsrp-row-text">
-          <span className={`bsrp-tag is-${item.kind}`}>{item.kind === 'area' ? 'Area' : 'Your flat'}</span>
-          <strong>{item.name}</strong>
-          <span className="bsrp-row-line">{item.line}</span>
+      <button type="button" className="bsrp-bar" onClick={() => onOpen(item.id)}>
+        <span className="bsrp-bar-icon" aria-hidden="true">{Icon ? <Icon size={18} strokeWidth={2} /> : null}</span>
+        <span className="bsrp-bar-main">
+          <span className="bsrp-bar-top">
+            <strong>{item.name}</strong>
+            {item.ask && <span className="bsrp-ask">Ask on visit</span>}
+          </span>
+          <span className="bsrp-bar-track" aria-hidden="true">
+            <i style={{ width: `${Math.max(3, item.score)}%` }} />
+            {showMid && typeof item.median === 'number' && <b style={{ left: `${item.median}%` }} />}
+          </span>
         </span>
-        <ChevronRight size={18} strokeWidth={2} aria-hidden="true" />
+        <span className="bsrp-bar-n" aria-label={`${item.score} out of 100`}>{item.score}</span>
+        <ChevronRight size={16} strokeWidth={2} aria-hidden="true" />
       </button>
     </li>
   );
@@ -224,7 +233,7 @@ export default function PhoneReport({
 }) {
   const hasArea = Boolean(area);
   const sun = useMemo(() => sunStats(unit?.sunYear), [unit?.sunYear]);
-  const { high, ask, rest, all } = useMemo(() => buildItems({ area, unit, sun }), [area, unit, sun]);
+  const { areaRows, flatRows, all } = useMemo(() => buildItems({ area, unit, sun }), [area, unit, sun]);
   const place = (address || '').replace(/,\s*India\s*$/i, '').split(',').slice(0, 2).join(',').trim() || 'This address';
   const city = CITY_NAMES[area?.city] || area?.city;
 
@@ -253,55 +262,37 @@ export default function PhoneReport({
   const openItem = (id) => { setItemId(id); setView('item'); };
   const startReport = (type) => { setView('page'); onRequestReport(type); };
 
-  // The three reports, in one place. Neighbourhood opens the existing
-  // page for this pincode; Sun and Full start the existing report flow.
+  // The three reports, always one tap away at the bottom of the page.
+  // Neighbourhood opens the existing pincode page; Sun and Full start the
+  // existing report flow (both need the 3D map, which they photograph).
   const busy = reportBusy || {};
-  const reportsBlock = (
-    <section className="bsrp-reports" aria-labelledby="bsrp-reports-h">
-      <h2 id="bsrp-reports-h" className="bsrp-h2">Your reports</h2>
-      <ul>
-        {hasArea && (
-          <li>
-            <a className="bsrp-rep" href={`/neighbourhood-report/${area.pinCode}`} target="_blank" rel="opener">
-              <span className="bsrp-rep-text">
-                <strong>Neighbourhood report</strong>
-                <span>Every area item for pin {area.pinCode}, with sources</span>
-              </span>
-              <span className="bsrp-rep-go">Open</span>
-            </a>
-          </li>
-        )}
-        <li>
-          <button type="button" className="bsrp-rep" disabled={!mapReady || busy.gallery} onClick={() => startReport('gallery')}>
-            <span className="bsrp-rep-text">
-              <strong>Sun report</strong>
-              <span>{busy.gallery ? 'Building it now…' : 'Your flat’s light in every season, as a PDF'}</span>
-            </span>
-            <span className="bsrp-rep-go">{busy.gallery ? '…' : 'Get'}</span>
-          </button>
-        </li>
-        <li>
-          {unitSet ? (
-            <button type="button" className="bsrp-rep is-main" disabled={!mapReady || busy.full} onClick={() => startReport('full')}>
-              <span className="bsrp-rep-text">
-                <strong>Full report</strong>
-                <span>{busy.full ? 'Writing it now, about two minutes…' : 'Area and flat together, with what to check, as a PDF'}</span>
-              </span>
-              <span className="bsrp-rep-go">{busy.full ? '…' : 'Get'}</span>
-            </button>
-          ) : (
-            <button type="button" className="bsrp-rep is-main" onClick={onChangeFlat}>
-              <span className="bsrp-rep-text">
-                <strong>Full report</strong>
-                <span>Set your floor and facing first, it’s written for one flat</span>
-              </span>
-              <span className="bsrp-rep-go">Set</span>
-            </button>
-          )}
-        </li>
-      </ul>
-      <p className="bsrp-small">{mapReady ? 'Free for now.' : 'Sun and Full reports unlock once the 3D map has loaded.'}</p>
-    </section>
+  const reportBar = (
+    <nav className="bsrp-dock" aria-label="Your reports">
+      {hasArea ? (
+        <a className="bsrp-dock-btn" href={`/neighbourhood-report/${area.pinCode}`} target="_blank" rel="opener">
+          <MapIcon size={18} strokeWidth={2} aria-hidden="true" />
+          <span>Area report</span>
+        </a>
+      ) : (
+        <span className="bsrp-dock-btn is-off" aria-disabled="true">
+          <MapIcon size={18} strokeWidth={2} aria-hidden="true" />
+          <span>Area report</span>
+        </span>
+      )}
+      <button type="button" className="bsrp-dock-btn" disabled={!mapReady || busy.gallery} onClick={() => startReport('gallery')}>
+        <Sun size={18} strokeWidth={2} aria-hidden="true" />
+        <span>{busy.gallery ? 'Building…' : 'Sun report'}</span>
+      </button>
+      <button
+        type="button"
+        className="bsrp-dock-btn is-main"
+        disabled={unitSet && (!mapReady || busy.full)}
+        onClick={() => (unitSet ? startReport('full') : onChangeFlat())}
+      >
+        <FileText size={18} strokeWidth={2} aria-hidden="true" />
+        <span>{busy.full ? 'Writing…' : 'Full report'}</span>
+      </button>
+    </nav>
   );
 
   const dec = sun?.by?.December?.hours;
@@ -482,65 +473,76 @@ export default function PhoneReport({
           <span>{place}</span>
         </div>
         <span className="bsrp-hero-chip" aria-hidden="true">
-          <Play size={13} strokeWidth={2.6} /> Tap to see any time of year
+          <Play size={13} strokeWidth={2.6} /> Tap to see the sun through the year
         </span>
       </div>
 
       <div className="bsrp-intro">
-        {unitSet ? (
-          <p className="bsrp-kicker">
-            {ord(floor)} floor · faces {String(facing).toLowerCase()} ·{' '}
-            <button type="button" className="bsrp-kicker-btn" onClick={onChangeFlat}>Change</button>
-          </p>
-        ) : (
-          <p className="bsrp-kicker is-warn">
-            Floor and facing not set, numbers below are for a typical flat ·{' '}
-            <button type="button" className="bsrp-kicker-btn" onClick={onChangeFlat}>Set them</button>
-          </p>
-        )}
         <h1 className="bsrp-h1">{headline}</h1>
         <p className="bsrp-small">Our sun model’s estimate for this floor and facing.</p>
+        {!unitSet && (
+          <p className="bsrp-warn">
+            Floor and facing aren’t set, so the flat numbers are for a typical flat.{' '}
+            <button type="button" className="bsrp-link" onClick={onChangeFlat}>Set them</button>
+          </p>
+        )}
       </div>
 
-      {reportsBlock}
-
-      {high.length > 0 && (
-        <section className="bsrp-sec" aria-labelledby="bsrp-high">
-          <div className="bsrp-sec-head"><h2 id="bsrp-high" className="bsrp-h2">{HIGH_TITLE}</h2><span>{high.length}</span></div>
-          <ul className="bsrp-list">{high.map((it) => <Row key={it.id} item={it} onOpen={openItem} />)}</ul>
+      {hasArea && (
+        <section className="bsrp-sec" aria-labelledby="bsrp-area-h">
+          <div className="bsrp-sec-head">
+            <h2 id="bsrp-area-h" className="bsrp-h2">The area</h2>
+            <span>
+              Pin {area.pinCode} ·{' '}
+              <button type="button" className="bsrp-link" onClick={() => setPinFixOpen(!pinFixOpen)} aria-expanded={pinFixOpen}>
+                {pinFixOpen ? 'Never mind' : 'Wrong pin?'}
+              </button>
+            </span>
+          </div>
+          {pinFixOpen && pinFixForm}
+          <p className="bsrp-legend">
+            Out of 100 on our scale. <b aria-hidden="true" /> marks the middle of the {city} pincodes we cover.
+          </p>
+          <ul className="bsrp-bars-list">
+            {areaRows.map((it) => <BarRow key={it.id} item={it} onOpen={openItem} showMid />)}
+          </ul>
         </section>
       )}
 
-      {ask.length > 0 && (
-        <section className="bsrp-sec" aria-labelledby="bsrp-ask">
-          <div className="bsrp-sec-head"><h2 id="bsrp-ask" className="bsrp-h2">{ASK_TITLE}</h2><span>{ask.length}</span></div>
-          <ul className="bsrp-list">{ask.map((it) => <Row key={it.id} item={it} onOpen={openItem} />)}</ul>
+      {flatRows.length > 0 && (
+        <section className="bsrp-sec" aria-labelledby="bsrp-flat-h">
+          <div className="bsrp-sec-head">
+            <h2 id="bsrp-flat-h" className="bsrp-h2">Your flat</h2>
+            <span>
+              {ord(floor)} floor · {String(facing).toLowerCase()} ·{' '}
+              <button type="button" className="bsrp-link" onClick={onChangeFlat}>Change</button>
+            </span>
+          </div>
+          <p className="bsrp-legend">Out of 100 on our scale, estimated for this floor and facing.</p>
+          <ul className="bsrp-bars-list">
+            {flatRows.map((it) => <BarRow key={it.id} item={it} onOpen={openItem} />)}
+          </ul>
+          <button type="button" className="bsrp-link is-go" onClick={() => setView('sun')}>
+            See the sun through the year <ChevronRight size={16} strokeWidth={2.2} aria-hidden="true" />
+          </button>
         </section>
-      )}
-
-      {rest.length > 0 && (
-        <details className="bsrp-sec bsrp-rest">
-          <summary>And {rest.length} more, in between</summary>
-          <ul className="bsrp-list">{rest.map((it) => <Row key={it.id} item={it} onOpen={openItem} />)}</ul>
-        </details>
       )}
 
       {!hasArea && (
-        <p className="bsrp-note">
-          We don’t have neighbourhood records for this pincode yet, so this covers the flat itself.
-        </p>
+        <div className="bsrp-note">
+          <p>We don’t have neighbourhood records for this pincode yet, so this covers the flat itself.</p>
+          <button type="button" className="bsrp-link" onClick={() => setPinFixOpen(!pinFixOpen)} aria-expanded={pinFixOpen}>
+            {pinFixOpen ? 'Never mind' : 'Know the pincode?'}
+          </button>
+          {pinFixOpen && pinFixForm}
+        </div>
       )}
 
+      <p className="bsrp-foot">
+        Tap any row for what the data shows and what to check. Estimates from public data and our sun model, not an inspection or advice.
+      </p>
 
-      <div className="bsrp-foot">
-        <p>
-          Estimates from public data for this pincode and from our sun model. Not an inspection or advice. Please check on your visit.
-        </p>
-        <button type="button" className="bsrp-kicker-btn" onClick={() => setPinFixOpen(!pinFixOpen)} aria-expanded={pinFixOpen}>
-          {pinFixOpen ? 'Never mind' : 'Wrong pincode?'}
-        </button>
-        {pinFixOpen && pinFixForm}
-      </div>
+      {reportBar}
     </div>
   );
 }

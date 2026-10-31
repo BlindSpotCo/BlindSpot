@@ -118,7 +118,10 @@ export async function GET(req) {
       if (typeof v !== 'number') continue;
       const others = sameCity.map((r) => r.scores?.[k]).filter((x) => typeof x === 'number');
       if (others.length < 5) continue;
+      const sorted = [...others].sort((x, y) => x - y);
+      const mid = sorted.length % 2 ? sorted[(sorted.length - 1) / 2] : (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2;
       cityRank[k] = {
+        median: Math.round(mid),
         lower: others.filter((x) => x < v).length,
         higher: others.filter((x) => x > v).length,
         total: others.length,

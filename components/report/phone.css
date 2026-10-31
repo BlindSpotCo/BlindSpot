@@ -13,15 +13,16 @@
   --p-area:#6B2232;
   --p-flat:#8A4A22;
   --p-sun:#E9A94A;
-  --p-hero:44vh;
+  --p-hero:40vh;
   position:relative;
   padding:0;
   max-width:none;
   background:var(--p-cream);
   color:var(--p-ink);
   min-height:100vh;
+  padding-bottom:calc(84px + env(safe-area-inset-bottom));
 }
-@supports (height:1svh){ .bsr.is-phone{ --p-hero:44svh } }
+@supports (height:1svh){ .bsr.is-phone{ --p-hero:40svh } }
 
 /* ---------- the live 3D map, full width at the top ----------
    The same Map3DShadow instance as everywhere else (the PDF reports
@@ -243,23 +244,67 @@
   .bsrp-row, .bsrp-band{ transition:none }
 }
 
-/* ---------- your reports: three plain buttons ---------- */
-.bsrp-reports{ padding:18px 18px 0 }
-.bsrp-reports ul{ list-style:none; margin:8px 0 0; padding:0; display:flex; flex-direction:column; gap:8px }
-.bsrp-rep{
-  width:100%; display:flex; align-items:center; gap:12px; box-sizing:border-box;
-  padding:12px 14px; border:1px solid var(--p-line); border-radius:12px;
-  background:#FFFFFF; color:var(--p-ink); text-decoration:none; text-align:left;
-  font:inherit; cursor:pointer;
+
+/* ---------- intro ---------- */
+.bsrp-warn{
+  margin:10px 0 0; font-size:14px; line-height:1.45; color:var(--bsr-avg,#6B4600);
 }
-.bsrp-rep.is-main{ background:var(--p-olive); border-color:var(--p-olive); color:var(--p-cream) }
-.bsrp-rep:disabled{ opacity:.55; cursor:default }
-.bsrp-rep-text{ flex:1; min-width:0; display:flex; flex-direction:column; gap:1px }
-.bsrp-rep-text strong{ font-size:16px; font-weight:700 }
-.bsrp-rep-text span{ font-size:13px; line-height:1.35; color:var(--p-mute) }
-.bsrp-rep.is-main .bsrp-rep-text span{ color:#E4E0C8 }
-.bsrp-rep-go{
-  flex:none; min-width:52px; text-align:center; padding:7px 12px; border-radius:999px;
-  background:var(--p-ink); color:var(--p-cream); font-size:14px; font-weight:600;
+.bsrp-link{
+  border:0; background:none; padding:0; font:inherit; color:var(--p-olive); font-weight:600;
+  text-decoration:underline; text-underline-offset:3px; cursor:pointer;
 }
-.bsrp-rep.is-main .bsrp-rep-go{ background:#F2D29A; color:var(--p-ink) }
+.bsrp-link.is-go{
+  display:inline-flex; align-items:center; gap:2px; margin-top:10px; min-height:44px; font-size:15px;
+}
+
+/* ---------- bar groups ---------- */
+.bsrp-sec-head{ gap:12px; flex-wrap:wrap }
+.bsrp-sec-head > span{ font-size:13px }
+.bsrp-legend{ margin:4px 0 6px; font-size:12.5px; line-height:1.4; color:var(--p-faint) }
+.bsrp-legend b{
+  display:inline-block; width:2px; height:12px; background:var(--p-ink); vertical-align:-1px; margin:0 2px;
+}
+.bsrp-bars-list{ list-style:none; margin:0; padding:0 }
+.bsrp-bars-list li + li .bsrp-bar{ border-top:1px solid var(--p-line) }
+.bsrp-bar{
+  width:100%; display:flex; align-items:center; gap:12px; padding:10px 0;
+  border:0; background:none; font:inherit; color:var(--p-ink); text-align:left; cursor:pointer;
+}
+.bsrp-bar > svg{ color:#8A8A7E; flex:none }
+.bsrp-bar-icon{
+  width:34px; height:34px; flex:none; border-radius:50%;
+  background:#EFEBDF; color:var(--p-ink); display:inline-flex; align-items:center; justify-content:center;
+}
+.bsrp-bar-main{ flex:1; min-width:0; display:flex; flex-direction:column; gap:7px }
+.bsrp-bar-top{ display:flex; align-items:center; gap:8px; min-width:0 }
+.bsrp-bar-top strong{ font-size:15px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.bsrp-ask{
+  flex:none; font-size:11px; font-weight:700; color:#7A3F1C; background:#F6E4D3;
+  padding:2px 7px; border-radius:999px;
+}
+.bsrp-bar-track{ position:relative; height:6px; border-radius:6px; background:#E8E3D5 }
+.bsrp-bar-track i{ position:absolute; left:0; top:0; bottom:0; border-radius:6px; background:var(--p-olive) }
+.bsrp-bar-track b{
+  position:absolute; top:-4px; width:2px; height:14px; margin-left:-1px; background:var(--p-ink);
+}
+.bsrp-bar-n{ flex:none; width:28px; text-align:right; font-size:15px; font-weight:700; font-variant-numeric:tabular-nums }
+
+.bsrp-note{ margin:22px 18px 0; font-size:14px; color:var(--p-mute) }
+.bsrp-note p{ margin:0 0 4px }
+.bsrp-foot{ margin:0; padding:22px 18px 8px; font-size:12px; line-height:1.5; color:var(--p-faint) }
+
+/* ---------- the report bar, stuck to the bottom ---------- */
+.bsrp-dock{
+  position:fixed; left:0; right:0; bottom:0; z-index:50;
+  display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px;
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+  background:rgba(251,248,241,.97); border-top:1px solid var(--p-line);
+  box-shadow:0 -6px 18px rgba(28,28,23,.06);
+}
+.bsrp-dock-btn{
+  min-height:54px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+  border:1px solid var(--p-line); border-radius:12px; background:#FFFFFF; color:var(--p-ink);
+  font:inherit; font-size:13px; font-weight:600; text-decoration:none; cursor:pointer;
+}
+.bsrp-dock-btn.is-main{ background:var(--p-olive); border-color:var(--p-olive); color:var(--p-cream) }
+.bsrp-dock-btn:disabled, .bsrp-dock-btn.is-off{ background:#EFEBE1; border-color:#E3DECF; color:#8A8A7E; cursor:default }
