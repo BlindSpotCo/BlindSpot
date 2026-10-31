@@ -8,8 +8,8 @@
 //
 // One page, four views:
 //   page   -- the 3D map full width at the top, one sentence from the sun
-//             model, then "Worth looking into" (what our data shows and why
-//             it matters, in words) and "Where it does better". No scores on
+//             model, then "Where it does better" and "Worth looking into" (one
+//             sentence each, plus why it matters). No scores on
 //             the page. The three reports sit in a bar at the bottom.
 //   item   -- one row opened: what our data shows, where this pincode sits
 //             among the city's pincodes we cover, and what to check.
@@ -87,7 +87,7 @@ const WHY = {
   view: 'Lower floors more often look straight onto nearby buildings.',
   privacy: 'Lower floors are easier to see into from nearby buildings and the street.',
   wind: 'Less airflow can make rooms feel stuffy on still summer days.',
-  dampness: 'This side meets more monsoon rain, which can show up as seepage on walls.',
+  dampness: 'Walls that take the monsoon rain can show seepage or peeling paint after the season.',
   noise: 'Roads or rail close by can mean more noise indoors, mostly at rush hour.',
 };
 
@@ -140,19 +140,6 @@ function rankLine(rank, city) {
   return `Around the middle of the ${c} pincodes we cover`;
 }
 
-function flatLine(key, sun, low) {
-  switch (key) {
-    case 'sun': return sun ? `About ${hrs(sun.avg)} of direct sun a day, averaged over the year` : 'From our sun model';
-    case 'shadeHeat': return sun ? `About ${hrs(sun.summer)} of direct sun a day from April to June` : 'From our sun model';
-    case 'view': return low ? 'Our estimate for this floor is on the lower side' : 'Our estimate for this floor is on the higher side';
-    case 'privacy': return low ? 'Our estimate for this floor is on the lower side' : 'Our estimate for this floor is on the higher side';
-    case 'wind': return low ? 'Our airflow estimate for this floor is on the lower side' : 'Our airflow estimate for this floor is on the higher side';
-    case 'dampness': return low ? 'Our model has more monsoon rain reaching this side than most' : 'Our model has this side fairly sheltered from monsoon rain';
-    case 'noise': return low ? 'Roads or rail lines are mapped close to this spot' : 'No major roads or rail lines mapped close by';
-    default: return '';
-  }
-}
-
 function flatDetail(key, { sun, floor, facing }) {
   const side = `${String(facing).toLowerCase()}-facing`;
   switch (key) {
@@ -179,51 +166,79 @@ function flatDetail(key, { sun, floor, facing }) {
   }
 }
 
-// Rows, in words. Look into: low in our data (or lower than most of the
-// city). Does better: high in our data (and, for the area, higher than most
-// of the city). Everything else is folded away.
+// Rows, in words: one sentence each, topic first. Does better: high in our
+// data (and, for the area, higher than most of the city). Worth looking
+// into: low in our data, or lower than most of the city. The rest fold away.
+const AREA_SUBJ = {
+  water: ['Water supply here', 'ranks'],
+  power: ['Power supply here', 'ranks'],
+  roads: ['Roads here', 'rank'],
+  infrastructure: ['Transport links here', 'rank'],
+  sewerage: ['Drainage here', 'ranks'],
+  crime: ['Safety records here', 'rank'],
+  schools: ['Schools nearby', 'rank'],
+  air: ['Air quality here', 'ranks'],
+};
+
+function flatSentence(key, sun, low) {
+  const side = low ? 'lower' : 'higher';
+  switch (key) {
+    case 'sun':
+      return ['Your flat', sun ? `gets about ${hrs(sun.avg)} of direct sun a day, averaged over the year, in our sun model.` : `gets ${low ? 'less' : 'more'} direct sun than most in our sun model.`];
+    case 'shadeHeat':
+      return ['This side', sun ? `gets about ${hrs(sun.summer)} of direct sun a day from April to June, in our sun model.` : `gets ${low ? 'more' : 'less'} summer sun than most in our sun model.`];
+    case 'view': return ['The view from this floor', `is on the ${side} side in our estimate.`];
+    case 'privacy': return ['Privacy at this floor', `is on the ${side} side in our estimate.`];
+    case 'wind': return ['Airflow at this floor', `is on the ${side} side in our estimate.`];
+    case 'dampness': return low ? ['This side', 'gets more monsoon rain than most in our model.'] : ['This side', 'is fairly sheltered from monsoon rain in our model.'];
+    case 'noise': return low ? ['Roads or rail lines', 'are mapped close to this flat.'] : ['No major roads or rail lines', 'are mapped close to this flat.'];
+    default: return ['', ''];
+  }
+}
+
 function buildItems({ area, unit, sun }) {
   const c = CITY_NAMES[area?.city] || area?.city || 'the city';
   const rows = [];
   if (area?.factors) {
     for (const key of AREA_ORDER) {
       const score = area.factors[key];
-      if (typeof score !== 'number') continue;
+      if (typeof score !== 'number' || !AREA_SUBJ[key]) continue;
       const rank = area.cityRank?.[key] || null;
       const band = rankBand(rank);
       const low = score < 55 || band === 'low';
-      const finding = band === 'low' ? `Lower than most ${c} pincodes we cover.`
-        : band === 'high' ? `Higher than most ${c} pincodes we cover.`
-        : band === 'mid' ? (low ? `Around the middle for ${c}, and on the lower side in our data.` : `Around the middle of the ${c} pincodes we cover.`)
-        : (low ? 'On the lower side in our data.' : 'On the higher side in our data.');
-      rows.push({ id: `a-${key}`, kind: 'area', key, score, name: AREA_NAMES[key], rank, band, low, high: !low && score >= 75 && band !== 'mid' && band !== 'low', finding, facts: area.facts?.[key] || {} });
+      const [lead, v] = AREA_SUBJ[key];
+      const rest = band === 'low' ? `${v} lower than most ${c} pincodes we cover.`
+        : band === 'high' ? `${v} higher than most ${c} pincodes we cover.`
+        : band === 'mid' ? (low ? `${v} around the middle for ${c}, on the lower side in our data.` : `${v} around the middle of the ${c} pincodes we cover.`)
+        : `${v} on the ${low ? 'lower' : 'higher'} side in our data.`;
+      rows.push({
+        id: `a-${key}`, kind: 'area', key, score, name: AREA_NAMES[key], rank, band, low,
+        high: !low && score >= 75 && band !== 'mid' && band !== 'low',
+        lead, rest, finding: `${lead} ${rest}`, facts: area.facts?.[key] || {},
+      });
     }
   }
   for (const s of unit?.subScores || []) {
     if (s.pending || typeof s.score !== 'number' || !FLAT_NAMES[s.key]) continue;
     if (/unavailable|neutral score/i.test(s.summary || '')) continue;
     const low = s.score < 55;
-    rows.push({ id: `f-${s.key}`, kind: 'flat', key: s.key, score: s.score, name: FLAT_NAMES[s.key], low, high: !low && s.score >= 75, finding: `${flatLine(s.key, sun, low)}.` });
+    const [lead, rest] = flatSentence(s.key, sun, low);
+    rows.push({ id: `f-${s.key}`, kind: 'flat', key: s.key, score: s.score, name: FLAT_NAMES[s.key], low, high: !low && s.score >= 75, lead, rest, finding: `${lead} ${rest}` });
   }
-  const byScore = (a, b) => a.score - b.score;
-  const look = rows.filter((r) => r.low).sort(byScore);
+  const look = rows.filter((r) => r.low).sort((a, b) => a.score - b.score);
   const better = rows.filter((r) => r.high).sort((a, b) => b.score - a.score);
   const rest = rows.filter((r) => !r.low && !r.high).sort((a, b) => a.name.localeCompare(b.name));
-  return { look, better, rest, all: [...look, ...better, ...rest] };
+  return { look, better, rest, all: [...better, ...look, ...rest] };
 }
 
 function FindingRow({ item, onOpen, why }) {
   const Icon = ICONS[item.key];
   return (
     <li>
-      <button type="button" className="bsrp-find" onClick={() => onOpen(item.id)}>
+      <button type="button" className="bsrp-find" onClick={() => onOpen(item.id)} aria-label={`${item.name}: ${item.finding} More detail`}>
         <span className="bsrp-bar-icon" aria-hidden="true">{Icon ? <Icon size={18} strokeWidth={2} /> : null}</span>
         <span className="bsrp-find-main">
-          <span className="bsrp-find-top">
-            <strong>{item.name}</strong>
-            <span className={`bsrp-find-kind is-${item.kind}`}>{item.kind === 'area' ? 'Area' : 'Your flat'}</span>
-          </span>
-          <span className="bsrp-find-what">{item.finding}</span>
+          <span className="bsrp-find-what"><strong>{item.lead}</strong> {item.rest}</span>
           {why && WHY[item.key] && <span className="bsrp-find-why">{WHY[item.key]}</span>}
         </span>
         <ChevronRight size={16} strokeWidth={2} aria-hidden="true" />
@@ -525,20 +540,20 @@ export default function PhoneReport({
         )}
       </div>
 
-      {look.length > 0 && (
-        <section className="bsrp-sec" aria-labelledby="bsrp-look-h">
-          <h2 id="bsrp-look-h" className="bsrp-h2">Worth looking into</h2>
-          <ul className="bsrp-find-list">
-            {look.map((it) => <FindingRow key={it.id} item={it} onOpen={openItem} why />)}
-          </ul>
-        </section>
-      )}
-
       {better.length > 0 && (
         <section className="bsrp-sec" aria-labelledby="bsrp-better-h">
           <h2 id="bsrp-better-h" className="bsrp-h2">Where it does better</h2>
           <ul className="bsrp-find-list">
             {better.map((it) => <FindingRow key={it.id} item={it} onOpen={openItem} />)}
+          </ul>
+        </section>
+      )}
+
+      {look.length > 0 && (
+        <section className="bsrp-sec" aria-labelledby="bsrp-look-h">
+          <h2 id="bsrp-look-h" className="bsrp-h2">Worth looking into</h2>
+          <ul className="bsrp-find-list">
+            {look.map((it) => <FindingRow key={it.id} item={it} onOpen={openItem} why />)}
           </ul>
         </section>
       )}
