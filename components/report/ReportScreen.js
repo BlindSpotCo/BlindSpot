@@ -29,7 +29,7 @@ import {
 import RoomPhotoAnalyzer from './RoomPhotoAnalyzer';
 import PhoneReport from './PhoneReport';
 import { sunLine as sunLineOf, areaLine as areaLineOf } from '@/lib/report/summaryLines';
-import { sunStats, areaFact, flatFact, tagScore } from '@/lib/report/facts';
+import { tagScore } from '@/lib/report/facts';
 import useIsPhone from '@/lib/useIsPhone';
 import { useTrends } from '@/lib/trends/useTrends';
 import { TREND_FOR_FACTOR, TREND_FOR_SUBSCORE } from '@/lib/trends/series';
@@ -2361,7 +2361,6 @@ export default function ReportScreen({ view = 'verdict' }) {
                         {RowIcon ? <RowIcon className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" /> : null}
                         <span className="bsr-row-what">
                           {FACTOR_LABELS[k] || k}
-                          {areaFact(k, area.raw, area.facts?.[k]) ? <span className="bsr-row-fact">{areaFact(k, area.raw, area.facts?.[k])}</span> : null}
                           {FACTOR_MEANS[k] ? <span className="bsr-row-note">{FACTOR_MEANS[k]}</span> : null}
                         </span>
                         {t.button}
@@ -2560,9 +2559,6 @@ export default function ReportScreen({ view = 'verdict' }) {
                     {RowIcon ? <RowIcon className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" /> : null}
                     <span className="bsr-row-what">
                       {s.label}
-                      {!s.pending && flatFact(s.key, s, { sun: sunStats(unit.sunYear), floor, facing }) ? (
-                        <span className="bsr-row-fact">{flatFact(s.key, s, { sun: sunStats(unit.sunYear), floor, facing })}</span>
-                      ) : null}
                       {s.summary ? <span className="bsr-row-note">{s.summary}</span> : null}
                     </span>
                     {/* `pending` (currently only Noise Risk, on its very

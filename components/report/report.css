@@ -2809,14 +2809,15 @@ button.bsr-cta.is-needs-unit:hover:not(:disabled){background:rgba(61,65,22,.07);
 .bsr-sum-line > svg{ flex:none; margin-top:3px }
 .bsr-sum-line.is-sun > svg{ color:var(--ss,#AF5F30) }
 .bsr-sum-line.is-area > svg{ color:var(--av,#6B2232) }
+/* Each line on one row on laptop screens. */
+@media (min-width:900px){
+  .bsr-sum .bsr-answer-say{ max-width:none }
+  .bsr-sum .bsr-answer-say h2.bsr-sum-lines{ font-size:18px }
+  .bsr-sum-line > span{ white-space:nowrap }
+}
 @media (max-width:560px){
   .bsr-sum .bsr-answer-say h2.bsr-sum-lines{ font-size:16px !important; gap:6px }
 }
-
-/* ---- one plain fact under each row, always visible (same as phone) ---- */
-.bsr-row-fact{ display:block; font-size:13px; line-height:1.4; color:var(--text-mute,#5A5140); margin-top:2px; font-weight:500 }
-.bsr-half .bsr-rows li{ align-items:flex-start }
-.bsr-half .bsr-rows li > .bsr-tag, .bsr-half .bsr-rows li > .bsr-row-icon{ margin-top:2px }
 
 /* ---- floor coach sits above the field, not over the flat's own rating ---- */
 @media (min-width:641px){
