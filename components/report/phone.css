@@ -385,3 +385,9 @@ html.bsrp-lock-x body{ position:relative }
 .bsrp-rest > summary{ min-height:38px; font-size:14px }
 .bsrp-meta{ padding:10px 16px 0; font-size:12px }
 .bsrp-foot{ padding:10px 16px 4px; font-size:11.5px }
+
+/* neutral rows: name, then what it covers */
+.bsrp-find-name{ font-size:14.5px; font-weight:700; line-height:1.3 }
+.bsrp-find{ align-items:center }
+.bsrp-find > svg{ margin-top:0 }
+.bsrp-find .bsrp-bar-icon{ margin-top:0 }
