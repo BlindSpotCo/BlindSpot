@@ -130,6 +130,31 @@ export async function GET(req) {
     // When each factor was last updated and whether it is a modelled
     // estimate, from the record's own provenance; plus the school list
     // counts, which are the one factor with plain countable facts.
+    // Plain per-pincode facts for the phone report's one-line rows (the
+    // same raw fields the detailed area report already shows). Modelled or
+    // derived values are flagged so the UI can say "estimated" or skip them.
+    let raw = null;
+    try {
+      const master = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'data', 'aslivastu', 'master_by_pin.json'), 'utf8'));
+      const m = master.find((r) => r.pin_code === pinCode);
+      if (m) {
+        const mp = m._provenance || {};
+        const pick = (k) => (m[k] === undefined ? null : m[k]);
+        raw = {
+          aqiAvg: pick('aqi_avg'), aqiCategory: pick('aqi_category'),
+          supplyHours: pick('supply_hours'), waterCoverage: m.water_coverage ?? m.coverage_pct ?? null, tds: pick('tds_level'),
+          outageHoursMonth: pick('avg_outage_hours'), discom: pick('discom'),
+          potholesPerKm: pick('pothole_density'),
+          metroNearby: pick('metro_stations_nearby'), metroPlanned: pick('metro_planned_stations'), highway: pick('highway_proximity'),
+          sewerCoverage: pick('sewerage_coverage'), floodsPerYear: pick('flooding_incidents_annual'),
+          crimes: avRecord.total_cognizable_crimes ?? pick('total_cognizable_crimes'),
+          crimesModelled: ((avRecord._provenance || {}).crime?.confidence === 'low') || (mp.total_cognizable_crimes?.confidence === 'low'),
+        };
+      }
+    } catch (e) {
+      console.error('[property-score] master_by_pin read failed:', e?.message || e);
+    }
+
     const prov = avRecord._provenance || {};
     const facts = {};
     for (const k of Object.keys(avRecord.scores || {})) {
@@ -162,6 +187,7 @@ export async function GET(req) {
         factors: avRecord.scores,
         cityRank,
         facts,
+        raw,
       },
       unit: {
         source: 'Home Comfort Score',

@@ -173,21 +173,110 @@ const AREA_COVERS = {
   sewerage: 'Drainage coverage and waterlogging',
 };
 const FLAT_ORDER = ['sun', 'shadeHeat', 'view', 'privacy', 'wind', 'dampness', 'noise'];
+const FLAT_COVERS = {
+  sun: 'Direct sun through the year, from our sun model',
+  shadeHeat: 'Summer sun on this side, from our sun model',
+  view: 'Estimated from your floor height',
+  privacy: 'Estimated from your floor height',
+  wind: 'From today’s wind forecast and your floor height',
+  dampness: 'How this side meets the monsoon rain',
+  noise: 'Roads and rail lines mapped nearby',
+};
 
-function flatCovers(key, sun) {
+const num1 = (n) => (Math.round(n * 10) / 10).toString();
+
+// One plain sentence per area item, from this pincode's own records.
+// Facts only: counts, hours, percentages, official bands. Falls back to
+// what the item covers when the record has no number for it.
+function areaFact(key, raw, facts) {
+  const r = raw || {};
   switch (key) {
-    case 'sun': return sun ? `About ${hrs(sun.avg)} of direct sun a day, averaged over the year` : 'Direct sun through the year, from our sun model';
-    case 'shadeHeat': return sun ? `About ${hrs(sun.summer)} of direct sun a day from April to June` : 'Summer sun on this side, from our sun model';
-    case 'view': return 'Estimated from your floor height';
-    case 'privacy': return 'Estimated from your floor height';
-    case 'wind': return 'From today’s wind forecast and your floor height';
-    case 'dampness': return 'How this side meets the monsoon rain';
-    case 'noise': return 'Roads and rail lines mapped nearby';
-    default: return '';
+    case 'schools': {
+      if (typeof facts?.count !== 'number') return null;
+      const b = Object.entries(facts.boards || {}).filter(([, n]) => n > 0).map(([k, n]) => `${n} ${k}`).join(', ');
+      return `${facts.count} schools listed in this pincode${b ? ` (${b})` : ''}.`;
+    }
+    case 'air':
+      return typeof r.aqiAvg === 'number'
+        ? `Average AQI around ${Math.round(r.aqiAvg)}${r.aqiCategory ? `, in the CPCB “${r.aqiCategory}” band` : ''}.`
+        : null;
+    case 'water': {
+      if (typeof r.supplyHours !== 'number') return null;
+      const h = r.supplyHours < 1 ? 'under 1 hour' : `about ${num1(r.supplyHours)} hours`;
+      return `Piped water supply ${h} a day${typeof r.waterCoverage === 'number' ? `, ${r.waterCoverage}% of homes on piped supply` : ''}.`;
+    }
+    case 'power':
+      return typeof r.outageHoursMonth === 'number'
+        ? `Power cuts add up to about ${num1(r.outageHoursMonth)} hours a month${r.discom ? ` (${r.discom})` : ''}.`
+        : null;
+    case 'roads':
+      return typeof r.potholesPerKm === 'number' ? `About ${num1(r.potholesPerKm)} potholes per km on roads here.` : null;
+    case 'infrastructure': {
+      if (typeof r.metroNearby !== 'number') return null;
+      const metro = r.metroNearby === 0
+        ? `No operating metro station nearby${r.metroPlanned ? `, ${r.metroPlanned} planned` : ''}`
+        : `${r.metroNearby} metro station${r.metroNearby === 1 ? '' : 's'} nearby`;
+      return `${metro}${r.highway ? `; highway access ${String(r.highway).toLowerCase()}` : ''}.`;
+    }
+    case 'sewerage':
+      return typeof r.sewerCoverage === 'number'
+        ? `${r.sewerCoverage}% of homes on the sewer network${typeof r.floodsPerYear === 'number' ? `; about ${r.floodsPerYear} flooding incidents recorded a year` : ''}.`
+        : null;
+    case 'crime':
+      return typeof r.crimes === 'number'
+        ? `About ${r.crimes} recorded crimes a year for this police area${r.crimesModelled ? ' (estimated)' : ''}.`
+        : null;
+    default:
+      return null;
   }
 }
 
-function buildItems({ area, unit, sun }) {
+// One plain sentence per flat item, from our sun model and the flat's own
+// sub-score inputs (floor, today's wind, mapped roads, monsoon rain).
+const floorBand = (f) => (f <= 1 ? 0 : f <= 4 ? 1 : f <= 9 ? 2 : f <= 15 ? 3 : 4);
+const VIEW_AT = [
+  'Ground floor: mostly the compound wall or next building in view',
+  'Low floor: a partly open view',
+  'Mid floor: usually clears nearby rooftops',
+  'High floor: open sky in most directions',
+  'Very high floor: close to an unobstructed view',
+];
+const PRIVACY_AT = [
+  'Ground floor: in view of the street',
+  'Low floor: within sightline of nearby buildings',
+  'Mid floor: above most street-level sightlines',
+  'High floor: few buildings tall enough to look in',
+  'Very high floor: very few buildings can look in',
+];
+function flatFact(key, sub, { sun, floor, facing }) {
+  const basis = sub?.basis || '';
+  switch (key) {
+    case 'sun': return sun ? `About ${hrs(sun.avg)} of direct sun a day, averaged over the year.` : null;
+    case 'shadeHeat': return sun ? `About ${hrs(sun.summer)} of direct sun a day from April to June.` : null;
+    case 'view': return `${VIEW_AT[floorBand(floor)]}, in our estimate.`;
+    case 'privacy': return `${PRIVACY_AT[floorBand(floor)]}, in our estimate.`;
+    case 'wind': {
+      const m = basis.match(/avgWindSpeed=([\d.]+)km\/h/);
+      return m ? `Wind around ${Math.round(Number(m[1]))} km/h today at this spot.` : null;
+    }
+    case 'dampness': {
+      const mm = basis.match(/cityMonsoonRainfall=(\d+)mm/);
+      const se = basis.match(/season=([A-Za-z]+-[A-Za-z]+)/);
+      const MONTHS_FULL = { Jan: 'January', Feb: 'February', Mar: 'March', Apr: 'April', May: 'May', Jun: 'June', Jul: 'July', Aug: 'August', Sep: 'September', Oct: 'October', Nov: 'November', Dec: 'December' };
+      const span = se ? se[1].split('-').map((x) => MONTHS_FULL[x] || x).join(' to ') : null;
+      return mm ? `About ${mm[1]} mm of monsoon rain here${span ? `, ${span}` : ''}.` : null;
+    }
+    case 'noise': {
+      const m = basis.match(/nearestSource=([a-z_ ]+)@(\d+)m/);
+      if (m) return `Nearest major ${m[1] === 'rail' ? 'rail line' : `${m[1]} road`} about ${m[2]} m away.`;
+      const none_ = (sub?.summary || '').match(/within (\d+)m/);
+      return none_ ? `No major road or rail line mapped within ${none_[1]} m.` : null;
+    }
+    default: return null;
+  }
+}
+
+function buildItems({ area, unit, sun, floor, facing }) {
   const areaRows = [];
   if (area?.factors) {
     for (const key of AREA_ORDER) {
@@ -195,8 +284,7 @@ function buildItems({ area, unit, sun }) {
       if (typeof score !== 'number') continue;
       const rank = area.cityRank?.[key] || null;
       const facts = area.facts?.[key] || {};
-      let covers = AREA_COVERS[key];
-      if (key === 'schools' && typeof facts.count === 'number') covers = `${facts.count} schools listed in this pincode in our data`;
+      const covers = areaFact(key, area.raw, facts) || AREA_COVERS[key];
       areaRows.push({
         id: `a-${key}`, kind: 'area', key, name: AREA_NAMES[key], covers, facts,
         strong: score >= 75 && rankBand(rank) === 'high',
@@ -207,7 +295,7 @@ function buildItems({ area, unit, sun }) {
   for (const s of unit?.subScores || []) {
     if (s.pending || typeof s.score !== 'number' || !FLAT_NAMES[s.key]) continue;
     if (/unavailable|neutral score/i.test(s.summary || '')) continue;
-    flatRows.push({ id: `f-${s.key}`, kind: 'flat', key: s.key, name: FLAT_NAMES[s.key], covers: flatCovers(s.key, sun) });
+    flatRows.push({ id: `f-${s.key}`, kind: 'flat', key: s.key, name: FLAT_NAMES[s.key], covers: flatFact(s.key, s, { sun, floor, facing }) || FLAT_COVERS[s.key] });
   }
   flatRows.sort((a, b) => FLAT_ORDER.indexOf(a.key) - FLAT_ORDER.indexOf(b.key));
   return { areaRows, flatRows, all: [...flatRows, ...areaRows] };
@@ -238,7 +326,7 @@ export default function PhoneReport({
 }) {
   const hasArea = Boolean(area);
   const sun = useMemo(() => sunStats(unit?.sunYear), [unit?.sunYear]);
-  const { areaRows, flatRows, all } = useMemo(() => buildItems({ area, unit, sun }), [area, unit, sun]);
+  const { areaRows, flatRows, all } = useMemo(() => buildItems({ area, unit, sun, floor, facing }), [area, unit, sun, floor, facing]);
   const place = (address || '').replace(/,\s*India\s*$/i, '').split(',').slice(0, 2).join(',').trim() || 'This address';
   const city = CITY_NAMES[area?.city] || area?.city;
 
@@ -358,13 +446,12 @@ export default function PhoneReport({
       : (typeof UNIT_ACTIONS[item.key] === 'function' ? UNIT_ACTIONS[item.key](facing) : UNIT_ACTIONS[item.key]);
     let detail = '';
     if (item.kind === 'area') {
-      detail = AREA_MEASURES[item.key];
-      if (item.key === 'schools' && typeof item.facts.count === 'number') {
-        const b = Object.entries(item.facts.boards || {}).filter(([, n]) => n > 0).map(([k, n]) => `${n} ${k}`).join(', ');
-        detail += ` ${item.facts.count} schools are listed in this pincode in our data${b ? ` (${b})` : ''}.`;
-      }
+      const f = areaFact(item.key, area?.raw, item.facts);
+      detail = f ? `${f} ${AREA_MEASURES[item.key]}` : AREA_MEASURES[item.key];
     } else {
-      detail = flatDetail(item.key, { sun, floor, facing });
+      const f = flatFact(item.key, (unit?.subScores || []).find((x) => x.key === item.key), { sun, floor, facing });
+      const d = flatDetail(item.key, { sun, floor, facing });
+      detail = f && !['sun', 'shadeHeat'].includes(item.key) ? `${f} ${d}` : d;
     }
     const updated = item.kind === 'area' ? monthYear(item.facts.asOf) : null;
     return (
