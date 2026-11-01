@@ -95,6 +95,7 @@ const WHY = {
 const CITY_NAMES = { Bangalore: 'Bengaluru' };
 
 const SEASON_TABS = [
+  { key: 'today', label: 'Today', month: null },
   { key: 'winter', label: 'Winter', month: 'December' },
   { key: 'spring', label: 'Spring', month: 'March' },
   { key: 'summer', label: 'Summer', month: 'June' },
@@ -511,27 +512,38 @@ export default function PhoneReport({
 
   /* ---------------- sun ---------------- */
   if (view === 'sun') {
-    const tab = SEASON_TABS.find((t) => t.key === seasonKey);
-    const monthName = tab ? tab.month : MONTHS[new Date().getMonth()];
+    const tab = SEASON_TABS.find((t) => t.key === seasonKey) || SEASON_TABS[0];
+    const monthName = tab.month || MONTHS[new Date().getMonth()];
     const m = sun?.by?.[monthName];
-    const max = Math.max(1, ...((unit?.sunYear || []).map((x) => x.hours || 0)));
+    const year = unit?.sunYear || [];
+    const max = Math.max(1, ...year.map((x) => x.hours || 0));
+    const when = tab.key === 'today' ? 'today' : `on ${tab.label.toLowerCase()} days (${monthName})`;
     return (
       <>
       {/* Outside .bsrp-sun: that panel sits under the map (the map is the
-          top half of this view), and the back button has to sit over it. */}
+          top of this view), and the back button has to sit over it. */}
       <button type="button" className="bsrp-icon-btn is-float" onClick={() => setView('page')} aria-label="Back">
         <ArrowLeft size={22} strokeWidth={2} />
       </button>
       <div className="bsrp-sun" role="dialog" aria-modal="true" aria-labelledby="bsrp-sun-h">
         <div className="bsrp-sun-body">
-          <h2 id="bsrp-sun-h" className="bsrp-visually-hidden">Sunlight on your flat</h2>
-          <div className="bsrp-seasons" role="group" aria-label="Time of year">
+          <div className="bsrp-seg" role="group" aria-label="Time of year">
             {SEASON_TABS.map((t) => (
               <button key={t.key} type="button" aria-pressed={seasonKey === t.key} onClick={() => setSeasonKey(t.key)}>
                 {t.label}
               </button>
             ))}
           </div>
+
+          {m && (
+            <div className="bsrp-sun-now">
+              <h2 id="bsrp-sun-h" className="bsrp-sun-say">
+                {none(m.hours) ? `No direct sun on this side ${when}` : `${hrs(m.hours)} of direct sun ${when}`}
+              </h2>
+              <p className="bsrp-small">Sunrise {m.rise} · Sunset {m.set} · our sun model, clear sky</p>
+            </div>
+          )}
+
           <div className="bsrp-time">
             <button
               type="button"
@@ -539,46 +551,40 @@ export default function PhoneReport({
               onClick={() => setAnimating(!animating)}
               aria-label={animating ? 'Pause the day' : 'Play the day'}
             >
-              {animating ? <Pause size={16} strokeWidth={2.4} /> : <Play size={16} strokeWidth={2.4} />}
+              {animating ? <Pause size={15} strokeWidth={2.6} /> : <Play size={15} strokeWidth={2.6} />}
             </button>
-            {animating ? (
-              <span className="bsrp-small">Playing the day. Pause to pick a time.</span>
-            ) : (
-              <label className="bsrp-slider">
-                <span className="bsrp-visually-hidden">Time of day</span>
-                <input type="range" min="330" max="1140" step="10" value={minutes} onChange={(e) => setMinutes(Number(e.target.value))} />
-                <strong>{clock(minutes)}</strong>
-              </label>
-            )}
+            <label className="bsrp-slider">
+              <span className="bsrp-visually-hidden">Time of day</span>
+              <input
+                type="range" min="330" max="1140" step="10" value={minutes}
+                onChange={(e) => { setAnimating(false); setMinutes(Number(e.target.value)); }}
+              />
+              <strong>{animating ? 'Playing' : clock(minutes)}</strong>
+            </label>
           </div>
-          {m && (
-            <>
-              <p className="bsrp-sun-say">
-                {none(m.hours) ? `No direct sun on this side in ${monthName}.` : `About ${hrs(m.hours)} of direct sun a day on this side in ${monthName}.`}
-              </p>
-              <p className="bsrp-small">Our sun model, clear sky. Sunrise {m.rise} · sunset {m.set}.</p>
-            </>
-          )}
 
-          {sun && (
-            <>
-              <h3 className="bsrp-h3">Through the year</h3>
+          {year.length === 12 && (
+            <div className="bsrp-year">
+              <h3 className="bsrp-h3">Direct sun through the year</h3>
               <div
                 className="bsrp-bars"
                 role="img"
-                aria-label={`Estimated hours of direct sun per day: ${unit.sunYear.map((x) => `${x.month} ${hrs(x.hours)}`).join(', ')}`}
+                aria-label={`Estimated hours of direct sun per day: ${year.map((x) => `${x.month} ${hrs(x.hours)}`).join(', ')}`}
               >
-                {unit.sunYear.map((x) => (
+                {year.map((x) => (
                   <span key={x.month} className={x.month === monthName ? 'is-on' : ''}>
-                    <i style={{ height: `${Math.max(2, (x.hours / max) * 100)}%` }} />
+                    {x.month === monthName && (
+                      <em style={{ bottom: `calc(${Math.max(3, (x.hours / max) * 100)}% + 2px)` }}>{Math.round(x.hours * 10) / 10}h</em>
+                    )}
+                    <i style={{ height: `${Math.max(3, (x.hours / max) * 100)}%` }} />
                     <b>{x.month[0]}</b>
                   </span>
                 ))}
               </div>
-              <p className="bsrp-small">Hours of direct sun per day on this side, from our sun model.</p>
-            </>
+            </div>
           )}
-
+        </div>
+        <div className="bsrp-sun-foot">
           <button type="button" className="bsrp-cta" disabled={!mapReady || reportBusy?.gallery} onClick={() => startReport('gallery')}>
             {reportBusy?.gallery ? 'Building the sun report…' : 'Get the sun report (PDF)'}
           </button>
