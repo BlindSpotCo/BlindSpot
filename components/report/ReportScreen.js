@@ -1725,7 +1725,7 @@ export default function ReportScreen({ view = 'verdict' }) {
             </Link>
             <p className="bsr-fullbar-where">
               <span className="bsr-fullbar-addr">
-                {address ? address.split(',').slice(0, 2).join(',').trim() : `${lat.toFixed(4)}, ${lon.toFixed(4)}`}
+                {address ? address.split(',').slice(0, isPhone ? 1 : 2).join(',').trim() : `${lat.toFixed(4)}, ${lon.toFixed(4)}`}
               </span>
               {/* The pin lock has a one-line explanation under the inline
                   map (.bsr-maphint), which is off screen here -- so the
