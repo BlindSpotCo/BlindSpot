@@ -121,7 +121,7 @@ export default function LoginPage() {
           <img src="/wordmark.png" alt="BlindSpot" className="auth-wordmark" style={{ height: 11 }} />
         </Link>
         <h1>Sign in</h1>
-        <p>Use the same email whether you&apos;re saving from Home Comfort Score or Neighbourhood Score.</p>
+        <p>Sign in to save the flats and reports you look at, and find them again on any device.</p>
 
         <button
           type="button"

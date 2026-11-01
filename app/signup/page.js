@@ -55,7 +55,7 @@ export default function SignupPage() {
           <img src="/wordmark.png" alt="BlindSpot" className="auth-wordmark" style={{ height: 11 }} />
         </Link>
         <h1>Create an account</h1>
-        <p>Use the same email whether you&apos;re saving from Home Comfort Score or Neighbourhood Score.</p>
+        <p>Sign in to save the flats and reports you look at, and find them again on any device.</p>
 
         {sent ? (
           <p className="auth-success">Check your inbox, we sent a confirmation link to {email}. Click it to finish creating your account.</p>

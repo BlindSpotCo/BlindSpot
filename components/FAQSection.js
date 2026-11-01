@@ -56,7 +56,7 @@ function useFaqItems() {
   return [
     {
       q: 'Is BlindSpot free?',
-      a: 'The scores, the 3D sun map, the checklist and comparing flats are free. The detailed written reports cost Keys. See Pricing.',
+      a: 'Yes, right now everything is free: the scores, the 3D sun map, comparing flats and the detailed written reports. See Pricing for how paid reports will work later.',
     },
     {
       q: 'Where does the data come from?',

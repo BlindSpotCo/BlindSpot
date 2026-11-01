@@ -21,7 +21,7 @@ export default function PricingView() {
           <h1>Pay per property, not per month.</h1>
           <p className="pr-sub">
             You open BlindSpot when you&apos;ve got a shortlist and need to pick one. That&apos;s one decision,
-            not a subscription. Buy Keys, spend them on the reports you want, and use them on any
+            not a subscription. Once paid reports start, you’ll buy Keys, spend them on the reports you want, and use them on any
             property in any city we cover.
           </p>
           <p className="pr-sub"><b>Keys aren&apos;t on sale yet. Every report is free while we set up payments.</b></p>

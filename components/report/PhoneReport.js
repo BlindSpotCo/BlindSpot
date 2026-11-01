@@ -23,6 +23,7 @@
 // is all we can claim.
 
 import { useEffect, useMemo, useRef } from 'react';
+import Link from 'next/link';
 import {
   ArrowLeft, ChevronRight, X, Play, Pause, MapPin, Sun, FileText, Map as MapIcon,
   ShieldCheck, GraduationCap, Wind, Droplets, Zap, Route, Building2, Waves,
@@ -217,7 +218,7 @@ function areaFact(key, raw, facts) {
       const metro = r.metroNearby === 0
         ? `No operating metro station nearby${r.metroPlanned ? `, ${r.metroPlanned} planned` : ''}`
         : `${r.metroNearby} metro station${r.metroNearby === 1 ? '' : 's'} nearby`;
-      return `${metro}${r.highway ? `; highway access ${String(r.highway).toLowerCase()}` : ''}.`;
+      return r.highway ? `Highway access ${String(r.highway).toLowerCase()}; ${metro[0].toLowerCase()}${metro.slice(1)}.` : `${metro}.`;
     }
     case 'sewerage':
       return typeof r.sewerCoverage === 'number'
@@ -288,6 +289,12 @@ function buildItems({ area, unit, sun, floor, facing }) {
       const covers = areaFact(key, area.raw, facts) || AREA_COVERS[key];
       areaRows.push({
         id: `a-${key}`, kind: 'area', key, score, name: AREA_NAMES[key], covers, facts,
+        // The tag has to agree with the fact printed under it. Roads show
+        // potholes per km, so their tag uses the area report's own pothole
+        // bands (under 2 good, over 5 poor) rather than the blended score.
+        tagScore: key === 'roads' && typeof area.raw?.potholesPerKm === 'number'
+          ? (area.raw.potholesPerKm < 2 ? 70 : area.raw.potholesPerKm <= 5 ? 50 : 30)
+          : score,
         strong: score >= 75 && rankBand(rank) === 'high',
       });
     }
@@ -304,7 +311,8 @@ function buildItems({ area, unit, sun, floor, facing }) {
 
 function FindingRow({ item, onOpen, rate }) {
   const Icon = ICONS[item.key];
-  const w = rate?.word(item.score);
+  const ts = item.tagScore ?? item.score;
+  const w = rate?.word(ts);
   return (
     <li>
       <button type="button" className="bsrp-find" onClick={() => onOpen(item.id)}>
@@ -312,7 +320,7 @@ function FindingRow({ item, onOpen, rate }) {
         <span className="bsrp-find-main">
           <span className="bsrp-find-top">
             <strong className="bsrp-find-name">{item.name}</strong>
-            {w && <span className={`bsr-tag is-${rate.tone(item.score)}`}>{w}</span>}
+            {w && <span className={`bsr-tag is-${rate.tone(ts)}`}>{w}</span>}
           </span>
           <span className="bsrp-find-why">{item.covers}</span>
         </span>
@@ -328,12 +336,17 @@ export default function PhoneReport({
   area, unit, address, floor, facing, unitSet,
   onChangeFlat, onRequestReport, reportBusy, pinFixForm, pinFixOpen, setPinFixOpen,
   seasonKey, setSeasonKey, animating, setAnimating, minutes, setMinutes, clock, mapReady, overall, rate,
+  compareHref, onUsePin,
 }) {
   const hasArea = Boolean(area);
   const sun = useMemo(() => sunStats(unit?.sunYear), [unit?.sunYear]);
   const { areaRows, flatRows, all } = useMemo(() => buildItems({ area, unit, sun, floor, facing }), [area, unit, sun, floor, facing]);
   const place = (address || '').replace(/,\s*India\s*$/i, '').split(',').slice(0, 2).join(',').trim() || 'This address';
   const city = CITY_NAMES[area?.city] || area?.city;
+  // A six-digit pin in the address that isn't the one the area data is for
+  // (the pin lookup sometimes lands on the pincode next door).
+  const addrPins = Array.from(new Set(((address || '').match(/\b\d{6}\b/g) || [])));
+  const pinClash = hasArea && addrPins.length && !addrPins.includes(area.pinCode) ? addrPins[0] : null;
 
   // iPhone Safari can still pan the whole page sideways when anything is a
   // hair too wide, whatever the containers say; clamp html and body to the
@@ -469,7 +482,12 @@ export default function PhoneReport({
             <X size={22} strokeWidth={2} />
           </button>
         </div>
-        <h2 id="bsrp-item-h" className="bsrp-item-h">{item.name}</h2>
+        <div className="bsrp-item-title">
+          <h2 id="bsrp-item-h" className="bsrp-item-h">{item.name}</h2>
+          {rate?.word(item.tagScore ?? item.score) && (
+            <span className={`bsr-tag is-${rate.tone(item.tagScore ?? item.score)}`}>{rate.word(item.tagScore ?? item.score)}</span>
+          )}
+        </div>
         <p className="bsrp-item-p">{detail}</p>
 
 
@@ -605,6 +623,17 @@ export default function PhoneReport({
       {/* No map up here: people arrive from the map step, where they just
           picked the building. It stays loaded offscreen (the Sun and Full
           reports photograph it) and opens in the sun view below. */}
+      <nav className="bsrp-bar" aria-label="BlindSpot">
+        <Link href="/" className="bsrp-bar-home" aria-label="BlindSpot home">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/mark.png" alt="" width="22" height="22" />
+          <span>BlindSpot</span>
+        </Link>
+        <span className="bsrp-bar-links">
+          <Link href={compareHref || '/compare'}>Compare</Link>
+          <Link href="/profile">My homes</Link>
+        </span>
+      </nav>
       <header className="bsrp-head">
         <p className="bsrp-place">
           <MapPin size={15} strokeWidth={2.4} aria-hidden="true" />
@@ -619,6 +648,12 @@ export default function PhoneReport({
           <p className="bsrp-unit is-warn">
             Floor and facing not set, so flat findings are for a typical flat ·{' '}
             <button type="button" className="bsrp-link" onClick={onChangeFlat}>Set them</button>
+          </p>
+        )}
+        {pinClash && (
+          <p className="bsrp-pinclash">
+            Area data is for pin {area.pinCode}, but your address shows {pinClash}.{' '}
+            <button type="button" className="bsrp-link" onClick={() => onUsePin?.(pinClash)}>Use {pinClash}</button>
           </p>
         )}
       </header>

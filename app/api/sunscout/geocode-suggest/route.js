@@ -43,10 +43,13 @@ function haversineKm(lat1, lon1, lat2, lon2) {
 }
 
 function buildLabel(props) {
+  // The place's own name first ("Prestige Lakeside Habitat, Whitefield-
+  // Sarjapur Road, ..."), so the suggestion list and the report title show
+  // the society someone searched for, not the street it sits on.
   const line1parts = [];
+  if (props.name) line1parts.push(props.name);
   if (props.housenumber && props.street) line1parts.push(`${props.housenumber} ${props.street}`);
-  else if (props.street) line1parts.push(props.street);
-  if (props.name && !line1parts.includes(props.name)) line1parts.push(props.name);
+  else if (props.street && props.street !== props.name) line1parts.push(props.street);
 
   const line2parts = [props.city || props.district || props.county, props.state].filter(Boolean);
 

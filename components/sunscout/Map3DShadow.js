@@ -457,7 +457,7 @@ var _cam=(function(){try{var s=window.parent.localStorage.getItem('ss_cam');retu
 // Phones always open at the default zoom: reopening at whatever zoom was
 // last used made every new address start zoomed in.
 var _phone=(function(){try{return window.parent.innerWidth<=640;}catch(e){return false;}})();
-var curRot=_cam.set?(_cam.rot||0):0, curTilt=_cam.set?(_cam.tilt||0):0, initZoom=_phone?17:(_cam.zoom||17);
+var curRot=_cam.set?(_cam.rot||0):0, curTilt=_cam.set?(_cam.tilt||0):(_phone?40:0), initZoom=_phone?17:(_cam.zoom||17);
 var curT='s', tL=null;
 
 // OSMBuildings 4.1.1 doesn't forward a preserveDrawingBuffer option to its WebGL

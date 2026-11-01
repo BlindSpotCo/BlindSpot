@@ -512,3 +512,22 @@ html.bsrp-lock-x body{ position:relative }
 .bsrp-sunbtn{ background:var(--paper,#FFFFFF) }
 .bsrp-verdict .bsr-sum-dial{ position:relative; flex:none; display:grid; place-items:center; width:58px !important; height:58px !important; margin:0 }
 .bsrp-verdict .bsr-sum-dial svg{ position:absolute; inset:0; width:58px !important; height:58px !important }
+
+/* ---------- slim site bar on the phone report ---------- */
+.bsrp-bar{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:10px 16px; border-bottom:1px solid var(--line,#E2E8F0); background:var(--paper,#FFFFFF);
+}
+.bsrp-bar-home{ display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:var(--text,#0F172A); font-weight:700; font-size:15px }
+.bsrp-bar-links{ display:inline-flex; gap:16px }
+.bsrp-bar-links a{ font-size:14px; font-weight:600; color:var(--brand,#3D4116); text-decoration:none; padding:6px 0 }
+.bsrp-pinclash{
+  margin:8px 0 0; padding:8px 10px; border-radius:10px; font-size:13px; line-height:1.4;
+  background:#FFF7E0; color:#6B4600;
+}
+.bsrp-item-title{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:8px }
+.bsrp-item-title .bsrp-item-h{ margin:0 }
+.bsrp-item-title .bsr-tag{ font-size:13px }
+
+/* map step on phones: say what Facing means */
+.bsr.is-phone-map .bsr-dock .bsr-long-only{ display:inline; color:inherit }

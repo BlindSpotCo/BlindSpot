@@ -1537,7 +1537,7 @@ export default function ReportScreen({ view = 'verdict' }) {
           onChange={(e) => { if (!e.target.value) return; setFacingSet(true); setFacing(e.target.value); }}
           aria-label="Which way the balcony or main window faces"
         >
-          {!facingSet && <option value="" disabled>Select</option>}
+          {!facingSet && <option value="" disabled>{isPhone ? 'Choose' : 'Select'}</option>}
           {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
         </select>
       </label>
@@ -1882,7 +1882,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                       {pinTouched ? (
                         <>
                           <strong>Step 2 · Set your floor and facing</strong>
-                          <span>Scores change a lot between floors</span>
+                          <span>{isPhone ? 'Facing = where your main balcony looks. Your compass app can tell you.' : 'Scores change a lot between floors'}</span>
                         </>
                       ) : (
                         <>
@@ -1941,7 +1941,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                   onClick={confirmSpot}
                 >
                   <span className="bsr-mapcta-long">{pinTouched ? 'See the analysis' : 'Continue without placing a pin'}</span>
-                  <span className="bsr-mapcta-short">{pinTouched ? 'See analysis' : 'Skip pin'}</span>
+                  <span className="bsr-mapcta-short">{pinTouched ? 'See analysis' : 'Use whole complex'}</span>
                   <span aria-hidden="true"> →</span>
                 </button>
               </div>
@@ -2108,6 +2108,8 @@ export default function ReportScreen({ view = 'verdict' }) {
           clock={clock}
           mapReady={!mapLoading && !mapFailed}
           overall={topScore}
+          compareHref={compareHref}
+          onUsePin={(v) => setPlace((p) => ({ ...p, pinCode: v }))}
           rate={{ word, tone: toneOf }}
         />
       )}
@@ -2469,7 +2471,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                     onChange={(e) => { if (!e.target.value) return; setFacingSet(true); setFacing(e.target.value); }}
                     aria-label="Which way the flat faces"
                   >
-                    {!facingSet && <option value="" disabled>Select</option>}
+                    {!facingSet && <option value="" disabled>{isPhone ? 'Choose' : 'Select'}</option>}
                     {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
                   </select>
                   {floorSet && !facingSet && (
