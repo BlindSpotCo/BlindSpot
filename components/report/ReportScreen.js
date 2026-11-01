@@ -198,11 +198,11 @@ function clock(mins) {
 //
 // Month/day only; the year is filled in at render so these never go stale.
 const SEASONS = [
-  { key: 'today',  label: 'Today',          md: null,      note: 'The sun where it is right now' },
-  { key: 'spring', label: 'Spring equinox', md: '03-20',   note: 'Day and night equal' },
-  { key: 'summer', label: 'Summer solstice',md: '06-21',   note: 'The most sun this flat ever gets' },
-  { key: 'autumn', label: 'Autumn equinox', md: '09-23',   note: 'Day and night equal again' },
-  { key: 'winter', label: 'Winter solstice',md: '12-21',   note: 'The least sun this flat ever gets' },
+  { key: 'today',  label: 'Today',          opt: 'Sun today',  md: null,      note: 'The sun where it is right now' },
+  { key: 'spring', label: 'Spring equinox', opt: 'Spring sun', md: '03-20',   note: 'Day and night equal' },
+  { key: 'summer', label: 'Summer solstice',opt: 'Summer sun', md: '06-21',   note: 'The most sun this flat ever gets' },
+  { key: 'autumn', label: 'Autumn equinox', opt: 'Autumn sun', md: '09-23',   note: 'Day and night equal again' },
+  { key: 'winter', label: 'Winter solstice',opt: 'Winter sun', md: '12-21',   note: 'The least sun this flat ever gets' },
 ];
 
 function todayStr() {
@@ -1558,10 +1558,10 @@ export default function ReportScreen({ view = 'verdict' }) {
         >
           {SEASONS.map((sn) => (
             <option key={sn.key} value={sn.key}>
-              {sn.label}{sn.md ? ` - ${prettyDate(seasonDate(sn.key))}` : ''}
+              {sn.opt}{sn.md ? ` (${prettyDate(seasonDate(sn.key))})` : ''}
             </option>
           ))}
-          <option value="custom">Pick a date…</option>
+          <option value="custom">Sun on a date…</option>
         </select>
       </label>
       {seasonKey === 'custom' && (
@@ -1748,7 +1748,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                 moving on to the analysis. It needs just the map, the pin
                 and floor/facing, keeps building in the background, and
                 carries on if you continue to the analysis. */}
-            <button
+            {!isPhone && (<button
               type="button"
               className="bsr-fullbar-sun"
               disabled={!solar?.pathData}
@@ -1759,7 +1759,7 @@ export default function ReportScreen({ view = 'verdict' }) {
               <Sun size={16} strokeWidth={2.2} aria-hidden="true" />
               <span className="bsr-fullbar-sun-full">Year-round sunlight report</span>
               <span className="bsr-fullbar-sun-short">Sunlight report</span>
-            </button>
+            </button>)}
 
             <button
               type="button"
@@ -2069,7 +2069,7 @@ export default function ReportScreen({ view = 'verdict' }) {
     : [];
 
   return (
-    <div className={`bsr${isPhone && !fullMap ? ' is-phone' : ''}`}>
+    <div className={`bsr${isPhone && !fullMap ? ' is-phone' : ''}${isPhone && fullMap ? ' is-phone-map' : ''}`}>
       {/* Fixed slots, and the order matters more than it looks. This one
           component serves both /report/locate and /report, and the two
           screens are the same tree with different parts switched on --
@@ -2107,6 +2107,7 @@ export default function ReportScreen({ view = 'verdict' }) {
           setMinutes={setMinutes}
           clock={clock}
           mapReady={!mapLoading && !mapFailed}
+          overall={topScore}
         />
       )}
       {verdictMode === 'ready' && !phoneHero && (

@@ -19,7 +19,7 @@
   /* Nothing on the phone report may push the page sideways, and a
      sideways swipe shouldn't pan it: only vertical scroll and pinch. */
   overflow-x:hidden;
-  touch-action:pan-y pinch-zoom;
+  touch-action:pan-y;
   background:var(--p-cream);
   color:var(--p-ink);
   min-height:100vh;
@@ -445,3 +445,30 @@ html.bsrp-lock-x body{ position:relative }
 .bsrp-sun .bsrp-bars span.is-on b{ color:var(--p-ink); font-weight:700 }
 .bsrp-sun .bsrp-bars b{ bottom:-18px; font-size:10.5px }
 .bsrp-year{ padding-bottom:20px }
+
+/* ---------- no page zoom on the phone screens ----------
+   Pinching anywhere outside the 3D map shouldn't zoom the page (that
+   pushed the top bar off screen); the map handles its own pinch. */
+.bsr.is-phone-map{ touch-action:pan-x pan-y }
+.bsrp-sheet, .bsrp-sun{ touch-action:pan-y }
+
+/* ---------- overall score, first in the band ---------- */
+.bsrp-sum-score{
+  flex-direction:row !important; align-items:center; gap:12px;
+  padding-bottom:10px; border-bottom:1px solid rgba(28,28,23,.10);
+}
+.bsrp-sum-n{ font-size:30px; font-weight:800; line-height:1; color:var(--p-olive); letter-spacing:-.02em }
+.bsrp-sum-n small{ font-size:14px; font-weight:600; color:var(--p-mute); margin-left:2px }
+.bsrp-sum-l{ display:flex; flex-direction:column; gap:1px }
+.bsrp-sum-l strong{ font-size:14px; font-weight:700 }
+.bsrp-sum-l span{ font-size:12.5px; color:var(--p-mute) }
+
+/* ---------- sun view: say what the switch is ---------- */
+.bsrp-seg-k{ margin:0 0 6px; font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--p-mute) }
+
+/* ---------- map step top bar on phones ----------
+   The sun-report button is gone from this bar on phones, so the season
+   box gets the room to read in full ("Sun today", "Winter sun (21 Dec)"). */
+.bsr.is-phone-map .bsr-fullbar-where{ flex:1 1 0; min-width:0 }
+.bsr.is-phone-map .bsr-fullbar-season select{ min-width:138px; max-width:170px; text-overflow:ellipsis }
+.bsrp-sum-score{ gap:14px }

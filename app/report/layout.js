@@ -8,6 +8,17 @@
 // and metadata.
 
 import { Suspense } from 'react';
+
+// The report and map screens are app-like: pinching should zoom the 3D map,
+// not the page (a page zoom pushed the top bar off screen), and tapping a
+// field shouldn't zoom the page in either.
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: '#FFFDF8',
+};
 import ReportShell from '@/components/report/ReportShell';
 
 export default function ReportLayout({ children }) {

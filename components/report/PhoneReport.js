@@ -323,7 +323,7 @@ export default function PhoneReport({
   view, setView, itemId, setItemId,
   area, unit, address, floor, facing, unitSet,
   onChangeFlat, onRequestReport, reportBusy, pinFixForm, pinFixOpen, setPinFixOpen,
-  seasonKey, setSeasonKey, animating, setAnimating, minutes, setMinutes, clock, mapReady,
+  seasonKey, setSeasonKey, animating, setAnimating, minutes, setMinutes, clock, mapReady, overall,
 }) {
   const hasArea = Boolean(area);
   const sun = useMemo(() => sunStats(unit?.sunYear), [unit?.sunYear]);
@@ -527,7 +527,8 @@ export default function PhoneReport({
       </button>
       <div className="bsrp-sun" role="dialog" aria-modal="true" aria-labelledby="bsrp-sun-h">
         <div className="bsrp-sun-body">
-          <div className="bsrp-seg" role="group" aria-label="Time of year">
+          <p className="bsrp-seg-k" id="bsrp-seg-k">See the sun on</p>
+          <div className="bsrp-seg" role="group" aria-labelledby="bsrp-seg-k">
             {SEASON_TABS.map((t) => (
               <button key={t.key} type="button" aria-pressed={seasonKey === t.key} onClick={() => setSeasonKey(t.key)}>
                 {t.label}
@@ -621,6 +622,15 @@ export default function PhoneReport({
       <div className="bsrp-intro">
         <h1 className="bsrp-visually-hidden">Your report</h1>
         <div className="bsrp-sum">
+          {typeof overall === 'number' && (
+            <p className="bsrp-sum-score">
+              <span className="bsrp-sum-n">{overall}<small>/100</small></span>
+              <span className="bsrp-sum-l">
+                <strong>BlindSpot score</strong>
+                <span>{hasArea ? 'The area and your flat together' : 'Your flat (no area data for this pincode yet)'}</span>
+              </span>
+            </p>
+          )}
           {sunLine && (
             <p>
               <span className="bsrp-sum-k"><Sun size={15} strokeWidth={2.4} aria-hidden="true" /> Sun on your flat</span>
