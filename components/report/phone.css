@@ -16,6 +16,10 @@
   position:relative;
   padding:0;
   max-width:none;
+  /* Nothing on the phone report may push the page sideways, and a
+     sideways swipe shouldn't pan it: only vertical scroll and pinch. */
+  overflow-x:hidden;
+  touch-action:pan-y pinch-zoom;
   background:var(--p-cream);
   color:var(--p-ink);
   min-height:100vh;
@@ -28,8 +32,17 @@
 .bsr.is-phone .bsr-mapzone.is-phone-sun .bsr-map{
   height:100%; margin:0; border:0; border-radius:0;
 }
-.bsr.is-phone .bsr-mapzone.is-phone-sun .bsr-mapbar,
-.bsr.is-phone .bsr-mapzone.is-phone-sun .bsr-map-guard{ display:none }
+.bsr.is-phone .bsr-mapzone.is-phone-sun .bsr-mapbar{ display:none }
+/* Locked until tapped: the guard covers the map so a swipe doesn't drag
+   it; it says so with a small pill instead of dimming the picture. */
+.bsr.is-phone .bsr-mapzone.is-phone-sun .bsr-map-guard{
+  display:flex; align-items:flex-end; justify-content:flex-end;
+  padding:0 12px 12px; background:transparent; -webkit-tap-highlight-color:transparent;
+}
+.bsr.is-phone .bsr-mapzone.is-phone-sun .bsr-map-guard-label{
+  background:rgba(28,28,23,.82); color:#FBF8F1; font-size:13px; font-weight:600;
+  padding:8px 12px; border-radius:999px;
+}
 .bsr.is-phone .bsr-mapzone.is-phone-sun{
   position:fixed; left:0; right:0; top:0;
   height:48vh; margin:0; z-index:61;
@@ -97,7 +110,8 @@
 
 /* ---------- item + report: full-screen views ---------- */
 .bsrp-sheet{
-  position:fixed; inset:0; z-index:70; overflow-y:auto; -webkit-overflow-scrolling:touch;
+  position:fixed; inset:0; z-index:70; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain; touch-action:pan-y pinch-zoom;
   background:var(--p-cream,#FBF8F1); color:var(--p-ink,#1C1C17);
   padding:8px 18px 24px; display:flex; flex-direction:column;
 }
@@ -166,11 +180,15 @@
 
 /* ---------- sun view ---------- */
 .bsrp-sun{
-  position:fixed; inset:0; z-index:60; overflow-y:auto; -webkit-overflow-scrolling:touch;
+  /* The panel scrolls only in the space under the map, so nothing slides
+     up behind the map while you scroll. */
+  position:fixed; left:0; right:0; bottom:0; top:48vh; z-index:60;
+  overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain; touch-action:pan-y pinch-zoom;
   background:var(--p-cream,#FBF8F1); color:var(--p-ink,#1C1C17);
-  padding-top:48vh;
+  padding-top:2px; box-shadow:0 -1px 0 var(--p-line);
 }
-@supports (height:1svh){ .bsrp-sun{ padding-top:48svh } }
+@supports (height:1svh){ .bsrp-sun{ top:48svh } }
 .bsrp-sun-body{ padding:0 18px 32px }
 .bsrp-seasons{ display:flex; gap:20px; border-bottom:1px solid var(--p-line) }
 .bsrp-seasons button{
@@ -322,3 +340,4 @@
 .bsrp-sunbtn-text{ flex:1; min-width:0; display:flex; flex-direction:column; gap:1px }
 .bsrp-sunbtn-text strong{ font-size:15px; font-weight:700 }
 .bsrp-sunbtn-text span{ font-size:13px; color:var(--p-mute) }
+

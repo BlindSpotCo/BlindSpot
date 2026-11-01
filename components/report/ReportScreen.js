@@ -616,6 +616,9 @@ export default function ReportScreen({ view = 'verdict' }) {
   // page. Armed by default: a click disarms it so the map can be used,
   // leaving the map re-arms it so the page scrolls normally again.
   const [mapArmed, setMapArmed] = useState(true);
+  // Phone sun view: the map starts locked so a swipe on it doesn't drag
+  // the 3D scene around; one tap on "Tap to move the map" unlocks it.
+  useEffect(() => { setMapArmed(true); }, [phoneView]);
 
   // Moving the pin: typed address, browser location, or a click on the map.
   const [locBusy, setLocBusy] = useState(false);
@@ -1842,9 +1845,9 @@ export default function ReportScreen({ view = 'verdict' }) {
               type="button"
               className="bsr-map-guard"
               onClick={() => setMapArmed(false)}
-              aria-label="Click to interact with the 3D map"
+              aria-label={isPhone ? 'Tap to move the 3D map' : 'Click to interact with the 3D map'}
             >
-              Click to interact with the map
+              <span className="bsr-map-guard-label">{isPhone ? 'Tap to move the map' : 'Click to interact with the map'}</span>
             </button>
           )}
 
