@@ -632,8 +632,11 @@ function projectToScreen(az,el){
   // into the perspective of the tilted map rather than standing it up
   // like a circle drawn on the glass.
   const f=Math.max(0,el)/90;
-  const rx=W*0.48*(1-f), ry=H*0.44*(1-f), ar=(az-curRot)*D2R;
-  return[W/2+rx*Math.sin(ar),H/2-ry*Math.cos(ar)*0.6];
+  // Vertical reach is now nearly the full map height too, so when the
+  // camera turns the path along the screen it runs top to bottom instead
+  // of sitting in the middle half.
+  const rx=W*0.48*(1-f), ry=H*0.46*(1-f), ar=(az-curRot)*D2R;
+  return[W/2+rx*Math.sin(ar),H/2-ry*Math.cos(ar)];
 }
 
 

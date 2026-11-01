@@ -2829,3 +2829,10 @@ button.bsr-cta.is-needs-unit:hover:not(:disabled){background:rgba(61,65,22,.07);
 .bsr-head .bsr-head-quiet a{ font-size:14px; font-weight:600; color:var(--brand,#3D4116); text-decoration:none }
 .bsr-head .bsr-head-quiet a:hover{ text-decoration:underline }
 .bsr-pinclash{ margin:8px 0 0; padding:8px 11px; border-radius:9px; font-size:13.5px; line-height:1.45; background:#FFF7E0; color:#6B4600 }
+
+/* ---- map step top bar (laptop): place on the left, season on the right ---- */
+@media (min-width:641px){
+  .bsr-mapzone.is-full .bsr-fullbar-controls{ margin-left:auto }
+  .bsr-mapzone.is-full .bsr-fullbar-season .bsr-set-field{ gap:12px }
+  .bsr-mapzone.is-full .bsr-fullbar-search-toggle{ margin-left:4px }
+}

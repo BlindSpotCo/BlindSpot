@@ -1725,7 +1725,7 @@ export default function ReportScreen({ view = 'verdict' }) {
             </Link>
             <p className="bsr-fullbar-where">
               <span className="bsr-fullbar-addr">
-                {address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`}
+                {address ? address.split(',').slice(0, 2).join(',').trim() : `${lat.toFixed(4)}, ${lon.toFixed(4)}`}
               </span>
               {/* The pin lock has a one-line explanation under the inline
                   map (.bsr-maphint), which is off screen here -- so the
@@ -1749,23 +1749,8 @@ export default function ReportScreen({ view = 'verdict' }) {
               </span>
             </div>
 
-            {/* The sunlight report lives up here, in the bar, as its own
-                solid CTA -- the card at the bottom right is only about
-                moving on to the analysis. It needs just the map, the pin
-                and floor/facing, keeps building in the background, and
-                carries on if you continue to the analysis. */}
-            {!isPhone && (<button
-              type="button"
-              className="bsr-fullbar-sun"
-              disabled={!solar?.pathData}
-              onClick={requestSunReport}
-              aria-label="Year-round sunlight report"
-              title="Light and shadow on this unit across all four seasons"
-            >
-              <Sun size={16} strokeWidth={2.2} aria-hidden="true" />
-              <span className="bsr-fullbar-sun-full">Year-round sunlight report</span>
-              <span className="bsr-fullbar-sun-short">Sunlight report</span>
-            </button>)}
+            {/* The sunlight report button used to sit here too; it is on
+                the report page itself, so the bar is just place + season. */}
 
             <button
               type="button"
