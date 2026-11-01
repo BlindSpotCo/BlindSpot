@@ -273,6 +273,15 @@ export default function PhoneReport({
   const place = (address || '').replace(/,\s*India\s*$/i, '').split(',').slice(0, 2).join(',').trim() || 'This address';
   const city = CITY_NAMES[area?.city] || area?.city;
 
+  // iPhone Safari can still pan the whole page sideways when anything is a
+  // hair too wide, whatever the containers say; clamp html and body to the
+  // screen while this page is open.
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.add('bsrp-lock-x');
+    return () => root.classList.remove('bsrp-lock-x');
+  }, []);
+
   // Overlays own the screen; stop the page scrolling behind them.
   useEffect(() => {
     if (view === 'page') return undefined;
@@ -348,11 +357,18 @@ export default function PhoneReport({
 
   const dec = sun?.by?.December?.hours;
   const jun = sun?.by?.June?.hours;
-  const headline = sun && typeof dec === 'number' && typeof jun === 'number'
-    ? (none(dec) && none(jun)
-      ? 'Little or no direct sun on this side in December or June.'
-      : `${none(dec) ? 'No direct sun' : `About ${hrs(dec)} of direct sun`} a day in December, ${none(jun) ? 'and none' : `about ${hrs(jun)}`} in June.`)
-    : 'Here’s what we found for this flat.';
+  // The two summary lines at the top: one for the sun, one for the area.
+  const fmtH = (h) => (none(h) ? 'none' : `~${Math.round(h)} h/day`);
+  const sunLine = sun && typeof dec === 'number' && typeof jun === 'number'
+    ? `${fmtH(dec)} in Dec, ${fmtH(jun)} in Jun`
+    : null;
+  const SHORT = { crime: 'safety', schools: 'schools', air: 'air', water: 'water', power: 'power', roads: 'roads', infrastructure: 'transport', sewerage: 'drainage' };
+  const areaBetter = better.filter((r) => r.kind === 'area').map((r) => SHORT[r.key]).slice(0, 2);
+  const areaAsk = look.filter((r) => r.kind === 'area').map((r) => SHORT[r.key]).slice(0, 2);
+  const areaLine = hasArea
+    ? [areaBetter.length ? `Higher: ${areaBetter.join(', ')}` : null, areaAsk.length ? `Ask: ${areaAsk.join(', ')}` : null]
+        .filter(Boolean).join(' · ') || `Middle of ${city}`
+    : null;
 
   /* ---------------- item ---------------- */
   if (view === 'item') {
@@ -540,13 +556,20 @@ export default function PhoneReport({
       </header>
 
       <div className="bsrp-intro">
-        <h1 className="bsrp-h1">{headline}</h1>
-        <p className="bsrp-small">Our sun model’s estimate for this floor and facing.</p>
+        <h1 className="bsrp-visually-hidden">Your report</h1>
+        <ul className="bsrp-sum">
+          {sunLine && (
+            <li title={`Direct sun on this side: ${sunLine}`}><Sun size={16} strokeWidth={2.2} aria-hidden="true" /><span><b>Sun</b> {sunLine}</span></li>
+          )}
+          {areaLine && (
+            <li title={`Area: ${areaLine}`}><MapIcon size={16} strokeWidth={2.2} aria-hidden="true" /><span><b>Area</b> {areaLine}</span></li>
+          )}
+        </ul>
         <button type="button" className="bsrp-sunbtn" onClick={() => setView('sun')}>
           <span className="bsrp-sunbtn-ico" aria-hidden="true"><Sun size={18} strokeWidth={2.2} /></span>
           <span className="bsrp-sunbtn-text">
             <strong>See the sun through the year</strong>
-            <span>Your building in 3D, any season and time of day</span>
+            <span>Your building in 3D, any season and time</span>
           </span>
           <ChevronRight size={18} strokeWidth={2.2} aria-hidden="true" />
         </button>
