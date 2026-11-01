@@ -358,16 +358,25 @@ export default function PhoneReport({
   const dec = sun?.by?.December?.hours;
   const jun = sun?.by?.June?.hours;
   // The two summary lines at the top: one for the sun, one for the area.
-  const fmtH = (h) => (none(h) ? 'none' : `~${Math.round(h)} h/day`);
+  // The two summary lines at the top, in full words.
+  const hoursWords = (h) => {
+    const n = Math.round(h);
+    return n === 1 ? 'about 1 hour' : `about ${n} hours`;
+  };
   const sunLine = sun && typeof dec === 'number' && typeof jun === 'number'
-    ? `${fmtH(dec)} in Dec, ${fmtH(jun)} in Jun`
+    ? (none(dec) && none(jun)
+      ? 'Little or no direct sun on this side in December or June, in our sun model.'
+      : `${none(dec) ? 'No direct sun' : `${hoursWords(dec)[0].toUpperCase()}${hoursWords(dec).slice(1)} of direct sun a day`} in December, and ${none(jun) ? 'none' : hoursWords(jun)} in June.`)
     : null;
-  const SHORT = { crime: 'safety', schools: 'schools', air: 'air', water: 'water', power: 'power', roads: 'roads', infrastructure: 'transport', sewerage: 'drainage' };
-  const areaBetter = better.filter((r) => r.kind === 'area').map((r) => SHORT[r.key]).slice(0, 2);
-  const areaAsk = look.filter((r) => r.kind === 'area').map((r) => SHORT[r.key]).slice(0, 2);
+  const FULL = { crime: 'safety', schools: 'schools', air: 'air quality', water: 'water supply', power: 'power supply', roads: 'roads', infrastructure: 'transport links', sewerage: 'drainage' };
+  const joinAnd = (xs) => (xs.length <= 1 ? (xs[0] || '') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
+  const areaBetter = better.filter((r) => r.kind === 'area').map((r) => FULL[r.key]).slice(0, 2);
+  const areaAsk = look.filter((r) => r.kind === 'area').map((r) => FULL[r.key]).slice(0, 2);
   const areaLine = hasArea
-    ? [areaBetter.length ? `Higher: ${areaBetter.join(', ')}` : null, areaAsk.length ? `Ask: ${areaAsk.join(', ')}` : null]
-        .filter(Boolean).join(' · ') || `Middle of ${city}`
+    ? [
+      areaBetter.length ? `Higher than most ${city} pincodes we cover for ${joinAnd(areaBetter)}.` : null,
+      areaAsk.length ? `Worth asking about ${joinAnd(areaAsk)}.` : null,
+    ].filter(Boolean).join(' ') || `Around the middle of the ${city} pincodes we cover.`
     : null;
 
   /* ---------------- item ---------------- */
@@ -557,14 +566,20 @@ export default function PhoneReport({
 
       <div className="bsrp-intro">
         <h1 className="bsrp-visually-hidden">Your report</h1>
-        <ul className="bsrp-sum">
+        <div className="bsrp-sum">
           {sunLine && (
-            <li title={`Direct sun on this side: ${sunLine}`}><Sun size={16} strokeWidth={2.2} aria-hidden="true" /><span><b>Sun</b> {sunLine}</span></li>
+            <p>
+              <span className="bsrp-sum-k"><Sun size={15} strokeWidth={2.4} aria-hidden="true" /> Sun on your flat</span>
+              <span className="bsrp-sum-v">{sunLine}</span>
+            </p>
           )}
           {areaLine && (
-            <li title={`Area: ${areaLine}`}><MapIcon size={16} strokeWidth={2.2} aria-hidden="true" /><span><b>Area</b> {areaLine}</span></li>
+            <p>
+              <span className="bsrp-sum-k"><MapIcon size={15} strokeWidth={2.4} aria-hidden="true" /> The area</span>
+              <span className="bsrp-sum-v">{areaLine}</span>
+            </p>
           )}
-        </ul>
+        </div>
         <button type="button" className="bsrp-sunbtn" onClick={() => setView('sun')}>
           <span className="bsrp-sunbtn-ico" aria-hidden="true"><Sun size={18} strokeWidth={2.2} /></span>
           <span className="bsrp-sunbtn-text">
