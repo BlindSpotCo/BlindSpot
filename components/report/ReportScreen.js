@@ -2108,6 +2108,7 @@ export default function ReportScreen({ view = 'verdict' }) {
           clock={clock}
           mapReady={!mapLoading && !mapFailed}
           overall={topScore}
+          rate={{ word, tone: toneOf }}
         />
       )}
       {verdictMode === 'ready' && !phoneHero && (

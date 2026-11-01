@@ -472,3 +472,43 @@ html.bsrp-lock-x body{ position:relative }
 .bsr.is-phone-map .bsr-fullbar-where{ flex:1 1 0; min-width:0 }
 .bsr.is-phone-map .bsr-fullbar-season select{ min-width:138px; max-width:170px; text-overflow:ellipsis }
 .bsrp-sum-score{ gap:14px }
+
+/* ---------- closer to the laptop report ----------
+   Same page background and colours as the laptop report; the verdict card
+   is the laptop's own (.bsr-sum), thinner; rows keep the laptop's rating
+   tags. */
+.bsr.is-phone{ --p-cream:var(--bg,#F8FAFC); background:var(--bg,#F8FAFC); color:var(--text,#0F172A) }
+.bsrp-sheet, .bsrp-sun, .bsrp-sun-foot, .bsrp-dock{ background:var(--bg,#F8FAFC) }
+.bsrp-dock{ background:rgba(248,250,252,.97) }
+.bsrp-verdict{
+  /* Same card as the laptop's verdict (.bsr-sum): gradient, soft border. */
+  display:flex; flex-direction:column; gap:8px; margin:12px 0 0; padding:12px 14px;
+  border:1px solid var(--line-soft,rgba(28,24,18,.08)); border-radius:14px;
+  background:linear-gradient(135deg, rgba(173,168,70,.10), rgba(255,253,248,0) 60%), var(--paper,#FFFDF8);
+}
+.bsrp-verdict-top{ display:flex; align-items:center; gap:12px }
+.bsrp-verdict .bsr-sum-dial{ width:58px; height:58px }
+.bsrp-verdict .bsr-sum-track, .bsrp-verdict .bsr-sum-arc{ stroke-width:12 }
+.bsrp-dial-n{
+  position:relative; font-size:19px; font-weight:800; line-height:1; letter-spacing:-.02em;
+  color:var(--text,#0F172A); font-variant-numeric:tabular-nums;
+}
+.bsrp-dial-n small{ display:block; text-align:center; font-size:9px; font-weight:600; color:var(--text-dim,#57697F); margin-top:2px; letter-spacing:0 }
+.bsrp-verdict-meta{ min-width:0; display:flex; flex-direction:column; gap:4px }
+.bsrp-verdict .bsr-sum-eyebrow{ font-size:10px; margin:0 !important }
+.bsrp-verdict .bsr-sum-split{ margin:0 !important; font-size:13px; gap:2px 14px }
+.bsrp-vline{
+  margin:0; display:flex; align-items:flex-start; gap:8px;
+  font-size:14.5px; line-height:1.38; font-weight:600; color:var(--text,#0F172A);
+}
+.bsrp-vline svg{ flex:none; margin-top:3px }
+.bsrp-vline.is-sun svg{ color:var(--ss,#AF5F30) }
+.bsrp-vline.is-area svg{ color:var(--av,#6B2232) }
+
+.bsrp-find-top{ display:flex; align-items:center; justify-content:space-between; gap:8px }
+.bsrp-find-top .bsr-tag{ font-size:12px }
+.bsrp-find-main .bsrp-find-why{ color:var(--text-mute,#64748B) }
+.bsrp-find .bsrp-bar-icon{ background:transparent; color:var(--text-mute,#64748B) }
+.bsrp-sunbtn{ background:var(--paper,#FFFFFF) }
+.bsrp-verdict .bsr-sum-dial{ position:relative; flex:none; display:grid; place-items:center; width:58px !important; height:58px !important; margin:0 }
+.bsrp-verdict .bsr-sum-dial svg{ position:absolute; inset:0; width:58px !important; height:58px !important }

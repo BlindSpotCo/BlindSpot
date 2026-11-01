@@ -287,7 +287,7 @@ function buildItems({ area, unit, sun, floor, facing }) {
       const facts = area.facts?.[key] || {};
       const covers = areaFact(key, area.raw, facts) || AREA_COVERS[key];
       areaRows.push({
-        id: `a-${key}`, kind: 'area', key, name: AREA_NAMES[key], covers, facts,
+        id: `a-${key}`, kind: 'area', key, score, name: AREA_NAMES[key], covers, facts,
         strong: score >= 75 && rankBand(rank) === 'high',
       });
     }
@@ -296,20 +296,24 @@ function buildItems({ area, unit, sun, floor, facing }) {
   for (const s of unit?.subScores || []) {
     if (s.pending || typeof s.score !== 'number' || !FLAT_NAMES[s.key]) continue;
     if (/unavailable|neutral score/i.test(s.summary || '')) continue;
-    flatRows.push({ id: `f-${s.key}`, kind: 'flat', key: s.key, name: FLAT_NAMES[s.key], covers: flatFact(s.key, s, { sun, floor, facing }) || FLAT_COVERS[s.key] });
+    flatRows.push({ id: `f-${s.key}`, kind: 'flat', key: s.key, score: s.score, name: FLAT_NAMES[s.key], covers: flatFact(s.key, s, { sun, floor, facing }) || FLAT_COVERS[s.key] });
   }
   flatRows.sort((a, b) => FLAT_ORDER.indexOf(a.key) - FLAT_ORDER.indexOf(b.key));
   return { areaRows, flatRows, all: [...flatRows, ...areaRows] };
 }
 
-function FindingRow({ item, onOpen }) {
+function FindingRow({ item, onOpen, rate }) {
   const Icon = ICONS[item.key];
+  const w = rate?.word(item.score);
   return (
     <li>
       <button type="button" className="bsrp-find" onClick={() => onOpen(item.id)}>
         <span className="bsrp-bar-icon" aria-hidden="true">{Icon ? <Icon size={18} strokeWidth={2} /> : null}</span>
         <span className="bsrp-find-main">
-          <strong className="bsrp-find-name">{item.name}</strong>
+          <span className="bsrp-find-top">
+            <strong className="bsrp-find-name">{item.name}</strong>
+            {w && <span className={`bsr-tag is-${rate.tone(item.score)}`}>{w}</span>}
+          </span>
           <span className="bsrp-find-why">{item.covers}</span>
         </span>
         <ChevronRight size={16} strokeWidth={2} aria-hidden="true" />
@@ -323,7 +327,7 @@ export default function PhoneReport({
   view, setView, itemId, setItemId,
   area, unit, address, floor, facing, unitSet,
   onChangeFlat, onRequestReport, reportBusy, pinFixForm, pinFixOpen, setPinFixOpen,
-  seasonKey, setSeasonKey, animating, setAnimating, minutes, setMinutes, clock, mapReady, overall,
+  seasonKey, setSeasonKey, animating, setAnimating, minutes, setMinutes, clock, mapReady, overall, rate,
 }) {
   const hasArea = Boolean(area);
   const sun = useMemo(() => sunStats(unit?.sunYear), [unit?.sunYear]);
@@ -621,29 +625,36 @@ export default function PhoneReport({
 
       <div className="bsrp-intro">
         <h1 className="bsrp-visually-hidden">Your report</h1>
-        <div className="bsrp-sum">
-          {typeof overall === 'number' && (
-            <p className="bsrp-sum-score">
-              <span className="bsrp-sum-n">{overall}<small>/100</small></span>
-              <span className="bsrp-sum-l">
-                <strong>BlindSpot score</strong>
-                <span>{hasArea ? 'The area and your flat together' : 'Your flat (no area data for this pincode yet)'}</span>
-              </span>
-            </p>
-          )}
-          {sunLine && (
-            <p>
-              <span className="bsrp-sum-k"><Sun size={15} strokeWidth={2.4} aria-hidden="true" /> Sun on your flat</span>
-              <span className="bsrp-sum-v">{sunLine}</span>
-            </p>
-          )}
-          {areaLine && (
-            <p>
-              <span className="bsrp-sum-k"><MapIcon size={15} strokeWidth={2.4} aria-hidden="true" /> The area</span>
-              <span className="bsrp-sum-v">{areaLine}</span>
-            </p>
-          )}
-        </div>
+        {/* The laptop's verdict card (same gradient, dial and area / flat
+            split), cut down for a phone, with the Sun and Area lines. */}
+        <section className="bsrp-verdict" aria-label="Property score">
+          <div className="bsrp-verdict-top">
+            {typeof overall === 'number' && (
+              <div className="bsr-sum-dial" role="img" aria-label={`Property score ${overall} out of 100`}>
+                <svg viewBox="0 0 150 150" aria-hidden="true">
+                  <circle cx="75" cy="75" r="60" className="bsr-sum-track" />
+                  <circle
+                    cx="75" cy="75" r="60" className="bsr-sum-arc"
+                    strokeDasharray={`${(Math.max(0, Math.min(100, overall)) / 100) * 377} 377`}
+                    transform="rotate(-90 75 75)"
+                  />
+                </svg>
+                <span className="bsrp-dial-n">{overall}<small>/100</small></span>
+              </div>
+            )}
+            <div className="bsrp-verdict-meta">
+              <p className="bsr-sum-eyebrow">{hasArea ? 'Property score · area + this flat' : 'Property score · this flat'}</p>
+              {hasArea && (
+                <p className="bsr-sum-split">
+                  <span><i className="bsr-sum-dot is-av" aria-hidden="true" />Neighbourhood <strong>{area.score}</strong></span>
+                  {typeof unit?.score === 'number' && <span><i className="bsr-sum-dot is-ss" aria-hidden="true" />This flat <strong>{unit.score}</strong></span>}
+                </p>
+              )}
+            </div>
+          </div>
+          {sunLine && <p className="bsrp-vline is-sun"><Sun size={14} strokeWidth={2.4} aria-hidden="true" /><span>{sunLine}</span></p>}
+          {areaLine && <p className="bsrp-vline is-area"><MapIcon size={14} strokeWidth={2.4} aria-hidden="true" /><span>{areaLine}</span></p>}
+        </section>
         <button type="button" className="bsrp-sunbtn" onClick={() => setView('sun')}>
           <span className="bsrp-sunbtn-ico" aria-hidden="true"><Sun size={18} strokeWidth={2.2} /></span>
           <span className="bsrp-sunbtn-text">
@@ -658,7 +669,7 @@ export default function PhoneReport({
         <section className="bsrp-sec" aria-labelledby="bsrp-flat-h">
           <h2 id="bsrp-flat-h" className="bsrp-h2">Your flat</h2>
           <ul className="bsrp-find-list">
-            {flatRows.map((it) => <FindingRow key={it.id} item={it} onOpen={openItem} />)}
+            {flatRows.map((it) => <FindingRow key={it.id} item={it} onOpen={openItem} rate={rate} />)}
           </ul>
         </section>
       )}
@@ -667,7 +678,7 @@ export default function PhoneReport({
         <section className="bsrp-sec" aria-labelledby="bsrp-area-h">
           <h2 id="bsrp-area-h" className="bsrp-h2">The area</h2>
           <ul className="bsrp-find-list">
-            {areaRows.map((it) => <FindingRow key={it.id} item={it} onOpen={openItem} />)}
+            {areaRows.map((it) => <FindingRow key={it.id} item={it} onOpen={openItem} rate={rate} />)}
           </ul>
         </section>
       )}
