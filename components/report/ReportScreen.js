@@ -1672,13 +1672,15 @@ export default function ReportScreen({ view = 'verdict' }) {
   // reports are built from photographs of this exact WebGL scene, and
   // the full-screen step is the same instance re-styled. The one
   // exception is a failed verdict, where the map is all there is.
-  // On a phone the verdict shows the live map full width at the top
-  // (and larger in the sun view) instead of parking it offscreen.
+  // On a phone the verdict page itself has no map; the map shows only in
+  // the phone sun view and stays parked offscreen (still drawing, for the
+  // report photographs) the rest of the time, same as desktop.
   const phoneHero = isPhone && !fullMap && state !== 'error' && Boolean(scores);
-  const mapParked = !fullMap && state !== 'error' && !phoneHero;
+  const phoneSun = phoneHero && phoneView === 'sun';
+  const mapParked = !fullMap && state !== 'error' && !phoneSun;
   const mapZone = (
       <section
-        className={`bsr-mapzone${fullMap ? ' is-full' : ''}${mapParked ? ' is-parked' : ''}${phoneHero ? (phoneView === 'sun' ? ' is-phone-sun' : ' is-phone-hero') : ''}`}
+        className={`bsr-mapzone${fullMap ? ' is-full' : ''}${mapParked ? ' is-parked' : ''}${phoneSun ? ' is-phone-sun' : ''}`}
         id="the-block"
         aria-label="The block in 3D"
         aria-hidden={mapParked || undefined}

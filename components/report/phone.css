@@ -13,7 +13,6 @@
   --p-area:#6B2232;
   --p-flat:#8A4A22;
   --p-sun:#E9A94A;
-  --p-hero:40vh;
   position:relative;
   padding:0;
   max-width:none;
@@ -22,22 +21,13 @@
   min-height:100vh;
   padding-bottom:calc(84px + env(safe-area-inset-bottom));
 }
-@supports (height:1svh){ .bsr.is-phone{ --p-hero:40svh } }
 
-/* ---------- the live 3D map, full width at the top ----------
-   The same Map3DShadow instance as everywhere else (the PDF reports
-   photograph it), just placed over the hero spacer instead of parked
-   offscreen. */
-.bsr.is-phone .bsr-mapzone.is-phone-hero{
-  position:absolute; left:0; right:0; top:0;
-  height:var(--p-hero); margin:0; z-index:1;
-}
-.bsr.is-phone .bsr-mapzone.is-phone-hero .bsr-map,
+/* ---------- the 3D map: only in the sun view on phones ----------
+   The rest of the time it's parked offscreen (report.css .is-parked),
+   still drawing, because the Sun and Full reports photograph it. */
 .bsr.is-phone .bsr-mapzone.is-phone-sun .bsr-map{
   height:100%; margin:0; border:0; border-radius:0;
 }
-.bsr.is-phone .bsr-mapzone.is-phone-hero .bsr-mapbar,
-.bsr.is-phone .bsr-mapzone.is-phone-hero .bsr-map-guard,
 .bsr.is-phone .bsr-mapzone.is-phone-sun .bsr-mapbar,
 .bsr.is-phone .bsr-mapzone.is-phone-sun .bsr-map-guard{ display:none }
 .bsr.is-phone .bsr-mapzone.is-phone-sun{
@@ -45,33 +35,10 @@
   height:48vh; margin:0; z-index:61;
 }
 @supports (height:1svh){ .bsr.is-phone .bsr-mapzone.is-phone-sun{ height:48svh } }
-/* While an item or the report view is open the map sits behind it. */
-.bsr.is-phone .bsr-mapzone.is-phone-under{ visibility:visible; z-index:0 }
 
 /* ---------- page ---------- */
 .bsrp{ font-family:inherit }
-.bsrp-hero{ position:relative; height:var(--p-hero); }
-.bsrp-hero-tap{
-  position:absolute; inset:0; z-index:2; width:100%;
-  border:0; background:transparent; padding:0; cursor:pointer;
-}
-.bsrp-hero-tap:focus-visible{ outline:3px solid var(--p-olive); outline-offset:-3px }
-.bsrp-hero-top{
-  position:absolute; left:12px; top:12px; z-index:3; pointer-events:none;
-  display:flex; align-items:center; gap:6px; max-width:calc(100% - 24px);
-  background:rgba(251,248,241,.94); color:var(--p-ink);
-  padding:7px 12px; border-radius:999px; font-size:14px; font-weight:600;
-}
-.bsrp-hero-top span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
-.bsrp-hero-chip{
-  position:absolute; left:12px; bottom:12px; z-index:3; pointer-events:none;
-  display:inline-flex; align-items:center; gap:7px;
-  background:var(--p-ink); color:var(--p-cream);
-  padding:9px 14px; border-radius:999px; font-size:13px; font-weight:600;
-}
-.bsrp-hero-chip svg{ color:var(--p-sun) }
-
-.bsrp-intro{ padding:16px 18px 0 }
+.bsrp-intro{ padding:14px 18px 0 }
 .bsrp-kicker{
   margin:0 0 6px; font-size:12px; letter-spacing:.1em; text-transform:uppercase;
   font-weight:600; color:var(--p-flat);
@@ -331,3 +298,27 @@
 .bsrp-meta{ margin:0; padding:20px 18px 0; font-size:13px; color:var(--p-faint) }
 .bsrp-meta-form{ padding:8px 18px 0 }
 .bsrp-sun-link{ margin:4px 18px 0 }
+
+/* ---------- page header (replaces the map at the top) ---------- */
+.bsrp-head{ padding:16px 18px 0 }
+.bsrp-place{
+  margin:0; display:flex; align-items:center; gap:6px;
+  font-size:15px; font-weight:700; color:var(--p-ink);
+}
+.bsrp-place svg{ color:var(--p-flat); flex:none }
+.bsrp-place span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.bsrp-unit{ margin:2px 0 0 21px; font-size:13.5px; color:var(--p-mute) }
+.bsrp-unit.is-warn{ color:var(--bsr-avg,#6B4600) }
+.bsrp-sunbtn{
+  width:100%; margin-top:14px; display:flex; align-items:center; gap:12px; box-sizing:border-box;
+  padding:12px 14px; border:1px solid var(--p-line); border-radius:14px; background:#FFFFFF;
+  font:inherit; color:var(--p-ink); text-align:left; cursor:pointer;
+}
+.bsrp-sunbtn > svg{ color:#8A8A7E; flex:none }
+.bsrp-sunbtn-ico{
+  width:38px; height:38px; flex:none; border-radius:50%;
+  background:#F7E9CF; color:#8A4A22; display:inline-flex; align-items:center; justify-content:center;
+}
+.bsrp-sunbtn-text{ flex:1; min-width:0; display:flex; flex-direction:column; gap:1px }
+.bsrp-sunbtn-text strong{ font-size:15px; font-weight:700 }
+.bsrp-sunbtn-text span{ font-size:13px; color:var(--p-mute) }

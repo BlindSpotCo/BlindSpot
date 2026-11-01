@@ -7,13 +7,13 @@
 // sections when useIsPhone() is true.
 //
 // One page, four views:
-//   page   -- the 3D map full width at the top, one sentence from the sun
-//             model, then "Where it does better" and "Worth looking into" (one
+//   page   -- address and flat, one sentence from the sun model, a button
+//             into the sun view (the 3D map lives there, not on the page), then "Where it does better" and "Worth looking into" (one
 //             sentence each, plus why it matters). No scores on
 //             the page. The three reports sit in a bar at the bottom.
 //   item   -- one row opened: what our data shows, where this pincode sits
 //             among the city's pincodes we cover, and what to check.
-//   sun    -- the same 3D map, larger, with season / play / time and the
+//   sun    -- the 3D map, with season / play / time and the
 //             month-by-month hours.
 //
 // Wording: no verdict words (good / poor / strong / weak / risk). Every line
@@ -518,26 +518,38 @@ export default function PhoneReport({
   /* ---------------- page ---------------- */
   return (
     <div className="bsrp">
-      <div className="bsrp-hero">
-        <button type="button" className="bsrp-hero-tap" onClick={() => setView('sun')} aria-label="Open the sunlight view" />
-        <div className="bsrp-hero-top">
-          <MapPin size={16} strokeWidth={2.4} aria-hidden="true" />
+      {/* No map up here: people arrive from the map step, where they just
+          picked the building. It stays loaded offscreen (the Sun and Full
+          reports photograph it) and opens in the sun view below. */}
+      <header className="bsrp-head">
+        <p className="bsrp-place">
+          <MapPin size={15} strokeWidth={2.4} aria-hidden="true" />
           <span>{place}</span>
-        </div>
-        <span className="bsrp-hero-chip" aria-hidden="true">
-          <Play size={13} strokeWidth={2.6} /> Tap to see the sun through the year
-        </span>
-      </div>
+        </p>
+        {unitSet ? (
+          <p className="bsrp-unit">
+            {ord(floor)} floor · faces {String(facing).toLowerCase()} ·{' '}
+            <button type="button" className="bsrp-link" onClick={onChangeFlat}>Change</button>
+          </p>
+        ) : (
+          <p className="bsrp-unit is-warn">
+            Floor and facing not set, so flat findings are for a typical flat ·{' '}
+            <button type="button" className="bsrp-link" onClick={onChangeFlat}>Set them</button>
+          </p>
+        )}
+      </header>
 
       <div className="bsrp-intro">
         <h1 className="bsrp-h1">{headline}</h1>
         <p className="bsrp-small">Our sun model’s estimate for this floor and facing.</p>
-        {!unitSet && (
-          <p className="bsrp-warn">
-            Floor and facing aren’t set, so the flat numbers are for a typical flat.{' '}
-            <button type="button" className="bsrp-link" onClick={onChangeFlat}>Set them</button>
-          </p>
-        )}
+        <button type="button" className="bsrp-sunbtn" onClick={() => setView('sun')}>
+          <span className="bsrp-sunbtn-ico" aria-hidden="true"><Sun size={18} strokeWidth={2.2} /></span>
+          <span className="bsrp-sunbtn-text">
+            <strong>See the sun through the year</strong>
+            <span>Your building in 3D, any season and time of day</span>
+          </span>
+          <ChevronRight size={18} strokeWidth={2.2} aria-hidden="true" />
+        </button>
       </div>
 
       {better.length > 0 && (
@@ -567,24 +579,15 @@ export default function PhoneReport({
         </details>
       )}
 
-      <p className="bsrp-meta">
-        {hasArea && <>Pin {area.pinCode} · <button type="button" className="bsrp-link" onClick={() => setPinFixOpen(!pinFixOpen)} aria-expanded={pinFixOpen}>{pinFixOpen ? 'Never mind' : 'Wrong pin?'}</button> · </>}
-        {ord(floor)} floor, {String(facing).toLowerCase()} · <button type="button" className="bsrp-link" onClick={onChangeFlat}>Change</button>
-      </p>
-      {hasArea && pinFixOpen && <div className="bsrp-meta-form">{pinFixForm}</div>}
-      <button type="button" className="bsrp-link is-go bsrp-sun-link" onClick={() => setView('sun')}>
-        See the sun through the year <ChevronRight size={16} strokeWidth={2.2} aria-hidden="true" />
-      </button>
-
-      {!hasArea && (
-        <div className="bsrp-note">
-          <p>We don’t have neighbourhood records for this pincode yet, so this covers the flat itself.</p>
+      {hasArea && (
+        <p className="bsrp-meta">
+          Area findings for pin {area.pinCode} ·{' '}
           <button type="button" className="bsrp-link" onClick={() => setPinFixOpen(!pinFixOpen)} aria-expanded={pinFixOpen}>
-            {pinFixOpen ? 'Never mind' : 'Know the pincode?'}
+            {pinFixOpen ? 'Never mind' : 'Wrong pin?'}
           </button>
-          {pinFixOpen && pinFixForm}
-        </div>
+        </p>
       )}
+      {hasArea && pinFixOpen && <div className="bsrp-meta-form">{pinFixForm}</div>}
 
       <p className="bsrp-foot">
         Tap any row for what the data shows and what to check. Estimates from public data and our sun model, not an inspection or advice.
