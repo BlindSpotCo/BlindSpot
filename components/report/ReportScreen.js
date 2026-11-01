@@ -28,6 +28,8 @@ import {
 } from 'lucide-react';
 import RoomPhotoAnalyzer from './RoomPhotoAnalyzer';
 import PhoneReport from './PhoneReport';
+import { sunLine as sunLineOf, areaLine as areaLineOf } from '@/lib/report/summaryLines';
+import { sunStats, areaFact, flatFact, tagScore } from '@/lib/report/facts';
 import useIsPhone from '@/lib/useIsPhone';
 import { useTrends } from '@/lib/trends/useTrends';
 import { TREND_FOR_FACTOR, TREND_FOR_SUBSCORE } from '@/lib/trends/series';
@@ -989,7 +991,11 @@ export default function ReportScreen({ view = 'verdict' }) {
 
   const actions = useMemo(
     () => getActionItems({
-      areaFactors: scores?.area?.factors,
+      // Same tag rule as the rows above (roads follow potholes per km), so
+      // anything tagged Poor or Fair also shows up in this checklist.
+      areaFactors: scores?.area?.factors
+        ? { ...scores.area.factors, ...(typeof scores.area.factors.roads === 'number' ? { roads: tagScore('roads', scores.area.factors.roads, scores.area.raw) } : {}) }
+        : scores?.area?.factors,
       factorLabels: FACTOR_LABELS,
       unitSubScores: scores?.unit?.subScores,
       facing,
@@ -2029,6 +2035,10 @@ export default function ReportScreen({ view = 'verdict' }) {
   // (see `if (!hasPlace)` above), where a hook can't legally live.
   const compareSlot = encodeSlots([{ name: address || '', lat, lon, pin: pinCode || '', floor, facing }]);
   const compareHref = compareSlot ? `/compare?c=${compareSlot}` : '/compare';
+  // A six-digit pin written in the address that isn't the one the area data
+  // is for (the pin lookup sometimes lands on the pincode next door).
+  const addrPins = Array.from(new Set((address || '').match(/\b\d{6}\b/g) || []));
+  const addrPinClash = hasArea && addrPins.length && !addrPins.includes(area.pinCode) ? addrPins[0] : null;
 
   // One form, used from both the covered and the not-covered state. The
   // reverse lookup is a best guess -- it returns the pincode of whatever
@@ -2167,6 +2177,13 @@ export default function ReportScreen({ view = 'verdict' }) {
                   away from the avatar in the global nav, so it doesn't need a
                   second copy here. Compare and Furnish now show up below,
                   once there's an actual scored flat to act on. */}
+              {/* Back again as two quiet links: a scored flat is on screen
+                  as soon as this header is, and without them the report was
+                  a dead end (no way to compare it or find saved homes). */}
+              <nav className="bsr-head-links bsr-head-quiet" aria-label="More">
+                <Link href={compareHref}>Compare</Link>
+                <Link href="/profile">My homes</Link>
+              </nav>
             </div>
             {addrEditOpen && (
               <form className="bsr-addr-edit bsr-locbar" onSubmit={onSearchSubmit}>
@@ -2225,12 +2242,25 @@ export default function ReportScreen({ view = 'verdict' }) {
                 {/* Phone: the dial is too small for the curved label, so it's said here. */}
                 <span className="bsr-sum-eyebrow-ph">Property score</span>
               </p>
-              <h2>{sum.headline}</h2>
-              <p>
-                {hasArea
-                  ? sum.line
-                  : `${sum.line} We don\u2019t have neighbourhood records for this pincode yet, so this covers the flat itself.`}
-              </p>
+              {/* Same two lines as the phone report (lib/report/summaryLines):
+                  sun on this side, and only what the area holds strong in. */}
+              <h2 className="bsr-sum-lines">
+                {sunLineOf(unit?.sunYear) && (
+                  <span className="bsr-sum-line is-sun">
+                    <Sun size={18} strokeWidth={2.2} aria-hidden="true" />
+                    <span>{sunLineOf(unit?.sunYear)}</span>
+                  </span>
+                )}
+                {hasArea && (
+                  <span className="bsr-sum-line is-area">
+                    <MapPin size={18} strokeWidth={2.2} aria-hidden="true" />
+                    <span>{areaLineOf(area, `We looked at the area around pin ${area.pinCode} from public data; every item is listed below.`)}</span>
+                  </span>
+                )}
+              </h2>
+              {!hasArea && (
+                <p>We don\u2019t have neighbourhood records for this pincode yet, so this covers the flat itself.</p>
+              )}
               {hasArea && (
                 <p className="bsr-sum-split">
                   <span><i className="bsr-sum-dot is-av" aria-hidden="true" />Neighbourhood <strong>{area.score}</strong></span>
@@ -2239,19 +2269,15 @@ export default function ReportScreen({ view = 'verdict' }) {
               )}
               {/* The pin and the floor/facing caveats, next to the number
                   they qualify, each one click from being fixed. */}
-              {!pinTouched && (
+              {/* The pin and floor/facing caveats as one line, next to the
+                  number they qualify, each part one click from being fixed. */}
+              {(!pinTouched || assumed) && (
                 <p className="bsr-assumed-note">
-                  Scored at the centre of this address, not a specific building -{' '}
-                  <button type="button" className="bsr-inline-link" onClick={openLocate}>
-                    open the map and tap your tower
-                  </button>{' '}
-                  to score the real spot.
-                </p>
-              )}
-              {assumed && (
-                <p className="bsr-assumed-note">
-                  Scored for a typical {ord(DEFAULT_FLOOR)} floor, {DEFAULT_FACING.toLowerCase()}-facing
-                  unit - <a href="#the-flat" onClick={scrollToUnitSet}>set the actual floor and facing</a> to score this specific flat.
+                  {!pinTouched && assumed
+                    ? <>Scored for the centre of this address and a typical {ord(DEFAULT_FLOOR)}-floor, {DEFAULT_FACING.toLowerCase()}-facing flat. <button type="button" className="bsr-inline-link" onClick={openLocate}>Tap your tower</button> and <a href="#the-flat" onClick={scrollToUnitSet}>set floor and facing</a> to score your flat.</>
+                    : !pinTouched
+                      ? <>Scored for the centre of this address. <button type="button" className="bsr-inline-link" onClick={openLocate}>Tap your tower on the map</button> to score the real spot.</>
+                      : <>Scored for a typical {ord(DEFAULT_FLOOR)}-floor, {DEFAULT_FACING.toLowerCase()}-facing flat. <a href="#the-flat" onClick={scrollToUnitSet}>Set your floor and facing</a> to score yours.</>}
                 </p>
               )}
             </div>
@@ -2295,6 +2321,12 @@ export default function ReportScreen({ view = 'verdict' }) {
                   when nothing was found. 560066 and 560067 are both Whitefield
                   and they are not the same set of records. */}
               {hasArea && pinFixOpen && pinFixForm}
+              {hasArea && addrPinClash && (
+                <p className="bsr-pinclash">
+                  Area data is for pin {area.pinCode}, but your address shows {addrPinClash}.{' '}
+                  <button type="button" className="bsr-inline-link" onClick={() => setPlace((p) => ({ ...p, pinCode: addrPinClash }))}>Use {addrPinClash}</button>
+                </p>
+              )}
 
               {hasArea ? (
                 <>
@@ -2329,10 +2361,11 @@ export default function ReportScreen({ view = 'verdict' }) {
                         {RowIcon ? <RowIcon className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" /> : null}
                         <span className="bsr-row-what">
                           {FACTOR_LABELS[k] || k}
+                          {areaFact(k, area.raw, area.facts?.[k]) ? <span className="bsr-row-fact">{areaFact(k, area.raw, area.facts?.[k])}</span> : null}
                           {FACTOR_MEANS[k] ? <span className="bsr-row-note">{FACTOR_MEANS[k]}</span> : null}
                         </span>
                         {t.button}
-                        <span className={`bsr-tag is-${toneOf(area.factors[k])}`}>{word(area.factors[k])}</span>
+                        <span className={`bsr-tag is-${toneOf(tagScore(k, area.factors[k], area.raw))}`}>{word(tagScore(k, area.factors[k], area.raw))}</span>
                         {t.panel}
                       </li>
                       );
@@ -2465,11 +2498,11 @@ export default function ReportScreen({ view = 'verdict' }) {
                   )}
                 </label>
                 <label className={`bsr-set-field${facingSet ? '' : ' is-unset'}`}>
-                  <span>Faces</span>
+                  <span>Balcony faces</span>
                   <select
                     value={facingSet ? facing : ''}
                     onChange={(e) => { if (!e.target.value) return; setFacingSet(true); setFacing(e.target.value); }}
-                    aria-label="Which way the flat faces"
+                    aria-label="Which way the main balcony faces"
                   >
                     {!facingSet && <option value="" disabled>{isPhone ? 'Choose' : 'Select'}</option>}
                     {FACING_OPTS.map((f) => <option key={f} value={f}>{f}</option>)}
@@ -2527,6 +2560,9 @@ export default function ReportScreen({ view = 'verdict' }) {
                     {RowIcon ? <RowIcon className="bsr-row-icon" size={16} strokeWidth={2} aria-hidden="true" /> : null}
                     <span className="bsr-row-what">
                       {s.label}
+                      {!s.pending && flatFact(s.key, s, { sun: sunStats(unit.sunYear), floor, facing }) ? (
+                        <span className="bsr-row-fact">{flatFact(s.key, s, { sun: sunStats(unit.sunYear), floor, facing })}</span>
+                      ) : null}
                       {s.summary ? <span className="bsr-row-note">{s.summary}</span> : null}
                     </span>
                     {/* `pending` (currently only Noise Risk, on its very

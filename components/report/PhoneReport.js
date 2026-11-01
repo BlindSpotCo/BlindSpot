@@ -30,6 +30,8 @@ import {
   Thermometer, Eye, Lock, Fan, CloudRain, Volume2,
 } from 'lucide-react';
 import { AREA_ACTIONS, UNIT_ACTIONS } from '@/lib/property-score/actionItems';
+import { sunLine as sunLineOf, areaLine as areaLineOf } from '@/lib/report/summaryLines';
+import { hrs, none, sunStats, areaFact, flatFact, tagScore } from '@/lib/report/facts';
 import './phone.css';
 
 const ICONS = {
@@ -109,8 +111,6 @@ const ord = (n) => {
   const v = n % 100;
   return n + (s[(v - 20) % 10] || s[v] || s[0]);
 };
-const hrs = (h) => (typeof h === 'number' && Number.isFinite(h) ? `${Math.round(h * 10) / 10} h` : null);
-const none = (h) => typeof h === 'number' && h < 0.05;
 const monthYear = (iso) => {
   if (!iso) return null;
   const d = new Date(iso);
@@ -118,14 +118,6 @@ const monthYear = (iso) => {
   return d.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
 };
 
-function sunStats(sunYear) {
-  if (!Array.isArray(sunYear) || sunYear.length < 12) return null;
-  const by = Object.fromEntries(sunYear.map((m) => [m.month, m]));
-  const avg = sunYear.reduce((s, m) => s + (m.hours || 0), 0) / sunYear.length;
-  const summer = ['April', 'May', 'June'].map((m) => by[m]?.hours || 0).reduce((a, b) => a + b, 0) / 3;
-  const sorted = [...sunYear].sort((a, b) => b.hours - a.hours);
-  return { by, avg, summer, best: sorted[0]?.month, worst: sorted[sorted.length - 1]?.month };
-}
 
 // 'low' | 'high' | 'mid' against the same city's pincodes we cover.
 function rankBand(rank) {
@@ -185,98 +177,6 @@ const FLAT_COVERS = {
   noise: 'Roads and rail lines mapped nearby',
 };
 
-const num1 = (n) => (Math.round(n * 10) / 10).toString();
-
-// One plain sentence per area item, from this pincode's own records.
-// Facts only: counts, hours, percentages, official bands. Falls back to
-// what the item covers when the record has no number for it.
-function areaFact(key, raw, facts) {
-  const r = raw || {};
-  switch (key) {
-    case 'schools': {
-      if (typeof facts?.count !== 'number') return null;
-      const b = Object.entries(facts.boards || {}).filter(([, n]) => n > 0).map(([k, n]) => `${n} ${k}`).join(', ');
-      return `${facts.count} schools listed in this pincode${b ? ` (${b})` : ''}.`;
-    }
-    case 'air':
-      return typeof r.aqiAvg === 'number'
-        ? `Average AQI around ${Math.round(r.aqiAvg)}${r.aqiCategory ? `, in the CPCB “${r.aqiCategory}” band` : ''}.`
-        : null;
-    case 'water': {
-      if (typeof r.supplyHours !== 'number') return null;
-      const h = r.supplyHours < 1 ? 'under 1 hour' : `about ${num1(r.supplyHours)} hours`;
-      return `Piped water supply ${h} a day${typeof r.waterCoverage === 'number' ? `, ${r.waterCoverage}% of homes on piped supply` : ''}.`;
-    }
-    case 'power':
-      return typeof r.outageHoursMonth === 'number'
-        ? `Power cuts add up to about ${num1(r.outageHoursMonth)} hours a month${r.discom ? ` (${r.discom})` : ''}.`
-        : null;
-    case 'roads':
-      return typeof r.potholesPerKm === 'number' ? `About ${num1(r.potholesPerKm)} potholes per km on roads here.` : null;
-    case 'infrastructure': {
-      if (typeof r.metroNearby !== 'number') return null;
-      const metro = r.metroNearby === 0
-        ? `No operating metro station nearby${r.metroPlanned ? `, ${r.metroPlanned} planned` : ''}`
-        : `${r.metroNearby} metro station${r.metroNearby === 1 ? '' : 's'} nearby`;
-      return r.highway ? `Highway access ${String(r.highway).toLowerCase()}; ${metro[0].toLowerCase()}${metro.slice(1)}.` : `${metro}.`;
-    }
-    case 'sewerage':
-      return typeof r.sewerCoverage === 'number'
-        ? `${r.sewerCoverage}% of homes on the sewer network${typeof r.floodsPerYear === 'number' ? `; about ${r.floodsPerYear} flooding incidents recorded a year` : ''}.`
-        : null;
-    case 'crime':
-      return typeof r.crimes === 'number'
-        ? `About ${r.crimes} recorded crimes a year for this police area${r.crimesModelled ? ' (estimated)' : ''}.`
-        : null;
-    default:
-      return null;
-  }
-}
-
-// One plain sentence per flat item, from our sun model and the flat's own
-// sub-score inputs (floor, today's wind, mapped roads, monsoon rain).
-const floorBand = (f) => (f <= 1 ? 0 : f <= 4 ? 1 : f <= 9 ? 2 : f <= 15 ? 3 : 4);
-const VIEW_AT = [
-  'Ground floor: mostly the compound wall or next building in view',
-  'Low floor: a partly open view',
-  'Mid floor: usually clears nearby rooftops',
-  'High floor: open sky in most directions',
-  'Very high floor: close to an unobstructed view',
-];
-const PRIVACY_AT = [
-  'Ground floor: in view of the street',
-  'Low floor: within sightline of nearby buildings',
-  'Mid floor: above most street-level sightlines',
-  'High floor: few buildings tall enough to look in',
-  'Very high floor: very few buildings can look in',
-];
-function flatFact(key, sub, { sun, floor, facing }) {
-  const basis = sub?.basis || '';
-  switch (key) {
-    case 'sun': return sun ? `About ${hrs(sun.avg)} of direct sun a day, averaged over the year.` : null;
-    case 'shadeHeat': return sun ? `About ${hrs(sun.summer)} of direct sun a day from April to June.` : null;
-    case 'view': return `${VIEW_AT[floorBand(floor)]}, in our estimate.`;
-    case 'privacy': return `${PRIVACY_AT[floorBand(floor)]}, in our estimate.`;
-    case 'wind': {
-      const m = basis.match(/avgWindSpeed=([\d.]+)km\/h/);
-      return m ? `Wind around ${Math.round(Number(m[1]))} km/h today at this spot.` : null;
-    }
-    case 'dampness': {
-      const mm = basis.match(/cityMonsoonRainfall=(\d+)mm/);
-      const se = basis.match(/season=([A-Za-z]+-[A-Za-z]+)/);
-      const MONTHS_FULL = { Jan: 'January', Feb: 'February', Mar: 'March', Apr: 'April', May: 'May', Jun: 'June', Jul: 'July', Aug: 'August', Sep: 'September', Oct: 'October', Nov: 'November', Dec: 'December' };
-      const span = se ? se[1].split('-').map((x) => MONTHS_FULL[x] || x).join(' to ') : null;
-      return mm ? `About ${mm[1]} mm of monsoon rain here${span ? `, ${span}` : ''}.` : null;
-    }
-    case 'noise': {
-      const m = basis.match(/nearestSource=([a-z_ ]+)@(\d+)m/);
-      if (m) return `Nearest major ${m[1] === 'rail' ? 'rail line' : `${m[1]} road`} about ${m[2]} m away.`;
-      const none_ = (sub?.summary || '').match(/within (\d+)m/);
-      return none_ ? `No major road or rail line mapped within ${none_[1]} m.` : null;
-    }
-    default: return null;
-  }
-}
 
 function buildItems({ area, unit, sun, floor, facing }) {
   const areaRows = [];
@@ -289,12 +189,7 @@ function buildItems({ area, unit, sun, floor, facing }) {
       const covers = areaFact(key, area.raw, facts) || AREA_COVERS[key];
       areaRows.push({
         id: `a-${key}`, kind: 'area', key, score, name: AREA_NAMES[key], covers, facts,
-        // The tag has to agree with the fact printed under it. Roads show
-        // potholes per km, so their tag uses the area report's own pothole
-        // bands (under 2 good, over 5 poor) rather than the blended score.
-        tagScore: key === 'roads' && typeof area.raw?.potholesPerKm === 'number'
-          ? (area.raw.potholesPerKm < 2 ? 70 : area.raw.potholesPerKm <= 5 ? 50 : 30)
-          : score,
+        tagScore: tagScore(key, score, area.raw),
         strong: score >= 75 && rankBand(rank) === 'high',
       });
     }
@@ -432,25 +327,10 @@ export default function PhoneReport({
 
   const dec = sun?.by?.December?.hours;
   const jun = sun?.by?.June?.hours;
-  // The two summary lines at the top: one for the sun, one for the area.
-  // The two summary lines at the top, in full words.
-  const hoursWords = (h) => {
-    const n = Math.round(h);
-    return n === 1 ? 'about 1 hour' : `about ${n} hours`;
-  };
-  const sunLine = sun && typeof dec === 'number' && typeof jun === 'number'
-    ? (none(dec) && none(jun)
-      ? 'Little or no direct sun on this side in December or June, in our sun model.'
-      : `${none(dec) ? 'No direct sun' : `${hoursWords(dec)[0].toUpperCase()}${hoursWords(dec).slice(1)} of direct sun a day`} in December, and ${none(jun) ? 'none' : hoursWords(jun)} in June.`)
-    : null;
-  const FULL = { crime: 'safety', schools: 'schools', air: 'air quality', water: 'water supply', power: 'power supply', roads: 'roads', infrastructure: 'transport links', sewerage: 'drainage' };
-  const joinAnd = (xs) => (xs.length <= 1 ? (xs[0] || '') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
-  // Only what the area holds strong in. Nothing is called out as weak.
-  const areaStrong = areaRows.filter((r) => r.strong).map((r) => FULL[r.key]).slice(0, 3);
+  // The two summary lines at the top (shared with the laptop layout).
+  const sunLine = sunLineOf(unit?.sunYear);
   const areaLine = hasArea
-    ? (areaStrong.length
-      ? `This area holds strong in ${joinAnd(areaStrong)}, in our data.`
-      : `We looked at ${areaRows.length} things for pin ${area.pinCode} from public data. Tap any one below.`)
+    ? areaLineOf(area, `We looked at ${areaRows.length} things for pin ${area.pinCode} from public data. Tap any one below.`)
     : null;
 
   /* ---------------- item ---------------- */

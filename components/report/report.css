@@ -2799,3 +2799,32 @@ button.bsr-cta.is-needs-unit:hover:not(:disabled){background:rgba(61,65,22,.07);
   .bsr-todo li:not(.is-open):not(.is-done):hover .bsr-todo-extras{max-height:0;opacity:0;margin-top:0;overflow:hidden}
   .bsr-todo li:hover .bsr-todo-chev:not(.is-open){transform:none}
 }
+
+/* ---- verdict card: the Sun and Area lines (same as the phone) ---- */
+.bsr-sum .bsr-answer-say h2.bsr-sum-lines{
+  display:flex; flex-direction:column; gap:8px; margin:2px 0 4px;
+  font-size:19px; font-weight:650; line-height:1.35;
+}
+.bsr-sum-line{ display:flex; align-items:flex-start; gap:10px }
+.bsr-sum-line > svg{ flex:none; margin-top:3px }
+.bsr-sum-line.is-sun > svg{ color:var(--ss,#AF5F30) }
+.bsr-sum-line.is-area > svg{ color:var(--av,#6B2232) }
+@media (max-width:560px){
+  .bsr-sum .bsr-answer-say h2.bsr-sum-lines{ font-size:16px !important; gap:6px }
+}
+
+/* ---- one plain fact under each row, always visible (same as phone) ---- */
+.bsr-row-fact{ display:block; font-size:13px; line-height:1.4; color:var(--text-mute,#5A5140); margin-top:2px; font-weight:500 }
+.bsr-half .bsr-rows li{ align-items:flex-start }
+.bsr-half .bsr-rows li > .bsr-tag, .bsr-half .bsr-rows li > .bsr-row-icon{ margin-top:2px }
+
+/* ---- floor coach sits above the field, not over the flat's own rating ---- */
+@media (min-width:641px){
+  .bsr-coach{ top:auto; bottom:calc(100% + 12px) }
+  .bsr-coach::before{ top:auto; bottom:-6px }
+}
+
+.bsr-head .bsr-head-quiet{ gap:18px; margin-left:auto }
+.bsr-head .bsr-head-quiet a{ font-size:14px; font-weight:600; color:var(--brand,#3D4116); text-decoration:none }
+.bsr-head .bsr-head-quiet a:hover{ text-decoration:underline }
+.bsr-pinclash{ margin:8px 0 0; padding:8px 11px; border-radius:9px; font-size:13.5px; line-height:1.45; background:#FFF7E0; color:#6B4600 }
