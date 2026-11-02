@@ -357,22 +357,12 @@ export default function ReportScreen({ view = 'verdict' }) {
     router.push(`/report?${flowQuery({ pin: pinTouched ? '1' : '' })}`);
   }, [router, flowQuery, pinTouched]);
 
-  // People didn't know the map takes a tap. Pressing "See the analysis"
-  // before picking a building shakes step 1 and says so; pressing again
-  // goes ahead with the centre of the complex.
-  const [pinNudged, setPinNudged] = useState(false);
-  const [pinShake, setPinShake] = useState(false);
-  const goToAnalysis = useCallback(() => {
-    if (!pinTouched && !pinNudged) {
-      setPinNudged(true);
-      setShowUnitTip(true);
-      setPinShake(false);
-      requestAnimationFrame(() => setPinShake(true));
-      setTimeout(() => setPinShake(false), 700);
-      return;
-    }
-    confirmSpot();
-  }, [pinTouched, pinNudged, confirmSpot]);
+  // Which step "See the analysis" is waiting on (1 = building, 2 = floor
+  // and facing), set while that step shakes. Defined further down, after
+  // mapFailed, as goToAnalysis.
+  const [nudgeStep, setNudgeStep] = useState(0);
+  const [shakeStep, setShakeStep] = useState(0);
+  const goRef = useRef(null);
 
   // ...and the way back to it from the verdict's own map toolbar.
   const openLocate = useCallback(() => {
@@ -855,7 +845,7 @@ export default function ReportScreen({ view = 'verdict' }) {
   // photographing a map that is mid-resize.
   useEffect(() => {
     if (!fullMapLive || reportOpen) return;
-    const onKey = (e) => { if (e.key === 'Escape') confirmSpot(); };
+    const onKey = (e) => { if (e.key === 'Escape') (goRef.current || confirmSpot)(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [fullMapLive, reportOpen]);
@@ -926,6 +916,23 @@ export default function ReportScreen({ view = 'verdict' }) {
   // it's up. Past 10s say so, and say it's fine to carry on without it.
   const mapFailed = solarFailed || capture.failed;
   const mapLoading = !mapFailed && (!solar?.pathData || !capture.ready);
+
+  // Nobody leaves the map step until they've tapped their building and set
+  // floor and facing. Each press of "See the analysis" before that shakes
+  // the step still missing and says what to do. If the 3D map didn't load
+  // there's nothing to tap, so only floor and facing are asked for.
+  const needPin = !pinTouched && !mapFailed;
+  const goToAnalysis = () => {
+    const missing = needPin ? 1 : assumed ? 2 : 0;
+    if (!missing) { setNudgeStep(0); confirmSpot(); return; }
+    setNudgeStep(missing);
+    setShowUnitTip(true);
+    setShakeStep(0);
+    requestAnimationFrame(() => setShakeStep(missing));
+    clearTimeout(goToAnalysis.t);
+    goToAnalysis.t = setTimeout(() => setShakeStep(0), 650);
+  };
+  goRef.current = goToAnalysis;
   useEffect(() => {
     if (!mapLoading) { setMapSlow(false); return; }
     const t = setTimeout(() => setMapSlow(true), 10000);
@@ -1875,27 +1882,27 @@ export default function ReportScreen({ view = 'verdict' }) {
               .bsr-mapcta each take their own spot -- see report.css. */}
           {fullMap && (
             <div className="bsr-dockzone" ref={dockzoneRef}>
-              <div className={`bsr-dock${pinShake ? ' is-shake' : ''}${pinNudged && !pinTouched ? ' is-nudged' : ''}`}>
+              <div className={`bsr-dock${shakeStep ? ` is-shake is-shake-${shakeStep}` : ''}${nudgeStep === 1 && needPin ? ' is-nudged-1' : ''}${nudgeStep === 2 && !needPin && assumed ? ' is-nudged-2' : ''}`}>
                 {/* Attached to the card's own top edge, full width, instead
                     of a pill floating above its right corner -- it lines up
                     with the box it's about. */}
                 {/* One yellow strip, one step at a time: pick the building
                     first, then floor and facing. */}
-                {showUnitTip && (!pinTouched || assumed) && (
+                {showUnitTip && (needPin || assumed) && (
                   <p className="bsr-docktip" role="note">
                     <span className="bsr-docktip-icon" aria-hidden="true">
-                      {pinTouched ? <ArrowDown size={15} strokeWidth={2.6} /> : <MapPin size={15} strokeWidth={2.6} />}
+                      {!needPin ? <ArrowDown size={15} strokeWidth={2.6} /> : <MapPin size={15} strokeWidth={2.6} />}
                     </span>
                     <span className="bsr-docktip-text">
-                      {pinTouched ? (
+                      {!needPin ? (
                         <>
-                          <strong>Step 2 · Set your floor and facing</strong>
+                          <strong>{nudgeStep === 2 ? 'Now set your floor and facing' : 'Step 2 · Set your floor and facing'}</strong>
                           <span>{isPhone ? 'Facing = where your main balcony looks. Your compass app can tell you.' : 'Scores change a lot between floors'}</span>
                         </>
                       ) : (
                         <>
-                          <strong>{pinNudged ? 'First, tap your building on the map' : 'Step 1 · Tap your building on the map'}</strong>
-                          <span>{pinNudged ? 'Or press “Use whole complex” below to skip this' : assumed ? 'Then set your floor and facing below' : 'So we score your exact tower'}</span>
+                          <strong>{nudgeStep === 1 ? 'First, tap your building on the map' : 'Step 1 · Tap your building on the map'}</strong>
+                          <span>{nudgeStep === 1 ? 'Tap the tower your flat is in, then set floor and facing' : assumed ? 'Then set your floor and facing below' : 'So we score your exact tower'}</span>
                         </>
                       )}
                     </span>
@@ -1912,16 +1919,16 @@ export default function ReportScreen({ view = 'verdict' }) {
                 {/* The whole map step as three plain steps (laptop/tablet; a
                     phone shows just the current one in the yellow strip). */}
                 {(() => {
-                  const cur = !pinTouched ? 1 : assumed ? 2 : 3;
+                  const cur = needPin ? 1 : assumed ? 2 : 3;
                   const steps = [
-                    { n: 1, t: pinNudged && !pinTouched ? 'First, tap your building on the map' : 'Tap your building', d: pinTouched ? 'Pin placed' : pinNudged ? 'Or press “Use the whole complex” to skip this' : 'On the map, so we score your tower' },
-                    { n: 2, t: 'Set floor and facing', d: 'Sun and heat change a lot with both' },
+                    { n: 1, t: nudgeStep === 1 && needPin ? 'First, tap your building on the map' : 'Tap your building', d: pinTouched ? 'Pin placed' : mapFailed ? 'Map didn’t load, skipped' : 'On the map, so we score your tower' },
+                    { n: 2, t: nudgeStep === 2 && assumed ? 'Now set your floor and facing' : 'Set floor and facing', d: nudgeStep === 2 && assumed ? 'Type the floor, pick where your balcony faces' : 'Sun and heat change a lot with both' },
                     { n: 3, t: 'See the analysis', d: 'Sun through the year + the neighbourhood' },
                   ];
                   return (
                     <ol className="bsr-steps" aria-label="Steps">
                       {steps.map((st) => {
-                        const done = (st.n === 1 && pinTouched) || (st.n === 2 && !assumed);
+                        const done = (st.n === 1 && !needPin) || (st.n === 2 && !assumed);
                         return (
                           <li key={st.n} className={`${done ? 'is-done' : ''}${st.n === cur ? ' is-now' : ''}${st.optional ? ' is-opt' : ''}`} aria-current={st.n === cur ? 'step' : undefined}>
                             <span className="bsr-step-n" aria-hidden="true">{done ? '✓' : st.n}</span>
@@ -1938,11 +1945,11 @@ export default function ReportScreen({ view = 'verdict' }) {
               </div>
               <div className={`bsr-mapcta${pinTouched ? ' is-ready' : ''}`}>
                 <p className="bsr-mapcta-say">
-                  {pinTouched
-                    ? 'Pin placed - every score below is for this exact spot.'
-                    : pinNudged
-                      ? 'No building picked yet. Tap it on the map, or score the centre of the complex instead.'
-                      : 'Tap your building on the map first, so we score your exact tower.'}
+                  {needPin
+                    ? (nudgeStep === 1 ? 'No building picked yet. Tap your tower on the map.' : 'Tap your building on the map first, so we score your exact tower.')
+                    : assumed
+                      ? (nudgeStep === 2 ? 'Set your floor and facing above to continue.' : 'Now set your floor and facing above.')
+                      : 'All set - every score is for this exact spot and flat.'}
                 </p>
                 <button
                   type="button"
@@ -1950,8 +1957,8 @@ export default function ReportScreen({ view = 'verdict' }) {
                   ref={fullBackRef}
                   onClick={goToAnalysis}
                 >
-                  <span className="bsr-mapcta-long">{pinTouched || !pinNudged ? 'See the analysis' : 'Use the whole complex'}</span>
-                  <span className="bsr-mapcta-short">{pinTouched || !pinNudged ? 'See analysis' : 'Use whole complex'}</span>
+                  <span className="bsr-mapcta-long">See the analysis</span>
+                  <span className="bsr-mapcta-short">See analysis</span>
                   <span aria-hidden="true"> →</span>
                 </button>
               </div>

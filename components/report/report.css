@@ -2843,9 +2843,15 @@ button.bsr-cta.is-needs-unit:hover:not(:disabled){background:rgba(61,65,22,.07);
   45%{transform:translateX(-5px)} 60%{transform:translateX(4px)} 75%{transform:translateX(-2px)}
 }
 .bsr-dock.is-shake .bsr-docktip,
-.bsr-dock.is-shake .bsr-steps li:first-child{ animation:bsr-shake .55s ease-in-out }
-.bsr-dock.is-nudged .bsr-docktip{ background:#F6C544; box-shadow:0 0 0 3px rgba(246,197,68,.35) }
-.bsr-dock.is-nudged .bsr-steps li:first-child{ background:#FBE3A6; box-shadow:inset 3px 0 0 #D1901F }
+.bsr-dock.is-shake-1 .bsr-steps li:nth-child(1),
+.bsr-dock.is-shake-2 .bsr-steps li:nth-child(2),
+.bsr-dock.is-shake-2 .bsr-dock-fields{ animation:bsr-shake .55s ease-in-out }
+.bsr-dock.is-nudged-1 .bsr-docktip,
+.bsr-dock.is-nudged-2 .bsr-docktip{ background:#F6C544; box-shadow:0 0 0 3px rgba(246,197,68,.35) }
+.bsr-dock.is-nudged-1 .bsr-steps li:nth-child(1),
+.bsr-dock.is-nudged-2 .bsr-steps li:nth-child(2){ background:#FBE3A6; box-shadow:inset 3px 0 0 #D1901F }
+.bsr-dock.is-nudged-2 .bsr-dock-fields input,
+.bsr-dock.is-nudged-2 .bsr-dock-fields select{ box-shadow:0 0 0 3px rgba(246,197,68,.55) }
 @media (prefers-reduced-motion:reduce){
-  .bsr-dock.is-shake .bsr-docktip, .bsr-dock.is-shake .bsr-steps li:first-child{ animation:none }
+  .bsr-dock.is-shake *{ animation:none !important }
 }
