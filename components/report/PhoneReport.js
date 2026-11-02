@@ -587,9 +587,14 @@ export default function PhoneReport({
               )}
             </div>
           </div>
-          {sunLine && <p className="bsrp-vline is-sun"><Sun size={14} strokeWidth={2.4} aria-hidden="true" /><span>{sunLine}</span></p>}
-          {areaLine && <p className="bsrp-vline is-area"><MapIcon size={14} strokeWidth={2.4} aria-hidden="true" /><span>{areaLine}</span></p>}
         </section>
+        {(sunLine || areaLine) && (
+          <section className="bsrp-glance" aria-label="In short">
+            <p className="bsrp-glance-k">In short</p>
+            {sunLine && <p className="bsrp-vline is-sun"><Sun size={16} strokeWidth={2.4} aria-hidden="true" /><span>{sunLine}</span></p>}
+            {areaLine && <p className="bsrp-vline is-area"><MapIcon size={16} strokeWidth={2.4} aria-hidden="true" /><span>{areaLine}</span></p>}
+          </section>
+        )}
         <button type="button" className="bsrp-sunbtn" onClick={() => setView('sun')}>
           <span className="bsrp-sunbtn-ico" aria-hidden="true"><Sun size={18} strokeWidth={2.2} /></span>
           <span className="bsrp-sunbtn-text">
@@ -601,8 +606,9 @@ export default function PhoneReport({
       </div>
 
       {flatRows.length > 0 && (
-        <section className="bsrp-sec" aria-labelledby="bsrp-flat-h">
+        <section className="bsrp-sec bsrp-part is-flat" aria-labelledby="bsrp-flat-h">
           <h2 id="bsrp-flat-h" className="bsrp-h2">Your flat</h2>
+          <p className="bsrp-part-sub">Floor {floor || '–'}{facing ? `, facing ${String(facing).toLowerCase()}` : ''}. Changes with floor and facing.</p>
           <ul className="bsrp-find-list">
             {flatRows.map((it) => <FindingRow key={it.id} item={it} onOpen={openItem} rate={rate} />)}
           </ul>
@@ -610,8 +616,9 @@ export default function PhoneReport({
       )}
 
       {areaRows.length > 0 && (
-        <section className="bsrp-sec" aria-labelledby="bsrp-area-h">
+        <section className="bsrp-sec bsrp-part is-area" aria-labelledby="bsrp-area-h">
           <h2 id="bsrp-area-h" className="bsrp-h2">The area</h2>
+          <p className="bsrp-part-sub">Pin {area?.pinCode}. The same for every flat around here.</p>
           <ul className="bsrp-find-list">
             {areaRows.map((it) => <FindingRow key={it.id} item={it} onOpen={openItem} rate={rate} />)}
           </ul>
@@ -621,46 +628,57 @@ export default function PhoneReport({
       {/* Same checklist as the laptop's "What to check before you decide":
           the items that scored lowest, each with what to look at on a visit.
           Ticks and notes are saved per address, shared with the laptop. */}
-      <section className="bsrp-sec bsrp-checks" aria-labelledby="bsrp-checks-h">
+      <section className="bsrp-sec bsrp-part is-checks" aria-labelledby="bsrp-checks-h">
         <h2 id="bsrp-checks-h" className="bsrp-h2">What to check before you decide</h2>
         {checks.length === 0 ? (
-          <p className="bsrp-checks-none">Nothing scored under 60. Still worth one visit at rush hour and one after dark.</p>
-        ) : (
-          <>
-            <p className="bsrp-checks-k">Tick each one off when you visit. {ticked ? `${checks.filter((a) => ticked.has(a.key)).length} of ${checks.length} done.` : ''}</p>
-            <ul className="bsrp-checklist">
-              {checks.map((a) => {
-                const done = !!ticked?.has(a.key);
-                return (
-                  <li key={a.key} className={done ? 'is-done' : undefined}>
-                    <label className="bsrp-check-row">
-                      <input type="checkbox" checked={done} onChange={() => onTick?.(a.key)} />
-                      <span className="bsrp-check-body">
-                        <strong>{a.label}</strong>
-                        <span>{a.action}</span>
-                      </span>
-                    </label>
-                    {(done || (notes[a.key] || '').trim()) && (
-                      <textarea
-                        className="bsrp-check-note"
-                        placeholder="What did you find? (optional)"
-                        aria-label={`What did you find - ${a.label}`}
-                        value={notes[a.key] || ''}
-                        onChange={(e) => onNote?.(a.key, e.target.value)}
-                        rows={2}
-                      />
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          </>
-        )}
+          <p className="bsrp-part-sub">Nothing scored under 60. Still worth one visit at rush hour and one after dark.</p>
+        ) : (() => {
+          const doneN = checks.filter((c) => ticked?.has(c.key)).length;
+          return (
+            <>
+              <div className="bsrp-progress" aria-label={`${doneN} of ${checks.length} checked`}>
+                <span className="bsrp-progress-bar"><i style={{ width: `${(doneN / checks.length) * 100}%` }} /></span>
+                <span className="bsrp-progress-n">{doneN} of {checks.length} checked</span>
+              </div>
+              <p className="bsrp-part-sub">Take these on your visit. Swipe through, mark each one when you've seen it.</p>
+              <ul className="bsrp-cards">
+                {checks.map((c, i) => {
+                  const done = !!ticked?.has(c.key);
+                  const isArea = AREA_ORDER.includes(c.key);
+                  const Icon = ICONS[c.key];
+                  return (
+                    <li key={c.key} className={`bsrp-card${done ? ' is-done' : ''}${isArea ? ' is-area' : ' is-flat'}`}>
+                      <div className="bsrp-card-top">
+                        <span className="bsrp-card-ico" aria-hidden="true">{Icon ? <Icon size={18} strokeWidth={2.2} /> : null}</span>
+                        <span className="bsrp-card-k">{isArea ? 'The area' : 'Your flat'} · {i + 1}/{checks.length}</span>
+                      </div>
+                      <h3 className="bsrp-card-t">{AREA_NAMES[c.key] || FLAT_NAMES[c.key] || c.label}</h3>
+                      <p className="bsrp-card-x">{c.action}</p>
+                      {done && (
+                        <textarea
+                          className="bsrp-card-note"
+                          placeholder="What did you find? (optional)"
+                          aria-label={`What did you find - ${c.label}`}
+                          value={notes[c.key] || ''}
+                          onChange={(e) => onNote?.(c.key, e.target.value)}
+                          rows={2}
+                        />
+                      )}
+                      <button type="button" className="bsrp-card-btn" aria-pressed={done} onClick={() => onTick?.(c.key)}>
+                        {done ? '✓ Checked' : 'Mark as checked'}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          );
+        })()}
       </section>
 
       {/* Compare and Furnishing used to be only small header / footer links
           on phones, easy to miss. Same card style as the sun button. */}
-      <section className="bsrp-sec bsrp-more" aria-labelledby="bsrp-more-h">
+      <section className="bsrp-sec bsrp-part bsrp-more" aria-labelledby="bsrp-more-h">
         <h2 id="bsrp-more-h" className="bsrp-h2">Next for this flat</h2>
         <Link href={compareHref || '/compare'} className="bsrp-sunbtn bsrp-morebtn">
           <span className="bsrp-sunbtn-ico is-compare" aria-hidden="true"><Scale size={18} strokeWidth={2.2} /></span>
