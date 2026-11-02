@@ -2132,6 +2132,11 @@ export default function ReportScreen({ view = 'verdict' }) {
           compareHref={compareHref}
           onUsePin={(v) => setPlace((p) => ({ ...p, pinCode: v }))}
           rate={{ word, tone: toneOf }}
+          checks={actions}
+          ticked={ticked}
+          onTick={toggleTick}
+          notes={notes}
+          onNote={updateNote}
         />
       )}
       {verdictMode === 'ready' && !phoneHero && (

@@ -22,7 +22,7 @@
 // can rank against our own records and estimate from our model, and that
 // is all we can claim.
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft, ChevronRight, X, Play, Pause, MapPin, Sun, FileText, Map as MapIcon,
@@ -226,12 +226,49 @@ function FindingRow({ item, onOpen, rate }) {
 }
 
 
+// Play/pause + time slider. While the day plays, the map reports its time
+// (Map3DShadow posts 'simTime'), so the slider and clock follow it. Its own
+// component so those updates don't re-render the whole report.
+function SunTimeRow({ animating, setAnimating, minutes, setMinutes, clock }) {
+  const [live, setLive] = useState(null);
+  useEffect(() => {
+    const on = (e) => {
+      if (e?.data?.type !== 'simTime' || typeof e.data.time !== 'string') return;
+      const [h, mm] = e.data.time.split(':').map(Number);
+      if (Number.isFinite(h) && Number.isFinite(mm)) setLive(h * 60 + mm);
+    };
+    window.addEventListener('message', on);
+    return () => window.removeEventListener('message', on);
+  }, []);
+  const shown = animating && live != null ? live : minutes;
+  return (
+    <div className="bsrp-time">
+      <button
+        type="button"
+        className="bsrp-play"
+        onClick={() => { if (animating && live != null) setMinutes(Math.round(live / 10) * 10); setAnimating(!animating); }}
+        aria-label={animating ? 'Pause the day' : 'Play the day'}
+      >
+        {animating ? <Pause size={16} strokeWidth={2.6} /> : <Play size={16} strokeWidth={2.6} />}
+      </button>
+      <label className="bsrp-slider">
+        <span className="bsrp-visually-hidden">Time of day</span>
+        <input
+          type="range" min="330" max="1140" step="10" value={Math.min(1140, Math.max(330, shown))}
+          onChange={(e) => { setAnimating(false); setMinutes(Number(e.target.value)); }}
+        />
+        <strong>{clock(shown)}</strong>
+      </label>
+    </div>
+  );
+}
+
 export default function PhoneReport({
   view, setView, itemId, setItemId,
   area, unit, address, floor, facing, unitSet,
   onChangeFlat, onRequestReport, reportBusy, pinFixForm, pinFixOpen, setPinFixOpen,
   seasonKey, setSeasonKey, animating, setAnimating, minutes, setMinutes, clock, mapReady, overall, rate,
-  compareHref, onUsePin,
+  compareHref, onUsePin, checks = [], ticked, onTick, notes = {}, onNote,
 }) {
   const hasArea = Boolean(area);
   const sun = useMemo(() => sunStats(unit?.sunYear), [unit?.sunYear]);
@@ -429,7 +466,16 @@ export default function PhoneReport({
       </button>
       <div className="bsrp-sun" role="dialog" aria-modal="true" aria-labelledby="bsrp-sun-h">
         <div className="bsrp-sun-body">
-          <p className="bsrp-seg-k" id="bsrp-seg-k">See the sun on</p>
+          {m && (
+            <div className="bsrp-sun-now">
+              <h2 id="bsrp-sun-h" className="bsrp-sun-say">
+                {none(m.hours) ? `No direct sun on this side ${when}` : `${hrs(m.hours)} of direct sun ${when}`}
+              </h2>
+              <p className="bsrp-small">Sunrise {m.rise} · Sunset {m.set} · clear-sky estimate</p>
+            </div>
+          )}
+
+          <p className="bsrp-seg-k" id="bsrp-seg-k">Pick a season</p>
           <div className="bsrp-seg" role="group" aria-labelledby="bsrp-seg-k">
             {SEASON_TABS.map((t) => (
               <button key={t.key} type="button" aria-pressed={seasonKey === t.key} onClick={() => setSeasonKey(t.key)}>
@@ -438,33 +484,7 @@ export default function PhoneReport({
             ))}
           </div>
 
-          {m && (
-            <div className="bsrp-sun-now">
-              <h2 id="bsrp-sun-h" className="bsrp-sun-say">
-                {none(m.hours) ? `No direct sun on this side ${when}` : `${hrs(m.hours)} of direct sun ${when}`}
-              </h2>
-              <p className="bsrp-small">Sunrise {m.rise} · Sunset {m.set} · our sun model, clear sky</p>
-            </div>
-          )}
-
-          <div className="bsrp-time">
-            <button
-              type="button"
-              className="bsrp-play"
-              onClick={() => setAnimating(!animating)}
-              aria-label={animating ? 'Pause the day' : 'Play the day'}
-            >
-              {animating ? <Pause size={15} strokeWidth={2.6} /> : <Play size={15} strokeWidth={2.6} />}
-            </button>
-            <label className="bsrp-slider">
-              <span className="bsrp-visually-hidden">Time of day</span>
-              <input
-                type="range" min="330" max="1140" step="10" value={minutes}
-                onChange={(e) => { setAnimating(false); setMinutes(Number(e.target.value)); }}
-              />
-              <strong>{animating ? 'Playing' : clock(minutes)}</strong>
-            </label>
-          </div>
+          <SunTimeRow animating={animating} setAnimating={setAnimating} minutes={minutes} setMinutes={setMinutes} clock={clock} />
 
           {year.length === 12 && (
             <div className="bsrp-year">
@@ -597,6 +617,46 @@ export default function PhoneReport({
           </ul>
         </section>
       )}
+
+      {/* Same checklist as the laptop's "What to check before you decide":
+          the items that scored lowest, each with what to look at on a visit.
+          Ticks and notes are saved per address, shared with the laptop. */}
+      <section className="bsrp-sec bsrp-checks" aria-labelledby="bsrp-checks-h">
+        <h2 id="bsrp-checks-h" className="bsrp-h2">What to check before you decide</h2>
+        {checks.length === 0 ? (
+          <p className="bsrp-checks-none">Nothing scored under 60. Still worth one visit at rush hour and one after dark.</p>
+        ) : (
+          <>
+            <p className="bsrp-checks-k">Tick each one off when you visit. {ticked ? `${checks.filter((a) => ticked.has(a.key)).length} of ${checks.length} done.` : ''}</p>
+            <ul className="bsrp-checklist">
+              {checks.map((a) => {
+                const done = !!ticked?.has(a.key);
+                return (
+                  <li key={a.key} className={done ? 'is-done' : undefined}>
+                    <label className="bsrp-check-row">
+                      <input type="checkbox" checked={done} onChange={() => onTick?.(a.key)} />
+                      <span className="bsrp-check-body">
+                        <strong>{a.label}</strong>
+                        <span>{a.action}</span>
+                      </span>
+                    </label>
+                    {(done || (notes[a.key] || '').trim()) && (
+                      <textarea
+                        className="bsrp-check-note"
+                        placeholder="What did you find? (optional)"
+                        aria-label={`What did you find - ${a.label}`}
+                        value={notes[a.key] || ''}
+                        onChange={(e) => onNote?.(a.key, e.target.value)}
+                        rows={2}
+                      />
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </>
+        )}
+      </section>
 
       {/* Compare and Furnishing used to be only small header / footer links
           on phones, easy to miss. Same card style as the sun button. */}

@@ -543,3 +543,47 @@ html.bsrp-lock-x body{ position:relative }
 .bsrp-more .bsrp-morebtn:first-of-type{ margin-top:6px }
 .bsrp-sunbtn-ico.is-compare{ background:#E8ECDD; color:#3D4116 }
 .bsrp-sunbtn-ico.is-furnish{ background:#F1E3E5; color:#6B2232 }
+
+/* ---------- sun view, cleaner (Nov) ----------
+   More map, a quieter "tap to move" hint, the answer first, then the
+   season switch and one time row; a lighter button at the bottom. */
+.bsr.is-phone .bsr-mapzone.is-phone-sun{ height:52vh }
+@supports (height:1svh){ .bsr.is-phone .bsr-mapzone.is-phone-sun{ height:52svh } }
+.bsrp-sun{ top:calc(52vh - 14px) }
+@supports (height:1svh){ .bsrp-sun{ top:calc(52svh - 14px) } }
+.bsr.is-phone .bsr-mapzone.is-phone-sun .bsr-map-guard{
+  align-items:flex-end; justify-content:center; padding:0 0 26px;
+}
+.bsr.is-phone .bsr-mapzone.is-phone-sun .bsr-map-guard-label{
+  background:rgba(255,253,248,.92); color:var(--p-ink,#1C1C17); font-size:12px; font-weight:600;
+  padding:6px 11px; border:1px solid rgba(28,28,23,.12); box-shadow:0 2px 8px rgba(28,28,23,.10);
+}
+.bsrp-sun-body{ padding:16px 16px 8px }
+.bsrp-sun-now{ margin:0 0 12px }
+.bsrp-sun .bsrp-sun-say{ font-size:19px }
+.bsrp-seg-k{ margin:0 0 6px; font-size:11.5px }
+.bsrp-sun .bsrp-time{ margin-top:12px }
+.bsrp-sun .bsrp-play{ width:38px; height:38px; background:var(--p-olive,#3D4116); color:#FFFFFF }
+.bsrp-sun .bsrp-slider strong{ min-width:46px; font-variant-numeric:tabular-nums; color:var(--p-ink) }
+.bsrp-sun .bsrp-year{ margin-top:12px; padding-bottom:22px }
+.bsrp-sun-foot{ padding-top:8px }
+.bsrp-sun-foot .bsrp-cta{ height:46px; font-size:15px; background:var(--p-olive,#3D4116) }
+
+/* ---------- What to check before you decide ---------- */
+.bsrp-checks-k{ margin:-4px 0 8px; font-size:13px; color:var(--p-mute) }
+.bsrp-checks-none{ margin:0; font-size:14px; color:var(--p-mute) }
+.bsrp-checklist{ list-style:none; margin:0; padding:0; border-top:1px solid var(--p-line) }
+.bsrp-checklist li{ border-bottom:1px solid var(--p-line); padding:10px 0 }
+.bsrp-check-row{ display:flex; gap:12px; align-items:flex-start; cursor:pointer }
+.bsrp-check-row input{
+  flex:none; width:22px; height:22px; margin:1px 0 0; accent-color:var(--p-olive,#3D4116);
+}
+.bsrp-check-body{ display:flex; flex-direction:column; gap:2px; min-width:0 }
+.bsrp-check-body strong{ font-size:15px; font-weight:650 }
+.bsrp-check-body span{ font-size:13.5px; line-height:1.4; color:var(--p-mute) }
+.bsrp-checklist li.is-done .bsrp-check-body strong{ text-decoration:line-through; color:var(--p-mute) }
+.bsrp-check-note{
+  display:block; width:100%; box-sizing:border-box; margin:8px 0 0 34px; max-width:calc(100% - 34px);
+  font:inherit; font-size:14px; padding:8px 10px; border:1px solid var(--p-line); border-radius:10px;
+  background:#FFFFFF; resize:vertical;
+}
