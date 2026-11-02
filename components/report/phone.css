@@ -537,3 +537,9 @@ html.bsrp-lock-x body{ position:relative }
 
 /* map step on phones: say what Facing means */
 .bsr.is-phone-map .bsr-dock .bsr-long-only{ display:inline; color:inherit }
+
+/* ---------- Next for this flat: compare + furnishing ---------- */
+.bsrp-more .bsrp-morebtn{ margin-top:8px; text-decoration:none }
+.bsrp-more .bsrp-morebtn:first-of-type{ margin-top:6px }
+.bsrp-sunbtn-ico.is-compare{ background:#E8ECDD; color:#3D4116 }
+.bsrp-sunbtn-ico.is-furnish{ background:#F1E3E5; color:#6B2232 }

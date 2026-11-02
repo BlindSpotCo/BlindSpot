@@ -357,6 +357,23 @@ export default function ReportScreen({ view = 'verdict' }) {
     router.push(`/report?${flowQuery({ pin: pinTouched ? '1' : '' })}`);
   }, [router, flowQuery, pinTouched]);
 
+  // People didn't know the map takes a tap. Pressing "See the analysis"
+  // before picking a building shakes step 1 and says so; pressing again
+  // goes ahead with the centre of the complex.
+  const [pinNudged, setPinNudged] = useState(false);
+  const [pinShake, setPinShake] = useState(false);
+  const goToAnalysis = useCallback(() => {
+    if (!pinTouched && !pinNudged) {
+      setPinNudged(true);
+      setShowUnitTip(true);
+      setPinShake(false);
+      requestAnimationFrame(() => setPinShake(true));
+      setTimeout(() => setPinShake(false), 700);
+      return;
+    }
+    confirmSpot();
+  }, [pinTouched, pinNudged, confirmSpot]);
+
   // ...and the way back to it from the verdict's own map toolbar.
   const openLocate = useCallback(() => {
     router.push(`/report/locate?${flowQuery({ pin: pinTouched ? '1' : '' })}`);
@@ -1858,7 +1875,7 @@ export default function ReportScreen({ view = 'verdict' }) {
               .bsr-mapcta each take their own spot -- see report.css. */}
           {fullMap && (
             <div className="bsr-dockzone" ref={dockzoneRef}>
-              <div className="bsr-dock">
+              <div className={`bsr-dock${pinShake ? ' is-shake' : ''}${pinNudged && !pinTouched ? ' is-nudged' : ''}`}>
                 {/* Attached to the card's own top edge, full width, instead
                     of a pill floating above its right corner -- it lines up
                     with the box it's about. */}
@@ -1877,8 +1894,8 @@ export default function ReportScreen({ view = 'verdict' }) {
                         </>
                       ) : (
                         <>
-                          <strong>Step 1 · Tap your building on the map</strong>
-                          <span>{assumed ? 'Then set your floor and facing below' : 'So we score your exact tower'}</span>
+                          <strong>{pinNudged ? 'First, tap your building on the map' : 'Step 1 · Tap your building on the map'}</strong>
+                          <span>{pinNudged ? 'Or press “Use whole complex” below to skip this' : assumed ? 'Then set your floor and facing below' : 'So we score your exact tower'}</span>
                         </>
                       )}
                     </span>
@@ -1897,7 +1914,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                 {(() => {
                   const cur = !pinTouched ? 1 : assumed ? 2 : 3;
                   const steps = [
-                    { n: 1, t: 'Tap your building', d: pinTouched ? 'Pin placed' : 'On the map, so we score your tower' },
+                    { n: 1, t: pinNudged && !pinTouched ? 'First, tap your building on the map' : 'Tap your building', d: pinTouched ? 'Pin placed' : pinNudged ? 'Or press “Use the whole complex” to skip this' : 'On the map, so we score your tower' },
                     { n: 2, t: 'Set floor and facing', d: 'Sun and heat change a lot with both' },
                     { n: 3, t: 'See the analysis', d: 'Sun through the year + the neighbourhood' },
                   ];
@@ -1923,16 +1940,18 @@ export default function ReportScreen({ view = 'verdict' }) {
                 <p className="bsr-mapcta-say">
                   {pinTouched
                     ? 'Pin placed - every score below is for this exact spot.'
-                    : 'Without a pin, scores use the centre of the complex.'}
+                    : pinNudged
+                      ? 'No building picked yet. Tap it on the map, or score the centre of the complex instead.'
+                      : 'Tap your building on the map first, so we score your exact tower.'}
                 </p>
                 <button
                   type="button"
                   className="bsr-mapcta-go"
                   ref={fullBackRef}
-                  onClick={confirmSpot}
+                  onClick={goToAnalysis}
                 >
-                  <span className="bsr-mapcta-long">{pinTouched ? 'See the analysis' : 'Continue without placing a pin'}</span>
-                  <span className="bsr-mapcta-short">{pinTouched ? 'See analysis' : 'Use whole complex'}</span>
+                  <span className="bsr-mapcta-long">{pinTouched || !pinNudged ? 'See the analysis' : 'Use the whole complex'}</span>
+                  <span className="bsr-mapcta-short">{pinTouched || !pinNudged ? 'See analysis' : 'Use whole complex'}</span>
                   <span aria-hidden="true"> →</span>
                 </button>
               </div>

@@ -2836,3 +2836,16 @@ button.bsr-cta.is-needs-unit:hover:not(:disabled){background:rgba(61,65,22,.07);
   .bsr-mapzone.is-full .bsr-fullbar-season .bsr-set-field{ gap:12px }
   .bsr-mapzone.is-full .bsr-fullbar-search-toggle{ margin-left:4px }
 }
+
+/* ---- map step: "See the analysis" before a building is picked ---- */
+@keyframes bsr-shake{
+  0%,100%{transform:translateX(0)} 15%{transform:translateX(-7px)} 30%{transform:translateX(6px)}
+  45%{transform:translateX(-5px)} 60%{transform:translateX(4px)} 75%{transform:translateX(-2px)}
+}
+.bsr-dock.is-shake .bsr-docktip,
+.bsr-dock.is-shake .bsr-steps li:first-child{ animation:bsr-shake .55s ease-in-out }
+.bsr-dock.is-nudged .bsr-docktip{ background:#F6C544; box-shadow:0 0 0 3px rgba(246,197,68,.35) }
+.bsr-dock.is-nudged .bsr-steps li:first-child{ background:#FBE3A6; box-shadow:inset 3px 0 0 #D1901F }
+@media (prefers-reduced-motion:reduce){
+  .bsr-dock.is-shake .bsr-docktip, .bsr-dock.is-shake .bsr-steps li:first-child{ animation:none }
+}

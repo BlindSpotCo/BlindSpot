@@ -27,7 +27,7 @@ import Link from 'next/link';
 import {
   ArrowLeft, ChevronRight, X, Play, Pause, MapPin, Sun, FileText, Map as MapIcon,
   ShieldCheck, GraduationCap, Wind, Droplets, Zap, Route, Building2, Waves,
-  Thermometer, Eye, Lock, Fan, CloudRain, Volume2,
+  Thermometer, Eye, Lock, Fan, CloudRain, Volume2, Scale, Sofa,
 } from 'lucide-react';
 import { AREA_ACTIONS, UNIT_ACTIONS } from '@/lib/property-score/actionItems';
 import { sunLine as sunLineOf, areaLine as areaLineOf } from '@/lib/report/summaryLines';
@@ -597,6 +597,28 @@ export default function PhoneReport({
           </ul>
         </section>
       )}
+
+      {/* Compare and Furnishing used to be only small header / footer links
+          on phones, easy to miss. Same card style as the sun button. */}
+      <section className="bsrp-sec bsrp-more" aria-labelledby="bsrp-more-h">
+        <h2 id="bsrp-more-h" className="bsrp-h2">Next for this flat</h2>
+        <Link href={compareHref || '/compare'} className="bsrp-sunbtn bsrp-morebtn">
+          <span className="bsrp-sunbtn-ico is-compare" aria-hidden="true"><Scale size={18} strokeWidth={2.2} /></span>
+          <span className="bsrp-sunbtn-text">
+            <strong>Compare with another flat</strong>
+            <span>Put two or three flats side by side</span>
+          </span>
+          <ChevronRight size={18} strokeWidth={2.2} aria-hidden="true" />
+        </Link>
+        <Link href="/floor-plan-analysis" className="bsrp-sunbtn bsrp-morebtn">
+          <span className="bsrp-sunbtn-ico is-furnish" aria-hidden="true"><Sofa size={18} strokeWidth={2.2} /></span>
+          <span className="bsrp-sunbtn-text">
+            <strong>Furnishing ideas</strong>
+            <span>Upload a floor plan, get room-by-room suggestions</span>
+          </span>
+          <ChevronRight size={18} strokeWidth={2.2} aria-hidden="true" />
+        </Link>
+      </section>
 
       {hasArea && (
         <p className="bsrp-meta">
