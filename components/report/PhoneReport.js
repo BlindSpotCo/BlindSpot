@@ -384,9 +384,14 @@ export default function PhoneReport({
       const f = areaFact(item.key, area?.raw, item.facts);
       detail = f ? `${f} ${AREA_MEASURES[item.key]}` : AREA_MEASURES[item.key];
     } else {
-      const f = flatFact(item.key, (unit?.subScores || []).find((x) => x.key === item.key), { sun, floor, facing });
-      const d = flatDetail(item.key, { sun, floor, facing });
-      detail = f && !['sun', 'shadeHeat'].includes(item.key) ? `${f} ${d}` : d;
+      const sub = (unit?.subScores || []).find((x) => x.key === item.key);
+      const f = flatFact(item.key, sub, { sun, floor, facing });
+      // View/privacy worked out from the buildings around: the summary
+      // already says what was found and what it can't see.
+      const d = sub?.source === 'buildings' && sub.summary ? '' : flatDetail(item.key, { sun, floor, facing });
+      detail = sub?.source === 'buildings' && sub.summary
+        ? sub.summary
+        : f && !['sun', 'shadeHeat'].includes(item.key) ? `${f} ${d}` : d;
     }
     const updated = item.kind === 'area' ? monthYear(item.facts.asOf) : null;
     return (
