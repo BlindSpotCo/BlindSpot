@@ -105,7 +105,7 @@ const sections = [
           <li><strong>Vercel</strong> hosts the website and counts visits.</li>
           <li><strong>Razorpay</strong> processes payments for Keys. It receives your payment details and the email and phone you give at checkout. We only receive the payment ID, the amount and whether it succeeded, never your full card or bank details.</li>
           <li><strong>Google</strong> handles Google sign-in, writes report text and analyses uploaded photos and floor plans (Gemini), and provides air quality readings for a location.</li>
-          <li><strong>Map and weather providers</strong> receive the location being looked up: OpenStreetMap&apos;s Nominatim and Komoot&apos;s Photon (address search), Esri and CARTO (map pictures), OSM Buildings (building heights), and Open-Meteo (weather and air). Some map pictures load straight from these providers, so they see your IP address like any website you visit.</li>
+          <li><strong>Map and weather providers</strong> receive the location being looked up: OpenStreetMap&apos;s Nominatim and Komoot&apos;s Photon (address search), Esri and CARTO (map pictures), OSM Buildings (building heights), NASA POWER (climate and wind), and Open-Meteo (air-quality history, when enabled). Some map pictures load straight from these providers, so they see your IP address like any website you visit.</li>
         </ul>
         <p>
           These providers may store data outside India. We&apos;ll also share information if the law
