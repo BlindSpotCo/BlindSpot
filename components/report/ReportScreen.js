@@ -1901,7 +1901,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                         </>
                       ) : (
                         <>
-                          <strong>{nudgeStep === 1 ? 'First, tap your building on the map' : 'Step 1 · Tap your building on the map'}</strong>
+                          <strong>{nudgeStep === 1 ? 'First, set your angle and tap your building' : 'Step 1 · Set your angle and tap your building'}</strong>
                           <span>{nudgeStep === 1 ? 'Tap the tower your flat is in, then set floor and facing' : assumed ? 'Then set your floor and facing below' : 'So we score your exact tower'}</span>
                         </>
                       )}
@@ -1920,10 +1920,15 @@ export default function ReportScreen({ view = 'verdict' }) {
                     phone shows just the current one in the yellow strip). */}
                 {(() => {
                   const cur = needPin ? 1 : assumed ? 2 : 3;
+                  // Each step carries its own controls right under it (laptop/
+                  // tablet): floor + facing under step 2, season under step 3.
                   const steps = [
-                    { n: 1, t: nudgeStep === 1 && needPin ? 'First, tap your building on the map' : 'Tap your building', d: pinTouched ? 'Pin placed' : mapFailed ? 'Map didn’t load, skipped' : 'On the map, so we score your tower' },
-                    { n: 2, t: nudgeStep === 2 && assumed ? 'Now set your floor and facing' : 'Set floor and facing', d: nudgeStep === 2 && assumed ? 'Type the floor, pick where your balcony faces' : 'Sun and heat change a lot with both' },
-                    { n: 3, t: 'See the analysis', d: 'Sun through the year + the neighbourhood' },
+                    { n: 1, t: nudgeStep === 1 && needPin ? 'First, set your angle and tap your building' : 'Set your angle and tap your building', d: pinTouched ? 'Pin placed' : mapFailed ? 'Map didn’t load, skipped' : 'Rotate the map, then tap your tower' },
+                    { n: 2, t: nudgeStep === 2 && assumed ? 'Now set your floor and facing' : 'Set floor and facing', d: nudgeStep === 2 && assumed ? 'Type the floor, pick where your balcony faces' : 'Sun and heat change a lot with both',
+                      body: <p className="bsr-set bsr-dock-fields bsr-step-fields">{unitFieldsNode}</p> },
+                    { n: 3, t: 'See season analysis', d: 'Pick a season to watch the shadows', optional: true,
+                      body: <p className="bsr-set bsr-step-season">{seasonFieldNode}</p> },
+                    { n: 4, t: 'See the analysis', d: 'Sun through the year + the neighbourhood' },
                   ];
                   return (
                     <ol className="bsr-steps" aria-label="Steps">
@@ -1932,21 +1937,26 @@ export default function ReportScreen({ view = 'verdict' }) {
                         return (
                           <li key={st.n} className={`${done ? 'is-done' : ''}${st.n === cur ? ' is-now' : ''}${st.optional ? ' is-opt' : ''}`} aria-current={st.n === cur ? 'step' : undefined}>
                             <span className="bsr-step-n" aria-hidden="true">{done ? '✓' : st.n}</span>
-                            <span className="bsr-step-t"><strong>{st.t}</strong><span>{st.d}</span></span>
+                            <div className="bsr-step-main">
+                              <span className="bsr-step-t"><strong>{st.t}</strong><span>{st.d}</span></span>
+                              {st.body}
+                            </div>
                           </li>
                         );
                       })}
                     </ol>
                   );
                 })()}
-                <p className="bsr-set bsr-dock-fields">
+                {/* Phone copy: .bsr-steps is hidden below 768px, so the
+                    fields still need a home there. Hidden at 768px+. */}
+                <p className="bsr-set bsr-dock-fields bsr-dock-fields-phone">
                   {unitFieldsNode}
                 </p>
               </div>
               <div className={`bsr-mapcta${pinTouched ? ' is-ready' : ''}`}>
                 <p className="bsr-mapcta-say">
                   {needPin
-                    ? (nudgeStep === 1 ? 'No building picked yet. Tap your tower on the map.' : 'Tap your building on the map first, so we score your exact tower.')
+                    ? (nudgeStep === 1 ? 'No building picked yet. Set your angle and tap your tower.' : 'Set your angle and tap your building first, so we score your exact tower.')
                     : assumed
                       ? (nudgeStep === 2 ? 'Set your floor and facing above to continue.' : 'Now set your floor and facing above.')
                       : 'All set - every score is for this exact spot and flat.'}
