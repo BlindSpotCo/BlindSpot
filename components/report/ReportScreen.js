@@ -2285,7 +2285,7 @@ export default function ReportScreen({ view = 'verdict' }) {
                 )}
               </h2>
               {!hasArea && (
-                <p>We don\u2019t have neighbourhood records for this pincode yet, so this covers the flat itself.</p>
+                <p>We don’t have neighbourhood records for this pincode yet, so this covers the flat itself.</p>
               )}
               {hasArea && (
                 <p className="bsr-sum-split">
