@@ -16,7 +16,7 @@ export default function PricingView() {
   return (
     <main className="pr-page">
       <div className="pr-wrap">
-        <header className="pr-hero">
+        <div className="pr-hero">
           <p className="pw-eyebrow">Pricing</p>
           <h1>Pay per property, not per month.</h1>
           <p className="pr-sub">
@@ -25,7 +25,7 @@ export default function PricingView() {
             property in any city we cover.
           </p>
           <p className="pr-sub"><b>Keys aren&apos;t on sale yet. Every report is free while we set up payments.</b></p>
-        </header>
+        </div>
 
         <section className="pr-sec">
           <h2>How Keys get spent</h2>

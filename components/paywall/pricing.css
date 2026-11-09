@@ -20,3 +20,8 @@
 .pr-col h3{margin:0 0 8px;font-size:16px}
 .pr-col ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px;font-size:14px}
 .pr-fine{font-size:13.5px !important;color:var(--text-mute,#64748B) !important}.pr-fine a{color:var(--brand,#3D4116);font-weight:600}
+/* Was a bare <header>, which picked up globals.css's site-wide
+   header{position:sticky;top:0;z-index:50;background:transparent} and
+   stuck to the top under the nav while the sections scrolled up through it.
+   Now a <div>; the reset stays in case it ever becomes a <header> again. */
+.pr-hero{position:static;z-index:auto;background:none;border:0}

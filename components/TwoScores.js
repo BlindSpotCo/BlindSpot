@@ -15,9 +15,9 @@
 // from lib/sunscout/scoring/*.js, run directly against those real inputs,
 // not invented. Each raw number is turned into a word/tone with the
 // report's own thresholds (>=80 Excellent/good, >=60 Good/good, >=40
-// Fair/avg, else Poor/poor). One exception: Wind needs a live Open-Meteo
-// reading that can't be replayed after the fact, so its tag uses
-// windScore.js's own documented "live data unavailable" fallback (score
+// Fair/avg, else Poor/poor). One exception: Wind needs a NASA POWER
+// lookup that isn't replayed here, so its tag uses
+// windScore.js's own documented "data unavailable" fallback (score
 // 50, Fair) -- real code, not a guess -- which is also exactly what
 // makes the four known real sub-scores land on the same 50/Fair combined
 // example already used elsewhere on this page. Dropped the ring: a plain
