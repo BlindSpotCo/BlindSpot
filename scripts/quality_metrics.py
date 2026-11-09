@@ -118,19 +118,19 @@ for city, recs in sorted(nqi_by_city.items()):
     for r in recs:
         for dim, val in (r.get("scores") or {}).items():
             if val is not None and not (0 <= val <= 100):
-                print(f"  ✗ {city} {r.get('pin_code')}: scores.{dim} = {val} — outside 0-100 range")
+                print(f"  ✗ {city} {r.get('pin_code')}: scores.{dim} = {val}, outside 0-100 range")
                 range_violations += 1
 vocab_violations = 0
 for pin, r in master_by_pin.items():
     for field, allowed in EXPECTED_VOCAB.items():
         val = r.get(field)
         if val is not None and val not in allowed:
-            print(f"  ✗ {r.get('city')} {pin}: {field} = {val!r} — not in expected set {sorted(allowed)}")
+            print(f"  ✗ {r.get('city')} {pin}: {field} = {val!r}, not in expected set {sorted(allowed)}")
             vocab_violations += 1
 for r in nqi:
     val = r.get("grade")
     if val is not None and val not in EXPECTED_VOCAB["grade"]:
-        print(f"  ✗ {r.get('city')} {r.get('pin_code')}: grade = {val!r} — not in expected set")
+        print(f"  ✗ {r.get('city')} {r.get('pin_code')}: grade = {val!r}, not in expected set")
         vocab_violations += 1
 if range_violations == 0 and vocab_violations == 0:
     print("  No range or vocabulary violations found.")
@@ -151,7 +151,7 @@ for city, recs in sorted(nqi_by_city.items()):
         print(f"  {city}: no parseable scored_at timestamps.")
         continue
     oldest, newest, avg = max(scored_ages), min(scored_ages), sum(scored_ages) / len(scored_ages)
-    print(f"  {city}: scored_at age — newest {newest}d, oldest {oldest}d, avg {avg:.0f}d "
+    print(f"  {city}: scored_at age, newest {newest}d, oldest {oldest}d, avg {avg:.0f}d "
           f"({len(scored_ages)} records)")
 stale_by_dim = defaultdict(int)
 for pin, r in master_by_pin.items():

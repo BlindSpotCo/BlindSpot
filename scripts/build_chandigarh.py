@@ -336,10 +336,10 @@ def build():
                 # overstate this 9x.
                 "land_sqft": land_sqft(land_yd),
                 "land_exact": True,
-                "basis": f"Sector {sectors} — Chandigarh collector rate (₹{land_yd:,}/sq yd residential land)",
-                "source": "Office of the District Collector, U.T. Chandigarh — Schedule of Collector's Rates w.e.f. 01-04-2025",
-                "circle_rate_note": "Chandigarh calls it the ‘collector rate’ (or DC rate) — the same instrument Delhi/UP call a circle rate and Karnataka calls a guidance value: the government’s minimum property value, used to calculate stamp duty and registration charges. Published sector-wise by the Office of the District Collector, U.T. Chandigarh.",
-                "market_gap_note": "Actual market prices in Chandigarh typically run above the collector rate, with the widest gap in the low-numbered northern sectors. The collector rate is only the legal floor — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+                "basis": f"Sector {sectors}, Chandigarh collector rate (₹{land_yd:,}/sq yd residential land)",
+                "source": "Office of the District Collector, U.T. Chandigarh, Schedule of Collector's Rates w.e.f. 01-04-2025",
+                "circle_rate_note": "Chandigarh calls it the ‘collector rate’ (or DC rate), the same instrument Delhi/UP call a circle rate and Karnataka calls a guidance value: the government’s minimum property value, used to calculate stamp duty and registration charges. Published sector-wise by the Office of the District Collector, U.T. Chandigarh.",
+                "market_gap_note": "Actual market prices in Chandigarh typically run above the collector rate, with the widest gap in the low-numbered northern sectors. The collector rate is only the legal floor, budget for the difference in your own funds, since home loans are usually capped near this valuation.",
                 "disclaimer": "Government minimum valuation, not market price. Land figures are converted from the notified ₹/sq yd rate (1 sq yd = 9 sq ft); flat rates are the notified ₹/sq ft bands. A single Chandigarh PIN can span several sectors and both cheaper and pricier pockets. Not part of the NQI score.",
             },
         })
@@ -416,7 +416,7 @@ def main():
 
     # ---- PIN_META / AREA_COORDS snippets ----
     with open("/tmp/chandigarh_pinmeta.txt", "w") as f:
-        f.write("\n  // ── Chandigarh (city 3) — every sector 1-56 (no 13) + villages.\n")
+        f.write("\n  // ── Chandigarh (city 3), every sector 1-56 (no 13) + villages.\n")
         f.write("  //    `sectors` drives search ('Sector 50' must find its pincode even\n")
         f.write("  //    though the name only shows a range); `aliases` are landmarks.\n")
         for pin, name, area, lat, lon, *_ in PINS:
@@ -430,7 +430,7 @@ def main():
                 parts.append("aliases:[" + ",".join(f'"{a}"' for a in alis) + "]")
             f.write("  \"%s\":{ %s },\n" % (pin, ", ".join(parts)))
     with open("/tmp/chandigarh_coords.txt", "w") as f:
-        f.write("\n  // ── Chandigarh (city 3) — approximate sector-group centroids ──\n")
+        f.write("\n  // ── Chandigarh (city 3), approximate sector-group centroids ──\n")
         for pin, name, area, lat, lon, *_ in PINS:
             f.write(f'  "{pin}": [{lat}, {lon}],\n')
     print("wrote /tmp/chandigarh_pinmeta.txt and /tmp/chandigarh_coords.txt")

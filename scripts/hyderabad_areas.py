@@ -2,7 +2,7 @@
 """
 scripts/hyderabad_areas.py
 
-The Hyderabad metro pincode reference table — "whole metro, old
+The Hyderabad metro pincode reference table, "whole metro, old
 boundaries" scope confirmed with Gurshaan: pre-trifurcation GHMC +
 Cyberabad Corporation + Malkajgiri Corporation footprint as one coverage
 area, including the full western IT corridor (Gachibowli, HITEC City,

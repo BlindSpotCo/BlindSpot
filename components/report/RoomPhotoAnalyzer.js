@@ -368,7 +368,7 @@ function PhotoCard({ photo, onBearing, onAnalyse, onChange, onRemove, canRemove,
           })()}
 
           {result.windows.length === 0 ? (
-            <p className="bsr-roomphoto-note">No window came through clearly in this photo — try one taken facing straight at a window.</p>
+            <p className="bsr-roomphoto-note">No window came through clearly in this photo, try one taken facing straight at a window.</p>
           ) : (
             <>
               <ul className="bsr-roomphoto-list">
@@ -499,7 +499,7 @@ export default function RoomPhotoAnalyzer({ lat, lon, floor, tzOffset }) {
     <section className="bsr-roomphoto">
       <h2>See it on your own photo</h2>
       <p className="bsr-roomphoto-lede">
-        Add photos of any rooms — say which way you were facing in each one, and we&apos;ll draw where the sun
+        Add photos of any rooms, say which way you were facing in each one, and we&apos;ll draw where the sun
         comes in and where the air moves, with real sun and heat data for each window&apos;s own direction.
       </p>
 

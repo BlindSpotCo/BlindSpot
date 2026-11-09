@@ -3,13 +3,13 @@
 scripts/city_launch_checklist.py
 
 Item 8 from the trust-framework checklist: "before you say a city is
-live" gate, checked against the other 7 items. Deliberately mechanical —
+live" gate, checked against the other 7 items. Deliberately mechanical,
 every row below is computed from the other scripts' own logic (or a
 direct data check), not hand-typed from memory, so this table can't
 silently drift out of date the way a manually-written status doc would.
 
 Run: python3 scripts/city_launch_checklist.py
-Writes: docs/city_launch_checklist.md (overwritten each run — treat it as
+Writes: docs/city_launch_checklist.md (overwritten each run, treat it as
 a generated report, not a hand-edited doc; edit this script instead).
 """
 import json
@@ -135,7 +135,7 @@ LABELS = [
 
 lines = []
 lines.append(f"# City launch checklist\n")
-lines.append(f"Generated {date.today().isoformat()} by `scripts/city_launch_checklist.py` — item 8 of the "
+lines.append(f"Generated {date.today().isoformat()} by `scripts/city_launch_checklist.py`, item 8 of the "
               f"trust-framework checklist. Re-run this script after any data or scoring change; don't hand-edit "
               f"this file.\n")
 lines.append("`pass` / `FAIL` / `PARTIAL` / `PENDING` (needs a human step) / `N/A` (not measurable with current data).\n")
@@ -145,7 +145,7 @@ lines.append("|---|" + "---|" * 7 + "---|")
 for row in rows:
     marks = " | ".join(row["items"])
     any_fail = any(x == "FAIL" for x in row["items"])
-    rec = "**Keep labelled beta**" if any_fail else "No FAIL items — still confirm items 3/4 (PENDING) before calling it fully launched"
+    rec = "**Keep labelled beta**" if any_fail else "No FAIL items, still confirm items 3/4 (PENDING) before calling it fully launched"
     lines.append(f"| {row['city']} (n={row['n']}) | {marks} | {rec} |")
 
 lines.append("\n## Detail per city\n")

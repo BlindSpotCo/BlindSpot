@@ -579,7 +579,7 @@ def main():
     print(f"wrote {len(master_new)} Hyderabad rows -> {master_path} (total {len(master)})")
 
     with open("/tmp/hyderabad_pinmeta.txt", "w") as f:
-        f.write("\n  // ── Hyderabad (city 5) — whole metro, old boundaries, 41 pincodes.\n")
+        f.write("\n  // ── Hyderabad (city 5), whole metro, old boundaries, 41 pincodes.\n")
         for pin, entry in HYDERABAD.items():
             name, area_label, lat, lon, tier, land = entry
             alis = landmarks_of(pin)
@@ -588,7 +588,7 @@ def main():
                 parts.append("aliases:[" + ",".join(f'"{a}"' for a in alis) + "]")
             f.write("  \"%s\":{ %s },\n" % (pin, ", ".join(parts)))
     with open("/tmp/hyderabad_coords.txt", "w") as f:
-        f.write("\n  // ── Hyderabad (city 5) — approximate locality centroids ──\n")
+        f.write("\n  // ── Hyderabad (city 5), approximate locality centroids ──\n")
         for pin, entry in HYDERABAD.items():
             _, _, lat, lon, *_ = entry
             f.write(f'  "{pin}": [{lat}, {lon}],\n')

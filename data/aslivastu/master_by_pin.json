@@ -27653,5 +27653,60 @@
         "note": "scripts/metro_stations.py has no CHENNAI_STATIONS entry to spatial-join against (unlike every other city this project has added a metro check for). 0 is asserted on distance grounds -- Chennai Metro's westernmost Phase 1 stations sit around Koyambedu/CMBT, well short of Sriperumbudur."
       }
     }
+  },
+  {
+    "pin_code": "110029",
+    "sources": [
+      "delhi_crime",
+      "infrastructure",
+      "power",
+      "water",
+      "roads",
+      "sewerage"
+    ],
+    "total_cognizable_crimes": 259,
+    "zone_type": "Residential",
+    "metro_stations_nearby": 5,
+    "metro_planned_stations": 0,
+    "highway_proximity": "Low",
+    "smart_city_project": false,
+    "infra_score_raw": 45,
+    "discom": "BSES Rajdhani",
+    "outage_frequency": 1,
+    "avg_outage_hours": 1.3,
+    "reliability": "Excellent",
+    "zone": "South",
+    "supply_hours": 18,
+    "water_quality": 4,
+    "quality_score": 4,
+    "water_coverage": 95,
+    "coverage_pct": 95,
+    "tds_level": "Low",
+    "complaints_per_1000": 9,
+    "source": "DJB",
+    "authority": "PWD",
+    "road_quality": 4,
+    "pothole_density": 2.0,
+    "road_condition": "Good",
+    "last_resurfaced": 2022,
+    "connectivity": "High",
+    "sewerage_coverage": 95,
+    "treatment": "Adequate",
+    "waterlogging_risk": 4,
+    "open_drains": false,
+    "flooding_incidents_annual": 1,
+    "data_completeness": 6,
+    "merged_at": "2026-11-09T16:36:00.717620",
+    "city": "Delhi NCR",
+    "_provenance": {
+      "metro_stations_nearby": {
+        "value": 5,
+        "source_id": "dmrc_stations_2026_09",
+        "method": "spatial_join_radius_1500m_centroid",
+        "as_of": "2026-11-09",
+        "confidence": "high",
+        "note": "Centroid-radius count against the corrected real named station registry (scripts/metro_stations.py), computed fresh for this pincode."
+      }
+    }
   }
 ]

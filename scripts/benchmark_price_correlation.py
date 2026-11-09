@@ -80,7 +80,7 @@ for city, recs in sorted(by_city.items()):
     n = len(pairs)
     distinct_bands = len(bands)
     if distinct_bands < MIN_DISTINCT_BANDS:
-        print(f"{city}: NOT MEASURABLE — only {distinct_bands} distinct price band(s) across "
+        print(f"{city}: NOT MEASURABLE, only {distinct_bands} distinct price band(s) across "
               f"{n} pins. Circle-rate data is too coarse in this city to correlate against "
               f"anything; a flat or near-flat price signal can't validate or invalidate the score.")
         results.append((city, None, n, distinct_bands))
@@ -102,7 +102,7 @@ for city, recs in sorted(by_city.items()):
 print()
 print("-" * 78)
 print("Reading this: a strong positive r means higher-scored areas do carry higher")
-print("circle rates in this dataset — score and (proxy) price roughly agree. A weak")
+print("circle rates in this dataset, score and (proxy) price roughly agree. A weak")
 print("or negative r for a city with good price resolution (enough distinct bands)")
 print("is worth investigating: either the score is off, the circle-rate proxy is a")
 print("bad stand-in for market price there, or both.")

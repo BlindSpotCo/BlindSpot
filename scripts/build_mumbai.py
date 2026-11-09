@@ -90,7 +90,7 @@ def jitter(pin, spread=6, salt=0):
     return (h % (2 * spread + 1)) - spread
 
 # ── Zone baselines, one row per dimension, each tied to a cited fact ────
-# (crime, power, schools, water, roads, sewerage) — infrastructure is
+# (crime, power, schools, water, roads, sewerage), infrastructure is
 # derived separately below from real metro proximity + zone density, and
 # air is derived from real AQI zone estimates via AQI_TO_SCORE below (see
 # that section for why it isn't a hand-set 0-100 baseline like the rest).
@@ -102,7 +102,7 @@ ZONE_BASELINE = {
 }
 
 # Pincodes with their OWN documented fact overriding the zone baseline.
-AIR_WORST = {"400073", "400074", "400085", "400088", "400043", "400071", "400089", "400094"}  # Trombay/Mahul/Deonar/Govandi/Chembur belt — WRI Mumbai CAP (400094 Anushakti Nagar sits inside this belt, borders Mankhurd/Govandi)
+AIR_WORST = {"400073", "400074", "400085", "400088", "400043", "400071", "400089", "400094"}  # Trombay/Mahul/Deonar/Govandi/Chembur belt, WRI Mumbai CAP (400094 Anushakti Nagar sits inside this belt, borders Mankhurd/Govandi)
 WATER_247 = {"400077", "400086", "400078", "400080", "400081", "400082", "400083", "400087", "400042"}  # Ghatkopar / Bhandup (both East 400042 and West 400078) / Mulund + immediate Vikhroli neighbours on the same 24x7 DMA
 
 # ── Real ward-level water supply hours, from BMC's own published timing
@@ -381,10 +381,10 @@ def build():
                 "rate_sqft": [lo_sqft, hi_sqft],
                 "rate_type": "apartment", "rate_exact": False,
                 "land_sqft": None, "land_exact": False,
-                "basis": f"{ward_area} — Maharashtra Ready Reckoner Rate FY2025-26 (₹{lo_sqm:,}-{hi_sqm:,}/sq m)",
-                "source": "Dept. of Registration & Stamps, Government of Maharashtra (IGR Maharashtra) — Ready Reckoner Rate FY2025-26",
-                "circle_rate_note": "Maharashtra calls it the ‘Ready Reckoner Rate’ (RRR) or Annual Statement of Rates (ASR) — the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, and Karnataka a guidance value: the government's minimum property value, used to calculate stamp duty and registration charges. Published per sq metre, zone-wise, by IGR Maharashtra.",
-                "market_gap_note": "Actual market prices in Mumbai typically run well above the Ready Reckoner Rate, with the widest gaps in supply-constrained South Mumbai and Bandra. The RRR is only the legal floor for stamp duty — budget for the difference in your own funds, since home loans are usually capped near this valuation.",
+                "basis": f"{ward_area}, Maharashtra Ready Reckoner Rate FY2025-26 (₹{lo_sqm:,}-{hi_sqm:,}/sq m)",
+                "source": "Dept. of Registration & Stamps, Government of Maharashtra (IGR Maharashtra), Ready Reckoner Rate FY2025-26",
+                "circle_rate_note": "Maharashtra calls it the ‘Ready Reckoner Rate’ (RRR) or Annual Statement of Rates (ASR), the same instrument Delhi/UP call a circle rate, Haryana/Chandigarh a collector rate, and Karnataka a guidance value: the government's minimum property value, used to calculate stamp duty and registration charges. Published per sq metre, zone-wise, by IGR Maharashtra.",
+                "market_gap_note": "Actual market prices in Mumbai typically run well above the Ready Reckoner Rate, with the widest gaps in supply-constrained South Mumbai and Bandra. The RRR is only the legal floor for stamp duty, budget for the difference in your own funds, since home loans are usually capped near this valuation.",
                 "disclaimer": "Government minimum valuation, not market price. Converted from the notified ₹/sq metre rate (1 sq m = 10.764 sq ft). Figures use the general zone band, not individual-building outliers. Not part of the NQI score.",
             },
         })
@@ -474,7 +474,7 @@ def main():
     print(f"wrote {len(master_new)} Mumbai rows -> {master_path} (total {len(master)})")
 
     with open("/tmp/mumbai_pinmeta.txt", "w") as f:
-        f.write("\n  // ── Mumbai (city 4) — Greater Mumbai / BMC jurisdiction, 94 pincodes.\n")
+        f.write("\n  // ── Mumbai (city 4), Greater Mumbai / BMC jurisdiction, 94 pincodes.\n")
         for pin, entry in MUMBAI.items():
             name, ward_area, lat, lon, ward, tier, land = entry
             alis = landmarks_of(pin)
@@ -483,7 +483,7 @@ def main():
                 parts.append("aliases:[" + ",".join(f'"{a}"' for a in alis) + "]")
             f.write("  \"%s\":{ %s },\n" % (pin, ", ".join(parts)))
     with open("/tmp/mumbai_coords.txt", "w") as f:
-        f.write("\n  // ── Mumbai (city 4) — approximate locality centroids ──\n")
+        f.write("\n  // ── Mumbai (city 4), approximate locality centroids ──\n")
         for pin, entry in MUMBAI.items():
             _, _, lat, lon, *_ = entry
             f.write(f'  "{pin}": [{lat}, {lon}],\n')

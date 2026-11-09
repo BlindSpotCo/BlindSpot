@@ -45,7 +45,7 @@ price_tier: 1 Premium .. 5 Value, from Ready Reckoner Rate zone banding
       (Dept. of Registration & Stamps, IGR Maharashtra, FY2025-26).
 """
 
-# ── South Mumbai / Island City (400001-400039) — BEST territory ─────────
+# ── South Mumbai / Island City (400001-400039), BEST territory ─────────
 SOUTH_MUMBAI = {
     "400001": ("Fort / CSMT / Churchgate East", "A Ward", 18.9339, 72.8352, "A", 1,
                ["Gateway of India", "CST/VT Terminus", "BSE", "Town Hall", "Bazargate"]),
@@ -127,7 +127,7 @@ SOUTH_MUMBAI = {
                []),
 }
 
-# ── Western Suburbs (400049-400069) — Tata Power + Adani dual-license ──
+# ── Western Suburbs (400049-400069), Tata Power + Adani dual-license ──
 WESTERN_SUBURBS = {
     "400049": ("Juhu", "K/West Ward", 19.1075, 72.8263, "K/W", 1,
                ["Juhu Beach", "ISKCON Temple", "Prithvi Theatre"]),
@@ -205,7 +205,7 @@ EXTENDED_WESTERN = {
 
 # ── Eastern Suburbs / Harbour Line (400070-400089, 400043) ─────────────
 # The worst-air-quality belt in Mumbai (see build_mumbai.py's
-# ZONE_BASELINE) — Trombay thermal plant, Deonar landfill, refineries,
+# ZONE_BASELINE), Trombay thermal plant, Deonar landfill, refineries,
 # hemmed in by the Trombay hills so sea breeze doesn't clear it, per
 # WRI India's Mumbai Climate Action Plan vulnerability assessment.
 EASTERN_SUBURBS = {
@@ -280,7 +280,7 @@ for _pin in EXTENDED_WESTERN:
     DISCOM_OF[_pin] = "Tata Power + Adani Electricity"; DISCOM_CONF[_pin] = "zone"
 for _pin in EASTERN_SUBURBS:
     DISCOM_OF[_pin] = "Tata Power"; DISCOM_CONF[_pin] = "zone"
-# BMC boundary pincodes bordering Thane/Navi Mumbai — no source names the
+# BMC boundary pincodes bordering Thane/Navi Mumbai, no source names the
 # specific operator here, MSEDCL is plausible per "periphery" description.
 for _pin in ("400068", "400066", "400080", "400081", "400082", "400043", "400088"):
     DISCOM_OF[_pin] = "Tata Power / MSEDCL"; DISCOM_CONF[_pin] = "edge"

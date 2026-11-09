@@ -159,12 +159,12 @@ def cmd_score(args):
         per_field[field] = (y, n_checked, partial, n_total)
 
     print("=" * 78)
-    print(f"Ground-truth audit results — {args.score}")
+    print(f"Ground-truth audit results, {args.score}")
     print("=" * 78)
     overall_y, overall_n = 0, 0
     for field, (y, n, partial, n_total) in per_field.items():
         if n == 0:
-            print(f"  {field}: no y/n verdicts yet ({partial} marked partial) — skipped")
+            print(f"  {field}: no y/n verdicts yet ({partial} marked partial), skipped")
             continue
         pct = y / n * 100
         lo, hi = wilson_ci(y, n)
@@ -177,9 +177,9 @@ def cmd_score(args):
         pct = overall_y / overall_n * 100
         lo, hi = wilson_ci(overall_y, overall_n)
         verdict = "PASS (>=95%)" if lo * 100 >= 95 else "below the 95% target from item 3 of the checklist"
-        print(f"OVERALL: {pct:.1f}% ({overall_y}/{overall_n}), 95% CI [{lo*100:.1f}%, {hi*100:.1f}%] — {verdict}")
+        print(f"OVERALL: {pct:.1f}% ({overall_y}/{overall_n}), 95% CI [{lo*100:.1f}%, {hi*100:.1f}%], {verdict}")
     else:
-        print("No verdicts filled in yet — nothing to score.")
+        print("No verdicts filled in yet, nothing to score.")
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
