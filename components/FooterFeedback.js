@@ -5,7 +5,7 @@
 // thing it is, the message, and an optional email for a reply. Works
 // signed out. Posts to /api/feedback.
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const KINDS = [
   { key: 'bug', label: 'Bug' },
@@ -31,6 +31,24 @@ export default function FooterFeedback() {
   // Collapsed to one line until someone clicks in; then the type chips and
   // the email box slide in.
   const [open, setOpen] = useState(false);
+  const formRef = useRef(null);
+  const textRef = useRef(null);
+
+  // Other parts of the page (the "Something wrong? Tell us" promise card,
+  // components/OurPromise.js) open this form with a type already picked by
+  // firing a bs:feedback event, instead of each keeping its own form.
+  useEffect(() => {
+    const onOpen = (e) => {
+      const want = e.detail && e.detail.kind;
+      if (want && KINDS.some((k) => k.key === want)) setKind(want);
+      setState('idle');
+      setOpen(true);
+      if (formRef.current) formRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => { if (textRef.current) textRef.current.focus({ preventScroll: true }); }, 350);
+    };
+    window.addEventListener('bs:feedback', onOpen);
+    return () => window.removeEventListener('bs:feedback', onOpen);
+  }, []);
 
   const send = async (e) => {
     e.preventDefault();
@@ -66,7 +84,7 @@ export default function FooterFeedback() {
   }
 
   return (
-    <form className={`ff${open ? ' is-open' : ''}`} onSubmit={send} aria-labelledby="ff-title">
+    <form ref={formRef} id="feedback" className={`ff${open ? ' is-open' : ''}`} onSubmit={send} aria-labelledby="ff-title">
       <span className="footer-col-title" id="ff-title">Feedback</span>
 
       {open && (
@@ -88,6 +106,7 @@ export default function FooterFeedback() {
 
       <div className="ff-row">
         <textarea
+          ref={textRef}
           aria-label="Your feedback"
           value={message}
           onFocus={() => setOpen(true)}

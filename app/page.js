@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import SiteHeader from '@/components/SiteHeader';
 import HeroLiveMap from '@/components/HeroLiveMap';
 import TwoScores from '@/components/TwoScores';
+import OurPromise from '@/components/OurPromise';
 import StepsHowItWorks from '@/components/StepsHowItWorks';
 import FAQSection from '@/components/FAQSection';
 import ClosingCTA from '@/components/ClosingCTA';
@@ -74,6 +75,7 @@ export default function Home() {
           sequence. */}
       <StepsHowItWorks />
       <TwoScores />
+      <OurPromise />
       <FAQSection />
       <ClosingCTA />
     </>

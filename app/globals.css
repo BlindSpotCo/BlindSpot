@@ -2337,6 +2337,52 @@ header.header-on-dark .brand-word-img{
   }
 }
 
+/* ---------- 03 - Our Promise (components/OurPromise.js) ----------
+   Same card language as .ts4-card (white paper, soft border, 22px
+   radius, lift on hover) and the same round outlined icon badge as
+   .hiw3-badge, so it reads as part of the same page, not a bolt-on. */
+.op-grid{
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:var(--space-6);
+  margin:0 var(--space-4);
+}
+@media (min-width:768px){ .op-grid{ margin:0 var(--space-6) } }
+.op-card{
+  --op-accent:var(--brand);
+  position:relative; display:flex; flex-direction:column;
+  background:linear-gradient(165deg, color-mix(in srgb, var(--op-accent) 6%, var(--paper)) 0%, var(--paper) 55%);
+  border:1px solid var(--line);
+  box-shadow:0 4px 20px rgba(0,0,0,0.06);
+  border-radius:22px; padding:var(--space-6);
+  transition:transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s ease;
+}
+.op-card:hover{ transform:translateY(-6px); box-shadow:0 10px 30px rgba(0,0,0,0.09) }
+.op-card.accent-av{ --op-accent:var(--av) }
+.op-card.accent-ss{ --op-accent:var(--ss) }
+.op-badge{
+  display:flex; align-items:center; justify-content:center;
+  width:48px; height:48px; border-radius:50%;
+  background:var(--paper); border:1.5px solid var(--op-accent); color:var(--op-accent);
+  margin-bottom:var(--space-4);
+}
+.op-badge svg{ width:22px; height:22px }
+.op-card h3{ font-size:19px; margin-bottom:6px }
+.op-card p{ font-size:14px; color:var(--text-mute); line-height:1.55 }
+.op-action{
+  align-self:flex-start; margin-top:var(--space-4);
+  background:none; border:0; padding:0; cursor:pointer;
+  font:inherit; font-size:14px; font-weight:600; color:var(--op-accent);
+}
+.op-action span{ display:inline-block; transition:transform .18s ease }
+.op-action:hover span{ transform:translateX(3px) }
+.op-action:focus-visible{ outline:2px solid var(--op-accent); outline-offset:3px; border-radius:4px }
+@media (max-width:900px){
+  .op-grid{ grid-template-columns:1fr; gap:var(--space-4) }
+}
+@media (prefers-reduced-motion: reduce){
+  .op-card, .op-action span{ transition:none }
+  .op-card:hover{ transform:none }
+}
+
 /* ---------- 05 - FAQ ---------- */
 /* Heading in the left column, questions in the right -- the list used
    to be a 760px strip down the left of a full-width section with the
