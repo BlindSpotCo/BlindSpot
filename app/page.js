@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import SiteHeader from '@/components/SiteHeader';
 import HeroLiveMap from '@/components/HeroLiveMap';
+import SourceStrip from '@/components/SourceStrip';
 import TwoScores from '@/components/TwoScores';
 import OurPromise from '@/components/OurPromise';
 import StepsHowItWorks from '@/components/StepsHowItWorks';
@@ -63,6 +64,9 @@ export default function Home() {
       <section className="hero hero-statement">
         <HeroLiveMap />
       </section>
+
+      {/* Named public sources, straight under the map - see SourceStrip.js. */}
+      <SourceStrip />
 
       {/* ===== THE REST OF THE PAGE =====
           Four sections. "What Listings Leave Out" used to open this

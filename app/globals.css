@@ -2337,6 +2337,34 @@ header.header-on-dark .brand-word-img{
   }
 }
 
+/* ---------- Source strip, under the hero (components/SourceStrip.js) ----------
+   Plain text, no logos, on paper between the dark map and the tinted
+   How It Works section. Each source is a small pill so wrapped lines
+   never leave a separator dangling at a line end. */
+.src-strip{
+  background:var(--paper); border-bottom:1px solid var(--line);
+  padding:var(--space-6) 0; text-align:center;
+}
+.src-strip-title{
+  font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--text-mute); margin-bottom:var(--space-3);
+}
+.src-strip-list{
+  list-style:none; margin:0 auto; padding:0 var(--space-4); max-width:1040px;
+  display:flex; flex-wrap:wrap; justify-content:center; gap:10px;
+}
+.src-strip-list li{
+  font-size:14px; font-weight:500; color:var(--ink); white-space:nowrap;
+  background:var(--bg-2); border:1px solid var(--line); border-radius:var(--radius-pill);
+  padding:6px 14px;
+}
+.src-strip-note{ font-size:13px; color:var(--text-mute); margin-top:var(--space-4) }
+@media (max-width:640px){
+  .src-strip{ padding:var(--space-5) 0 }
+  .src-strip-list{ gap:6px }
+  .src-strip-list li{ font-size:12px; padding:4px 10px; white-space:normal }
+}
+
 /* ---------- 03 - Our Promise (components/OurPromise.js) ----------
    Same card language as .ts4-card (white paper, soft border, 22px
    radius, lift on hover) and the same round outlined icon badge as
