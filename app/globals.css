@@ -2504,49 +2504,6 @@ header.header-on-dark .brand-word-img{
 .tm-empty-btn:focus-visible{ outline:2px solid var(--av); outline-offset:3px; border-radius:4px }
 @media (max-width:900px){ .tm-grid{ grid-template-columns:1fr; gap:var(--space-5) } }
 
-/* ---------- 05 - Who's Behind It (components/WhoWeAre.js) ---------- */
-.who-grid{
-  display:grid; grid-template-columns:1fr 1fr; gap:var(--space-6);
-  margin:0 var(--space-4);
-}
-@media (min-width:768px){ .who-grid{ margin:0 var(--space-6) } }
-.who-card{
-  display:flex; align-items:flex-start; gap:var(--space-5);
-  background:var(--paper); border:1px solid var(--line); border-radius:22px;
-  box-shadow:0 4px 20px rgba(0,0,0,0.06); padding:var(--space-6);
-}
-.who-avatar{
-  width:64px; height:64px; border-radius:50%; object-fit:cover; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center;
-  background:var(--brand); color:var(--brand-yellow);
-  font-family:'Geist Mono',monospace; font-weight:600; font-size:18px; letter-spacing:.04em;
-}
-.who-name{ font-size:19px; font-weight:500; color:var(--ink) }
-.who-role{ font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-mute); margin:2px 0 10px }
-.who-line{ font-size:14.5px; line-height:1.55; color:var(--text-mute) }
-.who-link{ display:inline-block; margin-top:10px; font-size:14px; font-weight:600; color:var(--brand) }
-.who-link:hover{ text-decoration:underline }
-.who-together{
-  margin:var(--space-6) var(--space-4) 0; text-align:center;
-  font-size:clamp(16px, 1.8vw, 19px); color:var(--ink); max-width:720px;
-}
-@media (min-width:768px){ .who-together{ margin:var(--space-6) auto 0 } }
-.who-facts{
-  list-style:none; padding:0; margin:var(--space-5) var(--space-4) 0;
-  display:flex; flex-wrap:wrap; justify-content:center; gap:10px 28px;
-  font-size:14px; color:var(--ink);
-}
-.who-facts li{ display:flex; align-items:baseline; gap:8px }
-.who-facts .mono{ font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-mute) }
-.who-facts a{ color:var(--brand); font-weight:500 }
-.who-facts a:hover{ text-decoration:underline }
-@media (max-width:900px){
-  .who-grid{ grid-template-columns:1fr; gap:var(--space-4) }
-  .who-card{ padding:var(--space-5); gap:var(--space-4) }
-  .who-avatar{ width:52px; height:52px; font-size:15px }
-  .who-facts{ flex-direction:column; align-items:center; gap:8px }
-}
-
 /* ---------- 05 - FAQ ---------- */
 /* Heading in the left column, questions in the right -- the list used
    to be a 760px strip down the left of a full-width section with the

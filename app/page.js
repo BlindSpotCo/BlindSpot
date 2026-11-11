@@ -6,7 +6,6 @@ import HeroLiveMap from '@/components/HeroLiveMap';
 import SourceStrip from '@/components/SourceStrip';
 import CityStrip from '@/components/CityStrip';
 import Testimonials from '@/components/Testimonials';
-import WhoWeAre from '@/components/WhoWeAre';
 import TwoScores from '@/components/TwoScores';
 import OurPromise from '@/components/OurPromise';
 import StepsHowItWorks from '@/components/StepsHowItWorks';
@@ -85,7 +84,6 @@ export default function Home() {
       <OurPromise />
       <Testimonials />
       <SourceStrip />
-      <WhoWeAre />
       <FAQSection />
       <ClosingCTA />
     </>
