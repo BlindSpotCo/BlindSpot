@@ -4,6 +4,9 @@ import { useEffect } from 'react';
 import SiteHeader from '@/components/SiteHeader';
 import HeroLiveMap from '@/components/HeroLiveMap';
 import SourceStrip from '@/components/SourceStrip';
+import CityStrip from '@/components/CityStrip';
+import Testimonials from '@/components/Testimonials';
+import WhoWeAre from '@/components/WhoWeAre';
 import TwoScores from '@/components/TwoScores';
 import OurPromise from '@/components/OurPromise';
 import StepsHowItWorks from '@/components/StepsHowItWorks';
@@ -65,8 +68,8 @@ export default function Home() {
         <HeroLiveMap />
       </section>
 
-      {/* Named public sources, straight under the map - see SourceStrip.js. */}
-      <SourceStrip />
+      {/* Covered cities, scrolling - see CityStrip.js. */}
+      <CityStrip />
 
       {/* ===== THE REST OF THE PAGE =====
           Four sections. "What Listings Leave Out" used to open this
@@ -80,6 +83,9 @@ export default function Home() {
       <StepsHowItWorks />
       <TwoScores />
       <OurPromise />
+      <Testimonials />
+      <SourceStrip />
+      <WhoWeAre />
       <FAQSection />
       <ClosingCTA />
     </>

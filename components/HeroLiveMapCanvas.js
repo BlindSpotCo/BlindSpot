@@ -31,6 +31,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import PinDropTransition from '@/components/PinDropTransition';
 import { scoreColor } from '@/components/property-score/AVDetailedReadout';
 import TypewriterCycle from '@/components/TypewriterCycle';
+import { KNOWN_CITIES } from '@/lib/aslivastu/cityMeta';
 import { TRY_PLACES_BY_CITY, DEFAULT_TRY_PLACES, CITY_CENTRES, nearestCoveredCity } from '@/lib/tryPlaces';
 
 // The hero backdrop is a recorded clip of the real sun/shadow animation
@@ -487,6 +488,14 @@ export default function HeroLiveMapCanvas() {
             <span className="sr-only">
               We measure what a listing leaves out: how much real sunlight this flat gets through the year, how much of it sits in shade, and what government records say about safety, water, power, schools, roads and air in the neighbourhood around it.
             </span>
+          </p>
+          {/* Trust badge. Only facts the code can back: the covered-city
+              count comes straight from CITY_META, and the flat score runs
+              on sun geometry + map data, so it works outside those cities
+              too. No report/user count until it comes from the database. */}
+          <p className="hlm-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>
+            Neighbourhood scores in {KNOWN_CITIES.length} cities · Flat scores anywhere in India
           </p>
         </div>
 

@@ -1812,6 +1812,15 @@
   font-family:'Geist Mono',monospace; font-size:clamp(16px, 1.7vw, 19px);
   opacity:0; animation:hlmRise 1.05s cubic-bezier(.16,1,.3,1) 0.45s forwards;
 }
+.hlm-badge{
+  display:block; text-align:center;
+  margin:16px 0 0; font-size:13.5px; font-weight:500; color:rgba(255,253,248,0.86);
+  text-shadow:0 2px 12px rgba(0,0,0,0.5);
+  opacity:0; animation:hlmRise 1.05s cubic-bezier(.16,1,.3,1) 0.55s forwards;
+}
+.hlm-badge svg{ color:var(--brand-yellow); display:inline-block; vertical-align:-2px; margin-right:6px }
+@media (max-width:640px){ .hlm-badge{ font-size:12px; padding:0 8px; } }
+@media (prefers-reduced-motion: reduce){ .hlm-badge{ animation:none !important; opacity:1 !important; transform:none !important; } }
 .hlm-typed-text{
   color:#FFFDF8; font-weight:500;
 }
@@ -2337,7 +2346,45 @@ header.header-on-dark .brand-word-img{
   }
 }
 
-/* ---------- Source strip, under the hero (components/SourceStrip.js) ----------
+/* ---------- City strip, under the hero (components/CityStrip.js) ----------
+   A slow, endless left scroll of covered cities. Two copies of the row
+   sit in one track; the track moves exactly one copy's width, so the
+   loop has no jump. Edges fade out with a mask. Pauses on hover. */
+.city-strip{
+  background:var(--paper); border-bottom:1px solid var(--line);
+  padding:var(--space-5) 0 var(--space-5); overflow:hidden;
+}
+.city-strip-title{
+  text-align:center; font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--text-mute); margin-bottom:var(--space-3);
+}
+.city-strip-window{
+  overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+          mask-image:linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+}
+.city-strip-track{ display:flex; width:max-content; animation:cityScroll 32s linear infinite }
+.city-strip-window:hover .city-strip-track{ animation-play-state:paused }
+.city-strip-row{ display:flex; list-style:none; margin:0; padding:0 }
+.city-strip-row li{
+  display:flex; align-items:center; white-space:nowrap;
+  font-size:clamp(18px, 2.2vw, 24px); font-weight:500; color:var(--ink); letter-spacing:-0.01em;
+}
+.city-strip-row li::after{
+  content:''; width:6px; height:6px; border-radius:50%; background:var(--brand-yellow);
+  margin:0 clamp(20px, 3vw, 40px); flex-shrink:0;
+}
+@keyframes cityScroll{ from{ transform:translateX(0) } to{ transform:translateX(-50%) } }
+@media (prefers-reduced-motion: reduce){
+  .city-strip-window{ -webkit-mask-image:none; mask-image:none }
+  .city-strip-track{ animation:none; width:auto; justify-content:center }
+  .city-strip-row{ flex-wrap:wrap; justify-content:center; gap:6px 0; padding:0 var(--space-4) }
+  .city-strip-row[aria-hidden="true"]{ display:none }
+  .city-strip-row li{ font-size:16px }
+  .city-strip-row li:last-child::after{ display:none }
+}
+
+/* ---------- Source strip, after Feedback (components/SourceStrip.js) ----------
    Plain text, no logos, on paper between the dark map and the tinted
    How It Works section. Each source is a small pill so wrapped lines
    never leave a separator dangling at a line end. */
@@ -2409,6 +2456,95 @@ header.header-on-dark .brand-word-img{
 @media (prefers-reduced-motion: reduce){
   .op-card, .op-action span{ transition:none }
   .op-card:hover{ transform:none }
+}
+
+/* ---------- 04 - Feedback (components/Testimonials.js) ----------
+   Quote cards share .op-card's paper/border/radius language. Until real,
+   consented quotes exist, .tm-empty is what the live site shows. */
+.tm-grid{
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:var(--space-6);
+  margin:var(--space-6) var(--space-4) 0;
+}
+@media (min-width:768px){ .tm-grid{ margin:var(--space-6) var(--space-6) 0 } }
+.tm-card{
+  position:relative; margin:0; display:flex; flex-direction:column; justify-content:space-between; gap:var(--space-5);
+  background:var(--paper); border:1px solid var(--line); border-radius:22px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.06); padding:var(--space-6);
+}
+.tm-card.is-preview{ border-style:dashed; box-shadow:none; background:transparent }
+.tm-preview-tag{
+  position:absolute; top:-11px; left:var(--space-5);
+  font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--ss); background:var(--bg); border:1px dashed var(--ss); border-radius:20px; padding:3px 10px;
+}
+.tm-quote{ margin:0; font-size:17px; line-height:1.55; color:var(--ink) }
+.tm-quote::before{ content:'\201C'; display:block; font-family:'Playfair Display',serif; font-size:44px; line-height:.6; color:var(--av); margin-bottom:10px }
+.tm-who{ display:flex; align-items:center; gap:12px }
+.tm-avatar{
+  width:40px; height:40px; border-radius:50%; object-fit:cover; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--bg-2); border:1px solid var(--line); color:var(--brand); font-weight:600;
+}
+.tm-name{ display:block; font-weight:600; font-size:14.5px; color:var(--ink) }
+.tm-area{ display:block; font-size:13px; color:var(--text-mute) }
+.tm-empty{
+  margin:0 var(--space-4); padding:var(--space-6);
+  background:var(--paper); border:1px solid var(--line); border-radius:22px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.06); text-align:center;
+}
+@media (min-width:768px){ .tm-empty{ margin:0 var(--space-6) } }
+.tm-empty-head{ font-size:19px; font-weight:500; color:var(--ink); margin-bottom:6px }
+.tm-empty-sub{ font-size:14.5px; color:var(--text-mute); max-width:520px; margin:0 auto }
+.tm-empty-btn{
+  margin-top:var(--space-4); background:none; border:0; padding:0; cursor:pointer;
+  font:inherit; font-size:14.5px; font-weight:600; color:var(--av);
+}
+.tm-empty-btn span{ display:inline-block; transition:transform .18s ease }
+.tm-empty-btn:hover span{ transform:translateX(3px) }
+.tm-empty-btn:focus-visible{ outline:2px solid var(--av); outline-offset:3px; border-radius:4px }
+@media (max-width:900px){ .tm-grid{ grid-template-columns:1fr; gap:var(--space-5) } }
+
+/* ---------- 05 - Who's Behind It (components/WhoWeAre.js) ---------- */
+.who-grid{
+  display:grid; grid-template-columns:1fr 1fr; gap:var(--space-6);
+  margin:0 var(--space-4);
+}
+@media (min-width:768px){ .who-grid{ margin:0 var(--space-6) } }
+.who-card{
+  display:flex; align-items:flex-start; gap:var(--space-5);
+  background:var(--paper); border:1px solid var(--line); border-radius:22px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.06); padding:var(--space-6);
+}
+.who-avatar{
+  width:64px; height:64px; border-radius:50%; object-fit:cover; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--brand); color:var(--brand-yellow);
+  font-family:'Geist Mono',monospace; font-weight:600; font-size:18px; letter-spacing:.04em;
+}
+.who-name{ font-size:19px; font-weight:500; color:var(--ink) }
+.who-role{ font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-mute); margin:2px 0 10px }
+.who-line{ font-size:14.5px; line-height:1.55; color:var(--text-mute) }
+.who-link{ display:inline-block; margin-top:10px; font-size:14px; font-weight:600; color:var(--brand) }
+.who-link:hover{ text-decoration:underline }
+.who-together{
+  margin:var(--space-6) var(--space-4) 0; text-align:center;
+  font-size:clamp(16px, 1.8vw, 19px); color:var(--ink); max-width:720px;
+}
+@media (min-width:768px){ .who-together{ margin:var(--space-6) auto 0 } }
+.who-facts{
+  list-style:none; padding:0; margin:var(--space-5) var(--space-4) 0;
+  display:flex; flex-wrap:wrap; justify-content:center; gap:10px 28px;
+  font-size:14px; color:var(--ink);
+}
+.who-facts li{ display:flex; align-items:baseline; gap:8px }
+.who-facts .mono{ font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-mute) }
+.who-facts a{ color:var(--brand); font-weight:500 }
+.who-facts a:hover{ text-decoration:underline }
+@media (max-width:900px){
+  .who-grid{ grid-template-columns:1fr; gap:var(--space-4) }
+  .who-card{ padding:var(--space-5); gap:var(--space-4) }
+  .who-avatar{ width:52px; height:52px; font-size:15px }
+  .who-facts{ flex-direction:column; align-items:center; gap:8px }
 }
 
 /* ---------- 05 - FAQ ---------- */

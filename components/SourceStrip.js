@@ -1,8 +1,8 @@
 // components/SourceStrip.js
 //
-// "Where our scores come from" - a quiet strip straight under the hero
-// map, the spot where a first-time visitor decides whether a score from
-// a site they have never heard of is worth believing.
+// "Where our scores come from" - a quiet strip between the Feedback and
+// Who's Behind It sections: after the promises and what buyers say, the
+// named sources that back them up.
 //
 // Text only, no logos: we are not partnered with any of these bodies,
 // we use their published data, and a logo would read as endorsement.
