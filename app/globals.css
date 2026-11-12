@@ -2376,7 +2376,7 @@ header.header-on-dark .brand-word-img{
   .city-strip-row li:last-child::after{ display:none }
 }
 
-/* ---------- Source strip, after Feedback (components/SourceStrip.js) ----------
+/* ---------- Source strip (components/SourceStrip.js) ----------
    Plain text, no logos, on paper between the dark map and the tinted
    How It Works section. Each source is a small pill so wrapped lines
    never leave a separator dangling at a line end. */
@@ -2450,53 +2450,7 @@ header.header-on-dark .brand-word-img{
   .op-card:hover{ transform:none }
 }
 
-/* ---------- 04 - Feedback (components/Testimonials.js) ----------
-   Quote cards share .op-card's paper/border/radius language. Until real,
-   consented quotes exist, .tm-empty is what the live site shows. */
-.tm-grid{
-  display:grid; grid-template-columns:repeat(3, 1fr); gap:var(--space-6);
-  margin:var(--space-6) var(--space-4) 0;
-}
-@media (min-width:768px){ .tm-grid{ margin:var(--space-6) var(--space-6) 0 } }
-.tm-card{
-  position:relative; margin:0; display:flex; flex-direction:column; justify-content:space-between; gap:var(--space-5);
-  background:var(--paper); border:1px solid var(--line); border-radius:22px;
-  box-shadow:0 4px 20px rgba(0,0,0,0.06); padding:var(--space-6);
-}
-.tm-card.is-preview{ border-style:dashed; box-shadow:none; background:transparent }
-.tm-preview-tag{
-  position:absolute; top:-11px; left:var(--space-5);
-  font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
-  color:var(--ss); background:var(--bg); border:1px dashed var(--ss); border-radius:20px; padding:3px 10px;
-}
-.tm-quote{ margin:0; font-size:17px; line-height:1.55; color:var(--ink) }
-.tm-quote::before{ content:'\201C'; display:block; font-family:'Playfair Display',serif; font-size:44px; line-height:.6; color:var(--av); margin-bottom:10px }
-.tm-who{ display:flex; align-items:center; gap:12px }
-.tm-avatar{
-  width:40px; height:40px; border-radius:50%; object-fit:cover; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center;
-  background:var(--bg-2); border:1px solid var(--line); color:var(--brand); font-weight:600;
-}
-.tm-name{ display:block; font-weight:600; font-size:14.5px; color:var(--ink) }
-.tm-area{ display:block; font-size:13px; color:var(--text-mute) }
-.tm-empty{
-  margin:0 var(--space-4); padding:var(--space-6);
-  background:var(--paper); border:1px solid var(--line); border-radius:22px;
-  box-shadow:0 4px 20px rgba(0,0,0,0.06); text-align:center;
-}
-@media (min-width:768px){ .tm-empty{ margin:0 var(--space-6) } }
-.tm-empty-head{ font-size:19px; font-weight:500; color:var(--ink); margin-bottom:6px }
-.tm-empty-sub{ font-size:14.5px; color:var(--text-mute); max-width:520px; margin:0 auto }
-.tm-empty-btn{
-  margin-top:var(--space-4); background:none; border:0; padding:0; cursor:pointer;
-  font:inherit; font-size:14.5px; font-weight:600; color:var(--av);
-}
-.tm-empty-btn span{ display:inline-block; transition:transform .18s ease }
-.tm-empty-btn:hover span{ transform:translateX(3px) }
-.tm-empty-btn:focus-visible{ outline:2px solid var(--av); outline-offset:3px; border-radius:4px }
-@media (max-width:900px){ .tm-grid{ grid-template-columns:1fr; gap:var(--space-5) } }
-
-/* ---------- 05 - FAQ ---------- */
+/* ---------- 04 - FAQ ---------- */
 /* Heading in the left column, questions in the right -- the list used
    to be a 760px strip down the left of a full-width section with the
    other half empty, which is also why the section was so tall. */
