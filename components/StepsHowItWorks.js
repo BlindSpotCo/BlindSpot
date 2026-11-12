@@ -11,7 +11,6 @@
 // down the page. This section's job is explaining the steps, not
 // closing.
 
-import { coverageLabel } from '@/lib/aslivastu/cityMeta';
 
 const STEPS = [
   {
@@ -61,9 +60,6 @@ export default function StepsHowItWorks() {
             </div>
           ))}
         </div>
-
-        {/* The only place the city list appears in this section. */}
-        <p className="hiw3-coverage reveal">Now in {coverageLabel()}. More cities soon.</p>
       </div>
     </section>
   );
