@@ -1,0 +1,17 @@
+Copyright (c) 2026 BLINDSPOT LLP. All rights reserved.
+
+This repository and its contents (source code, data, scoring methods,
+designs and documentation) are the property of BLINDSPOT LLP.
+
+The repository is publicly visible for reference only. No licence is
+granted to copy, modify, distribute, sublicense, host, or use any part
+of it, in whole or in part, for any purpose, without prior written
+permission from BLINDSPOT LLP.
+
+Third-party material keeps its own licence, including:
+- Map and building data (c) OpenStreetMap contributors, under the Open
+  Database License (ODbL): https://www.openstreetmap.org/copyright
+- Open-source dependencies listed in package.json, under their
+  respective licences.
+
+Contact: agblindspot@gmail.com
