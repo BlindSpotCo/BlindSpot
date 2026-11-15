@@ -134,6 +134,15 @@ html,body{touch-action:none;overscroll-behavior:none;}
 .cb:hover{border-color:var(--ss);color:var(--ss);background:rgba(175,95,48,.08);}
 .cb.N{border-color:var(--ss);color:var(--ss);font-size:10px;font-weight:800;font-family:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace;}
 .leaflet-control-attribution,.osmb-attribution{display:none!important;}
+/* Map credit. OSM's licence (ODbL) needs "© OpenStreetMap contributors"
+   visible on the map; the libraries' own attribution controls are hidden
+   above, so this is the one that shows. Bottom-right on desktop; on phones
+   the bottom of the map sits under the floor/facing sheet, so it moves to
+   the top-right corner, which the view-angle pad leaves empty there. */
+.credit{position:absolute;bottom:12px;right:14px;z-index:25;font-family:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:10.5px;color:var(--text-mute);background:rgba(255,253,248,.88);border:1px solid var(--line);padding:3px 9px;border-radius:999px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.credit a{color:inherit;text-decoration:none;}
+.credit a:hover{text-decoration:underline;}
+@media(max-width:767px){.credit{bottom:auto;top:10px;right:10px;font-size:9.5px;padding:2px 7px;}}
 .sdk-error{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg-2);color:var(--ink);font-family:'Geist',sans-serif;text-align:center;padding:24px;}
 .sdk-error.show{display:flex;}
 .sdk-error button{background:var(--ss);color:#fff;border:none;border-radius:var(--radius-md);padding:10px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
@@ -153,6 +162,7 @@ html,body{touch-action:none;overscroll-behavior:none;}
     <button class="tile-btn" id="bsat" onclick="setT('sat')">Satellite</button>
   </div>
   <div class="hint">Tap to move pin · drag to look around</div>
+  <div class="credit" id="credit"></div>
   <div class="view-controls" style="position:absolute;top:14px;right:14px;z-index:25;display:flex;flex-direction:column;gap:5px;align-items:center;background:rgba(255,253,248,0.97);border:1px solid var(--line);border-radius:var(--radius-md);padding:10px 9px;box-shadow:0 2px 12px rgba(28,24,18,0.08);">
     <div style="font-family:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;white-space:nowrap;line-height:1.4;text-align:center;">Set view angle<br/><span style="font-size:10.5px;font-weight:500;color:var(--text-mute);text-transform:none;letter-spacing:0;opacity:0.85;">e.g. balcony view</span></div>
     <button class="cb" id="btn-up">▲</button>
@@ -380,6 +390,16 @@ window.addEventListener('message',function(e){
           octx.fillRect(14,14,tw+20,34);
           octx.fillStyle='rgba(175,95,48,1)';
           octx.fillText(lbl,24,39);
+          // Map credit, bottom-right, on every frame -- these images go into
+          // the downloaded report, which is a separate copy of the map and
+          // needs its own attribution (ODbL).
+          var ct=CREDIT[curT].text;
+          octx.font='600 15px sans-serif';
+          var cw=octx.measureText(ct).width;
+          octx.fillStyle='rgba(255,253,248,0.88)';
+          octx.fillRect(CAP_W-cw-30,CAP_H-36,cw+20,26);
+          octx.fillStyle='rgba(28,24,18,0.78)';
+          octx.fillText(ct,CAP_W-cw-20,CAP_H-17);
           try{
             // WebP where the browser can encode it (Chrome, Edge, Firefox,
             // recent Safari): roughly a third smaller than the old JPEG at
@@ -461,6 +481,13 @@ var _cam=(function(){try{var s=window.parent.localStorage.getItem('ss_cam');retu
 var _phone=(function(){try{return window.parent.innerWidth<=640;}catch(e){return false;}})();
 var curRot=_cam.set?(_cam.rot||0):0, curTilt=_cam.set?(_cam.tilt||0):(_phone?40:0), initZoom=_phone?17:(_cam.zoom||17);
 var curT='s', tL=null;
+// What the map is built from, per base layer. The 3D buildings come from
+// OSM on both layers, so OSM is credited on Satellite too.
+var CREDIT={
+  s:{html:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',text:'© OpenStreetMap contributors'},
+  sat:{html:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors · Imagery © Esri',text:'© OpenStreetMap contributors · Imagery © Esri'}
+};
+function setCredit(){var el=document.getElementById('credit');if(el)el.innerHTML=CREDIT[curT].html;}
 
 // OSMBuildings 4.1.1 doesn't forward a preserveDrawingBuffer option to its WebGL
 // context, so without this patch the drawing buffer is cleared between frames and
@@ -524,7 +551,7 @@ function applyHL(){
 // Tiles stream in after this runs; keep trying until the first building
 // exists to take the buffer class from, then new tiles use the patch.
 (function waitForTiles(n){ if(patchTint()){ applyHL(); return; } if(n<60) setTimeout(function(){ waitForTiles(n+1); },250); })(0);
-tL=map.addMapTiles(TILES.s);
+tL=map.addMapTiles(TILES.s);setCredit();
 // Via our own proxy (see app/api/sunscout/buildings-tile/route.js): the
 // direct data.osmbuildings.org URL is CORS-locked to registered domains.
 // Must be absolute: OSMBuildings fetches GeoJSON tiles inside a blob: Web
@@ -603,7 +630,7 @@ function saveCamera(){
     window.parent.localStorage.setItem('ss_cam',JSON.stringify({rot:curRot,tilt:curTilt,zoom:z,set:true}));
   }catch(e){}
 }
-function setT(m){if(m===curT)return;curT=m;if(tL)map.remove(tL);tL=map.addMapTiles(TILES[m]);document.getElementById('bs').className='tile-btn'+(m==='s'?' on':'');document.getElementById('bsat').className='tile-btn'+(m==='sat'?' on':'');}
+function setT(m){if(m===curT)return;curT=m;if(tL)map.remove(tL);tL=map.addMapTiles(TILES[m]);document.getElementById('bs').className='tile-btn'+(m==='s'?' on':'');document.getElementById('bsat').className='tile-btn'+(m==='sat'?' on':'');setCredit();}
 
 var allPts=${allPtsJs};
 var livePts=allPts;
