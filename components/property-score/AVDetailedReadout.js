@@ -344,7 +344,7 @@ export default function AVDetailedReadout({ record }) {
           <p style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', marginBottom: 14 }}>
             Schools · {record.schools_count} mapped
           </p>
-          <BPF marks={false} style={{ padding: 0, overflow: 'hidden' }}>
+          <BPF marks={false} className="av-list" style={{ padding: 0, overflow: 'hidden' }}>
             {record.schools_list.map((sc, i) => (
               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, fontSize: 13.5, padding: '11px 18px', borderTop: i ? '1px dashed var(--line-soft)' : 'none' }}>
                 <span style={{ color: 'var(--text)' }}>{sc.name}</span>
@@ -364,7 +364,7 @@ export default function AVDetailedReadout({ record }) {
         <p style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700, color: 'var(--slate)', marginBottom: 14 }}>
           Methodology · Data Sources
         </p>
-        <BPF marks={false} style={{ padding: 0, overflow: 'hidden' }}>
+        <BPF marks={false} className="av-list" style={{ padding: 0, overflow: 'hidden' }}>
           {Object.entries(record.weights_applied || {}).map(([k, w], i) => (
             <div key={k} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13.5, padding: '10px 18px', borderTop: i ? '1px dashed var(--line-soft)' : 'none', flexWrap: 'wrap', gap: 8 }}>
               <span style={{ color: 'var(--text)', fontWeight: 600, minWidth: 150 }}>{FACTOR_LABELS[k] || k}</span>

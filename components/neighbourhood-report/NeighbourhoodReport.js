@@ -11,14 +11,16 @@
 // instead of AV's own dark theme + wine accent.
 //
 // Left out on purpose, because they're tied to AV's own account/backend
-// rather than being report *content*: PDF export, the feedback form, the
+// rather than being report *content*: AV's server-side PDF export (this
+// page has its own "Save as PDF", see the print rules in CSS), the feedback form, the
 // broker-branding strip, "Save to BlindSpot" (redundant - this already is
 // BlindSpot), the dark/light toggle (BlindSpot only has one theme), the
 // live Leaflet map, and the non-functional "Commute reality check" teaser.
 // Everything else - every score, every stat, every explanatory sentence - 
 // is here.
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import AVDetailedReadout, { BPF, source, scoreColor, verdictFor, explain, AQI_PLAIN, formatDateLong, inr, Info } from '@/components/property-score/AVDetailedReadout';
 import { FACTOR_LABELS } from '@/lib/property-score/ui';
 import { cityMeta } from '@/lib/aslivastu/cityMeta';
@@ -59,6 +61,69 @@ const CSS = `
   .nr-table-scroll table th:nth-child(5), .nr-table-scroll table td:nth-child(5),
   .nr-table-scroll table th:nth-child(6), .nr-table-scroll table td:nth-child(6) { display: none; }
 }
+
+/* ---- Save as PDF ----
+   The button calls window.print() and these rules lay the page out for
+   paper, the same approach as the sun report's own "Save as PDF"
+   (app/api/sunscout/report/pdf/route.js). The result is a real PDF: text
+   can be searched and copied, it stays sharp at any zoom, and there is
+   nothing extra to download or render on a server. Ctrl+P gets the same
+   layout.
+   @page margin:0 stops the browser stamping its own URL and timestamp on
+   every page; the fixed header and footer below take their place, and the
+   thead/tfoot spacers of .nr-pframe repeat on every printed page to
+   reserve the room they sit in, so content never runs under them. On
+   screen the table is display:block and invisible. */
+.nr-print-only { display: none; }
+.nr-pframe, .nr-pframe > thead, .nr-pframe > tbody, .nr-pframe > tfoot,
+.nr-pframe > * > tr, .nr-pframe > * > tr > td { display: block; }
+.nr-pframe > * > tr > td { padding: 0; }
+@page { size: A4; margin: 0; }
+@media print {
+  html, body { background: #fff !important; }
+  .nr { min-height: 0 !important; background: #fff !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .nr-print-only { display: block; }
+  .nr-pframe { display: table; width: 100%; border-collapse: collapse; }
+  .nr-pframe > thead { display: table-header-group; }
+  .nr-pframe > tbody { display: table-row-group; }
+  .nr-pframe > tfoot { display: table-footer-group; }
+  .nr-pframe > * > tr { display: table-row; }
+  .nr-pframe > * > tr > td { display: table-cell; vertical-align: top; }
+  .nr-pspace-head { height: 19mm; }
+  .nr-pspace-foot { height: 15mm; }
+  .nr-print-head, .nr-print-foot { position: fixed; left: 0; right: 0; padding: 0 13mm; background: #fff; z-index: 50; }
+  .nr-print-head { top: 0; }
+  .nr-print-foot { bottom: 0; }
+  .nr-print-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  .nr-print-head .nr-print-bar { height: 15mm; border-bottom: 1.5px solid var(--ink); }
+  .nr-print-foot .nr-print-bar { height: 12mm; border-top: 1px solid var(--line); }
+  .nr-print-brand { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 800; color: var(--ink); white-space: nowrap; }
+  .nr-print-kind { font-family: 'Geist Mono', monospace; font-size: 9px; font-weight: 600; color: var(--slate); text-transform: uppercase; letter-spacing: .14em; margin-left: 4px; }
+  .nr-print-where { font-size: 9.5px; color: var(--text-dim); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60%; }
+  .nr-print-small { font-size: 8.5px; color: var(--text-dim); white-space: nowrap; }
+
+  .nr-wrap { max-width: none !important; padding: 0 13mm !important; }
+  /* Controls, not content: the header buttons, each row's mobile toggle,
+     the per-field "report" flags, and the "?" tips (hover-only, so on
+     paper they would be stray circles). */
+  .nr-screen-head, .nr button, .nr form, .nr-info { display: none !important; }
+  /* Every row's source line and explanation, whatever the phone
+     accordion was showing. */
+  .avsheet-row-detail { display: block !important; }
+  /* Hero: name across the top, score and verdict side by side under it,
+     instead of three boxes stacked down most of page one. */
+  .avsheet-hero { grid-template-columns: 1fr 1fr !important; gap: 14px !important; margin-bottom: 18px !important; }
+  .avsheet-hero > * { min-height: 0 !important; }
+  .avsheet-hero > :first-child { grid-column: 1 / -1; }
+  .avsheet-box, .avsheet-verdict { box-shadow: none !important; }
+  /* Page breaks: a box never splits across pages, except the long ones
+     (the dimension readout, the schools and methodology lists), which
+     break between their rows instead. Headings stay with what follows. */
+  .avsheet-hero > *, .avsheet-row, .bpf-av:not(.avsheet-readout):not(.av-list), .av-list > div, tr { break-inside: avoid; }
+  .kick, .avsheet-readout-label, .av-detail-readout p { break-after: avoid; }
+  /* A long box that does split gets its border on both halves. */
+  .avsheet-readout, .av-list { -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+}
 `;
 
 // ── ported verbatim from AV's report page (persona weighting, dimension
@@ -97,6 +162,41 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
   // reading is available.
   const record = useLiveAqi(rawRecord);
   const [closeHint, setCloseHint] = useState(false);
+  // Date and address for the printed footer. Set when printing starts,
+  // not on render: both differ between server and browser, so rendering
+  // them during SSR would mismatch on hydration, and the date should be
+  // the day the PDF was made.
+  const [printMeta, setPrintMeta] = useState(null);
+  useEffect(() => {
+    // Browsers name the saved PDF after the page title, which is written
+    // for search results ("... - 76/100 (B+) | BlindSpot"). Swap in a
+    // clean file name while printing and put the real title back after.
+    const fileName = `BlindSpot ${record.name} ${record.pin_code} neighbourhood report`
+      .replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim();
+    let pageTitle = null;
+    function onBeforePrint() {
+      // Some browsers fire beforeprint twice for one print; keep the
+      // first title so the real one is what comes back afterwards.
+      if (pageTitle == null) pageTitle = document.title;
+      document.title = fileName;
+      // Synchronous, so the footer is in the DOM before the browser lays
+      // out the printed pages.
+      flushSync(() => setPrintMeta({
+        date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
+        url: window.location.host + window.location.pathname + window.location.search,
+      }));
+    }
+    function onAfterPrint() {
+      if (pageTitle != null) document.title = pageTitle;
+      pageTitle = null;
+    }
+    window.addEventListener('beforeprint', onBeforePrint);
+    window.addEventListener('afterprint', onAfterPrint);
+    return () => {
+      window.removeEventListener('beforeprint', onBeforePrint);
+      window.removeEventListener('afterprint', onAfterPrint);
+    };
+  }, [record.name, record.pin_code]);
   // Mobile-only accordion state for the dimension readout -- collapsed by
   // default below 640px so all 8 rows' labels/scores fit on screen at
   // once without scrolling through every row's explain paragraph; tap a
@@ -144,6 +244,8 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
   // leaving a dead button: back, if there's somewhere to go back to (a
   // saved report opened from the profile), otherwise the homepage. The
   // hint is the last resort, for a tab with no history at all.
+  const ghostBtn = { fontSize: 12.5, fontWeight: 600, border: '1px solid color-mix(in srgb, var(--slate) 45%, transparent)', borderRadius: 3, padding: '9px 16px', color: 'var(--text-mute)', background: 'transparent' };
+
   function handleClose() {
     window.close();
     setTimeout(() => {
@@ -158,10 +260,28 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
     <div className="nr" style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)' }}>
       <style>{CSS}</style>
 
+      {/* Printed on every page of the PDF in place of the browser's own
+          header and footer. Hidden on screen. */}
+      <div className="nr-print-only nr-print-head"><div className="nr-print-bar">
+        <div className="nr-print-brand">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/mark-report.png" alt="" width={12} height={14} style={{ objectFit: 'contain' }} />
+          BlindSpot<span className="nr-print-kind">Neighbourhood report</span>
+        </div>
+        <div className="nr-print-where">{record.name} · {record.area || record.city} · PIN {record.pin_code}</div>
+      </div></div>
+      <div className="nr-print-only nr-print-foot"><div className="nr-print-bar">
+        <span className="nr-print-small">{printMeta?.url || 'blindspot.properties'}</span>
+        {printMeta && <span className="nr-print-small">Prepared {printMeta.date}</span>}
+      </div></div>
+
+      <table className="nr-pframe" role="presentation">
+      <thead><tr><td><div className="nr-print-only nr-pspace-head" /></td></tr></thead>
+      <tbody><tr><td>
       <div className="nr-wrap" style={{ maxWidth: 1120, margin: '0 auto', padding: '48px 32px 64px' }}>
 
         {/* ── Header ── */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 28, paddingBottom: 18, borderBottom: '1px solid color-mix(in srgb, var(--slate) 55%, transparent)' }}>
+        <div className="nr-screen-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 28, paddingBottom: 18, borderBottom: '1px solid color-mix(in srgb, var(--slate) 55%, transparent)' }}>
           <p className="kick" style={{ fontSize: 12 }}>Neighbourhood Intelligence · Spec Sheet</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
             {closeHint && <span style={{ fontSize: 11.5, color: 'var(--text-dim)' }}>Couldn&apos;t close automatically, you can close this tab yourself.</span>}
@@ -170,7 +290,13 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
               data={record}
               defaultTitle={`${record.name} · PIN ${record.pin_code}`}
             />
-            <button onClick={handleClose} style={{ fontSize: 12.5, fontWeight: 600, border: '1px solid color-mix(in srgb, var(--slate) 45%, transparent)', borderRadius: 3, padding: '9px 16px', color: 'var(--text-mute)', background: 'transparent' }}>← Close</button>
+            <button
+              type="button"
+              onClick={() => window.print()}
+              title="Opens your browser's print window. Choose Save as PDF as the destination."
+              style={ghostBtn}
+            >Save as PDF</button>
+            <button onClick={handleClose} style={ghostBtn}>← Close</button>
           </div>
         </div>
 
@@ -386,6 +512,9 @@ export default function NeighbourhoodReport({ record: rawRecord, nearby }) {
         </div>
 
       </div>
+      </td></tr></tbody>
+      <tfoot><tr><td><div className="nr-print-only nr-pspace-foot" /></td></tr></tfoot>
+      </table>
     </div>
   );
 }
