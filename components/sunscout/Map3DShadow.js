@@ -54,6 +54,7 @@ export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTi
       type: 'setPath',
       pts: (l.pathData || []).map((p) => ({ lon: p.lon, lat: p.lat, el: Math.round(p.el * 100) / 100, az: Math.round(p.az * 100) / 100, time: p.time, iso: p.iso })),
       rise: l.sunTimes?.rise, set: l.sunTimes?.set, time: l.simTime,
+      tz: l.sunTimes?.timeZone || null, tzOff: l.sunTimes?.tzOffset ?? null,
     }, '*');
   }, []);
   const pathKey = pathData.length > 0 ? `${pathData[0].iso}|${pathData.length}` : '';
@@ -71,8 +72,14 @@ export default function Map3DShadow({ lat, lon, pathData, simTime, simPos, sunTi
     })));
     const mel = Math.round(simPos.elevation * 100) / 100;
     const maz = Math.round(simPos.azimuth * 10) / 10;
-    const simIso = pathData[0]?.iso?.slice(0,10) ? `${pathData[0].iso.slice(0,10)}T${simTime}:00` : new Date().toISOString();
-    const nowMins = new Date().getHours()*60+new Date().getMinutes();
+    // Times on this page are the PIN's local clock (the solar API sends its
+    // offset), not IST and not the viewer's own browser clock.
+    const pinOff = Number.isFinite(sunTimes?.tzOffset) ? sunTimes.tzOffset : 330;
+    const offSuffix = `${pinOff < 0 ? '-' : '+'}${String(Math.floor(Math.abs(pinOff) / 60)).padStart(2, '0')}:${String(Math.abs(pinOff) % 60).padStart(2, '0')}`;
+    const simDay = sunTimes?.date || pathData[0]?.iso?.slice(0, 10);
+    const simIso = simDay && simTime ? new Date(`${simDay}T${simTime}:00${offSuffix}`).toISOString() : new Date().toISOString();
+    const nowD = new Date();
+    const nowMins = (((nowD.getUTCHours() * 60 + nowD.getUTCMinutes() + pinOff) % 1440) + 1440) % 1440;
     let startIdx=0, bd=99999;
     for(let i=0;i<pathData.length;i++){const[h,m]=pathData[i].time.split(':').map(Number);const d=Math.abs(h*60+m-nowMins);if(d<bd){bd=d;startIdx=i;}}
 
@@ -258,6 +265,7 @@ window.addEventListener('message',function(e){
   if(e.data.type==='setPin'){ try{ setPin(e.data.lat,e.data.lon,e.data.hl); }catch(err){} return; }
   if(e.data.type==='setPath'&&Array.isArray(e.data.pts)&&e.data.pts.length){
     livePts=e.data.pts; allPts=livePts;
+    if(e.data.tz) PIN_TZ=e.data.tz; if(e.data.tzOff!=null&&isFinite(e.data.tzOff)) PIN_TZ_OFF=e.data.tzOff;
     if(e.data.rise) RISE=e.data.rise; if(e.data.set) SET=e.data.set;
     var nowT=e.data.time||(allPts[ai]&&allPts[ai].time)||'12:00', np=nowT.split(':'), nm=parseInt(np[0])*60+parseInt(np[1]), bi=0, bdd=99999;
     for(var q=0;q<allPts.length;q++){var tq=allPts[q].time.split(':'),dq=Math.abs(parseInt(tq[0])*60+parseInt(tq[1])-nm);if(dq<bdd){bdd=dq;bi=q;}}
@@ -277,7 +285,7 @@ window.addEventListener('message',function(e){
     isAnimating=false;
     stopAnim();
     if(capDate){
-      try{ map.setDate(new Date(capDate+'T'+capTime+':00')); }catch(err){}
+      try{ map.setDate(new Date(capDate+'T'+capTime+':00'+tzSuffix(capDate))); }catch(err){}
       // updateView() below sets the map's date from the path point it's
       // given. With the LIVE path that was today's (or the picked season's)
       // date, so every "Summer/Winter/Spring/Autumn" frame was really the
@@ -560,7 +568,28 @@ tL=map.addMapTiles(TILES.s);setCredit();
 var SITE_ORIGIN=(function(){try{return window.parent.location.origin;}catch(e){}try{if(location.origin&&location.origin!=='null')return location.origin;}catch(e){}return '';})();
 map.addGeoJSONTiles(SITE_ORIGIN+'/api/sunscout/buildings-tile?z={z}&x={x}&y={y}');
 var PIN_LAT=${lat}, PIN_LON=${lon};
-var TZ_SUFFIX='+05:30'; // every time on this page is IST (tzOffset 330)
+// Every 'HH:MM' on this page is the PIN's local clock. PIN_TZ is its IANA
+// zone (from /api/sunscout/solar, refreshed on every setPath), so the
+// offset for any date -- including daylight saving -- comes from Intl.
+// PIN_TZ_OFF is the fallback if Intl can't resolve the zone.
+var PIN_TZ=${JSON.stringify(sunTimes?.timeZone || null)}, PIN_TZ_OFF=${Number.isFinite(sunTimes?.tzOffset) ? sunTimes.tzOffset : 330};
+function tzOffFor(dateStr){
+  if(PIN_TZ){
+    try{
+      var p=dateStr.split('-').map(Number), ms=Date.UTC(p[0],p[1]-1,p[2],12,0,0), o={};
+      new Intl.DateTimeFormat('en-US',{timeZone:PIN_TZ,hourCycle:'h23',year:'numeric',month:'numeric',day:'numeric',hour:'numeric',minute:'numeric',second:'numeric'})
+        .formatToParts(new Date(ms)).forEach(function(x){o[x.type]=x.value;});
+      var asUtc=Date.UTC(+o.year,+o.month-1,+o.day,(+o.hour)%24,+o.minute,+o.second);
+      var off=Math.round((asUtc-ms)/60000);
+      if(isFinite(off)) return off;
+    }catch(e){}
+  }
+  return PIN_TZ_OFF;
+}
+function tzSuffix(dateStr){
+  var o=tzOffFor(dateStr), a=Math.abs(o);
+  return (o<0?'-':'+')+String(Math.floor(a/60)).padStart(2,'0')+':'+String(a%60).padStart(2,'0');
+}
 var pinLayer=map.addGeoJSON(${obsGj});
 function pinRing(la,lo){var steps=20,rd=0.000035,ring=[];for(var i=0;i<=steps;i++){var a=2*Math.PI*i/steps;ring.push([lo+rd*Math.cos(a)/Math.cos(la*Math.PI/180),la+rd*Math.sin(a)]);}return {type:'FeatureCollection',features:[{type:'Feature',properties:{color:'#D1901F',height:0.6,minHeight:0},geometry:{type:'Polygon',coordinates:[ring]}}]};}
 // Move the pin without rebuilding this document. Rebuilding (a new srcDoc)
@@ -608,7 +637,7 @@ function buildPath(dateStr){
   var out=[];
   for(var m=5*60;m<=19*60+30;m+=15){
     var hh=String(Math.floor(m/60)).padStart(2,'0'), mm=String(m%60).padStart(2,'0');
-    var dt=new Date(dateStr+'T'+hh+':'+mm+':00'+TZ_SUFFIX);
+    var dt=new Date(dateStr+'T'+hh+':'+mm+':00'+tzSuffix(dateStr));
     if(isNaN(dt)) continue;
     var sp=sunPos(dt,PIN_LAT,PIN_LON);
     out.push({az:Math.round(sp.az*100)/100, el:Math.round(sp.el*100)/100, time:hh+':'+mm, iso:dt.toISOString()});

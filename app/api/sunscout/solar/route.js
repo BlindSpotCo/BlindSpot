@@ -5,6 +5,7 @@ import {
   getSunTimes, buildPathData, getSolarPos, getEdge,
   calculateSolarRadiation, computeSolarAzimuth,
 } from '@/lib/sunscout/solar';
+import { timeZoneAt, tzOffsetFor, localDateAt } from '@/lib/tz';
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
@@ -17,7 +18,9 @@ export async function GET(req) {
   // too, and the callers all pass real coordinates already.
   const lat      = parseFloat(searchParams.get('lat'));
   const lon      = parseFloat(searchParams.get('lon'));
-  const tzOffset = parseInt(searchParams.get('tzOffset')  || '0', 10);
+  // ?tzOffset= is still accepted from old clients but ignored: the pin's
+  // own time zone decides (lib/tz.js). It used to be a fixed IST 330 from
+  // the report page, which is what put New Zealand's sunrise at 00:08.
 
   if (!Number.isFinite(lat) || !Number.isFinite(lon) ||
       Math.abs(lat) > 90 || Math.abs(lon) > 180) {
@@ -29,12 +32,16 @@ export async function GET(req) {
   if (dateParam) {
     dateStr = dateParam;
   } else {
-    const localNow = new Date(Date.now() + tzOffset * 60000);
-    dateStr = localNow.toISOString().slice(0, 10);
+    dateStr = localDateAt(lat, lon);
   }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    return NextResponse.json({ error: 'Invalid date' }, { status: 400 });
+  }
+  const timeZone = timeZoneAt(lat, lon);
+  const tzOffset = tzOffsetFor(lat, lon, dateStr);
 
-  const sunTimes = getSunTimes(lat, lon, dateStr, tzOffset);
-  const pathData = buildPathData(lat, lon, 250, sunTimes.riseDate, sunTimes.setDate, tzOffset);
+  const sunTimes = getSunTimes(lat, lon, dateStr);
+  const pathData = buildPathData(lat, lon, 250, sunTimes.riseDate, sunTimes.setDate);
 
   let simDate;
   if (simTimeP) {
@@ -61,7 +68,7 @@ export async function GET(req) {
   };
   const seasonal = {};
   for (const [sid, sd] of Object.entries(seasonDates)) {
-    const st = getSunTimes(lat, lon, sd, tzOffset);
+    const st = getSunTimes(lat, lon, sd);
     const pts = [];
     let c = new Date(st.riseDate.getTime());
     while (c <= st.setDate) {
@@ -73,7 +80,12 @@ export async function GET(req) {
   }
 
   return NextResponse.json({
-    sunTimes: { rise: sunTimes.rise, set: sunTimes.set, noon: sunTimes.noon },
+    // timeZone/tzOffset/date: the map iframe needs the pin's clock to turn
+    // its own 'HH:MM' times back into real instants (Map3DShadow.js).
+    sunTimes: {
+      rise: sunTimes.rise, set: sunTimes.set, noon: sunTimes.noon,
+      date: dateStr, timeZone, tzOffset, polar: sunTimes.polar,
+    },
     pathData, simPos: {
       sunLat: simPos.sunLat, sunLon: simPos.sunLon,
       shadowLat: simPos.shadowLat, shadowLon: simPos.shadowLon,

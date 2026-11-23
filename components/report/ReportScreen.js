@@ -84,6 +84,8 @@ const SUBSCORE_ICONS = {
 
 const MAX_FLOOR = 60;
 
+// Legacy: still sent as ?tzOffset= but every API now ignores it and uses
+// the pin's own time zone (lib/tz.js), so a pin outside India is right.
 const TZ = 330;
 const DEFAULT_FLOOR = 5;
 // Where each step of the report page's guide lives (see guideStep).
