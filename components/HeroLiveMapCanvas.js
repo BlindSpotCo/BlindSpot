@@ -133,6 +133,12 @@ export default function HeroLiveMapCanvas() {
   // empty. Without it that case was silent -- the click did nothing at all,
   // which reads as a broken button rather than "we couldn't find that".
   const [noMatch, setNoMatch] = useState('');
+  // "Use my location": for small buildings OSM has no name for, so
+  // typing can't find them. Asks the browser for GPS, then runs the same
+  // pick() as a typed result -- the locate page after it lets the user
+  // nudge the pin onto the exact building.
+  const [locating, setLocating] = useState(false);
+  const [locateError, setLocateError] = useState('');
   // Which covered city the visitor is in, if we can tell -- drives the
   // example chips. null = couldn't place them, show the one-per-city mix.
   const [homeCity, setHomeCity] = useState(null);
@@ -168,6 +174,7 @@ export default function HeroLiveMapCanvas() {
   const handleChange = (e) => {
     const v = e.target.value;
     setQuery(v);
+    setLocateError('');
     setOpen(true);
     setNoMatch('');
     // Typing again backs out of a just-opened city panel -- the box goes
@@ -328,6 +335,42 @@ export default function HeroLiveMapCanvas() {
   };
 
   const closeCityPanel = () => { setCityPanel(null); setCityFilter(''); };
+
+  const useMyLocation = () => {
+    if (locating) return;
+    setLocateError('');
+    setNoMatch('');
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      setLocateError("Your browser can't share your location. Type your address instead.");
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = Number(pos.coords.latitude.toFixed(6));
+        const lon = Number(pos.coords.longitude.toFixed(6));
+        let postcode = '';
+        let displayName = 'My location';
+        try {
+          const res = await fetch(`/api/sunscout/reverse-geocode?lat=${lat}&lon=${lon}`);
+          const data = await res.json();
+          if (data?.result) {
+            postcode = data.result.postcode || '';
+            displayName = data.result.displayName || displayName;
+          }
+        } catch {}
+        setLocating(false);
+        pick({ kind: 'address', lat, lon, postcode, displayName });
+      },
+      (err) => {
+        setLocating(false);
+        setLocateError(err?.code === 1
+          ? 'Location access was blocked. Allow it in your browser settings, or type your address.'
+          : "We couldn't get your location. Try again, or type your address.");
+      },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+    );
+  };
 
   const pick = (r) => {
     if (r.kind === 'city') { pickCity(r); return; }
@@ -537,6 +580,21 @@ export default function HeroLiveMapCanvas() {
                 autoComplete="off"
               />
               {loading && <span className="hlm-search-spinner" aria-hidden="true" />}
+              <button
+                type="button"
+                className="hlm-locate-btn"
+                onClick={useMyLocation}
+                disabled={locating}
+                aria-label="Use my current location"
+                title="Use my current location"
+              >
+                {locating ? (
+                  <span className="hlm-search-spinner" aria-hidden="true" />
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/><circle cx="12" cy="12" r="8"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3"/></svg>
+                )}
+                <span className="hlm-locate-label">{locating ? 'Finding you…' : 'My location'}</span>
+              </button>
             </div>
 
             {cityPanel && (
@@ -609,6 +667,10 @@ export default function HeroLiveMapCanvas() {
               </div>
             )}
           </div>
+
+          {locateError && !cityPanel && (
+            <p className="hlm-nomatch" role="status">{locateError}</p>
+          )}
 
           {noMatch && !cityPanel && (
             <p className="hlm-nomatch" role="status">

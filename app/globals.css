@@ -1887,8 +1887,23 @@
    wired in onSearchKeyDown) and clicking a suggestion row both already
    submit, so a separate button was a second, redundant way to do the
    same thing. */
+/* "My location" button -- for small buildings that have no name on the
+   map, so typing can't find them. */
+.hlm-locate-btn{
+  display:inline-flex; align-items:center; gap:6px; flex-shrink:0;
+  padding:8px 12px; border-radius:var(--radius-pill);
+  border:1px solid var(--line); background:transparent; color:var(--ink);
+  font-family:'Geist',sans-serif; font-size:13px; font-weight:500;
+  cursor:pointer; transition:background .15s ease, border-color .15s ease;
+}
+.hlm-locate-btn:hover{ background:rgba(245,195,67,0.14); border-color:var(--brand); }
+.hlm-locate-btn:focus-visible{ outline:2px solid var(--brand); outline-offset:2px; }
+.hlm-locate-btn:disabled{ cursor:wait; opacity:.75; }
+.hlm-search .hlm-locate-btn svg{ color:var(--ink); }
 @media (max-width:560px){
   .hlm-search{ padding:6px 6px 6px 16px; }
+  .hlm-locate-label{ display:none; }
+  .hlm-locate-btn{ padding:8px; }
 }
 
 /* ---- "Try" chips, under the search box ----
